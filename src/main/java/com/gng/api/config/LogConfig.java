@@ -1,0 +1,29 @@
+package com.gng.api.config;
+
+import com.gng.api.context.RunContext;
+import io.restassured.RestAssured;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Configure logging of Request/Response Details in Console
+ * For FAIL case - Console logs are enabled by-default
+ * For PASS case - Console logs are enabled only if enableLogsOnPass = true in config file
+ */
+@Slf4j
+public class LogConfig {
+
+    private LogConfig() {
+    }
+
+    public static void configureLogging() {
+        log.info("Log Request And Response details in Console if Validation Fails");
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        if (Boolean.TRUE.equals(RunContext.get().getEnvConfig().getEnableLogsOnPass())) {
+            log.info("Log Request And Response details in Console if Validation Pass");
+            RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
+        }
+    }
+
+}
