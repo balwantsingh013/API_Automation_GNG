@@ -90,7 +90,7 @@ public class GetAccountInfoApiSteps extends BaseStep {
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         GetAccountInfoRequest getAccountInfoRequest = new GetAccountInfoRequest();
         switch (param) {
-            case "PremisesCode":
+            case "PremCode":
                 getAccountInfoRequest = testContext.getGetAccountInfoApiPage().getApiPayload(GETACCOUNTINFO_INVALIDPREMCODELENGTH_API, getAccountInfoRequest);
                 testContext.getGetAccountInfoApiPage().setRequestSpecification(GETACCOUNTINFO_INVALIDPREMCODELENGTH_API, getAccountInfoRequest);
                 break;

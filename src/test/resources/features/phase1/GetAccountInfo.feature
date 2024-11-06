@@ -23,7 +23,7 @@ Feature: Verify GetAccountInfo Api
       | CustomerCode | 10011     | Missing Customer Code |
 
   @GetAccountInfoInvalidParamLength @Phase1
-  Scenario Outline: Verify GetAccountInfo Api request with Invalid Param Length
+  Scenario Outline: Verify GetAccountInfo Api request with Invalid "<param>" Length
     When a request is made to the GetAccountInfo Api with invalid param "<param>" length
     Then verify response code of "GetAccountInfo" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"

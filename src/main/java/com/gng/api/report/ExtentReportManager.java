@@ -151,8 +151,10 @@ public class ExtentReportManager {
     }
 
     public static String getResponseBody() {
-        return BODY + response.get().getBody().asPrettyString();
+        Response resp = response.get();
+        return resp != null ? BODY + resp.getBody().asPrettyString() : "No Response Body";
     }
+
 
     public static ExtentTest getExtentLogger() {
         return extentLogger.get();

@@ -5,6 +5,6 @@ vendorSecret: "HAXxeK86Q7omh4rCPeuX"
 driverClassName: "oracle.jdbc.OracleDriver"
 serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
 userName: "BSINGH"
-password: "VTX33663"
-enableLogsOnPass: false
+password: "vtx33669"
+enableLogsOnPass: true
 enableLogsOnFail: true

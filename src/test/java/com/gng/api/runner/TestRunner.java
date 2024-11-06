@@ -17,7 +17,8 @@ import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
 
 @CucumberOptions(
         features = "src/test/resources/features", glue = {"com.gng.api.steps"}, dryRun = false,
-        tags = "@TagName", monochrome = true,
+        //tags = "@GetAccountInfoInvalidParamLength",
+        monochrome = true,
         plugin = {"pretty", "json:target/cucumberJson/cucumber.json"}
 )
 @Slf4j

@@ -62,13 +62,13 @@ public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiSte
                 return getAccountInfoRequest;
             case GETACCOUNTINFO_INVALIDCUSTOMERCODELENGTH_API:
                 getAccountInfoRequest.setRequestID(UUID.randomUUID().toString());
-                getAccountInfoRequest.setCustomerCode(FakerUtil.getRandomNumber(10));
+                getAccountInfoRequest.setCustomerCode(FakerUtil.getRandomNumericString(10));
                 getAccountInfoRequest.setPremisesCode(testContext.getPremisesCode());
                 return getAccountInfoRequest;
             case GETACCOUNTINFO_INVALIDPREMCODELENGTH_API:
                 getAccountInfoRequest.setRequestID(UUID.randomUUID().toString());
                 getAccountInfoRequest.setCustomerCode(testContext.getCustomerCode());
-                getAccountInfoRequest.setPremisesCode(FakerUtil.getRandomNumber(8));
+                getAccountInfoRequest.setPremisesCode(FakerUtil.getRandomNumericString(8));
                 return getAccountInfoRequest;
             case GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API:
                 getAccountInfoRequest.setRequestID(UUID.randomUUID().toString());
