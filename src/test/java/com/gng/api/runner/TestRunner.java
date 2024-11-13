@@ -17,7 +17,7 @@ import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
 
 @CucumberOptions(
         features = "src/test/resources/features", glue = {"com.gng.api.steps"}, dryRun = false,
-        //tags = "@GetAccountInfoInvalidParamLength",
+        //tags = "@GetAccountInfoWithValidData",
         monochrome = true,
         plugin = {"pretty", "json:target/cucumberJson/cucumber.json"}
 )
