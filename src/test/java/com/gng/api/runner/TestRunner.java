@@ -2,11 +2,13 @@ package com.gng.api.runner;
 
 import com.gng.api.config.LogConfig;
 import com.gng.api.context.RunContext;
+import com.gng.api.report.AllureRestAssuredFilter;
 import com.gng.api.report.ExtentReportManager;
 import com.gng.api.spec.SetApiSpecification;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 import io.cucumber.testng.TestNGCucumberRunner;
+import io.restassured.RestAssured;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -19,7 +21,7 @@ import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
         features = "src/test/resources/features", glue = {"com.gng.api.steps"}, dryRun = false,
         //tags = "@GetAccountInfoWithValidData",
         monochrome = true,
-        plugin = {"pretty", "json:target/cucumberJson/cucumber.json"}
+        plugin = {"pretty", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"}
 )
 @Slf4j
 public class TestRunner extends AbstractTestNGCucumberTests {
@@ -34,6 +36,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
         log.info("*** Setup ***");
+        RestAssured.filters(new AllureRestAssuredFilter());
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
         RunContext.get().loadEnvConfig();
         LogConfig.configureLogging();

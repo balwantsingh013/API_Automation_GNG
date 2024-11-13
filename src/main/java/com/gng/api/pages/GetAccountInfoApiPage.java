@@ -21,7 +21,6 @@ import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
 import static com.gng.api.util.CommonUtil.nullifyFields;
 import static com.gng.api.util.LogUtil.logError;
 import static com.gng.api.util.LogUtil.logInfo;
-import static com.gng.api.util.LogUtil.saveTextLog;
 
 public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiStep<GetAccountInfoRequest, GetAccountInfoResponse> {
 
@@ -40,7 +39,6 @@ public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiSte
     @Override
     public GetAccountInfoRequest getApiPayload(String apiName, GetAccountInfoRequest getAccountInfoRequest) {
         logInfo("Get Api Payload");
-        saveTextLog("Get Api Payload");
         switch (apiName) {
             case GETACCOUNTINFO_HAPPYFLOW_API:
                 getAccountInfoRequest.setRequestID(UUID.randomUUID().toString());

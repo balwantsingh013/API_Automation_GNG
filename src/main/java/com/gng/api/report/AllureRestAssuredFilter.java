@@ -1,0 +1,36 @@
+package com.gng.api.report;
+
+import io.qameta.allure.Allure;
+import io.restassured.filter.Filter;
+import io.restassured.filter.FilterContext;
+import io.restassured.response.Response;
+import io.restassured.specification.FilterableRequestSpecification;
+import io.restassured.specification.FilterableResponseSpecification;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
+public class AllureRestAssuredFilter implements Filter {
+
+    @Override
+    public Response filter(FilterableRequestSpecification requestSpec, FilterableResponseSpecification responseSpec, FilterContext context) {
+        // Capture request details
+        String requestBuilder = "Request URI: " + requestSpec.getURI() + "\n" +
+                "Request Method: " + requestSpec.getMethod() + "\n" +
+                "Request Headers: " + requestSpec.getHeaders() + "\n" +
+                "Request Body: " + (requestSpec.getBody() != null ? requestSpec.getBody().toString() : "No Body");
+        Allure.addAttachment("Request", new ByteArrayInputStream(requestBuilder.getBytes(StandardCharsets.UTF_8)));
+
+        // Proceed with the request
+        Response response = context.next(requestSpec, responseSpec);
+
+        // Capture response details
+        String responseBuilder = "Response Status Code: " + response.getStatusCode() + "\n" +
+                "Response Headers: " + response.getHeaders() + "\n" +
+                "Response Body: " + response.getBody().asString();
+        Allure.addAttachment("Response", new ByteArrayInputStream(responseBuilder.getBytes(StandardCharsets.UTF_8)));
+
+        return response;
+    }
+}
+
