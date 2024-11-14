@@ -18,13 +18,18 @@ public class DBConnection {
         log.info("Create Database Connection");
         DataSource dataSource = getDataSource(envConfig);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+        // Set log level to DEBUG for JdbcTemplate
+        jdbcTemplate.setResultsMapCaseInsensitive(true);
         return new DBAction(jdbcTemplate);
     }
 
-    public DriverManagerDataSource getDataSource(EnvConfig envConfig) {
-        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource(envConfig.getServerName(),
-                envConfig.getUserName(), envConfig.getPassword());
-        driverManagerDataSource.setDriverClassName(envConfig.getDriverClassName());
-        return driverManagerDataSource;
+    private DriverManagerDataSource getDataSource(EnvConfig envConfig) {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setUrl(envConfig.getServerName());
+        dataSource.setUsername(envConfig.getUserName());
+        dataSource.setPassword(envConfig.getPassword());
+        dataSource.setDriverClassName(envConfig.getDriverClassName());
+        return dataSource;
     }
 }
