@@ -8,8 +8,8 @@ import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
-import static com.gng.api.util.LogUtil.logError;
-import static com.gng.api.util.LogUtil.logInfo;
+import static com.gng.api.config.LogConfig.logError;
+import static com.gng.api.config.LogConfig.logInfo;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;

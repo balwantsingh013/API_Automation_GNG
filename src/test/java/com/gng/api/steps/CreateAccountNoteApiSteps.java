@@ -15,10 +15,10 @@ import org.apache.http.client.methods.HttpPost;
 import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.config.LogConfig.logError;
 import static com.gng.api.constants.ApiEndPoint.ACCOUNT_NOTE;
 import static com.gng.api.constants.ApiLabel.*;
 import static com.gng.api.constants.DBConstant.*;
-import static com.gng.api.util.LogUtil.logError;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;

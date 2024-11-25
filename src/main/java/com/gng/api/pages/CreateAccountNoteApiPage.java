@@ -5,24 +5,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.context.TestContext;
-import com.gng.api.pages.base.CrudOperations;
-import com.gng.api.pages.base.IBaseApiStep;
 import com.gng.api.pojo.createaccountnote.CreateAccountNoteRequest;
 import com.gng.api.pojo.createaccountnote.CreateAccountNoteResponse;
-import com.gng.api.util.FakerUtil;
+import com.gng.api.util.CommonUtil;
 import io.restassured.response.Response;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.gng.api.config.LogConfig.logError;
+import static com.gng.api.config.LogConfig.logInfo;
 import static com.gng.api.constants.ApiLabel.*;
 import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
-import static com.gng.api.util.CommonUtil.nullifyFields;
-import static com.gng.api.util.LogUtil.logError;
-import static com.gng.api.util.LogUtil.logInfo;
 
-public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApiStep<CreateAccountNoteRequest, CreateAccountNoteResponse> {
+public class CreateAccountNoteApiPage extends CommonUtil {
 
     private final TestContext testContext;
 
@@ -30,13 +27,11 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
         this.testContext = testContext;
     }
 
-    @Override
     public void setRequestSpecification(String apiName, CreateAccountNoteRequest createAccountNoteRequest) {
         logInfo("Set Request Specification for: " + apiName);
         getRequestSpec().auth().oauth2(testContext.getAuthToken()).body(createAccountNoteRequest);
     }
 
-    @Override
     public CreateAccountNoteRequest getApiPayload(String apiName, CreateAccountNoteRequest createAccountNoteRequest) {
         logInfo("Get Api Payload");
         switch (apiName) {
@@ -48,9 +43,6 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
                 createAccountNoteRequest.setNoteTypeCode(testContext.getNoteTypeCode());
                 createAccountNoteRequest.setNoteText(testContext.getNoteText());
                 createAccountNoteRequest.setOrigin(testContext.getOrigin());
-             /* createAccountNoteRequest.setExpirationDate(testContext.getExpirationDate());
-                createAccountNoteRequest.setSuspenseDate(testContext.getSuspenseDate());
-                createAccountNoteRequest.setUserIDRemind(testContext.getUserIDRemind());*/
                 return createAccountNoteRequest;
             case CREATEACCOUNTNOTE_MISSINGREQUESTID_API:
                 nullifyFields(createAccountNoteRequest, "requestID");
@@ -73,7 +65,7 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
                 return createAccountNoteRequest;
             case GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API:
                 createAccountNoteRequest.setRequestID(UUID.randomUUID().toString());
-                createAccountNoteRequest.setCustomerCode(FakerUtil.getRandomNumericString(8));
+                createAccountNoteRequest.setCustomerCode(CommonUtil.getRandomNumericString(8));
                 createAccountNoteRequest.setPremisesCode(testContext.getPremisesCode());
                 createAccountNoteRequest.setServiceNumber(testContext.getServiceNumber());
                 createAccountNoteRequest.setNoteTypeCode(testContext.getNoteTypeCode());
@@ -118,7 +110,7 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
                 return createAccountNoteRequest;
             case CREATEACCOUNTNOTE_INVALIDCUSTOMERCODELENGTH_API:
                 createAccountNoteRequest.setRequestID(UUID.randomUUID().toString());
-                createAccountNoteRequest.setCustomerCode(FakerUtil.getRandomNumericString(10));
+                createAccountNoteRequest.setCustomerCode(CommonUtil.getRandomNumericString(10));
                 createAccountNoteRequest.setPremisesCode(testContext.getPremisesCode());
                 createAccountNoteRequest.setServiceNumber(testContext.getServiceNumber());
                 createAccountNoteRequest.setNoteTypeCode(testContext.getNoteTypeCode());
@@ -128,7 +120,7 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
             case CREATEACCOUNTNOTE_INVALIDPREMCODELENGTH_API:
                 createAccountNoteRequest.setRequestID(UUID.randomUUID().toString());
                 createAccountNoteRequest.setCustomerCode(testContext.getCustomerCode());
-                createAccountNoteRequest.setPremisesCode(FakerUtil.getRandomNumericString(8));
+                createAccountNoteRequest.setPremisesCode(CommonUtil.getRandomNumericString(8));
                 createAccountNoteRequest.setServiceNumber(testContext.getServiceNumber());
                 createAccountNoteRequest.setNoteTypeCode(testContext.getNoteTypeCode());
                 createAccountNoteRequest.setNoteText(testContext.getNoteText());
@@ -148,7 +140,7 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
                 createAccountNoteRequest.setRequestID(UUID.randomUUID().toString());
                 createAccountNoteRequest.setCustomerCode(testContext.getCustomerCode());
                 createAccountNoteRequest.setPremisesCode(testContext.getPremisesCode());
-                createAccountNoteRequest.setServiceNumber(FakerUtil.getRandomNumericString(4));
+                createAccountNoteRequest.setServiceNumber(CommonUtil.getRandomNumericString(4));
                 createAccountNoteRequest.setNoteTypeCode(testContext.getNoteTypeCode());
                 createAccountNoteRequest.setNoteText(testContext.getNoteText());
                 createAccountNoteRequest.setOrigin(testContext.getOrigin());
@@ -157,7 +149,7 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
                 createAccountNoteRequest.setRequestID(UUID.randomUUID().toString());
                 createAccountNoteRequest.setCustomerCode(testContext.getCustomerCode());
                 createAccountNoteRequest.setPremisesCode(testContext.getPremisesCode());
-                createAccountNoteRequest.setServiceNumber(FakerUtil.getRandomNumericString(5));
+                createAccountNoteRequest.setServiceNumber(CommonUtil.getRandomNumericString(5));
                 createAccountNoteRequest.setNoteTypeCode(testContext.getNoteTypeCode());
                 createAccountNoteRequest.setNoteText(testContext.getNoteText());
                 createAccountNoteRequest.setOrigin(testContext.getOrigin());
@@ -167,7 +159,7 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
                 createAccountNoteRequest.setCustomerCode(testContext.getCustomerCode());
                 createAccountNoteRequest.setPremisesCode(testContext.getPremisesCode());
                 createAccountNoteRequest.setServiceNumber(testContext.getServiceNumber());
-                createAccountNoteRequest.setNoteTypeCode(FakerUtil.getRandomString(3));
+                createAccountNoteRequest.setNoteTypeCode(CommonUtil.getRandomString(3));
                 createAccountNoteRequest.setNoteText(testContext.getNoteText());
                 createAccountNoteRequest.setOrigin(testContext.getOrigin());
                 return createAccountNoteRequest;
@@ -176,13 +168,11 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
         }
     }
 
-    @Override
     public CreateAccountNoteRequest deserializeJsonToPojo(String apiName) {
         logInfo("Deserializing Json to Pojo");
         return null;
     }
 
-    @Override
     public CreateAccountNoteResponse deserializeResponseToPojo(String apiName, Response response) {
         logInfo("Deserialize Response To Pojo");
         JsonFactory factory = JsonFactory.builder()
@@ -191,7 +181,7 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
         ObjectMapper mapper = new ObjectMapper(factory);
         try {
             return switch (apiName) {
-                case GETACCOUNTINFO_HAPPYFLOW_API ->
+                case CREATEACCOUNTNOTE_HAPPYFLOW_API ->
                         mapper.readValue(response.getBody().asString(), CreateAccountNoteResponse.class);
                 default -> throw new IllegalStateException(UNEXPECTED_VALUE + apiName);
             };
@@ -201,7 +191,6 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
         return null;
     }
 
-    @Override
     public Map<String, String> getApiHeaders(String apiName) {
         logInfo("Get Api Headers");
         Map<String, String> requestHeaders = new HashMap<>();
@@ -209,7 +198,6 @@ public class CreateAccountNoteApiPage extends CrudOperations implements IBaseApi
         return requestHeaders;
     }
 
-    @Override
     public String getApiQueryParams(String apiName) {
         logInfo("Get Api Params");
         return null;

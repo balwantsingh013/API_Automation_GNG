@@ -5,24 +5,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.context.TestContext;
-import com.gng.api.pages.base.CrudOperations;
-import com.gng.api.pages.base.IBaseApiStep;
 import com.gng.api.pojo.accountinfo.GetAccountInfoRequest;
 import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
-import com.gng.api.util.FakerUtil;
+import com.gng.api.util.CommonUtil;
 import io.restassured.response.Response;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.gng.api.config.LogConfig.logError;
+import static com.gng.api.config.LogConfig.logInfo;
 import static com.gng.api.constants.ApiLabel.*;
 import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
-import static com.gng.api.util.CommonUtil.nullifyFields;
-import static com.gng.api.util.LogUtil.logError;
-import static com.gng.api.util.LogUtil.logInfo;
 
-public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiStep<GetAccountInfoRequest, GetAccountInfoResponse> {
+public class GetAccountInfoApiPage extends CommonUtil{
 
     private final TestContext testContext;
 
@@ -30,13 +27,11 @@ public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiSte
         this.testContext = testContext;
     }
 
-    @Override
     public void setRequestSpecification(String apiName, GetAccountInfoRequest getAccountInfoRequest) {
         logInfo("Set Request Specification for :" + apiName);
         getRequestSpec().auth().oauth2(testContext.getAuthToken()).body(getAccountInfoRequest);
     }
 
-    @Override
     public GetAccountInfoRequest getApiPayload(String apiName, GetAccountInfoRequest getAccountInfoRequest) {
         logInfo("Get Api Payload");
         switch (apiName) {
@@ -62,17 +57,17 @@ public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiSte
                 return getAccountInfoRequest;
             case GETACCOUNTINFO_INVALIDCUSTOMERCODELENGTH_API:
                 getAccountInfoRequest.setRequestID(UUID.randomUUID().toString());
-                getAccountInfoRequest.setCustomerCode(FakerUtil.getRandomNumericString(10));
+                getAccountInfoRequest.setCustomerCode(CommonUtil.getRandomNumericString(10));
                 getAccountInfoRequest.setPremisesCode(testContext.getPremisesCode());
                 return getAccountInfoRequest;
             case GETACCOUNTINFO_INVALIDPREMCODELENGTH_API:
                 getAccountInfoRequest.setRequestID(UUID.randomUUID().toString());
                 getAccountInfoRequest.setCustomerCode(testContext.getCustomerCode());
-                getAccountInfoRequest.setPremisesCode(FakerUtil.getRandomNumericString(8));
+                getAccountInfoRequest.setPremisesCode(CommonUtil.getRandomNumericString(8));
                 return getAccountInfoRequest;
             case GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API:
                 getAccountInfoRequest.setRequestID(UUID.randomUUID().toString());
-                getAccountInfoRequest.setCustomerCode(FakerUtil.getRandomNumericString(8));
+                getAccountInfoRequest.setCustomerCode(CommonUtil.getRandomNumericString(8));
                 getAccountInfoRequest.setPremisesCode(testContext.getPremisesCode());
                 return getAccountInfoRequest;
             default:
@@ -80,13 +75,11 @@ public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiSte
         }
     }
 
-    @Override
     public GetAccountInfoRequest deserializeJsonToPojo(String apiName) {
         logInfo("Deserializing Json to Pojo");
         return null;
     }
 
-    @Override
     public GetAccountInfoResponse deserializeResponseToPojo(String apiName, Response response) {
         logInfo("Deserialize Response To Pojo");
         JsonFactory factory = JsonFactory.builder()
@@ -105,7 +98,6 @@ public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiSte
         return null;
     }
 
-    @Override
     public Map<String, String> getApiHeaders(String apiName) {
         logInfo("Get Api Headers");
         Map<String, String> requestHeaders = new HashMap<>();
@@ -113,8 +105,6 @@ public class GetAccountInfoApiPage extends CrudOperations implements IBaseApiSte
         return requestHeaders;
     }
 
-
-    @Override
     public String getApiQueryParams(String apiName) {
         logInfo("Get Api Params");
         return null;

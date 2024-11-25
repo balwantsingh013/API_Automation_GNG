@@ -17,11 +17,11 @@ import org.assertj.core.api.SoftAssertions;
 import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.config.LogConfig.logError;
 import static com.gng.api.constants.ApiEndPoint.ACCOUNT_INFO;
 import static com.gng.api.constants.ApiLabel.*;
 import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
 import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
-import static com.gng.api.util.LogUtil.logError;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
