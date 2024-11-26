@@ -10,9 +10,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Optional;
 
 import static com.gng.api.constants.TestConstant.PATH_CONFIG;
 
@@ -20,36 +17,40 @@ import static com.gng.api.constants.TestConstant.PATH_CONFIG;
 @Slf4j
 public class RunContext {
 
-    private static final String DEFAULT_ENV_VALUE = "qa";
-    private static final String ENV_SYS_PROP_NAME = "env";
-    private static String envConfigFileName;
-    private static RunContext context;
+    private static final String DEFAULT_ENV = "qa";
+    private static final String ENV_PROPERTY = "env";
+    private static RunContext instance;
+
     private AuthPayload authPayload;
     private EnvConfig envConfig;
     private DBAction dbAction;
 
+    public RunContext() {
+        loadEnvConfig();
+    }
+
     public static RunContext get() {
-        context = Optional.ofNullable(context).orElseGet(RunContext::new);
-        return context;
+        if (instance == null) {
+            instance = new RunContext();
+        }
+        return instance;
     }
 
     public String getEnvironment() {
-        return System.getProperty(ENV_SYS_PROP_NAME, DEFAULT_ENV_VALUE).toLowerCase(Locale.ROOT);
+        return System.getProperty(ENV_PROPERTY, DEFAULT_ENV).toLowerCase();
     }
 
     public String getEnvConfigFile() {
-        return Optional.ofNullable(envConfigFileName).orElseGet(() -> PATH_CONFIG + "envconfig-" + getEnvironment() + ".yml");
+        return PATH_CONFIG + "envconfig-" + getEnvironment() + ".yml";
     }
 
     public void loadEnvConfig() {
-        try {
-            InputStream inputStream = new FileInputStream(getEnvConfigFile());
-            Yaml yaml = new Yaml();
-            envConfig = yaml.loadAs(inputStream, EnvConfig.class);
+        try (FileInputStream inputStream = new FileInputStream(getEnvConfigFile())) {
+            envConfig = new Yaml().loadAs(inputStream, EnvConfig.class);
         } catch (IOException e) {
-            throw new IllegalStateException(String.format("The file '%s' cannot be read", getEnvConfigFile()), e);
+            throw new IllegalStateException("Cannot read config file: " + getEnvConfigFile(), e);
         }
-        log.debug("The env configs are: {}", envConfig);
+        log.debug("Loaded environment configuration: {}", envConfig);
     }
 
     public void setAuthApiPayload() {
@@ -59,7 +60,9 @@ public class RunContext {
     }
 
     public DBAction getDbAction() {
-        dbAction = Optional.ofNullable(dbAction).orElseGet(() -> DBConnection.dbConnection().createDatabaseConnection(envConfig));
+        if (dbAction == null) {
+            dbAction = DBConnection.dbConnection().createDatabaseConnection(envConfig);
+        }
         return dbAction;
     }
 }

@@ -2,7 +2,6 @@ package com.gng.api.steps;
 
 import com.gng.api.context.TestContext;
 import com.gng.api.pages.GetAccountInfoApiPage;
-import com.gng.api.steps.base.BaseStep;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @Slf4j
-public class CommonApiSteps extends BaseStep {
+public class CommonApiSteps {
 
     private final TestContext testContext;
 

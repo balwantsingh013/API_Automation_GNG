@@ -4,7 +4,6 @@ import com.gng.api.context.RunContext;
 import com.gng.api.context.TestContext;
 import com.gng.api.pages.CreateAccountNoteApiPage;
 import com.gng.api.pojo.createaccountnote.CreateAccountNoteRequest;
-import com.gng.api.steps.base.BaseStep;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -24,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @Slf4j
-public class CreateAccountNoteApiSteps extends BaseStep {
+public class CreateAccountNoteApiSteps  {
 
     private final TestContext testContext;
 

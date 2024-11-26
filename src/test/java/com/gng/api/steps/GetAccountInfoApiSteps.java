@@ -6,7 +6,6 @@ import com.gng.api.context.TestContext;
 import com.gng.api.pages.GetAccountInfoApiPage;
 import com.gng.api.pojo.accountinfo.GetAccountInfoRequest;
 import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
-import com.gng.api.steps.base.BaseStep;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
@@ -26,7 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @Slf4j
-public class GetAccountInfoApiSteps extends BaseStep {
+public class GetAccountInfoApiSteps {
 
     private final TestContext testContext;
 
