@@ -1,6 +1,6 @@
 package com.gng.api.steps;
 
-import com.gng.api.context.TestContext;
+import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pages.GetAccountInfoApiPage;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;

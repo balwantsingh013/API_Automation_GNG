@@ -1,14 +1,14 @@
 package com.gng.api.steps;
 
-import com.gng.api.context.RunContext;
-import com.gng.api.context.TestContext;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
-import static com.gng.api.config.LogConfig.logError;
-import static com.gng.api.config.LogConfig.logInfo;
+import static com.gng.api.util.LogUtil.logError;
+import static com.gng.api.util.LogUtil.logInfo;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -25,7 +25,7 @@ public class AuthApiSteps {
     public void requestToGenerateAuthToken() {
         logInfo("Generating Auth Token...");
         try {
-            RunContext runContext = RunContext.get();
+            ApplicationContext runContext = ApplicationContext.get();
             runContext.setAuthApiPayload();
             Response response = executeAuthRequest(runContext);
             storeAuthToken(response);
@@ -34,7 +34,7 @@ public class AuthApiSteps {
         }
     }
 
-    private Response executeAuthRequest(RunContext runContext) {
+    private Response executeAuthRequest(ApplicationContext runContext) {
         return given()
                 .relaxedHTTPSValidation()
                 .contentType(ContentType.JSON)

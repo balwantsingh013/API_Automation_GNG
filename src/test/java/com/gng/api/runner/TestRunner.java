@@ -1,10 +1,9 @@
 package com.gng.api.runner;
 
-import com.gng.api.config.LogConfig;
-import com.gng.api.context.RunContext;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.util.LogUtil;
 import com.gng.api.report.AllureRestAssuredFilter;
 import com.gng.api.report.ExtentReportManager;
-import com.gng.api.spec.SetApiSpecification;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 import io.cucumber.testng.TestNGCucumberRunner;
@@ -15,7 +14,9 @@ import org.testng.annotations.*;
 
 import java.lang.reflect.Method;
 
-import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
+import static com.gng.api.context.ApplicationContext.getRequestSpec;
+import static com.gng.api.context.ApplicationContext.removeRequestSpec;
+import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = "src/test/resources/features", glue = {"com.gng.api.steps"}, dryRun = false,
@@ -38,8 +39,8 @@ public class TestRunner extends AbstractTestNGCucumberTests {
         log.info("*** Setup ***");
         RestAssured.filters(new AllureRestAssuredFilter());
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
-        RunContext.get().loadEnvConfig();
-        LogConfig.configureLogging();
+        ApplicationContext.get().loadEnvConfig();
+        LogUtil.configureLogging();
         ExtentReportManager.initialiseExtentReport();
     }
 
@@ -54,7 +55,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
     @BeforeMethod(alwaysRun = true)
     public void beforeMethod(Method method) {
-        SetApiSpecification.setRequestSpec();
+        setRequestSpec();
         Test test = method.getAnnotation(Test.class);
         ExtentReportManager.createTest(method, test);
     }
@@ -63,6 +64,6 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     public void afterMethod(ITestResult result) {
         ExtentReportManager.addRequestDetailsToReport(getRequestSpec());
         ExtentReportManager.generateReport(result);
-        SetApiSpecification.removeRequestSpec();
+        removeRequestSpec();
     }
 }

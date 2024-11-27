@@ -1,4 +1,4 @@
-package com.gng.api.auth;
+package com.gng.api.pojo.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

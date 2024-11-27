@@ -1,8 +1,8 @@
 package com.gng.api.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gng.api.context.RunContext;
-import com.gng.api.context.TestContext;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pages.GetAccountInfoApiPage;
 import com.gng.api.pojo.accountinfo.GetAccountInfoRequest;
 import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
@@ -16,7 +16,7 @@ import org.assertj.core.api.SoftAssertions;
 import java.util.List;
 import java.util.Map;
 
-import static com.gng.api.config.LogConfig.logError;
+import static com.gng.api.util.LogUtil.logError;
 import static com.gng.api.constants.ApiEndPoint.ACCOUNT_INFO;
 import static com.gng.api.constants.ApiLabel.*;
 import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
@@ -37,7 +37,7 @@ public class GetAccountInfoApiSteps {
 
     @When("a request is made to the GetAccountInfo Api")
     public void a_request_is_made_to_the_get_account_info_api() {
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         GetAccountInfoRequest getAccountInfoRequest = new GetAccountInfoRequest();
@@ -51,7 +51,7 @@ public class GetAccountInfoApiSteps {
     @When("a request is made to the GetAccountInfo Api with missing param {string}")
     public void a_request_is_made_to_the_get_account_info_api_with_missing_param(String missingParam) {
         //Get Data from DB
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         //Create Request Payload
@@ -84,7 +84,7 @@ public class GetAccountInfoApiSteps {
 
     @When("a request is made to the GetAccountInfo Api with invalid param {string} length")
     public void a_request_is_made_to_the_get_account_info_api_with_invalid_param_length(String param) {
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         GetAccountInfoRequest getAccountInfoRequest = new GetAccountInfoRequest();
@@ -111,7 +111,7 @@ public class GetAccountInfoApiSteps {
 
     @Then("verify the account information in the response should match the information in the database")
     public void verify_the_account_information_in_the_response_should_match_the_information_in_the_database() {
-        Map<String, Object> accountInformationDB = RunContext.get().getDbAction().getAccountInformationHappyFlow().getFirst();
+        Map<String, Object> accountInformationDB = ApplicationContext.get().getDbAction().getAccountInformationHappyFlow().getFirst();
         GetAccountInfoResponse response = testContext.getGetAccountInfoResponse();
         List<String> keysDB = accountInformationDB.keySet().stream().toList();
         ObjectMapper mapper = new ObjectMapper();
@@ -130,7 +130,7 @@ public class GetAccountInfoApiSteps {
 
     @When("a request is made to the GetAccountInfo Api with duplicate requestID")
     public void a_request_is_made_to_the_get_account_info_api_with_duplicate_request_id() {
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         GetAccountInfoRequest getAccountInfoRequest = new GetAccountInfoRequest();
@@ -144,7 +144,7 @@ public class GetAccountInfoApiSteps {
 
     @When("a request is made to the GetAccountInfo Api with non-existent combination of custCode and premCode")
     public void a_request_is_made_to_the_get_account_info_api_with_non_existent_combination_of_cust_code_and_prem_code() {
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         GetAccountInfoRequest getAccountInfoRequest = new GetAccountInfoRequest();

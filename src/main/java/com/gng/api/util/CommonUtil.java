@@ -3,22 +3,18 @@ package com.gng.api.util;
 import com.github.javafaker.Faker;
 import com.gng.api.report.ExtentReportManager;
 import io.restassured.response.Response;
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.*;
 
 import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.gng.api.config.LogConfig.logInfo;
-import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
+import static com.gng.api.context.ApplicationContext.getRequestSpec;
+import static com.gng.api.util.LogUtil.logInfo;
 import static io.restassured.RestAssured.given;
 
 

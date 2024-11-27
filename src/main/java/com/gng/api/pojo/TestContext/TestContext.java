@@ -1,4 +1,4 @@
-package com.gng.api.context;
+package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pages.CreateAccountNoteApiPage;
 import com.gng.api.pages.GetAccountInfoApiPage;

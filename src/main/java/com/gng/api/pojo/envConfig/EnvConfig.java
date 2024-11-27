@@ -1,4 +1,4 @@
-package com.gng.api.config;
+package com.gng.api.pojo.envConfig;
 
 import lombok.Getter;
 import lombok.Setter;

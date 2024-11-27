@@ -1,7 +1,7 @@
 package com.gng.api.steps;
 
-import com.gng.api.context.RunContext;
-import com.gng.api.context.TestContext;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pages.CreateAccountNoteApiPage;
 import com.gng.api.pojo.createaccountnote.CreateAccountNoteRequest;
 import io.cucumber.datatable.DataTable;
@@ -14,7 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import java.util.List;
 import java.util.Map;
 
-import static com.gng.api.config.LogConfig.logError;
+import static com.gng.api.util.LogUtil.logError;
 import static com.gng.api.constants.ApiEndPoint.ACCOUNT_NOTE;
 import static com.gng.api.constants.ApiLabel.*;
 import static com.gng.api.constants.DBConstant.*;
@@ -36,7 +36,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with Null NoteTypeCode")
     public void a_request_is_made_to_the_create_account_note_api_with_null_note_type_code(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -52,7 +52,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with Null CustomerCode")
     public void a_request_is_made_to_the_create_account_note_api_with_null_customer_code(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
         testContext.setNoteTypeCode(data.get("noteTypeCode"));
@@ -68,7 +68,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with non-existent combination of CustomerCode and PremisesCode")
     public void a_request_is_made_to_the_create_account_note_api_with_non_existent_combination_of_customer_code_and_premises_code(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -85,7 +85,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with missing RequestID")
     public void a_request_is_made_to_the_create_account_note_api_with_missing_request_id(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -102,7 +102,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with valid data")
     public void a_request_is_made_to_the_create_account_note_api_with_valid_data(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -124,7 +124,7 @@ public class CreateAccountNoteApiSteps  {
 
     @Then("verify NoteSequenceNumber match the value in the database")
     public void verify_note_sequence_number_match_the_value_in_the_database() {
-        List<Map<String, Object>> noteSequenceNumberData = RunContext.get().getDbAction().getNoteSequenceNumber(testContext.getNoteSequenceNumber());
+        List<Map<String, Object>> noteSequenceNumberData = ApplicationContext.get().getDbAction().getNoteSequenceNumber(testContext.getNoteSequenceNumber());
         testContext.setNoteSequenceNumber(noteSequenceNumberData.getFirst().get(UCBACCT_SEQ_NUMBER).toString());
         String noteSequenceNumberDB = testContext.getResponse().jsonPath().getString("data.noteSequenceNumber");
         String custCodeDB = noteSequenceNumberData.getFirst().get(UCBACCT_CUST_CODE).toString();
@@ -137,7 +137,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with {string} value is {string}")
     public void a_request_is_made_to_the_create_account_note_api_with_value_is(String param, String paramValue, DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setServiceNumber(data.get("serviceNumber"));
         testContext.setNoteTypeCode(data.get("noteTypeCode"));
         testContext.setNoteText(data.get("noteText"));
@@ -164,7 +164,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with Null NoteText")
     public void a_request_is_made_to_the_create_account_note_api_with_null_note_text(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -180,7 +180,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with Null Origin")
     public void a_request_is_made_to_the_create_account_note_api_with_null_origin(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -196,7 +196,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with Duplicate requestID")
     public void a_request_is_made_to_the_create_account_note_api_with_duplicate_request_id(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -214,7 +214,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with Invalid Expiration Date Format")
     public void a_request_is_made_to_the_create_account_note_api_with_invalid_expiration_date_format(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(data.get("serviceNumber"));
@@ -232,7 +232,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with non-existent combination of ServiceNumber and PremisesCode")
     public void a_request_is_made_to_the_create_account_note_api_with_non_existent_combination_of_service_number_and_premises_code(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setNoteTypeCode(data.get("noteTypeCode"));
@@ -248,7 +248,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with Invalid ServiceNumber Format")
     public void a_request_is_made_to_the_create_account_note_api_with_invalid_service_number_format(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setNoteTypeCode(data.get("noteTypeCode"));
@@ -264,7 +264,7 @@ public class CreateAccountNoteApiSteps  {
     @When("a request is made to the CreateAccountNote Api with non-existent NoteType")
     public void a_request_is_made_to_the_create_account_note_api_with_non_existent_note_type(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        List<Map<String, Object>> activeCustomerData = RunContext.get().getDbAction().getActiveCustomerDetails();
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         testContext.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
         testContext.setServiceNumber(activeCustomerData.getFirst().get(UCRSERV_NUM).toString());

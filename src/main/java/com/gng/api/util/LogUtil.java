@@ -1,6 +1,6 @@
-package com.gng.api.config;
+package com.gng.api.util;
 
-import com.gng.api.context.RunContext;
+import com.gng.api.context.ApplicationContext;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -15,15 +15,15 @@ import static com.gng.api.report.ExtentReportManager.logInfoToReport;
  * For PASS case - Console logs are enabled only if enableLogsOnPass = true in config file
  */
 @Slf4j
-public class LogConfig {
+public class LogUtil {
 
-    private LogConfig() {
+    private LogUtil() {
     }
 
     public static void configureLogging() {
         log.info("Log Request And Response details in Console if Validation Fails");
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-        if (Boolean.TRUE.equals(RunContext.get().getEnvConfig().getEnableLogsOnPass())) {
+        if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnPass())) {
             log.info("Log Request And Response details in Console if Validation Pass");
             RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
         }

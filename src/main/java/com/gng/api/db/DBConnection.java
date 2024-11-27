@@ -1,6 +1,6 @@
 package com.gng.api.db;
 
-import com.gng.api.config.EnvConfig;
+import com.gng.api.pojo.envConfig.EnvConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;

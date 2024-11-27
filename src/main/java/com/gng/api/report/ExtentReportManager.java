@@ -4,7 +4,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.gng.api.context.RunContext;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.util.CommonUtil;
 import io.restassured.response.Response;
 import io.restassured.specification.QueryableRequestSpecification;
@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import static com.gng.api.constants.TestConstant.REPORTPATH;
+import static com.gng.api.constants.TestConstant.REPORT_PATH;
 
 @Slf4j
 public class ExtentReportManager {
@@ -46,7 +46,7 @@ public class ExtentReportManager {
 
     public static void initialiseExtentReport() {
         extent = new ExtentReports();
-        spark = new ExtentSparkReporter(REPORTPATH + "apireport-" + CommonUtil.getCurrentDateTime() + ".html");
+        spark = new ExtentSparkReporter(REPORT_PATH + "apireport-" + CommonUtil.getCurrentDateTime() + ".html");
         setConfig();
     }
 
@@ -62,9 +62,9 @@ public class ExtentReportManager {
         try {
             extent.setSystemInfo("System Name", InetAddress.getLocalHost().getHostName());
             extent.setSystemInfo("OS", System.getProperty("os.name"));
-            extent.setSystemInfo("Environment", RunContext.get().getEnvironment());
-            extent.setSystemInfo("Config File", RunContext.get().getEnvConfigFile());
-            extent.setSystemInfo("BaseUri", RunContext.get().getEnvConfig().getBaseUri());
+            extent.setSystemInfo("Environment", ApplicationContext.get().getEnvironment());
+            extent.setSystemInfo("Config File", ApplicationContext.get().getEnvConfigFile());
+            extent.setSystemInfo("BaseUri", ApplicationContext.get().getEnvConfig().getBaseUri());
         } catch (UnknownHostException e) {
             log.error(e.getMessage());
         }
@@ -73,7 +73,7 @@ public class ExtentReportManager {
     public static void generateReport(ITestResult result) {
         ExtentTest logger = extentLogger.get();
         if (result.getStatus() == ITestResult.FAILURE) {
-            if (Boolean.TRUE.equals(RunContext.get().getEnvConfig().getEnableLogsOnFail())) {
+            if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnFail())) {
                 logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable() + getResponseBody()
                         + BR2 + getRequestDetails() + BODY + qReqSpec.get().getBody());
             } else {
@@ -81,7 +81,7 @@ public class ExtentReportManager {
                         + BR2 + getRequestDetails());
             }
         } else if (result.getStatus() == ITestResult.SUCCESS) {
-            if (Boolean.TRUE.equals(RunContext.get().getEnvConfig().getEnableLogsOnPass())) {
+            if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnPass())) {
                 logger.log(Status.PASS, getRequestDetails() + getExpectedStatusCode()
                         + BODY + qReqSpec.get().getBody() + BR2 + RESPONSEDETAILS + getResponseStatusLine() + getResponseBody());
             } else {

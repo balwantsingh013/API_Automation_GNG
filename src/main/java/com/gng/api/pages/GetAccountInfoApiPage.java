@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gng.api.context.TestContext;
+import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.accountinfo.GetAccountInfoRequest;
 import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
 import com.gng.api.util.CommonUtil;
@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.gng.api.config.LogConfig.logError;
-import static com.gng.api.config.LogConfig.logInfo;
+import static com.gng.api.context.ApplicationContext.getRequestSpec;
+import static com.gng.api.util.LogUtil.logError;
+import static com.gng.api.util.LogUtil.logInfo;
 import static com.gng.api.constants.ApiLabel.*;
-import static com.gng.api.spec.SetApiSpecification.getRequestSpec;
 
 public class GetAccountInfoApiPage extends CommonUtil{
 
