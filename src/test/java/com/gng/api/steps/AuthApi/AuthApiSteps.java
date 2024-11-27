@@ -1,4 +1,4 @@
-package com.gng.api.steps;
+package com.gng.api.steps.AuthApi;
 
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.TestContext.TestContext;

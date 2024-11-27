@@ -1,4 +1,4 @@
-package com.gng.api.steps;
+package com.gng.api.steps.CreateAccountNote;
 
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.TestContext.TestContext;

@@ -19,7 +19,7 @@ import static com.gng.api.context.ApplicationContext.removeRequestSpec;
 import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
-        features = "src/test/resources/features/phase1/GetAccountInfo.feature", glue = {"com.gng.api.steps"}, dryRun = false,
+        features = "src/test/resources/features", glue = {"com.gng.api.steps"}, dryRun = false,
         //tags = "@HappyFlow",
         monochrome = true,
         plugin = {"pretty", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"}

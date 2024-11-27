@@ -1,4 +1,4 @@
-package com.gng.api.steps;
+package com.gng.api.steps.GetAccountInfo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.context.ApplicationContext;
