@@ -22,7 +22,6 @@ import static io.restassured.RestAssured.given;
 public class CommonUtil {
 
     public static Faker faker;
-    public static final String UNEXPECTED_VALUE = "Unexpected value: ";
 
     public Response sendRequest(String requestType, String uri, int expectedStatusCode) {
         logInfo("Sending " + requestType + " request to " + uri);

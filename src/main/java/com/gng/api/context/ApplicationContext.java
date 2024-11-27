@@ -92,42 +92,4 @@ public class ApplicationContext {
         requestSpecification.remove();
     }
 
-    public Response sendRequest(String requestType, String uri, int expectedStatusCode) {
-        log.info("Sending {} request to {}", requestType, uri);
-        try {
-            // Validate the request type
-            if (!isValidRequestType(requestType)) {
-                throw new IllegalArgumentException("Invalid HTTP method: " + requestType);
-            }
-
-            // Make the request
-            Response response = RestAssured
-                    .given()
-                    .spec(getRequestSpec())
-                    .when()
-                    .request(requestType, uri)
-                    .then()
-                    .extract()
-                    .response();
-
-            // Log and validate response
-            response.then().statusCode(expectedStatusCode);
-            log.info("{} request to {} completed successfully.", requestType, uri);
-            return response;
-        } catch (Exception e) {
-            log.error("Error during {} request to {}", requestType, uri, e);
-            throw e;
-        }
     }
-
-    private boolean isValidRequestType(String requestType) {
-        return switch (requestType) {
-            case HttpGet.METHOD_NAME, HttpPost.METHOD_NAME, HttpPut.METHOD_NAME,
-                 HttpPatch.METHOD_NAME, HttpDelete.METHOD_NAME -> true;
-            default -> false;
-        };
-    }
-
-
-
-}
