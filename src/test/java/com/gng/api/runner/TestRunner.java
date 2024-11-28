@@ -6,12 +6,12 @@ import com.gng.api.report.AllureRestAssuredFilter;
 import com.gng.api.report.ExtentReportManager;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
+import io.cucumber.testng.PickleWrapper;
 import io.cucumber.testng.TestNGCucumberRunner;
 import io.restassured.RestAssured;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
-
 import java.lang.reflect.Method;
 
 import static com.gng.api.context.ApplicationContext.getRequestSpec;
@@ -19,10 +19,17 @@ import static com.gng.api.context.ApplicationContext.removeRequestSpec;
 import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
-        features = "src/test/resources/features", glue = {"com.gng.api.steps"}, dryRun = false,
-        //tags = "@HappyFlow",
+        features = "src/test/resources/features",
+        glue = {"com.gng.api.steps"},
+        dryRun = false,
         monochrome = true,
-        plugin = {"pretty", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"}
+        //tags = "@HappyFlow",
+        plugin = {
+                "pretty",
+                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm",
+                "html:target/cucumber-reports/html-report.html",
+                "json:target/cucumber-reports/Cucumber.json"
+        }
 )
 @Slf4j
 public class TestRunner extends AbstractTestNGCucumberTests {
@@ -54,10 +61,15 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     @BeforeMethod(alwaysRun = true)
-    public void beforeMethod(Method method) {
+    public void beforeMethod(Method method, Object[] testData) {
         setRequestSpec();
-        Test test = method.getAnnotation(Test.class);
-        ExtentReportManager.createTest(method, test);
+        String scenarioName = "";
+
+        if (testData != null && testData.length > 0 && testData[0] instanceof PickleWrapper pickle) {
+            scenarioName = pickle.getPickle().getName();
+        }
+
+        ExtentReportManager.createTest(scenarioName);
     }
 
     @AfterMethod(alwaysRun = true)

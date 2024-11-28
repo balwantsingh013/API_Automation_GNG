@@ -42,19 +42,25 @@ public class GetAccountInfoHelper {
         };
     }
 
-    public void verifyAccountInformationWithDatabase(Map<String, Object> accountInformationDB, Map<String, String> responseMap) {
+    public void verifyAccountInformationWithDatabase(Map<String, Object> accountInformationDB, Map<String, Object> responseMap) {
         List<String> keysDB = accountInformationDB.keySet().stream().toList();
         SoftAssertions softAssert = new SoftAssertions();
 
         for (String key : keysDB) {
-            try {
-                softAssert.assertThat(responseMap.get(key)).isEqualTo(accountInformationDB.get(key));
-            } catch (ClassCastException e) {
-                logError(e.getMessage());
-            }
+            Object dbValue = accountInformationDB.get(key);
+            Object responseValue = responseMap.get(key);
+
+            String dbStringValue = String.valueOf(dbValue);
+            String responseStringValue = String.valueOf(responseValue);
+            logInfo("Expected: {}, Actual: {} "+ "DB Value: " +dbValue +" Response Value: "+ responseValue);
+            softAssert.assertThat(responseStringValue)
+                    .as("Field: " + key)
+                    .isEqualTo(dbStringValue);
         }
+
         softAssert.assertAll();
     }
+
 
     public GetAccountInfoRequest getApiPayload(GetAccountInfoLabels apiName, GetAccountInfoRequest request) {
         logInfo("Get Api Payload");

@@ -1,5 +1,6 @@
 package com.gng.api.pages.GetAccountInfoPage;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.base.BasePage;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import static com.gng.api.constants.ApiEndPoint.ACCOUNT_INFO;
 import static com.gng.api.pages.GetAccountInfoPage.GetAccountInfoLabels.*;
+import static com.gng.api.util.LogUtil.logInfo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -96,8 +98,12 @@ public class GetAccountInfoApiPage extends BasePage {
         GetAccountInfoResponse response = testContext.getGetAccountInfoResponse();
 
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> responseMap = mapper.convertValue(response.getData(), Map.class);
+        Map<String, Object> responseMap = mapper.convertValue(response.getData(), new TypeReference<Map<String, Object>>() {});
+
+        logInfo("Database Values: {}"+ accountInformationDB);
+        logInfo("Response Values: {}"+ responseMap);
 
         helper.verifyAccountInformationWithDatabase(accountInformationDB, responseMap);
     }
+
 }

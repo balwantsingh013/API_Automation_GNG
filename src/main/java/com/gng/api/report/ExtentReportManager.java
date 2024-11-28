@@ -102,11 +102,9 @@ public class ExtentReportManager {
         extentLogger.remove();
     }
 
-    public static void createTest(Method m, Test result) {
-        String testCaseName = result.description();
-        String methodName = m.getName();
-        String testName = m.getDeclaringClass().getSimpleName();
-        ExtentTest extentTest = extent.createTest(testName + " - " + methodName + "()", "TestCase: " + testCaseName);
+    public static void createTest(String scenarioName) {
+        String testName = scenarioName.isEmpty() ? "Test Scenario" : scenarioName;
+        ExtentTest extentTest = extent.createTest(testName);
         test.set(extentTest);
         extentLogger.set(extentTest.createNode("Test Steps"));
     }
