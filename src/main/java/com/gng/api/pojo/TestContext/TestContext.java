@@ -1,11 +1,11 @@
 package com.gng.api.pojo.TestContext;
 
-import com.gng.api.pages.CreateAccountNoteApiPage;
-import com.gng.api.pages.GetAccountInfoApiPage;
-import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
-import com.gng.api.pojo.createaccountnote.CreateAccountNoteResponse;
 import io.restassured.response.Response;
 import lombok.Data;
+import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
+import com.gng.api.pojo.createaccountnote.CreateAccountNoteResponse;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 public class TestContext {
@@ -22,8 +22,13 @@ public class TestContext {
     private String expirationDate;
     private String suspenseDate;
     private String userIDRemind;
-    private GetAccountInfoApiPage getAccountInfoApiPage;
+
+    // Add type-safe getters and setters
+    // Use Object type to avoid direct dependency on test classes
+    @Getter @Setter
+    private Object getAccountInfoApiPage;
     private GetAccountInfoResponse getAccountInfoResponse;
-    private CreateAccountNoteApiPage createAccountNoteApiPage;
+    @Getter @Setter
+    private Object createAccountNoteApiPage;
     private CreateAccountNoteResponse createAccountNoteResponse;
 }
