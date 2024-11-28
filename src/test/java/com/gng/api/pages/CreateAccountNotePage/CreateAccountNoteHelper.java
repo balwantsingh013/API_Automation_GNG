@@ -5,8 +5,7 @@ import com.gng.api.pojo.createaccountnote.CreateAccountNoteRequest;
 import com.gng.api.util.CommonUtil;
 import io.cucumber.datatable.DataTable;
 import static com.gng.api.util.LogUtil.logInfo;
-import static com.gng.api.constants.ApiLabel.*;
-import static com.gng.api.constants.TestConstant.UNEXPECTED_VALUE;
+import static com.gng.api.pages.CreateAccountNotePage.CreateAccountNoteLabels.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -23,31 +22,30 @@ public class CreateAccountNoteHelper {
         setTestContextData(data);
     }
 
-    public String getApiLabelForParam(String param) {
+    public CreateAccountNoteLabels getApiLabelForParam(String param) {
         return switch (param) {
-            case "PremisesCode" -> CREATEACCOUNTNOTE_INVALIDPREMCODELENGTH_API;
-            case "CustomerCode" -> CREATEACCOUNTNOTE_INVALIDCUSTOMERCODELENGTH_API;
+            case "PremisesCode" -> INVALID_PREM_CODE_LENGTH;
+            case "CustomerCode" -> INVALID_CUSTOMER_CODE_LENGTH;
             default -> throw new IllegalStateException("Invalid param: " + param);
         };
     }
 
-    public CreateAccountNoteRequest getApiPayload(String apiName, CreateAccountNoteRequest request) {
+    public CreateAccountNoteRequest getApiPayload(CreateAccountNoteLabels apiName, CreateAccountNoteRequest request) {
         logInfo("Get Api Payload");
         return switch (apiName) {
-            case CREATEACCOUNTNOTE_HAPPYFLOW_API -> buildHappyFlowPayload(request);
-            case CREATEACCOUNTNOTE_MISSINGREQUESTID_API -> buildMissingRequestIdPayload(request);
-            case CREATEACCOUNTNOTE_NULLCUSTOMERCODE_API -> buildNullCustomerCodePayload(request);
-            case CREATEACCOUNTNOTE_NULLNOTETYPECODE_API -> buildNullNoteTypeCodePayload(request);
-            case CREATEACCOUNTNOTE_NULLNOTETEXT_API -> buildNullNoteTextPayload(request);
-            case CREATEACCOUNTNOTE_NULLORIGIN_API -> buildNullOriginPayload(request);
-            case CREATEACCOUNTNOTE_INVALIDCUSTOMERCODELENGTH_API -> buildInvalidCustomerCodeLengthPayload(request);
-            case CREATEACCOUNTNOTE_INVALIDPREMCODELENGTH_API -> buildInvalidPremCodeLengthPayload(request);
-            case CREATEACCOUNTNOTE_INVALIDEXPIRATIONDATE_API -> buildInvalidExpirationDatePayload(request);
-            case CREATEACCOUNTNOTE_NONEXISTENT_SERVICENOPREMCODE_API -> buildNonExistentServiceNumberPayload(request);
-            case CREATEACCOUNTNOTE_INVALID_SERVICENOFORMAT_API -> buildInvalidServiceNumberFormatPayload(request);
-            case CREATEACCOUNTNOTE_NONEXISTENT_NOTETYPE_API -> buildNonExistentNoteTypePayload(request);
-            case GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API -> buildNonExistentCustomerPremCodePayload(request);
-            default -> throw new IllegalStateException(UNEXPECTED_VALUE + apiName);
+            case HAPPY_FLOW -> buildHappyFlowPayload(request);
+            case MISSING_REQUEST_ID -> buildMissingRequestIdPayload(request);
+            case NULL_CUSTOMER_CODE -> buildNullCustomerCodePayload(request);
+            case NULL_NOTE_TYPE_CODE -> buildNullNoteTypeCodePayload(request);
+            case NULL_NOTE_TEXT -> buildNullNoteTextPayload(request);
+            case NULL_ORIGIN -> buildNullOriginPayload(request);
+            case INVALID_CUSTOMER_CODE_LENGTH -> buildInvalidCustomerCodeLengthPayload(request);
+            case INVALID_PREM_CODE_LENGTH -> buildInvalidPremCodeLengthPayload(request);
+            case INVALID_EXPIRATION_DATE -> buildInvalidExpirationDatePayload(request);
+            case NONEXISTENT_SERVICE_NO_PREM_CODE -> buildNonExistentServiceNumberPayload(request);
+            case INVALID_SERVICE_NO_FORMAT -> buildInvalidServiceNumberFormatPayload(request);
+            case NONEXISTENT_NOTE_TYPE -> buildNonExistentNoteTypePayload(request);
+            case NONEXISTENT_CUST_PREM_CODE -> buildNonExistentCustomerPremCodePayload(request);
         };
     }
 
@@ -70,73 +68,73 @@ public class CreateAccountNoteHelper {
     }
 
     private CreateAccountNoteRequest buildMissingRequestIdPayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         CommonUtil.nullifyFields(request, "requestID");
         return request;
     }
 
     private CreateAccountNoteRequest buildNullCustomerCodePayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setCustomerCode(null);
         return request;
     }
 
     private CreateAccountNoteRequest buildNullNoteTypeCodePayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setNoteTypeCode(null);
         return request;
     }
 
     private CreateAccountNoteRequest buildNullNoteTextPayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setNoteText(null);
         return request;
     }
 
     private CreateAccountNoteRequest buildNullOriginPayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setOrigin(null);
         return request;
     }
 
     private CreateAccountNoteRequest buildInvalidCustomerCodeLengthPayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setCustomerCode(CommonUtil.getRandomNumericString(10));
         return request;
     }
 
     private CreateAccountNoteRequest buildInvalidPremCodeLengthPayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setPremisesCode(CommonUtil.getRandomNumericString(8));
         return request;
     }
 
     private CreateAccountNoteRequest buildInvalidExpirationDatePayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setExpirationDate(testContext.getExpirationDate());
         return request;
     }
 
     private CreateAccountNoteRequest buildNonExistentServiceNumberPayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setServiceNumber(CommonUtil.getRandomNumericString(4));
         return request;
     }
 
     private CreateAccountNoteRequest buildInvalidServiceNumberFormatPayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setServiceNumber(CommonUtil.getRandomNumericString(5));
         return request;
     }
 
     private CreateAccountNoteRequest buildNonExistentNoteTypePayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setNoteTypeCode(CommonUtil.getRandomString(3));
         return request;
     }
 
     private CreateAccountNoteRequest buildNonExistentCustomerPremCodePayload(CreateAccountNoteRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         request.setCustomerCode(CommonUtil.getRandomNumericString(8));
         return request;
     }

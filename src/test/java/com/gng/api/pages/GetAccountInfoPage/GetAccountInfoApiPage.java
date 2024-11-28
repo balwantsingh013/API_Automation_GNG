@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.ApiEndPoint.ACCOUNT_INFO;
-import static com.gng.api.constants.ApiLabel.*;
+import static com.gng.api.pages.GetAccountInfoPage.GetAccountInfoLabels.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -29,11 +29,11 @@ public class GetAccountInfoApiPage extends BasePage {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         setCustomerAndPremisesCodes(activeCustomerData);
 
-        GetAccountInfoRequest request = helper.createAndConfigureRequest(GETACCOUNTINFO_HAPPYFLOW_API);
-        setRequestSpecification(GETACCOUNTINFO_HAPPYFLOW_API, request);
+        GetAccountInfoRequest request = helper.createAndConfigureRequest(HAPPY_FLOW);
+        setRequestSpecification(HAPPY_FLOW.getLabel(), request);
         Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         GetAccountInfoResponse getAccountInfoResponse = deserializeResponseToPojo(
-                GETACCOUNTINFO_HAPPYFLOW_API, response, GetAccountInfoResponse.class);
+                HAPPY_FLOW.getLabel(), response, GetAccountInfoResponse.class);
         testContext.setGetAccountInfoResponse(getAccountInfoResponse);
     }
 
@@ -41,9 +41,9 @@ public class GetAccountInfoApiPage extends BasePage {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         setCustomerAndPremisesCodes(activeCustomerData);
 
-        String apiLabel = helper.getMissingParamApiLabel(missingParam);
+        GetAccountInfoLabels apiLabel = helper.getMissingParamApiLabel(missingParam);
         GetAccountInfoRequest request = helper.createAndConfigureRequest(apiLabel);
-        setRequestSpecification(apiLabel, request);
+        setRequestSpecification(apiLabel.getLabel(), request);
         Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
@@ -52,9 +52,9 @@ public class GetAccountInfoApiPage extends BasePage {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         setCustomerAndPremisesCodes(activeCustomerData);
 
-        String apiLabel = helper.getInvalidLengthApiLabel(param);
+        GetAccountInfoLabels apiLabel = helper.getInvalidLengthApiLabel(param);
         GetAccountInfoRequest request = helper.createAndConfigureRequest(apiLabel);
-        setRequestSpecification(apiLabel, request);
+        setRequestSpecification(apiLabel.getLabel(), request);
         Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
@@ -63,8 +63,8 @@ public class GetAccountInfoApiPage extends BasePage {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         setCustomerAndPremisesCodes(activeCustomerData);
 
-        GetAccountInfoRequest request = helper.createAndConfigureRequest(GETACCOUNTINFO_HAPPYFLOW_API);
-        setRequestSpecification(GETACCOUNTINFO_HAPPYFLOW_API, request);
+        GetAccountInfoRequest request = helper.createAndConfigureRequest(HAPPY_FLOW);
+        setRequestSpecification(HAPPY_FLOW.getLabel(), request);
         executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
@@ -74,8 +74,8 @@ public class GetAccountInfoApiPage extends BasePage {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         setCustomerAndPremisesCodes(activeCustomerData);
 
-        GetAccountInfoRequest request = helper.createAndConfigureRequest(GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API);
-        setRequestSpecification(GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API, request);
+        GetAccountInfoRequest request = helper.createAndConfigureRequest(NONEXISTENT_CUST_PREM_CODE);
+        setRequestSpecification(NONEXISTENT_CUST_PREM_CODE.getLabel(), request);
         Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }

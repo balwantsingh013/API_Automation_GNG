@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.gng.api.constants.ApiLabel.*;
-import static com.gng.api.constants.TestConstant.UNEXPECTED_VALUE;
+import static com.gng.api.pages.GetAccountInfoPage.GetAccountInfoLabels.*;
 import static com.gng.api.util.LogUtil.logError;
 import static com.gng.api.util.LogUtil.logInfo;
 
@@ -21,24 +20,24 @@ public class GetAccountInfoHelper {
         this.testContext = testContext;
     }
 
-    public GetAccountInfoRequest createAndConfigureRequest(String apiLabel) {
+    public GetAccountInfoRequest createAndConfigureRequest(GetAccountInfoLabels apiLabel) {
         GetAccountInfoRequest request = new GetAccountInfoRequest();
         return getApiPayload(apiLabel, request);
     }
 
-    public String getMissingParamApiLabel(String missingParam) {
+    public GetAccountInfoLabels getMissingParamApiLabel(String missingParam) {
         return switch (missingParam) {
-            case "RequestID" -> GETACCOUNTINFO_MISSINGREQUESTID_API;
-            case "PremisesCode" -> GETACCOUNTINFO_MISSINGPREMCODE_API;
-            case "CustomerCode" -> GETACCOUNTINFO_MISSINGCUSTOMERCODE_API;
+            case "RequestID" -> MISSING_REQUEST_ID;
+            case "PremisesCode" -> MISSING_PREM_CODE;
+            case "CustomerCode" -> MISSING_CUSTOMER_CODE;
             default -> throw new IllegalStateException("Invalid missing param: " + missingParam);
         };
     }
 
-    public String getInvalidLengthApiLabel(String param) {
+    public GetAccountInfoLabels getInvalidLengthApiLabel(String param) {
         return switch (param) {
-            case "PremCode" -> GETACCOUNTINFO_INVALIDPREMCODELENGTH_API;
-            case "CustomerCode" -> GETACCOUNTINFO_INVALIDCUSTOMERCODELENGTH_API;
+            case "PremCode" -> INVALID_PREM_CODE_LENGTH;
+            case "CustomerCode" -> INVALID_CUSTOMER_CODE_LENGTH;
             default -> throw new IllegalStateException("Invalid param: " + param);
         };
     }
@@ -57,17 +56,16 @@ public class GetAccountInfoHelper {
         softAssert.assertAll();
     }
 
-    public GetAccountInfoRequest getApiPayload(String apiName, GetAccountInfoRequest request) {
+    public GetAccountInfoRequest getApiPayload(GetAccountInfoLabels apiName, GetAccountInfoRequest request) {
         logInfo("Get Api Payload");
         return switch (apiName) {
-            case GETACCOUNTINFO_HAPPYFLOW_API -> buildHappyFlowPayload(request);
-            case GETACCOUNTINFO_MISSINGREQUESTID_API -> buildMissingRequestIdPayload(request);
-            case GETACCOUNTINFO_MISSINGPREMCODE_API -> buildMissingPremCodePayload(request);
-            case GETACCOUNTINFO_MISSINGCUSTOMERCODE_API -> buildMissingCustomerCodePayload(request);
-            case GETACCOUNTINFO_INVALIDCUSTOMERCODELENGTH_API -> buildInvalidCustomerCodeLengthPayload(request);
-            case GETACCOUNTINFO_INVALIDPREMCODELENGTH_API -> buildInvalidPremCodeLengthPayload(request);
-            case GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API -> buildNonExistentCombinationPayload(request);
-            default -> throw new IllegalStateException(UNEXPECTED_VALUE + apiName);
+            case HAPPY_FLOW -> buildHappyFlowPayload(request);
+            case MISSING_REQUEST_ID -> buildMissingRequestIdPayload(request);
+            case MISSING_PREM_CODE -> buildMissingPremCodePayload(request);
+            case MISSING_CUSTOMER_CODE -> buildMissingCustomerCodePayload(request);
+            case INVALID_CUSTOMER_CODE_LENGTH -> buildInvalidCustomerCodeLengthPayload(request);
+            case INVALID_PREM_CODE_LENGTH -> buildInvalidPremCodeLengthPayload(request);
+            case NONEXISTENT_CUST_PREM_CODE -> buildNonExistentCombinationPayload(request);
         };
     }
 
@@ -79,7 +77,7 @@ public class GetAccountInfoHelper {
     }
 
     private GetAccountInfoRequest buildMissingRequestIdPayload(GetAccountInfoRequest request) {
-        request = buildHappyFlowPayload(request);
+        buildHappyFlowPayload(request);
         CommonUtil.nullifyFields(request, "requestID");
         return request;
     }
@@ -119,4 +117,3 @@ public class GetAccountInfoHelper {
         return request;
     }
 }
-

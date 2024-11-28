@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.ApiEndPoint.ACCOUNT_NOTE;
-import static com.gng.api.constants.ApiLabel.*;
 import static com.gng.api.constants.DBConstant.UCBACCT_CUST_CODE;
 import static com.gng.api.constants.DBConstant.UCBACCT_PREM_CODE;
+import static com.gng.api.pages.CreateAccountNotePage.CreateAccountNoteLabels.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -28,36 +28,36 @@ public class CreateAccountNoteApiPage extends BasePage {
     }
 
     public void sendCreateAccountNoteRequestWithValidData(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_HAPPYFLOW_API);
+        setupAndExecuteRequest(dataTable, HAPPY_FLOW);
     }
 
     public void sendCreateAccountNoteRequestWithNullNoteTypeCode(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_NULLNOTETYPECODE_API);
+        setupAndExecuteRequest(dataTable, NULL_NOTE_TYPE_CODE);
     }
 
     public void sendCreateAccountNoteRequestWithNullCustomerCode(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_NULLCUSTOMERCODE_API);
+        setupAndExecuteRequest(dataTable, NULL_CUSTOMER_CODE);
     }
 
     public void sendCreateAccountNoteRequestWithNonExistentCombination(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, GETACCOUNTINFO_NONEXISTENT_CUSTPREMCODE_API);
+        setupAndExecuteRequest(dataTable, NONEXISTENT_CUST_PREM_CODE);
     }
 
     public void sendCreateAccountNoteRequestWithMissingRequestId(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_MISSINGREQUESTID_API);
+        setupAndExecuteRequest(dataTable, MISSING_REQUEST_ID);
     }
 
     public void sendCreateAccountNoteRequestWithParamValue(String param, String paramValue, DataTable dataTable) {
-        String apiLabel = helper.getApiLabelForParam(param);
+        CreateAccountNoteLabels apiLabel = helper.getApiLabelForParam(param);
         setupAndExecuteRequest(dataTable, apiLabel);
     }
 
     public void sendCreateAccountNoteRequestWithNullNoteText(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_NULLNOTETEXT_API);
+        setupAndExecuteRequest(dataTable, NULL_NOTE_TEXT);
     }
 
     public void sendCreateAccountNoteRequestWithNullOrigin(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_NULLORIGIN_API);
+        setupAndExecuteRequest(dataTable, NULL_ORIGIN);
     }
 
     public void sendCreateAccountNoteRequestWithDuplicateRequestId(DataTable dataTable) {
@@ -66,28 +66,28 @@ public class CreateAccountNoteApiPage extends BasePage {
         helper.setupRequestData(dataTable);
 
         CreateAccountNoteRequest request = new CreateAccountNoteRequest();
-        request = helper.getApiPayload(CREATEACCOUNTNOTE_HAPPYFLOW_API, request);
+        request = helper.getApiPayload(HAPPY_FLOW, request);
 
-        setRequestSpecification(CREATEACCOUNTNOTE_HAPPYFLOW_API, request);
+        setRequestSpecification(HAPPY_FLOW.getLabel(), request);
         executeRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
         Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
         testContext.setResponse(response);
     }
 
     public void sendCreateAccountNoteRequestWithInvalidExpirationDate(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_INVALIDEXPIRATIONDATE_API);
+        setupAndExecuteRequest(dataTable, INVALID_EXPIRATION_DATE);
     }
 
     public void sendCreateAccountNoteRequestWithNonExistentServiceNumber(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_NONEXISTENT_SERVICENOPREMCODE_API);
+        setupAndExecuteRequest(dataTable, NONEXISTENT_SERVICE_NO_PREM_CODE);
     }
 
     public void sendCreateAccountNoteRequestWithInvalidServiceNumberFormat(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_INVALID_SERVICENOFORMAT_API);
+        setupAndExecuteRequest(dataTable, INVALID_SERVICE_NO_FORMAT);
     }
 
     public void sendCreateAccountNoteRequestWithNonExistentNoteType(DataTable dataTable) {
-        setupAndExecuteRequest(dataTable, CREATEACCOUNTNOTE_NONEXISTENT_NOTETYPE_API);
+        setupAndExecuteRequest(dataTable, NONEXISTENT_NOTE_TYPE);
     }
 
     public void verifyValidNoteSequenceNumber() {
@@ -111,14 +111,14 @@ public class CreateAccountNoteApiPage extends BasePage {
                 premCodeDB, equalTo(testContext.getPremisesCode()));
     }
 
-    private void setupAndExecuteRequest(DataTable dataTable, String apiLabel) {
+    private void setupAndExecuteRequest(DataTable dataTable, CreateAccountNoteLabels apiLabel) {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         setCustomerAndPremisesCodes(activeCustomerData);
         helper.setupRequestData(dataTable);
 
         CreateAccountNoteRequest request = new CreateAccountNoteRequest();
         request = helper.getApiPayload(apiLabel, request);
-        setRequestSpecification(apiLabel, request);
+        setRequestSpecification(apiLabel.getLabel(), request);
         Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
         testContext.setResponse(response);
     }
