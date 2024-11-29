@@ -69,8 +69,8 @@ public class CreateAccountNoteApiPage extends BasePage {
         request = helper.getApiPayload(HAPPY_FLOW, request);
 
         setRequestSpecification(HAPPY_FLOW.getLabel(), request);
-        executeRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
-        Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
+        sendRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
         testContext.setResponse(response);
     }
 
@@ -119,7 +119,7 @@ public class CreateAccountNoteApiPage extends BasePage {
         CreateAccountNoteRequest request = new CreateAccountNoteRequest();
         request = helper.getApiPayload(apiLabel, request);
         setRequestSpecification(apiLabel.getLabel(), request);
-        Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
         testContext.setResponse(response);
     }
 }

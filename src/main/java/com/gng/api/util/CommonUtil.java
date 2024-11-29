@@ -1,10 +1,7 @@
 package com.gng.api.util;
 
 import com.github.javafaker.Faker;
-import com.gng.api.report.ExtentReportManager;
-import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.methods.*;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -13,9 +10,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.gng.api.context.ApplicationContext.getRequestSpec;
-import static com.gng.api.util.LogUtil.logInfo;
-import static io.restassured.RestAssured.given;
 
 
 @Slf4j
@@ -23,48 +17,9 @@ public class CommonUtil {
 
     public static Faker faker;
 
-    public Response sendRequest(String requestType, String uri, int expectedStatusCode) {
-        logInfo("Sending " + requestType + " request to " + uri);
+    private CommonUtil()
+    {
 
-        try {
-            // Validate the request type (optional)
-            if (!isValidRequestType(requestType)) {
-                throw new IllegalArgumentException("Invalid HTTP method: " + requestType);
-            }
-
-            // Make the request
-            Response response = given()
-                    .when()
-                    .spec(getRequestSpec())
-                    .request(requestType, uri)
-                    .then()
-                    .extract()
-                    .response();
-
-            // Log and validate the response
-            ExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
-            response.then().statusCode(expectedStatusCode);
-
-            logInfo(requestType + " request to " + uri + " completed successfully.");
-            return response;
-        } catch (Exception e) {
-            log.error("Error during {} request to {}", requestType, uri, e);
-            throw e;
-        }
-    }
-
-    /**
-     * Validates the request type against allowed HTTP methods.
-     *
-     * @param requestType the HTTP method
-     * @return true if valid, false otherwise
-     */
-    private boolean isValidRequestType(String requestType) {
-        return switch (requestType) {
-            case HttpGet.METHOD_NAME, HttpPost.METHOD_NAME, HttpPut.METHOD_NAME,
-                 HttpPatch.METHOD_NAME, HttpDelete.METHOD_NAME -> true;
-            default -> false;
-        };
     }
 
     /**

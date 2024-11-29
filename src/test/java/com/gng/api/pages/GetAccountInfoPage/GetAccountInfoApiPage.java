@@ -33,7 +33,7 @@ public class GetAccountInfoApiPage extends BasePage {
 
         GetAccountInfoRequest request = helper.createAndConfigureRequest(HAPPY_FLOW);
         setRequestSpecification(HAPPY_FLOW.getLabel(), request);
-        Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         GetAccountInfoResponse getAccountInfoResponse = deserializeResponseToPojo(
                 HAPPY_FLOW.getLabel(), response, GetAccountInfoResponse.class);
         testContext.setGetAccountInfoResponse(getAccountInfoResponse);
@@ -46,7 +46,7 @@ public class GetAccountInfoApiPage extends BasePage {
         GetAccountInfoLabels apiLabel = helper.getMissingParamApiLabel(missingParam);
         GetAccountInfoRequest request = helper.createAndConfigureRequest(apiLabel);
         setRequestSpecification(apiLabel.getLabel(), request);
-        Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 
@@ -57,7 +57,7 @@ public class GetAccountInfoApiPage extends BasePage {
         GetAccountInfoLabels apiLabel = helper.getInvalidLengthApiLabel(param);
         GetAccountInfoRequest request = helper.createAndConfigureRequest(apiLabel);
         setRequestSpecification(apiLabel.getLabel(), request);
-        Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 
@@ -67,8 +67,8 @@ public class GetAccountInfoApiPage extends BasePage {
 
         GetAccountInfoRequest request = helper.createAndConfigureRequest(HAPPY_FLOW);
         setRequestSpecification(HAPPY_FLOW.getLabel(), request);
-        executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
-        Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 
@@ -78,7 +78,7 @@ public class GetAccountInfoApiPage extends BasePage {
 
         GetAccountInfoRequest request = helper.createAndConfigureRequest(NONEXISTENT_CUST_PREM_CODE);
         setRequestSpecification(NONEXISTENT_CUST_PREM_CODE.getLabel(), request);
-        Response response = executeRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 

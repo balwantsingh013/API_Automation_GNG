@@ -26,9 +26,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         //tags = "@HappyFlow",
         plugin = {
                 "pretty",
-                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm",
-                "html:target/cucumber-reports/html-report.html",
-                "json:target/cucumber-reports/Cucumber.json"
+                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         }
 )
 @Slf4j

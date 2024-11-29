@@ -5,8 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.util.CommonUtil;
+import com.gng.api.report.ExtentReportManager;
 import io.restassured.response.Response;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.methods.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +19,10 @@ import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
 import static com.gng.api.context.ApplicationContext.getRequestSpec;
 import static com.gng.api.util.LogUtil.logError;
 import static com.gng.api.util.LogUtil.logInfo;
+import static io.restassured.RestAssured.given;
 
-public abstract class BasePage extends CommonUtil {
+@Slf4j
+public abstract class BasePage  {
     protected final TestContext testContext;
 
     protected BasePage(TestContext testContext) {
@@ -56,8 +60,48 @@ public abstract class BasePage extends CommonUtil {
         testContext.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
     }
 
-    protected Response executeRequest(String method, String endpoint, int expectedStatusCode) {
-        return sendRequest(method, endpoint, expectedStatusCode);
+    public Response sendRequest(String requestType, String uri, int expectedStatusCode) {
+        logInfo("Sending " + requestType + " request to " + uri);
+
+        try {
+            // Validate the request type (optional)
+            if (!isValidRequestType(requestType)) {
+                throw new IllegalArgumentException("Invalid HTTP method: " + requestType);
+            }
+
+            // Make the request
+            Response response = given()
+                    .when()
+                    .spec(getRequestSpec())
+                    .request(requestType, uri)
+                    .then()
+                    .extract()
+                    .response();
+
+            // Log and validate the response
+            ExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
+            response.then().statusCode(expectedStatusCode);
+
+            logInfo(requestType + " request to " + uri + " completed successfully.");
+            return response;
+        } catch (Exception e) {
+            log.error("Error during {} request to {}", requestType, uri, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Validates the request type against allowed HTTP methods.
+     *
+     * @param requestType the HTTP method
+     * @return true if valid, false otherwise
+     */
+    private boolean isValidRequestType(String requestType) {
+        return switch (requestType) {
+            case HttpGet.METHOD_NAME, HttpPost.METHOD_NAME, HttpPut.METHOD_NAME,
+                 HttpPatch.METHOD_NAME, HttpDelete.METHOD_NAME -> true;
+            default -> false;
+        };
     }
 }
 
