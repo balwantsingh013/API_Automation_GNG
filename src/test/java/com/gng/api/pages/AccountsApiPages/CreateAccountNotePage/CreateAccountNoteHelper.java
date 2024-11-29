@@ -1,11 +1,11 @@
-package com.gng.api.pages.CreateAccountNotePage;
+package com.gng.api.pages.AccountsApiPages.CreateAccountNotePage;
 
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.createaccountnote.CreateAccountNoteRequest;
+import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteRequest;
 import com.gng.api.util.CommonUtil;
 import io.cucumber.datatable.DataTable;
 import static com.gng.api.util.LogUtil.logInfo;
-import static com.gng.api.pages.CreateAccountNotePage.CreateAccountNoteLabels.*;
+import static com.gng.api.pages.AccountsApiPages.CreateAccountNotePage.CreateAccountNoteLabels.*;
 
 import java.util.Map;
 import java.util.UUID;

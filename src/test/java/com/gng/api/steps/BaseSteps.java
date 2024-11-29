@@ -1,4 +1,4 @@
-package com.gng.api.steps.base;
+package com.gng.api.steps;
 
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.And;

@@ -2,9 +2,9 @@ baseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
 authUri: "/Authentication/GetToken"
 vendorId: "vertex.auto.apitest.gng.com"
 vendorSecret: "HAXxeK86Q7omh4rCPeuX"
-driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+driverClassName: "oracle.jdbc.OracleDriver"
 serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
 userName: "BSINGH"
-password: "VTXO1792"
-enableLogsOnPass: false
+password: "vtx33669"
+enableLogsOnPass: true
 enableLogsOnFail: true

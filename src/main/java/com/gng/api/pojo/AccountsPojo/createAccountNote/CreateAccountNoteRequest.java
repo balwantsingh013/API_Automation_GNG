@@ -1,4 +1,4 @@
-package com.gng.api.pojo.createaccountnote;
+package com.gng.api.pojo.AccountsPojo.createAccountNote;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,9 +1,9 @@
-package com.gng.api.pages.CreateAccountNotePage;
+package com.gng.api.pages.AccountsApiPages.CreateAccountNotePage;
 
 import com.gng.api.context.ApplicationContext;
-import com.gng.api.pages.base.BasePage;
+import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.createaccountnote.CreateAccountNoteRequest;
+import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteRequest;
 import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
@@ -11,10 +11,10 @@ import org.apache.http.client.methods.HttpPost;
 import java.util.List;
 import java.util.Map;
 
-import static com.gng.api.constants.ApiEndPoint.ACCOUNT_NOTE;
+import static com.gng.api.constants.ApiEndPoint.CREATE_ACCOUNT_NOTE;
 import static com.gng.api.constants.DBConstant.UCBACCT_CUST_CODE;
 import static com.gng.api.constants.DBConstant.UCBACCT_PREM_CODE;
-import static com.gng.api.pages.CreateAccountNotePage.CreateAccountNoteLabels.*;
+import static com.gng.api.pages.AccountsApiPages.CreateAccountNotePage.CreateAccountNoteLabels.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -69,8 +69,8 @@ public class CreateAccountNoteApiPage extends BasePage {
         request = helper.getApiPayload(HAPPY_FLOW, request);
 
         setRequestSpecification(HAPPY_FLOW.getLabel(), request);
-        sendRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
-        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
+        sendRequest(HttpPost.METHOD_NAME, CREATE_ACCOUNT_NOTE, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, CREATE_ACCOUNT_NOTE, 200);
         testContext.setResponse(response);
     }
 
@@ -119,7 +119,7 @@ public class CreateAccountNoteApiPage extends BasePage {
         CreateAccountNoteRequest request = new CreateAccountNoteRequest();
         request = helper.getApiPayload(apiLabel, request);
         setRequestSpecification(apiLabel.getLabel(), request);
-        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_NOTE, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, CREATE_ACCOUNT_NOTE, 200);
         testContext.setResponse(response);
     }
 }

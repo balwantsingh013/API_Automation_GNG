@@ -1,7 +1,7 @@
-package com.gng.api.steps.GetAccountInfo;
+package com.gng.api.steps.AccountsApiSteps;
 
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pages.GetAccountInfoPage.GetAccountInfoApiPage;
+import com.gng.api.pages.AccountsApiPages.GetAccountInfoPage.GetAccountInfoApiPage;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;

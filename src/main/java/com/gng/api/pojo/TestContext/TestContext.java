@@ -1,9 +1,10 @@
 package com.gng.api.pojo.TestContext;
 
+import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import io.restassured.response.Response;
 import lombok.Data;
-import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
-import com.gng.api.pojo.createaccountnote.CreateAccountNoteResponse;
+import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
+import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,4 +32,7 @@ public class TestContext {
     @Getter @Setter
     private Object createAccountNoteApiPage;
     private CreateAccountNoteResponse createAccountNoteResponse;
+    @Getter @Setter
+    private Object saveEnrollmentApiPage;
+    private SaveEnrollmentResponse saveEnrollmentResponse;
 }

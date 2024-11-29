@@ -1,4 +1,4 @@
-package com.gng.api.pojo.accountinfo;
+package com.gng.api.pojo.AccountsPojo.getAccountInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

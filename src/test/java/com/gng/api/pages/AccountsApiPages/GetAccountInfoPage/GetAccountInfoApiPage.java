@@ -1,20 +1,20 @@
-package com.gng.api.pages.GetAccountInfoPage;
+package com.gng.api.pages.AccountsApiPages.GetAccountInfoPage;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.context.ApplicationContext;
-import com.gng.api.pages.base.BasePage;
+import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.accountinfo.GetAccountInfoRequest;
-import com.gng.api.pojo.accountinfo.GetAccountInfoResponse;
+import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoRequest;
+import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.gng.api.constants.ApiEndPoint.ACCOUNT_INFO;
-import static com.gng.api.pages.GetAccountInfoPage.GetAccountInfoLabels.*;
+import static com.gng.api.constants.ApiEndPoint.GET_ACCOUNT_INFO;
+import static com.gng.api.pages.AccountsApiPages.GetAccountInfoPage.GetAccountInfoLabels.*;
 import static com.gng.api.util.LogUtil.logInfo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,7 +33,7 @@ public class GetAccountInfoApiPage extends BasePage {
 
         GetAccountInfoRequest request = helper.createAndConfigureRequest(HAPPY_FLOW);
         setRequestSpecification(HAPPY_FLOW.getLabel(), request);
-        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ACCOUNT_INFO, 200);
         GetAccountInfoResponse getAccountInfoResponse = deserializeResponseToPojo(
                 HAPPY_FLOW.getLabel(), response, GetAccountInfoResponse.class);
         testContext.setGetAccountInfoResponse(getAccountInfoResponse);
@@ -46,7 +46,7 @@ public class GetAccountInfoApiPage extends BasePage {
         GetAccountInfoLabels apiLabel = helper.getMissingParamApiLabel(missingParam);
         GetAccountInfoRequest request = helper.createAndConfigureRequest(apiLabel);
         setRequestSpecification(apiLabel.getLabel(), request);
-        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 
@@ -57,7 +57,7 @@ public class GetAccountInfoApiPage extends BasePage {
         GetAccountInfoLabels apiLabel = helper.getInvalidLengthApiLabel(param);
         GetAccountInfoRequest request = helper.createAndConfigureRequest(apiLabel);
         setRequestSpecification(apiLabel.getLabel(), request);
-        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 
@@ -67,8 +67,8 @@ public class GetAccountInfoApiPage extends BasePage {
 
         GetAccountInfoRequest request = helper.createAndConfigureRequest(HAPPY_FLOW);
         setRequestSpecification(HAPPY_FLOW.getLabel(), request);
-        sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
-        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        sendRequest(HttpPost.METHOD_NAME, GET_ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 
@@ -78,7 +78,7 @@ public class GetAccountInfoApiPage extends BasePage {
 
         GetAccountInfoRequest request = helper.createAndConfigureRequest(NONEXISTENT_CUST_PREM_CODE);
         setRequestSpecification(NONEXISTENT_CUST_PREM_CODE.getLabel(), request);
-        Response response = sendRequest(HttpPost.METHOD_NAME, ACCOUNT_INFO, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ACCOUNT_INFO, 200);
         testContext.setResponse(response);
     }
 

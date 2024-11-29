@@ -1,4 +1,4 @@
-package com.gng.api.pages.CreateAccountNotePage;
+package com.gng.api.pages.AccountsApiPages.CreateAccountNotePage;
 
 import lombok.Getter;
 

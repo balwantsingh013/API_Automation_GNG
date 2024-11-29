@@ -1,6 +1,6 @@
-package com.gng.api.steps.CreateAccountNote;
+package com.gng.api.steps.AccountsApiSteps;
 
-import com.gng.api.pages.CreateAccountNotePage.CreateAccountNoteApiPage;
+import com.gng.api.pages.AccountsApiPages.CreateAccountNotePage.CreateAccountNoteApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;

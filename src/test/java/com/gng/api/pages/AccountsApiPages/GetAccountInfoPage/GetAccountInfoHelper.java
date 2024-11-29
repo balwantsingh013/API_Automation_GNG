@@ -1,7 +1,7 @@
-package com.gng.api.pages.GetAccountInfoPage;
+package com.gng.api.pages.AccountsApiPages.GetAccountInfoPage;
 
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.accountinfo.GetAccountInfoRequest;
+import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoRequest;
 import com.gng.api.util.CommonUtil;
 import org.assertj.core.api.SoftAssertions;
 
@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.gng.api.pages.GetAccountInfoPage.GetAccountInfoLabels.*;
-import static com.gng.api.util.LogUtil.logError;
+import static com.gng.api.pages.AccountsApiPages.GetAccountInfoPage.GetAccountInfoLabels.*;
 import static com.gng.api.util.LogUtil.logInfo;
 
 public class GetAccountInfoHelper {

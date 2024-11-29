@@ -1,4 +1,4 @@
-package com.gng.api.pages.GetAccountInfoPage;
+package com.gng.api.pages.AccountsApiPages.GetAccountInfoPage;
 
 import lombok.Getter;
 
