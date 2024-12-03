@@ -3,6 +3,7 @@ package com.gng.api.steps.ServiceOrdersSteps;
 import com.gng.api.pages.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,8 @@ public class SaveEnrollmentApiSteps {
         testContext.setSaveEnrollmentApiPage(saveEnrollmentApiPage);
     }
 
-    @When("a request is made to the Save Enrollment Api")
-    public void a_request_is_made_to_the_get_account_info_api() {
+    @When("a valid SaveEnrollment API request payload")
+    public void a_valid_save_enrollment_api_request_payload() {
         saveEnrollmentApiPage.sendSaveEnrollmentRequest();
     }
 
@@ -43,6 +44,11 @@ public class SaveEnrollmentApiSteps {
     @Then("verify response code of save enrollment Api with invalid customer  {string} code is {int}")
     public void verify_response_code_of_save_enrollment_api_invalid_customer_code(String param, Integer statusCode) {
         saveEnrollmentApiPage.verifyResponseCodeForInvalidCustomerCode(param, statusCode);
+    }
+
+
+    @Then("the response should contain a valid transactionID")
+    public void the_response_should_contain_a_valid_transaction_id() {
     }
 
 
