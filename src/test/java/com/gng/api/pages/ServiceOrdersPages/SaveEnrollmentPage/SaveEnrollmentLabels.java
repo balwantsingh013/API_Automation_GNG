@@ -1,5 +1,20 @@
 package com.gng.api.pages.ServiceOrdersPages.SaveEnrollmentPage;
+import lombok.Getter;
 
-public enum SaveEnrollmentLabels
-{
+
+@Getter
+public enum SaveEnrollmentLabels {
+    HAPPY_FLOW_("SaveEnrollment_HappyFlow"),
+    MISSING_REQUEST_ID("SaveEnrollment_MissingRequestId"),
+    INVALID_CUSTOMER_CODE("SaveEnrollment_InvalidCustomerCode"),
+    INVALID_PROMO_CODE_LENGTH("SaveEnrollment_InvalidPromoCodeLength");
+
+
+    private final String label;
+
+    SaveEnrollmentLabels(String label) {
+        this.label = label;
+    }
+
+
 }

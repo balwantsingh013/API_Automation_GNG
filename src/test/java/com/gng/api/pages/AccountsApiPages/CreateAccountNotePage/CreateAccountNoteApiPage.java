@@ -60,7 +60,7 @@ public class CreateAccountNoteApiPage extends BasePage {
         setupAndExecuteRequest(dataTable, NULL_ORIGIN);
     }
 
-    public void sendCreateAccountNoteRequestWithDuplicateRequestId(DataTable dataTable) {
+      public void sendCreateAccountNoteRequestWithDuplicateRequestId(DataTable dataTable) {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
         setCustomerAndPremisesCodes(activeCustomerData);
         helper.setupRequestData(dataTable);
