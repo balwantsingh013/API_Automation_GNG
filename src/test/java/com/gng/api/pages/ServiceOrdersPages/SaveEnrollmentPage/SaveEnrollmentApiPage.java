@@ -32,4 +32,13 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setSaveEnrollmentResponse(saveEnrollmentResponse);
     }
 
+    public void validateInvalidRequestIDCases(SaveEnrollmentApiLabel apiLabel, String requestID)
+    {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        payload.setRequestID(requestID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+
 }
