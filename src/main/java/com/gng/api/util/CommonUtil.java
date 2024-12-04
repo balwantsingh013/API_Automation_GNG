@@ -67,21 +67,4 @@ public class CommonUtil {
         return LocalDateTime.now().format(formatter);
     }
 
-
-    private static Faker getFaker() {
-        faker = Optional.ofNullable(faker).orElseGet(Faker::new);
-        return faker;
-    }
-
-    public static String getRandomNumericString(int length) {
-        String value = String.valueOf(getFaker().number().digits(length));
-        log.info("Random Numeric String: {}", value);
-        return value;
-    }
-
-    public static String getRandomString(int length) {
-        String value = getFaker().lorem().characters(length);
-        log.info("Random String: {}", value);
-        return value;
-    }
 }

@@ -3,6 +3,7 @@ package com.gng.api.pages.AccountsApiPages.GetAccountInfoPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoRequest;
 import com.gng.api.util.CommonUtil;
+import com.gng.api.util.FakerDataGenerator;
 import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
@@ -103,7 +104,7 @@ public class GetAccountInfoHelper {
 
     private GetAccountInfoRequest buildInvalidCustomerCodeLengthPayload(GetAccountInfoRequest request) {
         request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(CommonUtil.getRandomNumericString(10));
+        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
         request.setPremisesCode(testContext.getPremisesCode());
         return request;
     }
@@ -111,13 +112,13 @@ public class GetAccountInfoHelper {
     private GetAccountInfoRequest buildInvalidPremCodeLengthPayload(GetAccountInfoRequest request) {
         request.setRequestID(UUID.randomUUID().toString());
         request.setCustomerCode(testContext.getCustomerCode());
-        request.setPremisesCode(CommonUtil.getRandomNumericString(8));
+        request.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
         return request;
     }
 
     private GetAccountInfoRequest buildNonExistentCombinationPayload(GetAccountInfoRequest request) {
         request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(CommonUtil.getRandomNumericString(8));
+        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(8));
         request.setPremisesCode(testContext.getPremisesCode());
         return request;
     }

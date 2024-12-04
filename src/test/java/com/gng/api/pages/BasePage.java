@@ -3,6 +3,7 @@ package com.gng.api.pages;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamReadFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.report.ExtentReportManager;
@@ -10,12 +11,16 @@ import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
 import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
+import static com.gng.api.constants.TestConstant.JSON;
+import static com.gng.api.constants.TestConstant.PATH_PAYLOAD;
 import static com.gng.api.context.ApplicationContext.getRequestSpec;
 import static com.gng.api.util.LogUtil.logError;
 import static com.gng.api.util.LogUtil.logInfo;
@@ -32,6 +37,16 @@ public abstract class BasePage  {
     protected void setRequestSpecification(String apiName, Object request) {
         logInfo("Set Request Specification for: " + apiName);
         getRequestSpec().auth().oauth2(testContext.getAuthToken()).body(request);
+    }
+
+    // Set Request Specification
+    protected <T> void setRequestSpecification(T payload, String token) {
+        log.info("Setting Request Specification");
+        getRequestSpec()
+                .headers(getApiHeaders())
+                .body(payload)
+                .auth()
+                .oauth2(token);
     }
 
     protected Map<String, String> getApiHeaders() {
@@ -52,6 +67,46 @@ public abstract class BasePage  {
         } catch (JsonProcessingException e) {
             logError(e.getMessage());
             return null;
+        }
+    }
+
+
+
+    public static <T> T deserializeJsonToPojo(String apiName, Class<T> clazz) {
+        logInfo("Deserializing JSON for API: {}"+ apiName);
+        return deserializeJson(apiName, clazz);
+    }
+
+    private static <T> T deserializeJson(String apiName, Class<T> clazz) {
+        ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION).build());
+        try {
+            String path = PATH_PAYLOAD + apiName + "." + JSON;
+            logInfo("Reading JSON file: {}"+ path);
+            return mapper.readValue(new File(path), clazz);
+        } catch (IOException e) {
+            logError("Error deserializing JSON: {}"+ e.getMessage());
+            throw new RuntimeException("Failed to deserialize JSON file: " + apiName, e);
+        }
+    }
+
+    // Deserialize Response to POJO
+    protected <T> T deserializeResponseToPojo(Response response, Class<T> clazz) {
+        log.info("Deserializing API Response to POJO");
+        ObjectMapper mapper = new ObjectMapper(JsonFactory.builder()
+                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+                .build());
+
+        try {
+            String responseBody = response.getBody().asString();
+            log.info("Response Body: {}", responseBody);
+
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            return mapper.readValue(responseBody, clazz);
+        } catch (IOException e) {
+            log.error("Response Deserialization Failed. Response Status: {}, Class: {}",
+                    response.getStatusCode(), clazz.getSimpleName());
+            throw new RuntimeException(String.format("Failed to deserialize response to %s. Error: %s",
+                    clazz.getSimpleName(), e.getMessage()), e);
         }
     }
 

@@ -3,6 +3,7 @@ package com.gng.api.pages.AccountsApiPages.CreateAccountNotePage;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteRequest;
 import com.gng.api.util.CommonUtil;
+import com.gng.api.util.FakerDataGenerator;
 import io.cucumber.datatable.DataTable;
 import static com.gng.api.util.LogUtil.logInfo;
 import static com.gng.api.pages.AccountsApiPages.CreateAccountNotePage.CreateAccountNoteLabels.*;
@@ -99,13 +100,13 @@ public class CreateAccountNoteHelper {
 
     private CreateAccountNoteRequest buildInvalidCustomerCodeLengthPayload(CreateAccountNoteRequest request) {
         buildHappyFlowPayload(request);
-        request.setCustomerCode(CommonUtil.getRandomNumericString(10));
+        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
         return request;
     }
 
     private CreateAccountNoteRequest buildInvalidPremCodeLengthPayload(CreateAccountNoteRequest request) {
         buildHappyFlowPayload(request);
-        request.setPremisesCode(CommonUtil.getRandomNumericString(8));
+        request.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
         return request;
     }
 
@@ -117,25 +118,25 @@ public class CreateAccountNoteHelper {
 
     private CreateAccountNoteRequest buildNonExistentServiceNumberPayload(CreateAccountNoteRequest request) {
         buildHappyFlowPayload(request);
-        request.setServiceNumber(CommonUtil.getRandomNumericString(4));
+        request.setServiceNumber(FakerDataGenerator.getRandomNumericString(4));
         return request;
     }
 
     private CreateAccountNoteRequest buildInvalidServiceNumberFormatPayload(CreateAccountNoteRequest request) {
         buildHappyFlowPayload(request);
-        request.setServiceNumber(CommonUtil.getRandomNumericString(5));
+        request.setServiceNumber(FakerDataGenerator.getRandomNumericString(5));
         return request;
     }
 
     private CreateAccountNoteRequest buildNonExistentNoteTypePayload(CreateAccountNoteRequest request) {
         buildHappyFlowPayload(request);
-        request.setNoteTypeCode(CommonUtil.getRandomString(3));
+        request.setNoteTypeCode(FakerDataGenerator.getRandomString(3));
         return request;
     }
 
     private CreateAccountNoteRequest buildNonExistentCustomerPremCodePayload(CreateAccountNoteRequest request) {
         buildHappyFlowPayload(request);
-        request.setCustomerCode(CommonUtil.getRandomNumericString(8));
+        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(8));
         return request;
     }
 }

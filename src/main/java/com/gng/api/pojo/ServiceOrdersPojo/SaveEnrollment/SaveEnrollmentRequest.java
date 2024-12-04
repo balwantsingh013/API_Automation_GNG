@@ -1,12 +1,16 @@
 package com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SaveEnrollmentRequest  {
     private String requestID;
     private String loginID;
@@ -19,7 +23,7 @@ public class SaveEnrollmentRequest  {
     private String enrollmentStatus;
     private String paymentConfirmationNumber;
     private String billingPlan;
-    private int estimatedBudgetAmount;
+    private Object estimatedBudgetAmount;
     private String customerRequestedServiceDate;
     private String seasonalSavingsProgramResult;
     private boolean splitConnectionFeeIndicator;
@@ -29,7 +33,7 @@ public class SaveEnrollmentRequest  {
     private String entranceInstructions;
     private String specialInstructions;
     private String notes;
-    private int sspParticipantCode;
+    private Object sspParticipantCode;
     private String currentMarketerCode;
     
 }

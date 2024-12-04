@@ -1,0 +1,21 @@
+{
+  "requestID": "SDJFNJN124342LNLSDF",
+  "loginID": "dkinnaird",
+  "transactionID": "1416",
+  "transactionType": "MKSW",
+  "customerCode": 5914107,
+  "premisesCode": "5888581",
+  "planCode":"MVS",
+  "promotionCode": "25 CENTS FOR 12 MONTHS",
+  "enrollmentStatus": "SI",
+  "paymentConfirmationNumber": "",
+  "billingPlan": "R",
+  "estimatedBudgetAmount": null,
+  "customerRequestedServiceDate": "",
+  "seasonalSavingsProgramResult": "",
+  "splitConnectionFeeIndicator": false,
+  "aglcAccountNumber": "00000000001234567890",
+  "aglcServiceOrderNumber": null,
+  "notes": "",
+  "sspParticipantCode": null
+}
