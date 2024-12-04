@@ -5,6 +5,7 @@ import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.util.CommonUtil;
 
+import static com.gng.api.pages.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentLabels.INVALID_CUSTOMER_CODE_LENGTH;
 import static com.gng.api.pages.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentLabels.INVALID_PROMO_CODE_LENGTH;
 import static com.gng.api.util.LogUtil.logInfo;
 
@@ -26,7 +27,7 @@ public class SaveEnrollmentHelper {
         logInfo("Get Api Payload");
         return switch (apiName) {
             case HAPPY_FLOW_ -> buildHappyFlowPayload(request);
-            case INVALID_CUSTOMER_CODE -> buildInvalidCustomerCodePayload(request);
+            case INVALID_CUSTOMER_CODE_LENGTH -> buildInvalidCustomerCodePayload(request);
             case MISSING_REQUEST_ID -> buildMissingRequestIdPayload(request);
             case INVALID_PROMO_CODE_LENGTH -> buildInvalidPromoCodeLengthPayload(request);
 
@@ -62,17 +63,20 @@ public class SaveEnrollmentHelper {
 
     private SaveEnrollmentRequest buildInvalidPromoCodeLengthPayload(SaveEnrollmentRequest request) {
         buildHappyFlowPayload(request);
-        request.setPromotionCode(CommonUtil.getRandomNumericString(10));
+        request.setPromotionCode(CommonUtil.getRandomNumericString(37));
         return request;
     }
 
+    public SaveEnrollmentLabels getInvalidParamApiLabel(String invalidParam) {
+        return switch (invalidParam) {
+            case "CustomerCode" -> INVALID_CUSTOMER_CODE_LENGTH;
+            case "PromoCode" -> INVALID_PROMO_CODE_LENGTH;
 
-    public SaveEnrollmentLabels getMissingParamApiLabel(String missingParam) {
-        return switch (missingParam) {
-            case "InvalidPromoCodeLength" -> INVALID_PROMO_CODE_LENGTH;
-            default -> throw new IllegalStateException("Invalid missing param: " + missingParam);
+            default -> throw new IllegalStateException("Invalid missing param: " + invalidParam);
         };
     }
+
+
 
 }
 

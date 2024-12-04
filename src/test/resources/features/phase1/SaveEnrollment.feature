@@ -11,15 +11,19 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "SaveEnrollment" Api is <200>
 
 
-#@SaveEnrollmentInvalidPromotionCode @Phase1
-#Scenario: Verify response code for invalid promotion code
-#  When a request is made to the Save Enrollment API with an invalid promotion code "INVALID_CODE"
-#  Then verify response code of "Save Enrollment" Api is <400>
-#  And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-#
-#
-#@SaveEnrollmentInvalidCustomerCode @Phase1
-#Scenario: Verify response code for invalid customer code
-#  When a request is made to the Save Enrollment API with an invalid customer code "12345678910"
-#  Then verify response code of "Save Enrollment" Api is <400>
-#  And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+@SaveEnrollmentInvalidPromotionCode @Phase1
+Scenario: Verify response code for invalid promotion code
+  When a request is made to the SaveEnrollment Api with invalid "<param>" code
+  Then verify response code of "Save Enrollment" Api is <200>
+  And response should have ErrorCode <10000> and ErrorMessage "<errorMessage>"
+
+  @SaveEnrollmentInvalidParam @Phase1
+  Scenario Outline: Verify response code for invalid "<param>" code
+    When a request is made to the SaveEnrollment Api with invalid "<param>" code
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | param        | errorCode | errorMessage                 |
+      | CustomerCode | 10000     | The Customer Code must be an integer with a maximum length of 9 |
+      | PromoCode    | 10000     | The Promotion Code must be a string with a maximum length of 35 |
+
