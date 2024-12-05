@@ -35,26 +35,7 @@ public class SaveEnrollmentApiPage extends BasePage {
     public void validateInvalidRequestIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel requestID)
     {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
-        switch (requestID) {
-            case EMPTY_REQUEST_ID:
-                payload.setRequestID("");
-                break;
-            case DUPLICATE_REQUEST_ID:
-                payload.setRequestID("123");
-                break;
-            case SPECIAL_CHARS_REQUEST_ID:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
-                break;
-            case LONG_REQUEST_ID:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
-                break;
-            case UNICODE_CHARS_REQUEST_ID:
-                payload.setRequestID(FakerDataGenerator.generateUnicode());
-                break;
-            default:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-        }
-
+        helper.setRequestIDBasedOnType(payload, requestID);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);
