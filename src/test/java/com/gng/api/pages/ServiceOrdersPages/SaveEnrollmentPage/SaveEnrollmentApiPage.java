@@ -22,8 +22,7 @@ public class SaveEnrollmentApiPage extends BasePage {
         this.helper = new SaveEnrollmentHelper(testContext);
     }
 
-    public void sendSaveEnrollmentRequest(SaveEnrollmentApiLabel apiLabel)
-    {
+    public void sendSaveEnrollmentRequest(SaveEnrollmentApiLabel apiLabel) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         setRequestSpecification(payload, testContext.getAuthToken());
@@ -32,54 +31,44 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setSaveEnrollmentResponse(saveEnrollmentResponse);
     }
 
-    public void validateInvalidRequestIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel requestID)
-    {
+    public void validateInvalidRequestIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel requestID) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnType(payload, requestID);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);
     }
-    public void validateInvalidCustomerCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel customerCODE) {
-        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
-        switch (customerCODE) {
-            case MAX_LENGTH_CUSTOMER_CODE:
-                payload.setCustomerCode(1289653175);
-                break;
-            default:
-                payload.setCustomerCode(123456789);
-        }
 
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
-        testContext.setResponse(response);
-    }
-    public void validateInvalidPromotionCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel promotionCode)
+        public void validateInvalidCustomerCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel customerCODE)
     {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
-        switch (promotionCode) {
-            case EMPTY_PREMISES_CODE:
-                payload.setPromotionCode("");
-                break;
-            case DUPLICATE_PROMOTION_CODE:
-                payload.setPromotionCode("25 CENTS FOR 12 MONTHS");
-                break;
-            case SPECIAL_CHARS_PROMOTION_CODE:
-                payload.setPromotionCode(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
-                break;
-            case MAX_LENGTH_PROMOTION_CODE:
-                payload.setPromotionCode(FakerDataGenerator.generateAlphanumeric(37));
-                break;
-            case UNICODE_CHARS_PROMOTION_CODE:
-                payload.setPromotionCode(FakerDataGenerator.generateUnicode());
-                break;
-            default:
-                payload.setPromotionCode(FakerDataGenerator.generateString(35));
-        }
-
+        helper.setCustomerCodeBasedOnType(payload, customerCODE);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);
     }
-        }
+    public void validateInvalidPremisesCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel premisesCode) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesCodeBasedOnType(payload, premisesCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
 
+    public void validateInvalidTransactionIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel transactionID) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setTransactionIDBasedOnType(payload, transactionID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidTransactionTypeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel transactionType) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setTransactionTypeBasedOnType(payload, transactionType);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+
+
+}

@@ -17,21 +17,24 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | requestID                  | errorCode | errorMessage                    |
-      | EMPTY_REQUEST_ID           | 10001     | Missing Request ID              |
-      | DUPLICATE_REQUEST_ID       | 10003     | Duplicate Request ID            |
-      | SPECIAL_CHARS_REQUEST_ID   | 10004     | Invalid Request ID Format       |
-      | LONG_REQUEST_ID            | 10002     | Invalid Request ID              |
-      | UNICODE_CHARS_REQUEST_ID   | 10007     | Unsupported Characters          |
+      | requestID                | errorCode | errorMessage              |
+      | EMPTY_REQUEST_ID         | 10001     | Missing Request ID        |
+      | DUPLICATE_REQUEST_ID     | 10003     | Duplicate Request ID      |
+      | SPECIAL_CHARS_REQUEST_ID | 10004     | Invalid Request ID Format |
+      | LONG_REQUEST_ID          | 10002     | Invalid Request ID        |
+      | UNICODE_CHARS_REQUEST_ID | 10007     | Unsupported Characters    |
 
   @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<customerCODE>" code
-    When a request is made to the SaveEnrollment Api with invalid "<customerCODE>" code
+  Scenario Outline: Verify SaveEnrollment Api with invalid "<customerCODE>" code
+    When a request is made to the SaveEnrollment Api with  customer "<customerCODE>" code
     Then verify response code of "Save Enrollment" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | customerCODE                | errorCode | errorMessage                 |
-      | MAX_LENGTH_CUSTOMER_CODE    | 10000     | The Customer Code must be an integer with a maximum length of 9 |
+      | customerCODE                | errorCode | errorMessage                                                    |
+      | DUPLICATE_CUSTOMER_CODE     | 2000      | The Customer Code must be an integer with a maximum length of 9 |
+      | MAX_LENGTH_CUSTOMER_CODE    | 2000      | The Customer Code must be an integer with a maximum length of 9 |
+      | UNICODE_CHARS_CUSTOMER_CODE | 2000      | The Customer Code must be an integer with a maximum length of 9 |
+      | DUPLICATE_CUSTOMER_CODE     | 2000      | The Customer Code must be an integer with a maximum length of 9 |
 
 
   @SaveEnrollmentInvalidPromotionCODE @Phase1  @NegativeFlow
@@ -40,5 +43,33 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "Save Enrollment" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | premisesCODE                | errorCode | errorMessage                 |
-      | MAX_LENGTH_CUSTOMER_CODE    | 10000     | The Customer Code must be an integer with a maximum length of 9 |
+      | premisesCODE                | errorCode | errorMessage                                                          |
+      | EMPTY_PREMISES_CODE         | 10000     | Missing Premises Code                                                 |
+      | DUPLICATE_PREMISES_CODE     | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
+      | SPECIAL_CHARS_PREMISES_CODE | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
+      | MAX_LENGTH_PREMISES_CODE    | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
+      | MIN_LENGTH_PREMISES_CODE    | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
+
+  @SaveEnrollmentInvalidTransactionID @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<transactionID>"ID
+    When a request is made to the SaveEnrollment Api with  transaction "<transactionID>" ID
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | transactionID                     | errorCode | errorMessage                            |
+      | MIN_LENGTH_TRANSACTION_ID         | 2000      | Invalid Request: Invalid Transaction ID |
+      | WHITESPACE_BETWEEN_TRANSACTION_ID | 2000      | Invalid Request: Invalid Transaction ID |
+
+
+  @SaveEnrollmentInvalidTransactionType @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<transactionType>"Type
+    When a request is made to the SaveEnrollment Api with  transaction "<transactionType>" Type
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | transactionType               | errorCode | errorMessage                                                     |
+      | EMPTY_TRANSACTION_TYPE        | 10000      | Missing Transaction Type                                         |
+      | NULL_TRANSACTION_TYPE         | 10000     | Missing Transaction Type                                         |
+      | NUMERIC_TRANSACTION_TYPE      | 10000      | The Transaction Type must be a string with a maximum length of 4 |
+      | UPPERCASE_TRANSACTION_TYPE    | 10000      | The Transaction Type must be a string with a maximum length of 4 |
+      | ALPHANUMERIC_TRANSACTION_TYPE | 10000      | The Transaction Type must be a string with a maximum length of 4 |

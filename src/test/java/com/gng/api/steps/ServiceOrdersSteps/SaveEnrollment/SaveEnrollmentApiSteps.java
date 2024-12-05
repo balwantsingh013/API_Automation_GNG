@@ -28,15 +28,25 @@ public class SaveEnrollmentApiSteps {
     {
         saveEnrollmentApiPage.validateInvalidRequestIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(requestID));
     }
-    @When("a request is made to the SaveEnrollment Api with invalid {string} code")
-    public void a_request_is_made_to_the_SaveEnrollment_Api_with_invalid (String customerCODE)
+    @When("a request is made to the SaveEnrollment Api with  customer {string} code")
+    public void a_request_is_made_to_the_SaveEnrollment_with_customer(String customerCODE)
     {
         saveEnrollmentApiPage.validateInvalidCustomerCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(customerCODE));
     }
-    @When("a request is made to the SaveEnrollment Api with  promotion {string} code")
-    public void  a_request_is_made_to_the_SaveEnrollment_with_promotion (String promotionCode)
+    @When("a request is made to the SaveEnrollment Api with  premises {string} code")
+    public void  a_request_is_made_to_the_SaveEnrollment_with_premises (String premisesCode)
     {
-        saveEnrollmentApiPage.validateInvalidCustomerCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(promotionCode));
+        saveEnrollmentApiPage.validateInvalidPremisesCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(premisesCode));
+    }
+    @When("a request is made to the SaveEnrollment Api with  transaction {string} ID")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction (String transactionID)
+    {
+        saveEnrollmentApiPage.validateInvalidTransactionIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(transactionID));
+    }
+    @When("a request is made to the SaveEnrollment Api with  transaction {string} Type")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction_type (String transactionType)
+    {
+        saveEnrollmentApiPage.validateInvalidTransactionTypeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(transactionType));
     }
 
 
