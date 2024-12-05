@@ -24,3 +24,21 @@ Feature: Verify SaveEnrollment Api
       | LONG_REQUEST_ID            | 10002     | Invalid Request ID              |
       | UNICODE_CHARS_REQUEST_ID   | 10007     | Unsupported Characters          |
 
+  @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<customerCODE>" code
+    When a request is made to the SaveEnrollment Api with invalid "<customerCODE>" code
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | customerCODE                | errorCode | errorMessage                 |
+      | MAX_LENGTH_CUSTOMER_CODE    | 10000     | The Customer Code must be an integer with a maximum length of 9 |
+
+
+  @SaveEnrollmentInvalidPromotionCODE @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<premisesCODE>" code
+    When a request is made to the SaveEnrollment Api with  premises "<premisesCODE>" code
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesCODE                | errorCode | errorMessage                 |
+      | MAX_LENGTH_CUSTOMER_CODE    | 10000     | The Customer Code must be an integer with a maximum length of 9 |

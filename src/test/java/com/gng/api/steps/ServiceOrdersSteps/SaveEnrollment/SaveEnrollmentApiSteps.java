@@ -28,4 +28,16 @@ public class SaveEnrollmentApiSteps {
     {
         saveEnrollmentApiPage.validateInvalidRequestIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(requestID));
     }
+    @When("a request is made to the SaveEnrollment Api with invalid {string} code")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_invalid (String customerCODE)
+    {
+        saveEnrollmentApiPage.validateInvalidCustomerCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(customerCODE));
+    }
+    @When("a request is made to the SaveEnrollment Api with  promotion {string} code")
+    public void  a_request_is_made_to_the_SaveEnrollment_with_promotion (String promotionCode)
+    {
+        saveEnrollmentApiPage.validateInvalidCustomerCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(promotionCode));
+    }
+
+
 }

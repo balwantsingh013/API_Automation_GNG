@@ -24,7 +24,7 @@ import static com.gng.api.constants.TestConstant.PATH_CONFIG;
 public class ApplicationContext {
     private static final ThreadLocal<RequestSpecification> requestSpecification = new ThreadLocal<>();
 
-    private static final String DEFAULT_ENV = "uat1";
+    private static final String DEFAULT_ENV = "uat2";
     private static final String ENV_PROPERTY = "env";
     private static ApplicationContext instance;
 
