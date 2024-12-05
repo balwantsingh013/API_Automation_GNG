@@ -4,8 +4,7 @@ import com.gng.api.pages.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApi
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.When;
 
-import static com.gng.api.steps.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.INVALID_CASES_FOR_REQUEST_ID;
-import static com.gng.api.steps.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.save_enrollment;
+import static com.gng.api.steps.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.*;
 
 public class SaveEnrollmentApiSteps {
 
@@ -27,6 +26,6 @@ public class SaveEnrollmentApiSteps {
     @When("a request is made to the SaveEnrollment Api with {string}")
     public void a_request_is_made_to_the_SaveEnrollment_Api_with(String requestID)
     {
-        saveEnrollmentApiPage.validateInvalidRequestIDCases(INVALID_CASES_FOR_REQUEST_ID, requestID);
+        saveEnrollmentApiPage.validateInvalidRequestIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(requestID));
     }
 }

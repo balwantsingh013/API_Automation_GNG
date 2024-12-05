@@ -11,9 +11,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class FakerDataGenerator {
     private static final Faker faker = new Faker(Locale.forLanguageTag("en-US"));
+    private static final Faker chineseFaker = new Faker(Locale.forLanguageTag("zh-CN"));
+    private static final Faker japaneseFaker = new Faker(Locale.forLanguageTag("ja"));
+    private static final Faker russianFaker = new Faker(Locale.forLanguageTag("ru"));
 
-    private FakerDataGenerator()
-    {
+    private FakerDataGenerator() {
         // Private constructor to prevent instantiation
     }
 
@@ -83,7 +85,7 @@ public class FakerDataGenerator {
     }
 
     public static double generateDouble(double min, double max) {
-        return faker.number().randomDouble(3, (long)min, (long)max);
+        return faker.number().randomDouble(3, (long) min, (long) max);
     }
 
     // Alphanumeric generators
@@ -180,6 +182,12 @@ public class FakerDataGenerator {
     // UUID and identifiers
     public static String generateUUID() {
         return faker.internet().uuid();
+    }
+
+    //Unicode Generator
+    public static String generateUnicode() {
+        return chineseFaker.name().fullName();
+
     }
 }
 

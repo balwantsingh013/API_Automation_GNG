@@ -17,7 +17,10 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | requestID | errorCode  | errorMessage                    |
-      |           | 10001      | Missing Request ID              |
-      | 123       | 10003      | Duplicate Request ID            |
+      | requestID                  | errorCode | errorMessage                    |
+      | EMPTY_REQUEST_ID           | 10001     | Missing Request ID              |
+      | DUPLICATE_REQUEST_ID       | 10003     | Duplicate Request ID            |
+      | SPECIAL_CHARS_REQUEST_ID   | 10004     | Invalid Request ID Format       |
+      | LONG_REQUEST_ID            | 10002     | Invalid Request ID              |
+      | UNICODE_CHARS_REQUEST_ID   | 10007     | Unsupported Characters          |
 
