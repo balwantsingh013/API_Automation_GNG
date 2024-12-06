@@ -68,8 +68,62 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | transactionType               | errorCode | errorMessage                                                     |
-      | EMPTY_TRANSACTION_TYPE        | 10000      | Missing Transaction Type                                         |
-      | NULL_TRANSACTION_TYPE         | 10000     | Missing Transaction Type                                         |
-      | NUMERIC_TRANSACTION_TYPE      | 10000      | The Transaction Type must be a string with a maximum length of 4 |
-      | UPPERCASE_TRANSACTION_TYPE    | 10000      | The Transaction Type must be a string with a maximum length of 4 |
-      | ALPHANUMERIC_TRANSACTION_TYPE | 10000      | The Transaction Type must be a string with a maximum length of 4 |
+      | EMPTY_TRANSACTION_TYPE        | 10000     | Missing Transaction Type                                         |
+      | NUMERIC_TRANSACTION_TYPE      | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | UPPERCASE_TRANSACTION_TYPE    | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | ALPHANUMERIC_TRANSACTION_TYPE | 1000      | Invalid Request: Invalid Transaction Type                        |
+
+  @SaveEnrollmentInvalidPlanCode @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<planCode>"Code
+    When a request is made to the SaveEnrollment Api with  plan "<planCode>" Code
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | planCode                | errorCode | errorMessage                                              |
+      | NUMERIC_PLAN_CODE       | 10000     | The Plan Code must be a string with a maximum length of 3 |
+      | SPECIAL_CHARS_PLAN_CODE | 10000     | The Plan Code must be a string with a maximum length of 3 |
+      | EMPTY_PLAN_CODE         | 10000     | Missing Plan Code                                         |
+      | UPPERCASE_PLAN_CODE     | 10000     | The Plan Code must be a string with a maximum length of 3 |
+      | ALPHANUMERIC_PLAN_CODE  | 2000      | Invalid Request: Invalid Plan Code                        |
+
+  @SaveEnrollmentInvalidLoginID @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<loginID>"
+    When a request is made to the SaveEnrollment Api with login "<loginID>" ID
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | loginID                | errorCode | errorMessage     |
+      | MIN_LENGTH_LOGIN_ID    | 2000      | Invalid Login ID |
+      | SPECIAL_CHARS_LOGIN_ID | 2000      | Invalid Login ID |
+      | EMPTY_LOGIN_ID         | 10000     | Missing Login ID |
+      | UPPERCASE_LOGIN_ID     | 2000      | Invalid Login ID |
+      | ALPHANUMERIC_LOGIN_ID  | 2000      | Invalid Login ID |
+      | MAX_LENGTH_LOGIN_ID    | 2000      | Invalid Login ID |
+
+
+  @SaveEnrollmentInvalidEnrollmentStatus @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<enrollmentStatus>"
+    When a request is made to the SaveEnrollment Api with enrollment "<enrollmentStatus>" Status
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | enrollmentStatus                      | errorCode | errorMessage                                                       |
+      | MIN_LENGTH_ENROLLMENT_STATUS          | 2000    | Invalid Request: Invalid Enrollment Status  |
+      | SPECIAL_CHARS_ENROLLMENT_STATUS       | 10000    | The Enrollment Status must be a string with a maximum length of 2  |
+      | EMPTY_ENROLLMENT_STATUS               | 10000     | Missing Enrollment Status                                       |
+      | LOWERCASE_ENROLLMENT_STATUS           | 10000      | The Enrollment Status must be a string with a maximum length of 2                                      |
+      | ALPHANUMERIC_ENROLLMENT_STATUS        | 10000     | The Enrollment Status must be a string with a maximum length of 2  |
+      | MAX_LENGTH_ENROLLMENT_STATUS          | 10000     | The Enrollment Status must be a string with a maximum length of 2  |
+      | WHITESPACE_CONTAINS_ENROLLMENT_STATUS | 10000     | The Enrollment Status must be a string with a maximum length of 2  |
+
+  @SaveEnrollmentInvalidBillingPlan@Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<billingPlan>"
+    When a request is made to the SaveEnrollment Api with billing plan "<billingPlan>"
+    Then verify response code of "Save Enrollment" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | billingPlan                      | errorCode | errorMessage                                                       |
+      | MAX_LENGTH_BILLING_PLAN           | 10000    | The Billing Plan must be a string with a maximum length of 1  |
+      | SPECIAL_CHARS_BILLING_PLAN       | 10000    | The Billing Plan must be a string with a maximum length of 1  |
+      | EMPTY_BILLING_PLAN              | 10000     | Invalid Request: Missing conditional parameters-Billing Option                                         |
+      | LOWERCASE_BILLING_PLAN            | 2000      | The Billing Plan must be a string with a maximum length of 1                                   |

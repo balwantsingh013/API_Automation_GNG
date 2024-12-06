@@ -69,6 +69,28 @@ public class SaveEnrollmentApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidPlanCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel planCode) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setPlanCodeBasedOnType(payload, planCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidLoginIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel loginID) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setLoginIDBasedOnType(payload, loginID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidEnrollmentStatusCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel enrollmentStatus) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setEnrollmentStatusBasedOnType(payload, enrollmentStatus);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+
 
 
 }
