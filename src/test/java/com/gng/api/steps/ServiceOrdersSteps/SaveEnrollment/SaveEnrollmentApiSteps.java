@@ -63,10 +63,10 @@ public class SaveEnrollmentApiSteps {
     {
         saveEnrollmentApiPage.validateInvalidEnrollmentStatusCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(enrollmentStatus));
     }
-    @When("a request is made to the SaveEnrollment Api with billing {string} ")
+    @When("a request is made to the SaveEnrollment Api with billing {string} Plan")
     public void a_request_is_made_to_the_SaveEnrollment_Api_with_billing_plan (String billingPlan)
     {
-        saveEnrollmentApiPage.validateInvalidEnrollmentStatusCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(billingPlan));
+        saveEnrollmentApiPage.validateInvalidBillingPlanCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(billingPlan));
     }
 
 

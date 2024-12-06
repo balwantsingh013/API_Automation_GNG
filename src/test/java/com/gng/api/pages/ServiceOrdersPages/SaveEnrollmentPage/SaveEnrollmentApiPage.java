@@ -90,6 +90,13 @@ public class SaveEnrollmentApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidBillingPlanCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel billingPlan) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setBillingPlanBasedOnType(payload, billingPlan);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
 
 
 

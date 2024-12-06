@@ -183,8 +183,8 @@ public class SaveEnrollmentHelper {
                 payload.setLoginID(FakerDataGenerator.generateLowerCaseString(5));
         }
     }
-    public void setEnrollmentStatusBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel loginID) {
-        switch (loginID) {
+    public void setEnrollmentStatusBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel enrollmentStatus) {
+        switch (enrollmentStatus) {
             case MIN_LENGTH_ENROLLMENT_STATUS:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentStatus(FakerDataGenerator.getRandomNumericString(1));
@@ -215,6 +215,28 @@ public class SaveEnrollmentHelper {
                 break;
             default:
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(2));
+        }
+    }
+    public void setBillingPlanBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {
+        switch (billingPlan) {
+            case MAX_LENGTH_BILLING_PLAN:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setBillingPlan(FakerDataGenerator.getRandomNumericString(4));
+                break;
+            case SPECIAL_CHARS_BILLING_PLAN:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setBillingPlan(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
+                break;
+            case EMPTY_BILLING_PLAN:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setBillingPlan("");
+                break;
+            case LOWERCASE_BILLING_PLAN:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setBillingPlan(FakerDataGenerator.generateUpperCaseString(4));
+                break;
+            default:
+                payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(1));
         }
     }
 }
