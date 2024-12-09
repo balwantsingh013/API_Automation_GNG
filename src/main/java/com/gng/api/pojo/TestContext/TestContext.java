@@ -1,5 +1,6 @@
 package com.gng.api.pojo.TestContext;
 
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import io.restassured.response.Response;
 import lombok.Data;
@@ -35,4 +36,7 @@ public class TestContext {
     @Getter @Setter
     private Object saveEnrollmentApiPage;
     private SaveEnrollmentResponse saveEnrollmentResponse;
+    @Getter @Setter
+    private Object getEligiblePlansAndOffersApiPage;
+    private GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse;
 }

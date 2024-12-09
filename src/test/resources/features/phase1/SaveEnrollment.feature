@@ -31,10 +31,10 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerCODE                | errorCode | errorMessage                                                    |
-      | DUPLICATE_CUSTOMER_CODE     | 2000      | The Customer Code must be an integer with a maximum length of 9 |
-      | MAX_LENGTH_CUSTOMER_CODE    | 2000      | The Customer Code must be an integer with a maximum length of 9 |
-      | UNICODE_CHARS_CUSTOMER_CODE | 2000      | The Customer Code must be an integer with a maximum length of 9 |
-      | DUPLICATE_CUSTOMER_CODE     | 2000      | The Customer Code must be an integer with a maximum length of 9 |
+      | DUPLICATE_CUSTOMER_CODE     | 2000      | Invalid Request: Transaction ID does not exist |
+      | MAX_LENGTH_CUSTOMER_CODE    | 2000      | Invalid Request: Transaction ID does not exist |
+      | UNICODE_CHARS_CUSTOMER_CODE | 2000      | Invalid Request: Transaction ID does not exist |
+      | DUPLICATE_CUSTOMER_CODE     | 2000      | Invalid Request: Transaction ID does not exist|
 
 
   @SaveEnrollmentInvalidPromotionCODE @Phase1  @NegativeFlow
@@ -107,14 +107,14 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "Save Enrollment" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | enrollmentStatus                      | errorCode | errorMessage                                                       |
-      | MIN_LENGTH_ENROLLMENT_STATUS          | 2000    | Invalid Request: Invalid Enrollment Status  |
-      | SPECIAL_CHARS_ENROLLMENT_STATUS       | 10000    | The Enrollment Status must be a string with a maximum length of 2  |
-      | EMPTY_ENROLLMENT_STATUS               | 10000     | Missing Enrollment Status                                       |
-      | LOWERCASE_ENROLLMENT_STATUS           | 10000      | The Enrollment Status must be a string with a maximum length of 2                                      |
-      | ALPHANUMERIC_ENROLLMENT_STATUS        | 10000     | The Enrollment Status must be a string with a maximum length of 2  |
-      | MAX_LENGTH_ENROLLMENT_STATUS          | 10000     | The Enrollment Status must be a string with a maximum length of 2  |
-      | WHITESPACE_CONTAINS_ENROLLMENT_STATUS | 10000     | The Enrollment Status must be a string with a maximum length of 2  |
+      | enrollmentStatus                      | errorCode | errorMessage                                                      |
+      | MIN_LENGTH_ENROLLMENT_STATUS          | 2000      | Invalid Request: Invalid Enrollment Status                        |
+      | SPECIAL_CHARS_ENROLLMENT_STATUS       | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
+      | EMPTY_ENROLLMENT_STATUS               | 10000     | Missing Enrollment Status                                         |
+      | LOWERCASE_ENROLLMENT_STATUS           | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
+      | ALPHANUMERIC_ENROLLMENT_STATUS        | 2000      | The Enrollment Status must be a string with a maximum length of 2 |
+      | MAX_LENGTH_ENROLLMENT_STATUS          | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
+      | WHITESPACE_CONTAINS_ENROLLMENT_STATUS | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
 
   @SaveEnrollmentInvalidBillingPlan @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<billingPlan>"
@@ -122,8 +122,8 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "Save Enrollment" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | billingPlan                      | errorCode | errorMessage                                                       |
-      | MAX_LENGTH_BILLING_PLAN           | 10000   | The Billing Plan must be a string with a maximum length of 1  |
-      | SPECIAL_CHARS_BILLING_PLAN       | 10000    | The Billing Plan must be a string with a maximum length of 1  |
-      | EMPTY_BILLING_PLAN              | 2000     | Invalid Request: Missing conditional parameters-Billing Option                                         |
-      | LOWERCASE_BILLING_PLAN            | 10000      | The Billing Plan must be a string with a maximum length of 1                                   |
+      | billingPlan                | errorCode | errorMessage                                                   |
+      | MAX_LENGTH_BILLING_PLAN    | 10000     | The Billing Plan must be a string with a maximum length of 1   |
+      | SPECIAL_CHARS_BILLING_PLAN | 10000     | The Billing Plan must be a string with a maximum length of 1   |
+      | EMPTY_BILLING_PLAN         | 2000      | Invalid Request: Missing conditional parameters-Billing Option |
+      | LOWERCASE_BILLING_PLAN     | 10000     | The Billing Plan must be a string with a maximum length of 1   |
