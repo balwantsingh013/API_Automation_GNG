@@ -22,8 +22,7 @@ public class SaveEnrollmentApiPage extends BasePage {
         this.helper = new SaveEnrollmentHelper(testContext);
     }
 
-    public void sendSaveEnrollmentRequest(SaveEnrollmentApiLabel apiLabel)
-    {
+    public void sendSaveEnrollmentRequest(SaveEnrollmentApiLabel apiLabel) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         setRequestSpecification(payload, testContext.getAuthToken());
@@ -32,13 +31,73 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setSaveEnrollmentResponse(saveEnrollmentResponse);
     }
 
-    public void validateInvalidRequestIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel requestID)
-    {
+    public void validateInvalidRequestIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel requestID) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnType(payload, requestID);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);
     }
+
+        public void validateInvalidCustomerCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel customerCODE)
+    {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerCodeBasedOnType(payload, customerCODE);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel premisesCode) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesCodeBasedOnType(payload, premisesCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidTransactionIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel transactionID) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setTransactionIDBasedOnType(payload, transactionID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidTransactionTypeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel transactionType) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setTransactionTypeBasedOnType(payload, transactionType);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPlanCodeCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel planCode) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setPlanCodeBasedOnType(payload, planCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidLoginIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel loginID) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setLoginIDBasedOnType(payload, loginID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidEnrollmentStatusCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel enrollmentStatus) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setEnrollmentStatusBasedOnType(payload, enrollmentStatus);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidBillingPlanCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel billingPlan) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setBillingPlanBasedOnType(payload, billingPlan);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+    }
+
+
 
 }
