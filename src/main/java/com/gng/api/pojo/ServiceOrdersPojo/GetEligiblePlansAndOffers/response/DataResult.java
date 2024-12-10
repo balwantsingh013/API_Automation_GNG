@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @lombok.Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Result {
+public class DataResult {
 	private String billingUnitNumber;
 	private String homePhoneNumber;
 	private Object similarBusinesses;
