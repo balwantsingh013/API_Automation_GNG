@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @lombok.Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Data {
+public class Result {
 	private String billingUnitNumber;
 	private String homePhoneNumber;
 	private Object similarBusinesses;
@@ -34,7 +34,7 @@ public class Data {
 	private String billingZipCode;
 	private int availableSplitConnectionFeeInstallments;
 	private String premisesStreetName;
-	private List<PlansItem> plans;
+	private List<Plans> plans;
 	private String customerFirstName;
 	private String premisesStreetPreDirection;
 	private String enrollmentState;

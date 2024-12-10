@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EnrollmentStatusItem{
+public class EnrollmentStatus {
 	private String code;
 	private String label;
 }

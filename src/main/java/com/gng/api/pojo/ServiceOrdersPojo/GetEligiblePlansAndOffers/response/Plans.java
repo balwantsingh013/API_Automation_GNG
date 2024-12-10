@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlansItem{
+public class Plans {
 	private Object prepayEstimateAmountDue;
 	private String prepaySystemPayByDate;
 	private String prepayOneTimeWelcomeCreditMessage;
@@ -51,7 +51,7 @@ public class PlansItem{
 	private boolean promotion2VisaIndicator;
 	private Object thermPrice;
 	private boolean promotion2TransferIndicator;
-	private List<EnrollmentStatusItem> enrollmentStatus;
+	private List<EnrollmentStatus> enrollmentStatus;
 	private int sortOrder;
 	private Object prepayEstimatedConsumption;
 	private String planDescription;

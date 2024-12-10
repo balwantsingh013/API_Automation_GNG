@@ -8,7 +8,6 @@ import com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligibl
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
-import io.cucumber.java.en.When;
 
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
 

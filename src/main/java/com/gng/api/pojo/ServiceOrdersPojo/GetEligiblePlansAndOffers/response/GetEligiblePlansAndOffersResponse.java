@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetEligiblePlansAndOffersResponse{
-	private Data data;
+	private Result data;
 	private boolean success;
 	private String requestID;
 	private String errorMessage;
