@@ -10,7 +10,7 @@ public final class TestConstant {
 
 
     public static final String JSON = "json";
-    public static final String PATH_PAYLOAD = PATH_RESOURCES + "/payload/";
+    public static final String PATH_PAYLOAD = PATH_RESOURCES + "payload/";
 
     private TestConstant() {
     }
