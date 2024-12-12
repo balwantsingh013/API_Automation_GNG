@@ -1,5 +1,6 @@
 package com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetEligiblePlansAndOffersRequest{
 	private Object billingUnitNumber;
 	private Object homePhoneNumber;
