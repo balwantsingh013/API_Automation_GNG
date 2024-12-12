@@ -72,7 +72,93 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidCustomerFirstNameCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel customerFirstName) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerFirstNameBasedOnType(payload, customerFirstName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
 
+    public void validateInvalidSeasonalSavingsProgramIndicatorCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel seasonalSavingsProgramIndicator) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setSeasonalSavingsProgramIndicatorBasedOnType(payload, seasonalSavingsProgramIndicator);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
 
+    public void validateInvalidPremisesStreetNameCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesStreetName) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStreetNameBasedOnType(payload, premisesStreetName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
 
+    public void validateInvalidPremisesCityCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesCity) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesCityBasedOnType(payload, premisesCity);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidPremisesZipCodeCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesZipCode) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesZipCodeBasedOnType(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesCountyCodeCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesCountyCode) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesCountyCodeBasedOnType(payload, premisesCountyCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStateCodeCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesStateCode) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStateCodeBasedOnType(payload, premisesStateCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidCreditCheckOptionCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel creditCheckOption) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setCreditCheckOptionBasedOnType(payload, creditCheckOption);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidTenantLandlordCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel tenantLandlord) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setTenantLandlordBasedOnType(payload, tenantLandlord);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidSeparateBillingAddressCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel separateBillingAddress) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setSeparateBillingAddressBasedOnType(payload, separateBillingAddress);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidAcnStatusIndicatorCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel acnStatusIndicator) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setAcnStatusIndicatorBasedOnType(payload, acnStatusIndicator);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+//    public void validateInvalidAglcServiceLocationIDCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel aglcServiceLocationID) {
+//        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+//        helper.setAglcServiceLocationIDBasedOnType(payload, aglcServiceLocationID);
+//        setRequestSpecification(payload, testContext.getAuthToken());
+//        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+//        testContext.setResponse(response);
+//    }
 }
