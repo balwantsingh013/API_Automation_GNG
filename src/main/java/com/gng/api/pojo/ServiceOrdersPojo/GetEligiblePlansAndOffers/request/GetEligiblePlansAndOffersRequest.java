@@ -80,4 +80,11 @@ public class GetEligiblePlansAndOffersRequest{
 	private Object billingAddressType;
 	private boolean seasonalSavingsProgramIndicator;
 	private Object billingCity;
+
+	public void setSeasonalSavingsProgramIndicator(Boolean o) {
+
+	}
+
+	public void setSeparateBillingAddress(Boolean o) {
+	}
 }
