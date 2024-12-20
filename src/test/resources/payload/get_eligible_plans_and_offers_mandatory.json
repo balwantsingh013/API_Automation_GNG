@@ -1,0 +1,20 @@
+{
+  "requestID": "9100BD119E4B0645B3B77EEA5FA88290A6",
+  "loginID": "sys",
+  "transactionType": "TNON",
+  "customerType": "RS",
+  "enrollmentSource": "MAIL",
+  "seasonalSavingsProgramIndicator": false,
+  "customerLastName": "Smith",
+  "customerFirstName": "Jonny",
+  "aglcServiceLocationID": "124547",
+  "premisesStreetName": "TREE-PARK",
+  "premisesCity": "FLOWERY BRANCH",
+  "premisesStateCode": "GA",
+  "premisesZipCode": "30542",
+  "premisesCountyCode": "T207",
+  "separateBillingAddress": false,
+  "acnStatusIndicator": "NACN",
+  "tenantLandlord": "T",
+  "creditCheckOption": "Skip"
+}
