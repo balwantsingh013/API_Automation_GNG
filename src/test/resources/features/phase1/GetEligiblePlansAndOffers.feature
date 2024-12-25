@@ -5,10 +5,105 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetEligiblePlansAndOffersWithValidData @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with valid data
-    When a request is made to the GetEligiblePlansAndOffers Api
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesAndPromotionCodeAsNullTC318UC39 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC 318 UC 39
+    When  a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_319_UC 44
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC320UC46 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 320 UC 46
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes yes with no promotion code  TC_320_UC 46
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC321UC64 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 321 UC 64
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_321_UC 64
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC322UC45 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 322 UC 45
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_322_UC 45
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC323UCNA @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 323 UC NA
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_323_UC NA
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC324UCNA @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 324 UC NA
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_324_UC NA
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsServiceTransferWithNoPromotionCodeTC325UC55 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code TC 325 UC 55
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code  TC_325_UC 55
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsCommWithNoPromotionCodeTC326UC56 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code TC 326 UC 56
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code  TC_326_UC 56
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC327UC40  @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 327 UC 40
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_327_UC 40
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC328UCNA @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 328 UC NA
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+
+
+  @GetEligiblePlansAndOffersWithInvalidTestCondition @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<testCondition>" Type
+    When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>" Type
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition      | errorCode | errorMessage                                                  |
+      | NULL_AUTHORIZED_BY | 2000      | Invalid Request: Missing conditional parameters-Authorized By |
+
+
+  @GetEligiblePlansAndOffersWithInvalidReferralCodeTC237_241 @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<referralCode>" code Type
+    When a request is made to the GetEligiblePlansAndOffers Api with "<referralCode>" code Type
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | referralCode                                    | errorCode | errorMessage                                                                                                                                                 |
+      | MAX_REFERRAL_CODE                               | 10000     | The Referral Code must be a string with a maximum length of 9.                                                                                               |
+      | NONNUMERIC_REFERRAL_CODE                        | 2000      | Invalid Request: Invalid Referral Code                                                                                                                       |
+      | ALPHANUMERIC_REFERRAL_CODE                      | 2000      | Invalid Request: Invalid Referral Code                                                                                                                       |
+      | VALID_REFERRAL_CODE_WITH_MISSING_MARKETING_CODE | 1000      | Invalid Request: Missing Promotion Code -Please ask the customer for a promotion code. If they do not have one, enter the appropriate default promotion code |
+
+  @GetEligiblePlansAndOffersWithInvalidPremisesStreetTypeTC242_241 @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreet>"  Type
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreet>"  Type
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesStreet                                     | errorCode | errorMessage                                                                  |
+      | MAX_PREMISES_STREET_NUMBER                         | 10000     | The Premises Street Number must be a string with a maximum length of 12.      |
+      | MAX_PREMISES_STREET_PRE_DIRECTION                  | 10000     | The Premises Street PreDirection must be a string with a maximum length of 2. |
+      | INVALID_PREMISES_STREET_PRE_DIRECTION_EQUAL_TO_TWO | 2000      | Invalid Request: Invalid Premises Street Pre Direction                        |
+      | MAX_PREMISES_STREET_NAME                           | 10000     | The Premises Street Name must be a string with a maximum length of 30.       |
+      | NULL_PREMISES_STREET_NAME                           | 10000     | Invalid or missing Premises Street Name
+      | MAX_PREMISES_STREET_SUFFIX                           | 10000     | The Premises Street Suffix must be a string with a maximum length of 6.
+      | INVALID_PREMISES_STREET_SUFFIX                           | 2000    | Invalid Request: Invalid Premises Street Suffix
+      | MAX_PREMISES_STREET_POST_DIRECTION                  | 10000     | The Premises Street PostDirection must be a string with a maximum length of 2.|
+
+      | INVALID_PREMISES_STREET_POST_DIRECTION_EQUAL_TO_TWO | 2000      |Invalid Request: Invalid Premises Street Post Direction                      |
+
+
+
 
   @GetEligiblePlansAndOffersWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"
@@ -57,12 +152,12 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | customerTYPE             | errorCode | errorMessage                                                    |
-      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type  |
-      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2.|
-      | NUMERIC_CUSTOMER_TYPE    | 2000      | Invalid Request: Invalid Customer Type                          |
-      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2.  |
-      | MAX_LENGTH_CUSTOMER_TYPE | 10000      | The Customer Type must be a string with a maximum length of 2.  |
+      | customerTYPE             | errorCode | errorMessage                                                   |
+      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                               |
+      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2. |
+      | NUMERIC_CUSTOMER_TYPE    | 2000      | Invalid Request: Invalid Customer Type                         |
+      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2. |
+      | MAX_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2. |
 
   @GetEligiblePlansAndOffersInvalidEnrollmentSources @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<enrollmentSources>"
@@ -95,7 +190,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | EMPTY_CUSTOMER_FIRST_NAME | 10000     | Invalid Request: Missing conditional parameters-Customer Last Name |
 
   @GetEligiblePlansAndOffersInvalidSeasonalSavingsProgramIndicator @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid  "<SeasonalSavingsProgramIndicator> "
+  Scenario Outline: Verify response code for invalid  "<SeasonalSavingsProgramIndicator>"
     When a request is made to the GetEligiblePlansAndOffers Api with seasonal savings program "<SeasonalSavingsProgramIndicator>" Indicator
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -109,8 +204,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | PremisesStreetName              | errorCode | errorMessage                                                           |
-      | EMPTY_PREMISES_STREET_NAME      | 10000     | Invalid or missing Premises Street Name                                |
+      | PremisesStreetName         | errorCode | errorMessage                            |
+      | EMPTY_PREMISES_STREET_NAME | 10000     | Invalid or missing Premises Street Name |
 #      | SPL_CHAR_PREMISES_STREET_NAME   | 11115     | No Data in the Experian response                                       |
 #      | MAX_LENGTH_PREMISES_STREET_NAME | 10000     | The Premises Street Name must be a string with a maximum length of 30. |
 
@@ -167,12 +262,12 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | CreditCheckOption                | errorCode | errorMessage                                                          |
-      | EMPTY_CREDIT_CHECK_OPTION        | 2000      | Invalid Request: Invalid Credit Check Option                               |
-      | SPL_CHAR_CREDIT_CHECK_OPTION     | 2000      | Invalid Request: Invalid Credit Check Option                          |
-      | MAX_LENGTH_CREDIT_CHECK_OPTION   | 2000     | Invalid Request: Invalid Credit Check Option |
-      | NUMERIC_CREDIT_CHECK_OPTION      | 2000      | Invalid Request: Invalid Credit Check Option                          |
-      | ALPHANUMERIC_CREDIT_CHECK_OPTION | 2000      | Invalid Request: Invalid Credit Check Option                          |
+      | CreditCheckOption                | errorCode | errorMessage                                 |
+      | EMPTY_CREDIT_CHECK_OPTION        | 2000      | Invalid Request: Invalid Credit Check Option |
+      | SPL_CHAR_CREDIT_CHECK_OPTION     | 2000      | Invalid Request: Invalid Credit Check Option |
+      | MAX_LENGTH_CREDIT_CHECK_OPTION   | 2000      | Invalid Request: Invalid Credit Check Option |
+      | NUMERIC_CREDIT_CHECK_OPTION      | 2000      | Invalid Request: Invalid Credit Check Option |
+      | ALPHANUMERIC_CREDIT_CHECK_OPTION | 2000      | Invalid Request: Invalid Credit Check Option |
 
 
   @GetEligiblePlansAndOffersInvalidTenantLandlord @Phase1  @NegativeFlow
@@ -181,11 +276,11 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | TenantLandlord             | errorCode | errorMessage                                                      |
+      | TenantLandlord             | errorCode | errorMessage                                                     |
       | EMPTY_TENANT_LANDLORD      | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
       | SPL_CHAR_TENANT_LANDLORD   | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
-      | MAX_LENGTH_TENANT_LANDLORD | 10000     | The Tenant/Landlord must be a string with a maximum length of 1.  |
-      | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1.  |
+      | MAX_LENGTH_TENANT_LANDLORD | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
+      | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
       | NUMERIC_TENANT_LANDLORD    | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
 
 

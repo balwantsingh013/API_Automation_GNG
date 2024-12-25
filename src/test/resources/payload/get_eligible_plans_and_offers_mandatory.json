@@ -1,14 +1,18 @@
 {
-  "requestID": "9100BD119E4B0645B3B77EEA5FA88290A6",
-  "loginID": "sys",
+  "requestID": "2585655251",
+  "loginID": "kfletcher",
   "transactionType": "TNON",
   "customerType": "RS",
   "enrollmentSource": "MAIL",
+  "callerIDNotAvailable": false,
   "seasonalSavingsProgramIndicator": false,
-  "customerLastName": "Smith",
-  "customerFirstName": "Jonny",
-  "aglcServiceLocationID": "124547",
+  "customerLastName": "LUCH",
+  "customerFirstName": "TIMOTHY",
+  "socialSecurityNumber": "mP0BSV3ROWNZLl4QzBp+3pvSi0YkMJ/O5f2OuwbSPTw=",
+  "aglcServiceLocationID": "646359958",
+  "premisesStreetNumber": "1308",
   "premisesStreetName": "TREE-PARK",
+  "premisesStreetSuffix": "CIR",
   "premisesCity": "FLOWERY BRANCH",
   "premisesStateCode": "GA",
   "premisesZipCode": "30542",
@@ -16,5 +20,7 @@
   "separateBillingAddress": false,
   "acnStatusIndicator": "NACN",
   "tenantLandlord": "T",
-  "creditCheckOption": "Skip"
+  "customerPEWCPreferences": false,
+  "creditCheckOption": "Yes",
+  "confirmCreditCheck": false
 }

@@ -196,6 +196,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerLastName(FakerDataGenerator.generateUpperCaseString(2));
         }
     }
+
     public void setSeasonalSavingsProgramIndicatorBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel seasonalSavingsProgramIndicator) {
         switch (seasonalSavingsProgramIndicator) {
             case NULL_SEASONAL_SAVINGS_PROGRAM_INDICATOR:
@@ -206,6 +207,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setSeasonalSavingsProgramIndicator(Boolean.getBoolean(String.valueOf(true)));
         }
     }
+
     public void setPremisesStreetNameBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesStreetName) {
         switch (premisesStreetName) {
             case EMPTY_PREMISES_STREET_NAME:
@@ -215,6 +217,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesStreetName(FakerDataGenerator.getRandomString(5));
         }
     }
+
     public void setPremisesCityBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesCity) {
         switch (premisesCity) {
             case EMPTY_PREMISES_CITY:
@@ -350,6 +353,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setTenantLandlord(FakerDataGenerator.getRandomString(1));
         }
     }
+
     public void setSeparateBillingAddressBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel separateBillingAddress) {
         switch (separateBillingAddress) {
             case NULL_SEPARATE_BILLING_ADDRESS:
@@ -359,6 +363,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setSeparateBillingAddress(Boolean.getBoolean(String.valueOf(true)));
         }
     }
+
     public void setAcnStatusIndicatorBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel acnStatusIndicator) {
         switch (acnStatusIndicator) {
             case EMPTY_ACN_STATUS_INDICATOR:
@@ -383,7 +388,110 @@ public class GetEligiblePlansAndOffersHelper {
 
     }
 
+    public void setInvalidTestCondition(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel authorizedBy) {
+        switch (authorizedBy) {
+            case NULL_AUTHORIZED_BY:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setAuthorizedBy("");
+                payload.setCustomerType("CM");
+                payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
+            default:
+                payload.setAuthorizedBy(FakerDataGenerator.generateString(9));
 
+        }
+    }
+
+    public void setInvalidReferralCodeTC238_241(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel referralcode) {
+        switch (referralcode) {
+            case MAX_REFERRAL_CODE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setMarketingPromotionCode("AAA");
+                payload.setCustomerType("CM");
+                payload.setAuthorizedBy("MM");
+                payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
+                payload.setReferralCode(FakerDataGenerator.getRandomNumericString(14));
+                break;
+            case NONNUMERIC_REFERRAL_CODE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setMarketingPromotionCode("AAA");
+                payload.setCustomerType("CM");
+                payload.setAuthorizedBy("MM");
+                payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
+                payload.setReferralCode(FakerDataGenerator.getRandomNumericString(5));
+                break;
+            case ALPHANUMERIC_REFERRAL_CODE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setMarketingPromotionCode("AAA");
+                payload.setCustomerType("CM");
+                payload.setAuthorizedBy("MM");
+                payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
+                payload.setReferralCode(FakerDataGenerator.generateAlphanumeric(5));
+                break;
+            case VALID_REFERRAL_CODE_WITH_MISSING_MARKETING_CODE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setMarketingPromotionCode("");
+                payload.setCustomerType("CM");
+                payload.setAuthorizedBy("MM");
+                payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
+                payload.setReferralCode(FakerDataGenerator.getRandomNumericString(9));
+                break;
+            default:
+                payload.setReferralCode(FakerDataGenerator.getRandomNumericString(10));
+        }
+    }
+
+    public void setInvalidPremisesStreetTypeTC242_241(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesStreetNumber) {
+        switch (premisesStreetNumber) {
+            case MAX_PREMISES_STREET_NUMBER:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(13));
+                break;
+            case MAX_PREMISES_STREET_PRE_DIRECTION:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetPreDirection(FakerDataGenerator.getRandomNumericString(4));
+                break;
+                case INVALID_PREMISES_STREET_PRE_DIRECTION_EQUAL_TO_TWO:
+                    payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                    payload.setPremisesStreetPreDirection(FakerDataGenerator.generateUpperCaseString(2));
+                    break;
+           case MAX_PREMISES_STREET_NAME:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetPreDirection(FakerDataGenerator.generateUpperCaseString(32));
+                break;
+            case NULL_PREMISES_STREET_NAME:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetPreDirection(FakerDataGenerator.generateUpperCaseString(32));
+                break;
+            case MAX_PREMISES_STREET_SUFFIX:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetPreDirection(FakerDataGenerator.getRandomNumericString(7));
+                break;
+            case INVALID_PREMISES_STREET_SUFFIX:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetPreDirection(FakerDataGenerator.generateUpperCaseString(4));
+                break;
+            case MAX_PREMISES_STREET_POST_DIRECTION:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(3));
+                break;
+            case INVALID_PREMISES_STREET_POST_DIRECTION_EQUAL_TO_TWO:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(3));
+                break;
+
+
+
+
+
+
+
+
+
+            default:
+                payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(13));
+        }
+    }
 }
+
 
 
