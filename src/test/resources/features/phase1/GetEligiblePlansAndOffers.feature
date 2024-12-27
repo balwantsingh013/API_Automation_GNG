@@ -197,9 +197,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | PremisesCountyCode                | errorCode | errorMessage                                  |
       | EMPTY_PREMISES_COUNTY_CODE        | 2000      | Invalid Request: Invalid Premises County Code |
-      | MIN_LENGTH_PREMISES_COUNTY_CODE   | 10000    | Invalid or missing Premises County Code       |
+      | MIN_LENGTH_PREMISES_COUNTY_CODE   | 10000     | Invalid or missing Premises County Code       |
       | ALPHANUMERIC_PREMISES_COUNTY_CODE | 2000      | Invalid Request: Invalid Premises County Code |
-
 
 
   @GetEligiblePlansAndOffersInvalidSeparateBillingAddress @Phase1  @NegativeFlow
@@ -208,8 +207,31 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | SeparateBillingAddress        | errorCode | errorMessage                                |
-      | NULL_SEPARATE_BILLING_ADDRESS | 10000     | Invalid or missing Separate Billing Address |
+      | SeparateBillingAddress                                                   | errorCode | errorMessage                                                                                                                     |
+      | EMPTY_SEPARATE_BILLING_ADDRESS                                           | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 39  BytePositionInLine: 32. |
+      | MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                      | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 39  BytePositionInLine: 33. |
+      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_PROVIDED                       | 10000     | The Billing Address Type must be a string with a maximum length of 1.                                                            |
+      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_MISSING                        | 2000      | Invalid Request: Missing conditional parameters-Billing Address Type                                                             |
+      | SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_ADD_TYPE                   | 2000      | Invalid Request: Invalid Billing Address Type                                                                                    |
+      | INVALID_SEPARATE_BILLING_ADDRESS_WITH_VALID_BILLING_ADD_TYPE             | 2000      | The Billing Street Name must be a string with a maximum length of 30.                                                            |
+      | VALID_SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_STREET_NUMBER        | 10000     | The Billing Street Number must be a string with a maximum length of 12.                                                          |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION     | 10000     | The Billing Street PreDirection must be a string with a maximum length of 2.                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_PRE_DIRECTION  | 10000     | The Billing Street PreDirection must be a string with a maximum length of 2.                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION     | 2000      | Invalid Request: Invalid Billing Street Pre Direction                                                                            |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_SUFFIX         | 10000     | The Billing Street Suffix must be a string with a maximum length of 6.                                                           |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_SUFFIX            | 2000      | Invalid Request: Invalid Billing Street Suffix                                                                                   |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_POST_DIRECTION | 10000     | The Billing Street PostDirection must be a string with a maximum length of 2.                                                    |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_POST_DIRECTION    | 2000      | Invalid Request: Invalid Billing Street Post Direction                                                                           |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_TYPE             | 10000     | The Billing Unit Type must be a string with a maximum length of 6.                                                               |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_UNIT_TYPE                | 2000      | Invalid Request: Invalid Billing Unit Type                                                                                       |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_NUMBER           | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                             |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE           | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                             |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_EMPTY_BILLING_RURAL_ROUTE                | 2000      | Invalid Request: Invalid Billing Rural Route                                                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE_NUMBER    | 10000     | The Billing Rural Route Number must be a string with a maximum length of 10.                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_RURAL_ROUTE_NUMBER          | 2000      | Invalid Request: Invalid Billing Rural Route Number                                                                              |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_PO_BOX                | 10000     | The Billing PO Box must be a string with a maximum length of 10.                                                                 |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_PO_BOX                      | 2000      | Invalid Request: Invalid Billing PO Box Number                                                                                   |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2         | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
 
 
   @GetEligiblePlansAndOffersWithInvalidRequestID @Phase1 @NegativeFlow
@@ -353,7 +375,6 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | MAX_LENGTH_TENANT_LANDLORD | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
       | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
       | NUMERIC_TENANT_LANDLORD    | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
-
 
 
   @GetEligiblePlansAndOffersInvalidAcnStatusIndicator @Phase1  @NegativeFlow

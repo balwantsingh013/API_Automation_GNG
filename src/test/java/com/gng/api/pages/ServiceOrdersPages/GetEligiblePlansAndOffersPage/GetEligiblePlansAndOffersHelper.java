@@ -273,14 +273,263 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public void setSeparateBillingAddressBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel separateBillingAddress) {
+    public void setSeparateBillingAddressBasedOnType258_283b(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel separateBillingAddress) {
         switch (separateBillingAddress) {
-            case NULL_SEPARATE_BILLING_ADDRESS:
+            case EMPTY_SEPARATE_BILLING_ADDRESS:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setSeparateBillingAddress(null);
+                payload.setSeparateBillingAddress("");
+                break;
             case MIN_LENGTH_SEPARATE_BILLING_ADDRESS:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(FakerDataGenerator.getRandomString(1));
+                break;
+            case SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_PROVIDED:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType(FakerDataGenerator.generateUpperCaseString(5));
+            break;
+                case SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_MISSING:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType(null);
+           break;
+            case SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_ADD_TYPE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("C");
+            break;
+                case INVALID_SEPARATE_BILLING_ADDRESS_WITH_VALID_BILLING_ADD_TYPE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName(FakerDataGenerator.generateUpperCaseString(31));
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_NUMBER:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(13));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_PRE_DIRECTION:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection("SOUTH");
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection("EN");
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_SUFFIX:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection("NE");
+                payload.setWorkPhoneNumber(null);
+                payload.setBillingStreetSuffix(FakerDataGenerator.generateUpperCaseString(7));
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_SUFFIX:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection("NE");
+                payload.setBillingStreetSuffix(FakerDataGenerator.generateUpperCaseString(3));
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_POST_DIRECTION:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("FLOWERY BRANCH");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection(null);
+                payload.setBillingStreetSuffix("CIR");
+                payload.setBillingStreetPostDirection(FakerDataGenerator.generateUpperCaseString(3));
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_POST_DIRECTION:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection(null);
+                payload.setWorkPhoneNumber(null);
+                payload.setBillingStreetSuffix("CIR");
+                payload.setBillingStreetPostDirection("EN");
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_TYPE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection("NE");
+                payload.setWorkPhoneNumber(null);
+                payload.setBillingStreetSuffix("CIR");
+                payload.setBillingStreetPostDirection("NE");
+                payload.setBillingUnitType(FakerDataGenerator.getRandomNumericString(7));
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_UNIT_TYPE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection("NE");
+                payload.setWorkPhoneNumber(null);
+                payload.setBillingStreetSuffix("CIR");
+                payload.setBillingStreetPostDirection("NE");
+                payload.setBillingUnitType("KE");
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_NUMBER:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setPremisesStreetPreDirection("NE");
+                payload.setBillingStreetSuffix("CIR");
+                payload.setBillingStreetPostDirection("NE");
+                payload.setBillingUnitType("KEY");
+                payload.setBillingUnitNumber(FakerDataGenerator.getRandomNumericString(7));
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("R");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setBillingRuralRoute(FakerDataGenerator.getRandomNumericString(21));
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_EMPTY_BILLING_RURAL_ROUTE:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("R");
+                payload.setBillingStreetName("TREE-PARK");
+                payload.setBillingCity("ATLANTA");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setBillingRuralRoute(null);
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE_NUMBER:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("R");
+                payload.setBillingRuralRoute("RR");
+                payload.setBillingRuralRouteNumber(FakerDataGenerator.getRandomNumericString(11));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_RURAL_ROUTE_NUMBER:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("P");
+                payload.setBillingRuralRoute("RR");
+                payload.setBillingCity("FLOWERY BRANCH");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setBillingRuralRouteNumber(null);
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_PO_BOX:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("P");
+                payload.setBillingRuralRoute("RR");
+                payload.setBillingCity("FLOWERY BRANCH");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setBillingPOBox(FakerDataGenerator.getRandomNumericString(12));
+                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_PO_BOX:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("P");
+                payload.setBillingRuralRoute("RR");
+                payload.setBillingCity("FLOWERY BRANCH");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setBillingPOBox(null);
+                break;
+            case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setSeparateBillingAddress(true);
+                payload.setBillingAddressType("S");
+                payload.setBillingRuralRoute("RR");
+                payload.setBillingCity("FLOWERY BRANCH");
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
+                payload.setBillingCountyCode("T207");
+                payload.setBillingAddressLine2(FakerDataGenerator.generateUpperCaseString(31));
+                break;
+
+
+
+
+
+                
             default:
                 payload.setSeparateBillingAddress(Boolean.getBoolean(String.valueOf(true)));
         }
@@ -496,7 +745,7 @@ public class GetEligiblePlansAndOffersHelper {
             case EMPTY_PREMISES_ZIP_CODE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setPremisesZipCode("");
-            case LOWERCASE_PREMISES_ZIP_CODE_STEP2:
+            case LOWERCASE_PREMISES_ZIP_CODE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setPremisesZipCode(FakerDataGenerator.generateLowerCaseString(5));
                 break;
@@ -508,11 +757,11 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setPremisesZipCode("3054-00000");
                 break;
-            case NUMERIC_PREMISES_ZIP_CODE_255A:
+            case NUMERIC_PREMISES_ZIP_CODE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setPremisesZipCode(FakerDataGenerator.getRandomString(5));
                 break;
-            case INVALID_PREMISES_ZIP_CODE_255C:
+            case INVALID_PREMISES_ZIP_CODE_RANDOM_STRING:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setPremisesZipCode(FakerDataGenerator.getRandomString(4));
                 break;

@@ -251,7 +251,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
     public void validateInvalidSeparateBillingAddressCases258_283b(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel separateBillingAddress) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setSeparateBillingAddressBasedOnType(payload, separateBillingAddress);
+        helper.setSeparateBillingAddressBasedOnType258_283b(payload, separateBillingAddress);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
