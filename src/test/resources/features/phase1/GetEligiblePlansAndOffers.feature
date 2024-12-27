@@ -72,7 +72,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | NULL_AUTHORIZED_BY | 2000      | Invalid Request: Missing conditional parameters-Authorized By |
 
 
-  @GetEligiblePlansAndOffersWithInvalidReferralCodeTC237_241 @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersWithInvalidReferralCode @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<referralCode>" code Type
     When a request is made to the GetEligiblePlansAndOffers Api with "<referralCode>" code Type
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
@@ -84,25 +84,132 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | ALPHANUMERIC_REFERRAL_CODE                      | 2000      | Invalid Request: Invalid Referral Code                                                                                                                       |
       | VALID_REFERRAL_CODE_WITH_MISSING_MARKETING_CODE | 1000      | Invalid Request: Missing Promotion Code -Please ask the customer for a promotion code. If they do not have one, enter the appropriate default promotion code |
 
-  @GetEligiblePlansAndOffersWithInvalidPremisesStreetTypeTC242_241 @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreet>"  Type
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreet>"  Type
+  @GetEligiblePlansAndOffersWithInvalidPremisesStreetType @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetNumber>"  Type
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetNumber>"  Type
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | premisesStreet                                     | errorCode | errorMessage                                                                  |
-      | MAX_PREMISES_STREET_NUMBER                         | 10000     | The Premises Street Number must be a string with a maximum length of 12.      |
+      | premisesStreetNumber       | errorCode | errorMessage                                                             |
+      | MAX_PREMISES_STREET_NUMBER | 10000     | The Premises Street Number must be a string with a maximum length of 12. |
+
+  @GetEligiblePlansAndOffersWithInvalidPremisesStreetPreDirection  @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetPreDirection>" test cases 243
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetPreDirection>" test cases 243
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesStreetPreDirection                         | errorCode | errorMessage                                                                  |
       | MAX_PREMISES_STREET_PRE_DIRECTION                  | 10000     | The Premises Street PreDirection must be a string with a maximum length of 2. |
       | INVALID_PREMISES_STREET_PRE_DIRECTION_EQUAL_TO_TWO | 2000      | Invalid Request: Invalid Premises Street Pre Direction                        |
-      | MAX_PREMISES_STREET_NAME                           | 10000     | The Premises Street Name must be a string with a maximum length of 30.       |
-      | NULL_PREMISES_STREET_NAME                           | 10000     | Invalid or missing Premises Street Name
-      | MAX_PREMISES_STREET_SUFFIX                           | 10000     | The Premises Street Suffix must be a string with a maximum length of 6.
-      | INVALID_PREMISES_STREET_SUFFIX                           | 2000    | Invalid Request: Invalid Premises Street Suffix
-      | MAX_PREMISES_STREET_POST_DIRECTION                  | 10000     | The Premises Street PostDirection must be a string with a maximum length of 2.|
 
-      | INVALID_PREMISES_STREET_POST_DIRECTION_EQUAL_TO_TWO | 2000      |Invalid Request: Invalid Premises Street Post Direction                      |
+  @GetEligiblePlansAndOffersWithInvalidPremisesStreetName  @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetName>" test cases 244
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetName>" test cases 244_245
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesStreetName        | errorCode | errorMessage                                                           |
+      | MAX_PREMISES_STREET_NAME  | 10000     | The Premises Street Name must be a string with a maximum length of 30. |
+      | NULL_PREMISES_STREET_NAME | 10000     | Invalid or missing Premises Street Name                                |
+
+  @GetEligiblePlansAndOffersWithInvalidPremisesStreetSuffix  @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetSuffix>" test cases 246_246a
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetSuffix>" test cases 246_246a
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesStreetSuffix           | errorCode | errorMessage                                                             |
+      | MAX_PREMISES_STREET_SUFFIX     | 10000     | The Premises Street Suffix  must be a string with a maximum length of 6. |
+      | INVALID_PREMISES_STREET_SUFFIX | 2000      | Invalid Request: Invalid Premises Street Suffix                          |
+
+  @GetEligiblePlansAndOffersWithInvalidPremisesStreetPostDirection  @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetPostDirection>" test cases 247_247a
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetPostDirection>" test cases 247_247a
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesStreetPostDirection                         | errorCode | errorMessage                                                                   |
+      | MAX_PREMISES_STREET_POST_DIRECTION                  | 10000     | The Premises Street PostDirection must be a string with a maximum length of 2. |
+      | INVALID_PREMISES_STREET_POST_DIRECTION_EQUAL_TO_TWO | 2000      | Invalid Request: Invalid Premises Street Post Direction                        |
+
+  @GetEligiblePlansAndOffersWithInvalidPremisesUnitType  @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesUnitType>" test cases 248_248a
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesUnitType>" test cases 248_248a
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesUnitType           | errorCode | errorMessage                                                        |
+      | MAX_PREMISES_UNIT_TYPE     | 10000     | The Premises Unit Type must be a string with a maximum length of 6. |
+      | INVALID_PREMISES_UNIT_TYPE | 2000      | Invalid Request: Invalid Premises Unit Type                         |
+
+  @GetEligiblePlansAndOffersWithInvalidPremisesUnitNumber  @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesUnitNumber>" test cases 249
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesUnitNumber>" test cases 249
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesUnitNumber       | errorCode | errorMessage                                                          |
+      | MAX_PREMISES_UNIT_NUMBER | 10000     | The Premises Unit Number must be a string with a maximum length of 6. |
 
 
+  @GetEligiblePlansAndOffersWithInvalidPremisesCity  @Phase1 @NegativeFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesCity>" test cases 250_251
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesCity>" test cases 250_251
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesCity       | errorCode | errorMessage                                                    |
+      | MAX_PREMISES_CITY  | 10000     | The Premises City must be a string with a maximum length of 20. |
+      | NULL_PREMISES_CITY | 10000     | Invalid or missing Premises City                                |
+
+  @GetEligiblePlansAndOffersInvalidPremisesStateCode  @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<PremisesStateCode>"252_253
+    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesStateCode>" Statecode 252_253
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | PremisesStateCode                        | errorCode | errorMessage                                                         |
+      | EMPTY_PREMISES_STATE_CODE                | 10000     | The Premises State Code must be a string with a maximum length of 3. |
+      | MAX_LENGTH_PREMISES_STATE_CODE           | 10000     | The Premises State Code must be a string with a maximum length of 3. |
+      | INVALID_PREMISES_STATE_CODE_EQUAL_TO_TWO | 2000      | Invalid Request: Invalid Premises State Code                         |
+
+  @GetEligiblePlansAndOffersInvalidPremisesZipCode @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<PremisesZipCode>"254_255c
+    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesZipCode>" Zipcode254_255c
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | PremisesZipCode                   | errorCode | errorMessage                                                       |
+      | EMPTY_PREMISES_ZIP_CODE           | 10000     | Invalid or missing Premises Zip Code                               |
+      | INVALID_PREMISES_ZIP_CODE         | 2000      | Invalid Request: Invalid Premises Zip Code                         |
+      | MAX_LENGTH_PREMISES_ZIP_CODE      | 10000     | The Premises ZipCode must be a string with a maximum length of 10. |
+      | LOWERCASE_PREMISES_ZIP_CODE_STEP2 | 2000      | Invalid Request: Invalid Premises Zip Code                         |
+      | INVALID_PREMISES_ZIP_CODE_255B    | 2000      | Invalid Request: Invalid Premises Zip Code                         |
+      | NUMERIC_PREMISES_ZIP_CODE_255A    | 2000      | Invalid Request: Invalid Premises Zip Code                         |
+
+
+  @GetEligiblePlansAndOffersInvalidPremisesCountyCode @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<PremisesCountyCode>"
+    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesCountyCode>" Countycode256_257
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | PremisesCountyCode                | errorCode | errorMessage                                  |
+      | EMPTY_PREMISES_COUNTY_CODE        | 2000      | Invalid Request: Invalid Premises County Code |
+      | MIN_LENGTH_PREMISES_COUNTY_CODE   | 10000    | Invalid or missing Premises County Code       |
+      | ALPHANUMERIC_PREMISES_COUNTY_CODE | 2000      | Invalid Request: Invalid Premises County Code |
+
+
+
+  @GetEligiblePlansAndOffersInvalidSeparateBillingAddress @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<SeparateBillingAddress>"
+    When a request is made to the GetEligiblePlansAndOffers Api with separateBilling "<SeparateBillingAddress>" Address258_283b
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | SeparateBillingAddress        | errorCode | errorMessage                                |
+      | NULL_SEPARATE_BILLING_ADDRESS | 10000     | Invalid or missing Separate Billing Address |
 
 
   @GetEligiblePlansAndOffersWithInvalidRequestID @Phase1 @NegativeFlow
@@ -219,42 +326,6 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | PremisesCity        | errorCode | errorMessage                     |
       | EMPTY_PREMISES_CITY | 10000     | Invalid or missing Premises City |
 
-  @GetEligiblePlansAndOffersInvalidPremisesZipCode @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesZipCode>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesZipCode>" Zipcode
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesZipCode                | errorCode | errorMessage                                                       |
-      | EMPTY_PREMISES_ZIP_CODE        | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-      | SPL_CHAR_PREMISES_ZIP_CODE     | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-      | MAX_LENGTH_PREMISES_ZIP_CODE   | 10000     | The Premises ZipCode must be a string with a maximum length of 10. |
-      | MIN_LENGTH_PREMISES_ZIP_CODE   | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-      | ALPHANUMERIC_PREMISES_ZIP_CODE | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-
-  @GetEligiblePlansAndOffersInvalidPremisesCountyCode @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesCountyCode>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesCountyCode>" Countycode
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesCountyCode                | errorCode | errorMessage                                                          |
-      | EMPTY_PREMISES_COUNTY_CODE        | 2000      | Invalid Request: Invalid Premises County Code                         |
-      | SPL_CHAR_PREMISES_COUNTY_CODE     | 2000      | Invalid Request: Invalid Premises County Code                         |
-      | MAX_LENGTH_PREMISES_COUNTY_CODE   | 10000     | The Premises County Code must be a string with a maximum length of 5. |
-      | ALPHANUMERIC_PREMISES_COUNTY_CODE | 2000      | Invalid Request: Invalid Premises County Code                         |
-
-  @GetEligiblePlansAndOffersInvalidPremisesStateCode @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesStateCode>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesStateCode>" Statecode
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesStateCode                | errorCode | errorMessage                                                         |
-      | EMPTY_PREMISES_STATE_CODE        | 10000     | The Premises State Code must be a string with a maximum length of 3. |
-      | SPL_CHAR_PREMISES_STATE_CODE     | 10000     | The Premises State Code must be a string with a maximum length of 3. |
-      | MAX_LENGTH_PREMISES_STATE_CODE   | 10000     | The Premises State Code must be a string with a maximum length of 3. |
-      | ALPHANUMERIC_PREMISES_STATE_CODE | 2000      | Invalid Request: Invalid Premises State Code                         |
 
   @GetEligiblePlansAndOffersInvalidCreditCheckOption @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CreditCheckOption>"
@@ -283,15 +354,6 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
       | NUMERIC_TENANT_LANDLORD    | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
 
-
-  @GetEligiblePlansAndOffersInvalidSeparateBillingAddress @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<SeparateBillingAddress>"
-    When a request is made to the GetEligiblePlansAndOffers Api with separateBilling "<SeparateBillingAddress>" Address
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | SeparateBillingAddress        | errorCode | errorMessage                                |
-      | NULL_SEPARATE_BILLING_ADDRESS | 10000     | Invalid or missing Separate Billing Address |
 
 
   @GetEligiblePlansAndOffersInvalidAcnStatusIndicator @Phase1  @NegativeFlow
