@@ -23,7 +23,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        tags = "@GetEligiblePlansAndOffersInvalidSeparateBillingAddress",
+        tags = "@",
         plugin = {
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"

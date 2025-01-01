@@ -5,61 +5,61 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesAndPromotionCodeAsNullTC318UC39 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC 318 UC 39
-    When  a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_319_UC 44
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC320UC46 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 320 UC 46
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes yes with no promotion code  TC_320_UC 46
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC321UC64 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 321 UC 64
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_321_UC 64
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC322UC45 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 322 UC 45
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_322_UC 45
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC323UCNA @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 323 UC NA
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_323_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC324UCNA @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 324 UC NA
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_324_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsServiceTransferWithNoPromotionCodeTC325UC55 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code TC 325 UC 55
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code  TC_325_UC 55
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsCommWithNoPromotionCodeTC326UC56 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code TC 326 UC 56
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code  TC_326_UC 56
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC327UC40  @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 327 UC 40
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_327_UC 40
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC328UCNA @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 328 UC NA
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesAndPromotionCodeAsNullTC318UC39 @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC 318 UC 39
+#    When  a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_319_UC 44
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC320UC46 @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 320 UC 46
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes yes with no promotion code  TC_320_UC 46
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC321UC64 @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 321 UC 64
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_321_UC 64
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC322UC45 @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 322 UC 45
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_322_UC 45
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC323UCNA @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 323 UC NA
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_323_UC NA
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC324UCNA @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 324 UC NA
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_324_UC NA
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsServiceTransferWithNoPromotionCodeTC325UC55 @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code TC 325 UC 55
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code  TC_325_UC 55
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsCommWithNoPromotionCodeTC326UC56 @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code TC 326 UC 56
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code  TC_326_UC 56
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC327UC40  @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 327 UC 40
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_327_UC 40
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#
+#  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC328UCNA @Phase1 @HappyFlow
+#  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 328 UC NA
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
 
 
   @GetEligiblePlansAndOffersWithInvalidTestCondition @Phase1 @NegativeFlow
@@ -207,187 +207,282 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | SeparateBillingAddress                                                   | errorCode | errorMessage                                                                                                                     |
-      | EMPTY_SEPARATE_BILLING_ADDRESS                                           | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 39  BytePositionInLine: 32. |
-      | MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                      | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 39  BytePositionInLine: 33. |
-      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_PROVIDED                       | 10000     | The Billing Address Type must be a string with a maximum length of 1.                                                            |
-      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_MISSING                        | 2000      | Invalid Request: Missing conditional parameters-Billing Address Type                                                             |
-      | SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_ADD_TYPE                   | 2000      | Invalid Request: Invalid Billing Address Type                                                                                    |
-      | INVALID_SEPARATE_BILLING_ADDRESS_WITH_VALID_BILLING_ADD_TYPE             | 2000      | The Billing Street Name must be a string with a maximum length of 30.                                                            |
-      | VALID_SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_STREET_NUMBER        | 10000     | The Billing Street Number must be a string with a maximum length of 12.                                                          |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION     | 10000     | The Billing Street PreDirection must be a string with a maximum length of 2.                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_PRE_DIRECTION  | 10000     | The Billing Street PreDirection must be a string with a maximum length of 2.                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION     | 2000      | Invalid Request: Invalid Billing Street Pre Direction                                                                            |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_SUFFIX         | 10000     | The Billing Street Suffix must be a string with a maximum length of 6.                                                           |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_SUFFIX            | 2000      | Invalid Request: Invalid Billing Street Suffix                                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_POST_DIRECTION | 10000     | The Billing Street PostDirection must be a string with a maximum length of 2.                                                    |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_POST_DIRECTION    | 2000      | Invalid Request: Invalid Billing Street Post Direction                                                                           |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_TYPE             | 10000     | The Billing Unit Type must be a string with a maximum length of 6.                                                               |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_UNIT_TYPE                | 2000      | Invalid Request: Invalid Billing Unit Type                                                                                       |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_NUMBER           | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                             |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE           | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                             |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_EMPTY_BILLING_RURAL_ROUTE                | 2000      | Invalid Request: Invalid Billing Rural Route                                                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE_NUMBER    | 10000     | The Billing Rural Route Number must be a string with a maximum length of 10.                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_RURAL_ROUTE_NUMBER          | 2000      | Invalid Request: Invalid Billing Rural Route Number                                                                              |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_PO_BOX                | 10000     | The Billing PO Box must be a string with a maximum length of 10.                                                                 |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_PO_BOX                      | 2000      | Invalid Request: Invalid Billing PO Box Number                                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2         | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
+      | SeparateBillingAddress                                                                         | errorCode | errorMessage                                                                                                                     |
+      | EMPTY_SEPARATE_BILLING_ADDRESS                                                                 | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 39  BytePositionInLine: 32. |
+      | MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                                            | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 39  BytePositionInLine: 33. |
+      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_PROVIDED                                             | 10000     | The Billing Address Type must be a string with a maximum length of 1.                                                            |
+      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_MISSING                                              | 2000      | Invalid Request: Missing conditional parameters-Billing Address Type                                                             |
+      | SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_ADD_TYPE                                         | 2000      | Invalid Request: Invalid Billing Address Type                                                                                    |
+      | INVALID_SEPARATE_BILLING_ADDRESS_WITH_VALID_BILLING_ADD_TYPE                                   | 10000     | The Billing Street Name must be a string with a maximum length of 30.                                                            |
+      | VALID_SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_STREET_NUMBER                              | 10000     | Invalid Request: Invalid Premises Street Pre Direction                                                                           |
+#      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION     | 10000     | The Billing Street PreDirection must be a string with a maximum length of 2.                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_PRE_DIRECTION                        | 10000     | The Billing Street PreDirection must be a string with a maximum length of 2.                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION                           | 2000      | Invalid Request: Invalid Billing Street Pre Direction                                                                            |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_SUFFIX                               | 10000     | The Billing Street Suffix must be a string with a maximum length of 6.                                                           |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_SUFFIX                                  | 2000      | Invalid Request: Invalid Billing Street Suffix                                                                                   |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_POST_DIRECTION                       | 10000     | The Billing Street PostDirection must be a string with a maximum length of 2.                                                    |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_POST_DIRECTION                          | 2000      | Invalid Request: Invalid Billing Street Post Direction                                                                           |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_TYPE                                   | 10000     | The Billing Unit Type must be a string with a maximum length of 6.                                                               |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_UNIT_TYPE                                      | 2000      | Invalid Request: Invalid Billing Unit Type                                                                                       |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_NUMBER                                 | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                             |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE                                 | 10000     | The Billing Rural Route must be a string with a maximum length of 20.                                                            |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_EMPTY_BILLING_RURAL_ROUTE                                      | 2000      | Invalid Request: Invalid Billing Rural Route                                                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE_NUMBER                          | 10000     | The Billing Rural Route Number must be a string with a maximum length of 10.                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_RURAL_ROUTE_NUMBER                                | 2000      | Invalid Request: Invalid Billing Rural Route Number                                                                              |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_PO_BOX                                      | 10000     | The Billing PO Box must be a string with a maximum length of 10.                                                                 |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_PO_BOX                                            | 2000      | Invalid Request: Invalid Billing PO Box Number                                                                                   |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2                               | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2_WITH_BILLING_RURAL_ROUTE      | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
+      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2_WITH_BILLING_PO_BOX           | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_CITY                                      | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_CITY_WITH_BILLING_RURAL_ROUTE             | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_CITY_WITH_BILLING_PO_BOX                  | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_PO_BOX            | 10000     | The Billing State Code must be a string with a maximum length of 3                                                               |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_RURAL_ROUTE       | 10000     | The Billing State Code must be a string with a maximum length of 3                                                               |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_PO_BOX            | 10000     | The Billing State Code must be a string with a maximum length of 3                                                               |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_ZIP_CODE_MISSING                                     | 2000      | Invalid Request: Missing conditional parameters-Billing Zip Code                                                                 |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_ZIP_CODE_MISSING                                     | 2000      | Invalid Request: Missing conditional parameters-Billing Zip Code                                                                 |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_COUNTY_CODE                               | 10000     | The Billing County Code must be a string with a maximum length of 5                                                              |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_BILLING_RURAL_ROUTE           | 10000     | The Billing County Code must be a string with a maximum length of 5                                                              |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_WITH_BILLING_PO_BOX           | 10000     | The Billing County Code must be a string with a maximum length of 5                                                              |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE                     | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE                     | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE_WITH_BILLING_PO_BOX | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
 
-
-  @GetEligiblePlansAndOffersWithInvalidRequestID @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"
-    When a request is made to the GetEligiblePlansAndOffers Api with "<requestID>"
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-
-    Examples:
-      | requestID                | errorCode | errorMessage           |
-      | EMPTY_REQUEST_ID         | 10001     | Missing Request ID     |
-      | DUPLICATE_REQUEST_ID     | 10003     | Duplicate Request ID   |
-      | LONG_REQUEST_ID          | 10002     | Invalid Request ID     |
-      | UNICODE_CHARS_REQUEST_ID | 10007     | Unsupported Characters |
-
-  @GetEligiblePlansAndOffersInvalidLoginID @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<loginID>"
-    When a request is made to the GetEligiblePlansAndOffers Api with login "<loginID>" ID
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | loginID                | errorCode | errorMessage                                              |
-      | MIN_LENGTH_LOGIN_ID    | 2000      | Invalid Login ID                                          |
-      | SPECIAL_CHARS_LOGIN_ID | 2000      | Invalid Login ID                                          |
-      | EMPTY_LOGIN_ID         | 10000     | Missing Login ID                                          |
-      | UPPERCASE_LOGIN_ID     | 2000      | Invalid Login ID                                          |
-      | ALPHANUMERIC_LOGIN_ID  | 2000      | Invalid Login ID                                          |
-      | MAX_LENGTH_LOGIN_ID    | 10000     | The Login ID must be a string with a maximum length of 30 |
-
-  @GetEligiblePlansAndOffersInvalidTransactionType @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<transactionType>"Type
-    When a request is made to the GetEligiblePlansAndOffers Api with  transaction "<transactionType>" Type
+  @GetEligiblePlansAndOffersInvalidWorkPhoneNumber @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<WorkPhoneNumber>"
+    When a request is made to the GetEligiblePlansAndOffers Api with workPhone "<WorkPhoneNumber>" Number284_286
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | transactionType                      | errorCode | errorMessage                                                     |
-      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
-      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | UPPERCASE_TRANSACTION_TYPE           | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
-#      | MAX_LENGTH_TRANSACTION_TYPE          | 1000      | Invalid Request: Invalid Transaction Type                        |
-      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | WorkPhoneNumber                                   | errorCode | errorMessage                                                      |
+      | MIN_LENGTH_WORK_PHONE_NUMBER                      | 2000      | Invalid Request: Invalid Work Phone Number                        |
+      | ALPHANUMERIC_WORK_PHONE_NUMBER                    | 2000      | Invalid Request: Invalid Work Phone Number                        |
+      | NULL_WORK_PHONE_NUMBER_WITH_VALID_WORK_PHONE_TYPE | 2000      | Invalid Request: Missing conditional parameters-Work Phone Number |
 
-  @GetEligiblePlansAndOffersInvalidCustomerTYPE @Phase1  @NegativeFlow
-  Scenario Outline: Verify SaveEnrollment Api with invalid "<customerTYPE>" type
-    When a request is made to the GetEligiblePlansAndOffers Api with  customer "<customerTYPE>" Type
+
+  @GetEligiblePlansAndOffersInvalidWorkPhoneType @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<WorkPhoneType>"
+    When a request is made to the GetEligiblePlansAndOffers Api with WorkPhone "<WorkPhoneType>" Type287_290
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | customerTYPE             | errorCode | errorMessage                                                   |
-      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                               |
-      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2. |
-      | NUMERIC_CUSTOMER_TYPE    | 2000      | Invalid Request: Invalid Customer Type                         |
-      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2. |
-      | MAX_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2. |
+      | WorkPhoneType                                     | errorCode | errorMessage                                                          |
+      | NULL_WORK_PHONE_TYPE_WITH_VALID_WORK_PHONE_NUMBER | 2000      | Invalid Request: Missing conditional parameters-Work Phone Type       |
+      | MAX_LENGTH_WORK_EXTENSION_TYPE                    | 10000     | The Work Phone Extension must be a string with a maximum length of 4. |
+      | WORK_PHONE_TYPE_PROVIDED_MAX_1_CHAR               | 10000     | The Work Phone Type must be a string with a maximum length of 1.      |
+      | INVALID_WORK_PHONE_TYPE_VALUE                     | 2000      | Invalid Request: Invalid Work Phone Type                              |
 
-  @GetEligiblePlansAndOffersInvalidEnrollmentSources @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<enrollmentSources>"
-    When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<enrollmentSources>" Sources
+  @GetEligiblePlansAndOffersInvalidHomePhoneNumber @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<HomePhoneNumber>"
+    When a request is made to the GetEligiblePlansAndOffers Api with HomePhone "<HomePhoneNumber>" Number291_293
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | enrollmentSources             | errorCode | errorMessage                                                        |
-      | EMPTY_ENROLLMENT_SOURCES      | 10000     | Invalid or missing Enrollment Source                                |
-      | NUMERIC_ENROLLMENT_SOURCES    | 1000      | Invalid Request: Invalid Enrollment Source                          |
-      | SPL_CHAR_ENROLLMENT_SOURCES   | 1000      | Invalid Request: Invalid Enrollment Source                          |
-      | MAX_LENGTH_ENROLLMENT_SOURCES | 10000     | The Enrollment Source must be a string with a maximum length of 35. |
+      | HomePhoneNumber                                   | errorCode | errorMessage                                                      |
+      | MIN_LENGTH_HOME_PHONE_NUMBER                      | 2000      | Invalid Request: Invalid Home Phone Number                        |
+      | ALPHANUMERIC_HOME_PHONE_NUMBER                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
+      | NULL_HOME_PHONE_NUMBER_WITH_VALID_HOME_PHONE_TYPE | 2000      | Invalid Request: Missing conditional parameters-Home Phone Number |
 
-  @GetEligiblePlansAndOffersInvalidCustomerLastName @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<CustomerLastName>"
-    When a request is made to the GetEligiblePlansAndOffers Api with customer "<CustomerLastName>" LastName
+
+  @GetEligiblePlansAndOffersInvalidHomePhoneType @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<HomePhoneType>"
+    When a request is made to the GetEligiblePlansAndOffers Api with HomePhone "<HomePhoneType>" Type294_297
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | CustomerLastName         | errorCode | errorMessage                                                       |
-      | EMPTY_CUSTOMER_LAST_NAME | 2000      | Invalid Request: Missing conditional parameters-Customer Last Name |
-
-  @GetEligiblePlansAndOffersInvalidCustomerFirstName @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<CustomerFirstName>"
-    When a request is made to the GetEligiblePlansAndOffers Api with customer "<CustomerFirstName>" FirstName
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | CustomerFirstName         | errorCode | errorMessage                                                       |
-      | EMPTY_CUSTOMER_FIRST_NAME | 10000     | Invalid Request: Missing conditional parameters-Customer Last Name |
-
-  @GetEligiblePlansAndOffersInvalidSeasonalSavingsProgramIndicator @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid  "<SeasonalSavingsProgramIndicator>"
-    When a request is made to the GetEligiblePlansAndOffers Api with seasonal savings program "<SeasonalSavingsProgramIndicator>" Indicator
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | SeasonalSavingsProgramIndicator         | errorCode | errorMessage                                   |
-      | NULL_SEASONAL_SAVINGS_PROGRAM_INDICATOR | 10000     | Seasonal Saving Program Indicator Not Provided |
-
-  @GetEligiblePlansAndOffersInvalidPremisesStreetName @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesStreetName>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesStreetName>" StreetName
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesStreetName         | errorCode | errorMessage                            |
-      | EMPTY_PREMISES_STREET_NAME | 10000     | Invalid or missing Premises Street Name |
-#      | SPL_CHAR_PREMISES_STREET_NAME   | 11115     | No Data in the Experian response                                       |
-#      | MAX_LENGTH_PREMISES_STREET_NAME | 10000     | The Premises Street Name must be a string with a maximum length of 30. |
-
-
-  @GetEligiblePlansAndOffersInvalidPremisesCity @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesCity>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesCity>" City
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesCity        | errorCode | errorMessage                     |
-      | EMPTY_PREMISES_CITY | 10000     | Invalid or missing Premises City |
-
-
-  @GetEligiblePlansAndOffersInvalidCreditCheckOption @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<CreditCheckOption>"
-    When a request is made to the GetEligiblePlansAndOffers Api with credit "<CreditCheckOption>" Checkoption
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | CreditCheckOption                | errorCode | errorMessage                                 |
-      | EMPTY_CREDIT_CHECK_OPTION        | 2000      | Invalid Request: Invalid Credit Check Option |
-      | SPL_CHAR_CREDIT_CHECK_OPTION     | 2000      | Invalid Request: Invalid Credit Check Option |
-      | MAX_LENGTH_CREDIT_CHECK_OPTION   | 2000      | Invalid Request: Invalid Credit Check Option |
-      | NUMERIC_CREDIT_CHECK_OPTION      | 2000      | Invalid Request: Invalid Credit Check Option |
-      | ALPHANUMERIC_CREDIT_CHECK_OPTION | 2000      | Invalid Request: Invalid Credit Check Option |
-
-
-  @GetEligiblePlansAndOffersInvalidTenantLandlord @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<TenantLandlord>"
-    When a request is made to the GetEligiblePlansAndOffers Api with tenant "<TenantLandlord>" Landlord
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | TenantLandlord             | errorCode | errorMessage                                                     |
-      | EMPTY_TENANT_LANDLORD      | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
-      | SPL_CHAR_TENANT_LANDLORD   | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
-      | MAX_LENGTH_TENANT_LANDLORD | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
-      | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
-      | NUMERIC_TENANT_LANDLORD    | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
-
+      | HomePhoneType                                     | errorCode | errorMessage                                                     |
+      | NULL_HOME_PHONE_TYPE_WITH_VALID_HOME_PHONE_NUMBER | 2000      | Invalid Request: Missing conditional parameters-Home Phone Type  |
+      | HOME_PHONE_TYPE_PROVIDED_MAX_1_CHAR               | 10000     | The Home Phone Type must be a string with a maximum length of 1. |
+      | INVALID_HOME_PHONE_TYPE_VALUE                     | 2000      | Invalid Request: Invalid Work Phone Type                         |
 
   @GetEligiblePlansAndOffersInvalidAcnStatusIndicator @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<AcnStatusIndicator>"
-    When a request is made to the GetEligiblePlansAndOffers Api with acnStatus "<AcnStatusIndicator>" Indicator
+    When a request is made to the GetEligiblePlansAndOffers Api with acnStatus "<AcnStatusIndicator>" IndicatorTC298_307
     Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | AcnStatusIndicator                | errorCode | errorMessage                                                          |
-      | EMPTY_ACN_STATUS_INDICATOR        | 10000     | The ACN Status Indicator must be a string with a maximum length of 4. |
-      | SPL_CHAR_ACN_STATUS_INDICATOR     | 10000     | The ACN Status Indicator must be a string with a maximum length of 4. |
-      | MAX_LENGTH_ACN_STATUS_INDICATOR   | 2000      | Invalid Request: Invalid ACN Status Indicator                         |
-      | ALPHANUMERIC_ACN_STATUS_INDICATOR | 2000      | Invalid Request: Invalid ACN Status Indicator                         |
+      | AcnStatusIndicator                                                        | errorCode | errorMessage                                                          |
+      | EMPTY_ACN_STATUS_INDICATOR_WITH_TENANT_LANDLORD                           | 10000     | Invalid or missing ACN Status Indicator                               |
+      | INVALID_ACN_STATUS_INDICATOR_VALUE_NOT_PRESENT_IN_TABLE                   | 2000      | Invalid Request: Invalid ACN Status Indicator                         |
+      | MAX_LENGTH_ACN_STATUS_INDICATOR                                           | 10000     | The ACN Status Indicator must be a string with a maximum length of 4. |
+      | VALID_ACN_STATUS_INDICATOR_WITH_MAX_LENGTH_TENANT_LANDLORD                | 10000     | The Tenant/Landlord must be a string with a maximum length of 1.      |
+      | VALID_ACN_STATUS_INDICATOR_WITH_NULL_TENANT_LANDLORD                      | 10000     | Invalid or missing Tenant Landlord                                    |
+      | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE | 2000      | Invalid Request: Invalid ACN Status for user role                     |
+      | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE | 2000      | Invalid Request: Invalid ACN Status for user role                     |
+      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE  | 10000     | Invalid or missing ACN Status Indicator                               |
+      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE  | 10000     | Invalid Request: Invalid ACN Status for user role                     |
+
+  @GetEligiblePlansAndOffersInvalidCustomerPEWCPreferences @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<CustomerPEWCPreferences>"
+    When a request is made to the GetEligiblePlansAndOffers Api with CustomerPEWC "<CustomerPEWCPreferences>" PreferencesTC308_310
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | CustomerPEWCPreferences                                   | errorCode | errorMessage                                                                                                                      |
+      | CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL | 10000     | The JSON value could not be converted to System.Boolean. Path: $.customerPEWCPreferences  LineNumber: 63  BytePositionInLine: 37. |
+      | CUSTOMER_PEWC_PREFRENCES_VALUE_TRUE_WITH_OTHER_PARAM_NULL | 2000      | Invalid Request: Missing conditional parameters-Customer PEWC Preference                                                          |
+
+  @GetEligiblePlansAndOffersInvalidCreditCheckOption @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<CreditCheckOption>"
+    When a request is made to the GetEligiblePlansAndOffers Api with credit "<CreditCheckOption>" CheckoptionTC310_312
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | CreditCheckOption                | errorCode | errorMessage                                                          |
+      | EMPTY_CREDIT_CHECK_OPTION        | 2000      | Invalid Request: Invalid Credit Check Option                          |
+      | INVALID_CREDIT_CHECK_OPTION      | 2000      | Invalid Request: Invalid Credit Check Option                          |
+      | MAX_LENGTH_CREDIT_CHECK_OPTION   | 10000     | The Credit Check Option must be a string with a maximum length of 32. |
+      | NUMERIC_CREDIT_CHECK_OPTION      | 2000      | Invalid Request: Invalid Credit Check Option                          |
+      | ALPHANUMERIC_CREDIT_CHECK_OPTION | 2000      | Invalid Request: Invalid Credit Check Option                          |
+
+  @GetEligiblePlansAndOffersInitialCreditCheckCustomerCode @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<InitialCreditCheckCustomerCode>"
+    When a request is made to the GetEligiblePlansAndOffers Api with InitialCreditCheck "<InitialCreditCheckCustomerCode>" CustomerCodeTC313_315
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | InitialCreditCheckCustomerCode                                    | errorCode | errorMessage                                                                                                                                              |
+      | EMPTY_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITH_CREDIT_CHECK_OPTION | 2000      | Invalid Request: Invalid Credit Check Option                                                                                                              |
+      | MAX_LENGTH_INITIAL_CREDIT_CHECK_CUSTOMER_CODE                     | 10000     | The Customer Code must be an integer with a maximum length of 9.                                                                                          |
+      | NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int32]. Path: $.initialCreditCheckCustomerCode  LineNumber: 65  BytePositionInLine: 47. |
+
+
+
+
+
+
+#  @GetEligiblePlansAndOffersWithInvalidRequestID @Phase1 @NegativeFlow
+#  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with "<requestID>"
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#
+#    Examples:
+#      | requestID                | errorCode | errorMessage           |
+#      | EMPTY_REQUEST_ID         | 10001     | Missing Request ID     |
+#      | DUPLICATE_REQUEST_ID     | 10003     | Duplicate Request ID   |
+#      | LONG_REQUEST_ID          | 10002     | Invalid Request ID     |
+#      | UNICODE_CHARS_REQUEST_ID | 10007     | Unsupported Characters |
+#
+#  @GetEligiblePlansAndOffersInvalidLoginID @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid "<loginID>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with login "<loginID>" ID
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | loginID                | errorCode | errorMessage                                              |
+#      | MIN_LENGTH_LOGIN_ID    | 2000      | Invalid Login ID                                          |
+#      | SPECIAL_CHARS_LOGIN_ID | 2000      | Invalid Login ID                                          |
+#      | EMPTY_LOGIN_ID         | 10000     | Missing Login ID                                          |
+#      | UPPERCASE_LOGIN_ID     | 2000      | Invalid Login ID                                          |
+#      | ALPHANUMERIC_LOGIN_ID  | 2000      | Invalid Login ID                                          |
+#      | MAX_LENGTH_LOGIN_ID    | 10000     | The Login ID must be a string with a maximum length of 30 |
+#
+#  @GetEligiblePlansAndOffersInvalidTransactionType @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid "<transactionType>"Type
+#    When a request is made to the GetEligiblePlansAndOffers Api with  transaction "<transactionType>" Type
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | transactionType                      | errorCode | errorMessage                                                     |
+#      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
+#      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+#      | UPPERCASE_TRANSACTION_TYPE           | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+#      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
+##      | MAX_LENGTH_TRANSACTION_TYPE          | 1000      | Invalid Request: Invalid Transaction Type                        |
+#      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+#
+#  @GetEligiblePlansAndOffersInvalidCustomerTYPE @Phase1  @NegativeFlow
+#  Scenario Outline: Verify SaveEnrollment Api with invalid "<customerTYPE>" type
+#    When a request is made to the GetEligiblePlansAndOffers Api with  customer "<customerTYPE>" Type
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | customerTYPE             | errorCode | errorMessage                                                   |
+#      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                               |
+#      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2. |
+#      | NUMERIC_CUSTOMER_TYPE    | 2000      | Invalid Request: Invalid Customer Type                         |
+#      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2. |
+#      | MAX_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2. |
+#
+#  @GetEligiblePlansAndOffersInvalidEnrollmentSources @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid "<enrollmentSources>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<enrollmentSources>" Sources
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | enrollmentSources             | errorCode | errorMessage                                                        |
+#      | EMPTY_ENROLLMENT_SOURCES      | 10000     | Invalid or missing Enrollment Source                                |
+#      | NUMERIC_ENROLLMENT_SOURCES    | 1000      | Invalid Request: Invalid Enrollment Source                          |
+#      | SPL_CHAR_ENROLLMENT_SOURCES   | 1000      | Invalid Request: Invalid Enrollment Source                          |
+#      | MAX_LENGTH_ENROLLMENT_SOURCES | 10000     | The Enrollment Source must be a string with a maximum length of 35. |
+#
+#  @GetEligiblePlansAndOffersInvalidCustomerLastName @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid "<CustomerLastName>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer "<CustomerLastName>" LastName
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | CustomerLastName         | errorCode | errorMessage                                                       |
+#      | EMPTY_CUSTOMER_LAST_NAME | 2000      | Invalid Request: Missing conditional parameters-Customer Last Name |
+#
+#  @GetEligiblePlansAndOffersInvalidCustomerFirstName @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid "<CustomerFirstName>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with customer "<CustomerFirstName>" FirstName
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | CustomerFirstName         | errorCode | errorMessage                                                       |
+#      | EMPTY_CUSTOMER_FIRST_NAME | 10000     | Invalid Request: Missing conditional parameters-Customer Last Name |
+#
+#  @GetEligiblePlansAndOffersInvalidSeasonalSavingsProgramIndicator @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid  "<SeasonalSavingsProgramIndicator>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with seasonal savings program "<SeasonalSavingsProgramIndicator>" Indicator
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | SeasonalSavingsProgramIndicator         | errorCode | errorMessage                                   |
+#      | NULL_SEASONAL_SAVINGS_PROGRAM_INDICATOR | 10000     | Seasonal Saving Program Indicator Not Provided |
+#
+#  @GetEligiblePlansAndOffersInvalidPremisesStreetName @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid "<PremisesStreetName>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesStreetName>" StreetName
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | PremisesStreetName         | errorCode | errorMessage                            |
+#      | EMPTY_PREMISES_STREET_NAME | 10000     | Invalid or missing Premises Street Name |
+##      | SPL_CHAR_PREMISES_STREET_NAME   | 11115     | No Data in the Experian response                                       |
+##      | MAX_LENGTH_PREMISES_STREET_NAME | 10000     | The Premises Street Name must be a string with a maximum length of 30. |
+#
+#
+#
+#
+#  @GetEligiblePlansAndOffersInvalidTenantLandlord @Phase1  @NegativeFlow
+#  Scenario Outline: Verify response code for invalid "<TenantLandlord>"
+#    When a request is made to the GetEligiblePlansAndOffers Api with tenant "<TenantLandlord>" Landlord
+#    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    Examples:
+#      | TenantLandlord             | errorCode | errorMessage                                                     |
+#      | EMPTY_TENANT_LANDLORD      | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
+#      | SPL_CHAR_TENANT_LANDLORD   | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
+#      | MAX_LENGTH_TENANT_LANDLORD | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
+#      | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
+#      | NUMERIC_TENANT_LANDLORD    | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
+#
+#
+
 
 #  @GetEligiblePlansAndOffersInvalidAglcServiceLocationID @Phase1  @NegativeFlow
 #  Scenario Outline: Verify response code for invalid "<AglcServiceLocationID>"

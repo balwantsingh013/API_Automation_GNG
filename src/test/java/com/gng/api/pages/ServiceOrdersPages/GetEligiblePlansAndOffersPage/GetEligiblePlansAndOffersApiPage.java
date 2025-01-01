@@ -256,6 +256,62 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidWorkPhoneNumberTC284_286(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel workphonenumber) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setWorkPhoneNumberBasedOnType284_286(payload, workphonenumber);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidWorkPhoneTypeTC287_290(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel workphonetype) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setWorkPhoneTypeBasedOnType287_290(payload, workphonetype);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidHomePhoneNumberTC291_293(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel homePhoneNumber) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setHomePhoneNumberBasedOnType291_293(payload, homePhoneNumber);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidHomePhoneTypeTC294_297(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel homePhoneType) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setHomePhoneTypeBasedOnType294_297(payload, homePhoneType);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidAcnStatusIndicatorCasesTC298_307(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel acnStatusIndicator) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setAcnStatusIndicatorBasedOnTypeTC298_307(payload, acnStatusIndicator);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidCustomerPEWCPreferencesCasesTC308_309(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel acnStatusIndicator) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerPEWCPreferencesBasedOnTypeTC308_309(payload, acnStatusIndicator);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidCreditCheckOptionCases310_312(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel creditCheckOption) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setCreditCheckOptionBasedOnTypeTC310_312(payload, creditCheckOption);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInitialCreditCheckCustomerCodeCases313_315(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel initialCreditCheckCustomerCode) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setInitialCreditCheckCustomerCodeBasedOnTypeTC313_312(payload, initialCreditCheckCustomerCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
 
 
 
@@ -318,15 +374,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-
-
-    public void validateInvalidCreditCheckOptionCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel creditCheckOption) {
-        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setCreditCheckOptionBasedOnType(payload, creditCheckOption);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-        testContext.setResponse(response);
-    }
     public void validateInvalidTenantLandlordCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel tenantLandlord) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setTenantLandlordBasedOnType(payload, tenantLandlord);
@@ -335,13 +382,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateInvalidAcnStatusIndicatorCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel acnStatusIndicator) {
-        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setAcnStatusIndicatorBasedOnType(payload, acnStatusIndicator);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-        testContext.setResponse(response);
-    }
+
 //    public void validateInvalidAglcServiceLocationIDCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel aglcServiceLocationID) {
 //        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
 //        helper.setAglcServiceLocationIDBasedOnType(payload, aglcServiceLocationID);

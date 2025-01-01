@@ -34,7 +34,7 @@ public class GetEligiblePlansAndOffersRequest{
 	private String loginID;
 	private String premisesStateCode;
 	private Object federalTaxID;
-	private boolean customerPEWCPreferences;
+	private Object customerPEWCPreferences;
 	private Object billingZipCode;
 	private Object billingRuralRoute;
 	private String premisesStreetName;
