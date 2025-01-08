@@ -150,13 +150,35 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
     }
 
-    public void validateInvalidRequestIDCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {
+    public void validateInvalidRequestIDCasesTC155_157(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setRequestIDBasedOnType(payload, requestID);
+        helper.setRequestIDBasedOnTypeTC155_157(payload, requestID);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidLoginIDCasesTC158_160B(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel loginID) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setLoginIDBasedOnTypeTC158_160B(payload, loginID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidTransactionIDCasesTC161_162(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel transactionID) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setTransactionIDBasedOnTypeTC161_162(payload, transactionID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidCustomerCodeCasesTC163_164(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel customercode) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerCodeBasedOnTypeTC163_164(payload, customercode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateInvalidTestCondition(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setInvalidTestCondition(payload, testCondition);
@@ -305,23 +327,14 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
     }
-    public void validateInitialCreditCheckCustomerCodeCases313_315(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel initialCreditCheckCustomerCode) {
+    public void validateInitialCreditCheckCustomerCodeCases313_317(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel initialCreditCheckCustomerCode) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setInitialCreditCheckCustomerCodeBasedOnTypeTC313_312(payload, initialCreditCheckCustomerCode);
+        helper.setInitialCreditCheckCustomerCodeBasedOnTypeTC313_317(payload, initialCreditCheckCustomerCode);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
     }
 
-
-
-    public void validateInvalidLoginIDCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel loginID) {
-        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setLoginIDBasedOnType(payload, loginID);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-        testContext.setResponse(response);
-    }
     public void validateInvalidTransactionTypeCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel transactionType) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setTransactionTypeBasedOnType(payload, transactionType);
