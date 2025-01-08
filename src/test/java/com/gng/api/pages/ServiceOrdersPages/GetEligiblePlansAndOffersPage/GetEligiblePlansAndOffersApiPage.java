@@ -185,10 +185,17 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
     }
-
-    public void validateInvalidTestCondition(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void validateInvalidEnrollmentStateCasesTC168_182(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesCode) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setInvalidTestCondition(payload, testCondition);
+        helper.setPremisesCodeBasedOnTypeTC165_167(payload, premisesCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidTestConditionTC237(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setInvalidTestConditionTC237(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
@@ -266,7 +273,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
     public void validateInvalidPremisesZipCodeCases254_255C(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesZipCode) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setPremisesZipCodeBasedOnType254_254c(payload, premisesZipCode);
+        helper.setPremisesZipCodeBasedOnType254_255c(payload, premisesZipCode);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);

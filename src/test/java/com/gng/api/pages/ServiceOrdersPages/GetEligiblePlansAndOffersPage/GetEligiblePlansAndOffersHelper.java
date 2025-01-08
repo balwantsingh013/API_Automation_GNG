@@ -441,14 +441,12 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingAddressType("R");
-                payload.setBillingStreetName("TREE-PARK");
                 payload.setBillingCity("ATLANTA");
                 payload.setBillingStateCode("GA");
                 payload.setBillingZipCode("30542");
                 payload.setBillingCountyCode("T207");
+                payload.setLoginID("sys");
                 payload.setBillingRuralRoute(null);
-                payload.setBillingRuralRouteNumber(null);
-                payload.setBillingStreetNumber(FakerDataGenerator.getRandomNumericString(12));
                 break;
             case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE_NUMBER:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
@@ -461,11 +459,12 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingAddressType("R");
-                payload.setBillingRuralRoute("RR");
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingStateCode("GA");
                 payload.setBillingZipCode("30542");
                 payload.setBillingCountyCode("T207");
+                payload.setLoginID("sys");
+                payload.setBillingRuralRoute("RR");
                 payload.setBillingRuralRouteNumber(null);
                 break;
             case VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_PO_BOX:
@@ -484,7 +483,6 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingAddressType("P");
-                payload.setBillingRuralRoute("RR");
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingStateCode("GA");
                 payload.setBillingZipCode("30542");
@@ -567,7 +565,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingCity("ATLANTA");
                 payload.setBillingZipCode("30542");
                 payload.setBillingCountyCode("T207");
-                payload.setBillingStateCode(FakerDataGenerator.generateUpperCaseString(4));
+                payload.setBillingStateCode("GAGA");
                 break;
             case VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_RURAL_ROUTE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
@@ -577,7 +575,8 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingRuralRouteNumber("123");
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingZipCode("30542");
-                payload.setBillingStateCode(FakerDataGenerator.generateUpperCaseString(4));
+                payload.setBillingStateCode("GAGA");
+
                 break;
             case VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_PO_BOX:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
@@ -588,7 +587,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingZipCode("30542");
                 payload.setBillingCountyCode("T207");
-                payload.setBillingStateCode(FakerDataGenerator.generateUpperCaseString(4));
+                payload.setBillingStateCode("GAGA");
                 break;
             case VALID_BILLING_ADDRESS_TYPE_S_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
@@ -630,7 +629,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetPreDirection(null);
                 payload.setBillingCity("ATLANTA");
                 payload.setBillingZipCode("1234-12345");
-                payload.setBillingStateCode("AAA");
+                payload.setBillingStateCode("GA");
                 payload.setBillingCountyCode("T207");
                 break;
             case VALID_BILLING_ADDRESS_TYPE_S_WITH_MIN_LENGTH_BILLING_ZIP_CODE:
@@ -641,7 +640,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetPreDirection(null);
                 payload.setBillingCity("ATLANTA");
                 payload.setBillingZipCode("1234");
-                payload.setBillingStateCode("AAA");
+                payload.setBillingStateCode("GA");
                 payload.setBillingCountyCode("T207");
                 break;
             case VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_ZIP_CODE:
@@ -654,7 +653,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetPreDirection(null);
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingZipCode("1234-5897");
-                payload.setBillingStateCode("AAA");
+                payload.setBillingStateCode("GA");
                 payload.setBillingCountyCode("T207");
                 break;
             case VALID_BILLING_ADDRESS_TYPE_R_WITH_MIN_LENGTH_BILLING_ZIP_CODE:
@@ -667,7 +666,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetPreDirection(null);
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingZipCode("1234");
-                payload.setBillingStateCode("AAA");
+                payload.setBillingStateCode("GA");
                 payload.setBillingCountyCode("T207");
                 break;
             case VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_ZIP_CODE:
@@ -680,7 +679,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetPreDirection(null);
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingZipCode("3054-30542");
-                payload.setBillingStateCode("AAA");
+                payload.setBillingStateCode("GA");
                 payload.setBillingPOBox("2A");
                 payload.setBillingCountyCode("T207");
                 break;
@@ -693,8 +692,8 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetName("TREE-PARK");
                 payload.setBillingStreetPreDirection(null);
                 payload.setBillingCity("FLOWERY BRANCH");
-                payload.setBillingZipCode("1234");
-                payload.setBillingStateCode("AAA");
+                payload.setBillingZipCode("3054");
+                payload.setBillingStateCode("GA");
                 payload.setBillingPOBox("2A");
                 payload.setBillingCountyCode("T207");
                 break;
@@ -727,7 +726,8 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetName("TREE-PARK");
                 payload.setBillingStreetSuffix("CIR");
                 payload.setBillingCity("FLOWERY BRANCH");
-                payload.setBillingZipCode(FakerDataGenerator.generateZipCode());
+                payload.setBillingStateCode("GA");
+                payload.setBillingZipCode("30542");
                 payload.setBillingCountyCode("T12345");
                 break;
             case VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_BILLING_RURAL_ROUTE:
@@ -736,6 +736,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingAddressType("R");
                 payload.setBillingRuralRoute("RR");
                 payload.setBillingRuralRouteNumber("2A");
+                payload.setBillingStateCode("GA");
                 payload.setBillingCity("FLOWERY BRANCH");
                 payload.setBillingZipCode(null);
                 payload.setBillingCountyCode("T207T207");
@@ -743,6 +744,7 @@ public class GetEligiblePlansAndOffersHelper {
             case VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_WITH_BILLING_PO_BOX:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(true);
+                payload.setLoginID("sys");
                 payload.setBillingAddressType("P");
                 payload.setBillingPOBox("2A");
                 payload.setBillingAddressLine2(null);
@@ -755,6 +757,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingAddressType("S");
+                payload.setLoginID("sys");
                 payload.setBillingStreetNumber("1308");
                 payload.setBillingStreetPreDirection(null);
                 payload.setBillingStreetName("TREE-PARK");
@@ -877,25 +880,19 @@ public class GetEligiblePlansAndOffersHelper {
             case NULL_HOME_PHONE_TYPE_WITH_VALID_HOME_PHONE_NUMBER:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setHomePhoneType(null);
-                payload.setBillingRuralRoute(null);
-                payload.setBillingRuralRouteNumber(null);
-                payload.setHomePhoneNumber(FakerDataGenerator.generatePhoneNumber());
+                payload.setHomePhoneNumber("4164965313");
                 break;
             case HOME_PHONE_TYPE_PROVIDED_MAX_1_CHAR:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setHomePhoneType("LL");
-                payload.setBillingRuralRoute(null);
-                payload.setBillingRuralRouteNumber(null);
-                payload.setHomePhoneNumber(FakerDataGenerator.generatePhoneNumber());
+                payload.setHomePhoneNumber("4164965313");
                 break;
             case INVALID_HOME_PHONE_TYPE_VALUE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setHomePhoneType("B");
-                payload.setBillingRuralRoute(null);
-                payload.setBillingRuralRouteNumber(null);
-                payload.setHomePhoneNumber(FakerDataGenerator.generatePhoneNumber());
+                payload.setHomePhoneNumber("4164965313");
             default:
-                payload.setHomePhoneType("M");
+                payload.setHomePhoneType("L");
         }
     }
 
@@ -913,7 +910,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case MAX_LENGTH_ACN_STATUS_INDICATOR:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setAcnStatusIndicator(FakerDataGenerator.getRandomString(4));
+                payload.setAcnStatusIndicator("NACNN");
                 payload.setTenantLandlord("T");
                 break;
             case VALID_ACN_STATUS_INDICATOR_WITH_MAX_LENGTH_TENANT_LANDLORD:
@@ -923,6 +920,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case VALID_ACN_STATUS_INDICATOR_WITH_NULL_TENANT_LANDLORD:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+               payload.setLoginID("acncsr");
                 payload.setAcnStatusIndicator("ACN");
                 payload.setTenantLandlord(null);
                 break;
@@ -946,9 +944,9 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+                payload.setLoginID("sys");
                 payload.setAcnStatusIndicator(null);
                 payload.setTenantLandlord("T");
-                payload.setLoginID("sys");
                 break;
 
             default:
@@ -960,12 +958,13 @@ public class GetEligiblePlansAndOffersHelper {
         switch (acnStatusIndicator) {
             case CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setCustomerPEWCPreferences("good");
                 payload.setHomePhoneType(null);
                 payload.setHomePhoneNumber(null);
                 payload.setWorkPhoneExtension(null);
                 payload.setWorkPhoneType(null);
                 payload.setWorkPhoneNumber(null);
+                payload.setCustomerPEWCPreferences("good");
+
                 break;
             case CUSTOMER_PEWC_PREFRENCES_VALUE_TRUE_WITH_OTHER_PARAM_NULL:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
@@ -1049,7 +1048,6 @@ public class GetEligiblePlansAndOffersHelper {
             case NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("INCL");
-                payload.setCustomerCode("5911661");
                 payload.setPremisesCode("5886135");
                 payload.setTransactionID("234223459");
                 payload.setCustomerCode(null);
@@ -1057,13 +1055,12 @@ public class GetEligiblePlansAndOffersHelper {
             case NULL_CUSTOMER_CODE_CRDS_ENROLLMENT_STATE:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("INCL");
-                payload.setCustomerCode("5911661");
                 payload.setPremisesCode("5886136");
                 payload.setTransactionID("234223459");
                 payload.setCustomerCode(null);
                 break;
             default:
-                payload.setCustomerCode("RS");
+                payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(8));
         }
     }
     public void setPremisesCodeBasedOnTypeTC165_167(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesCode) {
@@ -1071,21 +1068,27 @@ public class GetEligiblePlansAndOffersHelper {
             case NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("INCL");
-                payload.setCustomerCode("5911661");
-                payload.setPremisesCode("5886135");
                 payload.setTransactionID("234223459");
-                payload.setCustomerCode(null);
+                payload.setCustomerCode("5911662");
+                payload.setPremisesCode(null);
                 break;
             case NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setEnrollmentState("INCL");
-                payload.setCustomerCode("5911661");
-                payload.setPremisesCode("5886136");
+                payload.setEnrollmentState("CRDS");
                 payload.setTransactionID("234223459");
-                payload.setCustomerCode(null);
+                payload.setCustomerCode("5911662");
+                payload.setPremisesCode(null);
+                break;
+            case VALID_PREMISES_CODE_NULL_ENROLLMENT_STATE:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setEnrollmentState("CRDS");
+                payload.setTransactionID("234223459");
+                payload.setCustomerCode("5911662");
+                payload.setPremisesCode("5886135");
+                payload.setEnrollmentState(null);
                 break;
             default:
-                payload.setCustomerCode("RS");
+                payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
         }
     }
 
@@ -1096,12 +1099,13 @@ public class GetEligiblePlansAndOffersHelper {
 
 
 
-    public void setInvalidTestCondition(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel authorizedBy) {
+    public void setInvalidTestConditionTC237(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel authorizedBy) {
         switch (authorizedBy) {
             case NULL_AUTHORIZED_BY:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setAuthorizedBy(null);
                 payload.setCustomerType("CM");
+                payload.setLoginID("sys");
                 payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
             default:
                 payload.setAuthorizedBy("MM");
@@ -1280,7 +1284,7 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public void setPremisesZipCodeBasedOnType254_254c(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesZipCode) {
+    public void setPremisesZipCodeBasedOnType254_255c(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesZipCode) {
         switch (premisesZipCode) {
             case EMPTY_PREMISES_ZIP_CODE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
@@ -1299,7 +1303,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case NUMERIC_PREMISES_ZIP_CODE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setPremisesZipCode(FakerDataGenerator.getRandomNumericString(5));
+                payload.setPremisesZipCode("31111");
                 break;
             case INVALID_PREMISES_ZIP_CODE_RANDOM_STRING:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));

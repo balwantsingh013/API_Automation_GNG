@@ -89,12 +89,17 @@ public class GetEligiblePlansAndOffersApiSteps {
     {
         getEligiblePlansAndOffersApiPage.validateInvalidPremisesCodeCasesTC165_167(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(premisesCode));
     }
+    @When("a request is made to the GetEligiblePlansAndOffers Api with enrollment {string} state TC168_182")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_enrollment_state_TC168_182 (String enrollmentState)
+    {
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesCodeCasesTC165_167(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(enrollmentState));
+    }
 
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_test_Condition_Type(String testCondition)
     {
-        getEligiblePlansAndOffersApiPage.validateInvalidTestCondition(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+        getEligiblePlansAndOffersApiPage.validateInvalidTestConditionTC237(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} code Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_referral_code_Type(String referralCode)
