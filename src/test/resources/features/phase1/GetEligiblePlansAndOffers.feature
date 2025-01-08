@@ -107,6 +107,16 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE         | 2000     | Invalid Request: Missing conditional parameters-Customer Code                                        |
       | NULL_CUSTOMER_CODE_CRDS_ENROLLMENT_STATE         | 2000     | Invalid Request: Missing conditional parameters-Customer Code                                        |
 
+  @GetEligiblePlansAndOffersInvalidPremisesCode @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<premisesCode>"
+    When a request is made to the GetEligiblePlansAndOffers Api with premises "<premisesCode>" code TC165_167
+    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | premisesCode               | errorCode | errorMessage                                              |
+      | NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE         | 2000     | Invalid Request: Missing conditional parameters-Premises Code                                        |
+      | NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE         | 2000     | Invalid Request: Missing conditional parameters-Premises Code                                       |
+      | VALID_PREMISES_CODE_NULL_ENROLLMENT_STATE         | 2000     | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null                                      |
 
 
 

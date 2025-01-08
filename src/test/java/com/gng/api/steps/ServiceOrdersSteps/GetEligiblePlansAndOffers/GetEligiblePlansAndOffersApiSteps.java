@@ -84,6 +84,11 @@ public class GetEligiblePlansAndOffersApiSteps {
     {
         getEligiblePlansAndOffersApiPage.validateInvalidCustomerCodeCasesTC163_164(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(customerCode));
     }
+    @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} code TC165_167")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_code_TC165_167 (String premisesCode)
+    {
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesCodeCasesTC165_167(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(premisesCode));
+    }
 
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} Type")
@@ -247,9 +252,9 @@ public class GetEligiblePlansAndOffersApiSteps {
     }
 
 
-//    @When("a request is made to the GetEligiblePlansAndOffers Api with aglcService {string} LocationID")
-//    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_aglcService_LocationID (String aglcServiceLocationID)
-//    {
-//        getEligiblePlansAndOffersApiPage.validateInvalidAglcServiceLocationIDCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(aglcServiceLocationID));
-//    }
+    @When("a request is made to the GetEligiblePlansAndOffers Api with aglcService {string} LocationID")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_aglcService_LocationID (String aglcServiceLocationID)
+    {
+        getEligiblePlansAndOffersApiPage.validateInvalidAglcServiceLocationIDCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(aglcServiceLocationID));
+    }
 }

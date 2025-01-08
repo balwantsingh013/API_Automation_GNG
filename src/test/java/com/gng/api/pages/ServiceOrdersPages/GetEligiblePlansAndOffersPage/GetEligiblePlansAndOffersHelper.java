@@ -1066,6 +1066,32 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerCode("RS");
         }
     }
+    public void setPremisesCodeBasedOnTypeTC165_167(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesCode) {
+        switch (premisesCode) {
+            case NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setEnrollmentState("INCL");
+                payload.setCustomerCode("5911661");
+                payload.setPremisesCode("5886135");
+                payload.setTransactionID("234223459");
+                payload.setCustomerCode(null);
+                break;
+            case NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setEnrollmentState("INCL");
+                payload.setCustomerCode("5911661");
+                payload.setPremisesCode("5886136");
+                payload.setTransactionID("234223459");
+                payload.setCustomerCode(null);
+                break;
+            default:
+                payload.setCustomerCode("RS");
+        }
+    }
+
+
+
+
 
 
 

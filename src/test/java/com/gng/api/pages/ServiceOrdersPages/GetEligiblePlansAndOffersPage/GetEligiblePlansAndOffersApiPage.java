@@ -178,6 +178,13 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidPremisesCodeCasesTC165_167(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel premisesCode) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesCodeBasedOnTypeTC165_167(payload, premisesCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
 
     public void validateInvalidTestCondition(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
@@ -396,11 +403,5 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
 
 
-//    public void validateInvalidAglcServiceLocationIDCases(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel aglcServiceLocationID) {
-//        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-//        helper.setAglcServiceLocationIDBasedOnType(payload, aglcServiceLocationID);
-//        setRequestSpecification(payload, testContext.getAuthToken());
-//        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-//        testContext.setResponse(response);
-//    }
+
 }
