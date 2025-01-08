@@ -19,11 +19,11 @@ import static com.gng.api.context.ApplicationContext.removeRequestSpec;
 import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
-        features = "src/test/resources/features/phase1",
+        features = "src/test/resources/features",
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        tags = "@GetEligiblePlansAndOffersInvalidCustomerCode",
+      //  tags = "@GetEligiblePlansAndOffersInvalidCustomerCode",
         plugin = {
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
