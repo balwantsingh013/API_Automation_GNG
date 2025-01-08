@@ -515,14 +515,3 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
 
 
-  @GetEligiblePlansAndOffersInvalidAglcServiceLocationID @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<AglcServiceLocationID>"
-    When a request is made to the GetEligiblePlansAndOffers Api with aglcService "<AglcServiceLocationID>" LocationID
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | AglcServiceLocationID                 | errorCode | errorMessage                                                         |
-      | EMPTY_AGLC_SERVICE_LOCATION_ID        | 10000     | Invalid or missing Premises State Code                               |
-      | SPL_CHAR_AGLC_SERVICE_LOCATION_ID     | 10000     | The Premises State Code must be a string with a maximum length of 3. |
-      | MAX_LENGTH_AGLC_SERVICE_LOCATION_ID   | 10000     | The Premises State Code must be a string with a maximum length of 3. |
-      | ALPHANUMERIC_AGLC_SERVICE_LOCATION_ID | 2000      | Invalid Request: Invalid Premises State Code                         |

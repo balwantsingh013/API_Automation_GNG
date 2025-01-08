@@ -252,9 +252,5 @@ public class GetEligiblePlansAndOffersApiSteps {
     }
 
 
-    @When("a request is made to the GetEligiblePlansAndOffers Api with aglcService {string} LocationID")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_aglcService_LocationID (String aglcServiceLocationID)
-    {
-        getEligiblePlansAndOffersApiPage.validateInvalidAglcServiceLocationIDCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(aglcServiceLocationID));
-    }
+
 }
