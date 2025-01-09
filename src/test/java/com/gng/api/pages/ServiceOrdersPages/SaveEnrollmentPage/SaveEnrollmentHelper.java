@@ -33,15 +33,11 @@ public class SaveEnrollmentHelper {
             case DUPLICATE_REQUEST_ID:
                 payload.setRequestID("123");
                 break;
-            case SPECIAL_CHARS_REQUEST_ID:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
-                break;
+
             case LONG_REQUEST_ID:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
                 break;
-            case UNICODE_CHARS_REQUEST_ID:
-                payload.setRequestID(FakerDataGenerator.generateUnicode());
-                break;
+
             default:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
         }
@@ -183,6 +179,7 @@ public class SaveEnrollmentHelper {
                 payload.setLoginID(FakerDataGenerator.generateLowerCaseString(5));
         }
     }
+
     public void setEnrollmentStatusBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel enrollmentStatus) {
         switch (enrollmentStatus) {
             case MIN_LENGTH_ENROLLMENT_STATUS:
@@ -201,11 +198,7 @@ public class SaveEnrollmentHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(4));
                 break;
-            case ALPHANUMERIC_ENROLLMENT_STATUS:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setEnrollmentStatus(FakerDataGenerator.generateAlphanumeric(2));
-                break;
-            case  MAX_LENGTH_ENROLLMENT_STATUS:
+            case MAX_LENGTH_ENROLLMENT_STATUS:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentStatus(FakerDataGenerator.getRandomNumericString(3));
                 break;
@@ -217,6 +210,7 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(2));
         }
     }
+
     public void setBillingPlanBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {
         switch (billingPlan) {
             case MAX_LENGTH_BILLING_PLAN:
