@@ -29,7 +29,6 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
 
-
     public void setTransactionTypeBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel transactionType) {
         switch (transactionType) {
             case EMPTY_TRANSACTION_TYPE:
@@ -189,37 +188,41 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCreditCheckOption(FakerDataGenerator.getRandomString(32));
         }
     }
+
     public void setInitialCreditCheckCustomerCodeBasedOnTypeTC313_317(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel initialCreditCheckCustomerCode) {
         switch (initialCreditCheckCustomerCode) {
-            case EMPTY_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITH_CREDIT_CHECK_OPTION:
+            case EMPTY_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITH_CREDIT_CHECK_OPTION_315:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setCreditCheckOption("mult");
                 payload.setInitialCreditCheckCustomerCode(null);
                 break;
-            case MAX_LENGTH_INITIAL_CREDIT_CHECK_CUSTOMER_CODE:
+            case MAX_LENGTH_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_313:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setInitialCreditCheckCustomerCode(FakerDataGenerator.getRandomNumericString(10));
                 break;
-            case NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE:
+            case NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_314:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setCreditCheckOption("yes");
-                payload.setInitialCreditCheckCustomerCode(FakerDataGenerator.generateUpperCaseString(5));
+                payload.setCreditCheckOption("Yes");
+                payload.setInitialCreditCheckCustomerCode("ABCDEFG");
                 break;
-            case INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_NOT_PRESENT_IN_TABLE:
+            case INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_NOT_PRESENT_IN_TABLE_316:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setCreditCheckOption("mult");
-                payload.setInitialCreditCheckCustomerCode(FakerDataGenerator.getRandomNumericString(6));
+                payload.setCreditCheckOption("MULT");
+                payload.setInitialCreditCheckCustomerCode("1234588");
                 break;
-            case INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE:
+            case INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setCreditCheckOption("mult");
-                payload.setInitialCreditCheckCustomerCode(FakerDataGenerator.getRandomNumericString(7));
+                payload.setCustomerLastName("BANKER");
+                payload.setCreditCheckOption("MULT");
+                payload.setGenerationCode(null);
+                payload.setCustomerFirstName("ROBERT");
+                payload.setSocialSecurityNumber("lduHv2sf3IiZv3cL6Lh7G4/uhyw8Fu6tKHdn12qCxyM=");
+                payload.setInitialCreditCheckCustomerCode("5908691");
             default:
 
-                payload.setInitialCreditCheckCustomerCode(FakerDataGenerator.getRandomString(9));
+                payload.setInitialCreditCheckCustomerCode(FakerDataGenerator.getRandomString(8));
         }
     }
-
 
 
     public void setTenantLandlordBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel tenantLandlord) {
@@ -920,7 +923,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case VALID_ACN_STATUS_INDICATOR_WITH_NULL_TENANT_LANDLORD:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-               payload.setLoginID("acncsr");
+                payload.setLoginID("acncsr");
                 payload.setAcnStatusIndicator("ACN");
                 payload.setTenantLandlord(null);
                 break;
@@ -954,6 +957,7 @@ public class GetEligiblePlansAndOffersHelper {
         }
 
     }
+
     public void setCustomerPEWCPreferencesBasedOnTypeTC308_309(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel acnStatusIndicator) {
         switch (acnStatusIndicator) {
             case CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL:
@@ -968,18 +972,20 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case CUSTOMER_PEWC_PREFRENCES_VALUE_TRUE_WITH_OTHER_PARAM_NULL:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-                payload.setCustomerPEWCPreferences(true);
                 payload.setHomePhoneType(null);
                 payload.setHomePhoneNumber(null);
                 payload.setWorkPhoneExtension(null);
                 payload.setWorkPhoneType(null);
                 payload.setWorkPhoneNumber(null);
+                payload.setCustomerPEWCPreferences(true);
+
                 break;
             default:
                 payload.setCustomerPEWCPreferences(true);
 
         }
     }
+
     public void setRequestIDBasedOnTypeTC155_157(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel requestID) {
         switch (requestID) {
             case NULL_REQUEST_ID:
@@ -996,6 +1002,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
         }
     }
+
     public void setLoginIDBasedOnTypeTC158_160B(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel loginID) {
         switch (loginID) {
             case INVALID_LOGIN_ID:
@@ -1022,6 +1029,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setLoginID(FakerDataGenerator.generateLowerCaseString(10));
         }
     }
+
     public void setTransactionIDBasedOnTypeTC161_162(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel transactionID) {
         switch (transactionID) {
             case NULL_TRANSACTION_ID_INCL_ENROLLMENT_STATE:
@@ -1063,6 +1071,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(8));
         }
     }
+
     public void setPremisesCodeBasedOnTypeTC165_167(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesCode) {
         switch (premisesCode) {
             case NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE:
@@ -1091,12 +1100,6 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
         }
     }
-
-
-
-
-
-
 
 
     public void setInvalidTestConditionTC237(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel authorizedBy) {

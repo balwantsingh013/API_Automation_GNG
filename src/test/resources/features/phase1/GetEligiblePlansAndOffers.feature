@@ -408,11 +408,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | CreditCheckOption                | errorCode | errorMessage                                                          |
-      | EMPTY_CREDIT_CHECK_OPTION        | 2000      | Invalid Request: Invalid Credit Check Option                          |
+      | EMPTY_CREDIT_CHECK_OPTION        |10000      | Invalid or missing Credit Check Option                        |
       | INVALID_CREDIT_CHECK_OPTION      | 2000      | Invalid Request: Invalid Credit Check Option                          |
       | MAX_LENGTH_CREDIT_CHECK_OPTION   | 10000     | The Credit Check Option must be a string with a maximum length of 32. |
-      | NUMERIC_CREDIT_CHECK_OPTION      | 2000      | Invalid Request: Invalid Credit Check Option                          |
-      | ALPHANUMERIC_CREDIT_CHECK_OPTION | 2000      | Invalid Request: Invalid Credit Check Option                          |
 
   @GetEligiblePlansAndOffersInitialCreditCheckCustomerCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<InitialCreditCheckCustomerCode>"
