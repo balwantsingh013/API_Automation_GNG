@@ -278,8 +278,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | SeparateBillingAddress                                                                         | errorCode | errorMessage                                                                  |
-#      | EMPTY_SEPARATE_BILLING_ADDRESS                                                                 | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 32. |
-#      | MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                                            | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 33. |
+     | EMPTY_SEPARATE_BILLING_ADDRESS                                                                 | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 32. |
+     | MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                                            | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 33. |
       | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_PROVIDED                                             | 10000     | The Billing Address Type must be a string with a maximum length of 1.         |
       | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_MISSING                                              | 2000      | Invalid Request: Missing conditional parameters-Billing Address Type          |
       | SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_ADD_TYPE                                         | 2000      | Invalid Request: Invalid Billing Address Type                                 |
