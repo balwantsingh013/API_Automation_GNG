@@ -34,7 +34,7 @@ public class GetEligiblePlansAndOffersRequest{
 	private String loginID;
 	private String premisesStateCode;
 	private Object federalTaxID;
-	private boolean customerPEWCPreferences;
+	private Object customerPEWCPreferences;
 	private Object billingZipCode;
 	private Object billingRuralRoute;
 	private String premisesStreetName;
@@ -73,7 +73,7 @@ public class GetEligiblePlansAndOffersRequest{
 	private Object billingStreetPostDirection;
 	private String transactionType;
 	private Object billingPOBox;
-	private boolean separateBillingAddress;
+	private Object separateBillingAddress;
 	private String authorizedBy;
 	private String premisesCountyCode;
 	private String premisesStreetSuffix;
@@ -85,6 +85,5 @@ public class GetEligiblePlansAndOffersRequest{
 
 	}
 
-	public void setSeparateBillingAddress(Boolean o) {
-	}
+
 }
