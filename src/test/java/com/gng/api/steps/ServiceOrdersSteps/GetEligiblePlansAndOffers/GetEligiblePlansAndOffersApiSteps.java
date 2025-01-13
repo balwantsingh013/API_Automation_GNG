@@ -3,11 +3,9 @@ package com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers;
 
 import com.gng.api.pages.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.steps.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
 import io.cucumber.java.en.When;
 
 import static com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
-import static com.gng.api.steps.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.save_enrollment_mandatory;
 
 public class GetEligiblePlansAndOffersApiSteps {
 
