@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class GetUserRolesResponse{
 	private String loginID;
 	private String requestID;
-	private String Password;
+	private String password;
 }
