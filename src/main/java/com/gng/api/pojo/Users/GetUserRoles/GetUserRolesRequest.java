@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class GetUserRolesRequest {
 	private String loginID;
 	private String requestID;
-	private String Password;
+	private String password;
 }
