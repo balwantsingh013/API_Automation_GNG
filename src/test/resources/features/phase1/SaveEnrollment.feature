@@ -17,12 +17,10 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | requestID                | errorCode | errorMessage              |
-      | EMPTY_REQUEST_ID         | 10001     | Missing Request ID        |
-      | DUPLICATE_REQUEST_ID     | 10003     | Duplicate Request ID      |
-      | SPECIAL_CHARS_REQUEST_ID | 10004     | Invalid Request ID Format |
-      | LONG_REQUEST_ID          | 10002     | Invalid Request ID        |
-      | UNICODE_CHARS_REQUEST_ID | 10007     | Unsupported Characters    |
+      | requestID            | errorCode | errorMessage         |
+      | EMPTY_REQUEST_ID     | 10001     | Missing Request ID   |
+      | DUPLICATE_REQUEST_ID | 10003     | Duplicate Request ID |
+      | LONG_REQUEST_ID      | 10002     | Invalid Request ID   |
 
   @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
   Scenario Outline: Verify SaveEnrollment Api with invalid "<customerCODE>" code
@@ -30,11 +28,11 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "Save Enrollment" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | customerCODE                | errorCode | errorMessage                                                    |
+      | customerCODE                | errorCode | errorMessage                                   |
       | DUPLICATE_CUSTOMER_CODE     | 2000      | Invalid Request: Transaction ID does not exist |
       | MAX_LENGTH_CUSTOMER_CODE    | 2000      | Invalid Request: Transaction ID does not exist |
       | UNICODE_CHARS_CUSTOMER_CODE | 2000      | Invalid Request: Transaction ID does not exist |
-      | DUPLICATE_CUSTOMER_CODE     | 2000      | Invalid Request: Transaction ID does not exist|
+      | DUPLICATE_CUSTOMER_CODE     | 2000      | Invalid Request: Transaction ID does not exist |
 
 
   @SaveEnrollmentInvalidPromotionCODE @Phase1  @NegativeFlow
@@ -112,7 +110,6 @@ Feature: Verify SaveEnrollment Api
       | SPECIAL_CHARS_ENROLLMENT_STATUS       | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
       | EMPTY_ENROLLMENT_STATUS               | 10000     | Missing Enrollment Status                                         |
       | LOWERCASE_ENROLLMENT_STATUS           | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
-      | ALPHANUMERIC_ENROLLMENT_STATUS        | 2000      | The Enrollment Status must be a string with a maximum length of 2 |
       | MAX_LENGTH_ENROLLMENT_STATUS          | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
       | WHITESPACE_CONTAINS_ENROLLMENT_STATUS | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
 

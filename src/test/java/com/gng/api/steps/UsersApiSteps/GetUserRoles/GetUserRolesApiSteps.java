@@ -1,0 +1,33 @@
+package com.gng.api.steps.UsersApiSteps.GetUserRoles;
+
+import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesApiPage;
+import com.gng.api.pojo.TestContext.TestContext;
+import io.cucumber.java.en.When;
+
+import static com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.get_eligible_plans_and_offers_mandatory;
+import static com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel.*;
+
+public class GetUserRolesApiSteps {
+
+    private final TestContext testContext;
+    private final GetUserRolesApiPage getUserRolesApiPage;
+
+    public GetUserRolesApiSteps(TestContext testContext, GetUserRolesApiPage getUserRolesApiPage) {
+        this.testContext = testContext;
+        this.getUserRolesApiPage = getUserRolesApiPage;
+        testContext.setGetEligiblePlansAndOffersApiPage(getUserRolesApiPage);
+    }
+    @When("a request is made to the GetUserRoles Api with {string}TC3_TC5")
+    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC3_TC5(String requestID) {
+        getUserRolesApiPage.validateInvalidRequestIDCasesTC3_TC5(get_user_roles, GetUserRolesApiLabel.valueOf(requestID));
+    }
+    @When("a request is made to the GetUserRoles Api with {string}TC6_TC9")
+    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC6_TC9(String loginID) {
+        getUserRolesApiPage.validateInvalidLoginIDCasesTC6_TC9(get_user_roles, GetUserRolesApiLabel.valueOf(loginID));
+    }
+    @When("a request is made to the GetUserRoles Api with {string}TC10_TC12")
+    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC10_TC12(String password) {
+        getUserRolesApiPage.validateInvalidPasswordCasesTC10_TC12(get_user_roles, GetUserRolesApiLabel.valueOf(password));
+    }
+
+}
