@@ -42,14 +42,14 @@ Feature: Verify GetUserRoles Api
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_10_CHAR_TC12     | 10110     | Invalid Login Credentials |
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_7_CHAR_TC12.1     | 10110     | Invalid Login Credentials |
 
-  @GetUserRoleInvalidDataRespUserTable @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid loginID "<loginID>"TC6_TC9
-    When a request is made to the GetUserRoles Api with "<loginID>"TC6_TC9
+  @GetUserRoleInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC6_TC9
+    When a request is made to the GetUserRoles Api with "<testCondition>"TC6_TC9
     Then verify response code of "GetUserRole" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | loginID                    | errorCode | errorMessage              |
-      | NULL_LOGIN_ID_AND_PASSWORD | 10110     | Invalid Login Credentials |
-      | NULL_LOGIN_ID              | 10110     | Invalid Login Credentials |
-      | ALPHANUMERIC_LOGIN_ID      | 10110     | Invalid Login Credentials |
-      | MAX_LENGTH_LOGIN_ID        | 10110     | Invalid Login Credentials |
+      | testCondition                    | errorCode | errorMessage              |
+      | INVALID_LOGIN_ID_TC13 |2000    | Invalid Login ID |
+      | PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14              | 2000     | The password doesn’t match the Login ID. |
+      | PASSWORD_MISMATCH_WITH_LOGIN_ID_LOCK_TC15     | 2000    | The password doesn’t match the username.  |
+      | EXPIRED_PASSWORD_TC16        | 2010     | Expired password |

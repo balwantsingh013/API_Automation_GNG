@@ -3,8 +3,8 @@ authUri: "/Authentication/GetToken"
 vendorId: "36763663.vistio.uat2testing"
 vendorSecret: "iohR@s5u(/yudfs&6"
 driverClassName: "oracle.jdbc.OracleDriver"
-serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGVBAN"
+serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
 userName: "BSINGH"
-password: "vrt20240602"
+password: "vtx33669"
 enableLogsOnPass: true
 enableLogsOnFail: true
