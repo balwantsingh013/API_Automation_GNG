@@ -94,5 +94,36 @@ public class GetUserRolesHelper {
                 payload.setPassword(FakerDataGenerator.generateLowerCaseString(10));
         }
     }
+    public void setTestConditionBasedOnTypeTC13_TC17(GetUserRolesRequest payload, GetUserRolesApiLabel password) {
+        switch (password) {
+            case INVALID_LOGIN_ID_TC13:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID("dummy");
+                payload.setPassword(FakerDataGenerator.generateLowerCaseString(10));
+                break;
+            case PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID("test10965");
+                payload.setPassword("Vet/pZSL5Ur1vzI6yU4t0Ad109CJqFMT2y7PPqqRCKY=");
+                break;
+            case PASSWORD_MISMATCH_WITH_LOGIN_ID_LOCK_TC15:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID("test10965");
+                payload.setPassword("bmc5QeZ4NwDKws@cbtb8AxMzDkHvPd5woQ31Fd57Bp4=");
+                break;
+            case EXPIRED_PASSWORD_TC16:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID("test10965");
+                payload.setPassword("c8447bb5badaf3cefb76ba57467b5be70271bcb");
+                break;
+            case LOCKED_LOGIN_ID_TC17:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID("test10965");
+                payload.setPassword("lYRWYOM1zpYNCK7D9lVuqQRWVhTJNBXPFoxSGBIjh18=");
+                break;
 
+            default:
+                payload.setPassword(FakerDataGenerator.generateLowerCaseString(10));
+        }
+    }
 }

@@ -8,7 +8,6 @@ import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
-import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
 import static com.gng.api.constants.ApiEndPoint.GET_USER_ROLES;
 
 
@@ -37,6 +36,13 @@ public class GetUserRolesApiPage extends BasePage {
     public void validateInvalidPasswordCasesTC10_TC12(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel password) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.setPasswordBasedOnTypeTC10_TC12(payload, password);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidTestConditionCasesTC13_TC17(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel testCondition) {
+        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
+        helper.setTestConditionBasedOnTypeTC13_TC17(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);

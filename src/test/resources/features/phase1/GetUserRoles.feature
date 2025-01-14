@@ -17,7 +17,7 @@ Feature: Verify GetUserRoles Api
       | DUPLICATE_REQUEST_ID_TC4 | 10003     | Duplicate Request ID |
       | LONG_REQUEST_ID_TC5      | 10002     | Invalid Request ID   |
 
-  @GetUserRoleInvalidLoginID @Phase1  @NegativeFlow
+  @GetUserRolesInvalidLoginID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid loginID "<loginID>"TC6_TC9
     When a request is made to the GetUserRoles Api with "<loginID>"TC6_TC9
     Then verify response code of "GetUserRole" Api is <200>
@@ -30,7 +30,7 @@ Feature: Verify GetUserRoles Api
       | MAX_LENGTH_LOGIN_ID_TC9        | 10110     | Invalid Login Credentials |
 
 
-  @GetUserRoleInvalidPassword @Phase1  @NegativeFlow
+  @GetUserRolesInvalidPassword @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid Password  "<password >"TC10_TC12
     When a request is made to the GetUserRoles Api with "<password>"TC10_TC12
     Then verify response code of "GetUserRole" Api is <200>
@@ -42,9 +42,9 @@ Feature: Verify GetUserRoles Api
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_10_CHAR_TC12  | 10110     | Invalid Login Credentials |
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_7_CHAR_TC12_1 | 10110     | Invalid Login Credentials |
 
-  @GetUserRoleInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC6_TC9
-    When a request is made to the GetUserRoles Api with "<testCondition>"TC6_TC9
+  @GetUserRolesInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC13_TC17
+    When a request is made to the GetUserRoles Api with "<testCondition>"TC13_TC17
     Then verify response code of "GetUserRole" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
@@ -53,3 +53,4 @@ Feature: Verify GetUserRoles Api
       | PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14      | 2000      | The password doesn’t match the Login ID. |
       | PASSWORD_MISMATCH_WITH_LOGIN_ID_LOCK_TC15 | 2000      | The password doesn’t match the username. |
       | EXPIRED_PASSWORD_TC16                     | 2010      | Expired password                         |
+      | LOCKED_LOGIN_ID_TC17                      | 2000      | Locked out Login ID                      |
