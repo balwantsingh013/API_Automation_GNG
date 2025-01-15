@@ -2,10 +2,8 @@ package com.gng.api.steps.UsersApiSteps.ResetPassword;
 
 import com.gng.api.pages.Users.ResetPassword.ResetPasswordApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import io.cucumber.java.en.When;
 
-import static com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel.get_user_roles;
 import static com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel.reset_password;
 
 public class ResetPasswordApiSteps {
@@ -19,7 +17,7 @@ public class ResetPasswordApiSteps {
     }
     @When("a request is made to the ResetPassword Api with {string}TC21_TC23")
     public void a_request_is_made_to_the_ResetPassword_Api_with_TC21_TC23(String requestID) {
-        resetPasswordApiPage.validateInvalidRequestIDCasesTC21_TC23(reset_password,ResetPasswordApiLabel.valueOf(requestID));
+        resetPasswordApiPage.validateInvalidRequestIDCasesTC21_TC23(reset_password, ResetPasswordApiLabel.valueOf(requestID));
     }
     @When("a request is made to the ResetPassword Api with {string}TC24_TC28")
     public void a_request_is_made_to_the_ResetPassword_Api_with_TC24_TC28(String loginID) {

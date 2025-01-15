@@ -47,5 +47,10 @@ public class TestContext {
     @Getter @Setter
     private Object resetPasswordApiPage;
     private ResetPasswordResponse resetPasswordResponse;
+    @Getter @Setter
+    private Object searchAccountsApiPage;
+    private ResetPasswordResponse searchAccountsResponse;
+
+
 
 }

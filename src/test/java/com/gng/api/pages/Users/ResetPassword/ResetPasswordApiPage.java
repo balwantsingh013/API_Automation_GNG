@@ -1,16 +1,12 @@
 package com.gng.api.pages.Users.ResetPassword;
 
 import com.gng.api.pages.BasePage;
-import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesHelper;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
-import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
-import static com.gng.api.constants.ApiEndPoint.GET_USER_ROLES;
 import static com.gng.api.constants.ApiEndPoint.RESET_PASSWORD;
 
 

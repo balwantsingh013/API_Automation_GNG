@@ -2,9 +2,7 @@ package com.gng.api.pages.Users.ResetPassword;
 
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
-import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -131,13 +129,13 @@ public class ResetPasswordHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
                 payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword("8bTIbxQEJMhp+c947YCPK9KnYTxq@p8aqqaUX£Mj@yI=");
+                payload.setNewPassword(FakerDataGenerator.generateAlphanumeric(35));
                 break;
             case INVALID_PASSWORD_FORMAT_ENCRYPTED_MIN_7_CHAR_TC34_1:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
                 payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword("W+MYczcQUHn2nPvmGd56cqnheTTgF71n0DN9HkgjgC0=");
+                payload.setNewPassword(FakerDataGenerator.generateAlphanumeric(7));
                 break;
             case OLD_PASSWORD_NEW_PASSWORD_SAME_TC35:
                 payload.setRequestID(FakerDataGenerator.generateString(10));

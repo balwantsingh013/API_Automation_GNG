@@ -83,12 +83,12 @@ public class GetUserRolesHelper {
             case INVALID_PASSWORD_FORMAT_ENCRYPTED_10_CHAR_TC12:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
-                payload.setPassword("g42GD1YNwX3aJX7/nRSEn6FkTezmJ9PqU2owe9BoL9A=");
+                payload.setPassword(FakerDataGenerator.generateAlphanumeric(15));
                 break;
             case INVALID_PASSWORD_FORMAT_ENCRYPTED_7_CHAR_TC12_1:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
-                payload.setPassword("lYRWYOM1zpYNCK7D9lVuqQRWVhTJNBXPFoxSGBIjh18=");
+                payload.setPassword(FakerDataGenerator.generateAlphanumeric(7));
                 break;
             default:
                 payload.setPassword(FakerDataGenerator.generateLowerCaseString(10));
@@ -119,9 +119,8 @@ public class GetUserRolesHelper {
             case LOCKED_LOGIN_ID_TC17:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
-                payload.setPassword("lYRWYOM1zpYNCK7D9lVuqQRWVhTJNBXPFoxSGBIjh18=");
+                payload.setPassword(FakerDataGenerator.generateAlphanumeric(10));
                 break;
-
             default:
                 payload.setPassword(FakerDataGenerator.generateLowerCaseString(10));
         }

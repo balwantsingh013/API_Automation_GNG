@@ -4,7 +4,6 @@ import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.When;
 
-import static com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.get_eligible_plans_and_offers_mandatory;
 import static com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel.*;
 
 public class GetUserRolesApiSteps {
