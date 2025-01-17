@@ -3,14 +3,12 @@ package com.gng.api.pages.AccountsApiPages.SearchAccounts;
 
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
-import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
-import static com.gng.api.constants.ApiEndPoint.GET_USER_ROLES;
 import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -57,12 +55,288 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-    public void validateInvalidBusinessNameCasesTC53(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel businessName) {
+    public void validateInvalidBusinessNameCasesTC53(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerBusinessName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setBusinessCodeBasedOnTypeTC53(payload, businessName);
+        helper.setCustomerBusinessNameBasedOnTypeTC53(payload, customerBusinessName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidLastNameFormatCasesTC54(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel lastName) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setLastNameBasedOnTypeTC54(payload, lastName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidFirstNameFormatCasesTC55(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel firstName) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setFirstNameBasedOnTypeTC55(payload, firstName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidSocialSecurityNumberFormatCasesTC56_TC57(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel socialSecurityNumber) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setSocialSecurityNumberBasedOnTypeTC56_TC57(payload, socialSecurityNumber);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidFederalTaxIDFormatCasesTC58_TC59(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel federalTaxID) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setFederalTaxIDBasedOnTypeTC58_TC59(payload, federalTaxID);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
+    public void validateInvalidPhoneNumberFormatCasesTC60(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel phoneNumber) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPhoneNumberBasedOnTypeTC60(payload, phoneNumber);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidAGLCAccountNumberFormatCasesTC61(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel aglcAccountNumber) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setAGLCAccountNumberBasedOnTypeTC61(payload, aglcAccountNumber);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStreetNumberFormatCasesTC62(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetNumber) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStreetNumberBasedOnTypeTC62(payload, premisesStreetNumber);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStreetPreDirectionFormatCasesTC63(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetPreDirection) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStreetPreDirectionBasedOnTypeTC63(payload, premisesStreetPreDirection);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStreetNameFormatCasesTC64(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetName) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStreetNameBasedOnTypeTC64(payload, premisesStreetName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStreetSuffixFormatCasesTC65(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetSuffix) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStreetSuffixBasedOnTypeTC65(payload, premisesStreetSuffix);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStreetPostDirectionFormatCasesTC66(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetPostDirection) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStreetPostDirectionBasedOnTypeTC66(payload, premisesStreetPostDirection);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesUnitTypeFormatCasesTC67(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesUnitType) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesUnitTypeBasedOnTypeTC67(payload, premisesUnitType);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesUnitNumberFormatCasesTC68(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesUnitNumber) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesUnitNumberBasedOnTypeTC68(payload, premisesUnitNumber);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesCityFormatCasesTC69(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesCityBasedOnTypeTC69(payload, premisesCity);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStateCodeFormatCasesTC70(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStateCodeBasedOnTypeTC70(payload, premisesStateCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesZipCodeFormatCasesTC71(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesZipCodeBasedOnTypeTC71(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateMissingSearchFieldsCasesTC72(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel missingSearchField) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingSearchFieldsBasedOnTypeTC72(payload, missingSearchField);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidCustomerCodeCasesTC73(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerCodeBasedOnTypeTC73(payload, customerCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesCodeCasesTC74(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerFirstName) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesCodeBasedOnTypeTC74(payload, customerFirstName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidCustomerLastNameCasesTC75(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerLastName) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerLastNameBasedOnTypeTC75(payload, customerLastName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesZipCodeCasesTC76(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesZipCodeBasedOnTypeTC76(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidSSNAndFederalTaxIDCasesTC77(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel federalTaxID) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setSSNAndFederalTaxIDBasedOnTypeTC77(payload, federalTaxID);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateInvalidPremisesStreetNameCasesTC78_TC92(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetName) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPremisesStreetNameBasedOnTypeTC78_TC92(payload, premisesStreetName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateMissingZipCityAndStateAddressFieldsCasesTC93(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingZipCityAndStateAddressFieldsBasedOnTypeTC93(payload, premisesCity);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingZipStreetNameAndStateAddressFieldsCasesTC94(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingZipStreetNameAndStateAddressFieldsBasedOnTypeTC94(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingZipStreetNameAndCityAddressFieldsCasesTC95(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingZipStreetNameAndCityAddressFieldsBasedOnTypeTC95(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateMissingStreetNameStateAndCityAddressFieldsCasesTC96(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStreetNameStateAndCityAddressFieldsBasedOnTypeTC96(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateMissingStateAndZipCodeAddressFieldsCasesTC97(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStateAndZipCodeAddressFieldsBasedOnTypeTC97(payload, premisesStateCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingCityAndZipCodeAddressFieldsCasesTC98(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingCityAndZipCodeAddressFieldsBasedOnTypeTC98(payload, premisesStateCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingStateAndCityAddressFieldsCasesTC99(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStateAndCityAddressFieldsBasedOnTypeTC99(payload, premisesStateCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingStreetNameAndZipAddressFieldsCasesTC100(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStreetNameAndZipAddressFieldsBasedOnTypeTC100(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateMissingStreetNameAndStateAddressFieldsCasesTC101(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStreetNameAndStateAddressFieldsBasedOnTypeTC101(payload, premisesStateCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingStreetNameAndCityAddressFieldsCasesTC102(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStreetNameAndCityAddressFieldsBasedOnTypeTC102(payload, premisesCity);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingZipAddressFieldsCasesTC103(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingZipAddressFieldsBasedOnTypeTC103(payload, premisesZipCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingCityAddressFieldsCasesTC104(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingCityAddressFieldsBasedOnTypeTC104(payload, premisesCity);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingStateCodeAddressFieldsCasesTC105(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStateCodeAddressFieldsBasedOnTypeTC105(payload, premisesStateCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMissingStreetNameAddressFieldsCasesTC106(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetName) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMissingStreetNameAddressFieldsBasedOnTypeTC106(payload, premisesStreetName);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+
+
+
 }
+
