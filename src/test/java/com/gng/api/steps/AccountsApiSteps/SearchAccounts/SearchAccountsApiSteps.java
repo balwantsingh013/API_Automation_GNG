@@ -7,6 +7,8 @@ import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.search_accounts;
+import static com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.search_accounts_mandatory;
+import static com.gng.api.steps.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.save_enrollment;
 import static com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel.get_user_roles;
 
 @Slf4j
@@ -192,6 +194,10 @@ public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String custome
     @When("a request is made to the SearchAccounts Api with {string}TC106")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_TC106(String premisesStreetName) {
         searchAccountsApiPage.validateMissingStreetNameAddressFieldsCasesTC106(search_accounts,SearchAccountsApiLabel.valueOf(premisesStreetName));
+    }
+    @When("a request is made to the SearchAccounts Api TC_109")
+    public void a_request_is_made_to_the_get_SearchAccounts_TC109() {
+        searchAccountsApiPage.validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(search_accounts_mandatory);
     }
 
 

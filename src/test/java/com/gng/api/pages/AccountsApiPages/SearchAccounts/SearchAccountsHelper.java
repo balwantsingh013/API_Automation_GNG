@@ -48,7 +48,7 @@ public class SearchAccountsHelper {
                 break;
             case ALPHANUMERIC_LOGIN_ID_TC47:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(8));
+                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
                 break;
             case MAX_LENGTH_LOGIN_ID_TC46:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -57,6 +57,7 @@ public class SearchAccountsHelper {
             case INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC48:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("dummy");
+
                 break;
             default:
                 payload.setLoginID(FakerDataGenerator.generateLowerCaseString(10));
@@ -284,10 +285,10 @@ public class SearchAccountsHelper {
             case MAX_LENGTH_PREMISES_STATE_CODE_TC70:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
-                payload.setPremisesStateCode(FakerDataGenerator.getRandomNumericString(4));
+                payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(4));
                 break;
             default:
-                payload.setPremisesStateCode(FakerDataGenerator.getRandomNumericString(3));
+                payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
         }
     }
     public void setPremisesZipCodeBasedOnTypeTC71(SearchAccountsRequest payload, SearchAccountsApiLabel premisesZipCode) {
@@ -377,8 +378,8 @@ public class SearchAccountsHelper {
             case SSN_PROVIDED_FEDERAL_TAX_ID_PROVIDE_TC77:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
-                payload.setSocialSecurityNumber(FakerDataGenerator.generateAlphanumeric(11));
-                payload.setFederalTaxID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setSocialSecurityNumber("YUiEKcZGFmS59Uu1aacc2tTqSPYw9QYAv97gTfGyhaI=");
+                payload.setFederalTaxID("YUiEKcZGFmS59Uu1aacc2tTqSPYw9QYAv97gTfGyhaI=");
                 break;
             default:
                 payload.setFederalTaxID(FakerDataGenerator.generateAlphanumeric(10));
@@ -455,8 +456,8 @@ public class SearchAccountsHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
-                payload.setPremisesStreetSuffix(FakerDataGenerator.generateUpperCaseString(2));
-                payload.setPremisesStreetPreDirection(FakerDataGenerator.generateUpperCaseString(3));
+                payload.setPremisesStreetSuffix("RD");
+                payload.setPremisesStreetPreDirection("SW");
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_NUMBER_SUFFIX_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC89:
@@ -543,7 +544,7 @@ public class SearchAccountsHelper {
             case PREMISES_ZIP_CODE_PROVIDED_STREET_NAME_ZIP_STATE_MISSING_TC96:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
-                payload.setPremisesZipCode(FakerDataGenerator.generateZipCode());
+                payload.setPremisesZipCode("30052");
                 payload.setPremisesStateCode("");
                 payload.setPremisesStreetName("");
                 payload.setPremisesCity("");
@@ -586,7 +587,7 @@ public class SearchAccountsHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("test10965");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
-                payload.setPremisesZipCode(FakerDataGenerator.generateZipCode());
+                payload.setPremisesZipCode("30052");
                 payload.setPremisesStateCode("");
                 payload.setPremisesCity("");
                 break;
@@ -616,7 +617,7 @@ public class SearchAccountsHelper {
                 payload.setPremisesStreetName("");
                 payload.setPremisesStateCode("");
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(3));
-                payload.setPremisesZipCode(FakerDataGenerator.generateZipCode());
+                payload.setPremisesZipCode("30052");
                 break;
             default:
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
@@ -629,8 +630,8 @@ public class SearchAccountsHelper {
                 payload.setLoginID("test10965");
                 payload.setPremisesStreetName("");
                 payload.setPremisesCity("");
-                payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
-                payload.setPremisesZipCode(FakerDataGenerator.generateZipCode());
+                payload.setPremisesStateCode("GA");
+                payload.setPremisesZipCode("30052");
                 break;
             default:
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(3));
@@ -643,7 +644,7 @@ public class SearchAccountsHelper {
                 payload.setLoginID("test10965");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesCity(FakerDataGenerator.generateString(6));
-                payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
+                payload.setPremisesStateCode("GA");
                 payload.setPremisesZipCode("");
                 break;
             default:
@@ -658,7 +659,7 @@ public class SearchAccountsHelper {
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesCity("");
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
-                payload.setPremisesZipCode(FakerDataGenerator.generateZipCode());
+                payload.setPremisesZipCode("30052");
                 break;
             default:
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(3));
@@ -672,7 +673,7 @@ public class SearchAccountsHelper {
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesCity(FakerDataGenerator.generateString(6));
                 payload.setPremisesStateCode("");
-                payload.setPremisesZipCode(FakerDataGenerator.generateZipCode());
+                payload.setPremisesZipCode("30052");
                 break;
             default:
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
@@ -685,26 +686,43 @@ public class SearchAccountsHelper {
                 payload.setLoginID("test10965");
                 payload.setPremisesStreetName("");
                 payload.setPremisesCity(FakerDataGenerator.generateString(6));
-                payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
-                payload.setPremisesZipCode(FakerDataGenerator.generateZipCode());
+                payload.setPremisesStateCode("GA");
+                payload.setPremisesZipCode("30052");
                 break;
             default:
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
         }
     }
+    public void setAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsRequest payload) {
+        String accountType = "ACCOUNT_NUMBER_WITHOUT_SSN_FROM_USER_TABLE_TC109";
+        if ("ACCOUNT_NUMBER_WITHOUT_SSN_FROM_USER_TABLE_TC109".equals(accountType)) {
+            payload.setRequestID(FakerDataGenerator.generateString(10));
+            payload.setLoginID("test10965");
+            payload.setCustomerCode("005801335");
+            payload.setPremisesCode("5776499");
+            payload.setTransactionType("TNON");
+        } else {
+            payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
+        }
 
-
-
-
-
-
-
-
-
-
+        System.out.println("Payload prepared: " + payload);
+    }
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

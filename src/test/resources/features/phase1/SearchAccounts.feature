@@ -13,9 +13,9 @@ Feature: Verify SearchAccounts Api
 
     Examples:
       | requestID                 | errorCode | errorMessage         |
-      | NULL_REQUEST_ID_TC21      | 10001     | Missing Request ID   |
-      | DUPLICATE_REQUEST_ID_TC22 | 10003     | Duplicate Request ID |
-      | LONG_REQUEST_ID_TC23      | 10002     | Invalid Request ID   |
+      | NULL_REQUEST_ID_TC41      | 10001     | Missing Request ID   |
+      | DUPLICATE_REQUEST_ID_TC42 | 10003     | Duplicate Request ID |
+      | LONG_REQUEST_ID_TC43      | 10002     | Invalid Request ID   |
 
   @SearchAccountsInvalidLoginID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid loginID "<loginID>"TC45_TC48
@@ -27,7 +27,7 @@ Feature: Verify SearchAccounts Api
       | NULL_LOGIN_ID_TC45                           | 10112     | Invalid or missing Login ID |
       | ALPHANUMERIC_LOGIN_ID_TC47                   | 10112     | Invalid or missing Login ID |
       | MAX_LENGTH_LOGIN_ID_TC46                     | 10112     | Invalid or missing Login ID |
-      | INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC48 | 20000     | Invalid Login ID            |
+      | INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC48 | 2000     | Invalid Login ID            |
 
   @SearchAccountsInvalidCustomerCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid customerCode "<customerCode>"TC49
@@ -418,3 +418,9 @@ Feature: Verify SearchAccounts Api
     Examples:
       | MissingStreetName                                          | errorCode | errorMessage|
       | PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
+
+  @SearchAccountsWithAccountNumberWithoutSSN @Phase1 @HappyFlow
+  Scenario: Verify SearchAccounts Api with valid data
+    When a request is made to the SearchAccounts Api TC_109
+    Then verify response code of "SearchAccounts" Api is <200>
+
