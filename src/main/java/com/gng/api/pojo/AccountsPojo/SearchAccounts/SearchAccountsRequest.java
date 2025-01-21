@@ -1,8 +1,12 @@
 package com.gng.api.pojo.AccountsPojo.SearchAccounts;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SearchAccountsRequest{
 	private String customerBusinessName;
 	private Object premisesUnitNumber;

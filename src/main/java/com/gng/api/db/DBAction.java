@@ -35,6 +35,13 @@ public class DBAction {
         logQueryInAllure("Get Note Sequence Number", query, noteSeqNo);
         return jdbcTemplate.queryForList(query, noteSeqNo);
     }
+    public List<Map<String, Object>> getInvalidCustomerCode() {
+        String query = DBQuery.SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE;
+        logQueryInAllure("Get Invalid Customer Code", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+
 
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string

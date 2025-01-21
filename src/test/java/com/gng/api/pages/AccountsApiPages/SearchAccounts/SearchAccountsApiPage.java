@@ -1,15 +1,29 @@
 package com.gng.api.pages.AccountsApiPages.SearchAccounts;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
+import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteRequest;
+import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
+import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
+import java.util.List;
+import java.util.Map;
+
+import static com.gng.api.constants.ApiEndPoint.CREATE_ACCOUNT_NOTE;
 import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
+import static com.gng.api.util.LogUtil.logInfo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class SearchAccountsApiPage extends BasePage {
     private final SearchAccountsHelper helper;
@@ -18,6 +32,7 @@ public class SearchAccountsApiPage extends BasePage {
         super(testContext);
         this.helper = new SearchAccountsHelper(testContext);
     }
+
     public void validateInvalidRequestIDCasesTC42_TC44(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel requestID) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnTypeTCTC42_TC44(payload, requestID);
@@ -25,6 +40,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidLoginIDCasesTC45_TC48(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel loginID) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setLoginIDBasedOnTypeTC45_TC48(payload, loginID);
@@ -32,6 +48,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidCustomerCodeCasesTC49(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerCodeBasedOnTypeTC49(payload, customerCode);
@@ -39,6 +56,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesCodeCasesTC50(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesCodeBasedOnTypeTC50(payload, premisesCode);
@@ -54,6 +72,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidBusinessNameCasesTC53(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerBusinessName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerBusinessNameBasedOnTypeTC53(payload, customerBusinessName);
@@ -61,6 +80,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidLastNameFormatCasesTC54(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel lastName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setLastNameBasedOnTypeTC54(payload, lastName);
@@ -68,6 +88,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidFirstNameFormatCasesTC55(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel firstName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setFirstNameBasedOnTypeTC55(payload, firstName);
@@ -75,6 +96,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidSocialSecurityNumberFormatCasesTC56_TC57(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel socialSecurityNumber) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setSocialSecurityNumberBasedOnTypeTC56_TC57(payload, socialSecurityNumber);
@@ -82,6 +104,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidFederalTaxIDFormatCasesTC58_TC59(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel federalTaxID) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setFederalTaxIDBasedOnTypeTC58_TC59(payload, federalTaxID);
@@ -105,6 +128,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesStreetNumberFormatCasesTC62(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetNumber) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesStreetNumberBasedOnTypeTC62(payload, premisesStreetNumber);
@@ -112,6 +136,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesStreetPreDirectionFormatCasesTC63(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetPreDirection) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesStreetPreDirectionBasedOnTypeTC63(payload, premisesStreetPreDirection);
@@ -119,6 +144,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesStreetNameFormatCasesTC64(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesStreetNameBasedOnTypeTC64(payload, premisesStreetName);
@@ -126,6 +152,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesStreetSuffixFormatCasesTC65(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetSuffix) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesStreetSuffixBasedOnTypeTC65(payload, premisesStreetSuffix);
@@ -133,6 +160,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesStreetPostDirectionFormatCasesTC66(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetPostDirection) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesStreetPostDirectionBasedOnTypeTC66(payload, premisesStreetPostDirection);
@@ -140,6 +168,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesUnitTypeFormatCasesTC67(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesUnitType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesUnitTypeBasedOnTypeTC67(payload, premisesUnitType);
@@ -147,6 +176,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesUnitNumberFormatCasesTC68(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesUnitNumber) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesUnitNumberBasedOnTypeTC68(payload, premisesUnitNumber);
@@ -154,6 +184,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesCityFormatCasesTC69(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesCityBasedOnTypeTC69(payload, premisesCity);
@@ -161,6 +192,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesStateCodeFormatCasesTC70(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesStateCodeBasedOnTypeTC70(payload, premisesStateCode);
@@ -168,6 +200,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesZipCodeFormatCasesTC71(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesZipCodeBasedOnTypeTC71(payload, premisesZipCode);
@@ -175,6 +208,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateMissingSearchFieldsCasesTC72(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel missingSearchField) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setMissingSearchFieldsBasedOnTypeTC72(payload, missingSearchField);
@@ -190,6 +224,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesCodeCasesTC74(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerFirstName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesCodeBasedOnTypeTC74(payload, customerFirstName);
@@ -197,6 +232,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidCustomerLastNameCasesTC75(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerLastName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerLastNameBasedOnTypeTC75(payload, customerLastName);
@@ -204,6 +240,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesZipCodeCasesTC76(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesZipCodeBasedOnTypeTC76(payload, premisesZipCode);
@@ -211,6 +248,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidSSNAndFederalTaxIDCasesTC77(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel federalTaxID) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setSSNAndFederalTaxIDBasedOnTypeTC77(payload, federalTaxID);
@@ -218,6 +256,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateInvalidPremisesStreetNameCasesTC78_TC92(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setPremisesStreetNameBasedOnTypeTC78_TC92(payload, premisesStreetName);
@@ -225,6 +264,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateMissingZipCityAndStateAddressFieldsCasesTC93(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setMissingZipCityAndStateAddressFieldsBasedOnTypeTC93(payload, premisesCity);
@@ -248,6 +288,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateMissingStreetNameStateAndCityAddressFieldsCasesTC96(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setMissingStreetNameStateAndCityAddressFieldsBasedOnTypeTC96(payload, premisesZipCode);
@@ -255,6 +296,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateMissingStateAndZipCodeAddressFieldsCasesTC97(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setMissingStateAndZipCodeAddressFieldsBasedOnTypeTC97(payload, premisesStateCode);
@@ -286,6 +328,7 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateMissingStreetNameAndStateAddressFieldsCasesTC101(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setMissingStreetNameAndStateAddressFieldsBasedOnTypeTC101(payload, premisesStateCode);
@@ -333,6 +376,16 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel,SearchAccountsApiLabel customerCode) {
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
+        setCustomerAndPremisesCodes(activeCustomerData);
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
@@ -340,11 +393,29 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-
-
-
-
-
+    public void validateSSPIndicatorValueWithDataBasedOnTypeTC107(SearchAccountsApiLabel apiLabel,SearchAccountsApiLabel customerCode) {
+        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
+        setCustomerAndPremisesCodes(activeCustomerData);
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

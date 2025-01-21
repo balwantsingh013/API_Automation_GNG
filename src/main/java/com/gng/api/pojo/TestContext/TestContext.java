@@ -1,5 +1,6 @@
 package com.gng.api.pojo.TestContext;
 
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesResponse;
@@ -49,7 +50,7 @@ public class TestContext {
     private ResetPasswordResponse resetPasswordResponse;
     @Getter @Setter
     private Object searchAccountsApiPage;
-    private ResetPasswordResponse searchAccountsResponse;
+    private SearchAccountsResponse searchAccountsResponse;
 
 
 

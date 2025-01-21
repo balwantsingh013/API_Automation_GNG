@@ -3,6 +3,7 @@ package com.gng.api.steps.AccountsApiSteps.SearchAccounts;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pages.AccountsApiPages.SearchAccounts.SearchAccountsApiPage;
 import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 
@@ -195,10 +196,17 @@ public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String custome
     public void a_request_is_made_to_the_SearchAccounts_Api_with_TC106(String premisesStreetName) {
         searchAccountsApiPage.validateMissingStreetNameAddressFieldsCasesTC106(search_accounts,SearchAccountsApiLabel.valueOf(premisesStreetName));
     }
-    @When("a request is made to the SearchAccounts Api TC_109")
+    @When("a request is made to the SearchAccounts Api with {string} TC_107")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode) {
+        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts,SearchAccountsApiLabel.valueOf(customerCode));;
+    }
+
+    @When("a request is made to the SearchAccounts Api  TC_109")
     public void a_request_is_made_to_the_get_SearchAccounts_TC109() {
         searchAccountsApiPage.validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(search_accounts_mandatory);
     }
+
+
 
 
 

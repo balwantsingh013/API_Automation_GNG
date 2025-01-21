@@ -198,6 +198,18 @@ public final class DBQuery {
             """;
 
 
+    public static final String SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE = """
+              SELECT *
+              FROM UCRACCT
+              WHERE UCRACCT_CUST_CODE =''
+            """;
+
+    public static final String SSP_INDICATOR_VALUE = """
+                SELECT UCRACCT
+               FROM UCRACCT
+            WHERE UCRACCT_CUST_CODE =?
+              \s""";
+
     private DBQuery() {
     }
 

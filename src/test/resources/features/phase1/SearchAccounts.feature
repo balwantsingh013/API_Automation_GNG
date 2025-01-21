@@ -27,7 +27,7 @@ Feature: Verify SearchAccounts Api
       | NULL_LOGIN_ID_TC45                           | 10112     | Invalid or missing Login ID |
       | ALPHANUMERIC_LOGIN_ID_TC47                   | 10112     | Invalid or missing Login ID |
       | MAX_LENGTH_LOGIN_ID_TC46                     | 10112     | Invalid or missing Login ID |
-      | INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC48 | 2000     | Invalid Login ID            |
+      | INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC48 | 2000      | Invalid Login ID            |
 
   @SearchAccountsInvalidCustomerCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid customerCode "<customerCode>"TC49
@@ -288,7 +288,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingCityAndZip                                              | errorCode | errorMessage|
+      | MissingCityAndZip                                              | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STREET_NAME_PROVIDED_CITY_ZIP_STATE_CODE_MISSING_TC93 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -298,7 +298,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingAddressFieldsZipAndState                                | errorCode | errorMessage|
+      | MissingAddressFieldsZipAndState                                | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_CITY_PROVIDED_STREET_NAME_ZIP_STATE_CODE_MISSING_TC94 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
   @SearchAccountsMissingZipStreetNameAndCity @Phase1  @NegativeFlow
@@ -307,7 +307,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingZipStreetNameAndCity                                    | errorCode | errorMessage|
+      | MissingZipStreetNameAndCity                                    | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STATE_CODE_PROVIDED_STREET_NAME_ZIP_CITY_MISSING_TC95 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -317,7 +317,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStreetNameStateAndCity                                 | errorCode | errorMessage|
+      | MissingStreetNameStateAndCity                                 | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_ZIP_CODE_PROVIDED_STREET_NAME_ZIP_STATE_MISSING_TC96 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -327,7 +327,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStateAndZipCode                                    | errorCode | errorMessage|
+      | MissingStateAndZipCode                                    | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STREET_NAME_CITY_PROVIDED_ZIP_STATE_MISSING_TC97 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -337,7 +337,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingCityAndZipCode                                     | errorCode | errorMessage|
+      | MissingCityAndZipCode                                     | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STREET_NAME_STATE_PROVIDED_ZIP_CITY_MISSING_TC98 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -347,7 +347,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStateAndCity                                       | errorCode | errorMessage|
+      | MissingStateAndCity                                       | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STREET_NAME_ZIP_PROVIDED_STATE_CITY_MISSING_TC99 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -357,7 +357,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStreetNameAndZip                                    | errorCode | errorMessage|
+      | MissingStreetNameAndZip                                    | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STATE_CITY_PROVIDED_STREET_NAME_ZIP_MISSING_TC100 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -367,7 +367,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStreetNameAndState                                        | errorCode | errorMessage|
+      | MissingStreetNameAndState                                        | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STATE_CITY_ZIP_PROVIDED_STREET_NAME_STATE_MISSING_TC101 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -377,7 +377,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStreetNameAndCity                                   | errorCode | errorMessage|
+      | MissingStreetNameAndCity                                   | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STATE_ZIP_PROVIDED_STREET_NAME_CITY_MISSING_TC102 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -387,7 +387,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingZipCode                                             | errorCode | errorMessage|
+      | MissingZipCode                                             | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STATE_STREET_NAME_CITY_PROVIDED_ZIP_MISSING_TC103 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -397,7 +397,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingCityAddress                                     | errorCode | errorMessage|
+      | MissingCityAddress                                     | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_STATE_STREET_NAME_PROVIDED_CITY_MISSING_TC104 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
 
@@ -407,7 +407,7 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStateCode                                           | errorCode | errorMessage|
+      | MissingStateCode                                           | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_ZIP_STREET_NAME_CITY_PROVIDED_STATE_MISSING_TC105 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
   @SearchAccountsMissingStreetName @Phase1  @NegativeFlow
@@ -416,8 +416,21 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is <200>
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | MissingStreetName                                          | errorCode | errorMessage|
+      | MissingStreetName                                          | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
+
+  @SearchAccountsInvalidCustomerCode @Phase1 @HappyFlow
+  Scenario Outline: Verify response code for invalid Customer Code "<CustomerCode>"TC107
+    When a request is made to the SearchAccounts Api with "<CustomerCode>"TC107
+    Then verify response code of "SearchAccounts" Api is <200>
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | CustomerCode                           | errorCode | errorMessage |
+      | CUSTMER_CODE_NOT_PRESENT_IN_DATATABLE_TC107 | 0         | " "           |
+
+  @SearchAccountsWithAccountNumberWithInvalidCustomerCode @Phase1 @HappyFlow
+
+
 
   @SearchAccountsWithAccountNumberWithoutSSN @Phase1 @HappyFlow
   Scenario: Verify SearchAccounts Api with valid data
