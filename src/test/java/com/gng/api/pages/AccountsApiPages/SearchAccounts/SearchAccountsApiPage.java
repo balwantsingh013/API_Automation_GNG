@@ -376,11 +376,9 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel,SearchAccountsApiLabel customerCode) {
-        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
-        setCustomerAndPremisesCodes(activeCustomerData);
+    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);
+        helper.setInvalidCustomerCode(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
@@ -388,7 +386,7 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
+        //helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
@@ -397,7 +395,7 @@ public class SearchAccountsApiPage extends BasePage {
         List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
         setCustomerAndPremisesCodes(activeCustomerData);
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);
+        //helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);

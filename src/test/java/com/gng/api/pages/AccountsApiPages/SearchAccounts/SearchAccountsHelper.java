@@ -747,16 +747,15 @@ public class SearchAccountsHelper {
 
     //positive test cases
 
-    public void setCustomerCodeNotInDataTableBasedOnTypeTC107(SearchAccountsRequest payload, SearchAccountsApiLabel customerCode) {
-        switch (customerCode) {
-            case CUSTMER_CODE_NOT_PRESENT_IN_DATATABLE_TC107:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setCustomerCode(FakerDataGenerator.generateString(10));
-                break;
-            default:
-        payload.setCustomerCode(FakerDataGenerator.generateString(5));
-        }
+
+    public void setInvalidCustomerCode(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
+        payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(10));
     }
+
+
+
     public void verifyAccountInformationWithDatabase(Map<String, Object> accountInformationDB, Map<String, Object> responseMap) {
         List<String> keysDB = accountInformationDB.keySet().stream().toList();
         SoftAssertions softAssert = new SoftAssertions();

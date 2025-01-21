@@ -8,7 +8,7 @@ Feature: Verify ResetPassword Api
   @ResetPasswordWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify ResetPassword Api with invalid requestID "<requestID>"TC21_TC23
     When a request is made to the ResetPassword Api with "<requestID>"TC21_TC23
-    Then verify response code of "ResetPassword" Api is <200>
+    Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
@@ -20,7 +20,7 @@ Feature: Verify ResetPassword Api
   @ResetPasswordWithInvalidLoginID @Phase1 @NegativeFlow
   Scenario Outline: Verify ResetPassword Api with invalid loginID "<loginID>"TC24_TC28
     When a request is made to the ResetPassword Api with "<loginID>"TC24_TC28
-    Then verify response code of "ResetPassword" Api is <200>
+    Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
@@ -35,7 +35,7 @@ Feature: Verify ResetPassword Api
   @ResetPasswordInvalidOldPassword @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid OldPassword "<oldPassword >"TC29_TC31
     When a request is made to the ResetPassword Api with "<oldPassword>"TC29_TC31
-    Then verify response code of "ResetPassword" Api is <200>
+    Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | oldPassword                                         | errorCode | errorMessage              |
@@ -47,7 +47,7 @@ Feature: Verify ResetPassword Api
   @ResetPasswordInvalidNewPassword @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid NewPassword "<newPassword >"TC32_TC35
     When a request is made to the ResetPassword Api with "<newPassword>"TC32_TC35
-    Then verify response code of "ResetPassword" Api is <200>
+    Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | newPassword                                         | errorCode | errorMessage              |
@@ -57,10 +57,3 @@ Feature: Verify ResetPassword Api
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_MIN_7_CHAR_TC34_1 | 10110     | Invalid Login Credentials |
       | OLD_PASSWORD_NEW_PASSWORD_SAME_TC35                 | 10110     | Invalid Login Credentials |
 
-  @ResetPasswordInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC36_TC38
-    When a request is made to the ResetPassword Api with "<testCondition>"TC36_TC38
-    Then verify response code of "ResetPassword" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | testCondition | errorCode | errorMessage |
