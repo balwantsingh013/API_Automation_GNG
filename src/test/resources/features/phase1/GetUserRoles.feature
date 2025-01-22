@@ -8,7 +8,7 @@ Feature: Verify GetUserRoles Api
   @GetUserRoleWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify GetUserRoles Api with invalid requestID "<requestID>"TC3_TC5
     When a request is made to the GetUserRoles Api with "<requestID>"TC3_TC5
-    Then verify response code of "GetUserRoles" Api is <200>
+    Then verify response code of "GetUserRoles" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
@@ -20,7 +20,7 @@ Feature: Verify GetUserRoles Api
   @GetUserRolesInvalidLoginID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid loginID "<loginID>"TC6_TC9
     When a request is made to the GetUserRoles Api with "<loginID>"TC6_TC9
-    Then verify response code of "GetUserRole" Api is <200>
+    Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | loginID                        | errorCode | errorMessage              |
@@ -33,7 +33,7 @@ Feature: Verify GetUserRoles Api
   @GetUserRolesInvalidPassword @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid Password  "<password >"TC10_TC12
     When a request is made to the GetUserRoles Api with "<password>"TC10_TC12
-    Then verify response code of "GetUserRole" Api is <200>
+    Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | password                                        | errorCode | errorMessage              |
@@ -45,7 +45,7 @@ Feature: Verify GetUserRoles Api
   @GetUserRolesInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC13_TC17
     When a request is made to the GetUserRoles Api with "<testCondition>"TC13_TC17
-    Then verify response code of "GetUserRole" Api is <200>
+    Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition                             | errorCode | errorMessage                             |

@@ -8,63 +8,63 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesAndPromotionCodeAsNullTC318UC39 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC 318 UC 39
     When  a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_319_UC 44
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC320UC46 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 320 UC 46
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes yes with no promotion code  TC_320_UC 46
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC321UC64 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 321 UC 64
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_321_UC 64
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC322UC45 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 322 UC 45
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_322_UC 45
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC323UCNA @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 323 UC NA
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_323_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC324UCNA @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 324 UC NA
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_324_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsServiceTransferWithNoPromotionCodeTC325UC55 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code TC 325 UC 55
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code  TC_325_UC 55
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsCommWithNoPromotionCodeTC326UC56 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code TC 326 UC 56
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code  TC_326_UC 56
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC327UC40  @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 327 UC 40
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_327_UC 40
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC328UCNA @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 328 UC NA
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
   @GetEligiblePlansAndOffersWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
     When a request is made to the GetEligiblePlansAndOffers Api with "<requestID>"TC155_157
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
@@ -77,7 +77,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidLoginID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<loginID>"
     When a request is made to the GetEligiblePlansAndOffers Api with login "<loginID>" ID TC158_160b
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | loginID               | errorCode | errorMessage                                              |
@@ -90,7 +90,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidTransactionID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<transactionID>"
     When a request is made to the GetEligiblePlansAndOffers Api with transaction "<transactionID>" ID TC161_162
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | transactionID                             | errorCode | errorMessage                                                   |
@@ -100,7 +100,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidCustomerCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<customerCode>"
     When a request is made to the GetEligiblePlansAndOffers Api with customer "<customerCode>" code TC163_164
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerCode                             | errorCode | errorMessage                                                  |
@@ -110,7 +110,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidPremisesCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<premisesCode>"
     When a request is made to the GetEligiblePlansAndOffers Api with premises "<premisesCode>" code TC165_167
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesCode                              | errorCode | errorMessage                                                                                                                      |
@@ -121,7 +121,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidEnrollmentState @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<enrollmentState>"
     When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<enrollmentState>" state TC168_182
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | enrollmentState                           | errorCode | errorMessage                                                                                                                      |
@@ -133,7 +133,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidTestCondition @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<testCondition>" Type
     When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>" Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition      | errorCode | errorMessage                                                  |
@@ -143,7 +143,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidReferralCode @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<referralCode>" code Type
     When a request is made to the GetEligiblePlansAndOffers Api with "<referralCode>" code Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | referralCode                                    | errorCode | errorMessage                                                                                                                                                 |
@@ -155,7 +155,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesStreetType @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetNumber>"  Type
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetNumber>"  Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetNumber       | errorCode | errorMessage                                                             |
@@ -164,7 +164,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesStreetPreDirection  @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetPreDirection>" test cases 243
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetPreDirection>" test cases 243
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetPreDirection                         | errorCode | errorMessage                                                                  |
@@ -174,7 +174,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesStreetName  @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetName>" test cases 244
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetName>" test cases 244_245
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetName        | errorCode | errorMessage                                                           |
@@ -184,7 +184,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesStreetSuffix  @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetSuffix>" test cases 246_246a
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetSuffix>" test cases 246_246a
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetSuffix           | errorCode | errorMessage                                                             |
@@ -194,7 +194,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesStreetPostDirection  @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetPostDirection>" test cases 247_247a
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetPostDirection>" test cases 247_247a
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetPostDirection                         | errorCode | errorMessage                                                                   |
@@ -204,7 +204,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesUnitType  @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesUnitType>" test cases 248_248a
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesUnitType>" test cases 248_248a
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesUnitType           | errorCode | errorMessage                                                        |
@@ -214,7 +214,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesUnitNumber  @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesUnitNumber>" test cases 249
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesUnitNumber>" test cases 249
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesUnitNumber       | errorCode | errorMessage                                                          |
@@ -224,7 +224,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersWithInvalidPremisesCity  @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesCity>" test cases 250_251
     When a request is made to the GetEligiblePlansAndOffers Api with "<premisesCity>" test cases 250_251
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesCity       | errorCode | errorMessage                                                    |
@@ -234,7 +234,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidPremisesStateCode  @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<PremisesStateCode>"252_253
     When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesStateCode>" Statecode 252_253
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | PremisesStateCode                        | errorCode | errorMessage                                                         |
@@ -245,7 +245,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidPremisesZipCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<PremisesZipCode>"254_255c
     When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesZipCode>" Zipcode254_255c
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | PremisesZipCode                         | errorCode | errorMessage                                                       |
@@ -260,7 +260,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidPremisesCountyCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<PremisesCountyCode>"
     When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesCountyCode>" Countycode256_257
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | PremisesCountyCode                | errorCode | errorMessage                                  |
@@ -272,7 +272,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidSeparateBillingAddress @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<SeparateBillingAddress>"
     When a request is made to the GetEligiblePlansAndOffers Api with separateBilling "<SeparateBillingAddress>" Address258_283b
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | SeparateBillingAddress                                                                         | errorCode | errorMessage                                                                                                                     |
@@ -327,7 +327,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidWorkPhoneNumber @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<WorkPhoneNumber>"
     When a request is made to the GetEligiblePlansAndOffers Api with workPhone "<WorkPhoneNumber>" Number284_286
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | WorkPhoneNumber                                   | errorCode | errorMessage                                                     |
@@ -339,7 +339,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidWorkPhoneType @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<WorkPhoneType>"
     When a request is made to the GetEligiblePlansAndOffers Api with WorkPhone "<WorkPhoneType>" Type287_290
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | WorkPhoneType                                     | errorCode | errorMessage                                                          |
@@ -351,7 +351,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidHomePhoneNumber @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<HomePhoneNumber>"
     When a request is made to the GetEligiblePlansAndOffers Api with HomePhone "<HomePhoneNumber>" Number291_293
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | HomePhoneNumber                                   | errorCode | errorMessage                                                      |
@@ -363,7 +363,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidHomePhoneType @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<HomePhoneType>"
     When a request is made to the GetEligiblePlansAndOffers Api with HomePhone "<HomePhoneType>" Type294_297
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | HomePhoneType                                         | errorCode | errorMessage                                                     |
@@ -374,7 +374,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidAcnStatusIndicator @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<AcnStatusIndicator>"
     When a request is made to the GetEligiblePlansAndOffers Api with acnStatus "<AcnStatusIndicator>" IndicatorTC298_307
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | AcnStatusIndicator                                                        | errorCode | errorMessage                                                          |
@@ -391,7 +391,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidCustomerPEWCPreferences @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CustomerPEWCPreferences>"
     When a request is made to the GetEligiblePlansAndOffers Api with CustomerPEWC "<CustomerPEWCPreferences>" PreferencesTC308_310
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | CustomerPEWCPreferences                                   | errorCode | errorMessage                                                                                                                      |
@@ -401,7 +401,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidCreditCheckOption @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CreditCheckOption>"
     When a request is made to the GetEligiblePlansAndOffers Api with credit "<CreditCheckOption>" CheckoptionTC310_312
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | CreditCheckOption              | errorCode | errorMessage                                                          |
@@ -412,7 +412,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInitialCreditCheckCustomerCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<InitialCreditCheckCustomerCode>"
     When a request is made to the GetEligiblePlansAndOffers Api with InitialCreditCheck "<InitialCreditCheckCustomerCode>" CustomerCodeTC313_317
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | InitialCreditCheckCustomerCode                                    | errorCode | errorMessage                                                                                                                                              |
@@ -426,7 +426,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidTransactionType @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<transactionType>"Type
     When a request is made to the GetEligiblePlansAndOffers Api with  transaction "<transactionType>" Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | transactionType                      | errorCode | errorMessage                                                     |
@@ -439,7 +439,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidCustomerTYPE @Phase1  @NegativeFlow
   Scenario Outline: Verify SaveEnrollment Api with invalid "<customerTYPE>" type
     When a request is made to the GetEligiblePlansAndOffers Api with  customer "<customerTYPE>" Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerTYPE             | errorCode | errorMessage                                                   |
@@ -451,7 +451,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidEnrollmentSources @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<enrollmentSources>"
     When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<enrollmentSources>" Sources
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | enrollmentSources             | errorCode | errorMessage                                                        |
@@ -463,7 +463,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidCustomerLastName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CustomerLastName>"
     When a request is made to the GetEligiblePlansAndOffers Api with customer "<CustomerLastName>" LastName
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | CustomerLastName         | errorCode | errorMessage                                                       |
@@ -473,7 +473,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
   @GetEligiblePlansAndOffersInvalidTenantLandlord @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<TenantLandlord>"
     When a request is made to the GetEligiblePlansAndOffers Api with tenant "<TenantLandlord>" Landlord
-    Then verify response code of "GetEligiblePlansAndOffers" Api is <200>
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | TenantLandlord             | errorCode | errorMessage                                                     |

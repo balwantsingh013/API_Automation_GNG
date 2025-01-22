@@ -8,7 +8,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify SearchAccounts Api with invalid requestID "<requestID>"TC42_TC44
     When a request is made to the SearchAccounts Api with "<requestID>"TC42_TC44
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
@@ -20,7 +20,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidLoginID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid loginID "<loginID>"TC45_TC48
     When a request is made to the SearchAccounts Api with "<loginID>"TC45_TC48
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | loginID                                      | errorCode | errorMessage                |
@@ -32,7 +32,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidCustomerCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid customerCode "<customerCode>"TC49
     When a request is made to the SearchAccounts Api with "<customerCode>"TC49
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerCode                  | errorCode | errorMessage                |
@@ -41,7 +41,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesCode "<premisesCode>"TC49
     When a request is made to the SearchAccounts Api with "<premisesCode>"TC49
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesCode                  | errorCode | errorMessage                |
@@ -50,7 +50,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidTransactionType @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid transactionType "<transactionType>"TC51_TC52
     When a request is made to the SearchAccounts Api with "<transactionType>"TC51_TC52
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | transactionType               | errorCode | errorMessage                        |
@@ -60,7 +60,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidBusinessName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid businessName "<businessName>"TC53
     When a request is made to the SearchAccounts Api with "<businessName>"TC53
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | businessName                  | errorCode | errorMessage                |
@@ -69,7 +69,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidLastName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid lastName "<lastName>"TC54
     When a request is made to the SearchAccounts Api with "<lastName>"TC54
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | lastName                  | errorCode | errorMessage                |
@@ -78,7 +78,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidFirstName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid customerFirstName "<customerFirstName>"TC55
     When a request is made to the SearchAccounts Api with "<customerFirstName>"TC55
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerFirstName          | errorCode | errorMessage                |
@@ -87,7 +87,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidSocialSecurityNumber @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid socialSecurityNumber "<socialSecurityNumber>"TC56_TC57
     When a request is made to the SearchAccounts Api with "<socialSecurityNumber>"TC56_TC57
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | socialSecurityNumber                      | errorCode | errorMessage                |
@@ -97,7 +97,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidFederalTaxID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid federalTaxID "<federalTaxID>"TC58_TC59
     When a request is made to the SearchAccounts Api with "<federalTaxID>"TC58_TC59
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | federalTaxID                      | errorCode | errorMessage                |
@@ -107,7 +107,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPhoneNumber  @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid phoneNumber "<phoneNumber>"TC60
     When a request is made to the SearchAccounts Api with "<phoneNumber>"TC60
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | phoneNumber                  | errorCode | errorMessage                |
@@ -116,7 +116,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidAGLCAccountNumber  @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid aglcAccountNumber "<aglcAccountNumber>"TC61
     When a request is made to the SearchAccounts Api with "<aglcAccountNumber>"TC61
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | aglcAccountNumber                   | errorCode | errorMessage                |
@@ -126,7 +126,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesStreetNumber  @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesStreetNumber "<premisesStreetNumber>"TC62
     When a request is made to the SearchAccounts Api with "<premisesStreetNumber>"TC62
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetNumber                   | errorCode | errorMessage                |
@@ -135,7 +135,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesStreetPreDirection  @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesStreetPreDirection "<premisesStreetPreDirection>"TC63
     When a request is made to the SearchAccounts Api with "<premisesStreetPreDirection>"TC63
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetPreDirection                    | errorCode | errorMessage                |
@@ -144,7 +144,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesStreetName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesStreetPreDirection "<premisesStreetName>"TC64
     When a request is made to the SearchAccounts Api with "<premisesStreetName>"TC64
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetName                   | errorCode | errorMessage                |
@@ -153,7 +153,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesStreetSuffix @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesStreetSuffix "<premisesStreetSuffix>"TC65
     When a request is made to the SearchAccounts Api with "<premisesStreetSuffix>"TC65
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetSuffix                   | errorCode | errorMessage                |
@@ -162,7 +162,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesStreetPostDirection @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesStreetPostDirection "<premisesStreetPostDirection>"TC66
     When a request is made to the SearchAccounts Api with "<premisesStreetPostDirection>"TC66
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetPostDirection                    | errorCode | errorMessage                |
@@ -171,7 +171,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesUnitType @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesUnitType "<premisesUnitType>"TC67
     When a request is made to the SearchAccounts Api with "<premisesUnitType>"TC67
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesUnitType                   | errorCode | errorMessage                |
@@ -180,7 +180,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesUnitNumber @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesUnitNumber "<premisesUnitNumber>"TC68
     When a request is made to the SearchAccounts Api with "<premisesUnitNumber>"TC68
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesUnitNumber                   | errorCode | errorMessage                |
@@ -189,7 +189,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesCity @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesCity "<premisesCity>"TC69
     When a request is made to the SearchAccounts Api with "<premisesCity>"TC69
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesCity                  | errorCode | errorMessage                |
@@ -198,7 +198,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesStateCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesStateCode "<premisesStateCode>"TC70
     When a request is made to the SearchAccounts Api with "<premisesStateCode>"TC70
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStateCode                   | errorCode | errorMessage                |
@@ -207,7 +207,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesZipCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesZipCode "<premisesZipCode>"TC71
     When a request is made to the SearchAccounts Api with "<premisesZipCode>"TC71
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesZipCode                   | errorCode | errorMessage                |
@@ -216,7 +216,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidCustomerCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid customerCode "<customerCode>"TC73
     When a request is made to the SearchAccounts Api with "<customerCode>"TC73
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerCode                                      | errorCode | errorMessage                                                                                                                                                                                        |
@@ -225,7 +225,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesCode "<premisesCode>"TC74
     When a request is made to the SearchAccounts Api with "<premisesCode>"TC74
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesCode                                      | errorCode | errorMessage                                                                                                                                                                                        |
@@ -234,7 +234,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidCustomerLastName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid customerLastName "<customerLastName>"TC75
     When a request is made to the SearchAccounts Api with "<customerLastName>"TC75
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerLastName                                             | errorCode | errorMessage                                                                                                                                                                                        |
@@ -243,7 +243,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesZipCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesZipCode "<premisesZipCode>"TC76
     When a request is made to the SearchAccounts Api with "<premisesZipCode>"TC76
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesZipCode                                       | errorCode | errorMessage                                                                                                                                                                                        |
@@ -253,7 +253,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidSSNAndFederalTaxID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid SSNAndFederalTaxID "<SSNAndFederalTaxID>"TC77
     When a request is made to the SearchAccounts Api with "<SSNAndFederalTaxID>"TC77
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | SSNAndFederalTaxID                       | errorCode | errorMessage                                                        |
@@ -262,7 +262,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsInvalidPremisesStreetName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid premisesStreetName "<premisesStreetName>"TC78_TC92
     When a request is made to the SearchAccounts Api with "<premisesStreetName>"TC78_TC92
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesStreetName                                                                                      | errorCode | errorMessage                                                                                                                                                                                        |
@@ -285,7 +285,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingCityAndZip @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingAddressFieldsCityAndZip "<MissingCityAndZip>"TC93
     When a request is made to the SearchAccounts Api with "<MissingCityAndZip>"TC93
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingCityAndZip                                              | errorCode | errorMessage                                                                                                                                                                                        |
@@ -295,7 +295,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingAddressFieldsZipAndState @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingAddressFieldsZipAndState "<MissingAddressFieldsZipAndState>"TC94
     When a request is made to the SearchAccounts Api with "<MissingAddressFieldsZipAndState>"TC94
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingAddressFieldsZipAndState                                | errorCode | errorMessage                                                                                                                                                                                        |
@@ -304,7 +304,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingZipStreetNameAndCity @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingZipStreetNameAndCity "<MissingZipStreetNameAndCity>"TC95
     When a request is made to the SearchAccounts Api with "<MissingZipStreetNameAndCity>"TC95
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingZipStreetNameAndCity                                    | errorCode | errorMessage                                                                                                                                                                                        |
@@ -314,7 +314,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStreetNameStateAndCity @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStreetNameStateAndCity "<MissingStreetNameStateAndCity>"TC96
     When a request is made to the SearchAccounts Api with "<MissingStreetNameStateAndCity>"TC96
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStreetNameStateAndCity                                 | errorCode | errorMessage                                                                                                                                                                                        |
@@ -324,7 +324,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStateAndZipCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStateAndZipCode "<MissingStateAndZipCode>"TC97
     When a request is made to the SearchAccounts Api with "<MissingStateAndZipCode>"TC97
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStateAndZipCode                                    | errorCode | errorMessage                                                                                                                                                                                        |
@@ -334,7 +334,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingCityAndZipCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingCityAndZipCode "<MissingCityAndZipCode>"TC98
     When a request is made to the SearchAccounts Api with "<MissingCityAndZipCode>"TC98
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingCityAndZipCode                                     | errorCode | errorMessage                                                                                                                                                                                        |
@@ -344,7 +344,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStateAndCity @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStateAndCity "<MissingStateAndCity>"TC99
     When a request is made to the SearchAccounts Api with "<MissingStateAndCity>"TC99
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStateAndCity                                       | errorCode | errorMessage                                                                                                                                                                                        |
@@ -354,7 +354,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStreetNameAndZip @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStreetNameAndZip "<MissingStreetNameAndZip>"TC100
     When a request is made to the SearchAccounts Api with "<MissingStreetNameAndZip>"TC100
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStreetNameAndZip                                    | errorCode | errorMessage                                                                                                                                                                                        |
@@ -364,7 +364,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStreetNameAndState @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStreetNameAndState "<MissingStreetNameAndState>"TC101
     When a request is made to the SearchAccounts Api with "<MissingStreetNameAndState>"TC101
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStreetNameAndState                                        | errorCode | errorMessage                                                                                                                                                                                        |
@@ -374,7 +374,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStreetNameAndCity @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStreetNameAndCity "<MissingStreetNameAndCity>"TC102
     When a request is made to the SearchAccounts Api with "<MissingStreetNameAndCity>"TC102
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStreetNameAndCity                                   | errorCode | errorMessage                                                                                                                                                                                        |
@@ -384,7 +384,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingZipCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingZipCode "<MissingZipCode>"TC103
     When a request is made to the SearchAccounts Api with "<MissingZipCode>"TC103
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingZipCode                                             | errorCode | errorMessage                                                                                                                                                                                        |
@@ -394,7 +394,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingCityAddress @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingCityAddress "<MissingCityAddress>"TC104
     When a request is made to the SearchAccounts Api with "<MissingCityAddress>"TC104
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingCityAddress                                     | errorCode | errorMessage                                                                                                                                                                                        |
@@ -404,7 +404,7 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStateCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStateCode "<MissingStateCode>"TC105
     When a request is made to the SearchAccounts Api with "<MissingStateCode>"TC105
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStateCode                                           | errorCode | errorMessage                                                                                                                                                                                        |
@@ -413,27 +413,17 @@ Feature: Verify SearchAccounts Api
   @SearchAccountsMissingStreetName @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid MissingStreetName "<MissingStreetName>"TC106
     When a request is made to the SearchAccounts Api with "<MissingStreetName>"TC106
-    Then verify response code of "SearchAccounts" Api is <200>
+    Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | MissingStreetName                                          | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
-  @SearchAccountsInvalidCustomerCode @Phase1 @HappyFlow
-  Scenario Outline: Verify response code for invalid Customer Code "<CustomerCode>"TC107
-    When a request is made to the SearchAccounts Api with "<CustomerCode>"TC107
-    Then verify response code of "SearchAccounts" Api is <200>
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | CustomerCode                           | errorCode | errorMessage |
-      | CUSTMER_CODE_NOT_PRESENT_IN_DATATABLE_TC107 | 0         | " "           |
+  @SearchAccountsInvalidCustomerCode_107 @Phase1 @HappyFlow
+  Scenario: Verify response code for invalid Customer Code TC107
+    When a request is made to the SearchAccounts Api with an invalid Customer Code TC_107
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
 
-  @SearchAccountsWithAccountNumberWithInvalidCustomerCode @Phase1 @HappyFlow
-
-
-
-  @SearchAccountsWithAccountNumberWithoutSSN @Phase1 @HappyFlow
-  Scenario: Verify SearchAccounts Api with valid data
-    When a request is made to the SearchAccounts Api TC_109
-    Then verify response code of "SearchAccounts" Api is <200>
 

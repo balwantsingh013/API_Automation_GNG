@@ -196,9 +196,9 @@ public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String custome
     public void a_request_is_made_to_the_SearchAccounts_Api_with_TC106(String premisesStreetName) {
         searchAccountsApiPage.validateMissingStreetNameAddressFieldsCasesTC106(search_accounts,SearchAccountsApiLabel.valueOf(premisesStreetName));
     }
-    @When("a request is made to the SearchAccounts Api with {string} TC_107")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode) {
-        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts,SearchAccountsApiLabel.valueOf(customerCode));;
+    @When("a request is made to the SearchAccounts Api with an invalid Customer Code TC_107")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107() {
+        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts);
     }
 
     @When("a request is made to the SearchAccounts Api  TC_109")

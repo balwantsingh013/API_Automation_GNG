@@ -11,7 +11,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode | ACCT            |
       | noteText     | This is a test2 |
       | origin       | IVR             |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And verify response contains a valid NoteSequenceNumber
     And verify NoteSequenceNumber match the value in the database
 
@@ -22,7 +22,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode  | ACCT |
       | noteText      | Test |
       | origin        | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10001 and ErrorMessage 'Missing Request ID'
 
   @CreateAccountNoteApiDuplicateRequestID @Phase1
@@ -32,7 +32,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode  | ACCT |
       | noteText      | Test |
       | origin        | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10003 and ErrorMessage 'Duplicate Request ID'
 
   @CreateAccountNoteApiNullCustomerCode @Phase1
@@ -42,7 +42,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode  | ACCT |
       | noteText      | Test |
       | origin        | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10011 and ErrorMessage 'Missing Customer Code'
 
   @CreateAccountNoteApiInvalidParamFormat @Phase1
@@ -52,7 +52,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode  | ACCT |
       | noteText      | Test |
       | origin        | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | param        | paramValue               | errorCode | errorMessage                 |
@@ -66,7 +66,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode  | ACCT |
       | noteText      | Test |
       | origin        | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 40015 and ErrorMessage 'Invalid Account Number'
 
   @CreateAccountNoteApiNullNoteTypeCode @Phase1
@@ -75,7 +75,7 @@ Feature: Verify CreateAccountNote Api
       | serviceNumber | 1    |
       | noteText      | Test |
       | origin        | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10027 and ErrorMessage 'Missing Note Type Code'
 
   @CreateAccountNoteApiNullNoteText @Phase1
@@ -84,7 +84,7 @@ Feature: Verify CreateAccountNote Api
       | serviceNumber | 1    |
       | noteTypeCode  | ACCT |
       | origin        | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10025 and ErrorMessage 'Missing Note Text'
 
   @CreateAccountNoteApiNullOrigin @Phase1
@@ -93,7 +93,7 @@ Feature: Verify CreateAccountNote Api
       | serviceNumber | 1    |
       | noteTypeCode  | ACCT |
       | noteText      | Test |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10029 and ErrorMessage 'Missing Origin'
 
   @CreateAccountNoteApiInvalidExpirationDateFormat @Phase1
@@ -104,7 +104,7 @@ Feature: Verify CreateAccountNote Api
       | noteText       | Test         |
       | origin         | IVR          |
       | expirationDate | invalid-date |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10031 and ErrorMessage 'Invalid Expiration Date Format'
 
   @CreateAccountNoteApiNonExistentServiceNoPremCode @Phase1
@@ -113,7 +113,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode | ACCT |
       | noteText     | Test |
       | origin       | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 40043 and ErrorMessage 'Invalid Service Number'
 
   @CreateAccountNoteApiInvalidServiceNumberFormat @Phase1
@@ -122,7 +122,7 @@ Feature: Verify CreateAccountNote Api
       | noteTypeCode | ACCT |
       | noteText     | Test |
       | origin       | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 10045 and ErrorMessage 'Invalid Service Number Format'
 
   @CreateAccountNoteApiNonExistentNoteType @Phase1
@@ -130,5 +130,5 @@ Feature: Verify CreateAccountNote Api
     When a request is made to the CreateAccountNote Api with non-existent NoteType
       | noteText | Test |
       | origin   | IVR  |
-    Then verify response code of "CreateAccountNote" Api is <200>
+    Then verify response code of "CreateAccountNote" Api is 200
     And response should have ErrorCode 40045 and ErrorMessage 'Invalid Note Type'
