@@ -197,11 +197,25 @@ public final class DBQuery {
             FROM UCBNOTE WHERE UCBNOTE_SEQ_NUMBER = ?
             """;
 
+    public static final String SELECT_PASSWORD_EXPIRE_DAY = """
+            SELECT *
+               FROM UZRPSTO
+               WHERE UZRPSTO_PARM_NAME = 'PASSWORD_EXPIRE_DAYS'
+               AND UZRPSTO_PARM_VALUE = '45'\s""";
+
+
+
+    public static final String EXTERNAL_PARAM_OBJECT_ADDED = """
+              SELECT *
+              FROM UZBPSTO
+            WHERE  UZBPSTO_OBJECT = 'SPK_WEB_API';
+            """;
+
 
     public static final String SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE = """
-              SELECT *
-              FROM UCRACCT
-              WHERE UCRACCT_CUST_CODE =''
+            SELECT *
+                                         FROM UCRACCT\s
+                                         WHERE UCRACCT_CUST_CODE = 'CustomerCode'
             """;
 
     public static final String SSP_INDICATOR_VALUE = """

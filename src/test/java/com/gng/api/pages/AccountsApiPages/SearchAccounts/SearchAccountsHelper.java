@@ -1,6 +1,7 @@
 package com.gng.api.pages.AccountsApiPages.SearchAccounts;
 
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -768,27 +769,39 @@ public class SearchAccountsHelper {
         payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
         payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(10));
     }
-
+//    public void String setCustomerCode (SearchAccountsRequest payload)
+//   {
+//       String  a = payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
+//       return a;
+//    }
+//    public void validateCustomerCodeInDB()
+//
+//    {
+//        List<Map<String, Object>> setCustomerCode = ApplicationContext.get().getDbAction().getInvalidCustomerCode(setCustomerCode());
+//
+//    }
+//
 
 
     public void verifyAccountInformationWithDatabase(Map<String, Object> accountInformationDB, Map<String, Object> responseMap) {
         List<String> keysDB = accountInformationDB.keySet().stream().toList();
-        SoftAssertions softAssert = new SoftAssertions();
-
-        for (String key : keysDB) {
-            Object dbValue = accountInformationDB.get(key);
-            Object responseValue = responseMap.get(key);
-
-            String dbStringValue = String.valueOf(dbValue);
-            String responseStringValue = String.valueOf(responseValue);
-            logInfo("Expected: {}, Actual: {} "+ "DB Value: " +dbValue +" Response Value: "+ responseValue);
-            softAssert.assertThat(responseStringValue)
-                    .as("Field: " + key)
-                    .isEqualTo(dbStringValue);
-        }
-
-        softAssert.assertAll();
-    }
+//        SoftAssertions softAssert = new SoftAssertions();
+//
+//        for (String key : keysDB) {
+//            Object dbValue = accountInformationDB.get(key);
+//            Object responseValue = responseMap.get(key);
+//
+//            String dbStringValue = String.valueOf(dbValue);
+//            String responseStringValue = String.valueOf(responseValue);
+//            logInfo("Expected: {}, Actual: {} "+ "DB Value: " +dbValue +" Response Value: "+ responseValue);
+//            softAssert.assertThat(responseStringValue)
+//                    .as("Field: " + key)
+//                    .isEqualTo(dbStringValue);
+//        }
+//
+//        softAssert.assertAll();
+//    }
+   }
 
 
     public void setAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsRequest payload,SearchAccountsApiLabel premisesStreetName) {

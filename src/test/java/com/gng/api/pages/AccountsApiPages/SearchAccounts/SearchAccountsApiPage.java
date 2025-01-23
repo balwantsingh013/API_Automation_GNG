@@ -382,7 +382,11 @@ public class SearchAccountsApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
+        //helper.validateCustomerCodeInDB();
+
+
     }
+
 
     public void validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
@@ -392,8 +396,8 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
     public void validateSSPIndicatorValueWithDataBasedOnTypeTC107(SearchAccountsApiLabel apiLabel,SearchAccountsApiLabel customerCode) {
-        List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
-        setCustomerAndPremisesCodes(activeCustomerData);
+      //  List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
+        //setCustomerAndPremisesCodes(activeCustomerData);
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         //helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);
         setRequestSpecification(payload, testContext.getAuthToken());

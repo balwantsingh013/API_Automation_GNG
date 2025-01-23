@@ -1,11 +1,16 @@
 package com.gng.api.pages.Users.ResetPassword;
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class ResetPasswordHelper {
@@ -23,6 +28,28 @@ public class ResetPasswordHelper {
                 : ResetPasswordApiLabel.reset_password_mandatory.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, ResetPasswordRequest.class);
     }
+    public void validatePasswordExpireDaysEntryInDB()
+    {
+        String expectedValue = passwordExpireDayValue();
+        List<Map<String, Object>> passwordExpireDayValue = ApplicationContext.get().getDbAction().getPasswordExpireDaysValue();
+
+
+        Assert.assertEquals(passwordExpireDayValue.size(), 1, "Exactly one entry should exist in the table.");
+
+        Map<String, Object> entry = passwordExpireDayValue.get(0);
+
+        String parmName = (String) entry.get("UZRPSTO_PARM_NAME");
+        String objectName = (String) entry.get("UZRPSTO_OBJECT");
+        String value = entry.get("VALUE").toString();
+
+        Assert.assertEquals(parmName, "PASSWORD_EXPIRE_DAYS", "Parameter name does not match.");
+        Assert.assertEquals(objectName, "SPK_WEB_API", "Object name does not match.");
+        Assert.assertEquals(value, expectedValue, "Value does not match the expected value.");
+    }
+    public String passwordExpireDayValue() {
+        return "45";
+    }
+
 
     public void setRequestIDBasedOnTypeTC21_TC23(ResetPasswordRequest payload, ResetPasswordApiLabel requestID) {
         switch (requestID) {

@@ -18,6 +18,14 @@ public class GetUserRolesApiPage extends BasePage {
         super(testContext);
         this.helper = new GetUserRolesHelper(testContext);
     }
+    public void validateExternalParameterObjectAddedT1(GetUserRolesApiLabel apiLabel) {
+        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
+       // helper.setRequestIDBasedOnTypeTCTC3_TC5();
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateInvalidRequestIDCasesTC3_TC5(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel requestID) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnTypeTCTC3_TC5(payload, requestID);

@@ -15,6 +15,10 @@ public class ResetPasswordApiSteps {
         this.resetPasswordApiPage = resetPasswordApiPage;
         testContext.setResetPasswordApiPage(resetPasswordApiPage);
     }
+    @When("a request is made to the ResetPassword Api with Expire Day Value TC20")
+    public void a_request_is_made_to_the_ResetPassword_Api_with_Expire_Day_Value_TC20() {
+        resetPasswordApiPage.validateUserTableValueTC20(reset_password);
+    }
     @When("a request is made to the ResetPassword Api with {string}TC21_TC23")
     public void a_request_is_made_to_the_ResetPassword_Api_with_TC21_TC23(String requestID) {
         resetPasswordApiPage.validateInvalidRequestIDCasesTC21_TC23(reset_password, ResetPasswordApiLabel.valueOf(requestID));

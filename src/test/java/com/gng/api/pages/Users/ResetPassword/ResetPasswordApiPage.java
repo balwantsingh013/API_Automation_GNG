@@ -17,6 +17,14 @@ public class ResetPasswordApiPage   extends BasePage  {
         super(testContext);
         this.helper = new ResetPasswordHelper(testContext);
     }
+    public void validateUserTableValueTC20(ResetPasswordApiLabel apiLabel) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.validatePasswordExpireDaysEntryInDB();
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateInvalidRequestIDCasesTC21_TC23(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel requestID) {
         ResetPasswordRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnTypeTC21_TC23(payload, requestID);

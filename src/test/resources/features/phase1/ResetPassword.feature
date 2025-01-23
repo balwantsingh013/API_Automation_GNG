@@ -5,6 +5,11 @@ Feature: Verify ResetPassword Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
+  @ResetPasswordUZRPSTOTable @Phase1 @HappyFlow
+  Scenario: ResetPassword Api with Expire Day Value TC20
+    When a request is made to the ResetPassword Api with Expire Day Value TC20
+    Then verify response code of "ResetPassword" Api is 200
+
   @ResetPasswordWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify ResetPassword Api with invalid requestID "<requestID>"TC21_TC23
     When a request is made to the ResetPassword Api with "<requestID>"TC21_TC23

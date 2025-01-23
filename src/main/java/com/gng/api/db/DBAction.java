@@ -35,10 +35,16 @@ public class DBAction {
         logQueryInAllure("Get Note Sequence Number", query, noteSeqNo);
         return jdbcTemplate.queryForList(query, noteSeqNo);
     }
-    public List<Map<String, Object>> getInvalidCustomerCode() {
-        String query = DBQuery.SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE;
+    public List<Map<String, Object>> getInvalidCustomerCode(String customerCode) {
+        String query = (DBQuery.SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE).replace("CustomerCode",customerCode);
         logQueryInAllure("Get Invalid Customer Code", query);
         return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> getPasswordExpireDaysValue() {
+        String query = DBQuery.SELECT_PASSWORD_EXPIRE_DAY;
+        logQueryInAllure("Get param password expire day", query);
+        return jdbcTemplate.queryForList(query);
+
     }
 
 
