@@ -196,9 +196,22 @@ public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String custome
     public void a_request_is_made_to_the_SearchAccounts_Api_with_TC106(String premisesStreetName) {
         searchAccountsApiPage.validateMissingStreetNameAddressFieldsCasesTC106(search_accounts,SearchAccountsApiLabel.valueOf(premisesStreetName));
     }
-    @When("a request is made to the SearchAccounts Api with an invalid Customer Code TC_107")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107() {
-        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts);
+    @When("a request is made to the SearchAccounts Api with an invalid {string} TC_107")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode) {
+        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts,customerCode);
+    }
+    @When("a request is made to the SearchAccounts Api with SSP Based {string} TC_111")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_SSP_Based_TC111(String LastNameAndZipCode) {
+        searchAccountsApiPage.validateLastNameAndZiPBTypESSPBasedOnTypeTC111(search_accounts,LastNameAndZipCode);
+    }
+
+    @When("a request is made to the SearchAccounts Api with Enrollment Records Based {string} TC_119")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Enrollment_Records_Based_TC119(String PhoneNumber) {
+        searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts,PhoneNumber);
+    }
+    @When("a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_an_SSP_Participant_Code_TC121e() {
+        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts);
     }
 
     @When("a request is made to the SearchAccounts Api  TC_109")

@@ -42,6 +42,15 @@ Feature: Verify GetUserRoles Api
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_10_CHAR_TC12  | 10110     | Invalid Login Credentials |
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_7_CHAR_TC12_1 | 10110     | Invalid Login Credentials |
 
+
+  @GetUserRolesInvalidPasswordInDB @Phase1  @NegativeFlow
+  Scenario: Verify response code for invalid Password TC15
+    When a request is made to the GetUserRoles Api with TC15
+    Then verify response code of "GetUserRole" Api is 200
+
+
+
+
   @GetUserRolesInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC13_TC17
     When a request is made to the GetUserRoles Api with "<testCondition>"TC13_TC17

@@ -376,21 +376,39 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel) {
+    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel,String customerCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setInvalidCustomerCode(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
-        //helper.validateCustomerCodeInDB();
-
-
+        helper.validateCustomerCodeInDB(customerCode,payload);
     }
-
-
+    public void validateLastNameAndZiPBTypESSPBasedOnTypeTC111(SearchAccountsApiLabel apiLabel,String customerCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setLastNameAndZiPBType(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(SearchAccountsApiLabel apiLabel,String customerCode) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setSSPParticipantCodeBasedOnTypeTC121e(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+        //helper.validateCustomerCodeInDB()
+    }
     public void validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        //helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
+        helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);

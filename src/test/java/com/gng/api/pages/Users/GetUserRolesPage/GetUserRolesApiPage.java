@@ -47,6 +47,14 @@ public class GetUserRolesApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
+        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
+        helper.validatePasswordNotMatchLoginIDInDB(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateInvalidTestConditionCasesTC13_TC17(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel testCondition) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.setTestConditionBasedOnTypeTC13_TC17(payload, testCondition);
@@ -54,5 +62,6 @@ public class GetUserRolesApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
     }
+
 
 }

@@ -419,11 +419,40 @@ Feature: Verify SearchAccounts Api
       | MissingStreetName                                          | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
-  @SearchAccountsInvalidCustomerCode_107 @Phase1 @HappyFlow
-  Scenario: Verify response code for invalid Customer Code TC107
-    When a request is made to the SearchAccounts Api with an invalid Customer Code TC_107
+  @SearchAccountsCustomerCodeNotInUserTable @Phase1 @HappyFlow
+  Scenario: Verify response code for invalid "<CustomerCode>" TC107
+    When a request is made to the SearchAccounts Api with an invalid "<CustomerCode>" TC_107
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+  @SearchAccountsSSPBasedOnTheProvidedLastNameAndZipCode @Phase1 @HappyFlow
+  Scenario: Verify response code SSP Based "<LastNameAndZipCode>" TC111
+    When a request is made to the SearchAccounts Api with SSP Based "<LastNameAndZipCode>" TC_111
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
 
+  @SearchAccountsEnrollmentRecordsBasedOnTheProvidedPhoneNumber @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Records Based "<PhoneNumber>" TC119
+    When a request is made to the SearchAccounts Api with Enrollment Records Based "<PhoneNumber>" TC_119
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should return numberOfMatches as 2
+
+
+  @SearchAccountsEnrollmentCommercialRecordsBasedOnTheProvidedCustomerBusinessName @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Commercial Records Based Provided "<customerBusinessName>" TC120
+    When a request is made to the SearchAccounts Api with Enrollment Commercial Records Based Provided "<customerBusinessName>" TC_120
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+
+
+  @SearchAccountsSSPParticipantCode @Phase1 @HappyFlow
+  Scenario: Verify response code for SSP Participant Code TC121e
+    When a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0

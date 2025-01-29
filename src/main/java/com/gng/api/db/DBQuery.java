@@ -204,7 +204,6 @@ public final class DBQuery {
                AND UZRPSTO_PARM_VALUE = '45'\s""";
 
 
-
     public static final String EXTERNAL_PARAM_OBJECT_ADDED = """
               SELECT *
               FROM UZBPSTO
@@ -217,6 +216,19 @@ public final class DBQuery {
                                          FROM UCRACCT\s
                                          WHERE UCRACCT_CUST_CODE = 'CustomerCode'
             """;
+
+
+    public static final String THE_PASSWORD_DOESNT_MATCH_THE_LOGIN_ID_LOCK_UPDATE_QUERY = """
+                UPDATE USERS SET user_locked_ind ='N', failed_logins=3 WHERE USER_ID='autotester'
+            """;
+    public static final String FAILED_LOGIN_COUNTS = """
+            SELECT failed_logins FROM USERS WHERE USER_ID='autotester'
+            """;
+
+    public static final String ROLLBACK_QUERIES = """
+            UPDATE USERS SET user_locked_ind ='N', failed_logins=1 WHERE USER_ID='autotester'
+            """;
+
 
     public static final String SSP_INDICATOR_VALUE = """
                 SELECT UCRACCT

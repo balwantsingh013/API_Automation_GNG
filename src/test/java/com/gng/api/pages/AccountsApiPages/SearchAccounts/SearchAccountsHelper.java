@@ -9,13 +9,12 @@ import com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.SoftAssertions;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.ACCOUNT_NUMBER_WITHOUT_SSN_FROM_USER_TABLE_TC109;
-import static com.gng.api.util.LogUtil.logInfo;
 
 
 @Slf4j
@@ -39,22 +38,17 @@ public class SearchAccountsHelper {
         switch (requestID) {
             case NULL_REQUEST_ID_TC42:
                 payload.setRequestID(null);
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
-
                 break;
             case DUPLICATE_REQUEST_ID_TC43:
                 payload.setRequestID("3BC00A0397B14F29A313280EE0110941");
-                payload.setTransactionType("TNON");
-                payload.setLoginID("test10965");
-
-
+                payload.setLoginID("autotester");
                 break;
             case LONG_REQUEST_ID_TC44:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(35));
                 payload.setTransactionType("TNON");
-                payload.setLoginID("test10965");
-
+                payload.setLoginID("autotester");
                 break;
             default:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -90,7 +84,7 @@ public class SearchAccountsHelper {
         switch (customerCode) {
             case MAX_LENGTH_CUSTOMER_CODE_TC49:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
                 payload.setCustomerCode(FakerDataGenerator.generateLowerCaseString(15));
                 break;
@@ -102,9 +96,8 @@ public class SearchAccountsHelper {
     public void setPremisesCodeBasedOnTypeTC50(SearchAccountsRequest payload, SearchAccountsApiLabel premisesCode) {
         switch (premisesCode) {
             case MAX_LENGTH_PREMISES_CODE_TC50:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setTransactionType("TNON");
+                payload.setRequestID(FakerDataGenerator.generateString(7));
+                payload.setLoginID("autotester");
                 payload.setPremisesCode(FakerDataGenerator.generateLowerCaseString(8));
                 break;
             default:
@@ -116,12 +109,12 @@ public class SearchAccountsHelper {
         switch (transactionType) {
             case MISSING_TRANSACTION_TYPE_TC51:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType(null);
                 break;
             case INVALID_TRANSACTION_TYPE_TC52:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNOF");
                 break;
             default:
@@ -133,7 +126,7 @@ public class SearchAccountsHelper {
         switch (customerBusinessName) {
             case MAX_LENGTH_BUSINESS_NAME_TC53:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setCustomerBusinessName(FakerDataGenerator.generateLowerCaseString(62));
                 break;
             default:
@@ -145,7 +138,7 @@ public class SearchAccountsHelper {
         switch (customerLastName) {
             case MAX_LENGTH_LAST_NAME_TC54:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setCustomerLastName(FakerDataGenerator.generateLowerCaseString(62));
                 break;
             default:
@@ -157,7 +150,7 @@ public class SearchAccountsHelper {
         switch (customerFirstName) {
             case MAX_LENGTH_FIRST_NAME_TC55:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setCustomerFirstName(FakerDataGenerator.generateLowerCaseString(17));
                 break;
             default:
@@ -169,12 +162,12 @@ public class SearchAccountsHelper {
         switch (socialSecurityNumber) {
             case NOT_ENCRYPTED_SOCIAL_SECURITY_NUMBER_TC56:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setSocialSecurityNumber(FakerDataGenerator.getRandomNumericString(9));
                 break;
             case ENCRYPTED_SOCIAL_SECURITY_NUMBER_TC57:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setSocialSecurityNumber(FakerDataGenerator.generateAlphanumericWithSpecialChars(12));
                 break;
 
@@ -187,12 +180,12 @@ public class SearchAccountsHelper {
         switch (federalTaxID) {
             case NOT_ENCRYPTED_FEDERAL_TAX_ID_TC58:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setFederalTaxID(FakerDataGenerator.getRandomNumericString(9));
                 break;
             case ENCRYPTED_FEDERAL_TAX_ID_TC59:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setFederalTaxID(FakerDataGenerator.generateAlphanumericWithSpecialChars(12));
                 break;
 
@@ -205,7 +198,7 @@ public class SearchAccountsHelper {
         switch (phoneNumber) {
             case MAX_LENGTH_PHONE_NUMBER_TC60:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPhoneNumber(FakerDataGenerator.getRandomNumericString(11));
                 break;
             default:
@@ -218,7 +211,7 @@ public class SearchAccountsHelper {
         switch (aglcAccountNumber) {
             case MAX_LENGTH_AGLC_ACCOUNT_NUMBER_TC61:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(21));
                 break;
             default:
@@ -230,7 +223,7 @@ public class SearchAccountsHelper {
         switch (premisesStreetNumber) {
             case MAX_LENGTH_PREMISES_STREET_NUMBER_TC62:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(14));
                 break;
             default:
@@ -242,7 +235,7 @@ public class SearchAccountsHelper {
         switch (premisesStreetPreDirection) {
             case MAX_LENGTH_PREMISES_STREET_PRE_DIRECTION_TC63:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetPreDirection(FakerDataGenerator.generateUpperCaseString(3));
                 break;
             default:
@@ -254,7 +247,7 @@ public class SearchAccountsHelper {
         switch (premisesStreetName) {
             case MAX_LENGTH_PREMISES_STREET_NAME_TC64:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.getRandomString(32));
                 break;
             default:
@@ -266,7 +259,7 @@ public class SearchAccountsHelper {
         switch (premisesStreetSuffix) {
             case MAX_LENGTH_PREMISES_STREET_SUFFIX_TC65:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetSuffix(FakerDataGenerator.getRandomString(32));
                 break;
             default:
@@ -278,7 +271,7 @@ public class SearchAccountsHelper {
         switch (premisesStreetPostDirection) {
             case MAX_LENGTH_PREMISES_STREET_POST_DIRECTION_TC66:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(3));
                 break;
             default:
@@ -290,7 +283,7 @@ public class SearchAccountsHelper {
         switch (premisesUnitType) {
             case MAX_LENGTH_PREMISES_UNIT_TYPE_TC67:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesUnitType(FakerDataGenerator.generateUpperCaseString(7));
                 break;
             default:
@@ -302,7 +295,7 @@ public class SearchAccountsHelper {
         switch (premisesUnitNumber) {
             case MAX_LENGTH_PREMISES_UNIT_NUMBER_TC68:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesUnitNumber(FakerDataGenerator.getRandomNumericString(7));
                 break;
             default:
@@ -314,7 +307,7 @@ public class SearchAccountsHelper {
         switch (premisesCity) {
             case MAX_LENGTH_PREMISES_CITY_TC69:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(22));
                 break;
             default:
@@ -326,7 +319,7 @@ public class SearchAccountsHelper {
         switch (premisesStateCode) {
             case MAX_LENGTH_PREMISES_STATE_CODE_TC70:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
 
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(4));
@@ -340,7 +333,7 @@ public class SearchAccountsHelper {
         switch (premisesZipCode) {
             case MAX_LENGTH_PREMISES_ZIP_CODE_TC71:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
                 payload.setPremisesZipCode(FakerDataGenerator.getRandomNumericString(6));
                 break;
@@ -354,7 +347,7 @@ public class SearchAccountsHelper {
         switch (missingSearchField) {
             case MAX_LENGTH_PREMISES_ZIP_CODE_TC71:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
                 payload.setAglcAccountNumber("");
                 payload.setCustomerBusinessName("");
@@ -375,7 +368,7 @@ public class SearchAccountsHelper {
         switch (customerCode) {
             case CUSTOMER_CODE_PROVIDED_PREMISES_CODE_MISSING_TC73:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(7));
                 payload.setCustomerCode("");
                 break;
@@ -389,7 +382,7 @@ public class SearchAccountsHelper {
         switch (premisesCode) {
             case CUSTOMER_CODE_MISSING_PREMISES_CODE_PROVIDED_TC74:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesCode("");
                 payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(7));
                 break;
@@ -402,7 +395,7 @@ public class SearchAccountsHelper {
         switch (customerLastName) {
             case CUSTOMER_FIRST_NAME_PROVIDED_CUSTOMER_LAST_NAME_MISSING_TC75:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setCustomerFirstName(FakerDataGenerator.generateFirstName());
                 payload.setCustomerLastName("");
                 break;
@@ -415,7 +408,7 @@ public class SearchAccountsHelper {
         switch (premisesZipCode) {
             case CUSTOMER_LAST_NAME_PROVIDED_PREMISES_ZIP_MISSING_TC76:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setCustomerLastName(FakerDataGenerator.generateLastName());
                 payload.setPremisesZipCode("");
                 break;
@@ -429,7 +422,7 @@ public class SearchAccountsHelper {
             case SSN_PROVIDED_FEDERAL_TAX_ID_PROVIDE_TC77:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setTransactionType("TNON");
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setSocialSecurityNumber("YUiEKcZGFmS59Uu1aacc2tTqSPYw9QYAv97gTfGyhaI=");
                 payload.setFederalTaxID("YUiEKcZGFmS59Uu1aacc2tTqSPYw9QYAv97gTfGyhaI=");
                 break;
@@ -442,75 +435,75 @@ public class SearchAccountsHelper {
         switch (premisesStreetName) {
             case PREMISES_STREET_NUMBER_PROVIDED_PREMISES_STREET_NAME_MISSING_TC78:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
                 payload.setPremisesStreetNumber("25");
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_PRE_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC79:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
                 payload.setPremisesStreetPreDirection("SE");
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_SUFFIX_PROVIDED_PREMISES_STREET_NAME_MISSING_TC80:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setTransactionType("TNON");
                 payload.setPremisesStreetSuffix(FakerDataGenerator.generateUpperCaseString(2));
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC81:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(2));
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_NUMBER_PREMISES_STREET_PRE_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC82:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
                 payload.setPremisesStreetPreDirection("SW");
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_NUMBER_PREMISES_STREET_SUFFIX_PROVIDED_PREMISES_STREET_NAME_MISSING_TC83:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
                 payload.setPremisesStreetSuffix(FakerDataGenerator.generateUpperCaseString(2));
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_NUMBER_PREMISES_STREET_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC84:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
                 payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(2));
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_PRE_DIRECTION_PREMISES_STREET_SUFFIX_PROVIDED_PREMISES_STREET_NAME_MISSING_TC85:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetSuffix("RD");
                 payload.setPremisesStreetPreDirection("SE");
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_PRE_DIRECTION_PREMISES_STREET_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC86:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetPostDirection("SE");
                 payload.setPremisesStreetPreDirection("SW");
                 payload.setPremisesStreetName("");
             case PREMISES_STREET_SUFFIX_PREMISES_STREET_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC87:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(2));
                 payload.setPremisesStreetSuffix(FakerDataGenerator.generateUpperCaseString(2));
                 payload.setPremisesStreetName("");
                 break;
             case PREMISES_STREET_NUMBER_SUFFIX_PRE_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC88:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
                 payload.setPremisesStreetSuffix("RD");
                 payload.setPremisesStreetPreDirection("SW");
@@ -518,7 +511,7 @@ public class SearchAccountsHelper {
                 break;
             case PREMISES_STREET_NUMBER_SUFFIX_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC89:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
                 payload.setPremisesStreetSuffix(FakerDataGenerator.generateUpperCaseString(2));
                 payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(2));
@@ -526,7 +519,7 @@ public class SearchAccountsHelper {
                 break;
             case PREMISES_PRE_DIRECTION_SUFFIX_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC90:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetPreDirection("SE");
                 payload.setPremisesStreetSuffix("RD");
                 payload.setPremisesStreetPostDirection("SW");
@@ -534,7 +527,7 @@ public class SearchAccountsHelper {
                 break;
             case PREMISES_STREET_NUMBER_PRE_DIRECTION_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC91:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
                 payload.setPremisesStreetPreDirection("SE");
                 payload.setPremisesStreetPostDirection("SW");
@@ -542,7 +535,7 @@ public class SearchAccountsHelper {
                 break;
             case PREMISES_STREET_NUMBER_SUFFIX_PRE_DIRECTION_POST_DIRECTION_PROVIDED_PREMISES_STREET_NAME_MISSING_TC92:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetNumber(FakerDataGenerator.getRandomNumericString(2));
                 payload.setPremisesStreetPreDirection("SE");
                 payload.setPremisesStreetSuffix("RD");
@@ -558,7 +551,7 @@ public class SearchAccountsHelper {
         switch (premisesCity) {
             case PREMISES_STREET_NAME_PROVIDED_CITY_ZIP_STATE_CODE_MISSING_TC93:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesZipCode("");
                 payload.setPremisesCity("");
@@ -573,7 +566,7 @@ public class SearchAccountsHelper {
         switch (premisesZipCode) {
             case PREMISES_CITY_PROVIDED_STREET_NAME_ZIP_STATE_CODE_MISSING_TC94:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(3));
                 payload.setPremisesZipCode("");
                 payload.setPremisesStreetName("");
@@ -588,7 +581,7 @@ public class SearchAccountsHelper {
         switch (premisesZipCode) {
             case PREMISES_STATE_CODE_PROVIDED_STREET_NAME_ZIP_CITY_MISSING_TC95:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
                 payload.setPremisesZipCode("");
                 payload.setPremisesStreetName("");
@@ -603,7 +596,8 @@ public class SearchAccountsHelper {
         switch (premisesStateCode) {
             case PREMISES_ZIP_CODE_PROVIDED_STREET_NAME_ZIP_STATE_MISSING_TC96:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
+                payload.setTransactionType("TNON");
                 payload.setPremisesZipCode("30052");
                 payload.setPremisesStateCode(null);
                 payload.setPremisesStreetName(null);
@@ -618,7 +612,7 @@ public class SearchAccountsHelper {
         switch (premisesStateCode) {
             case PREMISES_STREET_NAME_CITY_PROVIDED_ZIP_STATE_MISSING_TC97:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(3));
                 payload.setPremisesStateCode("");
@@ -633,7 +627,7 @@ public class SearchAccountsHelper {
         switch (premisesStateCode) {
             case PREMISES_STREET_NAME_STATE_PROVIDED_ZIP_CITY_MISSING_TC98:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
                 payload.setPremisesCity(null);
@@ -648,7 +642,7 @@ public class SearchAccountsHelper {
         switch (premisesStateCode) {
             case PREMISES_STREET_NAME_ZIP_PROVIDED_STATE_CITY_MISSING_TC99:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.generateLowerCaseString(10));
                 payload.setPremisesZipCode("30052");
                 payload.setPremisesStateCode(null);
@@ -663,7 +657,7 @@ public class SearchAccountsHelper {
         switch (premisesZipCode) {
             case PREMISES_STATE_CITY_PROVIDED_STREET_NAME_ZIP_MISSING_TC100:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(null);
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(3));
@@ -678,7 +672,7 @@ public class SearchAccountsHelper {
         switch (premisesStateCode) {
             case PREMISES_STATE_CITY_ZIP_PROVIDED_STREET_NAME_STATE_MISSING_TC101:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(8));
                 payload.setPremisesZipCode("30052");
                 break;
@@ -691,7 +685,7 @@ public class SearchAccountsHelper {
         switch (premisesCity) {
             case PREMISES_STATE_ZIP_PROVIDED_STREET_NAME_CITY_MISSING_TC102:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStateCode("GA");
                 payload.setPremisesZipCode("30052");
                 break;
@@ -704,7 +698,7 @@ public class SearchAccountsHelper {
         switch (premisesZipCode) {
             case PREMISES_STATE_STREET_NAME_CITY_PROVIDED_ZIP_MISSING_TC103:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesCity(FakerDataGenerator.generateString(6));
                 payload.setPremisesStateCode("GA");
@@ -719,7 +713,7 @@ public class SearchAccountsHelper {
         switch (premisesCity) {
             case PREMISES_STATE_STREET_NAME_PROVIDED_CITY_MISSING_TC104:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesCity("");
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(3));
@@ -734,7 +728,7 @@ public class SearchAccountsHelper {
         switch (premisesStateCode) {
             case PREMISES_ZIP_STREET_NAME_CITY_PROVIDED_STATE_MISSING_TC105:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
                 payload.setPremisesCity(FakerDataGenerator.generateString(6));
                 payload.setPremisesStateCode("");
@@ -749,7 +743,7 @@ public class SearchAccountsHelper {
         switch (premisesStreetName) {
             case PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPremisesStreetName("");
                 payload.setPremisesCity(FakerDataGenerator.generateLowerCaseString(6));
                 payload.setPremisesStateCode("GA");
@@ -766,22 +760,61 @@ public class SearchAccountsHelper {
 
     public void setInvalidCustomerCode(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
-        payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(10));
+        payload.setCustomerCode("5555555");
+        payload.setPremisesCode("55555");
     }
-//    public void String setCustomerCode (SearchAccountsRequest payload)
-//   {
-//       String  a = payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
-//       return a;
-//    }
-//    public void validateCustomerCodeInDB()
-//
-//    {
-//        List<Map<String, Object>> setCustomerCode = ApplicationContext.get().getDbAction().getInvalidCustomerCode(setCustomerCode());
-//
-//    }
-//
+    public void setCustomerCode(SearchAccountsRequest payload,List<Map<String, Object>> invalidCustomerCode) {
+        payload.setCustomerCode("5555555");
+        String a = (String) payload.getCustomerCode();
+        System.out.println("Customer Code: " + a);
 
+    }
+
+    public void validateCustomerCodeInDB(String customerCode,SearchAccountsRequest payload) {
+
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setCustomerCode("5555555");
+        payload.setPremisesCode("55555");
+
+        List<Map<String, Object>> invalidCustomerCodesFromDB = getInvalidCustomerCode(customerCode);
+
+        if (invalidCustomerCodesFromDB.isEmpty()) {
+            System.out.println("Validation failed: No matching record found for Customer Code in the database.");
+        } else if (invalidCustomerCodesFromDB.size() > 1) {
+            System.out.println("Validation failed: Multiple matching records found for Customer Code in the database.");
+        } else {
+            String dbCustomerCode = (String) invalidCustomerCodesFromDB.get(0).get("CustomerCode");
+
+            if (customerCode.equals(dbCustomerCode)) {
+                System.out.println("Validation passed: Customer Code matches the database value.");
+            } else {
+                System.out.println("Validation failed: Customer Code does not match the database value.");
+                System.out.println("Expected: " + customerCode);
+                System.out.println("Actual: " + dbCustomerCode);
+            }
+        }
+    }
+    public List<Map<String, Object>> getInvalidCustomerCode(String customerCode) {
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        Map<String, Object> record = new HashMap<>();
+        record.put("CustomerCode", customerCode);
+        results.add(record);
+
+        return results;
+    }
+
+    public void setLastNameAndZiPBType(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesZipCode("30132");
+        payload.setCustomerLastName("STONE");
+        payload.setCustomerFirstName("ANN");
+    }
+
+    public void setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPhoneNumber("7704090713");
+    }
 
     public void verifyAccountInformationWithDatabase(Map<String, Object> accountInformationDB, Map<String, Object> responseMap) {
         List<String> keysDB = accountInformationDB.keySet().stream().toList();
@@ -804,32 +837,21 @@ public class SearchAccountsHelper {
    }
 
 
-    public void setAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsRequest payload,SearchAccountsApiLabel premisesStreetName) {
-        switch (premisesStreetName) {
-            case ACCOUNT_NUMBER_WITHOUT_SSN_FROM_USER_TABLE_TC109:
+    public void setAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsRequest payload) {
             payload.setRequestID(FakerDataGenerator.generateString(10));
-            payload.setLoginID("test10965");
+            payload.setLoginID("autotester");
             payload.setCustomerCode("005801335");
             payload.setPremisesCode("5776499");
             payload.setTransactionType("TNON");
-            break;
-         default:
-            payload.setPremisesStreetName(FakerDataGenerator.generateString(3));
-        }
 
     }
-    public void setSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsRequest payload,SearchAccountsApiLabel customerCode) {
-        switch (customerCode) {
-            case SSP_PARTICIPATED_CODE_WITH_CUSTOMER_CODE_TC121e:
+    public void setSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsRequest payload) {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setCustomerCode("5801335");
                 payload.setPremisesCode("5776499");
                 payload.setTransactionType("TNON");
-                break;
-            default:
-                payload.setCustomerCode(FakerDataGenerator.generateString(7));
-        }
+
 
     }
 
