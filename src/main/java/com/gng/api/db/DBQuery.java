@@ -218,7 +218,7 @@ public final class DBQuery {
             """;
 
 
-    public static final String THE_PASSWORD_DOESNT_MATCH_THE_LOGIN_ID_LOCK_UPDATE_QUERY = """
+    public static final String THE_PASSWORD_UPDATE_QUERY = """
                 UPDATE USERS SET user_locked_ind ='N', failed_logins=3 WHERE USER_ID='autotester'
             """;
     public static final String FAILED_LOGIN_COUNTS = """
@@ -227,6 +227,49 @@ public final class DBQuery {
 
     public static final String ROLLBACK_QUERIES = """
             UPDATE USERS SET user_locked_ind ='N', failed_logins=1 WHERE USER_ID='autotester'
+            """;
+    public static final String EXPIRED_PASSWORD_UPDATE_QUERY = """
+            UPDATE USERS SET user_locked_ind = 'N', failed_logins = 0, PASSWORD_EXPIRE = SYSDATE - 1 WHERE USER_ID = 'autotester'
+            """;
+    public static final String EXPIRED_PASSWORD_CHECK_QUERY = """
+            SELECT CASE WHEN PASSWORD_EXPIRE < SYSDATE THEN 'Y' ELSE 'N' END AS is_expired FROM USERS WHERE USER_ID = 'autotester'
+            """;
+    public static final String FAILED_LOGIN_COUNTS_FOR_EXPIRED_PASSWORD = """
+            SELECT failed_logins FROM USERS WHERE USER_ID = 'autotester'
+            """;
+
+
+    public static final String EXPIRED_PASSWORD_ROLLBACK_QUERY = """
+            UPDATE USERS SET user_locked_ind = 'N', failed_logins = 0, PASSWORD_EXPIRE = SYSDATE +30 WHERE USER_ID = 'autotester'
+            """;
+
+
+    public static final String UPDATE_USER_LOCK_STATUS_QUERY = """
+            UPDATE USERS SET user_locked_ind ='Y', failed_logins=4 WHERE USER_ID='autotester'
+            """;
+
+    public static final String CHECK_USER_LOCK_STATUS_QUERY = """
+            SELECT user_locked_ind FROM users WHERE username = 'autotester'
+            """;
+    public static final String FAILED_LOGIN_COUNTS_FOR_USER_LOCK_STATUS_QUERY = """
+            UPDATE users SET user_locked_ind = 'N', failed_logins = 0 WHERE username = 'autotester'
+            """;
+
+    public static final String ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY = """
+            UPDATE USERS SET user_locked_ind ='N', failed_logins=1 WHERE USER_ID='autotester'
+            """;
+    public static final String UPDATE_FAILED_LOGIN_QUERY = """
+            UPDATE USERS SET user_locked_ind ='N', failed_logins=2 WHERE USER_ID='autotester'
+            """;
+    public static final String ROLE_COUNT_QUERY = """
+            SELECT count(*) FROM USER_ROLE WHERE USER_ID = 'autotester'
+            """;
+    public static final String FAILED_COUNT_ON_USER_ROLE_QUERY = """
+                            SELECT failed_logins FROM USERS WHERE USER_ID='autotester'
+            """;
+    public static final String ROLLBACK_COUNT_ON_USER_ROLE_QUERY = """
+                               UPDATE USERS SET user_locked_ind ='N', failed_logins=2 WHERE USER_ID='autotester'
+            
             """;
 
 

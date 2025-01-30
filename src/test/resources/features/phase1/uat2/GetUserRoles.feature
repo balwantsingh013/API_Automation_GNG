@@ -43,17 +43,10 @@ Feature: Verify GetUserRoles Api
       | INVALID_PASSWORD_FORMAT_ENCRYPTED_7_CHAR_TC12_1 | 10110     | Invalid Login Credentials |
 
 
-  @GetUserRolesInvalidPasswordInDB @Phase1  @NegativeFlow
-  Scenario: Verify response code for invalid Password TC15
-    When a request is made to the GetUserRoles Api with TC15
-    Then verify response code of "GetUserRole" Api is 200
-
-
-
 
   @GetUserRolesInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC13_TC17
-    When a request is made to the GetUserRoles Api with "<testCondition>"TC13_TC17
+  Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC13_TC14
+    When a request is made to the GetUserRoles Api with "<testCondition>"TC13_TC14
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
@@ -63,3 +56,24 @@ Feature: Verify GetUserRoles Api
       | PASSWORD_MISMATCH_WITH_LOGIN_ID_LOCK_TC15 | 2000      | The password doesn’t match the username. |
       | EXPIRED_PASSWORD_TC16                     | 2010      | Expired password                         |
       | LOCKED_LOGIN_ID_TC17                      | 2000      | Locked out Login ID                      |
+
+
+
+  @GetUserRolesInvalidPasswordInDB @Phase1  @NegativeFlow
+  Scenario: Verify response code for invalid Password TC15
+    When a request is made to the GetUserRoles Api with TC15
+    Then verify response code of "GetUserRole" Api is 200
+    And response should have ErrorCode 2000 and ErrorMessage "The password doesn’t match the username. The Login ID has been locked out of the system"
+
+  @GetUserRolesExpiredPasswordInDB @Phase1  @NegativeFlow
+  Scenario: Verify response code for invalid Password TC16
+    When a request is made to the GetUserRoles Api with TC16
+    Then verify response code of "GetUserRole" Api is 200
+    And response should have ErrorCode 2010 and ErrorMessage "Expired password’"
+
+
+  @GetUserRolesLockedOutLoginIDInDB @Phase1  @NegativeFlow
+  Scenario: Verify response code for invalid Password TC17
+    When a request is made to the GetUserRoles Api with TC17
+    Then verify response code of "GetUserRole" Api is 200
+    And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID’"

@@ -47,6 +47,14 @@ public class GetUserRolesApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
     }
+    public void validateInvalidTestConditionCasesTC13_TC14(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel testCondition) {
+        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
+        helper.setTestConditionBasedOnTypeTC13_TC14(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.validatePasswordNotMatchLoginIDInDB(payload);
@@ -55,13 +63,24 @@ public class GetUserRolesApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateInvalidTestConditionCasesTC13_TC17(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel testCondition) {
+    public void validatePasswordExpiredTestConditionCasesTC16(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.setTestConditionBasedOnTypeTC13_TC17(payload, testCondition);
+        helper.validatePasswordExpiredInDB();
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
     }
+    public void validateLockedOutLoginIDTestConditionCasesTC17(GetUserRolesApiLabel apiLabel) {
+        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
+        helper.validateLockedOutLoginIDInDB(payload );
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
+
+
+
+
 
 
 }

@@ -28,14 +28,23 @@ public class GetUserRolesApiSteps {
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC10_TC12(String password) {
         getUserRolesApiPage.validateInvalidPasswordCasesTC10_TC12(get_user_roles, GetUserRolesApiLabel.valueOf(password));
     }
+
+    @When("a request is made to the GetUserRoles Api with {string}TC13_TC14")
+    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC13_TC14(String testCondition) {
+        getUserRolesApiPage.validateInvalidTestConditionCasesTC13_TC14(get_user_roles, GetUserRolesApiLabel.valueOf(testCondition));
+    }
     @When("a request is made to the GetUserRoles Api with TC15")
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC15( ) {
         getUserRolesApiPage.validateInvalidTestConditionCasesTC15(get_user_roles);
     }
 
-    @When("a request is made to the GetUserRoles Api with {string}TC13_TC17")
-    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC13_TC17(String testCondition) {
-        getUserRolesApiPage.validateInvalidTestConditionCasesTC13_TC17(get_user_roles, GetUserRolesApiLabel.valueOf(testCondition));
+    @When("a request is made to the GetUserRoles Api with TC16")
+    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC16( ) {
+        getUserRolesApiPage.validatePasswordExpiredTestConditionCasesTC16(get_user_roles);
+    }
+    @When("a request is made to the GetUserRoles Api with TC17")
+    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC17( ) {
+        getUserRolesApiPage.validateLockedOutLoginIDTestConditionCasesTC17(get_user_roles);
     }
 
 }

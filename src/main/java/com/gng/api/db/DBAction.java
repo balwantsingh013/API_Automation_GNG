@@ -47,21 +47,88 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
 
     }
-    public List<Map<String, Object>> thePasswordDoesntMatchTheLoginIDLock() {
-        String query = DBQuery.THE_PASSWORD_DOESNT_MATCH_THE_LOGIN_ID_LOCK_UPDATE_QUERY;
+    public List<Map<String, Object>> theInvalidPasswordMatchUpdateQuery() {
+        String query = DBQuery.THE_PASSWORD_UPDATE_QUERY;
         logQueryInAllure("password doesn't match the login ID", query);
         return jdbcTemplate.queryForList(query);
     }
     public List<Map<String, Object>> togetthefailedcountsandvalidateshouldbe4(){
         String query = DBQuery.FAILED_LOGIN_COUNTS;
-        logQueryInAllure("password doesn't match the login ID", query);
+        logQueryInAllure("Failed login counts ", query);
         return jdbcTemplate.queryForList(query);
     }
-    public List<Map<String, Object>> rollbackChanges (){
+    public List<Map<String, Object>> rollBackChanges (){
         String query = DBQuery.ROLLBACK_QUERIES;
         logQueryInAllure("password doesn't match the login ID", query);
         return jdbcTemplate.queryForList(query);
     }
+    public List<Map<String, Object>> PasswordExpiredUpdateQuery (){
+        String query = DBQuery.EXPIRED_PASSWORD_UPDATE_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> PasswordExpiredCheckQuery (){
+        String query = DBQuery.EXPIRED_PASSWORD_CHECK_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+    public List<Map<String, Object>> failedLoginCountQuery (){
+        String query = DBQuery.FAILED_LOGIN_COUNTS_FOR_EXPIRED_PASSWORD;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+    public List<Map<String, Object>> rollBackQueryForPasswordExpired (){
+        String query = DBQuery.EXPIRED_PASSWORD_ROLLBACK_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+    public List<Map<String, Object>> updateUserLockStatusQuery (){
+        String query = DBQuery.UPDATE_USER_LOCK_STATUS_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> checkUserLockStatusQuery (){
+        String query = DBQuery.CHECK_USER_LOCK_STATUS_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> failedUserLockCountQuery (){
+        String query = DBQuery.FAILED_LOGIN_COUNTS_FOR_USER_LOCK_STATUS_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> rollBackUserLockStatusQuery (){
+        String query = DBQuery.ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> updateTheFailedLoginsQuery (){
+        String query = DBQuery.UPDATE_FAILED_LOGIN_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> RoleCountQuery (){
+        String query = DBQuery.ROLE_COUNT_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> FailedCountUserRoleQuery (){
+        String query = DBQuery.FAILED_COUNT_ON_USER_ROLE_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> rollbackCountUserRoleQuery (){
+        String query = DBQuery.ROLLBACK_COUNT_ON_USER_ROLE_QUERY;
+        logQueryInAllure("password doesn't match the login ID", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+
+
+
 
 
 
