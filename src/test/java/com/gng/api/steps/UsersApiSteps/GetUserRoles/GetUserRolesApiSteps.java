@@ -46,5 +46,10 @@ public class GetUserRolesApiSteps {
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC17( ) {
         getUserRolesApiPage.validateLockedOutLoginIDTestConditionCasesTC17(get_user_roles);
     }
+    @When("a request is made to the GetUserRoles Api with TC19")
+    public void a_request_is_made_to_the_GetUserRoles_Api_with_TC19( ) {
+        getUserRolesApiPage.validateSuccessfulResponseCasesTC19(get_user_roles);
+    }
+
 
 }

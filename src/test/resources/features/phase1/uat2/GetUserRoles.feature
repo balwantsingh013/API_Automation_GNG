@@ -69,11 +69,18 @@ Feature: Verify GetUserRoles Api
   Scenario: Verify response code for invalid Password TC16
     When a request is made to the GetUserRoles Api with TC16
     Then verify response code of "GetUserRole" Api is 200
-    And response should have ErrorCode 2010 and ErrorMessage "Expired password’"
+    And response should have ErrorCode 2010 and ErrorMessage "Expired password"
 
 
   @GetUserRolesLockedOutLoginIDInDB @Phase1  @NegativeFlow
   Scenario: Verify response code for invalid Password TC17
     When a request is made to the GetUserRoles Api with TC17
     Then verify response code of "GetUserRole" Api is 200
-    And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID’"
+    And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID"
+
+
+
+  @GetUserRolesSuccessfulResponseWithUserRolesIDInDB @Phase1  @NegativeFlow
+  Scenario: Verify response code for invalid Password TC19
+    When a request is made to the GetUserRoles Api with TC19
+    Then verify response code of "GetUserRole" Api is 200

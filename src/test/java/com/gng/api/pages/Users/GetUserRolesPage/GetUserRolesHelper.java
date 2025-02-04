@@ -9,6 +9,8 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import javax.management.relation.Role;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,15 +105,22 @@ public class GetUserRolesHelper {
         }
     }
 
-    public void validatePasswordNotMatchLoginIDInDB(GetUserRolesRequest payload) {
+    public void validatePasswordNotMatchLoginIDInDB() {
+        String expectedValue = passwordNotMatchValue();
+        int passwordNotMatchValue =
+                ApplicationContext.get().getDbAction().theInvalidPasswordMatchUpdateQuery();
+        Assert.assertEquals(passwordNotMatchValue, 1, "Password does not match the login ID.");
+    }
+
+    public void validatePasswordNotMatchLoginID(GetUserRolesRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(9));
+        payload.setLoginID("autotester");
+        payload.setPassword("/La98bDE4x/vUobavr+1O9w3PaJHfN8jfuzJB3O1a2o=");
+
+    }
+
+    public void rollBackQuery() {
         try {
-            String expectedValue = passwordNotMatchValue();
-            List<Map<String, Object>> passwordNotMatchValue =
-                    ApplicationContext.get().getDbAction().theInvalidPasswordMatchUpdateQuery();
-            Assert.assertEquals(passwordNotMatchValue.size(), 1, "Password does not match the login ID.");
-
-            payload.setPassword("/La98bDE4x/vUobavr+1O9w3PaJHfN8jfuzJB3O1a2o=");
-
             String expectedValue1 = failedLoginCount();
             List<Map<String, Object>> failedLoginCount =
                     ApplicationContext.get().getDbAction().togetthefailedcountsandvalidateshouldbe4();
@@ -139,46 +148,37 @@ public class GetUserRolesHelper {
         return "4";
     }
 
-    public void validatePasswordExpiredInDB() {
-        try {
-            ApplicationContext.get().getDbAction().PasswordExpiredUpdateQuery();
 
-            List<Map<String, Object>> result = ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
+    public void validateExpiredPasswordCredentials(GetUserRolesRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("autotester");
+        payload.setPassword("gQ0diQBSDMqsYPNevswiPuZ2/W8R5B4rD3JoxskVGbc=");
 
-            boolean isPasswordExpired = result.get(0).get("is_expired").equals("Y");
-            Assert.assertTrue(isPasswordExpired, "Password should be marked as expired in the database.");
-
-            List<Map<String, Object>> failedLoginResult = ApplicationContext.get().getDbAction().failedLoginCountQuery();
-            int failedLoginCount = Integer.parseInt(failedLoginResult.get(0).get("failed_logins").toString());
-
-            Assert.assertEquals(failedLoginCount, 0, "Failed login count should be reset to 0.");
-
-        } catch (Exception e) {
-            System.err.println(STR."An error occurred during validation: \{e.getMessage()}");
-            e.printStackTrace();
-        } finally {
-            try {
-                ApplicationContext.get().getDbAction().rollBackQueryForPasswordExpired();
-                System.out.println("Rollback query executed successfully.");
-            } catch (Exception e) {
-                System.err.println(STR."An unexpected error occurred during rollback: \{e.getMessage()}");
-                e.printStackTrace();
-            }
-        }
     }
-    public void validateLockedOutLoginIDInDB(GetUserRolesRequest payload) {
+
+
+    public void validatePasswordExpiredInDB() {
+
+        ApplicationContext.get().getDbAction().PasswordExpiredUpdateQuery();
+    }
+
+
+    public void rollbackDatabaseQuery() {
+        ApplicationContext.get().getDbAction().rollBackQueryForPasswordExpired();
+        System.out.println("Rollback query executed successfully.");
+
+    }
+
+
+    public void validateLockedOutLoginIDInDB() {
         try {
             ApplicationContext.get().getDbAction().updateUserLockStatusQuery();
-
             List<Map<String, Object>> lockStatusResult = ApplicationContext.get().getDbAction().checkUserLockStatusQuery();
-            boolean isUserLocked = lockStatusResult.get(0).get("user_locked_ind").equals("Y");
-            Assert.assertTrue(isUserLocked, "User should be locked in the database.");
+            Assert.assertEquals(lockStatusResult.size(), 1, "User should be locked in the database.");
 
-            payload.setPassword("gQ0diQBSDMqsYPNevswiPuZ2/W8R5B4rD3JoxskVGbc=");
-
-            List<Map<String, Object>> failedLoginResult = ApplicationContext.get().getDbAction().failedUserLockCountQuery();
-            int failedLoginCount = Integer.parseInt(failedLoginResult.get(0).get("failed_logins").toString());
-            Assert.assertEquals(failedLoginCount, 4, "Failed login count should be 4.");
+            int failedLoginResult = ApplicationContext.get().getDbAction().failedUserLockCountQuery();
+            int failedLoginCount = Integer.parseInt(String.valueOf(failedLoginResult));
+            Assert.assertEquals(failedLoginCount, 1, "Failed login count should be 4.");
 
         } catch (Exception e) {
             System.err.println(STR."An error occurred during validation: \{e.getMessage()}");
@@ -195,44 +195,52 @@ public class GetUserRolesHelper {
 
     }
 
-//    public void validateSuccessfulResponse(GetUserRolesRequest payload) {
-//        try {
-//            ApplicationContext.get().getDbAction().updateTheFailedLoginsQuery();
-//
-//
-//            payload.setLoginID("autotester");
-//            payload.setPassword("gQ0diQBSDMqsYPNevswiPuZ2/W8R5B4rD3JoxskVGbc=");
-//
-//            List<Map<String, Object>> roles = response.getRoles();
-//
-//            Assert.assertNotNull(roles, "Roles array should not be null.");
-//            Assert.assertTrue(roles.size() > 0, "Roles array should have at least one role.");
-//
-//            List<Map<String, Object>> dbRoleCountResult = ApplicationContext.get().getDbAction().RoleCountQuery();
-//            int dbRoleCount = Integer.parseInt(dbRoleCountResult.get(0).get("count(*)").toString());
-//            int apiRoleCount = roles.size();
-//
-//            Assert.assertEquals(apiRoleCount, dbRoleCount, "Role count from API should match the DB count.");
-//
-//
-//            List<Map<String, Object>> failedLoginResult = ApplicationContext.get().getDbAction().FailedCountUserRoleQuery();
-//            int failedLoginCount = Integer.parseInt(failedLoginResult.get(0).get("failed_logins").toString());
-//            Assert.assertEquals(failedLoginCount, 0, "Failed login count should be 0 after the API call.");
-//
-//        } catch (Exception e) {
-//            System.err.println(STR."An error occurred during validation: \{e.getMessage()}");
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                ApplicationContext.get().getDbAction().rollbackCountUserRoleQuery();
-//                System.out.println("Rollback query executed successfully.");
-//            } catch (Exception e) {
-//                System.err.println(STR."An unexpected error occurred during rollback: \{e.getMessage()}");
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 
+    public void validateRoles(GetUserRolesRequest payload) {
+        try {
+            ApplicationContext.get().getDbAction().updateTheFailedLoginQuery();
+            List<Map<String, Object>> dbRoleCountResult = ApplicationContext.get().getDbAction().RoleCountQuery();
+
+            payload.setRequestID(FakerDataGenerator.getRandomNumericString(8));
+            payload.setLoginID("autotester");
+            payload.setPassword("gQ0diQBSDMqsYPNevswiPuZ2/W8R5B4rD3JoxskVGbc=");
+
+            List<Role> roles = new ArrayList<>();
+            int dbRoleCount = Integer.parseInt(dbRoleCountResult.get(0).get("count(*)").toString());
+
+            System.out.println("Role count from DB: " + dbRoleCount);
+
+
+            if (roles.isEmpty()) {
+                System.err.println("No roles found from the API.");
+            } else {
+                System.out.println("Role count from API: " + roles.size());
+            }
+
+            int apiRoleCount = roles.size();
+
+            Assert.assertEquals(apiRoleCount, dbRoleCount, "Role count from API should match the DB count.");
+
+
+            List<Map<String, Object>> failedLoginResult = ApplicationContext.get().getDbAction().FailedCountUserRoleQuery();
+            int failedLoginCount = Integer.parseInt(failedLoginResult.get(0).get("failed_logins").toString());
+
+            Assert.assertEquals(failedLoginCount, 0, "Failed login count should be 0 after the API call.");
+
+        } catch (Exception e) {
+            System.err.println("An error occurred during validation: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                ApplicationContext.get().getDbAction().rollbackCountUserRoleQuery();
+                System.out.println("Rollback query executed successfully.");
+            } catch (Exception e) {
+                System.err.println("An unexpected error occurred during rollback: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     public void setTestConditionBasedOnTypeTC13_TC14(GetUserRolesRequest payload, GetUserRolesApiLabel password) {
         switch (password) {

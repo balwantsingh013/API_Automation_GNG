@@ -229,7 +229,10 @@ public final class DBQuery {
             UPDATE USERS SET user_locked_ind ='N', failed_logins=1 WHERE USER_ID='autotester'
             """;
     public static final String EXPIRED_PASSWORD_UPDATE_QUERY = """
-            UPDATE USERS SET user_locked_ind = 'N', failed_logins = 0, PASSWORD_EXPIRE = SYSDATE - 1 WHERE USER_ID = 'autotester'
+            UPDATE USERS
+            SET user_locked_ind = 'N', failed_logins = 0,
+            PASSWORD_EXPIRE = SYSDATE - 1
+            WHERE USER_ID = 'autotester'
             """;
     public static final String EXPIRED_PASSWORD_CHECK_QUERY = """
             SELECT CASE WHEN PASSWORD_EXPIRE < SYSDATE THEN 'Y' ELSE 'N' END AS is_expired FROM USERS WHERE USER_ID = 'autotester'
@@ -249,10 +252,10 @@ public final class DBQuery {
             """;
 
     public static final String CHECK_USER_LOCK_STATUS_QUERY = """
-            SELECT user_locked_ind FROM users WHERE username = 'autotester'
+            SELECT user_locked_ind FROM users WHERE USER_ID = 'autotester'
             """;
     public static final String FAILED_LOGIN_COUNTS_FOR_USER_LOCK_STATUS_QUERY = """
-            UPDATE users SET user_locked_ind = 'N', failed_logins = 0 WHERE username = 'autotester'
+            UPDATE users SET user_locked_ind = 'N', failed_logins = 0 WHERE USER_ID = 'autotester'
             """;
 
     public static final String ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY = """

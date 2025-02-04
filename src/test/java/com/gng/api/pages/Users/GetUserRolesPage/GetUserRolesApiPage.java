@@ -57,26 +57,43 @@ public class GetUserRolesApiPage extends BasePage {
 
     public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.validatePasswordNotMatchLoginIDInDB(payload);
+        helper.validatePasswordNotMatchLoginIDInDB();
+        helper.validatePasswordNotMatchLoginID(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+        helper.rollBackQuery();
+
     }
 
     public void validatePasswordExpiredTestConditionCasesTC16(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.validatePasswordExpiredInDB();
+        helper.validateExpiredPasswordCredentials(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+        helper.rollbackDatabaseQuery();
+
     }
     public void validateLockedOutLoginIDTestConditionCasesTC17(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.validateLockedOutLoginIDInDB(payload );
+      helper.validateExpiredPasswordCredentials(payload);
+        helper.validateLockedOutLoginIDInDB();
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
     }
+    public void validateSuccessfulResponseCasesTC19(GetUserRolesApiLabel apiLabel) {
+        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
+        helper.validateRoles(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+
+    }
+
+
 
 
 
