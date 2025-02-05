@@ -58,10 +58,11 @@ public class GetUserRolesApiPage extends BasePage {
     public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.validatePasswordNotMatchLoginIDInDB();
-        helper.validatePasswordNotMatchLoginID(payload);
+        helper.passwordNotMatchValue(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+        helper.validateFailedCountAs4();
         helper.rollBackQuery();
 
     }
@@ -69,7 +70,7 @@ public class GetUserRolesApiPage extends BasePage {
     public void validatePasswordExpiredTestConditionCasesTC16(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.validatePasswordExpiredInDB();
-        helper.validateExpiredPasswordCredentials(payload);
+        helper.validatePasswordCredentials(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
@@ -78,18 +79,25 @@ public class GetUserRolesApiPage extends BasePage {
     }
     public void validateLockedOutLoginIDTestConditionCasesTC17(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-      helper.validateExpiredPasswordCredentials(payload);
-        helper.validateLockedOutLoginIDInDB();
+      helper.validateLockedOutLoginIDInDBUpdateQuery();
+        helper.validatePasswordCredentials(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+        helper.validateLockedOutLoginIDInDBRollBackQuery();
     }
     public void validateSuccessfulResponseCasesTC19(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.validateRoles(payload);
+        helper.updateFailedLoginsQuery();
+        helper.validatePasswordCredentials(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+        helper.validateRolesCount();
+        helper.validateFailedCountUserRoles();
+        helper.validateFailedCountUserRollback();
+
+
 
     }
 
