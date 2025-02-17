@@ -200,24 +200,38 @@ public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String custome
     public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode) {
         searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts,customerCode);
     }
+    @When("a request is made to the SearchAccounts Api with Account Number Search B Type No SSP  TC_109")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_B_Type_No_SSP_TC109() {
+        searchAccountsApiPage.validateAccountNumberSearchBTypeNoSSPOnTypeTC109(search_accounts_mandatory);
+    }
+    @When("a request is made to the SearchAccounts Api with Account Number Search E Type No SSP  TC_110")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_E_Type_No_SSP_TC110() {
+         searchAccountsApiPage.validateAccountNumberSearchETypeNoSSPOnTypeTC110(search_accounts_mandatory);
+    }
     @When("a request is made to the SearchAccounts Api with SSP Based {string} TC_111")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_SSP_Based_TC111(String LastNameAndZipCode) {
-        searchAccountsApiPage.validateLastNameAndZiPBTypESSPBasedOnTypeTC111(search_accounts,LastNameAndZipCode);
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_SSP_Based_TC111() {
+        searchAccountsApiPage.validateLastNameAndZiPBTypESSPBasedOnTypeTC111(search_accounts_mandatory);
+    }
+    @When("a request is made to the SearchAccounts Api with First Name & Last Name & Zip - E Type, SSP TC_112")
+    public void a_request_is_made_to_the_SearchAccounts_First_Name_And_Last_Name_And_Zip_E_Type_SSP_TC112( ) {
+        searchAccountsApiPage.validateLastNameAndZiPTC112(search_accounts_mandatory);
+    }
+
+    @When("a request is made to the SearchAccounts Api with AGLC Account Number E Type No SSP TC_114")
+    public void a_request_is_made_to_the_SearchAccounts_AGLC_Account_Number_E_Type_No_SSP_TC114( ) {
+        searchAccountsApiPage.validateAGLCAccountNumberETypeNoSSPTC114(search_accounts_mandatory);
     }
 
     @When("a request is made to the SearchAccounts Api with Enrollment Records Based {string} TC_119")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_Enrollment_Records_Based_TC119(String PhoneNumber) {
-        searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts,PhoneNumber);
+        searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts_mandatory,PhoneNumber);
     }
     @When("a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_an_SSP_Participant_Code_TC121e() {
-        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts);
+        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts_mandatory);
     }
 
-    @When("a request is made to the SearchAccounts Api  TC_109")
-    public void a_request_is_made_to_the_get_SearchAccounts_TC109() {
-        searchAccountsApiPage.validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(search_accounts_mandatory);
-    }
+
 
 
 

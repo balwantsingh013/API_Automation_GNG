@@ -7,7 +7,6 @@ import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.util.FakerDataGenerator;
-import io.cucumber.datatable.DataTable;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -20,6 +19,21 @@ import java.util.Map;
 @Slf4j
 public class SearchAccountsHelper {
     private final TestContext testContext;
+    public String premisesZipCode;
+    public String customerLastName;
+    public String customerFirstName;
+    public String premisesCode;
+    public String customerCode;
+    public String aglcAccountNumber;
+    public String premisesStreetNumber;
+    public String premisesStreetPreDirection;
+    public String premisesStreetName;
+    public String premisesStreetSuffix;
+    public String premisesStreetPostDirection;
+    public String premisesUnitNumber;
+    public String premisesUnitType;
+    public String premisesCity;
+    public String premisesStateCode;
 
     public SearchAccountsHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -770,6 +784,7 @@ public class SearchAccountsHelper {
 
     }
 
+
     public void validateCustomerCodeInDB(String customerCode,SearchAccountsRequest payload) {
 
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -804,37 +819,104 @@ public class SearchAccountsHelper {
         return results;
     }
 
-    public void setLastNameAndZiPBType(SearchAccountsRequest payload) {
+
+    public void setLastNameFirstNameAndZiPBType(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setPremisesZipCode("30132");
-        payload.setCustomerLastName("STONE");
-        payload.setCustomerFirstName("ANN");
+        payload.setPremisesZipCode("PremisesZipCode");
+        payload.setCustomerLastName("CustomerLastName");
+        payload.setCustomerFirstName("CustomerFirstName");
+    }
+
+
+
+
+    public void setLastNameFirstNameAndZiPBInDBType() {
+        List<Map<String, Object>> customerData = ApplicationContext.get().getDbAction().lastNameFirstNameTC112Query();
+
+        if (customerData != null && !customerData.isEmpty()) {
+            Map<String, Object> data = customerData.get(0);
+
+            premisesZipCode = data.get("premises_zip_code").toString();
+            customerLastName = data.get("customer_last_name").toString();
+            customerFirstName = data.get("customer_first_name").toString();
+        } else {
+            throw new RuntimeException("No customer data found in DB.");
+        }
+    }
+
+
+    public void setaglcAccountNumberType(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setAglcAccountNumber("aglcAccountNumber");
+
+    }
+
+    public void setAGLCAccountNumberETypeNoSSPInDBType() {
+        List<Map<String, Object>> aglcAccNumber = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
+
+        if (aglcAccNumber != null && !aglcAccNumber.isEmpty()) {
+            Map<String, Object> data = aglcAccNumber.get(0);
+
+            aglcAccountNumber = data.get("aglc_acc_number").toString();
+
+        } else {
+            throw new RuntimeException("No Aglc Account Number found in DB.");
+        }
+    }
+
+
+    public void setCustomerDataETypeSSP(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesStreetNumber("premisesStreetNumber");
+        payload.setPremisesStreetPreDirection("premisesStreetPreDirection");
+        payload.setPremisesStreetName("premisesStreetName");
+        payload.setPremisesStreetSuffix("premisesStreetSuffix");
+        payload.setPremisesStreetPostDirection("premisesStreetPostDirection");
+        payload.setPremisesUnitNumber("premisesUnitNumber");
+        payload.setPremisesUnitType("premisesUnitType");
+        payload.setPremisesCity("premisesCity");
+        payload.setPremisesStateCode("premisesStateCode");
+        payload.setPremisesZipCode("premisesZipCode");
+
+    }
+
+    public void setCustomerDataETypeSSPInDBType() {
+        List<Map<String, Object>> customerDataSSP = ApplicationContext.get().getDbAction().customerDataWithETypeTC115Query();
+
+        if (customerDataSSP != null && !customerDataSSP.isEmpty()) {
+            Map<String, Object> data = customerDataSSP.get(0);
+
+            aglcAccountNumber = data.get("aglc_acc_number").toString();
+
+        } else {
+            throw new RuntimeException("No Aglc Account Number found in DB.");
+        }
+    }
+
+    public void setAccountNumberSearchETypeNoSSPDB() {
+        List<Map<String, Object>> accountNumberData = ApplicationContext.get().getDbAction().accountNumberSearchETypeNoSSPDBTC110Query();
+
+        if (accountNumberData != null && !accountNumberData.isEmpty()) {
+            Map<String, Object> data = accountNumberData.get(0);
+
+            premisesCode = data.get("premises_code").toString();
+            customerCode = data.get("customer_code").toString();
+        } else {
+            throw new RuntimeException("No account Number Data found in DB.");
+        }
+    }
+
+    public void setAccountNumberSearchETypeNoSSP(SearchAccountsRequest payload ) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesCode("premisesCode");
+        payload.setCustomerCode("customerCode");
+
     }
 
     public void setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setPhoneNumber("7704090713");
     }
-
-    public void verifyAccountInformationWithDatabase(Map<String, Object> accountInformationDB, Map<String, Object> responseMap) {
-        List<String> keysDB = accountInformationDB.keySet().stream().toList();
-//        SoftAssertions softAssert = new SoftAssertions();
-//
-//        for (String key : keysDB) {
-//            Object dbValue = accountInformationDB.get(key);
-//            Object responseValue = responseMap.get(key);
-//
-//            String dbStringValue = String.valueOf(dbValue);
-//            String responseStringValue = String.valueOf(responseValue);
-//            logInfo("Expected: {}, Actual: {} "+ "DB Value: " +dbValue +" Response Value: "+ responseValue);
-//            softAssert.assertThat(responseStringValue)
-//                    .as("Field: " + key)
-//                    .isEqualTo(dbStringValue);
-//        }
-//
-//        softAssert.assertAll();
-//    }
-   }
 
 
     public void setAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsRequest payload) {
@@ -843,6 +925,13 @@ public class SearchAccountsHelper {
             payload.setCustomerCode("005801335");
             payload.setPremisesCode("5776499");
             payload.setTransactionType("TNON");
+
+    }
+    public void setLastNameAndZiPBType(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID("autotester");
+        payload.setCustomerLastName("STONE");
+        payload.setPremisesZipCode("30132");
 
     }
     public void setSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsRequest payload) {

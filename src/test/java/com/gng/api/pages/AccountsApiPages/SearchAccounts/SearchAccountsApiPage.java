@@ -10,7 +10,9 @@ import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteRequest;
 import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
+import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
@@ -18,8 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import java.util.List;
 import java.util.Map;
 
-import static com.gng.api.constants.ApiEndPoint.CREATE_ACCOUNT_NOTE;
-import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
+import static com.gng.api.constants.ApiEndPoint.*;
 import static com.gng.api.util.LogUtil.logInfo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -376,36 +377,82 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel,String customerCode) {
+
+    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel, String customerCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setInvalidCustomerCode(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
-        helper.validateCustomerCodeInDB(customerCode,payload);
+        helper.validateCustomerCodeInDB(customerCode, payload);
     }
-    public void validateLastNameAndZiPBTypESSPBasedOnTypeTC111(SearchAccountsApiLabel apiLabel,String customerCode) {
+
+    public void validateAccountNumberSearchBTypeNoSSPOnTypeTC109(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setLastNameAndZiPBType(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-    public void validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(SearchAccountsApiLabel apiLabel,String customerCode) {
+
+    public void validateAccountNumberSearchETypeNoSSPOnTypeTC110(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setAccountNumberSearchETypeNoSSPDB();
+        helper.setAccountNumberSearchETypeNoSSP(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
+
+
+    public void validateLastNameAndZiPBTypESSPBasedOnTypeTC111(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setLastNameAndZiPBType(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateLastNameAndZiPTC112(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setLastNameFirstNameAndZiPBInDBType();
+        helper.setLastNameFirstNameAndZiPBType(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+
+
+    }
+    public void validateAGLCAccountNumberETypeNoSSPTC114(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setAGLCAccountNumberETypeNoSSPInDBType();
+        helper.setaglcAccountNumberType(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+
+
+    }
+
+
+
+    public void validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(SearchAccountsApiLabel apiLabel, String customerCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
     public void validateSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setSSPParticipantCodeBasedOnTypeTC121e(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
-        //helper.validateCustomerCodeInDB()
+
     }
+
     public void validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
@@ -413,8 +460,9 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-    public void validateSSPIndicatorValueWithDataBasedOnTypeTC107(SearchAccountsApiLabel apiLabel,SearchAccountsApiLabel customerCode) {
-      //  List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
+
+    public void validateSSPIndicatorValueWithDataBasedOnTypeTC107(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerCode) {
+        // List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
         //setCustomerAndPremisesCodes(activeCustomerData);
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         //helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);

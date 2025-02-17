@@ -125,6 +125,30 @@ public class DBAction {
         logQueryInAllure("password doesn't match the login ID", query);
         return jdbcTemplate.update(query);
     }
+    public List<Map<String, Object>> lastNameFirstNameTC112Query (){
+        String query = DBQuery.LAST_NAME_FIRST_NAME_QUERY_TC112;
+        logQueryInAllure("Last name and First Name ", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> accountNumberSearchETypeNoSSPDBTC110Query (){
+        String query = DBQuery.ACCOUNT_NUMBER_E_TYPE_NO_SSP_TC110;
+        logQueryInAllure("Last name and First Name ", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public List<Map<String, Object>> aglcAccountNumberETypeNoSSPTC114Query (){
+        String query = DBQuery.AGLC_ACCOUNT_NUMBER_TC114;
+        logQueryInAllure("Last name and First Name ", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+
+    public List<Map<String, Object>> customerDataWithETypeTC115Query (){
+        String query = DBQuery.CUSTOMER_DATA_WITH_TYPE_TC115;
+        logQueryInAllure("Customer Data Not Found With E type ", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+
 
 
 

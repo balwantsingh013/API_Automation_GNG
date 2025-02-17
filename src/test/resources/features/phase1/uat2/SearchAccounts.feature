@@ -426,9 +426,42 @@ Feature: Verify SearchAccounts Api
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
+  @SearchAccountsAccountNumberSearchBTypeNoSSP @Phase1 @HappyFlow
+  Scenario: Verify response code for invalid "<CustomerCode>" TC109
+    When a request is made to the SearchAccounts Api with Account Number Search B Type No SSP  TC_109
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+
+
+  @SearchAccountsAccountNumberSearchETypeNoSSP @Phase1 @HappyFlow
+  Scenario: Verify response code for invalid "<CustomerCode>" TC110
+    When a request is made to the SearchAccounts Api with Account Number Search E Type No SSP  TC_110
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+
+
   @SearchAccountsSSPBasedOnTheProvidedLastNameAndZipCode @Phase1 @HappyFlow
   Scenario: Verify response code SSP Based "<LastNameAndZipCode>" TC111
     When a request is made to the SearchAccounts Api with SSP Based "<LastNameAndZipCode>" TC_111
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+  @SearchAccountsSSPBasedOnTheProvidedWithFirstNameAndLastNameAndZipAndEType @Phase1 @HappyFlow
+  Scenario: Verify response code SSP Based with First Name & Last Name & Zip - E Type  TC112
+    When a request is made to the SearchAccounts Api with First Name & Last Name & Zip - E Type, SSP TC_112
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+
+  @SearchAccountswithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
+  Scenario: Verify response code with AGLC Account Number E Type No SSP TC_114
+    When   a request is made to the SearchAccounts Api with AGLC Account Number E Type No SSP TC_114
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
