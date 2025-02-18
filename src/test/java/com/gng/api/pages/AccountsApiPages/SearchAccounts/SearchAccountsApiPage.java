@@ -423,6 +423,7 @@ public class SearchAccountsApiPage extends BasePage {
 
 
     }
+
     public void validateAGLCAccountNumberETypeNoSSPTC114(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setAGLCAccountNumberETypeNoSSPInDBType();
@@ -449,15 +450,54 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void validateNumberAndPreDirAndSuffixAndPostDirAndStreetNameAndCityAndStateCodeAndZipCodeTC117(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerDataETypeSSPInDBType();
+        helper.setCustomerDataETypeSSP(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
 
 
-    public void validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(SearchAccountsApiLabel apiLabel, String customerCode) {
+    public void validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+    public void validatePartialPaymentTC121a(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPartialPayment(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateFullPaymentTC121b(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setFullPayment(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+    public void validateNoPaymentTC121c(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setNoPayment(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateMultiplePaymentTC121d(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setMultiplePayments(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
 
     public void validateSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
@@ -468,23 +508,7 @@ public class SearchAccountsApiPage extends BasePage {
 
     }
 
-    public void validateAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsApiLabel apiLabel) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
 
-    public void validateSSPIndicatorValueWithDataBasedOnTypeTC107(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerCode) {
-        // List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getInvalidCustomerCode();
-        //setCustomerAndPremisesCodes(activeCustomerData);
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        //helper.setCustomerCodeNotInDataTableBasedOnTypeTC107(payload, customerCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
 
 }
 

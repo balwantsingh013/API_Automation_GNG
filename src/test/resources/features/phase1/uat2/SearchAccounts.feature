@@ -476,32 +476,62 @@ Feature: Verify SearchAccounts Api
     And response should return numberOfMatches as 0
 
 
+
   @SearchAccountsWithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
-  Scenario: Verify response code with AGLC Account Number E Type No SSP TC_114
-    When   a request is made to the SearchAccounts Api with AGLC Account Number E Type No SSP TC_114
+  Scenario: Verify response code with Street Name And City And State Code And Zip Code TC_116
+    When    a request is made to the SearchAccounts Api with Street Name And City And State Code And Zip Code TC_116
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+  @SearchAccountsWithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
+  Scenario: Verify response code with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
+    When a request is made to the SearchAccounts Api with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
   @SearchAccountsEnrollmentRecordsBasedOnTheProvidedPhoneNumber @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records Based "<PhoneNumber>" TC119
-    When a request is made to the SearchAccounts Api with Enrollment Records Based "<PhoneNumber>" TC_119
+    When a request is made to the SearchAccounts Api with Enrollment Records Based TC_119
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 2
 
 
-  @SearchAccountsEnrollmentCommercialRecordsBasedOnTheProvidedCustomerBusinessName @Phase1 @HappyFlow
-  Scenario: Verify response code Enrollment Commercial Records Based Provided "<customerBusinessName>" TC120
-    When a request is made to the SearchAccounts Api with Enrollment Commercial Records Based Provided "<customerBusinessName>" TC_120
+  @SearchAccountsPartialPayment @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Records with Partial Payment TC_121a
+    When a request is made to the SearchAccounts Api with Partial Payment TC_121a
     Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
+    And response should return numberOfMatches as 1
 
+  @SearchAccountsFullPayment @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Records with Full Payment TC_121b
+    When a request is made to the SearchAccounts Api with Full Payment TC_121b
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should return numberOfMatches as 1
 
+  @SearchAccountsNoPayment @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Records with No Payment TC_121c
+    When a request is made to the SearchAccounts Api with No Payment TC_121c
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should return numberOfMatches as 1
+
+  @SearchAccountsMultiplePayment @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Records with Multiple Payment TC_121d
+    When a request is made to the SearchAccounts Api with Multiple Payment TC_121d
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should return numberOfMatches as 1
 
   @SearchAccountsSSPParticipantCode @Phase1 @HappyFlow
   Scenario: Verify response code for SSP Participant Code TC121e
     When a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+  @SearchAccountsEnrollmentCommercialRecordsBasedOnTheProvidedCustomerBusinessName @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Commercial Records Based Provided "<customerBusinessName>" TC120
+    When a request is made to the SearchAccounts Api with Enrollment Commercial Records Based Provided "<customerBusinessName>" TC_120
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0

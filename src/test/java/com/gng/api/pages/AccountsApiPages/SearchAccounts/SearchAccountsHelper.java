@@ -778,13 +778,6 @@ public class SearchAccountsHelper {
         payload.setCustomerCode("5555555");
         payload.setPremisesCode("55555");
     }
-    public void setCustomerCode(SearchAccountsRequest payload,List<Map<String, Object>> invalidCustomerCode) {
-        payload.setCustomerCode("5555555");
-        String a = (String) payload.getCustomerCode();
-        System.out.println("Customer Code: " + a);
-
-    }
-
 
     public void validateCustomerCodeInDB(String customerCode,SearchAccountsRequest payload) {
 
@@ -837,9 +830,9 @@ public class SearchAccountsHelper {
         if (customerData != null && !customerData.isEmpty()) {
             Map<String, Object> data = customerData.get(0);
 
-            premisesZipCode = data.get("premises_zip_code").toString();
-            customerLastName = data.get("customer_last_name").toString();
-            customerFirstName = data.get("customer_first_name").toString();
+            premisesZipCode = data.get("PREMISESZIPCODE").toString();
+            customerLastName = data.get("CUSTOMERLASTNAMEBUSINESS").toString();
+            customerFirstName = data.get("CUSTOMERFIRSTNAME").toString();
         } else {
             throw new RuntimeException("No customer data found in DB.");
         }
@@ -858,7 +851,7 @@ public class SearchAccountsHelper {
         if (aglcAccNumber != null && !aglcAccNumber.isEmpty()) {
             Map<String, Object> data = aglcAccNumber.get(0);
 
-            aglcAccountNumber = data.get("aglc_acc_number").toString();
+            aglcAccountNumber = data.get("uzbenro_old_acct_num").toString();
 
         } else {
             throw new RuntimeException("No Aglc Account Number found in DB.");
@@ -889,18 +882,17 @@ public class SearchAccountsHelper {
         if (CustomerDataSsp != null && !CustomerDataSsp.isEmpty()) {
             Map<String, Object> data = CustomerDataSsp.get(0);
 
-            premisesStreetNumber = data.get("aglc_acc_number").toString();
-            premisesStreetPreDirection = data.get("aglc_acc_number").toString();
-
-            premisesStreetName = data.get("aglc_acc_number").toString();
-            premisesStreetSuffix = data.get("aglc_acc_number").toString();
-            premisesStreetPostDirection = data.get("aglc_acc_number").toString();
+            premisesStreetNumber = data.get("UCRADDR_STREET_NUMBER").toString();
+            premisesStreetPreDirection = data.get("UCRADDR_PDIR_CODE_PRE").toString();
+            premisesStreetName = data.get("UCRADDR_STREET_NAME").toString();
+            premisesStreetSuffix = data.get("UCRADDR_SSFX_CODE").toString();
+            premisesStreetPostDirection = data.get("UCRADDR_PDIR_CODE_POST").toString();
             premisesUnitNumber = data.get("aglc_acc_number").toString();
-            premisesUnitType = data.get("aglc_acc_number").toString();
-            premisesCity = data.get("aglc_acc_number").toString();
-            premisesStateCode = data.get("aglc_acc_number").toString();
+            premisesUnitType = data.get("UCRADDR_UNIT").toString();
+            premisesCity = data.get("UCRADDR_CITY").toString();
+            premisesStateCode = data.get("UCRADDR_STAT_CODE").toString();
 
-            premisesZipCode = data.get("aglc_acc_number").toString();
+            premisesZipCode = data.get("UCRADDR_ZIP").toString();
 
 
         } else {
@@ -926,12 +918,17 @@ public class SearchAccountsHelper {
 
     public void setStreetNameAndCityAndStateCodeAndZipCode(SearchAccountsRequest payload ) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setPremisesStreetName("");
-        payload.setPremisesCity("");
-        payload.setPremisesStateCode("");
-        payload.setPremisesZipCode("");
+        payload.setPremisesStreetName("LEN");
+        payload.setPremisesCity("ATLANTA");
+        payload.setPremisesStateCode("GA");
+        payload.setPremisesZipCode("30309");
 
     }
+
+
+
+
+
 
     public void setAccountNumberSearchETypeNoSSP(SearchAccountsRequest payload ) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -943,6 +940,30 @@ public class SearchAccountsHelper {
     public void setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setPhoneNumber("7704090713");
+    }
+
+    public void setPartialPayment(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesCode("3394036");
+        payload.setCustomerCode("3377224");
+    }
+
+    public void setFullPayment(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesCode("5198736");
+        payload.setCustomerCode("5221058");
+    }
+
+    public void setNoPayment(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesCode("5776499");
+        payload.setCustomerCode("5801335");
+    }
+
+    public void setMultiplePayments(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesCode("5730863");
+        payload.setCustomerCode("5549929");
     }
 
 
