@@ -397,7 +397,6 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateAccountNumberSearchETypeNoSSPOnTypeTC110(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setAccountNumberSearchETypeNoSSPDB();
         helper.setAccountNumberSearchETypeNoSSP(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
@@ -415,7 +414,6 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateLastNameAndZiPTC112(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setLastNameFirstNameAndZiPBInDBType();
         helper.setLastNameFirstNameAndZiPBType(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
@@ -426,7 +424,6 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateAGLCAccountNumberETypeNoSSPTC114(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setAGLCAccountNumberETypeNoSSPInDBType();
         helper.setaglcAccountNumberType(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
@@ -435,7 +432,6 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateCustomerDataETypeSSPTC115(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerDataETypeSSPInDBType();
         helper.setCustomerDataETypeSSP(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
@@ -452,7 +448,6 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateNumberAndPreDirAndSuffixAndPostDirAndStreetNameAndCityAndStateCodeAndZipCodeTC117(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerDataETypeSSPInDBType();
         helper.setCustomerDataETypeSSP(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);

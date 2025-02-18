@@ -54,7 +54,7 @@ public class BaseSteps {
         Response response = testContext.getResponse();
 
         assertThat("Unexpected number of matches returned",
-                response.jsonPath().getInt("numberOfMatches"),
+                response.jsonPath().getInt("data.numberOfMatches"),
                 equalTo(expectedMatches));
     }
 

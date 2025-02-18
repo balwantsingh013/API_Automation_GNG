@@ -477,14 +477,14 @@ Feature: Verify SearchAccounts Api
 
 
 
-  @SearchAccountsWithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
+  @SearchAccountsWithStreetNameAndCityAndStateCodeAndZipCode @Phase1 @HappyFlow
   Scenario: Verify response code with Street Name And City And State Code And Zip Code TC_116
     When    a request is made to the SearchAccounts Api with Street Name And City And State Code And Zip Code TC_116
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
-  @SearchAccountsWithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
+  @SearchAccountsWithNumberAndPreDirAndSuffixAndPostDirAndStreetNameAndCityAndStateCodeAndZipCode  @Phase1 @HappyFlow
   Scenario: Verify response code with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
     When a request is made to the SearchAccounts Api with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
     Then verify response code of "SearchAccounts" Api is 200
