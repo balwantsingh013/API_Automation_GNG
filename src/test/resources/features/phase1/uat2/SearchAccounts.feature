@@ -467,6 +467,22 @@ Feature: Verify SearchAccounts Api
     And response should return numberOfMatches as 0
 
 
+
+  @SearchAccountsWithCustomerDataETypeSSP @Phase1 @HappyFlow
+  Scenario: Verify response code with  Customer Data E Type SSP TC_115
+    When a request is made to the SearchAccounts Api with Customer Data E Type SSP TC_115
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
+
+  @SearchAccountsWithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
+  Scenario: Verify response code with AGLC Account Number E Type No SSP TC_114
+    When   a request is made to the SearchAccounts Api with AGLC Account Number E Type No SSP TC_114
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
+
   @SearchAccountsEnrollmentRecordsBasedOnTheProvidedPhoneNumber @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records Based "<PhoneNumber>" TC119
     When a request is made to the SearchAccounts Api with Enrollment Records Based "<PhoneNumber>" TC_119

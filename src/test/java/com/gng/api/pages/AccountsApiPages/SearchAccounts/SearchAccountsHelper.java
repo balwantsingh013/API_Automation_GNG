@@ -8,6 +8,7 @@ import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -880,18 +881,34 @@ public class SearchAccountsHelper {
 
     }
 
-    public void setCustomerDataETypeSSPInDBType() {
-        List<Map<String, Object>> customerDataSSP = ApplicationContext.get().getDbAction().customerDataWithETypeTC115Query();
+    public void setCustomerDataETypeSSPInDBType()
+    {
+    List<Map<String, Object>> CustomerDataSsp = ApplicationContext.get().getDbAction().customerDataWithETypeTC115Query();
 
-        if (customerDataSSP != null && !customerDataSSP.isEmpty()) {
-            Map<String, Object> data = customerDataSSP.get(0);
 
-            aglcAccountNumber = data.get("aglc_acc_number").toString();
+        if (CustomerDataSsp != null && !CustomerDataSsp.isEmpty()) {
+            Map<String, Object> data = CustomerDataSsp.get(0);
+
+            premisesStreetNumber = data.get("aglc_acc_number").toString();
+            premisesStreetPreDirection = data.get("aglc_acc_number").toString();
+
+            premisesStreetName = data.get("aglc_acc_number").toString();
+            premisesStreetSuffix = data.get("aglc_acc_number").toString();
+            premisesStreetPostDirection = data.get("aglc_acc_number").toString();
+            premisesUnitNumber = data.get("aglc_acc_number").toString();
+            premisesUnitType = data.get("aglc_acc_number").toString();
+            premisesCity = data.get("aglc_acc_number").toString();
+            premisesStateCode = data.get("aglc_acc_number").toString();
+
+            premisesZipCode = data.get("aglc_acc_number").toString();
+
 
         } else {
             throw new RuntimeException("No Aglc Account Number found in DB.");
         }
-    }
+        }
+
+
 
     public void setAccountNumberSearchETypeNoSSPDB() {
         List<Map<String, Object>> accountNumberData = ApplicationContext.get().getDbAction().accountNumberSearchETypeNoSSPDBTC110Query();
@@ -904,6 +921,16 @@ public class SearchAccountsHelper {
         } else {
             throw new RuntimeException("No account Number Data found in DB.");
         }
+    }
+
+
+    public void setStreetNameAndCityAndStateCodeAndZipCode(SearchAccountsRequest payload ) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPremisesStreetName("");
+        payload.setPremisesCity("");
+        payload.setPremisesStateCode("");
+        payload.setPremisesZipCode("");
+
     }
 
     public void setAccountNumberSearchETypeNoSSP(SearchAccountsRequest payload ) {

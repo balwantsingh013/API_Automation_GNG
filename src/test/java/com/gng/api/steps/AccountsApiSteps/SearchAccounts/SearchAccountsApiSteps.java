@@ -222,6 +222,16 @@ public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String custome
         searchAccountsApiPage.validateAGLCAccountNumberETypeNoSSPTC114(search_accounts_mandatory);
     }
 
+    @When("a request is made to the SearchAccounts Api with Customer Data E Type SSP TC_115")
+    public void a_request_is_made_to_the_SearchAccounts_Customer_Data_E_Type_SSP_TC115( ) {
+        searchAccountsApiPage.validateCustomerDataETypeSSPTC115(search_accounts_mandatory);
+    }
+    @When("a request is made to the SearchAccounts Api with Street Name And City And State Code And Zip Code TC_116")
+    public void a_request_is_made_to_the_SearchAccounts_Street_Name_And_City_And_State_Code_And_Zip_Code_TC116( ) {
+        searchAccountsApiPage.validateStreetNameAndCityAndStateCodeAndZipCodeTC116(search_accounts_mandatory);
+    }
+
+
     @When("a request is made to the SearchAccounts Api with Enrollment Records Based {string} TC_119")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_Enrollment_Records_Based_TC119(String PhoneNumber) {
         searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts_mandatory,PhoneNumber);

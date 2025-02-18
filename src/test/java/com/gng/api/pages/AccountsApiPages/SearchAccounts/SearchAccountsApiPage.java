@@ -430,8 +430,23 @@ public class SearchAccountsApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+    }
 
+    public void validateCustomerDataETypeSSPTC115(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerDataETypeSSPInDBType();
+        helper.setCustomerDataETypeSSP(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
+    }
 
+    public void validateStreetNameAndCityAndStateCodeAndZipCodeTC116(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setStreetNameAndCityAndStateCodeAndZipCode(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        testContext.setResponse(response);
     }
 
 

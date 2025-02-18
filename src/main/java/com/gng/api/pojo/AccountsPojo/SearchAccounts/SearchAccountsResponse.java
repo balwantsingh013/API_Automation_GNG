@@ -1,5 +1,6 @@
 package com.gng.api.pojo.AccountsPojo.SearchAccounts;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class SearchAccountsResponse {
 	@lombok.Data
 	@AllArgsConstructor
 	@NoArgsConstructor
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Data {
 		private String customerBusinessName;
 		private Object premisesUnitNumber;
