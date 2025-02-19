@@ -445,18 +445,18 @@ Feature: Verify SearchAccounts Api
 
 
   @SearchAccountsSSPBasedOnTheProvidedLastNameAndZipCode @Phase1 @HappyFlow
-  Scenario: Verify response code SSP Based "<LastNameAndZipCode>" TC111
-    When a request is made to the SearchAccounts Api with SSP Based "<LastNameAndZipCode>" TC_111
+  Scenario: Verify response code SSP Based  TC111
+    When a request is made to the SearchAccounts Api with SSP Based TC_111
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
-  @SearchAccountsSSPBasedOnTheProvidedWithFirstNameAndLastNameAndZipAndEType @Phase1 @HappyFlow
+  @withFirstLastNameZipETypeSSP @Phase1 @HappyFlow
   Scenario: Verify response code SSP Based with First Name & Last Name & Zip - E Type  TC112
     When a request is made to the SearchAccounts Api with First Name & Last Name & Zip - E Type, SSP TC_112
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
+    And response should return numberOfMatches as 1
 
 
   @SearchAccountswithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
@@ -482,7 +482,7 @@ Feature: Verify SearchAccounts Api
     When    a request is made to the SearchAccounts Api with Street Name And City And State Code And Zip Code TC_116
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
+    And response should return numberOfMatches as 2
 
   @SearchAccountsWithNumberAndPreDirAndSuffixAndPostDirAndStreetNameAndCityAndStateCodeAndZipCode  @Phase1 @HappyFlow
   Scenario: Verify response code with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117

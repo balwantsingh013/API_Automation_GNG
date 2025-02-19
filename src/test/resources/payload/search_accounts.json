@@ -4,9 +4,9 @@
   "customerCode": null,
   "premisesCode": null,
   "transactionType": "TNON",
-  "customerBusinessName": "some business llc",
-  "customerLastName": "Doe",
-  "customerFirstName": "John",
+  "customerBusinessName": null,
+  "customerLastName": null,
+  "customerFirstName": null,
   "socialSecurityNumber": "",
   "federalTaxID": null,
   "phoneNumber": null,
@@ -20,5 +20,5 @@
   "premisesUnitNumber": null,
   "premisesCity": null,
   "premisesStateCode": null,
-  "premisesZipCode": "30032"
+  "premisesZipCode": null
 }

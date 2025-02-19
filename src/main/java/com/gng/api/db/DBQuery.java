@@ -201,7 +201,7 @@ public final class DBQuery {
             SELECT *
                FROM UZRPSTO
                WHERE UZRPSTO_PARM_NAME = 'PASSWORD_EXPIRE_DAYS'
-               AND UZRPSTO_PARM_VALUE = '45'\s""";
+               AND UZRPSTO_PARM_VALUE = '45'""";
 
 
     public static final String EXTERNAL_PARAM_OBJECT_ADDED = """
@@ -288,7 +288,9 @@ public final class DBQuery {
 
     public static final String AGLC_ACCOUNT_NUMBER_TC114 = """
             
-            select uzbenro_old_acct_num as aglcAccountNumber FROM  uzbenro WHERE  uzbenro_old_acct_num is not null and uzbenro_old_acct_num <> 0 
+            select uzbenro_old_acct_num as aglcAccountNumber FROM  uzbenro 
+            WHERE  uzbenro_old_acct_num is not NULL and uzbenro_old_acct_num <> 0  ;
+            
             """;
     public static final String CUSTOMER_DATA_WITH_TYPE_TC115 = """
             

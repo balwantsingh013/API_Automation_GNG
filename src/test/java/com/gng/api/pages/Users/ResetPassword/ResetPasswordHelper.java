@@ -38,9 +38,9 @@ public class ResetPasswordHelper {
 
         Map<String, Object> entry = passwordExpireDayValue.get(0);
 
-        String parmName = (String) entry.get("UZRPSTO_PARM_NAME");
-        String objectName = (String) entry.get("UZRPSTO_OBJECT");
-        String value = entry.get("VALUE").toString();
+        String parmName = entry.get("UZRPSTO_PARM_NAME").toString();;
+        String objectName =  entry.get("UZRPSTO_OBJECT").toString();;
+        String value = entry.get("UZRPSTO_PARM_VALUE").toString();
 
         Assert.assertEquals(parmName, "PASSWORD_EXPIRE_DAYS", "Parameter name does not match.");
         Assert.assertEquals(objectName, "SPK_WEB_API", "Object name does not match.");

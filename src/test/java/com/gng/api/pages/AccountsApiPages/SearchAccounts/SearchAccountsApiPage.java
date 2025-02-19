@@ -399,7 +399,7 @@ public class SearchAccountsApiPage extends BasePage {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setAccountNumberSearchETypeNoSSP(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
@@ -408,7 +408,7 @@ public class SearchAccountsApiPage extends BasePage {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setLastNameAndZiPBType(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
@@ -416,7 +416,7 @@ public class SearchAccountsApiPage extends BasePage {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setLastNameFirstNameAndZiPBType(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
 
 
@@ -426,7 +426,7 @@ public class SearchAccountsApiPage extends BasePage {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setaglcAccountNumberType(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
@@ -434,7 +434,7 @@ public class SearchAccountsApiPage extends BasePage {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerDataETypeSSP(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
@@ -442,7 +442,7 @@ public class SearchAccountsApiPage extends BasePage {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setStreetNameAndCityAndStateCodeAndZipCode(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
@@ -450,7 +450,7 @@ public class SearchAccountsApiPage extends BasePage {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerDataETypeSSP(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 

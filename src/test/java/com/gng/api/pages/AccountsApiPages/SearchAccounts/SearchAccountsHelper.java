@@ -99,7 +99,7 @@ public class SearchAccountsHelper {
     public void setPremisesCodeBasedOnTypeTC50(SearchAccountsRequest payload, SearchAccountsApiLabel premisesCode) {
         switch (premisesCode) {
             case MAX_LENGTH_PREMISES_CODE_TC50:
-                payload.setRequestID(FakerDataGenerator.generateString(7));
+                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(USERNAME);
                 payload.setPremisesCode(FakerDataGenerator.generateLowerCaseString(8));
                 break;
@@ -843,7 +843,7 @@ public class SearchAccountsHelper {
         String premisesStreetName = data.get("UCRADDR_STREET_NAME").toString();
         String premisesStreetSuffix = data.get("UCRADDR_SSFX_CODE").toString();
         String premisesStreetPostDirection = data.get("UCRADDR_PDIR_CODE_POST").toString();
-        String premisesUnitNumber = data.get("aglc_acc_number").toString();
+        //String premisesUnitNumber = data.get("aglc_acc_number").toString();
         String premisesUnitType = data.get("UCRADDR_UNIT").toString();
         String premisesCity = data.get("UCRADDR_CITY").toString();
         String premisesStateCode = data.get("UCRADDR_STAT_CODE").toString();
@@ -856,7 +856,7 @@ public class SearchAccountsHelper {
         payload.setPremisesStreetName(premisesStreetName);
         payload.setPremisesStreetSuffix(premisesStreetSuffix);
         payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
-        payload.setPremisesUnitNumber(premisesUnitNumber);
+       // payload.setPremisesUnitNumber(premisesUnitNumber);
         payload.setPremisesUnitType(premisesUnitType);
         payload.setPremisesCity(premisesCity);
         payload.setPremisesStateCode(premisesStateCode);
@@ -936,7 +936,7 @@ public class SearchAccountsHelper {
 
     public void setLastNameAndZiPBType(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME);
+        payload.setLoginID("autotester");
         payload.setCustomerLastName("STONE");
         payload.setPremisesZipCode("30132");
 
