@@ -324,7 +324,6 @@ public class SearchAccountsHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(USERNAME);
                 payload.setTransactionType("TNON");
-
                 payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(4));
                 break;
             default:
