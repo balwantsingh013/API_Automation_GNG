@@ -76,7 +76,9 @@ public class SearchAccountsHelper {
             case INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC48:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("dummy");
+                payload.setCustomerLastName("Doe");
                 payload.setTransactionType("TNON");
+                payload.setPremisesZipCode("30214");
                 break;
             default:
                 payload.setLoginID(FakerDataGenerator.generateLowerCaseString(10));
@@ -88,7 +90,6 @@ public class SearchAccountsHelper {
             case MAX_LENGTH_CUSTOMER_CODE_TC49:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(USERNAME);
-                payload.setTransactionType("TNON");
                 payload.setCustomerCode(FakerDataGenerator.generateLowerCaseString(15));
                 break;
             default:
@@ -895,6 +896,21 @@ public class SearchAccountsHelper {
         payload.setPhoneNumber("7704090713");
     }
 
+    public void setBusinessName(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME);
+        payload.setCustomerBusinessName("RENNIKS");
+    }
+
+
+    public void setWildcardSearch(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME);
+        payload.setCustomerLastName("HUN");
+        payload.setCustomerFirstName("A");
+        payload.setPremisesZipCode("30013");
+    }
+
     public void setPartialPayment(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
@@ -927,9 +943,8 @@ public class SearchAccountsHelper {
     public void setAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
-        payload.setCustomerCode("005801335");
+        payload.setCustomerCode("5801335");
         payload.setPremisesCode("5776499");
-        payload.setTransactionType("TNON");
 
     }
 
@@ -941,12 +956,19 @@ public class SearchAccountsHelper {
 
     }
 
+
+    public void setReturnedRecordsExceedsPSTOValue(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID("autotester");
+        payload.setCustomerBusinessName("BUSINESS");
+
+    }
+
     public void setSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
         payload.setCustomerCode("5801335");
         payload.setPremisesCode("5776499");
-        payload.setTransactionType("TNON");
 
 
     }

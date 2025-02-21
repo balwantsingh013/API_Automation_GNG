@@ -13,9 +13,9 @@ Feature: Verify SearchAccounts Api
 
     Examples:
       | requestID                 | errorCode | errorMessage         |
-      | NULL_REQUEST_ID_TC41      | 10001     | Missing Request ID   |
-      | DUPLICATE_REQUEST_ID_TC42 | 10003     | Duplicate Request ID |
-      | LONG_REQUEST_ID_TC43      | 10002     | Invalid Request ID   |
+      | NULL_REQUEST_ID_TC42      | 10001     | Missing Request ID   |
+      | DUPLICATE_REQUEST_ID_TC43 | 10003     | Duplicate Request ID |
+      | LONG_REQUEST_ID_TC44      | 10002     | Invalid Request ID   |
 
   @SearchAccountsInvalidLoginID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid loginID "<loginID>"TC45_TC48
@@ -426,21 +426,31 @@ Feature: Verify SearchAccounts Api
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
+  @SearchAccountsReturnedRecordsExceedsPSTOValue @Phase1 @HappyFlow
+  Scenario: Verify response code for returned records exceeds the PSTO value TC108
+    When a request is made to the SearchAccounts Api with returned records exceeds the PSTO value  TC_108
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 30
+
+
+
+
   @SearchAccountsAccountNumberSearchBTypeNoSSP @Phase1 @HappyFlow
-  Scenario: Verify response code for invalid "<CustomerCode>" TC109
+  Scenario: Verify response code with Account Number Search B Type No SSP  TC109
     When a request is made to the SearchAccounts Api with Account Number Search B Type No SSP  TC_109
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
+    And response should return numberOfMatches as 30
 
 
 
   @SearchAccountsAccountNumberSearchETypeNoSSP @Phase1 @HappyFlow
-  Scenario: Verify response code for invalid "<CustomerCode>" TC110
+  Scenario: Verify response code Account Number Search E Type No SSP TC110
     When a request is made to the SearchAccounts Api with Account Number Search E Type No SSP  TC_110
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
+    And response should return numberOfMatches as 1
 
 
 
@@ -497,6 +507,19 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 2
 
+  @SearchAccountsBusinessName @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Records Based Business Name TC 120
+    When a request is made to the SearchAccounts Api with Business Name  TC_120
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should return numberOfMatches as 0
+
+
+  @SearchAccountsWildcardSearch @Phase1 @HappyFlow
+  Scenario: Verify response code Enrollment Records with Wildcard Search TC_121
+    When a request is made to the SearchAccounts Api with Wildcard Search TC_121
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should return numberOfMatches as 1
+
 
   @SearchAccountsPartialPayment @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records with Partial Payment TC_121a
@@ -520,7 +543,7 @@ Feature: Verify SearchAccounts Api
   Scenario: Verify response code Enrollment Records with Multiple Payment TC_121d
     When a request is made to the SearchAccounts Api with Multiple Payment TC_121d
     Then verify response code of "SearchAccounts" Api is 200
-    And response should return numberOfMatches as 1
+    And response should return numberOfMatches as 0
 
   @SearchAccountsSSPParticipantCode @Phase1 @HappyFlow
   Scenario: Verify response code for SSP Participant Code TC121e
