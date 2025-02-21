@@ -1,4 +1,4 @@
-package com.gng.api.pojo.Users.GetUserRoles;
+package com.gng.api.pojo.Users.ResetPassword;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetUserRolesResponse{
+public class ResetPasswordResponse{
 	private String loginID;
 	private String requestID;
-	private String password;
+	private String oldPassword;
+	private String newPassword;
 }

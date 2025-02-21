@@ -1,8 +1,10 @@
 package com.gng.api.pojo.TestContext;
 
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesResponse;
+import com.gng.api.pojo.Users.ResetPassword.ResetPasswordResponse;
 import io.restassured.response.Response;
 import lombok.Data;
 import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
@@ -43,4 +45,13 @@ public class TestContext {
     @Getter @Setter
     private Object getUserRolesApiPage;
     private GetUserRolesResponse getUserRolesResponse;
+    @Getter @Setter
+    private Object resetPasswordApiPage;
+    private ResetPasswordResponse resetPasswordResponse;
+    @Getter @Setter
+    private Object searchAccountsApiPage;
+    private SearchAccountsResponse searchAccountsResponse;
+
+
+
 }

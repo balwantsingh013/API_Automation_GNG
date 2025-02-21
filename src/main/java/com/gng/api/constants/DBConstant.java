@@ -8,6 +8,8 @@ public final class DBConstant {
     public static final String UCBACCT_PREM_CODE = "UCBNOTE_PREM_CODE";
     public static final String UCBACCT_SEQ_NUMBER = "UCBNOTE_SEQ_NUMBER";
     public static final String UCRSERV_NUM = "UCRSERV_NUM";
+    public static final String UZRPSTO_PARM_VALUE = "UZRPSTO_PARM_VALUE";
+
 
     private DBConstant() {
     }

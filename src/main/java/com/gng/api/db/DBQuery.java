@@ -197,6 +197,112 @@ public final class DBQuery {
             FROM UCBNOTE WHERE UCBNOTE_SEQ_NUMBER = ?
             """;
 
+    public static final String SELECT_PASSWORD_EXPIRE_DAY = """
+            SELECT *
+               FROM UZRPSTO
+               WHERE UZRPSTO_PARM_NAME = 'PASSWORD_EXPIRE_DAYS'
+               AND UZRPSTO_PARM_VALUE = '45'""";
+
+
+    public static final String EXTERNAL_PARAM_OBJECT_ADDED = """
+              SELECT *
+              FROM UZBPSTO
+            WHERE  UZBPSTO_OBJECT = 'SPK_WEB_API';
+            """;
+
+
+    public static final String SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE = """
+            SELECT *
+                                         FROM UCRACCT\s
+                                         WHERE UCRACCT_CUST_CODE = 'CustomerCode'
+            """;
+
+
+    public static final String THE_PASSWORD_UPDATE_QUERY = """
+                UPDATE USERS SET user_locked_ind ='N', failed_logins=3 WHERE USER_ID='autotester'
+            """;
+    public static final String FAILED_LOGIN_COUNTS = """
+            SELECT failed_logins FROM USERS WHERE USER_ID='autotester'
+            """;
+
+    public static final String ROLLBACK_QUERIES = """
+            UPDATE USERS SET user_locked_ind ='N', failed_logins=1 WHERE USER_ID='autotester'
+            """;
+    public static final String EXPIRED_PASSWORD_UPDATE_QUERY = """
+            UPDATE USERS
+            SET user_locked_ind = 'N', failed_logins = 0,
+            PASSWORD_EXPIRE = SYSDATE - 1
+            WHERE USER_ID = 'autotester'
+            """;
+    public static final String EXPIRED_PASSWORD_CHECK_QUERY = """
+            SELECT CASE WHEN PASSWORD_EXPIRE < SYSDATE THEN 'Y' ELSE 'N' END AS is_expired FROM USERS WHERE USER_ID = 'autotester'
+            """;
+    public static final String FAILED_LOGIN_COUNTS_FOR_EXPIRED_PASSWORD = """
+            SELECT failed_logins FROM USERS WHERE USER_ID = 'autotester'
+            """;
+
+
+    public static final String EXPIRED_PASSWORD_ROLLBACK_QUERY = """
+            UPDATE USERS SET user_locked_ind = 'N', failed_logins = 0, PASSWORD_EXPIRE = SYSDATE +30 WHERE USER_ID = 'autotester'
+            """;
+
+
+    public static final String UPDATE_USER_LOCK_STATUS_QUERY = """
+            UPDATE USERS SET user_locked_ind ='Y', failed_logins=4 WHERE USER_ID='autotester'
+            """;
+
+    public static final String CHECK_USER_LOCK_STATUS_QUERY = """
+            SELECT user_locked_ind FROM users WHERE USER_ID = 'autotester'
+            """;
+    public static final String FAILED_LOGIN_COUNTS_FOR_USER_LOCK_STATUS_QUERY = """
+            UPDATE users SET user_locked_ind = 'N', failed_logins = 0 WHERE USER_ID = 'autotester'
+            """;
+
+    public static final String ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY = """
+            UPDATE USERS SET user_locked_ind ='N', failed_logins=1 WHERE USER_ID='autotester'
+            """;
+    public static final String UPDATE_FAILED_LOGIN_QUERY = """
+            UPDATE USERS SET user_locked_ind ='N', failed_logins=2 WHERE USER_ID='autotester'
+            """;
+    public static final String ROLE_COUNT_QUERY = """
+            SELECT count(*) FROM USER_ROLE WHERE USER_ID = 'autotester'
+            """;
+    public static final String FAILED_COUNT_ON_USER_ROLE_QUERY = """
+                            SELECT failed_logins FROM USERS WHERE USER_ID='autotester'
+            """;
+    public static final String ROLLBACK_COUNT_ON_USER_ROLE_QUERY = """
+                               UPDATE USERS SET user_locked_ind ='N', failed_logins=2 WHERE USER_ID='autotester'
+            
+            """;
+    public static final String LAST_NAME_FIRST_NAME_QUERY_TC112 = """
+            SELECT 'SSP FALL TURN ON RECORD' as recordType, ucbcust_cust_code as customerCode, ucbprem_code as premisesCode, ucbcust_first_name as customerFirstName, ucbcust_middle_name as customerMiddleName, ucbcust_last_name as customerLastNameBusiness, uzbenro_credit_check_name as creditCheckBusinessName, uzbenro_scls_code as customerType, ucbcust_ssn_last_four as lastFourSocialSecurityNumber, ucbprem_street_number as premisesStreetNumber, ucbprem_pdir_code_pre as premisesStreetPreDirection, ucbprem_street_name as premisesStreetName, ucbprem_ssfx_code as premisesStreetSuffix, ucbprem_pdir_code_post as premisesStreetPostDirection, ucbprem_utyp_code as premisesUnitType, ucbprem_unit as premisesUnitNumber, ucbprem_city as premisesCity, ucbprem_stat_code_addr as premisesStateCode, ucbprem_zipc_code as premisesZipCode, ucbprem.ucbprem_tjur_code as  premisesCountyCode, spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code,ucbprem_code) as accountStatus, uzbenro_old_acct_num as aglcAccountNumber, uzbenro_enro_status as enrollmentSatus, TO_CHAR(uzbenro_enro_status_date,'YYYYMMDD') as enrollmentStatusDate, UZBENRO_TYPE_CODE as enrollmentType, TO_NUMBER(NULL) as pastDueAmount, TO_NUMBER(NULL) as badDebtAmount, DECODE(uzbenro_price_plan,'PRP','true','false') as prepayPlanIndicator, DECODE(uzbenro_price_plan,'PGB','true','false') as payInAdvanceIndicator, uzbenro_price_plan as pricePlan FROM ucbcust, ucbprem, uzbenro  WHERE  ucbcust_cust_code = uzbenro_cust_code  AND ucbprem_code = uzbenro_prem_code  AND uzbenro_enro_status in ('INCL') AND UZBENRO_SSP_IND ='Y' AND uzbenro_cira_ind = 'N' AND MONTHS_BETWEEN(SYSDATE,uzbenro_activity_date) <= 3  AND NOT EXISTS (SELECT 'X'  FROM uabbdbt  WHERE uabbdbt_transfer_hold_ind='Y'  AND  uabbdbt.uabbdbt_prem_code = uzbenro_prem_code  AND  uabbdbt.uabbdbt_cust_code = uzbenro_cust_code )
+            AND NOT EXISTS (  SELECT 1 FROM ucracct  WHERE ucracct_cust_code = uzbenro_cust_code AND ucracct_prem_code = uzbenro_prem_code)
+            AND EXISTS (  SELECT 1 FROM uzbsspp WHERE uzbsspp_participant_code = uzbenro_cust_code) AND NOT EXISTS (SELECT 1 FROM uzrsspa  WHERE uzrsspa_cust_code = uzbenro_cust_code  AND uzrsspa_prem_code = uzbenro_prem_code)""";
+
+    public static final String ACCOUNT_NUMBER_E_TYPE_NO_SSP_TC110 = """
+            SELECT 'E' as recordType, ucbcust_cust_code as customerCode, ucbprem_code as premisesCode, ucbcust_first_name as customerFirstName, ucbcust_middle_name as customerMiddleName, ucbcust_last_name as customerLastNameBusiness, uzbenro_credit_check_name as creditCheckBusinessName, uzbenro_scls_code as customerType, ucbcust_ssn_last_four as lastFourSocialSecurityNumber, ucbprem_street_number as premisesStreetNumber, ucbprem_pdir_code_pre as premisesStreetPreDirection, ucbprem_street_name as premisesStreetName, ucbprem_ssfx_code as premisesStreetSuffix, ucbprem_pdir_code_post as premisesStreetPostDirection, ucbprem_utyp_code as premisesUnitType, ucbprem_unit as premisesUnitNumber, ucbprem_city as premisesCity, ucbprem_stat_code_addr as premisesStateCode, ucbprem_zipc_code as premisesZipCode, ucbprem.ucbprem_tjur_code as  premisesCountyCode, spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code,ucbprem_code) as accountStatus, uzbenro_old_acct_num as aglcAccountNumber, uzbenro_enro_status as enrollmentSatus, TO_CHAR(uzbenro_enro_status_date,'YYYYMMDD') as enrollmentStatusDate, UZBENRO_TYPE_CODE as enrollmentType, TO_NUMBER(NULL) as pastDueAmount, TO_NUMBER(NULL) as badDebtAmount, DECODE(uzbenro_price_plan,'PRP','true','false') as prepayPlanIndicator, DECODE(uzbenro_price_plan,'PGB','true','false') as payInAdvanceIndicator, uzbenro_price_plan as pricePlan FROM ucbcust, ucbprem, uzbenro  WHERE  ucbcust_cust_code = uzbenro_cust_code  AND ucbprem_code = uzbenro_prem_code  AND uzbenro_enro_status in ('INCL','CRDS','PRPY') AND UZBENRO_SSP_IND ='N' AND uzbenro_cira_ind = 'N' AND MONTHS_BETWEEN(SYSDATE,uzbenro_activity_date) <= 3  AND NOT EXISTS (SELECT 'X'  FROM uabbdbt  WHERE uabbdbt_transfer_hold_ind='Y' 
+             AND  uabbdbt.uabbdbt_prem_code = uzbenro_prem_code  
+             AND  uabbdbt.uabbdbt_cust_code = uzbenro_cust_code )  
+     AND ROWNUM < 31 ORDER BY 1,6,4,2
+          """;
+
+    public static final String AGLC_ACCOUNT_NUMBER_TC114 = """
+            
+            select uzbenro_old_acct_num as aglcAccountNumber FROM  uzbenro 
+            WHERE  uzbenro_old_acct_num is not NULL and uzbenro_old_acct_num <> 0  ;
+            
+            """;
+    public static final String CUSTOMER_DATA_WITH_TYPE_TC115 = """
+            
+            SELECT * FROM UCRADDR WHERE UCRADDR_PDIR_CODE_POST IS NOT NULL
+                                                     AND UCRADDR_PDIR_CODE_PRE IS NOT NULL AND UCRADDR_PHONE_EXT IS NOT NULL\s""";
+
+
+    public static final String SSP_INDICATOR_VALUE = """
+                SELECT UCRACCT
+               FROM UCRACCT
+            WHERE UCRACCT_CUST_CODE =?
+              \s""";
 
     private DBQuery() {
     }

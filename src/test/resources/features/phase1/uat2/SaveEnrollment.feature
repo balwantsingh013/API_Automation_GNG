@@ -8,12 +8,12 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentWithValidData @Phase1 @HappyFlow
   Scenario: Verify SaveEnrollment Api with valid data
     When a request is made to the SaveEnrollment Api
-    Then verify response code of "SaveEnrollment" Api is <200>
+    Then verify response code of "SaveEnrollment" Api is 200
 
   @SaveEnrollmentWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify SaveEnrollment Api with invalid requestID "<requestID>"
     When a request is made to the SaveEnrollment Api with "<requestID>"
-    Then verify response code of "SaveEnrollment" Api is <200>
+    Then verify response code of "SaveEnrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
@@ -25,7 +25,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
   Scenario Outline: Verify SaveEnrollment Api with invalid "<customerCODE>" code
     When a request is made to the SaveEnrollment Api with  customer "<customerCODE>" code
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerCODE                | errorCode | errorMessage                                   |
@@ -38,7 +38,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidPromotionCODE @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<premisesCODE>" code
     When a request is made to the SaveEnrollment Api with  premises "<premisesCODE>" code
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | premisesCODE                | errorCode | errorMessage                                                          |
@@ -51,7 +51,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidTransactionID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<transactionID>"ID
     When a request is made to the SaveEnrollment Api with  transaction "<transactionID>" ID
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | transactionID                     | errorCode | errorMessage                            |
@@ -62,7 +62,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidTransactionType @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<transactionType>"Type
     When a request is made to the SaveEnrollment Api with  transaction "<transactionType>" Type
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | transactionType               | errorCode | errorMessage                                                     |
@@ -74,7 +74,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidPlanCode @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<planCode>"Code
     When a request is made to the SaveEnrollment Api with  plan "<planCode>" Code
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | planCode                | errorCode | errorMessage                                              |
@@ -87,7 +87,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidLoginID @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<loginID>"
     When a request is made to the SaveEnrollment Api with login "<loginID>" ID
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | loginID                | errorCode | errorMessage     |
@@ -102,7 +102,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidEnrollmentStatus @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<enrollmentStatus>"
     When a request is made to the SaveEnrollment Api with enrollment "<enrollmentStatus>" Status
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | enrollmentStatus                      | errorCode | errorMessage                                                      |
@@ -116,7 +116,7 @@ Feature: Verify SaveEnrollment Api
   @SaveEnrollmentInvalidBillingPlan @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<billingPlan>"
     When a request is made to the SaveEnrollment Api with billing "<billingPlan>" Plan
-    Then verify response code of "Save Enrollment" Api is <200>
+    Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | billingPlan                | errorCode | errorMessage                                                   |
