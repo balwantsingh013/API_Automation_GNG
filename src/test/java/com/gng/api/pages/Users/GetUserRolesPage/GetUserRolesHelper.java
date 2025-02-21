@@ -92,12 +92,12 @@ public class GetUserRolesHelper {
                 break;
             case INVALID_PASSWORD_FORMAT_ENCRYPTED_10_CHAR_TC12:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPassword(FakerDataGenerator.generateAlphanumeric(15));
                 break;
             case INVALID_PASSWORD_FORMAT_ENCRYPTED_7_CHAR_TC12_1:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
+                payload.setLoginID("autotester");
                 payload.setPassword(FakerDataGenerator.generateAlphanumeric(7));
                 break;
             default:
@@ -171,13 +171,28 @@ public class GetUserRolesHelper {
 
     public void validateRolesCount() {
         List<Map<String, Object>> dbRoleCountResult = ApplicationContext.get().getDbAction().RoleCountQuery();
+
+        if (dbRoleCountResult != null && !dbRoleCountResult.isEmpty()) {
+            for (Map<String, Object> roleData : dbRoleCountResult) {
+                System.out.println("Role Data: " + roleData);
+            }
+        } else {
+            System.out.println("No role data found.");
+        }
     }
 
 
     public void validateFailedCountUserRoles() {
-            List<Map<String, Object>> failedLoginResult = ApplicationContext.get().getDbAction().FailedCountUserRoleQuery();
+        List<Map<String, Object>> failedLoginResult = ApplicationContext.get().getDbAction().FailedCountUserRoleQuery();
 
+        if (failedLoginResult != null && !failedLoginResult.isEmpty()) {
+            for (Map<String, Object> record : failedLoginResult) {
+                System.out.println("User Role Data: " + record);
+            }
+        } else {
+            System.out.println("No failed login data found.");
         }
+    }
     public void validateFailedCountUserRollback() {
 
         ApplicationContext.get().getDbAction().rollbackCountUserRoleQuery();
