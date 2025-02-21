@@ -1,0 +1,12 @@
+{
+  "requestID": "DFREW234FDFD",
+  "loginID": "dkinnaird",
+  "transactionID": "1416",
+  "transactionType": "MKSW",
+  "customerCode": 5914107,
+  "premisesCode": "5888581",
+  "planCode":"MVS",
+  "enrollmentStatus": "SI",
+  "splitConnectionFeeIndicator": false,
+  "billingPlan": "R"
+}

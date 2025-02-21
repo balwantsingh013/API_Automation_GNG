@@ -1,0 +1,10 @@
+baseUri: "https://wapi-uat2.gng.vertexna.net/api/v1"
+authUri: "/Authentication/GetToken"
+vendorId: "36763663.vistio.uat2testing"
+vendorSecret: "iohR@s5u(/yudfs&6"
+driverClassName: "oracle.jdbc.OracleDriver"
+serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGVBAN"
+userName: "BSINGH"
+password: "vrt20240602"
+enableLogsOnPass: true
+enableLogsOnFail: true
