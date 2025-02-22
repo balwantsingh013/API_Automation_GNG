@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -70,5 +71,26 @@ public class CommonUtil {
             return null;
         }
     }
+
+    public static String removeFieldsFromJson(Object object, String fieldsToRemove) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Convert the object to a Map
+            Map<String, Object> objectMap = mapper.convertValue(object, Map.class);
+
+            // Remove multiple fields dynamically
+            Arrays.stream(fieldsToRemove.split(","))
+                    .map(String::trim)  // Trim spaces to handle "field1, field2"
+                    .forEach(objectMap::remove);
+
+            // Convert back to JSON string
+            return mapper.writeValueAsString(objectMap);
+        } catch (Exception e) {
+            log.error("Failed to remove fields from JSON: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }
 

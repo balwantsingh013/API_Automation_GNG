@@ -55,6 +55,12 @@ public class TestContext {
     private Object searchAccountsApiPage;
     private SearchAccountsResponse searchAccountsResponse;
 
+    public void storeRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
+    public String retrieveRequestId() {
+        return this.requestId;
+    }
 
 }

@@ -8,19 +8,18 @@ import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import com.gng.api.util.CommonUtil;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.testng.Assert;
 
-import javax.management.relation.Role;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public class GetUserRolesHelper {
     private final TestContext testContext;
+    private final GetUserRolesApiPage apiPage; // Reference to GetUserRolesApiPage
 
-    public GetUserRolesHelper(TestContext testContext) {
+    public GetUserRolesHelper(TestContext testContext, GetUserRolesApiPage apiPage) {
         this.testContext = testContext;
+        this.apiPage = apiPage; // Store reference
     }
 
 
@@ -39,10 +38,10 @@ public class GetUserRolesHelper {
                 payload.setRequestID(null);
                 break;
             case DUPLICATE_REQUEST_ID_TC4:
-                payload.setRequestID("3BC00A0397B14F29A313280EE0110941");
+                payload.setRequestID(apiPage.getOrGenerateRequestID());
                 break;
             case LONG_REQUEST_ID_TC5:
-                payload.setRequestID(FakerDataGenerator.getRandomNumericString(50));
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(33));
                 break;
             case NO_REQUEST_ID_TC3A:
                 String jsonPayload = CommonUtil.removeFieldFromJson(payload, "requestID");
@@ -54,28 +53,35 @@ public class GetUserRolesHelper {
 
     public void setLoginIDBasedOnTypeTC6_TC9(GetUserRolesRequest payload, GetUserRolesApiLabel loginID) {
         switch (loginID) {
-            case NULL_LOGIN_ID_AND_PASSWORD_TC6:
+            case WITHOUT_LOGIN_ID_AND_PASSWORD_TC6:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("");
-                payload.setPassword("");
+                String jsonPayload = CommonUtil.removeFieldsFromJson(payload, "loginID,password");
+                testContext.setCustomRequestPayload(jsonPayload);
+                log.info("Final request payload after removing loginID and password: {}", jsonPayload);
                 break;
-            case NULL_LOGIN_ID_TC7:
+            case NULL_LOGIN_ID_AND_PASSWORD_TC6A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("");
-                payload.setPassword(FakerDataGenerator.generatePassword(5, 10, true));
+                payload.setLoginID(null);
+                payload.setPassword(null);
                 break;
-            case ALPHANUMERIC_LOGIN_ID_TC8:
+            case WITHOUT_LOGIN_ID_TC7:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(8));
-                payload.setPassword(FakerDataGenerator.generatePassword(5, 10, true));
+                String json = CommonUtil.removeFieldFromJson(payload, "loginID");
+                testContext.setCustomRequestPayload(json);
+                log.info("Final request payload after removing loginID: {}", json);
                 break;
-            case MAX_LENGTH_LOGIN_ID_TC9:
+            case NULL_LOGIN_ID_TC7A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.getRandomNumericString(35));
-                payload.setPassword(FakerDataGenerator.generatePassword(5, 10, true));
+                payload.setLoginID(null);
                 break;
-            default:
-                payload.setLoginID(FakerDataGenerator.generateLowerCaseString(10));
+            case LOGIN_ID_MORE_THAN_30_CHAR_TC8:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(31));
+                break;
+            case LOGIN_ID_WITH_SPECIAL_CHAR_TC9:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
+                break;
         }
     }
 

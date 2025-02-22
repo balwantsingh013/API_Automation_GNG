@@ -13,8 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetUserRolesRequest {
+	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String loginID;
 	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String requestID;
+	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String password;
 }

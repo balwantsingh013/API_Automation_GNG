@@ -4,6 +4,7 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
+import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
@@ -16,7 +17,7 @@ public class GetUserRolesApiPage extends BasePage {
 
     public GetUserRolesApiPage(TestContext testContext) {
         super(testContext);
-        this.helper = new GetUserRolesHelper(testContext);
+        this.helper = new GetUserRolesHelper(testContext, this);
     }
     public void validateExternalParameterObjectAddedT1(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
@@ -96,16 +97,19 @@ public class GetUserRolesApiPage extends BasePage {
         helper.validateRolesCount();
         helper.validateFailedCountUserRoles();
         helper.validateFailedCountUserRollback();
-
-
-
     }
 
-
-
-
-
-
-
+    public String getOrGenerateRequestID() {
+        if (testContext.retrieveRequestId() != null) {
+            return testContext.retrieveRequestId();
+        }
+        GetUserRolesRequest payload = new GetUserRolesRequest();
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
+        String generatedRequestID = response.jsonPath().getString("requestID");
+        testContext.storeRequestId(generatedRequestID);
+        return generatedRequestID;
+    }
 
 }
