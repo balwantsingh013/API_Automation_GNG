@@ -9,11 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import static com.gng.api.report.ExtentReportManager.logErrorToReport;
 import static com.gng.api.report.ExtentReportManager.logInfoToReport;
 
-/**
- * Configure logging of Request/Response Details in Console
- * For FAIL case - Console logs are enabled by-default
- * For PASS case - Console logs are enabled only if enableLogsOnPass = true in config file
- */
 @Slf4j
 public class LogUtil {
 

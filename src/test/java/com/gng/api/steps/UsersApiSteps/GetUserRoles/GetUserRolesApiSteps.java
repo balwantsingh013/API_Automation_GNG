@@ -14,7 +14,7 @@ public class GetUserRolesApiSteps {
     public GetUserRolesApiSteps(TestContext testContext, GetUserRolesApiPage getUserRolesApiPage) {
         this.testContext = testContext;
         this.getUserRolesApiPage = getUserRolesApiPage;
-        testContext.setGetEligiblePlansAndOffersApiPage(getUserRolesApiPage);
+        testContext.setGetUserRolesApiPage(getUserRolesApiPage);
     }
     @When("a request is made to the GetUserRoles Api with {string}TC3_TC5")
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC3_TC5(String requestID) {
