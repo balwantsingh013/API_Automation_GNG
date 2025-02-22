@@ -24,7 +24,7 @@ public class GetUserRolesApiSteps {
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC6_TC9(String loginID) {
         getUserRolesApiPage.validateInvalidLoginIDCasesTC6_TC9(get_user_roles, GetUserRolesApiLabel.valueOf(loginID));
     }
-    @When("a request is made to the GetUserRoles Api with {string}TC10_TC12")
+    @When("a request is made to the GetUserRoles Api with {string} TC10_TC12")
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC10_TC12(String password) {
         getUserRolesApiPage.validateInvalidPasswordCasesTC10_TC12(get_user_roles, GetUserRolesApiLabel.valueOf(password));
     }

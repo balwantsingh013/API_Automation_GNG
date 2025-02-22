@@ -8,6 +8,7 @@ import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import com.gng.api.util.CommonUtil;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,12 @@ import java.util.Map;
 public class GetUserRolesHelper {
     private final TestContext testContext;
     private final GetUserRolesApiPage apiPage; // Reference to GetUserRolesApiPage
+    String activeUser;
+    String encryptedPasswordMoreThan10Char = "pUsNrpKOUDBej9d5DYDxG0TBDRJhEYSz9hq05QdlDF8=";
+    String encryptedPasswordLessThan7Char = "hysLdv98prkIGkXJvHhO8lDU3xG8i64KcXcgK2GZ6IQ=";
+    String encrypted8CharPasswordWithSpecialChar = "FVGBjHF04+LgSXm1ULFcAhTDheMftquWq0VwfkLAEyo=";
+    String validEncryptedPassword = "WRJpoTk4n5BLUNDAf4a2jzkuyjBcmgdgZ1JZdq7IEiE=";
+
 
     public GetUserRolesHelper(TestContext testContext, GetUserRolesApiPage apiPage) {
         this.testContext = testContext;
@@ -87,28 +94,32 @@ public class GetUserRolesHelper {
 
     public void setPasswordBasedOnTypeTC10_TC12(GetUserRolesRequest payload, GetUserRolesApiLabel password) {
         switch (password) {
-            case NULL_PASSWORD_TC10:
+            case WITHOUT_PASSWORD_FIELD_TC10:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("LoginID");
+                String json = CommonUtil.removeFieldFromJson(payload, "password");
+                testContext.setCustomRequestPayload(json);
+                log.info("Final request payload after removing password: {}", json);
+                break;
+            case NULL_PASSWORD_TC10A:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setPassword(null);
                 break;
-            case INVALID_PASSWORD_FORMAT_NOT_ENCRYPTED_TC11:
+            case UNENCRYPTED_PASSWORD_TC11:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setPassword("abcd");
+                payload.setPassword(FakerDataGenerator.generateString(4));
                 break;
-            case INVALID_PASSWORD_FORMAT_ENCRYPTED_10_CHAR_TC12:
+            case ENCRYPTED_PASSWORD_MORE_THAN_10_CHAR_TC12:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setPassword(FakerDataGenerator.generateAlphanumeric(15));
+                payload.setPassword(encryptedPasswordMoreThan10Char);
                 break;
-            case INVALID_PASSWORD_FORMAT_ENCRYPTED_7_CHAR_TC12_1:
+            case ENCRYPTED_PASSWORD_LESS_THAN_7_CHAR_TC12A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setPassword(FakerDataGenerator.generateAlphanumeric(7));
+                payload.setPassword(encryptedPasswordLessThan7Char);
                 break;
-            default:
-                payload.setPassword(FakerDataGenerator.generateLowerCaseString(10));
+            case ENCRYPTED_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC12B:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setPassword(encrypted8CharPasswordWithSpecialChar);
+                break;
         }
     }
 
@@ -197,21 +208,21 @@ public class GetUserRolesHelper {
         switch (password) {
             case INVALID_LOGIN_ID_TC13:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("dummy");
-                payload.setPassword("gQ0diQBSDMqsYPNevswiPuZ2/W8R5B4rD3JoxskVGbc=");
+                payload.setLoginID(FakerDataGenerator.generateString(5));
+                payload.setPassword(validEncryptedPassword);
                 break;
             case PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("autotester");
-                payload.setPassword("/La98bDE4x/vUobavr+1O9w3PaJHfN8jfuzJB3O1a2o=");
+                activeUser= ApplicationContext.get().getDbAction().getActiveUserID();
+                payload.setLoginID(activeUser);
+                payload.setPassword(validEncryptedPassword);
                 break;
-            case LOCKED_LOGIN_ID_TC17:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("autotester");
-                payload.setPassword(FakerDataGenerator.generateAlphanumeric(10));
-                break;
-            default:
-                payload.setPassword(FakerDataGenerator.generateLowerCaseString(10));
         }
+    }
+
+    public void validateDatabaseForMismatchCase()
+    {
+        String dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(activeUser);
+        Assert.assertEquals(dbValidationResult, "2");
     }
 }

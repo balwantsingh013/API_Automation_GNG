@@ -149,11 +149,17 @@ public class DBAction {
     }
 
 
+    public String getActiveUserID() {
+        String query = DBQuery.SELECT_VALID_USER;
+        logQueryInAllure("Get active user ID", query);
+        return jdbcTemplate.queryForObject(query, String.class);
+    }
 
-
-
-
-
+    public String validateFailedLoginForSpecificUser(String userID) {
+        String query = DBQuery.SELECT_SPECIFIC_USER_DATA;
+        logQueryInAllure("Get active user ID", query);
+        return jdbcTemplate.queryForObject(query, String.class, userID);
+    }
 
 
 

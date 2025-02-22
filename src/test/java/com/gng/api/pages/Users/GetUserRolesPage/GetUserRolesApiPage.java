@@ -54,6 +54,9 @@ public class GetUserRolesApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+        if (testCondition == GetUserRolesApiLabel.PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14) {
+            helper.validateDatabaseForMismatchCase();
+        }
     }
 
     public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
