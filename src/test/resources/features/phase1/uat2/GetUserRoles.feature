@@ -14,6 +14,7 @@ Feature: Verify GetUserRoles Api
     Examples:
       | requestID                | errorCode | errorMessage         |
       | NULL_REQUEST_ID_TC3      | 10001     | Missing Request ID   |
+      | NO_REQUEST_ID_TC3A       | 10001     | Missing Request ID   |
       | DUPLICATE_REQUEST_ID_TC4 | 10003     | Duplicate Request ID |
       | LONG_REQUEST_ID_TC5      | 10002     | Invalid Request ID   |
 

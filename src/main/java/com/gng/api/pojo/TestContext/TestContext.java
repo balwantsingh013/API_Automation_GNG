@@ -31,6 +31,9 @@ public class TestContext {
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes
     @Getter @Setter
+    private String customRequestPayload;
+
+    @Getter @Setter
     private Object getAccountInfoApiPage;
     private GetAccountInfoResponse getAccountInfoResponse;
     @Getter @Setter

@@ -5,6 +5,7 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
+import com.gng.api.util.CommonUtil;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
@@ -36,20 +37,20 @@ public class GetUserRolesHelper {
         switch (requestID) {
             case NULL_REQUEST_ID_TC3:
                 payload.setRequestID(null);
-                payload.setLoginID("sys");
-                payload.setPassword(FakerDataGenerator.generatePassword(5, 10, true));
                 break;
             case DUPLICATE_REQUEST_ID_TC4:
                 payload.setRequestID("3BC00A0397B14F29A313280EE0110941");
                 break;
             case LONG_REQUEST_ID_TC5:
-                payload.setRequestID(FakerDataGenerator.getRandomNumericString(35));
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(50));
                 break;
-
-            default:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
+            case NO_REQUEST_ID_TC3A:
+                String jsonPayload = CommonUtil.removeFieldFromJson(payload, "requestID");
+                testContext.setCustomRequestPayload(jsonPayload);
+                log.info("Final request payload after removing requestID: {}", jsonPayload);
         }
     }
+
 
     public void setLoginIDBasedOnTypeTC6_TC9(GetUserRolesRequest payload, GetUserRolesApiLabel loginID) {
         switch (loginID) {

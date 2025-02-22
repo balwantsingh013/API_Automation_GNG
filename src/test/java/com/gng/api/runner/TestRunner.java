@@ -19,11 +19,11 @@ import static com.gng.api.context.ApplicationContext.removeRequestSpec;
 import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
-        features = "src/test/resources/features/phase1/uat2/SearchAccounts.feature",
+        features = "src/test/resources/features/phase1/uat2/GetUserRoles.feature",
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-      // tags = "@SearchAccountsInvalidCustomerCode",
+       tags = "@GetUserRoleWithInvalidRequestID",
         plugin = {
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
