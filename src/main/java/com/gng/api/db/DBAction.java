@@ -44,10 +44,10 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public List<Map<String, Object>> getPasswordExpireDaysValue() {
-        String query = DBQuery.SELECT_PASSWORD_EXPIRE_DAY;
+    public Map<String, Object> getPasswordExpireDaysValue() {
+        String query = DBQuery.SELECT_PASSWORD_EXPIRE_DAYS;
         logQueryInAllure("Get param password expire day", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
 
     }
 

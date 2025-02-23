@@ -197,11 +197,12 @@ public final class DBQuery {
             FROM UCBNOTE WHERE UCBNOTE_SEQ_NUMBER = ?
             """;
 
-    public static final String SELECT_PASSWORD_EXPIRE_DAY = """
-            SELECT *
-               FROM UZRPSTO
-               WHERE UZRPSTO_PARM_NAME = 'PASSWORD_EXPIRE_DAYS'
-               AND UZRPSTO_PARM_VALUE = '45'""";
+    public static final String SELECT_PASSWORD_EXPIRE_DAYS = """
+            SELECT UZRPSTO_PARM_VALUE
+            FROM UZRPSTO
+            WHERE UZRPSTO_PARM_NAME = 'PASSWORD_EXPIRE_DAYS'
+            AND UZRPSTO_OBJECT='SPK_WEB_API'
+            """;
 
 
     public static final String EXTERNAL_PARAM_OBJECT_ADDED = """

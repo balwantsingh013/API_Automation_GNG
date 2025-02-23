@@ -2,11 +2,14 @@ package com.gng.api.pages.Users.ResetPassword;
 
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
+import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
+import static com.gng.api.constants.ApiEndPoint.GET_USER_ROLES;
 import static com.gng.api.constants.ApiEndPoint.RESET_PASSWORD;
 
 
@@ -17,12 +20,8 @@ public class ResetPasswordApiPage   extends BasePage  {
         super(testContext);
         this.helper = new ResetPasswordHelper(testContext);
     }
-    public void validateUserTableValueTC20(ResetPasswordApiLabel apiLabel) {
-        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+    public void validateUserTable_UZRPSTO_PARM_NAME_ValueTC20() {
         helper.validatePasswordExpireDaysEntryInDB();
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
-        testContext.setResponse(response);
     }
 
     public void validateInvalidRequestIDCasesTC21_TC23(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel requestID) {
@@ -53,4 +52,19 @@ public class ResetPasswordApiPage   extends BasePage  {
         Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
         testContext.setResponse(response);
     }
+
+  /*  public String getOrGenerateRequestID() {
+        if (testContext.retrieveRequestId() != null) {
+            return testContext.retrieveRequestId();
+        }
+        ResetPasswordRequest payload = new ResetPasswordRequest();
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        String generatedRequestID = response.jsonPath().getString("requestID");
+        testContext.storeRequestId(generatedRequestID);
+        return generatedRequestID;
+    }*/
+
+
 }

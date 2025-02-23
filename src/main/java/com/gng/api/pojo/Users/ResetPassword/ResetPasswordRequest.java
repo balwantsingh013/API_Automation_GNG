@@ -12,8 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResetPasswordRequest{
+	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String loginID;
+	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String requestID;
+	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String oldPassword;
+	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String newPassword;
 }

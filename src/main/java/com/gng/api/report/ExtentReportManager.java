@@ -12,7 +12,6 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.SpecificationQuerier;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
-import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -75,8 +74,8 @@ public class ExtentReportManager {
 
         if (result.getStatus() == ITestResult.FAILURE) {
             if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnFail())) {
-                logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable() + getResponseBodyIfExists()
-                        + BR2 + getRequestDetailsIfExists());
+                logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable() + getRequestDetailsIfExists()
+                        + BR2 + getResponseBodyIfExists());
             } else {
                 logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable());
             }
@@ -98,7 +97,6 @@ public class ExtentReportManager {
         extent.flush();
     }
 
-
     public static void clearThreadLocals() {
         test.remove();
         extentLogger.remove();
@@ -117,7 +115,8 @@ public class ExtentReportManager {
     }
 
     public static void addRequestDetailsToReport(RequestSpecification reqSpec) {
-        qReqSpec.set(SpecificationQuerier.query(reqSpec));
+        QueryableRequestSpecification queryable = SpecificationQuerier.query(reqSpec);
+        qReqSpec.set(queryable);
     }
 
     public static void addResponseDetailsToReport(Response resp, int statusCode) {
@@ -136,19 +135,19 @@ public class ExtentReportManager {
     }
 
     public static String getRequestDetailsIfExists() {
-        return (qReqSpec.get() != null)
-                ? REQUESTDETAILS + BASEURI + qReqSpec.get().getBaseUri()
-                + HEADERS + qReqSpec.get().getHeaders()
-                + PARAMS + qReqSpec.get().getRequestParams()
+        QueryableRequestSpecification reqSpec = qReqSpec.get();
+        return (reqSpec != null)
+                ? REQUESTDETAILS + BASEURI + reqSpec.getBaseUri()
+                + HEADERS + reqSpec.getHeaders()
+                + PARAMS + reqSpec.getRequestParams()
+                + BODY + (reqSpec.getBody() != null ? reqSpec.getBody().toString() : "No Request Body")
                 : "No API Request Details (DB Validation Only)";
     }
-
 
     public static String getSafeResponseStatusLine() {
         Response resp = response.get();
         return (resp != null) ? STATUS + resp.getStatusLine() : STATUS + "No API Response (DB Validation Only)";
     }
-
 
     public static String getExpectedStatusCodeIfExists() {
         return (expectedStatusCode.get() != null)
@@ -156,16 +155,12 @@ public class ExtentReportManager {
                 : STATUSCODEEXP + "No Expected Status Code (DB Validation Only)";
     }
 
-
     public static String getResponseBodyIfExists() {
         Response resp = response.get();
         return (resp != null) ? BODY + resp.getBody().asPrettyString() : "No API Response Body (DB Validation Only)";
     }
 
-
-
     public static ExtentTest getExtentLogger() {
         return extentLogger.get();
     }
-
 }

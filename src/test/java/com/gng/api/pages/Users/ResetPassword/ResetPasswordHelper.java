@@ -2,6 +2,7 @@ package com.gng.api.pages.Users.ResetPassword;
 
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
@@ -11,6 +12,9 @@ import org.testng.Assert;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.gng.api.util.CommonUtil.removeFieldFromJson;
+import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
 
 @Slf4j
 public class ResetPasswordHelper {
@@ -28,82 +32,69 @@ public class ResetPasswordHelper {
                 : ResetPasswordApiLabel.reset_password_mandatory.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, ResetPasswordRequest.class);
     }
-    public void validatePasswordExpireDaysEntryInDB()
-    {
-        String expectedValue = passwordExpireDayValue();
-        List<Map<String, Object>> passwordExpireDayValue = ApplicationContext.get().getDbAction().getPasswordExpireDaysValue();
-
-
-        Assert.assertEquals(passwordExpireDayValue.size(), 1, "Exactly one entry should exist in the table.");
-
-        Map<String, Object> entry = passwordExpireDayValue.get(0);
-
-        String parmName = entry.get("UZRPSTO_PARM_NAME").toString();;
-        String objectName =  entry.get("UZRPSTO_OBJECT").toString();;
-        String value = entry.get("UZRPSTO_PARM_VALUE").toString();
-
-        Assert.assertEquals(parmName, "PASSWORD_EXPIRE_DAYS", "Parameter name does not match.");
-        Assert.assertEquals(objectName, "SPK_WEB_API", "Object name does not match.");
-        Assert.assertEquals(value, expectedValue, "Value does not match the expected value.");
-    }
-    public String passwordExpireDayValue() {
-        return "45";
+    public void validatePasswordExpireDaysEntryInDB() {
+        Map<String, Object> passwordExpireDayValue = ApplicationContext.get().getDbAction().getPasswordExpireDaysValue();
+        Object expireValue = passwordExpireDayValue.get("UZRPSTO_PARM_VALUE");
+        int value = expireValue != null ? Integer.parseInt(expireValue.toString()) : -1;
+        Assert.assertEquals(value, 45);
     }
 
 
     public void setRequestIDBasedOnTypeTC21_TC23(ResetPasswordRequest payload, ResetPasswordApiLabel requestID) {
         switch (requestID) {
-            case NULL_REQUEST_ID_TC21:
+            case WITHOUT_REQUEST_ID_TC21:
+                String jsonPayload= removeFieldFromJson(payload,"requestID");
+                testContext.setCustomRequestPayload(jsonPayload);
+                log.info("Final request payload after removing requestID: {}", jsonPayload);
+                break;
+            case NULL_REQUEST_ID_TC21A:
                 payload.setRequestID(null);
-                payload.setLoginID("test10965");
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword(FakerDataGenerator.generatePassword(5, 10, true));
                 break;
             case DUPLICATE_REQUEST_ID_TC22:
-                payload.setRequestID("3BC00A0397B14F29A313280EE0110941");
+                GetUserRolesApiPage getUserRolesApiPage = new GetUserRolesApiPage(testContext);
+                payload.setRequestID(getUserRolesApiPage.getOrGenerateRequestID());
                 break;
             case LONG_REQUEST_ID_TC23:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(35));
                 break;
-            default:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
         }
     }
 
     public void setLoginIDBasedOnTypeTC24_TC28(ResetPasswordRequest payload, ResetPasswordApiLabel loginID) {
         switch (loginID) {
-            case NULL_LOGIN_ID_AND_OLD_PASSWORD_TC24:
+            case WITHOUT_LOGIN_ID_AND_OLD_PASSWORD_TC24:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                String jsonPayload= removeFieldsFromJson(payload,"loginID,oldPassword");
+                testContext.setCustomRequestPayload(jsonPayload);
+                log.info("Final request payload after removing loginID and oldPassword: {}", jsonPayload);
+                break;
+            case NULL_LOGIN_ID_AND_OLD_PASSWORD_TC24A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(null);
                 payload.setOldPassword(null);
-                payload.setNewPassword(FakerDataGenerator.generatePassword(5, 10, true));
                 break;
-            case NULL_LOGIN_ID_TC25:
+            case WITHOUT_LOGIN_ID_TC25:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                String jsonPay= removeFieldFromJson(payload,"loginID");
+                testContext.setCustomRequestPayload(jsonPay);
+                log.info("Final request payload after removing loginID: {}", jsonPay);
+                break;
+            case NULL_LOGIN_ID_TC25A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(null);
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword(FakerDataGenerator.generatePassword(5, 10, true));
                 break;
             case MAX_LENGTH_LOGIN_ID_TC26:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.getRandomNumericString(35));
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword(FakerDataGenerator.generatePassword(5, 10, true));
                 break;
-            case ALPHANUMERIC_LOGIN_ID_TC27:
+            case SPECIAL_CHAR_LOGIN_ID_TC27:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(8));
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword(FakerDataGenerator.generatePassword(5, 10, true));
+                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
                 break;
             case INVALID_LOGIN_ID_NOT_IN_USER_TABLE_TC28:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test109651");
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword(FakerDataGenerator.generatePassword(5, 10, true));
+                payload.setLoginID(FakerDataGenerator.generateString(6));
                 break;
-            default:
-                payload.setLoginID(FakerDataGenerator.generateLowerCaseString(10));
         }
     }
 
