@@ -16,6 +16,20 @@ public class GetUserRolesApiSteps {
         this.getUserRolesApiPage = getUserRolesApiPage;
         testContext.setGetUserRolesApiPage(getUserRolesApiPage);
     }
+
+    @When("we query the database for validate UZBPSTO_OBJECT value")
+    public void query_the_database_for_validate_UZBPSTO_OBJECT_value()
+    {
+        getUserRolesApiPage.validate_UZBPSTO_OBJECT_Value_In_DB_TC1();
+    }
+
+    @When("we query the database for validate UZRPSTO_PARM_NAME value")
+    public void query_the_database_for_validate_UZRPSTO_PARM_NAME_value()
+    {
+        getUserRolesApiPage.validate_UZRPSTO_PARM_NAME_Value_In_DB_TC2();
+    }
+
+
     @When("a request is made to the GetUserRoles Api with {string}TC3_TC5")
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC3_TC5(String requestID) {
         getUserRolesApiPage.validateInvalidRequestIDCasesTC3_TC5(get_user_roles, GetUserRolesApiLabel.valueOf(requestID));

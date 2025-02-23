@@ -5,6 +5,15 @@ Feature: Verify GetUserRoles Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
+    @DBValidation
+  Scenario: TC_01 Ensure the entry for UZBPSTO_OBJECT = SPK_WEB_API is present in the UZBPSTO table
+    When we query the database for validate UZBPSTO_OBJECT value
+
+  @DBValidation
+  Scenario: TC_02 Ensure the entry for UZRPSTO_PARM_NAME = FAILED_LOGINS_TO_LOCK is present in the UZRPSTO table with value 4
+    When we query the database for validate UZRPSTO_PARM_NAME value
+
+
   @GetUserRoleWithInvalidRequestID @Phase1 @NegativeFlow
   Scenario Outline: Verify GetUserRoles Api with invalid requestID "<requestID>"TC3_TC5
     When a request is made to the GetUserRoles Api with "<requestID>"TC3_TC5

@@ -27,6 +27,17 @@ public class GetUserRolesApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void validate_UZBPSTO_OBJECT_Value_In_DB_TC1()
+    {
+        helper.validate_UZBPSTO_OBJECT_Value();
+    }
+
+    public void validate_UZRPSTO_PARM_NAME_Value_In_DB_TC2()
+    {
+        helper.validate_UZRPSTO_PARM_NAME_Value();
+    }
+
+
     public void validateInvalidRequestIDCasesTC3_TC5(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel requestID) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnTypeTCTC3_TC5(payload, requestID);
@@ -61,14 +72,11 @@ public class GetUserRolesApiPage extends BasePage {
 
     public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.validatePasswordNotMatchLoginIDInDB();
-        helper.passwordNotMatchValue(payload);
+        helper.extractTheUserFromDB(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
         helper.validateFailedCountAs4();
-        helper.rollBackQuery();
-
     }
 
     public void validatePasswordExpiredTestConditionCasesTC16(GetUserRolesApiLabel apiLabel) {

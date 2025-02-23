@@ -315,8 +315,31 @@ public final class DBQuery {
 
     public static final String SELECT_SPECIFIC_USER_DATA =
             """
-                SELECT FAILED_LOGINS FROM USERS WHERE USER_ID = ?
+                SELECT FAILED_LOGINS, USER_LOCKED_IND FROM USERS WHERE USER_ID = ?
             """;
+
+    public static final String SELECT_USER_WITH_FAILED_LOGIN_3 = """
+                SELECT USER_ID
+                FROM USERS
+                WHERE FAILED_LOGINS = 3 AND USER_LOCKED_IND = 'N'
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String UPDATE_FAILED_ATTEMPT_TO_3 = """
+                UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=3 WHERE USER_ID= ?
+            """;
+
+    public static final String select_UZBPSTO_OBJECT_Value = """
+                SELECT UZBPSTO_OBJECT FROM UZBPSTO WHERE UZBPSTO_OBJECT = 'SPK_WEB_API'
+            """;
+
+    public static final String select_UZRPSTO_PARM_NAME_Value = """
+        SELECT UZRPSTO_OBJECT, UZRPSTO_PARM_VALUE
+        FROM UZRPSTO
+        WHERE UZRPSTO_PARM_NAME = 'FAILED_LOGINS_TO_LOCK'
+    """;
+
+
 
     private DBQuery() {
     }

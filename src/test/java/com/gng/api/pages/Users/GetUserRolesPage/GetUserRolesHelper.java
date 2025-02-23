@@ -4,9 +4,11 @@ import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.report.ExtentReportManager;
 import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import com.gng.api.util.CommonUtil;
 import com.gng.api.util.FakerDataGenerator;
+import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
@@ -18,6 +20,7 @@ public class GetUserRolesHelper {
     private final TestContext testContext;
     private final GetUserRolesApiPage apiPage; // Reference to GetUserRolesApiPage
     String activeUser;
+    String user;
     String encryptedPasswordMoreThan10Char = "pUsNrpKOUDBej9d5DYDxG0TBDRJhEYSz9hq05QdlDF8=";
     String encryptedPasswordLessThan7Char = "hysLdv98prkIGkXJvHhO8lDU3xG8i64KcXcgK2GZ6IQ=";
     String encrypted8CharPasswordWithSpecialChar = "FVGBjHF04+LgSXm1ULFcAhTDheMftquWq0VwfkLAEyo=";
@@ -36,6 +39,40 @@ public class GetUserRolesHelper {
                 ? GetUserRolesApiLabel.get_user_roles.toString()
                 : GetUserRolesApiLabel.get_user_roles_mandatory.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, GetUserRolesRequest.class);
+    }
+
+    public void validate_UZBPSTO_OBJECT_Value() {
+        log.info("Validating UZBPSTO_OBJECT value from DB");
+        ExtentReportManager.logInfoToReport("Validating UZBPSTO_OBJECT value from DB");
+        Allure.step("Validating UZBPSTO_OBJECT value from DB");
+
+        String objectValue = ApplicationContext.get().getDbAction().select_UZBPSTO_OBJECT_Value();
+        log.info("Expected: SPK_WEB_API, Actual: {}", objectValue);
+        Assert.assertEquals(objectValue, "SPK_WEB_API");
+
+        ExtentReportManager.logInfoToReport("UZBPSTO_OBJECT validation successful!");
+        Allure.step("UZBPSTO_OBJECT validation successful!");
+    }
+
+    public void validate_UZRPSTO_PARM_NAME_Value() {
+        log.info("Validating UZRPSTO_PARM_NAME value from DB");
+        ExtentReportManager.logInfoToReport("Validating UZRPSTO_PARM_NAME value from DB");
+        Allure.step("Validating UZRPSTO_PARM_NAME value from DB");
+
+        Map<String, Object> result = ApplicationContext.get().getDbAction().select_UZRPSTO_PARM_NAME_Value();
+        Object obj = result.get("UZRPSTO_OBJECT");
+        Object paramValue = result.get("UZRPSTO_PARM_VALUE");
+        String failedLogins = obj != null ? obj.toString() : "UNKNOWN";
+        int param = paramValue != null ? Integer.parseInt(paramValue.toString()) : -1;
+
+        log.info("Expected: SPK_WEB_API, Actual: {}", failedLogins);
+        log.info("Expected: 4, Actual: {}", param);
+
+        Assert.assertEquals(failedLogins, "SPK_WEB_API");
+        Assert.assertEquals(param, 4);
+
+        ExtentReportManager.logInfoToReport("UZRPSTO_PARM_NAME validation successful!");
+        Allure.step("UZRPSTO_PARM_NAME validation successful!");
     }
 
 
@@ -123,8 +160,38 @@ public class GetUserRolesHelper {
         }
     }
 
-    public void validatePasswordNotMatchLoginIDInDB() {
-        ApplicationContext.get().getDbAction().theInvalidPasswordMatchUpdateQuery();
+    public void extractTheUserFromDB(GetUserRolesRequest payload) {
+        user = ApplicationContext.get().getDbAction().extractUserFromDBWithFailedLogin3();
+        if(user==null)
+        {
+          user =  ApplicationContext.get().getDbAction().getActiveUserID();
+          int count= ApplicationContext.get().getDbAction().updateUserToFailedAttempt3(user);
+          System.out.println(count);
+          payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+          payload.setLoginID(user);
+          payload.setPassword(validEncryptedPassword);
+        }
+        else
+        {
+            payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+            payload.setLoginID(user);
+            payload.setPassword(validEncryptedPassword);
+        }
+    }
+
+    public void validateFailedCountAs4()
+    {
+        Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
+        if (dbValidationResult.isEmpty()) {
+            System.out.println("No data found for the given user.");
+        } else {
+            Object failedLoginsObj = dbValidationResult.get("FAILED_LOGINS");
+            Object userLockedIndObj = dbValidationResult.get("USER_LOCKED_IND");
+            int failedLogins = failedLoginsObj != null ? Integer.parseInt(failedLoginsObj.toString()) : -1;
+            String userLockedInd = userLockedIndObj != null ? (userLockedIndObj.toString()) : "UNKNOWN";
+            Assert.assertEquals(failedLogins, 4, "Mismatch in expected FAILED_LOGINS value");
+            Assert.assertEquals(userLockedInd, "Y", "Mismatch in expected USER_LOCKED_IND value");
+        }
     }
 
     public void validatePasswordNotMatchLoginID(GetUserRolesRequest payload) {
@@ -134,19 +201,14 @@ public class GetUserRolesHelper {
 
     }
 
-    public void validateFailedCountAs4() {
 
-        ApplicationContext.get().getDbAction().togetthefailedcountsandvalidateshouldbe4();
-    }
         public void rollBackQuery() {
                 ApplicationContext.get().getDbAction().rollBackChanges();
                 System.out.println("Rollback query executed successfully.");
             }
 
     public void passwordNotMatchValue(GetUserRolesRequest payload) {
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-        payload.setLoginID("autotester");
-        payload.setPassword("/La98bDE4x/vUobavr+1O9w3PaJHfN8jfuzJB3O1a2o=");
+
     }
 
 
@@ -222,7 +284,9 @@ public class GetUserRolesHelper {
 
     public void validateDatabaseForMismatchCase()
     {
-        String dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(activeUser);
-        Assert.assertEquals(dbValidationResult, "2");
+        Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(activeUser);
+        Object failedLoginObj= dbValidationResult.get("FAILED_LOGINS");
+        int failedLogins = failedLoginObj != null ? Integer.parseInt(failedLoginObj.toString()) : -1;
+        Assert.assertEquals(failedLogins, 2);
     }
 }
