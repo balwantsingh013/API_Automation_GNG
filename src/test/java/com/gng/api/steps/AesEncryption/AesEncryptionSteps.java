@@ -17,15 +17,27 @@ public class AesEncryptionSteps {
 
     @Step("Encrypting data using AES Encryption API")
     public static String encryptData(String data) {
-        log.info("Encrypting data using AES Encryption API...");
+        return processAesRequest(data, ApiEndPoint.AES_ENCRYPTION, "Encryption");
+    }
 
-        String uri = ApplicationContext.get().getEnvConfig().getAesBaseUri() + ApiEndPoint.AES_ENCRYPTION;
+    @Step("Decrypting data using AES Decryption API")
+    public static String decryptData(String encryptedData) {
+        return processAesRequest(encryptedData, ApiEndPoint.AES_DECRYPTION, "Decryption");
+    }
+
+    /**
+     * Common method to handle AES encryption & decryption API calls.
+     */
+    private static String processAesRequest(String data, String endPoint, String action) {
+        log.info("{} data using AES {} API...", action, action);
+
+        String uri = ApplicationContext.get().getEnvConfig().getAesBaseUri() + endPoint;
 
         Map<String, String> payload = new HashMap<>();
         payload.put("DataToEncryptOrDecrypt", data);
 
-        // Logging request to Extent Reports
-        ExtentReportManager.logInfoToReport("Encryption Request - URI: " + uri);
+        // Logging request details
+        ExtentReportManager.logInfoToReport(action + " Request - URI: " + uri);
         ExtentReportManager.logInfoToReport("Payload: " + payload);
 
         Response response = RestAssured.given()
@@ -36,38 +48,38 @@ public class AesEncryptionSteps {
                 .extract()
                 .response();
 
-        // Log API request details
+        // Log API request and response details
         ExtentReportManager.addRequestDetailsToReport(RestAssured.given().contentType(ContentType.JSON).body(payload));
         ExtentReportManager.addResponseDetailsToReport(response, 200);
 
         if (response.getStatusCode() == 200) {
-            String encryptedData = response.jsonPath().getString("encryptedDecryptedData");
+            String resultData = response.jsonPath().getString("encryptedDecryptedData");
 
-            if (encryptedData == null || encryptedData.isEmpty()) {
-                log.error("Encryption failed: Response does not contain 'encryptedData'");
-                String errorMessage = "Encryption API response does not contain 'encryptedData'. Response: " + response.getBody().asString();
+            if (resultData == null || resultData.isEmpty()) {
+                log.error("{} failed: Response does not contain 'encryptedDecryptedData'", action);
+                String errorMessage = action + " API response does not contain 'encryptedDecryptedData'. Response: " + response.getBody().asString();
 
-                // Log error to Extent Report
+                // Log error details
                 ExtentReportManager.logErrorToReport(errorMessage);
-                attachToAllureReport("Encryption Error", errorMessage);
+                attachToAllureReport(action + " Error", errorMessage);
 
                 throw new RuntimeException(errorMessage);
             }
 
-            log.info("Encryption successful. Encrypted Data: " + encryptedData);
+            log.info("{} successful. Result Data: {}", action, resultData);
 
-            // Log response details to Extent and Allure
-            ExtentReportManager.logInfoToReport("Encryption Successful. Encrypted Data: " + encryptedData);
-            attachToAllureReport("Encryption Response", encryptedData);
+            // Log success details
+            ExtentReportManager.logInfoToReport(action + " Successful. Result Data: " + resultData);
+            attachToAllureReport(action + " Response", resultData);
 
-            return encryptedData;
+            return resultData;
         } else {
-            log.error("Encryption failed with status code: " + response.getStatusCode());
-            String errorMessage = "Encryption API call failed: " + response.getBody().asString();
+            log.error("{} failed with status code: {}", action, response.getStatusCode());
+            String errorMessage = action + " API call failed: " + response.getBody().asString();
 
-            // Log failure to Extent and Allure
+            // Log failure details
             ExtentReportManager.logErrorToReport(errorMessage);
-            attachToAllureReport("Encryption Error", errorMessage);
+            attachToAllureReport(action + " Error", errorMessage);
 
             throw new RuntimeException(errorMessage);
         }
@@ -76,7 +88,7 @@ public class AesEncryptionSteps {
     @Step("{title}")
     public static void attachToAllureReport(String title, String content) {
         if (content == null || content.isEmpty()) {
-            log.warn("Skipping Allure attachment: " + title + " (content is null or empty)");
+            log.warn("Skipping Allure attachment: {} (content is null or empty)", title);
             return;
         }
         io.qameta.allure.Allure.addAttachment(title, content);
