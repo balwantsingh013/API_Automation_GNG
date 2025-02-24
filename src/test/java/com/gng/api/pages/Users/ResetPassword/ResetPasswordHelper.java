@@ -3,6 +3,7 @@ package com.gng.api.pages.Users.ResetPassword;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesApiPage;
+import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesHelper;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
@@ -19,7 +20,7 @@ import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
 @Slf4j
 public class ResetPasswordHelper {
     private final TestContext testContext;
-
+    String user;
     public ResetPasswordHelper(TestContext testContext) {
         this.testContext = testContext;
     }
@@ -100,69 +101,96 @@ public class ResetPasswordHelper {
 
     public void setOldPasswordBasedOnTypeTC29_TC31(ResetPasswordRequest payload, ResetPasswordApiLabel oldPassword) {
         switch (oldPassword) {
-            case NULL_OLD_PASSWORD_TC29:
+            case WITHOUT_OLD_PASSWORD_TC29:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("LoginID");
+                String updatedPayload= removeFieldFromJson(payload,"oldPassword");
+                testContext.setCustomRequestPayload(updatedPayload);
+                log.info("Final request payload after removing oldPassword: {}", updatedPayload);
+                break;
+            case NULL_OLD_PASSWORD_TC29A:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setOldPassword(null);
-                payload.setNewPassword(FakerDataGenerator.generatePassword(5, 10, true));
                 break;
-            case INVALID_OLD_PASSWORD_FORMAT_NOT_ENCRYPTED_TC30:
+            case UNENCRYPTED_OLD_PASSWORD_TC30:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setOldPassword("abcd12345");
-                payload.setNewPassword("zH@Qvw/9IZjxL2ihIbS41B43z+w4bzQGZqZo7dG+gTw=");
+                String activeUser =  ApplicationContext.get().getDbAction().getActiveUserID();
+                payload.setLoginID(activeUser);
+                payload.setOldPassword(FakerDataGenerator.generateString(7));
                 break;
-            case INVALID_OLD_PASSWORD_FORMAT_ENCRYPTED_MAX_CHAR_TC31:
+            case ENCRYPTED_OLD_PASSWORD_MORE_THAN_10_CHAR_TC31:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setOldPassword("xxP1GXFhuCOZsYwH6XQf1Cv9e7fCRsCEM18vwj12maA=");
-                payload.setNewPassword("zH@Qvw/9IZjxL2ihIbS41B43z+w4bzQGZqZo7dG+gTw=");
+                payload.setOldPassword(GetUserRolesHelper.encryptedPasswordMoreThan10Char);
                 break;
-            case INVALID_PASSWORD_FORMAT_ENCRYPTED_MIN_7_CHAR_TC31_1:
+            case ENCRYPTED_OLD_PASSWORD_LESS_THAN_7_CHAR_TC31A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setOldPassword("A6Z+8doiFMIoawaFymc4109iHhIE32ntX4uiZI1kXjc=");
-                payload.setNewPassword("zH@Qvw/9IZjxL2ihIbS41B43z+w4bzQGZqZo7dG+gTw=");
+                payload.setOldPassword(GetUserRolesHelper.encryptedPasswordLessThan7Char);
                 break;
-            default:
-                payload.setOldPassword(FakerDataGenerator.generateLowerCaseString(10));
+            case ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC31B:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setOldPassword(GetUserRolesHelper.encrypted8CharPasswordWithSpecialChar);
+                break;
         }
     }
 
     public void setNewPasswordBasedOnTypeTC32_TC35(ResetPasswordRequest payload, ResetPasswordApiLabel newPassword) {
         switch (newPassword) {
-            case NULL_NEW_PASSWORD_TC32:
+            case WITHOUT_NEW_PASSWORD_TC32:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("LoginID");
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
+                String updatedPayload= removeFieldFromJson(payload,"newPassword");
+                testContext.setCustomRequestPayload(updatedPayload);
+                log.info("Final request payload after removing newPassword: {}", updatedPayload);
+                break;
+            case NULL_NEW_PASSWORD_TC32A:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setNewPassword(null);
                 break;
-            case INVALID_NEW_PASSWORD_FORMAT_NOT_ENCRYPTED_TC33:
+            case UNENCRYPTED_NEW_PASSWORD_TC33:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword("abcd12345");
+                String activeUser =  ApplicationContext.get().getDbAction().getActiveUserID();
+                payload.setLoginID(activeUser);
+                payload.setNewPassword(FakerDataGenerator.generateString(7));
                 break;
-            case INVALID_NEW_PASSWORD_FORMAT_ENCRYPTED_MAX_CHAR_TC34:
+            case ENCRYPTED_NEW_PASSWORD_MORE_THAN_10_CHAR_TC34:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword(FakerDataGenerator.generateAlphanumeric(35));
+                payload.setNewPassword(GetUserRolesHelper.encryptedPasswordMoreThan10Char);
                 break;
-            case INVALID_PASSWORD_FORMAT_ENCRYPTED_MIN_7_CHAR_TC34_1:
+            case ENCRYPTED_NEW_PASSWORD_LESS_THAN_7_CHAR_TC34A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setOldPassword(FakerDataGenerator.generatePassword(5, 10, true));
-                payload.setNewPassword(FakerDataGenerator.generateAlphanumeric(7));
+                payload.setNewPassword(GetUserRolesHelper.encryptedPasswordLessThan7Char);
+                break;
+            case ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC34B:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setNewPassword(GetUserRolesHelper.encrypted8CharPasswordWithSpecialChar);
                 break;
             case OLD_PASSWORD_NEW_PASSWORD_SAME_TC35:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID("test10965");
-                payload.setOldPassword("mpgejG3D10LlJivRkZGLTMQgQg0f7FGWaiVSkpflVrg=");
-                payload.setNewPassword("mpgejG3D10LlJivRkZGLTMQgQg0f7FGWaiVSkpflVrg=");
+                String user =  ApplicationContext.get().getDbAction().getActiveUserID();
+                payload.setLoginID(user);
                 break;
-            default:
-                payload.setNewPassword(FakerDataGenerator.generateLowerCaseString(10));
+        }
+    }
+
+    public void validatePasswordWithLoginIN(ResetPasswordRequest payload)
+    {
+        user = ApplicationContext.get().getDbAction().getActiveUserID();
+        payload.setLoginID(user);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setOldPassword(GetUserRolesHelper.validEncryptedPassword);
+    }
+
+
+    public void validateFailedCount()
+    {
+        Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
+        if (dbValidationResult.isEmpty()) {
+            System.out.println("No data found for the given user.");
+        } else {
+            Object failedLoginsObj = dbValidationResult.get("FAILED_LOGINS");
+            Object userLockedIndObj = dbValidationResult.get("USER_LOCKED_IND");
+            int failedLogins = failedLoginsObj != null ? Integer.parseInt(failedLoginsObj.toString()) : -1;
+            String userLockedInd = userLockedIndObj != null ? (userLockedIndObj.toString()) : "UNKNOWN";
+            Assert.assertEquals(failedLogins, 2, "Mismatch in expected FAILED_LOGINS value");
+            Assert.assertEquals(userLockedInd, "N", "Mismatch in expected USER_LOCKED_IND value");
         }
     }
 }

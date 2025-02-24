@@ -41,27 +41,40 @@ Feature: Verify ResetPassword Api
 
 
   @ResetPasswordInvalidOldPassword @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid OldPassword "<oldPassword >"TC29_TC31
+  Scenario Outline: TC29_TC31 - Verify response code for invalid OldPassword "<oldPassword>"
     When a request is made to the ResetPassword Api with "<oldPassword>"TC29_TC31
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | oldPassword                                         | errorCode | errorMessage              |
-      | NULL_OLD_PASSWORD_TC29                              | 10110     | Invalid Login Credentials |
-      | INVALID_OLD_PASSWORD_FORMAT_NOT_ENCRYPTED_TC30      | 10110     | Invalid Login Credentials |
-      | INVALID_OLD_PASSWORD_FORMAT_ENCRYPTED_MAX_CHAR_TC31 | 10110     | Invalid Login Credentials |
-      | INVALID_PASSWORD_FORMAT_ENCRYPTED_MIN_7_CHAR_TC31_1 | 10110     | Invalid Login Credentials |
+      | oldPassword                                                | errorCode | errorMessage              |
+      | WITHOUT_OLD_PASSWORD_TC29                                  | 10110     | Invalid Login Credentials |
+      | NULL_OLD_PASSWORD_TC29A                                    | 10110     | Invalid Login Credentials |
+      | UNENCRYPTED_OLD_PASSWORD_TC30                              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_OLD_PASSWORD_MORE_THAN_10_CHAR_TC31              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_OLD_PASSWORD_LESS_THAN_7_CHAR_TC31A              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC31B | 10110     | Invalid Login Credentials |
 
   @ResetPasswordInvalidNewPassword @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid NewPassword "<newPassword >"TC32_TC35
+  Scenario Outline: TC32_TC35 - Verify response code for invalid NewPassword "<newPassword>"
     When a request is made to the ResetPassword Api with "<newPassword>"TC32_TC35
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | newPassword                                         | errorCode | errorMessage              |
-      | NULL_NEW_PASSWORD_TC32                              | 10110     | Invalid Login Credentials |
-      | INVALID_NEW_PASSWORD_FORMAT_NOT_ENCRYPTED_TC33      | 10110     | Invalid Login Credentials |
-      | INVALID_NEW_PASSWORD_FORMAT_ENCRYPTED_MAX_CHAR_TC34 | 10110     | Invalid Login Credentials |
-      | INVALID_PASSWORD_FORMAT_ENCRYPTED_MIN_7_CHAR_TC34_1 | 10110     | Invalid Login Credentials |
-      | OLD_PASSWORD_NEW_PASSWORD_SAME_TC35                 | 10110     | Invalid Login Credentials |
+      | newPassword                                                | errorCode | errorMessage              |
+      | WITHOUT_NEW_PASSWORD_TC32                                  | 10110     | Invalid Login Credentials |
+      | NULL_NEW_PASSWORD_TC32A                                    | 10110     | Invalid Login Credentials |
+      | UNENCRYPTED_NEW_PASSWORD_TC33                              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_NEW_PASSWORD_MORE_THAN_10_CHAR_TC34              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_NEW_PASSWORD_LESS_THAN_7_CHAR_TC34A              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC34B | 10110     | Invalid Login Credentials |
+      | OLD_PASSWORD_NEW_PASSWORD_SAME_TC35                        | 10110     | Invalid Login Credentials |
 
+  @ResetPasswordOldPasswordMismatchWithDB @Phase1 @DBValidation
+  Scenario Outline: TC-36 - Validate the case where old password doesn't match with LoginID
+    When a request is made to validate password doesn't match with LoginID TC36
+    Then verify response code of "ResetPassword" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | errorCode | errorMessage                            |
+      | 2000      | The password doesn't match the Login ID |

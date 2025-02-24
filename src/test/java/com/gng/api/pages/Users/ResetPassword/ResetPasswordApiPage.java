@@ -1,6 +1,7 @@
 package com.gng.api.pages.Users.ResetPassword;
 
 import com.gng.api.pages.BasePage;
+import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesHelper;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
@@ -53,18 +54,16 @@ public class ResetPasswordApiPage   extends BasePage  {
         testContext.setResponse(response);
     }
 
-  /*  public String getOrGenerateRequestID() {
-        if (testContext.retrieveRequestId() != null) {
-            return testContext.retrieveRequestId();
-        }
-        ResetPasswordRequest payload = new ResetPasswordRequest();
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
+
+    public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel)
+    {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.validatePasswordWithLoginIN(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
-        String generatedRequestID = response.jsonPath().getString("requestID");
-        testContext.storeRequestId(generatedRequestID);
-        return generatedRequestID;
-    }*/
+        testContext.setResponse(response);
+        helper.validateFailedCount();
+    }
 
 
 }

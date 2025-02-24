@@ -21,10 +21,10 @@ public class GetUserRolesHelper {
     private final GetUserRolesApiPage apiPage; // Reference to GetUserRolesApiPage
     String activeUser;
     String user;
-    String encryptedPasswordMoreThan10Char = "pUsNrpKOUDBej9d5DYDxG0TBDRJhEYSz9hq05QdlDF8=";
-    String encryptedPasswordLessThan7Char = "hysLdv98prkIGkXJvHhO8lDU3xG8i64KcXcgK2GZ6IQ=";
-    String encrypted8CharPasswordWithSpecialChar = "FVGBjHF04+LgSXm1ULFcAhTDheMftquWq0VwfkLAEyo=";
-    String validEncryptedPassword = "WRJpoTk4n5BLUNDAf4a2jzkuyjBcmgdgZ1JZdq7IEiE=";
+    public static String encryptedPasswordMoreThan10Char = "xMniuYClp79QrD7KA6wf6eexy+F5l4pneNoW2qpXkBU=";
+    public static String encryptedPasswordLessThan7Char = "uoXOHMb4k2qXuWM+ucTQKrRpM16O73nfvgc1v5AwFhc=";
+    public static String encrypted8CharPasswordWithSpecialChar = "FVGBjHF04+LgSXm1ULFcAhTDheMftquWq0VwfkLAEyo=";
+    public static String validEncryptedPassword = "PzsQh6YrvB2Pf9VJJxc8yFkS36BgUXRRO8MxhCA1qcA=";
 
 
     public GetUserRolesHelper(TestContext testContext, GetUserRolesApiPage apiPage) {
@@ -179,7 +179,7 @@ public class GetUserRolesHelper {
         }
     }
 
-    public void validateFailedCountAs4()
+    public void validateFailedCount()
     {
         Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
         if (dbValidationResult.isEmpty()) {

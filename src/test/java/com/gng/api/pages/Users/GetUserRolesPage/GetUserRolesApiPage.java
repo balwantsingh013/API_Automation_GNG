@@ -76,7 +76,7 @@ public class GetUserRolesApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
-        helper.validateFailedCountAs4();
+        helper.validateFailedCount();
     }
 
     public void validatePasswordExpiredTestConditionCasesTC16(GetUserRolesApiLabel apiLabel) {
