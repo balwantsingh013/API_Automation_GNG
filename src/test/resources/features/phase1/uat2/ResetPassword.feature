@@ -6,11 +6,11 @@ Feature: Verify ResetPassword Api
     And a valid token is received in response
 
   @ResetPasswordUZRPSTOTable @Phase1 @DBValidation
-  Scenario: TC-20 - ResetPassword Api with Expire Day Value
+  Scenario: ResetPassword Api - TC-20 - To validate UZRPSTO_PARM_NAME Expire Day Value in DB
     When a request is made to the validate UZRPSTO_PARM_NAME value in DB TC20
 
   @ResetPasswordWithInvalidRequestID @Phase1 @NegativeFlow
-  Scenario Outline: Verify ResetPassword Api with invalid requestID "<requestID>" TC21_TC23
+  Scenario Outline: ResetPassword Api - Verify ResetPassword Api with invalid requestID "<requestID>"
     When a request is made to the ResetPassword Api with "<requestID>"TC21_TC23
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -24,7 +24,7 @@ Feature: Verify ResetPassword Api
 
 
   @ResetPasswordWithInvalidLoginID @Phase1 @NegativeFlow
-  Scenario Outline: TC24_TC28 - Verify ResetPassword Api with invalid loginID "<loginID>"
+  Scenario Outline: ResetPassword Api - Verify ResetPassword Api with invalid loginID "<loginID>"
     When a request is made to the ResetPassword Api with "<loginID>"TC24_TC28
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -41,7 +41,7 @@ Feature: Verify ResetPassword Api
 
 
   @ResetPasswordInvalidOldPassword @Phase1  @NegativeFlow
-  Scenario Outline: TC29_TC31 - Verify response code for invalid OldPassword "<oldPassword>"
+  Scenario Outline: ResetPassword Api - Verify response code for invalid OldPassword "<oldPassword>"
     When a request is made to the ResetPassword Api with "<oldPassword>"TC29_TC31
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -55,7 +55,7 @@ Feature: Verify ResetPassword Api
       | ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC31B | 10110     | Invalid Login Credentials |
 
   @ResetPasswordInvalidNewPassword @Phase1  @NegativeFlow
-  Scenario Outline: TC32_TC35 - Verify response code for invalid NewPassword "<newPassword>"
+  Scenario Outline: ResetPassword Api - Verify response code for invalid NewPassword "<newPassword>"
     When a request is made to the ResetPassword Api with "<newPassword>"TC32_TC35
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -70,7 +70,7 @@ Feature: Verify ResetPassword Api
       | OLD_PASSWORD_NEW_PASSWORD_SAME_TC35                        | 10110     | Invalid Login Credentials |
 
   @ResetPasswordOldPasswordMismatchWithDB @Phase1 @DBValidation
-  Scenario Outline: TC-36 - Validate the case where old password doesn't match with LoginID
+  Scenario Outline: ResetPassword Api - Validate the case where old password doesn't match with LoginID
     When a request is made to validate password doesn't match with LoginID TC36
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"

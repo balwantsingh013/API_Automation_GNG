@@ -11,6 +11,8 @@ public final class ApiEndPoint {
     public static final String GET_USER_ROLES = "Users/GetUserRoles";
     public static final String RESET_PASSWORD = "Users/ResetPassword";
 
+    public static final String AES_ENCRYPTION = "/api/AesEncryption/Encrypt";
+
 
     private ApiEndPoint() {
     }

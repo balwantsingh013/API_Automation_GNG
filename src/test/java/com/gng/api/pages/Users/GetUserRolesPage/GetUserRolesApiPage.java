@@ -19,12 +19,18 @@ public class GetUserRolesApiPage extends BasePage {
         super(testContext);
         this.helper = new GetUserRolesHelper(testContext, this);
     }
-    public void validateExternalParameterObjectAddedT1(GetUserRolesApiLabel apiLabel) {
-        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-       // helper.setRequestIDBasedOnTypeTCTC3_TC5();
+
+    public String getOrGenerateRequestID() {
+        if (testContext.retrieveRequestId() != null) {
+            return testContext.retrieveRequestId();
+        }
+        GetUserRolesRequest payload = new GetUserRolesRequest();
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
-        testContext.setResponse(response);
+        String generatedRequestID = response.jsonPath().getString("requestID");
+        testContext.storeRequestId(generatedRequestID);
+        return generatedRequestID;
     }
 
     public void validate_UZBPSTO_OBJECT_Value_In_DB_TC1()
@@ -110,17 +116,6 @@ public class GetUserRolesApiPage extends BasePage {
         helper.validateFailedCountUserRollback();
     }
 
-    public String getOrGenerateRequestID() {
-        if (testContext.retrieveRequestId() != null) {
-            return testContext.retrieveRequestId();
-        }
-        GetUserRolesRequest payload = new GetUserRolesRequest();
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
-        String generatedRequestID = response.jsonPath().getString("requestID");
-        testContext.storeRequestId(generatedRequestID);
-        return generatedRequestID;
-    }
+
 
 }

@@ -6,6 +6,8 @@ import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesApiPage;
 import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesHelper;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
+import com.gng.api.report.ExtentReportManager;
+import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.testng.Assert;
 import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.steps.BaseSteps.*;
 import static com.gng.api.util.CommonUtil.removeFieldFromJson;
 import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
 
@@ -119,15 +122,24 @@ public class ResetPasswordHelper {
                 break;
             case ENCRYPTED_OLD_PASSWORD_MORE_THAN_10_CHAR_TC31:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setOldPassword(GetUserRolesHelper.encryptedPasswordMoreThan10Char);
+                String encryptedMore12Char = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(12));
+                log.info(encryptedMore12Char);
+                ExtentReportManager.logInfoToReport(encryptedMore12Char);
+                payload.setOldPassword(encryptedMore12Char);
                 break;
             case ENCRYPTED_OLD_PASSWORD_LESS_THAN_7_CHAR_TC31A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setOldPassword(GetUserRolesHelper.encryptedPasswordLessThan7Char);
+                String encryptedLess7Char = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(5));
+                log.info(encryptedLess7Char);
+                ExtentReportManager.logInfoToReport(encryptedLess7Char);
+                payload.setOldPassword(encryptedLess7Char);
                 break;
             case ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC31B:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setOldPassword(GetUserRolesHelper.encrypted8CharPasswordWithSpecialChar);
+                String encryptedSpecial = AesEncryptionSteps.encryptData(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
+                log.info(encryptedSpecial);
+                ExtentReportManager.logInfoToReport(encryptedSpecial);
+                payload.setOldPassword(encryptedSpecial);
                 break;
         }
     }
@@ -152,15 +164,24 @@ public class ResetPasswordHelper {
                 break;
             case ENCRYPTED_NEW_PASSWORD_MORE_THAN_10_CHAR_TC34:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setNewPassword(GetUserRolesHelper.encryptedPasswordMoreThan10Char);
+                String encryptedMore12Char = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(12));
+                log.info(encryptedMore12Char);
+                ExtentReportManager.logInfoToReport(encryptedMore12Char);
+                payload.setNewPassword(encryptedMore12Char);
                 break;
             case ENCRYPTED_NEW_PASSWORD_LESS_THAN_7_CHAR_TC34A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setNewPassword(GetUserRolesHelper.encryptedPasswordLessThan7Char);
+                String encryptedLess7Char = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(5));
+                log.info(encryptedLess7Char);
+                ExtentReportManager.logInfoToReport(encryptedLess7Char);
+                payload.setNewPassword(encryptedLess7Char);
                 break;
             case ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC34B:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setNewPassword(GetUserRolesHelper.encrypted8CharPasswordWithSpecialChar);
+                String encryptedSpecial = AesEncryptionSteps.encryptData(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
+                log.info(encryptedSpecial);
+                ExtentReportManager.logInfoToReport(encryptedSpecial);
+                payload.setNewPassword(encryptedSpecial);
                 break;
             case OLD_PASSWORD_NEW_PASSWORD_SAME_TC35:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -175,7 +196,8 @@ public class ResetPasswordHelper {
         user = ApplicationContext.get().getDbAction().getActiveUserID();
         payload.setLoginID(user);
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setOldPassword(GetUserRolesHelper.validEncryptedPassword);
+        String validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
+        payload.setOldPassword(validEncryptedPassword);
     }
 
 

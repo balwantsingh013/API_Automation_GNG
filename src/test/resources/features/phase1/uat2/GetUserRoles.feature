@@ -6,16 +6,16 @@ Feature: Verify GetUserRoles Api
     And a valid token is received in response
 
     @DBValidation
-  Scenario: TC_01 Ensure the entry for UZBPSTO_OBJECT = SPK_WEB_API is present in the UZBPSTO table
+  Scenario: GetUserRoles Api - TC_01 Ensure the entry for UZBPSTO_OBJECT = SPK_WEB_API is present in the UZBPSTO table
     When we query the database for validate UZBPSTO_OBJECT value
 
   @DBValidation
-  Scenario: TC_02 Ensure the entry for UZRPSTO_PARM_NAME = FAILED_LOGINS_TO_LOCK is present in the UZRPSTO table with value 4
+  Scenario: GetUserRoles Api - TC_02 Ensure the entry for UZRPSTO_PARM_NAME = FAILED_LOGINS_TO_LOCK is present in the UZRPSTO table with value 4
     When we query the database for validate UZRPSTO_PARM_NAME value
 
 
   @GetUserRoleWithInvalidRequestID @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetUserRoles Api with invalid requestID "<requestID>"TC3_TC5
+  Scenario Outline: GetUserRoles Api - Verify Api Response with invalid requestID "<requestID>"
     When a request is made to the GetUserRoles Api with "<requestID>"TC3_TC5
     Then verify response code of "GetUserRoles" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -28,7 +28,7 @@ Feature: Verify GetUserRoles Api
       | LONG_REQUEST_ID_TC5      | 10002     | Invalid Request ID   |
 
   @GetUserRolesInvalidLoginID @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid loginID "<loginID>"TC6_TC9
+  Scenario Outline: GetUserRoles Api - Verify response code for invalid loginID "<loginID>"
     When a request is made to the GetUserRoles Api with "<loginID>"TC6_TC9
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -43,7 +43,7 @@ Feature: Verify GetUserRoles Api
 
 
   @GetUserRolesInvalidPassword @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid Password "<password>" TC10_TC12
+  Scenario Outline: GetUserRoles Api - Verify response code for invalid Password "<password>"
     When a request is made to the GetUserRoles Api with "<password>" TC10_TC12
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -58,7 +58,7 @@ Feature: Verify GetUserRoles Api
 
 
   @GetUserRolesInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid testCondition "<testCondition>"TC13_TC14
+  Scenario Outline: GetUserRoles Api - Verify response code for invalid testCondition "<testCondition>"
     When a request is made to the GetUserRoles Api with "<testCondition>"TC13_TC14
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -71,20 +71,20 @@ Feature: Verify GetUserRoles Api
 
 
   @GetUserRolesInvalidPasswordInDB @Phase1  @NegativeFlow
-  Scenario: Verify response code for invalid Password TC15
+  Scenario: GetUserRoles Api - TC15 - Verify response code for invalid Password
     When a request is made to the GetUserRoles Api with TC15
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2000 and ErrorMessage "The password doesn't match the Login ID. The Login ID has been locked."
 
   @GetUserRolesExpiredPasswordInDB @Phase1  @NegativeFlow
-  Scenario: Verify response code for invalid Password TC16
+  Scenario: GetUserRoles Api - TC16 - Verify response code for invalid Password
     When a request is made to the GetUserRoles Api with TC16
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2010 and ErrorMessage "Expired password"
 
 
   @GetUserRolesLockedOutLoginIDInDB @Phase1  @NegativeFlow
-  Scenario: Verify response code for invalid Password TC17
+  Scenario: GetUserRoles Api - TC17 - Verify response code for invalid Password
     When a request is made to the GetUserRoles Api with TC17
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID"
@@ -92,6 +92,6 @@ Feature: Verify GetUserRoles Api
 
 
   @GetUserRolesSuccessfulResponseWithUserRolesIDInDB @Phase1  @NegativeFlow
-  Scenario: Verify response code for invalid Password TC19
+  Scenario: GetUserRoles Api  TC19 - Verify response code for invalid Password
     When a request is made to the GetUserRoles Api with TC19
     Then verify response code of "GetUserRole" Api is 200

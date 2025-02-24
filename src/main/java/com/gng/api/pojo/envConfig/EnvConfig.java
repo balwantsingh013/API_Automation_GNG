@@ -16,4 +16,5 @@ public class EnvConfig {
     private String password;
     private Boolean enableLogsOnPass;
     private Boolean enableLogsOnFail;
+    private String aesBaseUri;
 }
