@@ -67,42 +67,40 @@ public class GetUserRolesApiPage extends BasePage {
     }
     public void validateInvalidTestConditionCasesTC13_TC14(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel testCondition) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.setTestConditionBasedOnTypeTC13_TC14(payload, testCondition);
+        String user = helper.setTestConditionBasedOnTypeTC13_TC14(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
         if (testCondition == GetUserRolesApiLabel.PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14) {
-            helper.validateDatabaseForMismatchCase();
+            helper.validateDatabaseForMismatchCase(user);
         }
     }
 
     public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.extractTheUserFromDB(payload);
+        String user = helper.extractTheUserFromDB(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
-        helper.validateFailedCount();
+        helper.validateFailedCount(user);
     }
 
     public void validatePasswordExpiredTestConditionCasesTC16(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.validatePasswordExpiredInDB();
-        helper.validatePasswordCredentials(payload);
+        String user = helper.validatePasswordExpiredInDB(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
-        helper.rollbackDatabaseQuery();
+        helper.rollbackDatabaseQuery(user);
 
     }
     public void validateLockedOutLoginIDTestConditionCasesTC17(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-      helper.validateLockedOutLoginIDInDBUpdateQuery();
-        helper.validatePasswordCredentials(payload);
+        String user = helper.validateLockedOutLoginIDInDBUpdateQuery(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
-        helper.validateLockedOutLoginIDInDBRollBackQuery();
+        helper.unlockSpecificUser(user);
     }
     public void validateSuccessfulResponseCasesTC19(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);

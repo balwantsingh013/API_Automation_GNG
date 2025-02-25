@@ -5,6 +5,7 @@ import com.gng.api.pages.Users.GetUserRolesPage.GetUserRolesHelper;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordRequest;
+import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
 import com.gng.api.steps.UsersApiSteps.ResetPassword.ResetPasswordApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
@@ -55,14 +56,16 @@ public class ResetPasswordApiPage   extends BasePage  {
     }
 
 
-    public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel)
+    public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel oldPassword)
     {
         ResetPasswordRequest payload = helper.preparePayload(apiLabel);
-        helper.validatePasswordWithLoginIN(payload);
+        String user = helper.validatePasswordWithLoginIN(payload, oldPassword);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
         testContext.setResponse(response);
-        helper.validateFailedCount();
+        if (oldPassword == ResetPasswordApiLabel.INCORRECT_PASSWORD_BLOCK_USER_TC37) {
+            helper.validateFailedCount(user);
+        }
     }
 
 

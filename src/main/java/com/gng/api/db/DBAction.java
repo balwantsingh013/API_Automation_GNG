@@ -1,5 +1,6 @@
 package com.gng.api.db;
 
+import com.gng.api.report.ExtentReportManager;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -63,16 +64,22 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public int rollBackChanges() {
+    public void rollBackQuery(String user) {
         String query = DBQuery.ROLLBACK_QUERIES;
-        logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.update(query);
+        String formattedQuery = query.replace("?", "'" + user + "'");
+        ExtentReportManager.logInfoToReport("Executing Rollback Query: {}" + formattedQuery);
+        log.info("Executing Rollback Query: {}", formattedQuery);
+        logQueryInAllure("Rollback Query", formattedQuery);
+        int rowsUpdated = jdbcTemplate.update(query, user);
+        log.info("Rollback executed for user: {} | Rows affected: {}", user, rowsUpdated);
+        ExtentReportManager.logInfoToReport("Rollback executed for user: {} | Rows affected: {}" +" " +user +" "+ rowsUpdated);
     }
 
-    public int PasswordExpiredUpdateQuery() {
+
+    public int passwordExpiredUpdateQuery(String user) {
         String query = DBQuery.EXPIRED_PASSWORD_UPDATE_QUERY;
-        logQueryInAllure("password is expired", query);
-        return jdbcTemplate.update(query);
+        logQueryInAllure("Query to update expire date to current date -1 ", query);
+        return jdbcTemplate.update(query, user);
     }
 
     public List<Map<String, Object>> PasswordExpiredCheckQuery() {
@@ -87,16 +94,16 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public int rollBackQueryForPasswordExpired() {
+    public int rollBackQueryForPasswordExpired(String user) {
         String query = DBQuery.EXPIRED_PASSWORD_ROLLBACK_QUERY;
-        logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.update(query);
+        logQueryInAllure("Query to update expiry date to currentDate + 30 - ", query);
+        return jdbcTemplate.update(query, user);
     }
 
-    public int updateUserLockStatusQuery() {
-        String query = DBQuery.UPDATE_USER_LOCK_STATUS_QUERY;
-        logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.update(query);
+    public int updateUserLockStatusQuery(String user) {
+        String query = DBQuery.UPDATE_TO_LOCK_SPECIFIC_USER;
+        logQueryInAllure("Update query to lock the user", query);
+        return jdbcTemplate.update(query, user);
     }
 
     public List<Map<String, Object>> checkUserLockStatusQuery() {
@@ -111,10 +118,10 @@ public class DBAction {
         return jdbcTemplate.update(query);
     }
 
-    public int rollBackUserLockStatusQuery() {
-        String query = DBQuery.ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY;
-        logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.update(query);
+    public int updateQueryToUnlockUser(String user) {
+        String query = DBQuery.UPDATE_TO_UNLOCK_SPECIFIC_USER;
+        logQueryInAllure("Update query to unlock the user", query);
+        return jdbcTemplate.update(query, user);
     }
 
     public int updateTheFailedLoginQuery() {

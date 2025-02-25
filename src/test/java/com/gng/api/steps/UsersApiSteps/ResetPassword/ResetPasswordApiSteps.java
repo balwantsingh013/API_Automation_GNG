@@ -36,9 +36,9 @@ public class ResetPasswordApiSteps {
         resetPasswordApiPage.validateInvalidNewPasswordCasesTC32_TC35(reset_password, ResetPasswordApiLabel.valueOf(newPassword));
     }
 
-    @When("a request is made to validate password doesn't match with LoginID TC36")
-    public void a_request_is_made_to_validate_password_does_not_match_with_LoginID_TC36()
+    @When("a request is made to validate oldPassword {string} doesn't match with LoginID TC36")
+    public void a_request_is_made_to_validate_password_does_not_match_with_LoginID_TC36(String oldPassword)
     {
-        resetPasswordApiPage.validatePasswordDoesNotMatchWithLoginID(reset_password);
+        resetPasswordApiPage.validatePasswordDoesNotMatchWithLoginID(reset_password, ResetPasswordApiLabel.valueOf(oldPassword));
     }
 }

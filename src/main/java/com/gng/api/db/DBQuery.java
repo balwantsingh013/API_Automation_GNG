@@ -227,13 +227,13 @@ public final class DBQuery {
             """;
 
     public static final String ROLLBACK_QUERIES = """
-            UPDATE USERS SET user_locked_ind ='N', failed_logins=1 WHERE USER_ID='autotester'
+            UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
             """;
     public static final String EXPIRED_PASSWORD_UPDATE_QUERY = """
             UPDATE USERS
             SET user_locked_ind = 'N', failed_logins = 0,
             PASSWORD_EXPIRE = SYSDATE - 1
-            WHERE USER_ID = 'autotester'
+            WHERE USER_ID = ?
             """;
     public static final String EXPIRED_PASSWORD_CHECK_QUERY = """
             SELECT CASE WHEN PASSWORD_EXPIRE < SYSDATE THEN 'Y' ELSE 'N' END AS is_expired FROM USERS WHERE USER_ID = 'autotester'
@@ -244,7 +244,7 @@ public final class DBQuery {
 
 
     public static final String EXPIRED_PASSWORD_ROLLBACK_QUERY = """
-            UPDATE USERS SET user_locked_ind = 'N', failed_logins = 0, PASSWORD_EXPIRE = SYSDATE +30 WHERE USER_ID = 'autotester'
+            UPDATE USERS SET USER_LOCKED_IND = 'N', FAILED_LOGINS = 0, PASSWORD_EXPIRE = SYSDATE +30 WHERE USER_ID = ?
             """;
 
 
@@ -310,7 +310,9 @@ public final class DBQuery {
     """
         SELECT USER_ID
         FROM USERS
-        WHERE FAILED_LOGINS = 1 AND USER_LOCKED_IND = 'N'
+        WHERE FAILED_LOGINS = 0
+        AND USER_LOCKED_IND = 'N'
+        ORDER BY DBMS_RANDOM.VALUE
         FETCH FIRST 1 ROWS ONLY
     """;
 
@@ -340,6 +342,13 @@ public final class DBQuery {
         WHERE UZRPSTO_PARM_NAME = 'FAILED_LOGINS_TO_LOCK'
     """;
 
+    public static final String UPDATE_TO_LOCK_SPECIFIC_USER = """
+            UPDATE USERS SET USER_LOCKED_IND ='Y', FAILED_LOGINS=4 WHERE USER_ID= ?
+            """;
+
+    public static final String UPDATE_TO_UNLOCK_SPECIFIC_USER = """
+            UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
+            """;
 
 
     private DBQuery() {

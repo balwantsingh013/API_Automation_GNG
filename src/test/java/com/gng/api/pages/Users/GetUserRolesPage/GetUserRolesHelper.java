@@ -22,7 +22,7 @@ import static com.gng.api.steps.BaseSteps.*;
 public class GetUserRolesHelper {
     private final TestContext testContext;
     private final GetUserRolesApiPage apiPage; // Reference to GetUserRolesApiPage
-    String user;
+    //String user;
 
     public GetUserRolesHelper(TestContext testContext, GetUserRolesApiPage apiPage) {
         this.testContext = testContext;
@@ -74,7 +74,7 @@ public class GetUserRolesHelper {
 
 
     public void setRequestIDBasedOnTypeTCTC3_TC5(GetUserRolesRequest payload, GetUserRolesApiLabel requestID) {
-        user = ApplicationContext.get().getDbAction().getActiveUserID();
+        String user = ApplicationContext.get().getDbAction().getActiveUserID();
         payload.setLoginID(user);
 
         switch (requestID) {
@@ -126,7 +126,7 @@ public class GetUserRolesHelper {
     }
 
     public void setPasswordBasedOnTypeTC10_TC12(GetUserRolesRequest payload, GetUserRolesApiLabel password) {
-        user = ApplicationContext.get().getDbAction().getActiveUserID();
+        String user = ApplicationContext.get().getDbAction().getActiveUserID();
         payload.setLoginID(user);
         payload.setRequestID(FakerDataGenerator.generateString(10));
 
@@ -163,58 +163,63 @@ public class GetUserRolesHelper {
         }
     }
 
-    public void extractTheUserFromDB(GetUserRolesRequest payload) {
-        user = ApplicationContext.get().getDbAction().extractUserFromDBWithFailedLogin3();
-        if(user==null)
-        {
-          user =  ApplicationContext.get().getDbAction().getActiveUserID();
-          int count= ApplicationContext.get().getDbAction().updateUserToFailedAttempt3(user);
-          System.out.println(count);
-          payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-          payload.setLoginID(user);
-          String validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
-          payload.setPassword(validEncryptedPassword);
-        }
-        else
-        {
-            payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-            payload.setLoginID(user);
-            String validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
-            payload.setPassword(validEncryptedPassword);
-        }
-    }
+    public String extractTheUserFromDB(GetUserRolesRequest payload) {
+        String user = ApplicationContext.get().getDbAction().extractUserFromDBWithFailedLogin3();
 
-    public void validateFailedCount()
-    {
-        Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
-        if (dbValidationResult.isEmpty()) {
-            System.out.println("No data found for the given user.");
+        if (user == null) {
+            user = ApplicationContext.get().getDbAction().getActiveUserID();
+            int count = ApplicationContext.get().getDbAction().updateUserToFailedAttempt3(user);
+
+            log.info("User not found with failed login attempts, retrieved active user: {}", user);
+            log.info(count + " Row updated successfully");
+
+            ExtentReportManager.logInfoToReport("User not found with failed login attempts, retrieved active user: " + user);
+            ExtentReportManager.logInfoToReport(count + " Row updated successfully");
         } else {
-            Object failedLoginsObj = dbValidationResult.get("FAILED_LOGINS");
-            Object userLockedIndObj = dbValidationResult.get("USER_LOCKED_IND");
-            int failedLogins = failedLoginsObj != null ? Integer.parseInt(failedLoginsObj.toString()) : -1;
-            String userLockedInd = userLockedIndObj != null ? (userLockedIndObj.toString()) : "UNKNOWN";
-            Assert.assertEquals(failedLogins, 4, "Mismatch in expected FAILED_LOGINS value");
-            Assert.assertEquals(userLockedInd, "Y", "Mismatch in expected USER_LOCKED_IND value");
+            log.info("User found with failed login attempts: {}", user);
+            ExtentReportManager.logInfoToReport("User found with failed login attempts: " + user);
+        }
+
+        // Set payload details
+        String requestID = FakerDataGenerator.getRandomNumericString(6);
+        String validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
+
+        payload.setRequestID(requestID);
+        payload.setLoginID(user);
+        payload.setPassword(validEncryptedPassword);
+
+        // Logging the assigned values
+        log.info("Generated RequestID: {}", requestID);
+        log.info("Generated Encrypted Password: {}", validEncryptedPassword);
+
+        ExtentReportManager.logInfoToReport("Generated RequestID: " + requestID);
+        ExtentReportManager.logInfoToReport("Generated Encrypted Password: " + validEncryptedPassword);
+
+        return user;
+    }
+
+
+    public void validateFailedCount(String user)
+    {
+        try {
+            Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
+            if (dbValidationResult.isEmpty()) {
+                System.out.println("No data found for the given user.");
+            } else {
+                Object failedLoginsObj = dbValidationResult.get("FAILED_LOGINS");
+                Object userLockedIndObj = dbValidationResult.get("USER_LOCKED_IND");
+                int failedLogins = failedLoginsObj != null ? Integer.parseInt(failedLoginsObj.toString()) : -1;
+                String userLockedInd = userLockedIndObj != null ? (userLockedIndObj.toString()) : "UNKNOWN";
+                Assert.assertEquals(failedLogins, 4, "Mismatch in expected FAILED_LOGINS value");
+                Assert.assertEquals(userLockedInd, "Y", "Mismatch in expected USER_LOCKED_IND value");
+            }
+        }
+        finally
+        {
+            ApplicationContext.get().getDbAction().rollBackQuery(user);
         }
     }
 
-    public void validatePasswordNotMatchLoginID(GetUserRolesRequest payload) {
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(9));
-        payload.setLoginID("autotester");
-        payload.setPassword("/La98bDE4x/vUobavr+1O9w3PaJHfN8jfuzJB3O1a2o=");
-
-    }
-
-
-        public void rollBackQuery() {
-                ApplicationContext.get().getDbAction().rollBackChanges();
-                System.out.println("Rollback query executed successfully.");
-            }
-
-    public void passwordNotMatchValue(GetUserRolesRequest payload) {
-
-    }
 
 
     public void validatePasswordCredentials(GetUserRolesRequest payload) {
@@ -225,29 +230,37 @@ public class GetUserRolesHelper {
     }
 
 
-    public void validatePasswordExpiredInDB() {
-
-        ApplicationContext.get().getDbAction().PasswordExpiredUpdateQuery();
+    public String validatePasswordExpiredInDB(GetUserRolesRequest payload) {
+        String user = ApplicationContext.get().getDbAction().getActiveUserID();
+        int rowCount = ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(user);
+        ExtentReportManager.logInfoToReport(rowCount + " row updated successfully.");
+        payload.setRequestID(FakerDataGenerator.generateString(6));
+        payload.setLoginID(user);
+        return user;
     }
 
 
-    public void rollbackDatabaseQuery() {
-        ApplicationContext.get().getDbAction().rollBackQueryForPasswordExpired();
-        System.out.println("Rollback query executed successfully.");
-
+    public void rollbackDatabaseQuery(String user) {
+        int updatedCounts = ApplicationContext.get().getDbAction().rollBackQueryForPasswordExpired(user);
+        System.out.println("Rollback query executed successfully and updated rows are ." + updatedCounts);
+        ExtentReportManager.logInfoToReport("Rollback query executed successfully and updated rows are ." + updatedCounts);
     }
 
 
-    public void validateLockedOutLoginIDInDBUpdateQuery() {
-
-        ApplicationContext.get().getDbAction().updateUserLockStatusQuery();
+    public String validateLockedOutLoginIDInDBUpdateQuery(GetUserRolesRequest payload) {
+        String user = ApplicationContext.get().getDbAction().getActiveUserID();
+        int lockedUser=  ApplicationContext.get().getDbAction().updateUserLockStatusQuery(user);
+        ExtentReportManager.logInfoToReport(STR."User \{user} locked with updated row - \{lockedUser}");
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID(user);
+        return user;
     }
 
-    public void validateLockedOutLoginIDInDBRollBackQuery() {
-
-                ApplicationContext.get().getDbAction().rollBackUserLockStatusQuery();
-                System.out.println("Rollback query executed successfully.");
-            }
+    public void unlockSpecificUser(String user) {
+    int unlockUser =   ApplicationContext.get().getDbAction().updateQueryToUnlockUser(user);
+    log.info(STR."User \{user} unlocked successfully and row updated count is \{unlockUser}");
+    ExtentReportManager.logInfoToReport(STR."User \{user} unlocked successfully and row updated count is \{unlockUser}");
+    }
 
     public void updateFailedLoginsQuery() {
 
@@ -271,25 +284,30 @@ public class GetUserRolesHelper {
 
     }
 
-    public void setTestConditionBasedOnTypeTC13_TC14(GetUserRolesRequest payload, GetUserRolesApiLabel password) {
+    public String setTestConditionBasedOnTypeTC13_TC14(GetUserRolesRequest payload, GetUserRolesApiLabel password) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-
+        String user = null;
         switch (password) {
             case INVALID_LOGIN_ID_TC13:
                 payload.setLoginID(FakerDataGenerator.generateString(5));
                 break;
             case PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14:
-                user= ApplicationContext.get().getDbAction().getActiveUserID();
+              user= ApplicationContext.get().getDbAction().getActiveUserID();
                 payload.setLoginID(user);
                 break;
         }
+        return user;
     }
 
-    public void validateDatabaseForMismatchCase()
-    {
-        Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
-        Object failedLoginObj= dbValidationResult.get("FAILED_LOGINS");
-        int failedLogins = failedLoginObj != null ? Integer.parseInt(failedLoginObj.toString()) : -1;
-        Assert.assertEquals(failedLogins, 2);
+    public void validateDatabaseForMismatchCase(String user) {
+        try {
+            Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
+            Object failedLoginObj = dbValidationResult.get("FAILED_LOGINS");
+            int failedLogins = failedLoginObj != null ? Integer.parseInt(failedLoginObj.toString()) : -1;
+            Assert.assertEquals(failedLogins, 1);
+        }
+        finally {
+            ApplicationContext.get().getDbAction().rollBackQuery(user);
+        }
     }
 }

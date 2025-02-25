@@ -23,7 +23,7 @@ import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
 @Slf4j
 public class ResetPasswordHelper {
     private final TestContext testContext;
-    String user;
+    String validEncryptedPassword;
     public ResetPasswordHelper(TestContext testContext) {
         this.testContext = testContext;
     }
@@ -191,17 +191,53 @@ public class ResetPasswordHelper {
         }
     }
 
-    public void validatePasswordWithLoginIN(ResetPasswordRequest payload)
-    {
-        user = ApplicationContext.get().getDbAction().getActiveUserID();
-        payload.setLoginID(user);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        String validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
-        payload.setOldPassword(validEncryptedPassword);
+    public String validatePasswordWithLoginIN(ResetPasswordRequest payload, ResetPasswordApiLabel oldPassword) {
+        String user = null;
+        switch (oldPassword) {
+            case INCORRECT_PASSWORD_UNBLOCK_USER_TC36:
+                user = ApplicationContext.get().getDbAction().getActiveUserID();
+                payload.setLoginID(user);
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
+                payload.setOldPassword(validEncryptedPassword);
+                break;
+            case INCORRECT_PASSWORD_BLOCK_USER_TC37:
+                user = ApplicationContext.get().getDbAction().extractUserFromDBWithFailedLogin3();
+
+                if (user == null) {
+                    user = ApplicationContext.get().getDbAction().getActiveUserID();
+                    int count = ApplicationContext.get().getDbAction().updateUserToFailedAttempt3(user);
+
+                    log.info("User not found with failed login attempts, retrieved active user: {}", user);
+                    log.info("Updated user failed login attempt count: {}", count);
+
+                    ExtentReportManager.logInfoToReport("User not found with failed login attempts, retrieved active user: " + user);
+                    ExtentReportManager.logInfoToReport("Updated failed login attempt count: " + count);
+                } else {
+                    log.info("User found with failed login attempts: {}", user);
+                    ExtentReportManager.logInfoToReport("User found with failed login attempts: " + user);
+                }
+                // Set payload details
+                String requestID = FakerDataGenerator.getRandomNumericString(6);
+                validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
+
+                payload.setRequestID(requestID);
+                payload.setLoginID(user);
+                payload.setOldPassword(validEncryptedPassword);
+
+                // Logging the assigned values
+                log.info("Generated RequestID: {}", requestID);
+                log.info("Generated Encrypted Password: {}", validEncryptedPassword);
+
+                ExtentReportManager.logInfoToReport("Generated RequestID: " + requestID);
+                ExtentReportManager.logInfoToReport("Generated Encrypted Password: " + validEncryptedPassword);
+                break;
+        }
+        return user;
     }
 
 
-    public void validateFailedCount()
+    public void validateFailedCount(String user)
     {
         Map<String, Object> dbValidationResult = ApplicationContext.get().getDbAction().validateFailedLoginForSpecificUser(user);
         if (dbValidationResult.isEmpty()) {
@@ -211,8 +247,8 @@ public class ResetPasswordHelper {
             Object userLockedIndObj = dbValidationResult.get("USER_LOCKED_IND");
             int failedLogins = failedLoginsObj != null ? Integer.parseInt(failedLoginsObj.toString()) : -1;
             String userLockedInd = userLockedIndObj != null ? (userLockedIndObj.toString()) : "UNKNOWN";
-            Assert.assertEquals(failedLogins, 2, "Mismatch in expected FAILED_LOGINS value");
-            Assert.assertEquals(userLockedInd, "N", "Mismatch in expected USER_LOCKED_IND value");
+            Assert.assertEquals(failedLogins, 4, "Mismatch in expected FAILED_LOGINS value");
+            Assert.assertEquals(userLockedInd, "Y", "Mismatch in expected USER_LOCKED_IND value");
         }
     }
 }

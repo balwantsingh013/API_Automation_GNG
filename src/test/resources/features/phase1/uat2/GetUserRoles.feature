@@ -68,13 +68,12 @@ Feature: Verify GetUserRoles Api
       | PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14      | 2000      | The password doesn't match the Login ID |
 
 
-
-
   @GetUserRolesInvalidPasswordInDB @Phase1  @NegativeFlow
   Scenario: GetUserRoles Api - TC15 - Verify response code for invalid Password
     When a request is made to the GetUserRoles Api with TC15
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2000 and ErrorMessage "The password doesn't match the Login ID. The Login ID has been locked."
+
 
   @GetUserRolesExpiredPasswordInDB @Phase1  @NegativeFlow
   Scenario: GetUserRoles Api - TC16 - Verify response code for invalid Password
@@ -88,7 +87,6 @@ Feature: Verify GetUserRoles Api
     When a request is made to the GetUserRoles Api with TC17
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID"
-
 
 
   @GetUserRolesSuccessfulResponseWithUserRolesIDInDB @Phase1  @NegativeFlow

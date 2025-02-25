@@ -70,11 +70,12 @@ Feature: Verify ResetPassword Api
       | OLD_PASSWORD_NEW_PASSWORD_SAME_TC35                        | 10110     | Invalid Login Credentials |
 
   @ResetPasswordOldPasswordMismatchWithDB @Phase1 @DBValidation
-  Scenario Outline: ResetPassword Api - Validate the case where old password doesn't match with LoginID
-    When a request is made to validate password doesn't match with LoginID TC36
+  Scenario Outline: ResetPassword Api - TC-36-37 - Validate the case where old password doesn't match with LoginID "<oldPassword>"
+    When a request is made to validate oldPassword "<oldPassword>" doesn't match with LoginID TC36
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | errorCode | errorMessage                            |
-      | 2000      | The password doesn't match the Login ID |
+      | oldPassword                          | errorCode | errorMessage                                                           |
+      | INCORRECT_PASSWORD_UNBLOCK_USER_TC36 | 2000      | The password doesn't match the Login ID                                |
+      | INCORRECT_PASSWORD_BLOCK_USER_TC37   | 2000      | The password doesn't match the Login ID. The Login ID has been locked. |
