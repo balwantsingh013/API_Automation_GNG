@@ -5,6 +5,8 @@ import com.gng.api.pages.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEli
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.When;
 
+import java.io.IOException;
+
 import static com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
 
 public class GetEligiblePlansAndOffersApiSteps {
@@ -89,7 +91,7 @@ public class GetEligiblePlansAndOffersApiSteps {
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with customer {string} code TC163_164")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_code_TC163_164(String customerCode) {
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_code_TC163_164(String customerCode) throws IOException {
         getEligiblePlansAndOffersApiPage.validateInvalidCustomerCodeCasesTC163_164(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(customerCode));
     }
 

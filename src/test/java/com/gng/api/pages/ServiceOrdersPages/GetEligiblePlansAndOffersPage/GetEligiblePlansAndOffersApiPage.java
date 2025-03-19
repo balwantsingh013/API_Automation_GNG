@@ -9,6 +9,8 @@ import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
+import java.io.IOException;
+
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
 
 public class GetEligiblePlansAndOffersApiPage extends BasePage {
@@ -182,7 +184,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateInvalidCustomerCodeCasesTC163_164(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel customercode) {
+    public void validateInvalidCustomerCodeCasesTC163_164(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel customercode) throws IOException {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerCodeBasedOnTypeTC163_164(payload, customercode);
         setRequestSpecification(payload, testContext.getAuthToken());
