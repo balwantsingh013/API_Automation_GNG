@@ -250,7 +250,7 @@ public class GetUserRolesHelper {
     public String validateLockedOutLoginIDInDBUpdateQuery(GetUserRolesRequest payload) {
         String user = ApplicationContext.get().getDbAction().getActiveUserID();
         int lockedUser=  ApplicationContext.get().getDbAction().updateUserLockStatusQuery(user);
-        ExtentReportManager.logInfoToReport(STR."User \{user} locked with updated row - \{lockedUser}");
+        //ExtentReportManager.logInfoToReport("User \{user} locked with updated row - \{lockedUser}");
         payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
         payload.setLoginID(user);
         return user;
@@ -258,8 +258,8 @@ public class GetUserRolesHelper {
 
     public void unlockSpecificUser(String user) {
     int unlockUser =   ApplicationContext.get().getDbAction().updateQueryToUnlockUser(user);
-    log.info(STR."User \{user} unlocked successfully and row updated count is \{unlockUser}");
-    ExtentReportManager.logInfoToReport(STR."User \{user} unlocked successfully and row updated count is \{unlockUser}");
+    //log.info(STR."User \{user} unlocked successfully and row updated count is \{unlockUser}");
+    //ExtentReportManager.logInfoToReport(STR."User \{user} unlocked successfully and row updated count is \{unlockUser}");
     }
 
     public void updateFailedLoginsQuery() {
