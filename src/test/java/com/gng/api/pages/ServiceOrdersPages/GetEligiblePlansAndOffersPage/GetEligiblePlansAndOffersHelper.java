@@ -5,8 +5,16 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static com.gng.api.constants.TestConstant.EXPERIAN_DATA;
+import static com.gng.api.constants.TestConstant.EXPERIAN_SHEET_NAME;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -1003,10 +1011,14 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public void setCustomerCodeBasedOnTypeTC163_164(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customercode) {
+    public void setCustomerCodeBasedOnTypeTC163_164(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customercode) throws IOException {
         switch (customercode) {
             case NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
+                /*ExcelReader excelReader = new ExcelReader(EXPERIAN_DATA);
+                List<Map<String, String>> testData = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
+                Map<String, String> rowData = testData.get(0); // 0-indexed, fetches the second data row
+                log.info("BUSINESS NAME is: {}", rowData.get("BUSINESS NAME"));*/
                 payload.setEnrollmentState("INCL");
                 payload.setPremisesCode("5886135");
                 payload.setTransactionID("234223459");

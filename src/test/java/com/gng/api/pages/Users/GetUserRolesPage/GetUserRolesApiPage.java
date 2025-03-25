@@ -4,6 +4,7 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.UsersApiSteps.GetUserRoles.GetUserRolesApiLabel;
+import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
@@ -16,15 +17,32 @@ public class GetUserRolesApiPage extends BasePage {
 
     public GetUserRolesApiPage(TestContext testContext) {
         super(testContext);
-        this.helper = new GetUserRolesHelper(testContext);
+        this.helper = new GetUserRolesHelper(testContext, this);
     }
-    public void validateExternalParameterObjectAddedT1(GetUserRolesApiLabel apiLabel) {
-        GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-       // helper.setRequestIDBasedOnTypeTCTC3_TC5();
+
+    public String getOrGenerateRequestID() {
+        if (testContext.retrieveRequestId() != null) {
+            return testContext.retrieveRequestId();
+        }
+        GetUserRolesRequest payload = new GetUserRolesRequest();
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
-        testContext.setResponse(response);
+        String generatedRequestID = response.jsonPath().getString("requestID");
+        testContext.storeRequestId(generatedRequestID);
+        return generatedRequestID;
     }
+
+    public void validate_UZBPSTO_OBJECT_Value_In_DB_TC1()
+    {
+        helper.validate_UZBPSTO_OBJECT_Value();
+    }
+
+    public void validate_UZRPSTO_PARM_NAME_Value_In_DB_TC2()
+    {
+        helper.validate_UZRPSTO_PARM_NAME_Value();
+    }
+
 
     public void validateInvalidRequestIDCasesTC3_TC5(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel requestID) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
@@ -49,42 +67,40 @@ public class GetUserRolesApiPage extends BasePage {
     }
     public void validateInvalidTestConditionCasesTC13_TC14(GetUserRolesApiLabel apiLabel, GetUserRolesApiLabel testCondition) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.setTestConditionBasedOnTypeTC13_TC14(payload, testCondition);
+        String user = helper.setTestConditionBasedOnTypeTC13_TC14(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
+        if (testCondition == GetUserRolesApiLabel.PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14) {
+            helper.validateDatabaseForMismatchCase(user);
+        }
     }
 
     public void validateInvalidTestConditionCasesTC15(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.validatePasswordNotMatchLoginIDInDB();
-        helper.passwordNotMatchValue(payload);
+        String user = helper.extractTheUserFromDB(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
-        helper.validateFailedCountAs4();
-        helper.rollBackQuery();
-
+        helper.validateFailedCount(user);
     }
 
     public void validatePasswordExpiredTestConditionCasesTC16(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-        helper.validatePasswordExpiredInDB();
-        helper.validatePasswordCredentials(payload);
+        String user = helper.validatePasswordExpiredInDB(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
-        helper.rollbackDatabaseQuery();
+        helper.rollbackDatabaseQuery(user);
 
     }
     public void validateLockedOutLoginIDTestConditionCasesTC17(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
-      helper.validateLockedOutLoginIDInDBUpdateQuery();
-        helper.validatePasswordCredentials(payload);
+        String user = helper.validateLockedOutLoginIDInDBUpdateQuery(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);
-        helper.validateLockedOutLoginIDInDBRollBackQuery();
+        helper.unlockSpecificUser(user);
     }
     public void validateSuccessfulResponseCasesTC19(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
@@ -96,15 +112,7 @@ public class GetUserRolesApiPage extends BasePage {
         helper.validateRolesCount();
         helper.validateFailedCountUserRoles();
         helper.validateFailedCountUserRollback();
-
-
-
     }
-
-
-
-
-
 
 
 

@@ -15,9 +15,9 @@ public class ResetPasswordApiSteps {
         this.resetPasswordApiPage = resetPasswordApiPage;
         testContext.setResetPasswordApiPage(resetPasswordApiPage);
     }
-    @When("a request is made to the ResetPassword Api with Expire Day Value TC20")
-    public void a_request_is_made_to_the_ResetPassword_Api_with_Expire_Day_Value_TC20() {
-        resetPasswordApiPage.validateUserTableValueTC20(reset_password);
+    @When("a request is made to the validate UZRPSTO_PARM_NAME value in DB TC20")
+    public void a_request_is_made_to_validate_UZRPSTO_PARM_NAME_Value_TC20() {
+        resetPasswordApiPage.validateUserTable_UZRPSTO_PARM_NAME_ValueTC20();
     }
     @When("a request is made to the ResetPassword Api with {string}TC21_TC23")
     public void a_request_is_made_to_the_ResetPassword_Api_with_TC21_TC23(String requestID) {
@@ -36,5 +36,9 @@ public class ResetPasswordApiSteps {
         resetPasswordApiPage.validateInvalidNewPasswordCasesTC32_TC35(reset_password, ResetPasswordApiLabel.valueOf(newPassword));
     }
 
-
+    @When("a request is made to validate oldPassword {string} doesn't match with LoginID TC36")
+    public void a_request_is_made_to_validate_password_does_not_match_with_LoginID_TC36(String oldPassword)
+    {
+        resetPasswordApiPage.validatePasswordDoesNotMatchWithLoginID(reset_password, ResetPasswordApiLabel.valueOf(oldPassword));
+    }
 }

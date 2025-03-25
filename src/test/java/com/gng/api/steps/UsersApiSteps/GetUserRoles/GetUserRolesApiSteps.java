@@ -14,8 +14,22 @@ public class GetUserRolesApiSteps {
     public GetUserRolesApiSteps(TestContext testContext, GetUserRolesApiPage getUserRolesApiPage) {
         this.testContext = testContext;
         this.getUserRolesApiPage = getUserRolesApiPage;
-        testContext.setGetEligiblePlansAndOffersApiPage(getUserRolesApiPage);
+        testContext.setGetUserRolesApiPage(getUserRolesApiPage);
     }
+
+    @When("we query the database for validate UZBPSTO_OBJECT value")
+    public void query_the_database_for_validate_UZBPSTO_OBJECT_value()
+    {
+        getUserRolesApiPage.validate_UZBPSTO_OBJECT_Value_In_DB_TC1();
+    }
+
+    @When("we query the database for validate UZRPSTO_PARM_NAME value")
+    public void query_the_database_for_validate_UZRPSTO_PARM_NAME_value()
+    {
+        getUserRolesApiPage.validate_UZRPSTO_PARM_NAME_Value_In_DB_TC2();
+    }
+
+
     @When("a request is made to the GetUserRoles Api with {string}TC3_TC5")
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC3_TC5(String requestID) {
         getUserRolesApiPage.validateInvalidRequestIDCasesTC3_TC5(get_user_roles, GetUserRolesApiLabel.valueOf(requestID));
@@ -24,7 +38,7 @@ public class GetUserRolesApiSteps {
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC6_TC9(String loginID) {
         getUserRolesApiPage.validateInvalidLoginIDCasesTC6_TC9(get_user_roles, GetUserRolesApiLabel.valueOf(loginID));
     }
-    @When("a request is made to the GetUserRoles Api with {string}TC10_TC12")
+    @When("a request is made to the GetUserRoles Api with {string} TC10_TC12")
     public void a_request_is_made_to_the_GetUserRoles_Api_with_TC10_TC12(String password) {
         getUserRolesApiPage.validateInvalidPasswordCasesTC10_TC12(get_user_roles, GetUserRolesApiLabel.valueOf(password));
     }
