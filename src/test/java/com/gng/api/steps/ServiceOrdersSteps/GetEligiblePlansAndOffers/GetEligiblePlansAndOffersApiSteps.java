@@ -106,8 +106,8 @@ public class GetEligiblePlansAndOffersApiSteps {
     }
 
 
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} Type")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_test_Condition_Type( ) {
+    @When("a request is made to the GetEligiblePlansAndOffers Api with null Authorised Type")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_null_Authorised_Type( ) {
         getEligiblePlansAndOffersApiPage.validateInvalidTestConditionTC237(get_eligible_plans_and_offers);
     }
 
@@ -271,14 +271,7 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Commercial_marketer_switch_TC_31() {
         getEligiblePlansAndOffersApiPage.validateTestCondition31(get_eligible_plans_and_offers_mandatory);
     }
-    @When("a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_32")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Commercial_marketer_switch_TC_32() {
-        getEligiblePlansAndOffersApiPage.validateTestCondition32(get_eligible_plans_and_offers_mandatory);
-    }
-    @When("a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_33")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Commercial_marketer_switch_TC_33() {
-        getEligiblePlansAndOffersApiPage.validateTestCondition33(get_eligible_plans_and_offers_mandatory);
-    }
+
 
 
 
