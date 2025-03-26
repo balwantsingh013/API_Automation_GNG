@@ -4,6 +4,7 @@ package com.gng.api.pages.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
@@ -1066,18 +1067,13 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
 
-    public void setInvalidTestConditionTC237(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel authorizedBy) {
-        switch (authorizedBy) {
-            case NULL_AUTHORIZED_BY_237:
+    public void setInvalidTestConditionTC237(GetEligiblePlansAndOffersRequest payload) {
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setAuthorizedBy(null);
                 payload.setCustomerType("CM");
                 payload.setLoginID("sys");
                 payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
-            default:
-                payload.setAuthorizedBy("MM");
 
-        }
     }
 
     public void setInvalidReferralCodeTC238_241(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel referralcode) {
@@ -1298,6 +1294,93 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesCountyCode(FakerDataGenerator.getRandomString(5));
         }
     }
+    public void setTestCondition25(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+payload.setAglcAccountNumber("00000000000633305101");
+payload.setAglcServiceLocationID("633305101");
+payload.setCreditCheckOption("yes");
+payload.setConfirmCreditCheck(false);
+
+    }
+    public void setTestCondition26(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition27(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckBusinessName("MORGAN TRAILER MFG CO");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+        payload.setCommercialCreditCheckBusinessBIN("716441998");
+
+    }
+    public void setTestCondition28(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition29(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition30(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition31(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition32(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition33(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+
+
 
 }
 
