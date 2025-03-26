@@ -131,8 +131,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
 
   @GetEligiblePlansAndOffersWithInvalidTestCondition @Phase1 @NegativeFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with invalid test condition "<NULL_AUTHORIZED_BY>" Type
-    When a request is made to the GetEligiblePlansAndOffers Api with "<NULL_AUTHORIZED_BY>" Type
+  Scenario: Verify GetEligiblePlansAndOffers Api with invalid test condition null Authorised Type
+    When a request is made to the GetEligiblePlansAndOffers Api with null Authorised Type
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 2000 and ErrorMessage "Invalid Request: Missing conditional parameters-Authorized By"
 
@@ -145,7 +145,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | referralCode                                    | errorCode | errorMessage                                                                                                                                                 |
       | MAX_REFERRAL_CODE                               | 10000     | The Referral Code must be a string with a maximum length of 9.                                                                                               |
-      | NONNUMERIC_REFERRAL_CODE                        | 2000      | Invalid Request: Invalid Referral Code                                                                                                                       |
+      | NONNUMERIC_REFERRAL_CODE                        | 11115      | Invalid Request: Invalid Referral Code                                                                                                                       |
       | ALPHANUMERIC_REFERRAL_CODE                      | 2000      | Invalid Request: Invalid Referral Code                                                                                                                       |
       | VALID_REFERRAL_CODE_WITH_MISSING_MARKETING_CODE | 1000      | Invalid Request: Missing Promotion Code -Please ask the customer for a promotion code. If they do not have one, enter the appropriate default promotion code |
 
@@ -300,7 +300,6 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_CITY                                      | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
       | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_CITY_WITH_BILLING_RURAL_ROUTE             | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_CITY_WITH_BILLING_PO_BOX                  | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_PO_BOX_279b       | 10003     | The Billing State Code must be a string with a maximum length of 3.                                                              |
       | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_RURAL_ROUTE       | 10000     | The Billing State Code must be a string with a maximum length of 3.                                                              |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_PO_BOX            | 10000     | The Billing State Code must be a string with a maximum length of 3.                                                              |
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
@@ -310,10 +309,10 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
       | VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
       | VALID_BILLING_ADDRESS_TYPE_R_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Address Type                                                                  |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_ZIP_CODE_MISSING_281c                                     | 2000      | Invalid Request: Invalid Billing Address Type                                                                |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_ZIP_CODE_MISSING_281e                                | 2000      | Invalid Request: Missing conditional parameters-Billing Zip Code                                                                 |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_ZIP_CODE_MISSING_281e                                | 2000      | Invalid Request: Missing conditional parameters-Billing State Code                                     |
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_COUNTY_CODE                               | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
       | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_BILLING_RURAL_ROUTE           | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_WITH_BILLING_PO_BOX           | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
@@ -375,15 +374,15 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | AcnStatusIndicator                                                        | errorCode | errorMessage                                                          |
-      | EMPTY_ACN_STATUS_INDICATOR_WITH_TENANT_LANDLORD                           | 10000     | Invalid Request: Invalid ACN Status for user role                              |
+      | EMPTY_ACN_STATUS_INDICATOR_WITH_TENANT_LANDLORD                           | 10000     | Invalid or missing ACN Status Indicator                           |
       | INVALID_ACN_STATUS_INDICATOR_VALUE_NOT_PRESENT_IN_TABLE                   | 2000      | Invalid Request: Invalid ACN Status Indicator                         |
       | MAX_LENGTH_ACN_STATUS_INDICATOR                                           | 10000     | The ACN Status Indicator must be a string with a maximum length of 4. |
       | VALID_ACN_STATUS_INDICATOR_WITH_MAX_LENGTH_TENANT_LANDLORD                | 10000     | The Tenant/Landlord must be a string with a maximum length of 1.      |
-      | VALID_ACN_STATUS_INDICATOR_WITH_NULL_TENANT_LANDLORD                      | 10000     | Invalid or missing Tenant Landlord                                    |
+      | VALID_ACN_STATUS_INDICATOR_WITH_NULL_TENANT_LANDLORD                      | 10000     | Invalid or missing Tenant/Landlord Indicator                          |
       | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE | 2000      | Invalid Request: Invalid ACN Status for user role                     |
       | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE | 2000      | Invalid Request: Invalid ACN Status for user role                     |
       | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE  | 10000     | Invalid or missing ACN Status Indicator                               |
-      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE  | 10000     | Invalid Request: Invalid ACN Status for user role                     |
+      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE  | 10000     | Invalid or missing ACN Status Indicator                     |
 
   @GetEligiblePlansAndOffersInvalidCustomerPEWCPreferences @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CustomerPEWCPreferences>"
@@ -414,9 +413,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | InitialCreditCheckCustomerCode                                    | errorCode | errorMessage                                                                                                                                              |
       | EMPTY_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITH_CREDIT_CHECK_OPTION_315 | 2000      | Invalid Request: Missing conditional parameters-Initial Credit Check Cust Code                                                                            |
-      | MAX_LENGTH_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_313                     | 10000     | The Customer Code must be an integer with a maximum length of 9                                                                                        |
+      | MAX_LENGTH_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_313                     | 10000     | The Initial Credit Check Customer Code must be an integer with a maximum length of 9                                                                   |
       | NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_314                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int32]. Path: $.initialCreditCheckCustomerCode  LineNumber: 65  BytePositionInLine: 47. |
-      | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_NOT_PRESENT_IN_TABLE_316   | 2000      | Invalid Request: Invalid Customer Code                                                                                                                    |
+      | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_NOT_PRESENT_IN_TABLE_316   | 2000      | Invalid or missing Initial Credit Check Customer Code                                                                                                                  |
       | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317   | 10000      | Unable to locate a credit score within 3 months for the Customer Code provided - 5908691                                                                  |
 
 
@@ -440,7 +439,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | customerTYPE             | errorCode | errorMessage                                                   |
-      | EMPTY_CUSTOMER_TYPE      | 10000     | The Customer Type must be a string with a maximum length of 2                              |
+      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
       | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
       | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
       | MAX_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
@@ -518,12 +517,3 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
 
-  @GetEligiblePlansAndOffersTC32UC74MKSW @Phase1 @HappyFlow
-  Scenario: Verify response code Commercial marketer switch  TC_32
-    When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_32
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-
-  @GetEligiblePlansAndOffersTC33UC42MKSW @Phase1 @HappyFlow
-  Scenario: Verify response code Commercial marketer switch  TC_33
-    When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_33
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200

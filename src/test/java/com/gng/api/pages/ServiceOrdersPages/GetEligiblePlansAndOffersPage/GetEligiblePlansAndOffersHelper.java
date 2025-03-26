@@ -649,7 +649,7 @@ public class GetEligiblePlansAndOffersHelper {
             case VALID_BILLING_ADDRESS_TYPE_P_WITH_MIN_LENGTH_BILLING_ZIP_CODE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(true);
-                payload.setBillingAddressType("P");
+                payload.setBillingAddressType("S");
                 payload.setBillingRuralRoute("RR");
                 payload.setBillingRuralRouteNumber("1234");
                 payload.setBillingStreetName("TREE-PARK");
@@ -1361,24 +1361,8 @@ payload.setConfirmCreditCheck(false);
         payload.setConfirmCreditCheck(true);
 
     }
-    public void setTestCondition32(GetEligiblePlansAndOffersRequest payload) {
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-        payload.setLoginID("sys");
-        payload.setTransactionType("MKSW");
-        payload.setCustomerBusinessName("MORGAN");
-        payload.setCreditCheckOption("yes");
-        payload.setConfirmCreditCheck(true);
 
-    }
-    public void setTestCondition33(GetEligiblePlansAndOffersRequest payload) {
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-        payload.setLoginID("sys");
-        payload.setTransactionType("MKSW");
-        payload.setCustomerBusinessName("MORGAN");
-        payload.setCreditCheckOption("yes");
-        payload.setConfirmCreditCheck(true);
 
-    }
 
 
 
