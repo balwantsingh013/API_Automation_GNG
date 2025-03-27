@@ -20,16 +20,17 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/phase1/uat2/GetEligiblePlansAndOffers.feature"
+                "src/test/resources/features/phase1/uat2"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
         //tags = "@GetEligiblePlansAndOffersInvalidCustomerCode",
-        //tags = "@GetEligiblePlansAndOffersTC25UC53",
+        //tags = "@GetUserRolesExpiredPasswordInDB",
 
         plugin = {
                 "pretty",
+
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         }
 )
