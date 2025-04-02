@@ -481,5 +481,13 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
     }
 
+    public void validateTestConditionRSTC17UC39(GetEligiblePlansAndOffersApiLabel apiLabel) throws IOException {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setTestConditionRSTC17UC39(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+
+    }
 
 }
