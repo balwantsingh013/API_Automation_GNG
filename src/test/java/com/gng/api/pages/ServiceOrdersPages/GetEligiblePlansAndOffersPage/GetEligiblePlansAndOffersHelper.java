@@ -14,8 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.gng.api.constants.TestConstant.EXPERIAN_DATA;
-import static com.gng.api.constants.TestConstant.EXPERIAN_SHEET_NAME;
+import static com.gng.api.constants.TestConstant.*;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -1298,11 +1297,13 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
         payload.setLoginID("sys");
         payload.setTransactionType("MKSW");
+        payload.setCustomerLastName(null);
+        payload.setCustomerFirstName(null);
         payload.setCustomerBusinessName("MORGAN");
-payload.setAglcAccountNumber("00000000000633305101");
-payload.setAglcServiceLocationID("633305101");
-payload.setCreditCheckOption("yes");
-payload.setConfirmCreditCheck(false);
+        payload.setAglcAccountNumber("00000000000633305101");
+        payload.setAglcServiceLocationID("633305101");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(false);
 
     }
     public void setTestCondition26(GetEligiblePlansAndOffersRequest payload) {
@@ -1359,6 +1360,16 @@ payload.setConfirmCreditCheck(false);
         payload.setCustomerBusinessName("MORGAN");
         payload.setCreditCheckOption("yes");
         payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestConditionRSTC17UC39(GetEligiblePlansAndOffersRequest payload) throws IOException {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+ ExcelReader excelReader = new ExcelReader(CUSTOMER_DATA);
+                List<Map<String, String>> testData = excelReader.getSheetData(CUSTOMER_SHEET_NAME);
+                Map<String, String> rowData = testData.get(829); // 0-indexed, fetches the second data row
+                log.info("BUSINESS NAME is: {}", rowData.get("BUSINESS NAME"));
 
     }
 
