@@ -516,8 +516,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_31
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
-  @GetEligiblePlansAndOffers_RSTC17UC39MKSW @Phase1 @HappyFlow
-  Scenario: Verify response code Commercial marketer switch  RSTC17UC39
-    When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  RSTC17UC39
+  @GetEligiblePlansAndOffers_RSTC11UC50MKSW @Phase1 @HappyFlow
+  Scenario: Verify response code Residential marketer switch  RSTC11UC50
+    When a request is made to the GetEligiblePlansAndOffers Api with Residential marketer switch  RSTC11UC50
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 

@@ -271,9 +271,9 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Commercial_marketer_switch_TC_31() {
         getEligiblePlansAndOffersApiPage.validateTestCondition31(get_eligible_plans_and_offers_mandatory);
     }
-    @When("a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  RSTC17UC39")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Commercial_marketer_switch_RSTC17UC39() throws IOException {
-        getEligiblePlansAndOffersApiPage.validateTestConditionRSTC17UC39(get_eligible_plans_and_offers_mandatory);
+    @When("a request is made to the GetEligiblePlansAndOffers Api with Residential marketer switch  RSTC11UC50")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Residential_marketer_switch_RSTC11UC50() throws IOException {
+        getEligiblePlansAndOffersApiPage.validateTestConditionRSTC11UC50(get_eligible_plans_and_offers);
     }
 
 
