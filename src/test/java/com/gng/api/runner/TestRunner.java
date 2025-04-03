@@ -26,7 +26,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         dryRun = false,
         monochrome = true,
         //tags = "@GetEligiblePlansAndOffersInvalidCustomerCode",
-        tags = "@GetUserRolesInvalidPasswordInDB",
+        tags = "@GetEligiblePlansAndOffers_RSTC11UC50MKSW",
 
         plugin = {
                 "pretty",

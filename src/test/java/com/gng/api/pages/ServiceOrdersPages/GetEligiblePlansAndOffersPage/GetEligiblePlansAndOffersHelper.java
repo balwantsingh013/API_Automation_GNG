@@ -1362,14 +1362,38 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setConfirmCreditCheck(true);
 
     }
-    public void setTestConditionRSTC17UC39(GetEligiblePlansAndOffersRequest payload) throws IOException {
+    public void setTestConditionRSTC11UC50(GetEligiblePlansAndOffersRequest payload) throws IOException {
         payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
         payload.setLoginID("sys");
         payload.setTransactionType("MKSW");
  ExcelReader excelReader = new ExcelReader(CUSTOMER_DATA);
                 List<Map<String, String>> testData = excelReader.getSheetData(CUSTOMER_SHEET_NAME);
-                Map<String, String> rowData = testData.get(829); // 0-indexed, fetches the second data row
-                log.info("BUSINESS NAME is: {}", rowData.get("BUSINESS NAME"));
+                Map<String, String> rowData = testData.get(3);
+        payload.setCustomerLastName(rowData.get("customerLastName"));
+        payload.setCustomerFirstName(rowData.get("customerFirstName"));
+        payload.setAglcAccountNumber(rowData.get("aglcAccountNumber"));
+        payload.setAglcServiceLocationID(rowData.get("aglcServiceLocationID"));
+        payload.setPremisesStreetNumber(rowData.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(rowData.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(rowData.get("premisesStreetSuffix"));
+        payload.setPremisesUnitType(rowData.get("premisesUnitType"));
+        payload.setPremisesUnitNumber(rowData.get("premisesUnitNumber"));
+        payload.setPremisesCity(rowData.get("premisesCity"));
+        payload.setPremisesStateCode(rowData.get("premisesStateCode"));
+        payload.setPremisesZipCode(rowData.get("premisesZipCode"));
+        payload.setPremisesCountyCode(rowData.get("premisesCountyCode"));
+        payload.setSeparateBillingAddress(rowData.get("separateBillingAddress"));
+        payload.setAcnStatusIndicator(rowData.get("acnStatusIndicator"));
+        payload.setCustomerPEWCPreferences(rowData.get("customerPEWCPreferences"));
+        payload.setCreditCheckOption(rowData.get("creditCheckOption"));
+        payload.setConfirmCreditCheck(Boolean.parseBoolean(rowData.get("confirmCreditCheck")));
+        payload.setTenantLandlord(rowData.get("tenantLandlord"));
+        payload.setPremisesStreetPostDirection(rowData.get("premisesStreetPostDirection"));
+
+
+
+
+
 
     }
 
