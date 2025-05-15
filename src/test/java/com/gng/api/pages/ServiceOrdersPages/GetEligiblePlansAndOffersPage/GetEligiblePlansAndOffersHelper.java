@@ -3,11 +3,18 @@ package com.gng.api.pages.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
-import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesRequest;
 import com.gng.api.steps.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static com.gng.api.constants.TestConstant.*;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -641,7 +648,7 @@ public class GetEligiblePlansAndOffersHelper {
             case VALID_BILLING_ADDRESS_TYPE_P_WITH_MIN_LENGTH_BILLING_ZIP_CODE:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setSeparateBillingAddress(true);
-                payload.setBillingAddressType("P");
+                payload.setBillingAddressType("S");
                 payload.setBillingRuralRoute("RR");
                 payload.setBillingRuralRouteNumber("1234");
                 payload.setBillingStreetName("TREE-PARK");
@@ -1004,10 +1011,14 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public void setCustomerCodeBasedOnTypeTC163_164(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customercode) {
+    public void setCustomerCodeBasedOnTypeTC163_164(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customercode) throws IOException {
         switch (customercode) {
             case NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
+                /*ExcelReader excelReader = new ExcelReader(EXPERIAN_DATA);
+                List<Map<String, String>> testData = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
+                Map<String, String> rowData = testData.get(0); // 0-indexed, fetches the second data row
+                log.info("BUSINESS NAME is: {}", rowData.get("BUSINESS NAME"));*/
                 payload.setEnrollmentState("INCL");
                 payload.setPremisesCode("5886135");
                 payload.setTransactionID("234223459");
@@ -1055,18 +1066,13 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
 
-    public void setInvalidTestConditionTC237(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel authorizedBy) {
-        switch (authorizedBy) {
-            case NULL_AUTHORIZED_BY_237:
+    public void setInvalidTestConditionTC237(GetEligiblePlansAndOffersRequest payload) {
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setAuthorizedBy(null);
                 payload.setCustomerType("CM");
                 payload.setLoginID("sys");
                 payload.setFederalTaxID("f45uBGDqZKPL34H0Fx01ETGmXhUlI6VyORn/aD0/IYg=");
-            default:
-                payload.setAuthorizedBy("MM");
 
-        }
     }
 
     public void setInvalidReferralCodeTC238_241(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel referralcode) {
@@ -1287,6 +1293,113 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesCountyCode(FakerDataGenerator.getRandomString(5));
         }
     }
+    public void setTestCondition25(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerLastName(null);
+        payload.setCustomerFirstName(null);
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setAglcAccountNumber("00000000000633305101");
+        payload.setAglcServiceLocationID("633305101");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(false);
+
+    }
+    public void setTestCondition26(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition27(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckBusinessName("MORGAN TRAILER MFG CO");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+        payload.setCommercialCreditCheckBusinessBIN("716441998");
+
+    }
+    public void setTestCondition28(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition29(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition30(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestCondition31(GetEligiblePlansAndOffersRequest payload) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+        payload.setCustomerBusinessName("MORGAN");
+        payload.setCreditCheckOption("yes");
+        payload.setConfirmCreditCheck(true);
+
+    }
+    public void setTestConditionRSTC11UC50(GetEligiblePlansAndOffersRequest payload) throws IOException {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setLoginID("sys");
+        payload.setTransactionType("MKSW");
+ ExcelReader excelReader = new ExcelReader(CUSTOMER_DATA);
+                List<Map<String, String>> testData = excelReader.getSheetData(CUSTOMER_SHEET_NAME);
+                Map<String, String> rowData = testData.get(3);
+        payload.setCustomerLastName(rowData.get("customerLastName"));
+        payload.setCustomerFirstName(rowData.get("customerFirstName"));
+        payload.setAglcAccountNumber(rowData.get("aglcAccountNumber"));
+        payload.setAglcServiceLocationID(rowData.get("aglcServiceLocationID"));
+        payload.setPremisesStreetNumber(rowData.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(rowData.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(rowData.get("premisesStreetSuffix"));
+        payload.setPremisesUnitType(rowData.get("premisesUnitType"));
+        payload.setPremisesUnitNumber(rowData.get("premisesUnitNumber"));
+        payload.setPremisesCity(rowData.get("premisesCity"));
+        payload.setPremisesStateCode(rowData.get("premisesStateCode"));
+        payload.setPremisesZipCode(rowData.get("premisesZipCode"));
+        payload.setPremisesCountyCode(rowData.get("premisesCountyCode"));
+        payload.setSeparateBillingAddress(rowData.get("separateBillingAddress"));
+        payload.setAcnStatusIndicator(rowData.get("acnStatusIndicator"));
+        payload.setCustomerPEWCPreferences(rowData.get("customerPEWCPreferences"));
+        payload.setCreditCheckOption(rowData.get("creditCheckOption"));
+        payload.setConfirmCreditCheck(Boolean.parseBoolean(rowData.get("confirmCreditCheck")));
+        payload.setTenantLandlord(rowData.get("tenantLandlord"));
+        payload.setPremisesStreetPostDirection(rowData.get("premisesStreetPostDirection"));
+
+
+
+
+
+
+    }
+
+
+
+
 
 }
 

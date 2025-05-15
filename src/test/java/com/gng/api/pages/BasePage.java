@@ -42,12 +42,18 @@ public abstract class BasePage  {
     // Set Request Specification
     protected <T> void setRequestSpecification(T payload, String token) {
         log.info("Setting Request Specification");
+        // Use modified payload if available, otherwise use the default payload
+        Object finalPayload = (testContext.getCustomRequestPayload() != null)
+                ? testContext.getCustomRequestPayload()
+                : payload;
+
         getRequestSpec()
                 .headers(getApiHeaders())
-                .body(payload)
+                .body(finalPayload)
                 .auth()
                 .oauth2(token);
     }
+
 
     protected Map<String, String> getApiHeaders() {
         logInfo("Get Api Headers");

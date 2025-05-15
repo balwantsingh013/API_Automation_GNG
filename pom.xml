@@ -19,7 +19,7 @@
         <surefire.parallel>methods</surefire.parallel>
         <surefire.threadCount>1</surefire.threadCount>
         <maven.cucumber.reporting.version>5.8.2</maven.cucumber.reporting.version>
-        <cucumber.version>7.18.1</cucumber.version>
+        <cucumber.version>7.21.1</cucumber.version>
         <testng.version>7.10.2</testng.version>
         <restassured.version>5.5.0</restassured.version>
         <jackson.version>2.18.0</jackson.version>
@@ -45,8 +45,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler.version}</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>21</source>
+                    <target>21</target>
+
                 </configuration>
             </plugin>
             <plugin>
@@ -269,6 +270,12 @@
             <artifactId>xchart</artifactId>
             <version>3.8.0</version>
         </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>5.2.3</version>  <!-- Use the latest version -->
+            </dependency>
+
 
     </dependencies>
 </project>

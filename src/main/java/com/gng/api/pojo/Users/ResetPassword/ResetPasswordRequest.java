@@ -1,6 +1,5 @@
-package com.gng.api.pojo.Users.GetUserRoles;
+package com.gng.api.pojo.Users.ResetPassword;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -12,11 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GetUserRolesRequest {
+public class ResetPasswordRequest{
 	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String loginID;
 	@JsonInclude(JsonInclude.Include.ALWAYS)
 	private String requestID;
 	@JsonInclude(JsonInclude.Include.ALWAYS)
-	private String password;
+	private String oldPassword;
+	@JsonInclude(JsonInclude.Include.ALWAYS)
+	private String newPassword;
 }

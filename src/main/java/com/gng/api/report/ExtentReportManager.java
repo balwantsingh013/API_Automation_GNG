@@ -12,7 +12,6 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.SpecificationQuerier;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
-import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -72,25 +71,26 @@ public class ExtentReportManager {
 
     public static void generateReport(ITestResult result) {
         ExtentTest logger = extentLogger.get();
+
         if (result.getStatus() == ITestResult.FAILURE) {
             if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnFail())) {
-                logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable() + getResponseBody()
-                        + BR2 + getRequestDetails() + BODY + qReqSpec.get().getBody());
+                logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable() + getRequestDetailsIfExists()
+                        + BR2 + getResponseBodyIfExists());
             } else {
-                logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable() + getResponseBody()
-                        + BR2 + getRequestDetails());
+                logger.log(Status.FAIL, ERRORRETURNED + result.getThrowable());
             }
         } else if (result.getStatus() == ITestResult.SUCCESS) {
             if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnPass())) {
-                logger.log(Status.PASS, getRequestDetails() + getExpectedStatusCode()
-                        + BODY + qReqSpec.get().getBody() + BR2 + RESPONSEDETAILS + getResponseStatusLine() + getResponseBody());
+                logger.log(Status.PASS, getRequestDetailsIfExists() + getExpectedStatusCodeIfExists()
+                        + BR2 + RESPONSEDETAILS + getSafeResponseStatusLine() + getResponseBodyIfExists());
             } else {
-                logger.log(Status.PASS, getRequestDetails() + getExpectedStatusCode() + BR2 + RESPONSEDETAILS + getResponseStatusLine());
+                logger.log(Status.PASS, getRequestDetailsIfExists() + getExpectedStatusCodeIfExists());
             }
         } else if (result.getStatus() == ITestResult.SKIP) {
-            logger.log(Status.SKIP, getRequestDetails()
-                    + BODY + qReqSpec.get().getBody());
+            logger.log(Status.SKIP, getRequestDetailsIfExists());
         }
+
+        // Clean up after the test
         qReqSpec.remove();
         response.remove();
         expectedStatusCode.remove();
@@ -115,7 +115,8 @@ public class ExtentReportManager {
     }
 
     public static void addRequestDetailsToReport(RequestSpecification reqSpec) {
-        qReqSpec.set(SpecificationQuerier.query(reqSpec));
+        QueryableRequestSpecification queryable = SpecificationQuerier.query(reqSpec);
+        qReqSpec.set(queryable);
     }
 
     public static void addResponseDetailsToReport(Response resp, int statusCode) {
@@ -133,29 +134,33 @@ public class ExtentReportManager {
         logger.log(Status.FAIL, msg);
     }
 
-    public static String getRequestDetails() {
-        return REQUESTDETAILS
-                + BASEURI + qReqSpec.get().getBaseUri()
-                + HEADERS + qReqSpec.get().getHeaders()
-                + PARAMS + qReqSpec.get().getRequestParams();
+    public static String getRequestDetailsIfExists() {
+        QueryableRequestSpecification reqSpec = qReqSpec.get();
+        return (reqSpec != null)
+                ? REQUESTDETAILS + BASEURI + reqSpec.getBaseUri()
+                + HEADERS + reqSpec.getHeaders()
+                + PARAMS + reqSpec.getRequestParams()
+                + BODY + (reqSpec.getBody() != null ? reqSpec.getBody().toString() : "No Request Body")
+                : "No API Request Details (DB Validation Only)";
     }
 
-    public static String getResponseStatusLine() {
-        return STATUS + response.get().getStatusLine();
-    }
-
-    public static String getExpectedStatusCode() {
-        return STATUSCODEEXP + expectedStatusCode.get();
-    }
-
-    public static String getResponseBody() {
+    public static String getSafeResponseStatusLine() {
         Response resp = response.get();
-        return resp != null ? BODY + resp.getBody().asPrettyString() : "No Response Body";
+        return (resp != null) ? STATUS + resp.getStatusLine() : STATUS + "No API Response (DB Validation Only)";
     }
 
+    public static String getExpectedStatusCodeIfExists() {
+        return (expectedStatusCode.get() != null)
+                ? STATUSCODEEXP + expectedStatusCode.get()
+                : STATUSCODEEXP + "No Expected Status Code (DB Validation Only)";
+    }
+
+    public static String getResponseBodyIfExists() {
+        Response resp = response.get();
+        return (resp != null) ? BODY + resp.getBody().asPrettyString() : "No API Response Body (DB Validation Only)";
+    }
 
     public static ExtentTest getExtentLogger() {
         return extentLogger.get();
     }
-
 }
