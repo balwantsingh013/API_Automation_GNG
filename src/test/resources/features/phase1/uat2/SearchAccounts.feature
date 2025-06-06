@@ -558,3 +558,10 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
+
+  @SearchAccountsInvalidParameter @Phase1 @HappyFlow
+  Scenario: Verify Response For Verify that when an invalid Banner Account Number parameter with transactionType As TOFF is input TC_74
+    When a request is made to the SearchAccounts Api with invalid Banner Account Number parameter with transactionType As TOFF TC_74
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0

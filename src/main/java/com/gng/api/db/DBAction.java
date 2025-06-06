@@ -216,7 +216,11 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-
+    public Map<String, Object> getAccountDetails_CustCode() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE;
+        logQueryInAllure("Get Customer Code And Premise Code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
 
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string
