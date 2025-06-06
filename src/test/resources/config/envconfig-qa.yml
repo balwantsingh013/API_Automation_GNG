@@ -1,4 +1,4 @@
-baseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
+baseUri: "https://apitest2.gng.com/api/v1"
 authUri: "/Authentication/GetToken"
 vendorId: "vertex.auto.apitest.gng.com"
 vendorSecret: "HAXxeK86Q7omh4rCPeuX"
