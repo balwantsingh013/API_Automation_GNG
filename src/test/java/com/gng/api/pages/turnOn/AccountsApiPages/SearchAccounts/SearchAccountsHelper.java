@@ -22,6 +22,8 @@ public class SearchAccountsHelper {
     public String customerCode;
 
     public static final String USERNAME = "autotester";
+    public static final String USERNAME_01 = "sys";
+    public static final String TRANS_TYPE="TOFF";
 
     public SearchAccountsHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -972,7 +974,16 @@ public class SearchAccountsHelper {
 
     }
 
+    public void  getCustomerFromDbAndPreparePayload(SearchAccountsRequest payload) {
+        Map<String, Object> AccountDetails_CustCode = ApplicationContext.get().getDbAction().getAccountDetails_CustCode();
+        String customerCode=AccountDetails_CustCode.get("UCRACCT_CUST_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME_01);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
+        payload.setTransactionType(TRANS_TYPE);
 
+    }
 }
 
 
