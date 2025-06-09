@@ -45,6 +45,12 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> cityStateZip() {
+        String query = DBQuery.select_CITY_STATE_ZIP;
+        logQueryInAllure("Get city, state and zip", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public List<Map<String, Object>> getInvalidCustomerCode(String customerCode) {
         String query = (DBQuery.SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE).replace("CustomerCode", customerCode);
         logQueryInAllure("Get Invalid Customer Code", query);

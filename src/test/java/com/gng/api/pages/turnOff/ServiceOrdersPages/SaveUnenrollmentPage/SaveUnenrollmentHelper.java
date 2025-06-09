@@ -109,9 +109,15 @@ public class SaveUnenrollmentHelper {
     public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,String forwardingAddressIs, String type){
         if(forwardingAddressIs.equals("NA")){
             payload.setForwardingAddressIs("NA");
-            payload.setForwardingAddressCity("ATLANTA");
-            payload.setForwardingAddressStateCode("GA");
-            payload.setForwardingAddressZipCode("30316");
+
+            Map<String, Object> addressCityStateZip = ApplicationContext.get().getDbAction().cityStateZip();
+            String city = addressCityStateZip.get("UCRADDR_CITY").toString();
+            String state = addressCityStateZip.get("UCRADDR_STAT_CODE").toString();
+            String zip= addressCityStateZip.get("UCRADDR_ZIP").toString();
+
+            payload.setForwardingAddressCity(city);
+            payload.setForwardingAddressStateCode(state);
+            payload.setForwardingAddressZipCode(zip);
 
             switch(type){
                 case "S":

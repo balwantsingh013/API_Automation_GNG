@@ -350,6 +350,13 @@ public final class DBQuery {
             UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
             """;
 
+    public static final String select_CITY_STATE_ZIP = """
+            SELECT t.UCRADDR_CITY, t.UCRADDR_STAT_CODE, t.UCRADDR_ZIP 
+            FROM UCRADDR t
+            WHERE t.UCRADDR_ZIP IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String select_CUST_PREM_AGLC_SERVICE_CODES = """
             SELECT
                 t2.gtbtrnh_cust_code,
