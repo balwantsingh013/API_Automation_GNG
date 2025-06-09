@@ -350,7 +350,7 @@ public final class DBQuery {
             UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
             """;
 
-    public static final String QUERY_TC_75 = """
+    public static final String ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS = """
 SELECT
   t1.ucracct_cust_code,
   t1.ucracct_prem_code
@@ -369,6 +369,13 @@ WHERE t1.ucracct_cust_code = t2.ucbcust_cust_code
 ORDER BY t1.ucracct_cust_code DESC
 FETCH FIRST 1 ROWS ONLY
             """;
+
+    public static final String GET_LASTNAME_AND_ZIPCODE = "SELECT t1.uzbenro_dsm_last_name,  t2.ucraddr_zip \n" +
+            "FROM uzbenro t1 JOIN ucraddr t2\n" +
+            "ON t1.uzbenro_cust_code= t2.ucraddr_cust_code\n" +
+            "WHERE t1.uzbenro_dsm_last_name IS NOT NULL \n" +
+            "AND t2.ucraddr_zip IS NOT NULL\n" +
+            "FETCH FIRST 1 ROWS ONLY";
 
 
 

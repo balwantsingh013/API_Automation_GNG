@@ -222,24 +222,25 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getAccountDetails_ForResOrCommAccount(String account_type) {
-        String query = DBQuery.QUERY_TC_75;
-        String formattedQuery=null;
-        switch (account_type){
-            case "Residential":
-                formattedQuery=query.replace("?","RS");
-                case "Commercial":
-                formattedQuery=query.replace("?","CM");
+    public Map<String, Object> getAccountDetails_ForResidentialOrCommercialAccount(String account_type) {
+        String query = DBQuery.ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS;
+        String formattedQuery = null;
+
+        if ("Residential".equalsIgnoreCase(account_type)) {
+            formattedQuery = query.replace("?", "RS");
+        } else if ("Commercial".equalsIgnoreCase(account_type)) {
+            formattedQuery = query.replace("?", "CM");
+        } else {
+            throw new IllegalArgumentException("Invalid account type: " + account_type);
         }
         logQueryInAllure("Get Customer Code And Premise Code", formattedQuery);
         return jdbcTemplate.queryForMap(formattedQuery);
     }
 
-    public Map<String, Object> getAccountDetails_CustCode2() {
-        String query = DBQuery.QUERY_TC_75;
-        String formattedQuery=query.replace("?","CM");
-        logQueryInAllure("Get Customer Code And Premise Code", formattedQuery);
-        return jdbcTemplate.queryForMap(formattedQuery);
+    public Map<String, Object> getAccountDetails_LastNameZipCode() {
+        String query = DBQuery.GET_LASTNAME_AND_ZIPCODE;
+        logQueryInAllure("Get Last Name And Zip Code", query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     private void logQueryInAllure(String title, String query, Object... params) {

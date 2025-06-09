@@ -21,7 +21,7 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateResponseForInvalidAccountParamtersTC74(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getCustomerFromDbAndPreparePayload(payload);
+        helper.getCustomerDetialsFromDbAndPreparePayload(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
@@ -30,12 +30,23 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateResponseForvalidAccountParamtersForTC75_76(SearchAccountsApiLabel apiLabel, String account_type) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getCustomerFromDbAndPreparePayload1(payload, account_type);
+        helper.getDetailsFromDbAndPreparePayloadForRMOrCM_customer(payload, account_type);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
 
     }
+
+    public void validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(SearchAccountsApiLabel apiLabel, String combination_status) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getLastNameAndZipcodeFromDbAndPreparePayload(payload, combination_status);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+
+    }
+
+
 
 
 }
