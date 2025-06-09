@@ -94,46 +94,47 @@ public class SaveUnenrollmentHelper {
         }
     }
 
-    public void setEmailAddress(SaveUnenrollmentRequest payload,Boolean setEmail){
-        if(setEmail){
-            payload.setEmailAddress("karen.fletcher@vertexone.net");
+    public void setEmailAddress(SaveUnenrollmentRequest payload,String setEmail){
+        if(setEmail.equals("Yes")){
+            payload.setEmailAddress(FakerDataGenerator.generateEmail());
         }
     }
 
-    public void setEtcExists(SaveUnenrollmentRequest payload, Boolean etcExists ){
-        if(etcExists){
+    public void setEtcExists(SaveUnenrollmentRequest payload, String etcExists ){
+        if(etcExists.equals("Yes")){
             payload.setEtcExists(true);
         }
     }
 
     public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,String forwardingAddressIs, String type){
-        switch(type){
-            case "S":
-                payload.setForwardingAddressType("S");
-                payload.setForwardingAddressStreetNumber("609");
-                payload.setForwardingAddressStreetName("STOKESWOOD");
-                payload.setForwardingAddressStreetSuffix("AVE");
-                payload.setForwardingAddressStreetPostDirection("SE");
-                break;
-
-            case "R":
-                payload.setForwardingAddressType("R");
-                payload.setForwardingAddressRuralRoute("RR2");
-                break;
-
-            case "P":
-                payload.setForwardingAddressType("P");
-                payload.setForwardingAddressPOBox("2A");
-                break;
-
-            default:
-
-        }
         if(forwardingAddressIs.equals("NA")){
             payload.setForwardingAddressIs("NA");
             payload.setForwardingAddressCity("ATLANTA");
             payload.setForwardingAddressStateCode("GA");
             payload.setForwardingAddressZipCode("30316");
+
+            switch(type){
+                case "S":
+                    payload.setForwardingAddressType("S");
+                    payload.setForwardingAddressStreetNumber("609");
+                    payload.setForwardingAddressStreetName("STOKESWOOD");
+                    payload.setForwardingAddressStreetSuffix("AVE");
+                    payload.setForwardingAddressStreetPostDirection("SE");
+                    break;
+
+                case "R":
+                    payload.setForwardingAddressType("R");
+                    payload.setForwardingAddressRuralRoute("RR2");
+                    break;
+
+                case "P":
+                    payload.setForwardingAddressType("P");
+                    payload.setForwardingAddressPOBox("2A");
+                    break;
+
+                default:
+
+            }
         }
     }
 
