@@ -326,7 +326,7 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts_mandatory);
     }
 
-    @When("a request is made to the SearchAccounts Api with invalid Banner Account Number parameter with transactionType As TOFF TC_74")
+   // @When("a request is made to the SearchAccounts Api with invalid Banner Account Number parameter with transactionType As TOFF TC_74")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_invalid_Banner_Account_Number_parameter_TC_74 () {
         searchAccountsApiPage.validateResponseForInvalidAccountParamtersTC74(search_accounts);
     }

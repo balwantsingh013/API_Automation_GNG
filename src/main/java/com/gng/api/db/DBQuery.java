@@ -350,6 +350,28 @@ public final class DBQuery {
             UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
             """;
 
+    public static final String QUERY_TC_75 = """
+SELECT
+  t1.ucracct_cust_code,
+  t1.ucracct_prem_code
+FROM ucracct t1, ucbcust t2, ucrserv t3, ucrscmp t5
+WHERE t1.ucracct_cust_code = t2.ucbcust_cust_code
+  AND t1.ucracct_cust_code = t3.ucrserv_cust_code
+  AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+  AND t1.ucracct_cust_code = t5.ucrscmp_cust_code
+  AND t1.ucracct_prem_code = t5.ucrscmp_prem_code
+  AND t1.ucracct_status_ind = 'A'
+  AND t1.ucracct_cycl_code NOT IN ('DEPO')
+  AND t3.ucrserv_scls_code IN ('?')
+  AND t5.ucrscmp_end_date > SYSDATE
+  AND t5.ucrscmp_start_date < SYSDATE
+  AND t5.ucrscmp_scty_code = 'COMM'
+ORDER BY t1.ucracct_cust_code DESC
+FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+
 
     private DBQuery() {
     }

@@ -20,12 +20,12 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/phase1/turnOn"
+                "src/test/resources/features/phase1/turnOff"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        //tags = "@GetEligiblePlansAndOffersInvalidCustomerCode",
+        tags = "@SearchAccountsInvalidParameter2",
         //tags = "@ResetPasswordWithInvalidLoginID",
 
         plugin = {

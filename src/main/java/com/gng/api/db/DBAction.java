@@ -222,6 +222,26 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getAccountDetails_ForResOrCommAccount(String account_type) {
+        String query = DBQuery.QUERY_TC_75;
+        String formattedQuery=null;
+        switch (account_type){
+            case "Residential":
+                formattedQuery=query.replace("?","RS");
+                case "Commercial":
+                formattedQuery=query.replace("?","CM");
+        }
+        logQueryInAllure("Get Customer Code And Premise Code", formattedQuery);
+        return jdbcTemplate.queryForMap(formattedQuery);
+    }
+
+    public Map<String, Object> getAccountDetails_CustCode2() {
+        String query = DBQuery.QUERY_TC_75;
+        String formattedQuery=query.replace("?","CM");
+        logQueryInAllure("Get Customer Code And Premise Code", formattedQuery);
+        return jdbcTemplate.queryForMap(formattedQuery);
+    }
+
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string
         String paramsString = params != null ? java.util.Arrays.toString(params) : "None";
