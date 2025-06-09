@@ -39,6 +39,12 @@ public class DBAction {
         return jdbcTemplate.queryForList(query, noteSeqNo);
     }
 
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC207(String pricePlan, String sclsCode) {
+        String query = DBQuery.select_CUST_PREM_AGLC_SERVICE_CODES;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code ", query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
+    }
+
     public List<Map<String, Object>> getInvalidCustomerCode(String customerCode) {
         String query = (DBQuery.SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE).replace("CustomerCode", customerCode);
         logQueryInAllure("Get Invalid Customer Code", query);

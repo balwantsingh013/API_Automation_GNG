@@ -350,6 +350,33 @@ public final class DBQuery {
             UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
             """;
 
+    public static final String select_CUST_PREM_AGLC_SERVICE_CODES = """
+            SELECT
+                t2.gtbtrnh_cust_code,
+                t2.gtbtrnh_prem_code,
+                t2.gtbtrnh_aglc_acct_nbr,
+                t3.gtrrndn_serv_ord_num
+            FROM
+                uzbenro t1
+            JOIN
+                gtbtrnh t2
+                ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
+            JOIN
+                gtrrndn t3
+                ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
+            JOIN
+                ucrserv t4
+                ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
+            JOIN
+                ucracct t5
+                ON t4.ucrserv_prem_code = t5.ucracct_prem_code
+            WHERE
+                t1.uzbenro_price_plan = ?
+                AND t5.ucracct_status_ind = 'A'
+                AND t4.ucrserv_scls_code = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
 
     private DBQuery() {
     }
