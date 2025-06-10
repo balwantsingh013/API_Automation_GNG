@@ -110,8 +110,8 @@ public class SaveUnenrollmentHelper {
     }
 
 
-    public void setEmailAddress(SaveUnenrollmentRequest payload,String setEmail){
-        if(setEmail.equals("Yes")){
+    public void setEmailAddress(SaveUnenrollmentRequest payload,Boolean setEmail){
+        if(setEmail){
             payload.setEmailAddress(FakerDataGenerator.generateEmail());
         }
     }
