@@ -216,12 +216,6 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getAccountDetails_CustCode() {
-        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE;
-        logQueryInAllure("Get Customer Code And Premise Code", query);
-        return jdbcTemplate.queryForMap(query);
-    }
-
     public Map<String, Object> getAccountDetails_ForResidentialOrCommercialAccount(String account_type) {
         String query = DBQuery.ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS;
         String formattedQuery = null;

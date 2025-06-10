@@ -973,17 +973,6 @@ public class SearchAccountsHelper {
 
 
     }
-
-    public void  getCustomerFromDbAndPreparePayload(SearchAccountsRequest payload) {
-        List<Map<String, Object>> AccountDetails_CustCode = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
-        String customerCode=AccountDetails_CustCode.getFirst().get("UCRACCT_CUST_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME_01);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-        payload.setTransactionType(TRANS_TYPE);
-
-    }
 }
 
 
