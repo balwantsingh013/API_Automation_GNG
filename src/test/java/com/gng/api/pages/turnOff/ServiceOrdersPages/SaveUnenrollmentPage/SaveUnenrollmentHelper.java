@@ -7,6 +7,7 @@ import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentReque
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.SaveUnenrollmentApiLabel;
+import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,64 +46,69 @@ public class SaveUnenrollmentHelper {
         }
     }
 
-    public void setTurnOffReasonAndSubReason(SaveUnenrollmentRequest payload, String turnoffreason){
-        switch (turnoffreason){
-            case "Seasonal or Heat Only":
-                payload.setTurnOffReason("Seasonal or Heat Only");
-                payload.setTurnOffSubReason("");
+    public void setTurnOffReasonAndSubReason(SaveUnenrollmentRequest payload, TurnOffReason reason) {
+
+        switch (reason) {
+            case SEASONAL_OR_HEAT_ONLY:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Moving - Outside AGLC":
-                payload.setTurnOffSubReason("Outside AGLC Territory/Outside Georgia");
-                payload.setTurnOffReason("Moving");
+            case MOVING_OUTSIDE_AGLC:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Other - Military":
-                payload.setTurnOffReason("Other");
-                payload.setTurnOffSubReason("Military");
+            case OTHERS_MILITARY:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Other - Military - ETC waived ":
-                payload.setTurnOffReason("Other");
-                payload.setTurnOffSubReason("Military - ETC Waived");
+            case OTHERS_MILITARY_ETC_WAIVED:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "REAP/Realtor Inspection":
-                payload.setTurnOffReason("REAP/Realtor Inspection");
-                payload.setTurnOffSubReason("");
+            case REAP_REALTOR_INSPECTION:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Household Account Change":
-                payload.setTurnOffSubReason("");
-                payload.setTurnOffReason("Household Account Change");
+            case HOUSEHOLD_ACCOUNT_CHANGE:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Other - financial situation":
-                payload.setTurnOffReason("Other");
-                payload.setTurnOffSubReason("Financial Situation");
+            case OTHER_FINANCIAL_SITUATION:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Moving - Not staying with GNG":
-                payload.setTurnOffReason("Moving");
-                payload.setTurnOffSubReason("Within Pool Group but Not Staying with GNG");
+            case MOVING_NOT_STAYING_WITH_GNG:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Other - Regulated Provider":
-                payload.setTurnOffReason("Other");
-                payload.setTurnOffSubReason("Regulated Provider");
+            case OTHER_REGULATED_PROVIDER:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Other - Deceased":
-                payload.setTurnOffReason("Other");
-                payload.setTurnOffSubReason("Deceased");
+            case OTHER_DECEASED:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case "Moving - Service Transfer":
-                payload.setTurnOffReason("Moving");
-                payload.setTurnOffSubReason("Service Transfer");
+            case MOVING_SERVICE_TRANSFER:
+                payload.setTurnOffReason(reason.getReason());
+                payload.setTurnOffSubReason(reason.getSubReason());
                 break;
+
+            default:
+                throw new IllegalArgumentException("Unhandled reason: " + reason);
         }
     }
+
 
     public void setEmailAddress(SaveUnenrollmentRequest payload,String setEmail){
         if(setEmail.equals("Yes")){

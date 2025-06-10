@@ -8,6 +8,7 @@ import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentReque
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.SaveUnenrollmentApiLabel;
+import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
@@ -33,7 +34,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateForActiveRAMVS(SaveUnenrollmentApiLabel apiLabel, String pricePlan, String sclsCode, String forwardingAddressIs, String type, String turnoffreason, String setEmail, Boolean etcExists){
+    public void validateForActiveRAMVS(SaveUnenrollmentApiLabel apiLabel, String pricePlan, String sclsCode, String forwardingAddressIs, String type, TurnOffReason turnoffreason, String setEmail, Boolean etcExists){
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerCodePremCodeAGLCServiceNo(payload, pricePlan, sclsCode);
         helper.setTurnOffReasonAndSubReason(payload, turnoffreason);

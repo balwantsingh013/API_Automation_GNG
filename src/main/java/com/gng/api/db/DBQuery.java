@@ -381,6 +381,7 @@ public final class DBQuery {
                 t1.uzbenro_price_plan = ?
                 AND t5.ucracct_status_ind = 'A'
                 AND t4.ucrserv_scls_code = ?
+                AND t3.gtrrndn_serv_ord_num IS NOT NULL
             FETCH FIRST 1 ROWS ONLY
             """;
 
