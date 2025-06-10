@@ -37,13 +37,18 @@ public class SearchAccountsApiSteps {
     }
 
     @When("a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For {string} Account")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_FirstName_LastName_And_Zipcode_with_transactionType_As_TOFF_is_input(String combination_status) {
-        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(search_accounts, combination_status);
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_FirstName_LastName_And_Zipcode_with_transactionType_As_TOFF_is_input(String account_type) {
+        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(search_accounts, account_type);
     }
 
     @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And {string} Account")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_CustomerBusinessName_Parameter_with_transactionType_As_TOFF_is_input_For_Commercial_Active(String combination_status) {
         searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC81_82(search_accounts, combination_status);
+    }
+
+    @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And ActiveOrPending Rewards Account")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_CustomerBusinessName_Parameter_with_transactionType_As_TOFF_is_input_For_Commercial_Active_ActivePendingRewardAccount() {
+        searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC83(search_accounts);
     }
 
 }

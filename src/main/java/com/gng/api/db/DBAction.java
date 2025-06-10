@@ -218,17 +218,8 @@ public class DBAction {
 
     public Map<String, Object> getAccountDetails_ForResidentialOrCommercialAccount(String account_type) {
         String query = DBQuery.ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS;
-        String formattedQuery = null;
-
-        if (account_type.equalsIgnoreCase("Residential")) {
-            formattedQuery = query.replace("?", "RS");
-        } else if (account_type.equalsIgnoreCase("Commercial")) {
-            formattedQuery = query.replace("?", "CM");
-        } else {
-            throw new IllegalArgumentException("Invalid account type: " + account_type);
-        }
-        logQueryInAllure("Get Customer Code And Premise Code", formattedQuery);
-        return jdbcTemplate.queryForMap(formattedQuery);
+        logQueryInAllure("Get Customer Code And Premise Code", query);
+        return jdbcTemplate.queryForMap(query, account_type);
     }
 
     public Map<String, Object> getAccountDetails_LastNameZipCode() {
@@ -239,17 +230,8 @@ public class DBAction {
 
     public Map<String, Object> getAccountDetails_ForResidentialOrSeniorResAccount(String account_type) {
         String query = DBQuery.GET_FIRSTNAME_LASTNAME_AND_ZIPCODE;
-        String formattedQuery = null;
-
-        if (account_type.equalsIgnoreCase("ResidentialMetered")) {
-            formattedQuery = query.replace("?", "RS");
-        } else if (account_type.equalsIgnoreCase("SeniorResidential")) {
-            formattedQuery = query.replace("?", "SR");
-        } else {
-            throw new IllegalArgumentException("Invalid account type: " + account_type);
-        }
-        logQueryInAllure("Get First Name, Last Name And Zip Code", formattedQuery);
-        return jdbcTemplate.queryForMap(formattedQuery);
+        logQueryInAllure("Get First Name, Last Name And Zip Code", query);
+        return jdbcTemplate.queryForMap(query, account_type);
     }
 
     public Map<String, Object> getAccountDetails_ForPastDueBalanceCommercialAccount(String account_type) {
@@ -262,6 +244,31 @@ public class DBAction {
         String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomBusnsNm_ForActPenRewardCommercialAccount() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVEPENDINGREWARD_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomBusnsNm_ForCommercialAccountTC85_87(String account_type) {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_TC85_87;
+        String fromattedQuery1=null;
+        String formattedQuery2=null;
+        if (account_type.equalsIgnoreCase("EarlyTerminationCharge")) {
+            fromattedQuery1=query.replace("{value}", "'200', '220'");
+            formattedQuery2=query.replace("?","CCV");
+        } else if (account_type.equalsIgnoreCase("SeniorResidential")) {
+            fromattedQuery1=query.replace("{value}", "'200'");
+            formattedQuery2=query.replace("?","CFM");
+        } else {
+            throw new IllegalArgumentException("Invalid account type: " + account_type);
+        }
+
+
+        logQueryInAllure("Get CustomerBusinessName", formattedQuery2);
+        return jdbcTemplate.queryForMap(formattedQuery2);
     }
 
     private void logQueryInAllure(String title, String query, Object... params) {

@@ -12,51 +12,51 @@ Then verify response code of "SearchAccounts" Api is 200
 And response should have ErrorCode 0 and ErrorMessage ""
 And response should return numberOfMatches as 0
 
-  @ValidRSAccountParameter @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response when an Valid Banner Account Number parameters with transactionType As TOFF is input For Residential Active Account TC_75
-    When a request is made to the SearchAccounts Api with valid Banner Account Number parameters with transactionType As TOFF For a "Residential" Active Account
+  @ValidRSOrCMAccountParameter @Phase1 @HappyFlow @SATOFF
+  Scenario Outline:  Verify Response when an Valid Banner Account Number parameters with transactionType As TOFF is input For Residential/Commercial Active Account  TC75_TC76
+    When a request is made to the SearchAccounts Api with valid Banner Account Number parameters with transactionType As TOFF For a "<Acct_type>" Active Account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    Examples:
+      | Acct_type |
+      |   RS      |
+      |   CM      |
 
-  @ValidCMAccountParameter @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response when an Valid Banner Account Number parameters with transactionType As TOFF is input  For Residential Active Account  TC_76
-    When a request is made to the SearchAccounts Api with valid Banner Account Number parameters with transactionType As TOFF For a "Commercial" Active Account
+  @Invalid_ValidLastNameZipcode @Phase1 @HappyFlow @SATOFF
+  Scenario Outline: Verify Response  when a InValid/Valid Combination Of Last Name And Zipcode with transactionType As TOFF is input  TC77_TC78
+    When a request is made to the SearchAccounts Api with "<combination>" Combination Of Last Name And Zipcode with transactionType As TOFF
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    Examples:
+      | combination |
+      |   InValid   |
+      |   Valid     |
 
-  @InvalidLastNameZipcode @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response  when a InValid Combination Of Last Name And Zipcode with transactionType As TOFF is input  TC_77
-    When a request is made to the SearchAccounts Api with "InValid" Combination Of Last Name And Zipcode with transactionType As TOFF
+  @validFirstNameLastNameZipcodeRSOrSR @Phase1 @HappyFlow @SATOFF
+  Scenario Outline: Verify Response  when a Valid Combination Of First Name, Last Name And Zipcode with transactionType As TOFF is input For Residential Metered Account TC79_TC80
+    When a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For "<Acct_type>" Account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    Examples:
+      | Acct_type |
+      |    RS     |
+      |    SR     |
 
-  @validLastNameZipcode @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response For Verify that when a Valid Combination Of Last Name And Zipcode with transactionType As TOFF is input TC_78
-    When a request is made to the SearchAccounts Api with "Valid" Combination Of Last Name And Zipcode with transactionType As TOFF
+
+  @validCustomerBusinessNamePastDueBalanceOrSONP @Phase1 @HappyFlow @SATOFF
+  Scenario Outline: Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For "<Acct_type>" Account TC81_TC82
+    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And "<Acct_type>" Account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    Examples:
+      | Acct_type     |
+      | PastDueBalance|
+      |    SONP       |
 
-  @validFirstNameLastNameZipcodeRS @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response  when a InValid Combination Of First Name, Last Name And Zipcode with transactionType As TOFF is input For Residential Metered Account  TC_79
-    When a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For "ResidentialMetered" Account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
 
-  @validFirstNameLastNameZipcodeSR @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response For Verify that when a Valid Combination Of First NameLast Name And Zipcode with transactionType As TOFF is input For Senior Residential Account TC_80
-    When a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For "SeniorResidential" Account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustomerBusinessNamePastDueBalance @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And Past Due Balance Account TC_81
-    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And "PastDueBalance" Account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustomerBusinessNameSONP @Phase1 @HappyFlow @SATOFF
-  Scenario: Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And SONP Account TC_82
-    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And "SONP" Account
+  @validCustomerBusinessNameActPendReward @Phase1 @HappyFlow @SATOFF
+  Scenario: Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And  Active/Pending Rewards Account TC_82
+    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And ActiveOrPending Rewards Account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 

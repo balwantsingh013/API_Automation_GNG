@@ -17,10 +17,14 @@ public class SearchAccountsHelper {
     private final TestContext testContext;
     public String premisesCode;
     public String customerCode;
+    public String lastName;
+    public String zipCode;
+    public String firstName;
+    public String customerBusinessName;
 
     public static final String USERNAME = "autotester";
-    public static final String USERNAME_01 = "sys";
-    public static final String TRANS_TYPE="TOFF";
+    public static final String LOGINID_SYS = "sys";
+    public static final String TRANS_TYPE_TOFF="TOFF";
 
     public SearchAccountsHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -37,35 +41,32 @@ public class SearchAccountsHelper {
 
     public void  getCustomerDetialsFromDbAndPreparePayload(SearchAccountsRequest payload) {
         List<Map<String, Object>> AccountDetails_CustCode = ApplicationContext.get().getDbAction().getActiveCustomerDetails();
-        String customerCode=AccountDetails_CustCode.getFirst().get("UCRACCT_CUST_CODE").toString();
+        customerCode=AccountDetails_CustCode.getFirst().get("UCRACCT_CUST_CODE").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME_01);
         payload.setCustomerCode(customerCode);
         payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-        payload.setTransactionType(TRANS_TYPE);
+        payload.setTransactionType(TRANS_TYPE_TOFF);
 
     }
 
     public void  getDetailsFromDbAndPreparePayloadForRMOrCM_customer(SearchAccountsRequest payload, String account_type) {
         Map<String, Object> AccountDetails_CustCodePremCode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrCommercialAccount(account_type);
-        String customerCode=AccountDetails_CustCodePremCode.get("UCRACCT_CUST_CODE").toString();
-        String premisesCode=AccountDetails_CustCodePremCode.get("UCRACCT_PREM_CODE").toString();
+        customerCode=AccountDetails_CustCodePremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=AccountDetails_CustCodePremCode.get("UCRACCT_PREM_CODE").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME_01);
         payload.setCustomerCode(customerCode);
         payload.setPremisesCode(premisesCode);
-        payload.setTransactionType(TRANS_TYPE);
+        payload.setTransactionType(TRANS_TYPE_TOFF);
 
     }
 
     public void  getLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, String combination_status) {
         Map<String, Object> AccountDetails_LastNameZipcode = ApplicationContext.get().getDbAction().getAccountDetails_LastNameZipCode();
-        String lastName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_LAST_NAME").toString();
-        String zipCode=AccountDetails_LastNameZipcode.get("UCRADDR_ZIP").toString();
+        lastName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_LAST_NAME").toString();
+        zipCode=AccountDetails_LastNameZipcode.get("UCRADDR_ZIP").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME_01);
         payload.setCustomerLastName(lastName);
-        payload.setTransactionType(TRANS_TYPE);
+        payload.setTransactionType(TRANS_TYPE_TOFF);
         if (combination_status.equalsIgnoreCase("InValid")) {
           payload.setPremisesZipCode(FakerDataGenerator.generateDigits(5));
         } else if (combination_status.equalsIgnoreCase("Valid")) {
@@ -78,15 +79,14 @@ public class SearchAccountsHelper {
 
     public void  getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, String account_type) {
         Map<String, Object> AccountDetails_LastNameZipcode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrSeniorResAccount(account_type);
-        String firstName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_FIRST_NAME").toString();
-        String lastName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_LAST_NAME").toString();
-        String zipCode=AccountDetails_LastNameZipcode.get("UCRADDR_ZIP").toString();
+        firstName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_FIRST_NAME").toString();
+        lastName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_LAST_NAME").toString();
+        zipCode=AccountDetails_LastNameZipcode.get("UCRADDR_ZIP").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME_01);
         payload.setCustomerFirstName(firstName);
         payload.setCustomerLastName(lastName);
         payload.setPremisesZipCode(zipCode);
-        payload.setTransactionType(TRANS_TYPE);
+        payload.setTransactionType(TRANS_TYPE_TOFF);
 
 
     }
@@ -101,13 +101,26 @@ public class SearchAccountsHelper {
             throw new IllegalArgumentException("Invalid account type: " + account_type);
         }
 
-        String customerBusinessName=AccountDetails_LastNameZipcode.get("UCBCUST_LAST_NAME").toString();
+        customerBusinessName=AccountDetails_LastNameZipcode.get("UCBCUST_LAST_NAME").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME_01);
-        payload.setTransactionType(TRANS_TYPE);
+        payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerBusinessName(customerBusinessName);
 
 
     }
+
+    public void  getCustomerBusinessNameFromDbAndPreparePayloadTC_83(SearchAccountsRequest payload) {
+        Map<String, Object> AccountDetails_CustomerBsnNam = ApplicationContext.get().getDbAction().getCustomBusnsNm_ForActPenRewardCommercialAccount();
+        customerBusinessName=AccountDetails_CustomerBsnNam.get("UCBCUST_LAST_NAME").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerBusinessName(customerBusinessName);
+
+
+    }
+
+
+
+
 
 }
