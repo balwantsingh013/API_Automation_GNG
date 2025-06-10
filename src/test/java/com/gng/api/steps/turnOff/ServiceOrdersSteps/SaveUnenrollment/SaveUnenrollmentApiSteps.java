@@ -13,6 +13,11 @@ public class SaveUnenrollmentApiSteps {
     private final TestContext testContext;
     private final SaveUnenrollmentApiPage saveUnenrollmentApiPage;
 
+    @ParameterType("true|false")
+    public Boolean booleanValue(String value) {
+        return Boolean.valueOf(value);
+    }
+
     public SaveUnenrollmentApiSteps(TestContext testContext, SaveUnenrollmentApiPage saveUnenrollmentApiPage) {
         this.testContext = testContext;
         this.saveUnenrollmentApiPage = saveUnenrollmentApiPage;
@@ -28,6 +33,6 @@ public class SaveUnenrollmentApiSteps {
     @When("a request is made to the SaveUnenrollment Api for account with {string} plan {string} type with forwardingAddressIs {string} with type {string} and turnoffreason {string} and setEmail {string} with etcExists {string}")
     public void a_request_is_made_to_the_SaveUnenrollment_Api_Active(String pricePlan, String sclsCode, String forwardingAddressIs, String type, String turnoffreason, String setEmail, String etcExists)
     {
-        saveUnenrollmentApiPage.validateForActiveRAMVS(save_unenrollment, pricePlan, sclsCode, forwardingAddressIs, type, turnoffreason, setEmail, etcExists);
+        saveUnenrollmentApiPage.validateForActiveRAMVS(save_unenrollment, pricePlan, sclsCode, forwardingAddressIs, type, turnoffreason, setEmail, booleanValue(etcExists));
     }
 }

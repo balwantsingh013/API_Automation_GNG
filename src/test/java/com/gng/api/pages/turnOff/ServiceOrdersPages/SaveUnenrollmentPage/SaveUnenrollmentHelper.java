@@ -62,6 +62,11 @@ public class SaveUnenrollmentHelper {
                 payload.setTurnOffSubReason("Military");
                 break;
 
+            case "Other - Military - ETC waived ":
+                payload.setTurnOffReason("Other");
+                payload.setTurnOffSubReason("Military - ETC Waived");
+                break;
+
             case "REAP/Realtor Inspection":
                 payload.setTurnOffReason("REAP/Realtor Inspection");
                 payload.setTurnOffSubReason("");
@@ -91,6 +96,11 @@ public class SaveUnenrollmentHelper {
                 payload.setTurnOffReason("Other");
                 payload.setTurnOffSubReason("Deceased");
                 break;
+
+            case "Moving - Service Transfer":
+                payload.setTurnOffReason("Moving");
+                payload.setTurnOffSubReason("Service Transfer");
+                break;
         }
     }
 
@@ -100,10 +110,8 @@ public class SaveUnenrollmentHelper {
         }
     }
 
-    public void setEtcExists(SaveUnenrollmentRequest payload, String etcExists ){
-        if(etcExists.equals("Yes")){
-            payload.setEtcExists(true);
-        }
+    public void setEtcExists(SaveUnenrollmentRequest payload, Boolean etcExists ){
+            payload.setEtcExists(etcExists);
     }
 
     public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,String forwardingAddressIs, String type){
