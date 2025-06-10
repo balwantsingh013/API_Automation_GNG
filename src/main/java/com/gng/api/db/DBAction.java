@@ -226,9 +226,9 @@ public class DBAction {
         String query = DBQuery.ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS;
         String formattedQuery = null;
 
-        if ("Residential".equalsIgnoreCase(account_type)) {
+        if (account_type.equalsIgnoreCase("Residential")) {
             formattedQuery = query.replace("?", "RS");
-        } else if ("Commercial".equalsIgnoreCase(account_type)) {
+        } else if (account_type.equalsIgnoreCase("Commercial")) {
             formattedQuery = query.replace("?", "CM");
         } else {
             throw new IllegalArgumentException("Invalid account type: " + account_type);
@@ -240,6 +240,33 @@ public class DBAction {
     public Map<String, Object> getAccountDetails_LastNameZipCode() {
         String query = DBQuery.GET_LASTNAME_AND_ZIPCODE;
         logQueryInAllure("Get Last Name And Zip Code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForResidentialOrSeniorResAccount(String account_type) {
+        String query = DBQuery.GET_FIRSTNAME_LASTNAME_AND_ZIPCODE;
+        String formattedQuery = null;
+
+        if (account_type.equalsIgnoreCase("ResidentialMetered")) {
+            formattedQuery = query.replace("?", "RS");
+        } else if (account_type.equalsIgnoreCase("SeniorResidential")) {
+            formattedQuery = query.replace("?", "SR");
+        } else {
+            throw new IllegalArgumentException("Invalid account type: " + account_type);
+        }
+        logQueryInAllure("Get First Name, Last Name And Zip Code", formattedQuery);
+        return jdbcTemplate.queryForMap(formattedQuery);
+    }
+
+    public Map<String, Object> getAccountDetails_ForPastDueBalanceCommercialAccount(String account_type) {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForSONPCommercialAccount(String account_type) {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }
 

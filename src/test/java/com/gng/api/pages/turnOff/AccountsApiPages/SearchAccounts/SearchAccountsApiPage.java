@@ -46,6 +46,24 @@ public class SearchAccountsApiPage extends BasePage {
 
     }
 
+    public void validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(SearchAccountsApiLabel apiLabel, String account_type) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(payload, account_type);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+
+    }
+
+    public void validateResponseForValidCustomerBusinessNameTC81_82(SearchAccountsApiLabel apiLabel, String account_type) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerBusinessNameFromDbAndPreparePayload(payload, account_type);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+
+    }
+
 
 
 

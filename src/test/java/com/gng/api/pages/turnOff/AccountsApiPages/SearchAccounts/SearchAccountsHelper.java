@@ -76,4 +76,38 @@ public class SearchAccountsHelper {
 
     }
 
+    public void  getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, String account_type) {
+        Map<String, Object> AccountDetails_LastNameZipcode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrSeniorResAccount(account_type);
+        String firstName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_FIRST_NAME").toString();
+        String lastName=AccountDetails_LastNameZipcode.get("UZBENRO_DSM_LAST_NAME").toString();
+        String zipCode=AccountDetails_LastNameZipcode.get("UCRADDR_ZIP").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME_01);
+        payload.setCustomerFirstName(firstName);
+        payload.setCustomerLastName(lastName);
+        payload.setPremisesZipCode(zipCode);
+        payload.setTransactionType(TRANS_TYPE);
+
+
+    }
+
+    public void  getCustomerBusinessNameFromDbAndPreparePayload(SearchAccountsRequest payload, String account_type) {
+        Map<String, Object> AccountDetails_LastNameZipcode=null;
+        if (account_type.equalsIgnoreCase("PastDueBalance")) {
+             AccountDetails_LastNameZipcode = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceCommercialAccount(account_type);
+        } else if (account_type.equalsIgnoreCase("SONP")) {
+            AccountDetails_LastNameZipcode = ApplicationContext.get().getDbAction().getAccountDetails_ForSONPCommercialAccount(account_type);
+        } else {
+            throw new IllegalArgumentException("Invalid account type: " + account_type);
+        }
+
+        String customerBusinessName=AccountDetails_LastNameZipcode.get("UCBCUST_LAST_NAME").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME_01);
+        payload.setTransactionType(TRANS_TYPE);
+        payload.setCustomerBusinessName(customerBusinessName);
+
+
+    }
+
 }
