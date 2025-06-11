@@ -1,6 +1,6 @@
 package com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts;
 
-public enum SearchAccountsApiLabel {
+public enum SearchAccountsTOffApiLabel {
 
     search_accounts,
     search_accounts_mandatory,

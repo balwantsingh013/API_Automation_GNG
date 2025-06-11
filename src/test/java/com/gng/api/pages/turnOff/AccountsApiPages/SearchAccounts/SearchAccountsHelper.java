@@ -4,7 +4,8 @@ import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
+import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel;
+import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,7 +50,7 @@ public class SearchAccountsHelper {
 
     }
 
-    public void  getDetailsFromDbAndPreparePayloadForRMOrCM_customer(SearchAccountsRequest payload, SearchAccountsApiLabel requestID) {
+    public void  getDetailsFromDbAndPreparePayloadForRMOrCM_customer(SearchAccountsRequest payload, SearchAccountsTOffApiLabel requestID) {
        String accountType=null;
         switch(requestID){
             case RESIDENTIAL_ACTIVE_ACCOUNT_TC75:
@@ -67,7 +68,7 @@ public class SearchAccountsHelper {
 
     }
 
-    public void  getLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsApiLabel request_id) {
+    public void  getLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel request_id) {
         Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_LastNameZipCode();
         lastName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_LAST_NAME").toString();
         zipCode=accountDetailsLastNameZipCode.get("UCRADDR_ZIP").toString();
@@ -82,7 +83,7 @@ public class SearchAccountsHelper {
         }
     }
 
-    public void  getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsApiLabel request_id) {
+    public void  getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel request_id) {
         String accountType=null;
         switch(request_id){
             case RESIDENTIAL_ACCOUNT_TC79:
@@ -103,7 +104,7 @@ public class SearchAccountsHelper {
 
     }
 
-    public void  getCustomerBusinessNameFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsApiLabel request_id) {
+    public void  getCustomerBusinessNameFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel request_id) {
         Map<String, Object> accountDetailsLastNameZipCode=null;
         switch(request_id){
             case PASTDUEBALANCE_ACCOUNT_TC81:

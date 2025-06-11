@@ -132,7 +132,7 @@ public class SearchAccountsApiSteps {
 
     //    @When("a request is made to the SearchAccounts Api with {string}TC72")
 //    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC72(String missingSearchField) {
-//        searchAccountsApiPage.validateMissingSearchFieldsCasesTC72(search_accounts, SearchAccountsApiLabel.valueOf(missingSearchField));
+//        searchAccountsApiPage.validateMissingSearchFieldsCasesTC72(search_accounts, SearchAccountsApiLabelTOff.valueOf(missingSearchField));
 //    }
     @When("a request is made to the SearchAccounts Api with {string}TC73")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String customerCode) {
