@@ -2,11 +2,10 @@ package com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts;
 
 import com.gng.api.pages.turnOff.AccountsApiPages.SearchAccounts.SearchAccountsApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.search_accounts;
+import static com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.*;
 
 @Slf4j
 public class SearchAccountsApiSteps {
@@ -26,24 +25,24 @@ public class SearchAccountsApiSteps {
     }
 
 
-    @When("a request is made to the SearchAccounts Api with valid Banner Account Number parameters with transactionType As TOFF For a {string} Active Account")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_valid_Banner_Account_Number_parameter_with_transactionType_As_TOFF_TC_75_76(String account_type) {
-        searchAccountsApiPage.validateResponseForvalidAccountParamtersForTC75_76(search_accounts, account_type);
+    @When("a request is made to the SearchAccounts Api with valid Banner Account Number parameters with transactionType As TOFF For {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_valid_Banner_Account_Number_parameter_with_transactionType_As_TOFF_TC_75_76(String request_id) {
+        searchAccountsApiPage.validateResponseForvalidAccountParamtersForTC75_76(search_accounts, SearchAccountsApiLabel.valueOf(request_id));
     }
 
-    @When("a request is made to the SearchAccounts Api with {string} Combination Of Last Name And Zipcode with transactionType As TOFF")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_InValid_OR_Valid_Combination_Of_Last_Name_And_Zipcode_with_transactionType_As_TOFF(String combination_status) {
-        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(search_accounts, combination_status);
+    @When("a request is made to the SearchAccounts Api with Last Name And Zipcode And transactionType As TOFF With {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_InValid_OR_Valid_Combination_Of_Last_Name_And_Zipcode_with_transactionType_As_TOFF(String request_id) {
+        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(search_accounts, SearchAccountsApiLabel.valueOf(request_id));
     }
 
-    @When("a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For {string} Account")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_FirstName_LastName_And_Zipcode_with_transactionType_As_TOFF_is_input(String account_type) {
-        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(search_accounts, account_type);
+    @When("a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_FirstName_LastName_And_Zipcode_with_transactionType_As_TOFF_is_input(String request_id) {
+        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(search_accounts, SearchAccountsApiLabel.valueOf(request_id));
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And {string} Account")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_CustomerBusinessName_Parameter_with_transactionType_As_TOFF_is_input_For_Commercial_Active(String combination_status) {
-        searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC81_82(search_accounts, combination_status);
+    @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_CustomerBusinessName_Parameter_with_transactionType_As_TOFF_is_input_For_Commercial_Active(String request_id) {
+        searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC81_82(search_accounts, SearchAccountsApiLabel.valueOf(request_id));
     }
 
     @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And ActiveOrPending Rewards Account")

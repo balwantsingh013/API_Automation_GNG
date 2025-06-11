@@ -5,7 +5,7 @@ import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-
+//import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -234,13 +234,13 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, account_type);
     }
 
-    public Map<String, Object> getAccountDetails_ForPastDueBalanceCommercialAccount(String account_type) {
+    public Map<String, Object> getAccountDetails_ForPastDueBalanceCommercialAccount() {
         String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getAccountDetails_ForSONPCommercialAccount(String account_type) {
+    public Map<String, Object> getAccountDetails_ForSONPCommercialAccount() {
         String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
@@ -250,25 +250,6 @@ public class DBAction {
         String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVEPENDINGREWARD_COMMERCIALACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
-    }
-
-    public Map<String, Object> getCustomBusnsNm_ForCommercialAccountTC85_87(String account_type) {
-        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_TC85_87;
-        String fromattedQuery1=null;
-        String formattedQuery2=null;
-        if (account_type.equalsIgnoreCase("EarlyTerminationCharge")) {
-            fromattedQuery1=query.replace("{value}", "'200', '220'");
-            formattedQuery2=query.replace("?","CCV");
-        } else if (account_type.equalsIgnoreCase("SeniorResidential")) {
-            fromattedQuery1=query.replace("{value}", "'200'");
-            formattedQuery2=query.replace("?","CFM");
-        } else {
-            throw new IllegalArgumentException("Invalid account type: " + account_type);
-        }
-
-
-        logQueryInAllure("Get CustomerBusinessName", formattedQuery2);
-        return jdbcTemplate.queryForMap(formattedQuery2);
     }
 
     private void logQueryInAllure(String title, String query, Object... params) {
