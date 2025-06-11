@@ -351,41 +351,121 @@ public final class DBQuery {
             """;
 
     public static final String ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS = """
-SELECT
-  t1.ucracct_cust_code,
-  t1.ucracct_prem_code
-FROM ucracct t1, ucbcust t2, ucrserv t3, ucrscmp t5
-WHERE t1.ucracct_cust_code = t2.ucbcust_cust_code
-  AND t1.ucracct_cust_code = t3.ucrserv_cust_code
-  AND t1.ucracct_prem_code = t3.ucrserv_prem_code
-  AND t1.ucracct_cust_code = t5.ucrscmp_cust_code
-  AND t1.ucracct_prem_code = t5.ucrscmp_prem_code
-  AND t1.ucracct_status_ind = 'A'
-  AND t1.ucracct_cycl_code NOT IN ('DEPO')
-  AND t3.ucrserv_scls_code IN (?)
-  AND t5.ucrscmp_end_date > SYSDATE
-  AND t5.ucrscmp_start_date < SYSDATE
-  AND t5.ucrscmp_scty_code = 'COMM'
-ORDER BY t1.ucracct_cust_code DESC
+SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+FROM UCRACCT T1, UCBCUST T2, UCRSERV T3, UCRSCMP T5
+WHERE T1.UCRACCT_CUST_CODE = T2.UCBCUST_CUST_CODE
+  AND T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+  AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+  AND T1.UCRACCT_CUST_CODE = T5.UCRSCMP_CUST_CODE
+  AND T1.UCRACCT_PREM_CODE = T5.UCRSCMP_PREM_CODE
+  AND T1.UCRACCT_STATUS_IND = 'A'
+  AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO')
+  AND T3.UCRSERV_SCLS_CODE IN (?)
+  AND T5.UCRSCMP_END_DATE > SYSDATE
+  AND T5.UCRSCMP_START_DATE < SYSDATE
+  AND T5.UCRSCMP_SCTY_CODE = 'COMM'
+ORDER BY T1.UCRACCT_CUST_CODE DESC
 FETCH FIRST 1 ROWS ONLY
-            """;
+""";
 
-    public static final String GET_LASTNAME_AND_ZIPCODE = "SELECT t1.uzbenro_dsm_last_name,  t2.ucraddr_zip \n" +
-            "FROM uzbenro t1 JOIN ucraddr t2\n" +
-            "ON t1.uzbenro_cust_code= t2.ucraddr_cust_code\n" +
-            "WHERE t1.uzbenro_dsm_last_name IS NOT NULL \n" +
-            "AND t2.ucraddr_zip IS NOT NULL\n" +
-            "FETCH FIRST 1 ROWS ONLY";
+    public static final String GET_LASTNAME_AND_ZIPCODE = """
+SELECT T1.UZBENRO_DSM_LAST_NAME, T2.UCRADDR_ZIP
+FROM UZBENRO T1
+JOIN UCRADDR T2 ON T1.UZBENRO_CUST_CODE = T2.UCRADDR_CUST_CODE
+WHERE T1.UZBENRO_DSM_LAST_NAME IS NOT NULL
+  AND T2.UCRADDR_ZIP IS NOT NULL
+FETCH FIRST 1 ROWS ONLY
+""";
 
-    public static final String GET_FIRSTNAME_LASTNAME_AND_ZIPCODE = "SELECT t3.uzbenro_dsm_first_name,t3.uzbenro_dsm_last_name, t3.uzbenro_cust_code,t3.uzbenro_prem_code, t4.ucraddr_zip FROM ucrserv t1 INNER JOIN ucracct t2 ON t1.ucrserv_prem_code = t2.ucracct_prem_code INNER JOIN uzbenro t3 ON t2.ucracct_prem_code = t3.uzbenro_prem_code INNER JOIN ucraddr t4 ON t3.uzbenro_cust_code = t4.ucraddr_cust_code where t1.ucrserv_cust_code = t2.ucracct_cust_code and t1.ucrserv_prem_code = t2.ucracct_prem_code and t1.ucrserv_scls_code = ? AND T1.UCRSERV_CUST_CODE IS NOT NULL and t2.ucracct_status_ind = 'A' AND t3.uzbenro_dsm_first_name IS NOT NULL AND t3.uzbenro_dsm_last_name IS NOT NULL ORDER BY T1.UCRSERV_CUST_CODE DESC FETCH FIRST 1 ROWS ONLY";
+    public static final String GET_FIRSTNAME_LASTNAME_AND_ZIPCODE = """
+SELECT T3.UZBENRO_DSM_FIRST_NAME, T3.UZBENRO_DSM_LAST_NAME, T3.UZBENRO_CUST_CODE, T3.UZBENRO_PREM_CODE, T4.UCRADDR_ZIP
+FROM UCRSERV T1
+INNER JOIN UCRACCT T2 ON T1.UCRSERV_PREM_CODE = T2.UCRACCT_PREM_CODE
+INNER JOIN UZBENRO T3 ON T2.UCRACCT_PREM_CODE = T3.UZBENRO_PREM_CODE
+INNER JOIN UCRADDR T4 ON T3.UZBENRO_CUST_CODE = T4.UCRADDR_CUST_CODE
+WHERE T1.UCRSERV_CUST_CODE = T2.UCRACCT_CUST_CODE
+  AND T1.UCRSERV_PREM_CODE = T2.UCRACCT_PREM_CODE
+  AND T1.UCRSERV_SCLS_CODE = ?
+  AND T1.UCRSERV_CUST_CODE IS NOT NULL
+  AND T2.UCRACCT_STATUS_IND = 'A'
+  AND T3.UZBENRO_DSM_FIRST_NAME IS NOT NULL
+  AND T3.UZBENRO_DSM_LAST_NAME IS NOT NULL
+ORDER BY T1.UCRSERV_CUST_CODE DESC
+FETCH FIRST 1 ROWS ONLY
+""";
 
-    public static final String GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT="select t2.ucbcust_last_name from ucracct t1, ucbcust t2, ucrserv t3, ucrscmp t5 where t1.ucracct_cust_code = t2.ucbcust_cust_code and t1.ucracct_cust_code = t3.ucrserv_cust_code and t1.ucracct_prem_code = t3.ucrserv_prem_code and t1.ucracct_cust_code = t5.ucrscmp_cust_code and t1.ucracct_prem_code = t5.ucrscmp_prem_code and t1.ucracct_status_ind = 'A' and t1.ucracct_cycl_code NOT IN 'DEPO' and t2.ucbcust_prospect_value_score IN ('200', '220') and t3.ucrserv_scls_code = 'CM' and t5.ucrscmp_plan_code = 'CVS' and t5.ucrscmp_end_date > SYSDATE and t5.ucrscmp_start_date < SYSDATE and t5.ucrscmp_scty_code = 'COMM' and exists (select 'x' from GZRCBHT t6 where t1.ucracct_cust_code = T6.GZRCBHT_CUST_CODE and t1.ucracct_prem_code = t6.gzrcbht_prem_code) order by t1.ucracct_cust_code desc FETCH FIRST 1 ROWS ONLY";
-    public static final String GET_CUSTOMERBUSINESSNAME_FOR__SONP_COMMERCIALACCOUNT="SELECT T3.UCBCUST_LAST_NAME FROM UCRACCT T1 INNER JOIN UCRSERV T2 ON T1.UCRACCT_CUST_CODE = T2.UCRSERV_CUST_CODE INNER JOIN UCBCUST T3 ON T2.UCRSERV_CUST_CODE = T3.UCBCUST_CUST_CODE WHERE T1.UCRACCT_STATUS_IND = 'A' AND T2.UCRSERV_SCLS_CODE = 'CM' AND T1.Ucracct_Cycl_Code IN ('06', '13') and exists (select 'x' from ucbsvco where UCBSVCO_PREM_CODE = UCRACCT_PREM_CODE AND UCBSVCO_CUST_CODE = UCRACCT_CUST_CODE AND ucbsvco_sotp_code = 'SONP' --AND UCBSVCO_DATE_CREATED > ('08-NOV-2024') AND ucbsvco_STUS_CODE IN ('O', 'X', 'C')) order by UCRACCT_cust_code desc FETCH FIRST 1 ROWS ONLY";
-public static final String GET_CUSTOMERBUSINESSNAME_FOR_ACTIVEPENDINGREWARD_COMMERCIALACCOUNT="select ucbcust_last_name from ucracct t1, ucbcust t2, ucrserv t3, ucrscmp t5 where t1.ucracct_cust_code = t2.ucbcust_cust_code and t1.ucracct_cust_code = t3.ucrserv_cust_code and t1.ucracct_prem_code = t3.ucrserv_prem_code and t1.ucracct_cust_code = t5.ucrscmp_cust_code and t1.ucracct_prem_code = t5.ucrscmp_prem_code and t1.ucracct_status_ind = 'A' and t1.ucracct_cycl_code NOT IN 'DEPO' and t2.ucbcust_prospect_value_score IN ('200', '220') and t3.ucrserv_scls_code = 'CM' and t5.ucrscmp_plan_code = 'CVS' and t5.ucrscmp_end_date > SYSDATE and t5.ucrscmp_start_date < SYSDATE and t5.ucrscmp_scty_code = 'COMM' and exists (select 'x' from gzbrwds t6 where T1.ucracct_cust_code = t6.gzbrwds_cust_code and T1.ucracct_prem_code = t6.gzbrwds_prem_code and t6.gzbrwds_reward_id = '44') order by T1.ucracct_cust_code desc FETCH FIRST 1 ROWS ONLY";
-    public static final String GET_CUSTOMERBUSINESSNAME_TC85_87="select t2.ucbcust_last_name from ucracct t1, ucbcust t2, ucrserv t3, ucrscmp t5 where t1.ucracct_cust_code = t2.ucbcust_cust_code and t1.ucracct_cust_code = t3.ucrserv_cust_code and t1.ucracct_prem_code = t3.ucrserv_prem_code and t1.ucracct_cust_code = t5.ucrscmp_cust_code and t1.ucracct_prem_code = t5.ucrscmp_prem_code and t1.ucracct_status_ind = 'A' and t1.ucracct_cycl_code NOT IN 'DEPO' and t2.ucbcust_prospect_value_score IN ({value}) and t3.ucrserv_scls_code = 'CM' and t5.ucrscmp_plan_code = '?' and t5.ucrscmp_end_date > SYSDATE and t5.ucrscmp_start_date < SYSDATE and t5.ucrscmp_scty_code = 'COMM' and NOT exists (select 'x' from gzbrwds t6 where t1.ucracct_cust_code = t6.gzbrwds_cust_code and t1.ucracct_prem_code = t6.gzbrwds_prem_code) order by t1.ucracct_cust_code desc FETCH FIRST 1 ROWS ONLY";
+    public static final String GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT = """
+SELECT T2.UCBCUST_LAST_NAME
+FROM UCRACCT T1, UCBCUST T2, UCRSERV T3, UCRSCMP T5
+WHERE T1.UCRACCT_CUST_CODE = T2.UCBCUST_CUST_CODE
+  AND T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+  AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+  AND T1.UCRACCT_CUST_CODE = T5.UCRSCMP_CUST_CODE
+  AND T1.UCRACCT_PREM_CODE = T5.UCRSCMP_PREM_CODE
+  AND T1.UCRACCT_STATUS_IND = 'A'
+  AND T1.UCRACCT_CYCL_CODE NOT IN 'DEPO'
+  AND T2.UCBCUST_PROSPECT_VALUE_SCORE IN ('200', '220')
+  AND T3.UCRSERV_SCLS_CODE = 'CM'
+  AND T5.UCRSCMP_PLAN_CODE = 'CVS'
+  AND T5.UCRSCMP_END_DATE > SYSDATE
+  AND T5.UCRSCMP_START_DATE < SYSDATE
+  AND T5.UCRSCMP_SCTY_CODE = 'COMM'
+  AND EXISTS (
+    SELECT 'X' FROM GZRCBHT T6
+    WHERE T1.UCRACCT_CUST_CODE = T6.GZRCBHT_CUST_CODE
+      AND T1.UCRACCT_PREM_CODE = T6.GZRCBHT_PREM_CODE
+  )
+ORDER BY T1.UCRACCT_CUST_CODE DESC
+FETCH FIRST 1 ROWS ONLY
+""";
 
+    public static final String GET_CUSTOMERBUSINESSNAME_FOR__SONP_COMMERCIALACCOUNT = """
+SELECT T3.UCBCUST_LAST_NAME
+FROM UCRACCT T1
+INNER JOIN UCRSERV T2 ON T1.UCRACCT_CUST_CODE = T2.UCRSERV_CUST_CODE
+INNER JOIN UCBCUST T3 ON T2.UCRSERV_CUST_CODE = T3.UCBCUST_CUST_CODE
+WHERE T1.UCRACCT_STATUS_IND = 'A'
+  AND T2.UCRSERV_SCLS_CODE = 'CM'
+  AND T1.UCRACCT_CYCL_CODE IN ('06', '13')
+  AND EXISTS (
+    SELECT 'X'
+    FROM UCBSVCO
+    WHERE UCBSVCO_PREM_CODE = UCRACCT_PREM_CODE
+      AND UCBSVCO_CUST_CODE = UCRACCT_CUST_CODE
+      AND UCBSVCO_SOTP_CODE = 'SONP'
+      --AND UCBSVCO_DATE_CREATED > ('08-NOV-2024')
+      AND UCBSVCO_STUS_CODE IN ('O', 'X', 'C')
+  )
+ORDER BY UCRACCT_CUST_CODE DESC
+FETCH FIRST 1 ROWS ONLY
+""";
 
-
+    public static final String GET_CUSTOMERBUSINESSNAME_FOR_ACTIVEPENDINGREWARD_COMMERCIALACCOUNT = """
+SELECT UCBCUST_LAST_NAME
+FROM UCRACCT T1, UCBCUST T2, UCRSERV T3, UCRSCMP T5
+WHERE T1.UCRACCT_CUST_CODE = T2.UCBCUST_CUST_CODE
+  AND T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+  AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+  AND T1.UCRACCT_CUST_CODE = T5.UCRSCMP_CUST_CODE
+  AND T1.UCRACCT_PREM_CODE = T5.UCRSCMP_PREM_CODE
+  AND T1.UCRACCT_STATUS_IND = 'A'
+  AND T1.UCRACCT_CYCL_CODE NOT IN 'DEPO'
+  AND T2.UCBCUST_PROSPECT_VALUE_SCORE IN ('200', '220')
+  AND T3.UCRSERV_SCLS_CODE = 'CM'
+  AND T5.UCRSCMP_PLAN_CODE = 'CVS'
+  AND T5.UCRSCMP_END_DATE > SYSDATE
+  AND T5.UCRSCMP_START_DATE < SYSDATE
+  AND T5.UCRSCMP_SCTY_CODE = 'COMM'
+  AND EXISTS (
+    SELECT 'X'
+    FROM GZBRWDS T6
+    WHERE T1.UCRACCT_CUST_CODE = T6.GZBRWDS_CUST_CODE
+      AND T1.UCRACCT_PREM_CODE = T6.GZBRWDS_PREM_CODE
+      AND T6.GZBRWDS_REWARD_ID = '44'
+  )
+ORDER BY T1.UCRACCT_CUST_CODE DESC
+FETCH FIRST 1 ROWS ONLY
+""";
 
     private DBQuery() {
     }

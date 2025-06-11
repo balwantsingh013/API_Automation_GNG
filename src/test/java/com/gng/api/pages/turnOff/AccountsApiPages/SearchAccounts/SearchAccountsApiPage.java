@@ -28,36 +28,36 @@ public class SearchAccountsApiPage extends BasePage {
 
     }
 
-    public void validateResponseForvalidAccountParamtersForTC75_76(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel request_id) {
+    public void validateResponseForvalidAccountParamtersForTC75_76(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getDetailsFromDbAndPreparePayloadForRMOrCM_customer(payload, request_id);
+        helper.getDetailsFromDbAndPreparePayloadForRMOrCM_customer(payload, accountType);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
 
     }
 
-    public void validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel request_id) {
+    public void validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel combinationType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getLastNameAndZipcodeFromDbAndPreparePayload(payload, request_id);
+        helper.getLastNameAndZipcodeFromDbAndPreparePayload(payload, combinationType);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
 
     }
 
-    public void validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel request_id) {
+    public void validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(payload, request_id);
+        helper.getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(payload, accountType);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
 
     }
 
-    public void validateResponseForValidCustomerBusinessNameTC81_82(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel request_id) {
+    public void validateResponseForValidCustomerBusinessNameTC81_82(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getCustomerBusinessNameFromDbAndPreparePayload(payload, request_id);
+        helper.getCustomerBusinessNameFromDbAndPreparePayload(payload, accountType);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
