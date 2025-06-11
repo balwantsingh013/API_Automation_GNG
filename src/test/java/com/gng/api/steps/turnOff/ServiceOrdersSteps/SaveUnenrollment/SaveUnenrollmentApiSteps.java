@@ -31,8 +31,8 @@ public class SaveUnenrollmentApiSteps {
     }
 
     @When("a request is made to the SaveUnenrollment Api for account with {string} plan {string} type with forwardingAddressIs {string} with type {string} and turnoffreason {string} and setEmail {string} with etcExists {string}")
-    public void a_request_is_made_to_the_SaveUnenrollment_Api_Active(String pricePlan, String sclsCode, String forwardingAddressIs, String type, String turnoffreason, String setEmail, String etcExists)
+    public void a_request_is_made_to_the_SaveUnenrollment_Api_Active(String pricePlan, String sclsCode, String forwardingAddressIs, String type, String testCondition, String setEmail, String etcExists)
     {
-        saveUnenrollmentApiPage.validateForActiveRAMVS(save_unenrollment, pricePlan, sclsCode, forwardingAddressIs, type, TurnOffReason.fromString(turnoffreason), booleanValue(setEmail), booleanValue(etcExists));
+        saveUnenrollmentApiPage.validateForActiveRAMVS(save_unenrollment, pricePlan, sclsCode, forwardingAddressIs, type, TurnOffReason.valueOf(testCondition), booleanValue(setEmail), booleanValue(etcExists));
     }
 }

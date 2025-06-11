@@ -47,59 +47,59 @@ public class SaveUnenrollmentHelper {
     }
 
     public void setTurnOffReasonAndSubReason(SaveUnenrollmentRequest payload, TurnOffReason reason) {
-
         switch (reason) {
-            case SEASONAL_OR_HEAT_ONLY:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC44_TC223:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC28_TC207:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case MOVING_OUTSIDE_AGLC:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC51_TC230:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC29_TC208:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case OTHERS_MILITARY:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC30_TC209:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case OTHERS_MILITARY_ETC_WAIVED:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC48_TC227:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC31_TC210:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case REAP_REALTOR_INSPECTION:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC35_TC214:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case HOUSEHOLD_ACCOUNT_CHANGE:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC46_TC225:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC36_TC215:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case OTHER_FINANCIAL_SITUATION:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC50_TC229:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC37_TC216:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case MOVING_NOT_STAYING_WITH_GNG:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC40_TC219:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case OTHER_REGULATED_PROVIDER:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC43_TC222:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;
 
-            case OTHER_DECEASED:
-                payload.setTurnOffReason(reason.getReason());
-                payload.setTurnOffSubReason(reason.getSubReason());
-                break;
-
-            case MOVING_SERVICE_TRANSFER:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC53_TC232:
+            case POSITIVE_RESIDENTIAL_TURN_OFF_UC49_TC228:
                 payload.setTurnOffReason(reason.getReason());
                 payload.setTurnOffSubReason(reason.getSubReason());
                 break;

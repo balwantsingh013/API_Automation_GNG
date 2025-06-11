@@ -5,17 +5,23 @@ import lombok.Getter;
 @Getter
 public enum TurnOffReason {
 
-    SEASONAL_OR_HEAT_ONLY("Seasonal or Heat Only", ""),
-    MOVING_OUTSIDE_AGLC("Moving", "Outside AGLC Territory/Outside Georgia"),
-    OTHERS_MILITARY("Other", "Military"),
-    OTHERS_MILITARY_ETC_WAIVED("Other", "Military - ETC Waived"),
-    REAP_REALTOR_INSPECTION("REAP/Realtor Inspection", ""),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC28_TC207("Seasonal or Heat Only", ""),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC44_TC223("Seasonal or Heat Only", ""),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC29_TC208("Moving", "Outside AGLC Territory/Outside Georgia"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC51_TC230("Moving", "Outside AGLC Territory/Outside Georgia"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC30_TC209("Other", "Military"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC35_TC214("Other", "Military - ETC Waived"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC31_TC210("REAP/Realtor Inspection", ""),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC48_TC227("REAP/Realtor Inspection", ""),
     HOUSEHOLD_ACCOUNT_CHANGE("Household Account Change", ""),
-    OTHER_FINANCIAL_SITUATION("Other", "Financial Situation"),
-    MOVING_NOT_STAYING_WITH_GNG("Moving", "Within Pool Group but Not Staying with GNG"),
-    OTHER_REGULATED_PROVIDER("Other", "Regulated Provider"),
-    OTHER_DECEASED("Other", "Deceased"),
-    MOVING_SERVICE_TRANSFER("Moving", "Service Transfer");
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC36_TC215("Other", "Financial Situation"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC37_TC216("Moving", "Within Pool Group but Not Staying with GNG"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC50_TC229("Moving", "Within Pool Group but Not Staying with GNG"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC40_TC219("Other", "Regulated Provider"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC43_TC222("Other", "Deceased"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC49_TC228("Moving", "Service Transfer"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC46_TC225("Other", "Financial Situation"),
+    POSITIVE_RESIDENTIAL_TURN_OFF_UC53_TC232("Other", "Financial Situation");
 
     private final String reason;
     private final String subReason;
@@ -26,19 +32,5 @@ public enum TurnOffReason {
         this.subReason = subReason;
     }
 
-    public static TurnOffReason fromString(String reasonString) {
-        // Normalize the input string: Convert to uppercase and replace spaces with underscores
-        String normalizedReason = reasonString.toUpperCase().replace(" ", "_");
-
-        // Iterate through the enum values and compare with the normalized string
-        for (TurnOffReason reason : TurnOffReason.values()) {
-            if (reason.name().equals(normalizedReason)) {
-                return reason;
-            }
-        }
-
-        // If no match is found, throw an exception
-        throw new IllegalArgumentException("Unknown reason: " + reasonString);
-    }
 }
 
