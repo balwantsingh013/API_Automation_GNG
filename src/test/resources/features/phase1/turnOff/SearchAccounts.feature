@@ -59,5 +59,17 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
+  @validCustomerBusinessNameActPendReward @Phase1 @HappyFlow @SearchAccountTOFF
+  Scenario: SearchAccountsApi- Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And  Active/Pending Rewards Account TC_83
+    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And ActiveOrPending Rewards Account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustPremCodeActiveRSNewNonMetered @Phase1 @HappyFlow @SearchAccountTOFF @TC-56
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS New and Non-metered account TC_56
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS New and Non-metered account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
 
 

@@ -502,6 +502,21 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_CUSTOMERCODE_PREM_CODE_ACTIVE_RS_NON_METERED_ACCOUNT = """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            WHERE T1.UCRACCT_STATUS_IND = 'N'
+            AND T1.UCRACCT_CUST_CODE <> 999999999
+            AND NOT EXISTS (
+                SELECT 'X'
+                FROM UCRSERV T3
+                WHERE T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+                AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+            )
+            ORDER BY T1.UCRACCT_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
 
     private DBQuery() {
     }

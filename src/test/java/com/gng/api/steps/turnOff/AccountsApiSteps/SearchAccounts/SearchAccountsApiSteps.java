@@ -50,4 +50,9 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC83(search_accounts);
     }
 
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS New and Non-metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_New_and_Non_metered_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC56(search_accounts);
+    }
+
 }

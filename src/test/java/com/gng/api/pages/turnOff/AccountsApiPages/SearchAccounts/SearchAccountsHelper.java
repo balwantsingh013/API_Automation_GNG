@@ -113,8 +113,6 @@ public class SearchAccountsHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerBusinessName(customerBusinessName);
-
-
     }
 
     public void  getCustomerBusinessNameFromDbAndPreparePayloadTC_83(SearchAccountsRequest payload) {
@@ -123,8 +121,16 @@ public class SearchAccountsHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerBusinessName(customerBusinessName);
+    }
 
-
+    public void  getCustomerBusinessNameFromDbAndPreparePayloadTC_56(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveNonMeteredAccount();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
     }
 
 
