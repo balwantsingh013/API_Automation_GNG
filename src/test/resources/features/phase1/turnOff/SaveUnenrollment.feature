@@ -5,7 +5,7 @@ Feature: Verify SaveUnenrollment Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @HappyFlow @SaveUnenrollment @123
+  @HappyFlow @SaveUnenrollment
   Scenario Outline: SaveUnenrollmentApi - Verify SaveUnenrollment Api positive flow <testCondition>
     When a request is made to the SaveUnenrollment Api for account with "<pricePlan>" plan "<accountType>" type with forwardingAddressIs "<forwardingAddressIs>" with type "<addressType>" and turnoffreason "<testCondition>" and setEmail "<setEmail>" with etcExists "<etcExists>"
     Then verify response code of "SaveUnenrollment" Api is 200

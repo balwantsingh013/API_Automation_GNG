@@ -5,7 +5,7 @@ import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-
+//import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -228,9 +228,39 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getAccountDetails_CustCode() {
-        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE;
+    public Map<String, Object> getAccountDetails_ForResidentialOrCommercialAccount(String account_type) {
+        String query = DBQuery.ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS;
         logQueryInAllure("Get Customer Code And Premise Code", query);
+        return jdbcTemplate.queryForMap(query, account_type);
+    }
+
+    public Map<String, Object> getAccountDetails_LastNameZipCode() {
+        String query = DBQuery.GET_LASTNAME_AND_ZIPCODE;
+        logQueryInAllure("Get Last Name And Zip Code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForResidentialOrSeniorResAccount(String account_type) {
+        String query = DBQuery.GET_FIRSTNAME_LASTNAME_AND_ZIPCODE;
+        logQueryInAllure("Get First Name, Last Name And Zip Code", query);
+        return jdbcTemplate.queryForMap(query, account_type);
+    }
+
+    public Map<String, Object> getAccountDetails_ForPastDueBalanceCommercialAccount() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForSONPCommercialAccount() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomBusnsNm_ForActPenRewardCommercialAccount() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVEPENDINGREWARD_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }
 
