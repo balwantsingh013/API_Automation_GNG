@@ -22,9 +22,6 @@ public class SearchAccountsHelper {
     public String zipCode;
     public String firstName;
     public String customerBusinessName;
-
-    public static final String USERNAME = "autotester";
-    public static final String LOGINID_SYS = "sys";
     public static final String TRANS_TYPE_TOFF="TOFF";
 
     public SearchAccountsHelper(TestContext testContext) {
@@ -50,15 +47,15 @@ public class SearchAccountsHelper {
 
     }
 
-    public void  getDetailsFromDbAndPreparePayloadForRMOrCM_customer(SearchAccountsRequest payload, SearchAccountsTOffApiLabel requestID) {
-       String accountType=null;
-        switch(requestID){
-            case RESIDENTIAL_ACTIVE_ACCOUNT_TC75:
-                accountType="RS";
-            case COMMERCIAL_ACTIVE_ACCOUNT_TC76:
-                accountType="CM";
+    public void  getDetailsFromDbAndPreparePayloadForRMOrCM_customer(SearchAccountsRequest payload, SearchAccountsTOffApiLabel accountType) {
+       String account_Type=null;
+        switch(accountType){
+            case RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC75:
+                account_Type="RS";
+            case COMMERCIAL_VALID_ACTIVE_ACCOUNT_TC76:
+                account_Type="CM";
         }
-        Map<String, Object> accountDetailsCustCode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrCommercialAccount(accountType);
+        Map<String, Object> accountDetailsCustCode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrCommercialAccount(account_Type);
         customerCode=accountDetailsCustCode.get("UCRACCT_CUST_CODE").toString();
         premisesCode=accountDetailsCustCode.get("UCRACCT_PREM_CODE").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -68,30 +65,30 @@ public class SearchAccountsHelper {
 
     }
 
-    public void  getLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel request_id) {
+    public void  getLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel combinationType) {
         Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_LastNameZipCode();
         lastName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_LAST_NAME").toString();
         zipCode=accountDetailsLastNameZipCode.get("UCRADDR_ZIP").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setCustomerLastName(lastName);
         payload.setTransactionType(TRANS_TYPE_TOFF);
-        switch(request_id){
-            case INVALID_COMBINATION_TC77:
+        switch(combinationType){
+            case INVALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC77:
                 payload.setPremisesZipCode(FakerDataGenerator.generateDigits(5));
-            case VALID_COMBINATION_TC78:
+            case VALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC78:
                 payload.setPremisesZipCode(zipCode);
         }
     }
 
-    public void  getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel request_id) {
-        String accountType=null;
-        switch(request_id){
-            case RESIDENTIAL_ACCOUNT_TC79:
-                accountType="RS";
-            case SENIOR_RESIDENTIAL_ACCOUNT_TC80:
-                accountType="SR";
+    public void  getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel accountType) {
+        String account_Type=null;
+        switch(accountType){
+            case RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC79:
+                account_Type="RS";
+            case SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC80:
+                account_Type="SR";
         }
-        Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrSeniorResAccount(accountType);
+        Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrSeniorResAccount(account_Type);
         firstName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_FIRST_NAME").toString();
         lastName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_LAST_NAME").toString();
         zipCode=accountDetailsLastNameZipCode.get("UCRADDR_ZIP").toString();
@@ -104,12 +101,12 @@ public class SearchAccountsHelper {
 
     }
 
-    public void  getCustomerBusinessNameFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel request_id) {
+    public void  getCustomerBusinessNameFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel accountType) {
         Map<String, Object> accountDetailsLastNameZipCode=null;
-        switch(request_id){
-            case PASTDUEBALANCE_ACCOUNT_TC81:
+        switch(accountType){
+            case COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC81:
                 accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceCommercialAccount();
-            case SONP_ACCOUNT_TC82:
+            case COMMERCIAL_VALID_ACTIVE_SONP_ACCOUNT_TC82:
                 accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_ForSONPCommercialAccount();
         }
         customerBusinessName=accountDetailsLastNameZipCode.get("UCBCUST_LAST_NAME").toString();
