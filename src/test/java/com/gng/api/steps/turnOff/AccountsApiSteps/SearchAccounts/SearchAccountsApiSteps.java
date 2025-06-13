@@ -70,4 +70,9 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC59(search_accounts);
     }
 
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for Inactive account with bad debt balance")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_Inactive_metered_account_with_bad_debt_balance(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC60(search_accounts);
+    }
+
 }

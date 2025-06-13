@@ -558,7 +558,7 @@ public final class DBQuery {
             """;
 
     public static final String GET_CUSTOMERCODE_PREM_CODE_INACTIVE_METERED_ACCOUNT= """
-            SELECT\s
+            SELECT
                 T1.UCRACCT_CUST_CODE,
                 T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
@@ -575,6 +575,15 @@ public final class DBQuery {
                 AND T5.UCRSCMP_START_DATE < SYSDATE
                 AND T5.UCRSCMP_SCTY_CODE = 'COMM'
             ORDER BY T1.UCRACCT_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMERCODE_PREM_CODE_INACTIVE_ACCOUNT_WITH_BAD_DEBT= """
+            SELECT UABOPEN_PREM_CODE, UABOPEN_CUST_CODE
+            FROM UABOPEN
+            WHERE (UABOPEN_BAD_DEBT_STATUS_CODE IS NULL OR UABOPEN_BAD_DEBT_STATUS_CODE NOT IN ('G', 'H', 'N'))
+            GROUP BY UABOPEN_PREM_CODE, UABOPEN_CUST_CODE
+            HAVING SUM(UABOPEN_BD_BALANCE) > 0
             FETCH FIRST 1 ROWS ONLY
             """;
 

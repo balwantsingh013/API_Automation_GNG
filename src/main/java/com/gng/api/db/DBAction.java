@@ -288,6 +288,12 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeInactiveAccWithBadDebtt() {
+        String query = DBQuery.GET_CUSTOMERCODE_PREM_CODE_INACTIVE_ACCOUNT_WITH_BAD_DEBT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string
         String paramsString = params != null ? java.util.Arrays.toString(params) : "None";
