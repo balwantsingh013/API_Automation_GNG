@@ -94,4 +94,15 @@ public class SearchAccountsApiSteps {
     public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_inactive_and_bankrupcy_account(){
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC64(search_accounts);
     }
+
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Bankrupcy account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_new_and_bankrupcy_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC65(search_accounts);
+    }
+
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM Active and Non metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_Active_Non_metered_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC67(search_accounts);
+    }
+
 }

@@ -119,6 +119,18 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
+  @validCustPremCodeCMNewNonMetered @HappyFlow @SearchAccountTOFF @TC-65
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM new and Bankrupcy account TC_65
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Bankrupcy account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @CommercialActiveNonMetered @HappyFlow @SearchAccountTOFF @TC-67
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM Active Non-metered account TC_67
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM Active and Non metered account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
 
 
 
