@@ -159,4 +159,28 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
+
+    public void validateResponseForValidCustomerANDPremiseCodeTC68(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_68(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResponseForValidCustomerANDPremiseCodeTC69(SearchAccountsApiLabel apiLabel){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_69(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResponseForValidCustomerANDPremiseCodeTC70(SearchAccountsApiLabel apiLabel){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_70(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
 }

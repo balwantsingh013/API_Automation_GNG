@@ -233,6 +233,36 @@ public class SearchAccountsHelper {
         payload.setPremisesCode(premisesCode);
     }
 
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_68(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveMetered();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_69(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveBadDebt();
+        customerCode=custPremCode.get("UABBDBT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UABBDBT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_70(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveBadDebt();
+        customerCode=custPremCode.get("UABBDBT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UABBDBT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
 
 
 
