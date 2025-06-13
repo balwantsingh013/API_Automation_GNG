@@ -153,6 +153,16 @@ public class SearchAccountsHelper {
         payload.setPremisesCode(premisesCode);
     }
 
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_59(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveMeteredAccount();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
 
 
 

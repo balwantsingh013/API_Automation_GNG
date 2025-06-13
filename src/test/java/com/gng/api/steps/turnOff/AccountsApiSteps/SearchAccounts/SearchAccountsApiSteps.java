@@ -65,4 +65,9 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC58(search_accounts);
     }
 
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive and metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_Inactive_metered_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC59(search_accounts);
+    }
+
 }

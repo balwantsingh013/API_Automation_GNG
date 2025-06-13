@@ -96,6 +96,14 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void validateResponseForValidCustomerANDPremiseCodeTC59(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_59(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
 
 
 }
