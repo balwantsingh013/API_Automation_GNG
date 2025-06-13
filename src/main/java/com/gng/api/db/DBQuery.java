@@ -607,7 +607,31 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_CUSTOMERCODE_PREM_CODE_RS_NEW_BANKRUPCY= """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            JOIN UZBENRO T2 ON (
+                T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
+            )
+            WHERE T1.UCRACCT_PREM_CODE = 8888888
+            AND T2.UZBENRO_SCLS_CODE = 'RS'
+            AND T1.UCRACCT_STATUS_IND = 'N'
+            ORDER BY T1.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
 
+    public static final String GET_CUSTOMERCODE_PREM_CODE_RS_INACTIVE_BANKRUPCY= """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            JOIN UZBENRO T2 ON (
+                T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
+            )
+            WHERE T1.UCRACCT_PREM_CODE = 8888888
+            AND T2.UZBENRO_SCLS_CODE = 'RS'
+            AND T1.UCRACCT_STATUS_IND = 'I'
+            ORDER BY T1.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
 
 
     private DBQuery() {

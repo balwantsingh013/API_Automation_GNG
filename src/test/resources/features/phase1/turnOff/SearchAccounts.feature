@@ -107,4 +107,18 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
+  @validCustPremCodeRSNewBankrupcy @HappyFlow @SearchAccountTOFF @TC-63
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS New and Bankrupcy account TC_63
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS New and Bankrupcy account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustPremCodeRSInactiveBankrupcy @HappyFlow @SearchAccountTOFF @TC-64
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS Inactive and Bankrupcy account TC_64
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive and Bankrupcy account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+
+
 

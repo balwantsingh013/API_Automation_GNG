@@ -193,6 +193,26 @@ public class SearchAccountsHelper {
         payload.setPremisesCode(premisesCode);
     }
 
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_63(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeResidentialNewBankrupcy();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_64(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeResidentialInactiveBankrupcy();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
 
 
 
