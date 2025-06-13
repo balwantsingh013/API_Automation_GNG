@@ -276,6 +276,12 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeActiveNonMeteredAccount() {
+        String query = DBQuery.GET_CUSTOMERCODE_PREM_CODE_ACTIVE_NON_METERED_ACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getCustPremCodeInactiveNonMeteredAccount() {
         String query = DBQuery.GET_CUSTOMERCODE_PREM_CODE_INACTIVE_NON_METERED_ACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);
@@ -288,8 +294,14 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getCustPremCodeInactiveAccWithBadDebtt() {
+    public Map<String, Object> getCustPremCodeInactiveAccWithBadDebt() {
         String query = DBQuery.GET_CUSTOMERCODE_PREM_CODE_INACTIVE_ACCOUNT_WITH_BAD_DEBT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeInactiveAccWithSONP() {
+        String query = DBQuery.GET_CUSTOMERCODE_PREM_CODE_INACTIVE_ACCOUNT_WITH_SONP;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }

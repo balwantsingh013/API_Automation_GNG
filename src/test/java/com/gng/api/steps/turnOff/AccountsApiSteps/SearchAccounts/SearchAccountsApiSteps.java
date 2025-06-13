@@ -60,8 +60,8 @@ public class SearchAccountsApiSteps {
        searchAccountsApiPage.validateResponseForValidCustomerANDPRemisesCodeTC57(search_accounts);
    }
 
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive and Non-metered account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_Inactive_and_Non_metered_account(){
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Active and Non-metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_active_and_Non_metered_account(){
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC58(search_accounts);
     }
 
@@ -75,4 +75,13 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC60(search_accounts);
     }
 
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive account with SONP")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_Inactive_account_with_SONP(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC61(search_accounts);
+    }
+
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive Non metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_inactive_and_Non_metered_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC62(search_accounts);
+    }
 }

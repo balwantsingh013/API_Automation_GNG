@@ -530,29 +530,30 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String GET_CUSTOMERCODE_PREM_CODE_INACTIVE_NON_METERED_ACCOUNT= """
-            SELECT
-                T1.UCRACCT_CUST_CODE,
-                T1.UCRACCT_PREM_CODE
+    public static final String GET_CUSTOMERCODE_PREM_CODE_ACTIVE_NON_METERED_ACCOUNT= """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
-            JOIN UZBENRO T2
-                ON T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
-                AND T1.UCRACCT_PREM_CODE = T2.UZBENRO_PREM_CODE
+            WHERE T1.UCRACCT_STATUS_IND = 'A'
+            AND NOT EXISTS (
+                SELECT 'X'
+                FROM UCRSERV T3
+                WHERE T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+                AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+            )
+            ORDER BY T1.UCRACCT_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMERCODE_PREM_CODE_INACTIVE_NON_METERED_ACCOUNT= """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
             WHERE T1.UCRACCT_STATUS_IND = 'I'
-                AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO')
-                AND T2.UZBENRO_SCLS_CODE = 'RS'
-                AND NOT EXISTS (
-                    SELECT 'X'
-                    FROM UCRSERV T3
-                    WHERE T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
-                    AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
-                )
-                AND NOT EXISTS (
-                    SELECT 'X'
-                    FROM UCRSCMP T4
-                    WHERE T1.UCRACCT_CUST_CODE = T4.UCRSCMP_CUST_CODE
-                    AND T1.UCRACCT_PREM_CODE = T4.UCRSCMP_PREM_CODE
-                )
+            AND NOT EXISTS (
+                SELECT 'X'
+                FROM UCRSERV T3
+                WHERE T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+                AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+            )
             ORDER BY T1.UCRACCT_CUST_CODE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -584,6 +585,25 @@ public final class DBQuery {
             WHERE (UABOPEN_BAD_DEBT_STATUS_CODE IS NULL OR UABOPEN_BAD_DEBT_STATUS_CODE NOT IN ('G', 'H', 'N'))
             GROUP BY UABOPEN_PREM_CODE, UABOPEN_CUST_CODE
             HAVING SUM(UABOPEN_BD_BALANCE) > 0
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMERCODE_PREM_CODE_INACTIVE_ACCOUNT_WITH_SONP= """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1, UCRSERV T2
+            WHERE T1.UCRACCT_CUST_CODE = T2.UCRSERV_CUST_CODE
+            AND T1.UCRACCT_PREM_CODE = T2.UCRSERV_PREM_CODE
+            AND T1.UCRACCT_STATUS_IND = 'I'
+            AND T2.UCRSERV_SCLS_CODE = 'RS' -- UPDATE TO APPLICABLE SERVICE CLASS
+            AND EXISTS (
+                SELECT 'X'
+                FROM UCBSVCO
+                WHERE UCBSVCO_PREM_CODE = UCRACCT_PREM_CODE
+                AND UCBSVCO_CUST_CODE = UCRACCT_CUST_CODE
+                AND UCBSVCO_SOTP_CODE = 'SONP'
+                AND UCBSVCO_STUS_CODE IN ('O', 'X', 'C')
+            )
+            ORDER BY UCRACCT_CUST_CODE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 

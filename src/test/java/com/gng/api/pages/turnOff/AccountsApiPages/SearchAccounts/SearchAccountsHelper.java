@@ -144,6 +144,16 @@ public class SearchAccountsHelper {
     }
 
     public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_58(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeActiveNonMeteredAccount();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_62(SearchAccountsRequest payload) {
         Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveNonMeteredAccount();
         customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
         premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
@@ -164,9 +174,19 @@ public class SearchAccountsHelper {
     }
 
     public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_60(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithBadDebtt();
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithBadDebt();
         customerCode=custPremCode.get("UABOPEN_CUST_CODE").toString();
         premisesCode=custPremCode.get("UABOPEN_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_61(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithSONP();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerCode(customerCode);
