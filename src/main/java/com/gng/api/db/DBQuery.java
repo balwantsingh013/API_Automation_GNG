@@ -517,6 +517,46 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_CUSTOMERCODE_PREM_CODE_ACTIVE_MSB_ACCOUNT= """
+            SELECT T2.UCRACCT_CUST_CODE, T2.UCRACCT_PREM_CODE
+            FROM UCRMBIL T1
+            JOIN UCRACCT T2
+            ON T2.UCRACCT_CUST_CODE = T1.UCRMBIL_CUST_CODE
+            WHERE UCRMBIL_STATUS_IND is not null
+            AND UCRMBIL_STATUS_IND <> ' '
+            AND UCRMBIL_STATUS_IND <> 'T'
+            AND UCRMBIL_STATUS_IND <> 'X'
+            AND T2.ucracct_status_ind = 'A'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMERCODE_PREM_CODE_INACTIVE_NON_METERED_ACCOUNT= """
+            SELECT
+                T1.UCRACCT_CUST_CODE,
+                T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            JOIN UZBENRO T2
+                ON T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
+                AND T1.UCRACCT_PREM_CODE = T2.UZBENRO_PREM_CODE
+            WHERE T1.UCRACCT_STATUS_IND = 'I'
+                AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO')
+                AND T2.UZBENRO_SCLS_CODE = 'RS'
+                AND NOT EXISTS (
+                    SELECT 'X'
+                    FROM UCRSERV T3
+                    WHERE T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+                    AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+                )
+                AND NOT EXISTS (
+                    SELECT 'X'
+                    FROM UCRSCMP T4
+                    WHERE T1.UCRACCT_CUST_CODE = T4.UCRSCMP_CUST_CODE
+                    AND T1.UCRACCT_PREM_CODE = T4.UCRSCMP_PREM_CODE
+                )
+            ORDER BY T1.UCRACCT_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
 
     private DBQuery() {
     }

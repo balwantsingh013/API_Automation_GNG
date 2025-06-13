@@ -72,14 +72,29 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateResponseForValidCustomerBusinessNameTC56(SearchAccountsApiLabel apiLabel) {
+    public void validateResponseForValidCustomerANDPremiseCodeTC56(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getCustomerBusinessNameFromDbAndPreparePayloadTC_56(payload);
+        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_56(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
+    public void validateResponseForValidCustomerANDPRemisesCodeTC57(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_57(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResponseForValidCustomerANDPremiseCodeTC58(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_58(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
 
 
 

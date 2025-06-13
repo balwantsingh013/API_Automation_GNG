@@ -52,7 +52,17 @@ public class SearchAccountsApiSteps {
 
     @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS New and Non-metered account")
     public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_New_and_Non_metered_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC56(search_accounts);
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC56(search_accounts);
+    }
+
+   @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for active MSB account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_active_MSB_account(){
+       searchAccountsApiPage.validateResponseForValidCustomerANDPRemisesCodeTC57(search_accounts);
+   }
+
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive and Non-metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_Inactive_and_Non_metered_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC58(search_accounts);
     }
 
 }

@@ -123,8 +123,28 @@ public class SearchAccountsHelper {
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
-    public void  getCustomerBusinessNameFromDbAndPreparePayloadTC_56(SearchAccountsRequest payload) {
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_56(SearchAccountsRequest payload) {
         Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveNonMeteredAccount();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_57(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeMSBAccount();
+        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
+    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_58(SearchAccountsRequest payload) {
+        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveNonMeteredAccount();
         customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
         premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
