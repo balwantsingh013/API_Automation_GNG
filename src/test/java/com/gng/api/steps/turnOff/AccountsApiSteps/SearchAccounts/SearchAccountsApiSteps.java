@@ -95,8 +95,8 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC64(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Bankrupcy account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_new_and_bankrupcy_account(){
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Non-metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_new_and_non_metered_account(){
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC65(search_accounts);
     }
 
@@ -120,4 +120,18 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC70(search_accounts);
     }
 
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive non-metered account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_inactive_non_metered_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC71(search_accounts);
+    }
+
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Bankrupcy account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_new_bankrupcy_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC72(search_accounts);
+    }
+
+    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM Inactive and Bankrupcy account")
+    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_inactive_bankrupcy_account(){
+        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC73(search_accounts);
+    }
 }

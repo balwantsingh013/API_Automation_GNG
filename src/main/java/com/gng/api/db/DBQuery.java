@@ -633,7 +633,7 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String GET_CUSTOMERCODE_PREM_CODE_CM_NEW_BANKRUPCY= """
+    public static final String GET_CUSTOMERCODE_PREM_CODE_CM_NEW_NON_METERED= """
             SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
             JOIN UZBENRO T2 ON (
@@ -724,6 +724,58 @@ public final class DBQuery {
                 AND UCBSVCO_STUS_CODE IN ('O', 'X', 'C')
             )
             ORDER BY UCRACCT_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMERCODE_PREM_CODE_CM_INACTIVE_NON_METERED= """
+            SELECT
+                T1.UCRACCT_CUST_CODE,
+                T1.UCRACCT_PREM_CODE,
+                T1.*
+            FROM UCRACCT T1, UZBENRO T2
+            WHERE T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
+            AND T1.UCRACCT_PREM_CODE = T2.UZBENRO_PREM_CODE
+            AND T1.UCRACCT_STATUS_IND = 'I'
+            AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO') -- FIXED SYNTAX FOR NOT IN
+            AND T2.UZBENRO_SCLS_CODE = 'CM' -- UPDATE TO APPLICABLE SERVICE CLASS
+            AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO') -- REMOVED DUPLICATE CONDITION
+            AND NOT EXISTS (
+                SELECT 'X'
+                FROM UCRSERV T3
+                WHERE T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+                AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+            )
+            AND NOT EXISTS (
+                SELECT 'X'
+                FROM UCRSCMP T4
+                WHERE T1.UCRACCT_CUST_CODE = T4.UCRSCMP_CUST_CODE
+                AND T1.UCRACCT_PREM_CODE = T4.UCRSCMP_PREM_CODE
+            )
+            ORDER BY T1.UCRACCT_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMERCODE_PREM_CODE_CM_NEW_BANKRUPCY= """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            JOIN UZBENRO T2 ON (
+                T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
+            )
+            WHERE T1.UCRACCT_PREM_CODE = 8888888
+            AND T2.UZBENRO_SCLS_CODE = 'CM'
+            AND T1.UCRACCT_STATUS_IND = 'N'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMERCODE_PREM_CODE_CM_INACTIVE_BANKRUPCY= """
+            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            JOIN UZBENRO T2 ON (
+                T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
+            )
+            WHERE T1.UCRACCT_PREM_CODE = 8888888
+            AND T2.UZBENRO_SCLS_CODE = 'CM'
+            AND T1.UCRACCT_STATUS_IND = 'I'
             FETCH FIRST 1 ROWS ONLY
             """;
 

@@ -114,8 +114,8 @@ Feature: Verify SearchAccounts TurnOff Api
     And response should have ErrorCode 0 and ErrorMessage ""
 
   @validCustPremCodeCMNewNonMetered @HappyFlow @SearchAccountTOFF @TC-65
-  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM new and Bankrupcy account TC_65
-    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Bankrupcy account
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM new and Non-metered account TC_65
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Non-metered account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
@@ -140,6 +140,24 @@ Feature: Verify SearchAccounts TurnOff Api
   @validCustPremCodeCommercialInactiveSONP @HappyFlow @SearchAccountTOFF @TC-70
   Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM Inactive account with SONP TC_70
     When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive account with SONP
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustPremCodeCommercialInactiveNonMetered @HappyFlow @SearchAccountTOFF @TC-71
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM Inactive Non-metered account TC_71
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive non-metered account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustPremCodeCommercialNewAndBankrupcy @HappyFlow @SearchAccountTOFF @TC-72
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM New and Bankrupcy account TC_72
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Bankrupcy account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustPremCodeCommercialInactiveAndBankrupcy @HappyFlow @SearchAccountTOFF @TC-73
+  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for CM Inactive and Bankrupcy account TC_73
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM Inactive and Bankrupcy account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
