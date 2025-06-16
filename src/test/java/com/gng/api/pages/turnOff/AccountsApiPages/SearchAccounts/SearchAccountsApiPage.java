@@ -19,23 +19,6 @@ public class SearchAccountsApiPage extends BasePage {
         this.helper = new SearchAccountsHelper(testContext);
     }
 
-    public void validateResponseForInvalidAccountParamtersTC74(SearchAccountsApiLabel apiLabel) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getCustomerDetialsFromDbAndPreparePayload(payload);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-
-    }
-
-    public void validateResponseForvalidAccountParamtersForTC75_76(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getDetailsFromDbAndPreparePayloadForRMOrCM_customer(payload, accountType);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-
-    }
 
     public void validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel combinationType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
@@ -67,22 +50,6 @@ public class SearchAccountsApiPage extends BasePage {
     public void validateResponseForValidCustomerBusinessNameTC83(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getCustomerBusinessNameFromDbAndPreparePayloadTC_83(payload);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateResponseForValidCustomerANDPremiseCodeTC72(SearchAccountsApiLabel apiLabel){
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_72(payload);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateResponseForValidCustomerANDPremiseCodeTC73(SearchAccountsApiLabel apiLabel){
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getCustomerPremisesCodeFromDbAndPreparePayloadTC_73(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
