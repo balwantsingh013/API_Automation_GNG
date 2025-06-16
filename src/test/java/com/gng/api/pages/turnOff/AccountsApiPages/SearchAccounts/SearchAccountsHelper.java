@@ -123,46 +123,6 @@ public class SearchAccountsHelper {
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_68(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveMetered();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_69(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveBadDebt();
-        customerCode=custPremCode.get("UABBDBT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UABBDBT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_70(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveSONP();
-        customerCode=custPremCode.get("UABBDBT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UABBDBT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_71(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveNonMetered();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
     public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_72(SearchAccountsRequest payload) {
         Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMNewBakrupcy();
         customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
@@ -294,6 +254,48 @@ public class SearchAccountsHelper {
                 payload.setTransactionType(TRANS_TYPE_TOFF);
                 payload.setCustomerCode(customerCode);
                 payload.setPremisesCode(premisesCode);
+                break;
+
+            case CM_INACTIVE_METERED_TC_68:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveMetered();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case CM_INACTIVE_BAD_DEBT_TC_69:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveBadDebt();
+                customerCode=custPremCode.get("UABBDBT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UABBDBT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case CM_INACTIVE_SONP_TC_70:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveSONP();
+                customerCode=custPremCode.get("UABBDBT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UABBDBT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case CM_INACTIVE_NON_METERED_TC_71:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveNonMetered();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
         }
     }
 

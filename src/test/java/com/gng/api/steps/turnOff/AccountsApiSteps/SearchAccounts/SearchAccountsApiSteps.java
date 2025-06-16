@@ -50,26 +50,6 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC83(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive and metered account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_inactive_metered_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC68(search_accounts);
-    }
-
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive account with bad debt")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_inactive_account_bad_debt(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC69(search_accounts);
-    }
-
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive account with SONP")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_inactive_account_SONP(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC70(search_accounts);
-    }
-
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive non-metered account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_inactive_non_metered_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC71(search_accounts);
-    }
-
     @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Bankrupcy account")
     public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_new_bankrupcy_account(){
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC72(search_accounts);
