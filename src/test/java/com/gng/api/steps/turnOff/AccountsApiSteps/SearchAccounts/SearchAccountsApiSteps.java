@@ -50,31 +50,6 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC83(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive Non metered account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_inactive_and_Non_metered_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC62(search_accounts);
-    }
-
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS New and Bankrupcy account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_new_and_bankrupcy_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC63(search_accounts);
-    }
-
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive and Bankrupcy account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_RS_inactive_and_bankrupcy_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC64(search_accounts);
-    }
-
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM New and Non-metered account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_new_and_non_metered_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC65(search_accounts);
-    }
-
-    @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM Active and Non metered account")
-    public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_Active_Non_metered_account(){
-        searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC67(search_accounts);
-    }
-
     @When("a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM inactive and metered account")
     public void a_request_made_to_SearchAccounts_Api_Valid_customer_premisesCode_with_TOFF_for_CM_inactive_metered_account(){
         searchAccountsApiPage.validateResponseForValidCustomerANDPremiseCodeTC68(search_accounts);

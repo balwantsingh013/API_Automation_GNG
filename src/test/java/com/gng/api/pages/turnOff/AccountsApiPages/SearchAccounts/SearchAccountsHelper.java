@@ -123,56 +123,6 @@ public class SearchAccountsHelper {
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_62(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveNonMeteredAccount();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_63(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeResidentialNewBankrupcy();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_64(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeResidentialInactiveBankrupcy();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_65(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMNewNonMetered();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_67(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMActiveNonMetered();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
     public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_68(SearchAccountsRequest payload) {
         Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMInactiveMetered();
         customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
@@ -295,6 +245,55 @@ public class SearchAccountsHelper {
                 payload.setCustomerCode(customerCode);
                 payload.setPremisesCode(premisesCode);
                 break;
+
+            case RS_INACTIVE_NON_METER_TC_62:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveNonMeteredAccount();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case RS_NEW_BANKRUPCY_TC_63:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeResidentialNewBankrupcy();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case RS_INACTIVE_BANKRUPCY_TC_64:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeResidentialInactiveBankrupcy();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case CM_NEW_NON_METERED_TC_65:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMNewNonMetered();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case CM_ACTIVE_NON_METERED_TC_67:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeCMActiveNonMetered();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
         }
     }
 
