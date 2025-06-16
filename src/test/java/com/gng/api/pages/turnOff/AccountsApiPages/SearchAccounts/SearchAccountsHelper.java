@@ -97,6 +97,30 @@ public class SearchAccountsHelper {
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
+    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_85(SearchAccountsRequest payload) {
+        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveETC();
+        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerBusinessName(customerBusinessName);
+    }
+
+    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_86(SearchAccountsRequest payload) {
+        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveNoETC();
+        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerBusinessName(customerBusinessName);
+    }
+
+    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_87(SearchAccountsRequest payload) {
+        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveCCV();
+        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerBusinessName(customerBusinessName);
+    }
+
     public void getCustomerPremisesCodeFromDbAndPreparePayload(SearchAccountsRequest payload,SearchAccountsTOffApiLabel testCondition) {
         Map<String, Object> custPremCode=null;
         String account_Type=null;

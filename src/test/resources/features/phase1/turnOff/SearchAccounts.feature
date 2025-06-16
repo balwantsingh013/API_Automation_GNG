@@ -42,7 +42,6 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
-#updated
   @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF
   Scenario Outline: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for <testCondition>
     When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for "<testCondition>"
@@ -70,6 +69,24 @@ Feature: Verify SearchAccounts TurnOff Api
     |VALID_CUST_CODE_INVALID_PREM_CODE_TC_74|
     |RS_ACTIVE_ACCOUNT_TC_75                |
     |CM_ACTIVE_ACCOUNT_TC_76                |
+
+  @validCustomerBusinessNameCMActiveETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-85
+  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC TC_85
+    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustomerBusinessNameCMActiveNoETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-86
+  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with No ETC TC_86
+    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with No ETC
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustomerBusinessNameCMActivePricePlanCCV @Phase1 @HappyFlow @SearchAccountTOFF @TC-87
+  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with CCV price plan TC_87
+    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with CCV price plan
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
 
 
 

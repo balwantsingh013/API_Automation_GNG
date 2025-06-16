@@ -264,6 +264,24 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustomerBusinessNameCMActiveETC() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_ETC;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomerBusinessNameCMActiveNoETC() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_No_ETC;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomerBusinessNameCMActiveCCV() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_CCV;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getCustPremCodeRSActiveNonMeteredAccount() {
         String query = DBQuery.GET_CUSTOMERCODE_PREM_CODE_ACTIVE_RS_NON_METERED_ACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);

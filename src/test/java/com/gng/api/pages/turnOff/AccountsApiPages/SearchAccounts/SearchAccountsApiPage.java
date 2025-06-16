@@ -44,7 +44,30 @@ public class SearchAccountsApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
+    }
 
+    public void validateResponseForValidCustomerBusinessNameTC85(SearchAccountsApiLabel apiLabel){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerBusinessNameFromDbAndPreparePayloadTC_85(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResponseForValidCustomerBusinessNameTC86(SearchAccountsApiLabel apiLabel){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerBusinessNameFromDbAndPreparePayloadTC_86(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResponseForValidCustomerBusinessNameTC87(SearchAccountsApiLabel apiLabel){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerBusinessNameFromDbAndPreparePayloadTC_87(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
     }
 
     public void validateResponseForValidCustomerBusinessNameTC83(SearchAccountsApiLabel apiLabel) {
