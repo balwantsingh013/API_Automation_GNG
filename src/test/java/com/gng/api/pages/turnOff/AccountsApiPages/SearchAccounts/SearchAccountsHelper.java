@@ -123,68 +123,8 @@ public class SearchAccountsHelper {
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_56(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveNonMeteredAccount();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_57(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeMSBAccount();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_58(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeActiveNonMeteredAccount();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
     public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_62(SearchAccountsRequest payload) {
         Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveNonMeteredAccount();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_59(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveMeteredAccount();
-        customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_60(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithBadDebt();
-        customerCode=custPremCode.get("UABOPEN_CUST_CODE").toString();
-        premisesCode=custPremCode.get("UABOPEN_PREM_CODE").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerCode(customerCode);
-        payload.setPremisesCode(premisesCode);
-    }
-
-    public void  getCustomerPremisesCodeFromDbAndPreparePayloadTC_61(SearchAccountsRequest payload) {
-        Map<String, Object> custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithSONP();
         customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
         premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -291,6 +231,71 @@ public class SearchAccountsHelper {
         payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerCode(customerCode);
         payload.setPremisesCode(premisesCode);
+    }
+
+    public void getCustomerPremisesCodeFromDbAndPreparePayload(SearchAccountsRequest payload,SearchAccountsTOffApiLabel testCondition) {
+        Map<String, Object> custPremCode=null;
+        switch (testCondition) {
+            case ACTIVE_RS_NEW_NON_METERED_TC_56:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveNonMeteredAccount();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case ACTIVE_MSB_ACCOUNT_TC_57:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeMSBAccount();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case ACTIVE_RS_NEW_NON_METERED_TC_58:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeActiveNonMeteredAccount();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case INACTIVE_RS_METERED_TC_59:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveMeteredAccount();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case INACTIVE_BAD_DEBT_BALANCE_TC_60:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithBadDebt();
+                customerCode=custPremCode.get("UABOPEN_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UABOPEN_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+
+            case RS_INACTIVE_WITH_SONP_TC_61:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithSONP();
+                customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TRANS_TYPE_TOFF);
+                payload.setCustomerCode(customerCode);
+                payload.setPremisesCode(premisesCode);
+                break;
+        }
     }
 
 

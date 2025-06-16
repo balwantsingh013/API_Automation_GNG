@@ -59,42 +59,6 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
-  @validCustPremCodeActiveRSNewNonMetered @Phase1 @HappyFlow @SearchAccountTOFF @TC-56
-  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS New and Non-metered account TC_56
-    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS New and Non-metered account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustPremCodeActiveMSBAccount @Phase1 @HappyFlow @SearchAccountTOFF @TC-57
-  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for active MSB account TC_57
-    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for active MSB account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustPremCodectiActiveRSNewNonMetered @Phase1 @HappyFlow @SearchAccountTOFF @TC-58
-  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS Active and Non-metered account TC_58
-    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Active and Non-metered account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustPremCodeInactiveRSMetered @Phase1 @HappyFlow @SearchAccountTOFF @TC-59
-  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS Inactive and Metered account TC_59
-    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive and metered account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustPremCodeInactiveBadDebtBalance @HappyFlow @SearchAccountTOFF @TC-60
-  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for Inactive account with bad debt balance TC_60
-    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for Inactive account with bad debt balance
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustPremCodeRSInactiveWithSONP @HappyFlow @SearchAccountTOFF @TC-61
-  Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS Inactive account with SONP TC_61
-    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive account with SONP
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
   @validCustPremCodeRSInactiveNonMeter @HappyFlow @SearchAccountTOFF @TC-62
   Scenario: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for RS Inactive Non-metered account TC_62
     When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for RS Inactive Non metered account
@@ -160,6 +124,21 @@ Feature: Verify SearchAccounts TurnOff Api
     When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for CM Inactive and Bankrupcy account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+
+#updated
+  @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF
+  Scenario Outline: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for <testCondition>
+    When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Examples:
+    |testCondition|
+    |ACTIVE_RS_NEW_NON_METERED_TC_56|
+    |ACTIVE_MSB_ACCOUNT_TC_57|
+    |ACTIVE_RS_NEW_NON_METERED_TC_58|
+    |INACTIVE_RS_METERED_TC_59      |
+    |INACTIVE_BAD_DEBT_BALANCE_TC_60|
+    |RS_INACTIVE_WITH_SONP_TC_61|
 
 
 
