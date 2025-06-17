@@ -234,6 +234,18 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, account_type);
     }
 
+    public Map<String, Object> getCustPremCodeRSSONPNonMaster() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SONP_NON_MASTER;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActivePendingRewards() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_PENDING_REWARDS;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getAccountDetails_LastNameZipCode() {
         String query = DBQuery.GET_LASTNAME_AND_ZIPCODE;
         logQueryInAllure("Get Last Name And Zip Code", query);
@@ -278,6 +290,18 @@ public class DBAction {
 
     public Map<String, Object> getCustomerBusinessNameCMActiveCCV() {
         String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_CCV;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomerBusinessNameCMFinalAccount() {
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_FINAL_CM;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomerSSNActiveRSAccount() {
+        String query = DBQuery.GET_SSN_FOR_ACTIVE_RS_ACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }

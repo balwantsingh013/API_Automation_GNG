@@ -70,6 +70,22 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void validateResponseForValidCustomerBusinessNameTC88(SearchAccountsApiLabel apiLabel){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getCustomerBusinessNameFromDbAndPreparePayloadTC_88(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResponseForValidSSNTC89(SearchAccountsApiLabel apiLabel){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.getSSNFromDbAndPreparePayloadTC_89(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateResponseForValidCustomerBusinessNameTC83(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getCustomerBusinessNameFromDbAndPreparePayloadTC_83(payload);

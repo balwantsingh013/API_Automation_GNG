@@ -69,6 +69,8 @@ Feature: Verify SearchAccounts TurnOff Api
     |VALID_CUST_CODE_INVALID_PREM_CODE_TC_74|
     |RS_ACTIVE_ACCOUNT_TC_75                |
     |CM_ACTIVE_ACCOUNT_TC_76                |
+    |RS_ACTIVE_SONP_NON_MASTER_TC_91        |
+    |RS_ACTIVE_PENDING_REWARDS_TC_92        |
 
   @validCustomerBusinessNameCMActiveETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-85
   Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC TC_85
@@ -87,6 +89,19 @@ Feature: Verify SearchAccounts TurnOff Api
     When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with CCV price plan
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+
+  @validCustomerBusinessNameCMFinalAccount @Phase1 @HappyFlow @SearchAccountTOFF @TC-88
+  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Final Account TC_88
+    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial final account
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+  #Encryption API is failing
+#  @validSSNActiveRSPastDueBalance @Phase1 @HappyFlow @SearchAccountTOFF @TC-89
+#  Scenario: SearchAccountsApi- Verify Response when a Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance TC_89
+#    When a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance
+#    Then verify response code of "SearchAccounts" Api is 200
+#    And response should have ErrorCode 0 and ErrorMessage ""
 
 
 

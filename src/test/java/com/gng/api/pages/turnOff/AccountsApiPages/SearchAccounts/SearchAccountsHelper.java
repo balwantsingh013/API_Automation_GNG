@@ -4,6 +4,7 @@ import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.util.FakerDataGenerator;
@@ -24,6 +25,7 @@ public class SearchAccountsHelper {
     public String zipCode;
     public String firstName;
     public String customerBusinessName;
+    public String socialSecurityNumber;
     public static final String TRANS_TYPE_TOFF="TOFF";
 
     public SearchAccountsHelper(TestContext testContext) {
@@ -121,6 +123,23 @@ public class SearchAccountsHelper {
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
+    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_88(SearchAccountsRequest payload) {
+        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMFinalAccount();
+        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setCustomerBusinessName(customerBusinessName);
+    }
+
+    public void getSSNFromDbAndPreparePayloadTC_89(SearchAccountsRequest payload) {
+        Map<String, Object> accountDetailsCustomerSSN = ApplicationContext.get().getDbAction().getCustomerSSNActiveRSAccount();
+        String UnencryptedSSN=accountDetailsCustomerSSN.get("UCBCUST_SSN").toString();
+        socialSecurityNumber= AesEncryptionSteps.encryptData(UnencryptedSSN);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setSocialSecurityNumber(socialSecurityNumber);
+    }
+
     public void getCustomerPremisesCodeFromDbAndPreparePayload(SearchAccountsRequest payload,SearchAccountsTOffApiLabel testCondition) {
         Map<String, Object> custPremCode=null;
         String account_Type=null;
@@ -208,6 +227,14 @@ public class SearchAccountsHelper {
                 account_Type="CM";
                 custPremCode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrCommercialAccount(account_Type);
                 break;
+
+            case RS_ACTIVE_SONP_NON_MASTER_TC_91:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSSONPNonMaster();
+                break;
+
+            case RS_ACTIVE_PENDING_REWARDS_TC_92:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePendingRewards();
+                break;
         }
 
         switch(testCondition){
@@ -217,7 +244,6 @@ public class SearchAccountsHelper {
                 break;
 
             case CM_INACTIVE_BAD_DEBT_TC_69:
-            case CM_INACTIVE_SONP_TC_70:
                 customerCode=custPremCode.get("UABBDBT_CUST_CODE").toString();
                 premisesCode=custPremCode.get("UABBDBT_PREM_CODE").toString();
                 break;
@@ -228,6 +254,12 @@ public class SearchAccountsHelper {
                 payload.setCustomerCode(customerCode);
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
                 payload.setTransactionType(TRANS_TYPE_TOFF);
+                break;
+
+            case RS_ACTIVE_SONP_NON_MASTER_TC_91:
+                customerCode=custPremCode.get("UCRSCMP_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UCRSCMP_PREM_CODE").toString();
+                break;
 
             default:
                 customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
