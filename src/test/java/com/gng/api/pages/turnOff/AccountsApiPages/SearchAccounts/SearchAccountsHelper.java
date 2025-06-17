@@ -27,6 +27,17 @@ public class SearchAccountsHelper {
     public String customerBusinessName;
     public String socialSecurityNumber;
     public static final String TRANS_TYPE_TOFF="TOFF";
+    public String aglcAccountNumber;
+    public String premisesStreetNumber;
+    public String premisesStreetPreDirection;
+    public String premisesStreetName;
+    public String premisesStreetSuffix;
+    public String premisesStreetPostDirection;
+    public String premisesUnitType;
+    public String premisesUnitNumber;
+    public String premisesCity;
+    public String premisesStateCode;
+    public String premisesZipCode;
 
     public SearchAccountsHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -129,6 +140,41 @@ public class SearchAccountsHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerBusinessName(customerBusinessName);
+    }
+
+    public void getAGLCNumberFromDbAndPreparePayloadTC_103(SearchAccountsRequest payload) {
+        Map<String, Object> aglcNumber = ApplicationContext.get().getDbAction().getAGLCNumberRSActiveAccount();
+        aglcAccountNumber=aglcNumber.get("GTBTRNH_AGLC_ACCT_NBR").toString();
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setAglcAccountNumber(aglcAccountNumber);
+    }
+
+    public void getAddressDetailsFromDbAndPreparePayloadTC_104(SearchAccountsRequest payload) {
+        Map<String, Object> addressDetails = ApplicationContext.get().getDbAction().getAddressDetailsRSActiveAccount();
+        premisesStreetNumber=addressDetails.get("UCRADDR_STREET_NUMBER").toString();
+        premisesStreetPreDirection=addressDetails.get("UCRADDR_PDIR_CODE_PRE").toString();
+        premisesStreetName=addressDetails.get("UCRADDR_STREET_NAME").toString();
+        premisesStreetSuffix=addressDetails.get("UCRADDR_SSFX_CODE").toString();
+        premisesStreetPostDirection=addressDetails.get("UCRADDR_PDIR_CODE_POST").toString();
+        premisesUnitType=addressDetails.get("UCRADDR_UTYP_CODE").toString();
+        premisesUnitNumber=addressDetails.get("UCRADDR_UNIT").toString();
+        premisesCity=addressDetails.get("UCRADDR_CITY").toString();
+        premisesStateCode=addressDetails.get("UCRADDR_STAT_CODE").toString();
+        premisesZipCode=addressDetails.get("UCRADDR_ZIP").toString();
+
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setPremisesStreetNumber(premisesStreetNumber);
+        payload.setPremisesStreetPreDirection(premisesStreetPreDirection);
+        payload.setPremisesStreetName(premisesStreetName);
+        payload.setPremisesStreetSuffix(premisesStreetSuffix);
+        payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
+        payload.setPremisesUnitType(premisesUnitType);
+        payload.setPremisesUnitNumber(premisesUnitNumber);
+        payload.setPremisesCity(premisesCity);
+        payload.setPremisesStateCode(premisesStateCode);
+        payload.setPremisesZipCode(premisesZipCode);
     }
 
     public void getSSNFromDbAndPreparePayloadTC_89(SearchAccountsRequest payload) {

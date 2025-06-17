@@ -360,6 +360,18 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getAGLCNumberRSActiveAccount() {
+        String query = DBQuery.GET_AGLC_NUMBER_FOR_ACTIVE_RS;
+        logQueryInAllure("Get AGLC account number", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAddressDetailsRSActiveAccount() {
+        String query = DBQuery.GET_ADDRESS_DETAILS_FOR_ACTIVE_RS;
+        logQueryInAllure("Get Address Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getCustomerSSNActiveRSAccount() {
         String query = DBQuery.GET_SSN_FOR_ACTIVE_RS_ACCOUNT;
         logQueryInAllure("Get CustomerBusinessName", query);
