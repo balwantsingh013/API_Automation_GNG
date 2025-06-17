@@ -112,11 +112,16 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
-  @ValidAddressDetailsRSActiveAccount @Phase1 @HappyFlow @SearchAccountTOFF @TC-104
-  Scenario: SearchAccountsApi- Verify Response when a Valid Address Details parameters with transactionType As TOFF is input For Residential Active Account TC_104
-    When a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For Residential Active account
+  @ValidAddressDetailsRSActiveAccount @Phase1 @HappyFlow @SearchAccountTOFF
+  Scenario Outline: SearchAccountsApi- Verify Response when a Valid Address Details parameters with transactionType As TOFF is input For Residential Active Account <testCondition>
+    When a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For Residential Active account "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+  Examples:
+  |testCondition                             |
+  |ALL_PREMISES_FIELDS_TC_104                |
+  |PREMISES_STREET_NAME_CITY_STATE_ZIP_TC_105|
+
 
   #Encryption API is failing
 #  @validSSNActiveRSPastDueBalance @Phase1 @HappyFlow @SearchAccountTOFF @TC-89

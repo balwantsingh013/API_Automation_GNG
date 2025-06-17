@@ -86,9 +86,9 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateResponseForValidAddressDetailsTC104(SearchAccountsApiLabel apiLabel){
+    public void validateResponseForValidAddressDetailsTC104(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.getAddressDetailsFromDbAndPreparePayloadTC_104(payload);
+        helper.getAddressDetailsFromDbAndPreparePayloadTC_104(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);

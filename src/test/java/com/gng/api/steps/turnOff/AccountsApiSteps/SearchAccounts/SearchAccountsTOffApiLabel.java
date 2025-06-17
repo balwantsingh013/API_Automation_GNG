@@ -45,7 +45,12 @@ public enum SearchAccountsTOffApiLabel {
     RS_ACTIVE_GREENER_LIFE_TC_99,
     RS_ACTIVE_CSV_PRICE_PLAN_TC_100,
     RS_FINAL_ACCOUNT_TC_101,
-    RS_ACTIVE_ACCOUNT_TC_102
+    RS_ACTIVE_ACCOUNT_TC_102,
+
+
+    //positive test conditions related to premises parameters
+    ALL_PREMISES_FIELDS_TC_104,
+    PREMISES_STREET_NAME_CITY_STATE_ZIP_TC_105
 
 
 }

@@ -59,9 +59,9 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidAGLCNumberTC103(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For Residential Active account")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_Address_Details_Parameters_with_TOFF_RS_Active_account() {
-        searchAccountsApiPage.validateResponseForValidAddressDetailsTC104(search_accounts);
+    @When("a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For Residential Active account {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_Address_Details_Parameters_with_TOFF_RS_Active_account(String testCondition) {
+        searchAccountsApiPage.validateResponseForValidAddressDetailsTC104(search_accounts, SearchAccountsTOffApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance")

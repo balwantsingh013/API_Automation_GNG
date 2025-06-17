@@ -150,31 +150,42 @@ public class SearchAccountsHelper {
         payload.setAglcAccountNumber(aglcAccountNumber);
     }
 
-    public void getAddressDetailsFromDbAndPreparePayloadTC_104(SearchAccountsRequest payload) {
+    public void getAddressDetailsFromDbAndPreparePayloadTC_104(SearchAccountsRequest payload, SearchAccountsTOffApiLabel testCondition) {
         Map<String, Object> addressDetails = ApplicationContext.get().getDbAction().getAddressDetailsRSActiveAccount();
-        premisesStreetNumber=addressDetails.get("UCRADDR_STREET_NUMBER").toString();
-        premisesStreetPreDirection=addressDetails.get("UCRADDR_PDIR_CODE_PRE").toString();
+
+        switch(testCondition){
+            case ALL_PREMISES_FIELDS_TC_104:
+                premisesStreetNumber=addressDetails.get("UCRADDR_STREET_NUMBER").toString();
+                premisesStreetPreDirection=addressDetails.get("UCRADDR_PDIR_CODE_PRE").toString();
+                premisesStreetSuffix=addressDetails.get("UCRADDR_SSFX_CODE").toString();
+                premisesStreetPostDirection=addressDetails.get("UCRADDR_PDIR_CODE_POST").toString();
+                premisesUnitType=addressDetails.get("UCRADDR_UTYP_CODE").toString();
+                premisesUnitNumber=addressDetails.get("UCRADDR_UNIT").toString();
+
+                payload.setPremisesStreetNumber(premisesStreetNumber);
+                payload.setPremisesStreetPreDirection(premisesStreetPreDirection);
+                payload.setPremisesStreetSuffix(premisesStreetSuffix);
+                payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
+                payload.setPremisesUnitType(premisesUnitType);
+                payload.setPremisesUnitNumber(premisesUnitNumber);
+                break;
+
+            case PREMISES_STREET_NAME_CITY_STATE_ZIP_TC_105:
+                //no changes need to be made other than common fields below
+                break;
+        }
+
         premisesStreetName=addressDetails.get("UCRADDR_STREET_NAME").toString();
-        premisesStreetSuffix=addressDetails.get("UCRADDR_SSFX_CODE").toString();
-        premisesStreetPostDirection=addressDetails.get("UCRADDR_PDIR_CODE_POST").toString();
-        premisesUnitType=addressDetails.get("UCRADDR_UTYP_CODE").toString();
-        premisesUnitNumber=addressDetails.get("UCRADDR_UNIT").toString();
         premisesCity=addressDetails.get("UCRADDR_CITY").toString();
         premisesStateCode=addressDetails.get("UCRADDR_STAT_CODE").toString();
         premisesZipCode=addressDetails.get("UCRADDR_ZIP").toString();
 
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setPremisesStreetNumber(premisesStreetNumber);
-        payload.setPremisesStreetPreDirection(premisesStreetPreDirection);
         payload.setPremisesStreetName(premisesStreetName);
-        payload.setPremisesStreetSuffix(premisesStreetSuffix);
-        payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
-        payload.setPremisesUnitType(premisesUnitType);
-        payload.setPremisesUnitNumber(premisesUnitNumber);
         payload.setPremisesCity(premisesCity);
         payload.setPremisesStateCode(premisesStateCode);
         payload.setPremisesZipCode(premisesZipCode);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TRANS_TYPE_TOFF);
     }
 
     public void getSSNFromDbAndPreparePayloadTC_89(SearchAccountsRequest payload) {
