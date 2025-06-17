@@ -263,6 +263,18 @@ public class SearchAccountsHelper {
             case RS_ACTIVE_GREENER_LIFE_TC_99:
                 custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveGreenerLife();
                 break;
+
+            case RS_ACTIVE_CSV_PRICE_PLAN_TC_100:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveCSV();
+                break;
+
+            case RS_FINAL_ACCOUNT_TC_101:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSFinal();
+                break;
+
+            case RS_ACTIVE_ACCOUNT_TC_102:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActive();
+                break;
         }
 
         switch(testCondition){
