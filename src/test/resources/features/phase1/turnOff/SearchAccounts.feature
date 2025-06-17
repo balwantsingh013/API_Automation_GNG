@@ -71,6 +71,9 @@ Feature: Verify SearchAccounts TurnOff Api
     |CM_ACTIVE_ACCOUNT_TC_76                |
     |RS_ACTIVE_SONP_NON_MASTER_TC_91        |
     |RS_ACTIVE_PENDING_REWARDS_TC_92        |
+    |RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93      |
+    |RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94   |
+    |RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95|
 
   @validCustomerBusinessNameCMActiveETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-85
   Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC TC_85

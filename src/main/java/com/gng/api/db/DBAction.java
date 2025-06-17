@@ -246,6 +246,24 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeRSActiveUnappliedDeposit() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveNoUnappliedDeposit() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_NO_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActivePGBExpirationDate() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_PGB_EXP_DATE;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getAccountDetails_LastNameZipCode() {
         String query = DBQuery.GET_LASTNAME_AND_ZIPCODE;
         logQueryInAllure("Get Last Name And Zip Code", query);

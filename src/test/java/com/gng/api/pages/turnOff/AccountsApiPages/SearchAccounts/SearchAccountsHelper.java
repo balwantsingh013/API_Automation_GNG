@@ -235,6 +235,18 @@ public class SearchAccountsHelper {
             case RS_ACTIVE_PENDING_REWARDS_TC_92:
                 custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePendingRewards();
                 break;
+
+            case RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveUnappliedDeposit();
+                break;
+
+            case RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveNoUnappliedDeposit();
+                break;
+
+            case RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95:
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePGBExpirationDate();
+                break;
         }
 
         switch(testCondition){
@@ -257,6 +269,9 @@ public class SearchAccountsHelper {
                 break;
 
             case RS_ACTIVE_SONP_NON_MASTER_TC_91:
+            case RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93:
+            case RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94:
+            case RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95:
                 customerCode=custPremCode.get("UCRSCMP_CUST_CODE").toString();
                 premisesCode=custPremCode.get("UCRSCMP_PREM_CODE").toString();
                 break;
