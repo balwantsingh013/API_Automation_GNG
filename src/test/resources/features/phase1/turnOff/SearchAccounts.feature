@@ -48,32 +48,36 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     Examples:
-    |testCondition                          |
-    |ACTIVE_RS_NEW_NON_METERED_TC_56        |
-    |ACTIVE_MSB_ACCOUNT_TC_57               |
-    |ACTIVE_RS_NEW_NON_METERED_TC_58        |
-    |INACTIVE_RS_METERED_TC_59              |
-    |INACTIVE_BAD_DEBT_BALANCE_TC_60        |
-    |RS_INACTIVE_WITH_SONP_TC_61            |
-    |RS_INACTIVE_NON_METER_TC_62            |
-    |RS_NEW_BANKRUPCY_TC_63                 |
-    |RS_INACTIVE_BANKRUPCY_TC_64            |
-    |CM_NEW_NON_METERED_TC_65               |
-    |CM_ACTIVE_NON_METERED_TC_67            |
-    |CM_INACTIVE_METERED_TC_68              |
-    |CM_INACTIVE_BAD_DEBT_TC_69             |
-    |CM_INACTIVE_SONP_TC_70                 |
-    |CM_INACTIVE_NON_METERED_TC_71          |
-    |CM_NEW_BANKRUPCY_TC_72                 |
-    |CM_INACTIVE_BANKRUPCY_TC_73            |
-    |VALID_CUST_CODE_INVALID_PREM_CODE_TC_74|
-    |RS_ACTIVE_ACCOUNT_TC_75                |
-    |CM_ACTIVE_ACCOUNT_TC_76                |
-    |RS_ACTIVE_SONP_NON_MASTER_TC_91        |
-    |RS_ACTIVE_PENDING_REWARDS_TC_92        |
-    |RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93      |
-    |RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94   |
-    |RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95|
+    |testCondition                             |
+    |ACTIVE_RS_NEW_NON_METERED_TC_56           |
+    |ACTIVE_MSB_ACCOUNT_TC_57                  |
+    |ACTIVE_RS_NEW_NON_METERED_TC_58           |
+    |INACTIVE_RS_METERED_TC_59                 |
+    |INACTIVE_BAD_DEBT_BALANCE_TC_60           |
+    |RS_INACTIVE_WITH_SONP_TC_61               |
+    |RS_INACTIVE_NON_METER_TC_62               |
+    |RS_NEW_BANKRUPCY_TC_63                    |
+    |RS_INACTIVE_BANKRUPCY_TC_64               |
+    |CM_NEW_NON_METERED_TC_65                  |
+    |CM_ACTIVE_NON_METERED_TC_67               |
+    |CM_INACTIVE_METERED_TC_68                 |
+    |CM_INACTIVE_BAD_DEBT_TC_69                |
+    |CM_INACTIVE_SONP_TC_70                    |
+    |CM_INACTIVE_NON_METERED_TC_71             |
+    |CM_NEW_BANKRUPCY_TC_72                    |
+    |CM_INACTIVE_BANKRUPCY_TC_73               |
+    |VALID_CUST_CODE_INVALID_PREM_CODE_TC_74   |
+    |RS_ACTIVE_ACCOUNT_TC_75                   |
+    |CM_ACTIVE_ACCOUNT_TC_76                   |
+    |RS_ACTIVE_SONP_NON_MASTER_TC_91           |
+    |RS_ACTIVE_PENDING_REWARDS_TC_92           |
+    |RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93         |
+    |RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94      |
+    |RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95   |
+    |RS_ACTIVE_MKT_PRICE_PLAN_NO_EXP_DATE_TC_96|
+    |RS_ACTIVE_ETC_TC_97                       |
+    |RS_ACTIVE_ETC_RGB_PRICE_PLAN_TC_98        |
+    |RS_ACTIVE_GREENER_LIFE_TC_99              |
 
   @validCustomerBusinessNameCMActiveETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-85
   Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC TC_85
