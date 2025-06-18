@@ -1048,7 +1048,10 @@ public final class DBQuery {
     public static final String GET_CUSTOMERCODE_PREM_CODE_ACTIVE_NON_METERED_ACCOUNT= """
             SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
+            JOIN UZBENRO T2
+            ON T2.UZBENRO_CUST_CODE = T1.UCRACCT_CUST_CODE
             WHERE T1.UCRACCT_STATUS_IND = 'A'
+            AND T2.UZBENRO_SCLS_CODE = 'RS'
             AND NOT EXISTS (
                 SELECT 'X'
                 FROM UCRSERV T3

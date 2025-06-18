@@ -4,6 +4,7 @@ import com.gng.api.pages.turnOff.AccountsApiPages.SearchAccounts.SearchAccountsA
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
+import io.cucumber.java.en.And;
 
 import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.search_accounts;
 
