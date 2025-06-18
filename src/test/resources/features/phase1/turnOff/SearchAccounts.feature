@@ -66,15 +66,16 @@ Feature: Verify SearchAccounts TurnOff Api
     |RS_NEW_BANKRUPCY_TC_63                    |N            |false           |            |false           |false          |false        |
     |RS_INACTIVE_BANKRUPCY_TC_64               |I            |false           |            |false           |false          |false        |
     |CM_NEW_NON_METERED_TC_65                  |N            |false           |            |false           |false          |false        |
-#    |CM_ACTIVE_NON_METERED_TC_67               |
-#    |CM_INACTIVE_METERED_TC_68                 |
-#    |CM_INACTIVE_BAD_DEBT_TC_69                |
-#    |CM_INACTIVE_SONP_TC_70                    |
-#    |CM_INACTIVE_NON_METERED_TC_71             |
-#    |CM_NEW_BANKRUPCY_TC_72                    |
-#    |CM_INACTIVE_BANKRUPCY_TC_73               |
-#    |VALID_CUST_CODE_INVALID_PREM_CODE_TC_74   |
-#    |RS_ACTIVE_ACCOUNT_TC_75                   |
+    |CM_ACTIVE_NON_METERED_TC_67               |A            |false           |            |false           |false          |false        |
+    |CM_INACTIVE_METERED_TC_68                 |I            |true            |CM          |false           |false          |true         |
+    |CM_INACTIVE_BAD_DEBT_TC_69                |I            |true            |CM          |false           |false          |false        |
+    |CM_INACTIVE_SONP_TC_70                    |I            |true            |CM          |false           |false          |true         |
+    |CM_INACTIVE_NON_METERED_TC_71             |I            |false           |            |false           |false          |false        |
+    |CM_NEW_BANKRUPCY_TC_72                    |N            |false           |            |false           |false          |false        |
+    |CM_INACTIVE_BANKRUPCY_TC_73               |I            |false           |            |false           |false          |false        |
+    #TC74 needs to be moved
+    #|VALID_CUST_CODE_INVALID_PREM_CODE_TC_74   |NA           |false           |NA          |
+    |RS_ACTIVE_ACCOUNT_TC_75                   |A            |true            |RS          |true            |false          |false        |
 #    |CM_ACTIVE_ACCOUNT_TC_76                   |
 #    |RS_ACTIVE_SONP_NON_MASTER_TC_91           |
 #    |RS_ACTIVE_PENDING_REWARDS_TC_92           |
