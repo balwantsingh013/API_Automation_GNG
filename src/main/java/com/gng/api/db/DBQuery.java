@@ -303,6 +303,48 @@ public final class DBQuery {
                 FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITH_ETC= """
+            SELECT
+                UCRACCT.UCRACCT_CUST_CODE,
+                UCRACCT.UCRACCT_PREM_CODE
+            FROM UZBENRO
+            JOIN UCRACCT ON UCRACCT.UCRACCT_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
+                        AND UCRACCT.UCRACCT_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
+            WHERE UZBENRO.UZBENRO_SSP_IND = ?
+              AND EXISTS (
+                  SELECT 1
+                  FROM UZRSSPA
+                  WHERE UZRSSPA.UZRSSPA_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
+                    AND UZRSSPA.UZRSSPA_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
+              )
+              AND F_GET_PLAN_TYPE_IND(UZBENRO.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+            ORDER BY UZBENRO.UZBENRO_ACTIVITY_DATE DESC
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC= """
+            "SELECT
+                UZBENRO_CUST_CODE,
+                UZBENRO_PREM_CODE
+            FROM UZBENRO
+            WHERE UZBENRO_SSP_IND = ?
+              AND EXISTS (
+                  SELECT 1
+                  FROM UCRACCT
+                  WHERE UCRACCT_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
+                    AND UCRACCT_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM UZRSSPA
+                  WHERE UZRSSPA_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
+                    AND UZRSSPA_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
+              )
+              AND F_GET_PLAN_TYPE_IND(UZBENRO_PRICE_PLAN) NOT IN ('G', 'F')
+            ORDER BY UZBENRO_ACTIVITY_DATE DESC
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String GET_ACCOUNT_INFO_API_SUCCESS_RESPONSE_PARAMETERS = "WITH CustPremCode AS (\n" +
             "    SELECT *\n" +
             "    FROM (\n" +

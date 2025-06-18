@@ -306,6 +306,19 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeSSPAccountwithETC(String SSpIndicator) {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITH_ETC;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query,SSpIndicator);
+    }
+
+    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETC(String SSpIndicator) {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query,SSpIndicator);
+    }
+
+
     public Map<String, Object> getAccountDetails_LastNameZipCode() {
         String query = DBQuery.GET_LASTNAME_AND_ZIPCODE;
         logQueryInAllure("Get Last Name And Zip Code", query);
