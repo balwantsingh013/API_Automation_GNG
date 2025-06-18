@@ -45,14 +45,12 @@ Feature: Verify SearchAccounts TurnOff Api
     And response should have pastDueAmount as <pastDueAmount>
     Examples:
       |accountType                                        |customerType|accountStatus|isMeteredAccount|isTurnOffAllowed|isSONPAccount|pastDueAmount|
-      |COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC81|CM          |A            |true            |true            |true         |0            |
+      |COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC81|CM          |A            |true            |true            |false         |0            |
       |COMMERCIAL_VALID_ACTIVE_SONP_ACCOUNT_TC82          |CM          |A            |true            |true            |true         |0            |
-
-    @validCustomerBusinessNameActPendReward @Phase1 @HappyFlow @SearchAccountTOFF
-    Scenario: SearchAccountsApi- Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And  Active/Pending Rewards Account TC_83
-    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And ActiveOrPending Rewards Account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
+      |COMMERCIAL_VALID_ACTIVE_PENDING_REWARDS_TC83       |CM          |A            |true            |true            |false        |0            |
+      |COMMERCIAL_VALID_ACTIVE_ETC_TC_85                  |CM          |A            |true            |true            |false        |0            |
+      |COMMERCIAL_VALID_ACTIVE_NO_ETC_TC_86               |CM          |A            |true            |true            |false        |0            |
+      |COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87       |            |N            |false            |false            |false        |0            |
 
   @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF
   Scenario Outline: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for <testCondition>
@@ -104,24 +102,6 @@ Feature: Verify SearchAccounts TurnOff Api
     |SSP_ACCOUNT_WITHOUT_ETC_105B              |A            |true            |CM          |true            |false          |false         |
     |NON_SSP_ACCOUNT_WITH_ETC_105C             |A            |true            |RS          |true            |false          |false         |
     |NON_SSP_ACCOUNT_WITHOUT_ETC_105D          |A            |true            |CM          |true            |false          |false         |
-
-  @validCustomerBusinessNameCMActiveETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-85
-  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC TC_85
-    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustomerBusinessNameCMActiveNoETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-86
-  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with No ETC TC_86
-    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with No ETC
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
-  @validCustomerBusinessNameCMActivePricePlanCCV @Phase1 @HappyFlow @SearchAccountTOFF @TC-87
-  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with CCV price plan TC_87
-    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with CCV price plan
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
 
   @validCustomerBusinessNameCMFinalAccount @Phase1 @HappyFlow @SearchAccountTOFF @TC-88
   Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Final Account TC_88

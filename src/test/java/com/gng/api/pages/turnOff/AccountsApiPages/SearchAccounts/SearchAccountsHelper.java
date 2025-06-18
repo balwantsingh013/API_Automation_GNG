@@ -91,46 +91,33 @@ public class SearchAccountsHelper {
     }
 
     public void  getCustomerBusinessNameFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel accountType) {
-        Map<String, Object> accountDetailsLastNameZipCode=null;
+        Map<String, Object> validCustomerBusinessName=null;
         switch(accountType){
             case COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC81:
-                accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceCommercialAccount();
+                validCustomerBusinessName = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceCommercialAccount();
+                break;
+
             case COMMERCIAL_VALID_ACTIVE_SONP_ACCOUNT_TC82:
-                accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_ForSONPCommercialAccount();
+                validCustomerBusinessName = ApplicationContext.get().getDbAction().getAccountDetails_ForSONPCommercialAccount();
+                break;
+
+            case COMMERCIAL_VALID_ACTIVE_PENDING_REWARDS_TC83:
+                validCustomerBusinessName = ApplicationContext.get().getDbAction().getCustomBusnsNm_ForActPenRewardCommercialAccount();
+                break;
+
+            case COMMERCIAL_VALID_ACTIVE_ETC_TC_85:
+                validCustomerBusinessName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveETC();
+                break;
+
+            case COMMERCIAL_VALID_ACTIVE_NO_ETC_TC_86:
+                validCustomerBusinessName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveNoETC();
+                break;
+
+            case COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87:
+                validCustomerBusinessName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveCCV();
+                break;
         }
-        customerBusinessName=accountDetailsLastNameZipCode.get("UCBCUST_LAST_NAME").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerBusinessName(customerBusinessName);
-    }
-
-    public void  getCustomerBusinessNameFromDbAndPreparePayloadTC_83(SearchAccountsRequest payload) {
-        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomBusnsNm_ForActPenRewardCommercialAccount();
-        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerBusinessName(customerBusinessName);
-    }
-
-    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_85(SearchAccountsRequest payload) {
-        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveETC();
-        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerBusinessName(customerBusinessName);
-    }
-
-    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_86(SearchAccountsRequest payload) {
-        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveNoETC();
-        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerBusinessName(customerBusinessName);
-    }
-
-    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_87(SearchAccountsRequest payload) {
-        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveCCV();
-        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
+        customerBusinessName=validCustomerBusinessName.get("UCBCUST_LAST_NAME").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerBusinessName(customerBusinessName);
