@@ -81,11 +81,11 @@ Feature: Verify SearchAccounts TurnOff Api
     |RS_ACTIVE_PENDING_REWARDS_TC_92           |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93         |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94      |A            |true            |RS          |true            |false          |false        |
-#    |RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95   |
-#    |RS_ACTIVE_MKT_PRICE_PLAN_NO_EXP_DATE_TC_96|
-#    |RS_ACTIVE_ETC_TC_97                       |
-#    |RS_ACTIVE_ETC_RGB_PRICE_PLAN_TC_98        |
-#    |RS_ACTIVE_GREENER_LIFE_TC_99              |
+    |RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95   |A            |true            |RS          |true            |false          |false        |
+    |RS_ACTIVE_MKT_PRICE_PLAN_NO_EXP_DATE_TC_96|A            |true            |RS          |true            |false          |true        |
+    |RS_ACTIVE_ETC_TC_97                       |A            |true            |RS          |true            |false          |false        |
+    |RS_ACTIVE_ETC_RGB_PRICE_PLAN_TC_98        |A            |true            |RS          |true            |false          |false        |
+    |RS_ACTIVE_GREENER_LIFE_TC_99              |A            |true            |RS          |true            |false          |false         |
 #    |RS_ACTIVE_CSV_PRICE_PLAN_TC_100           |
 #    |RS_FINAL_ACCOUNT_TC_101                   |
 #    |RS_ACTIVE_ACCOUNT_TC_102                  |
