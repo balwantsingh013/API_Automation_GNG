@@ -76,11 +76,11 @@ Feature: Verify SearchAccounts TurnOff Api
     #TC74 needs to be moved
     #|VALID_CUST_CODE_INVALID_PREM_CODE_TC_74   |NA           |false           |NA          |
     |RS_ACTIVE_ACCOUNT_TC_75                   |A            |true            |RS          |true            |false          |false        |
-#    |CM_ACTIVE_ACCOUNT_TC_76                   |
-#    |RS_ACTIVE_SONP_NON_MASTER_TC_91           |
-#    |RS_ACTIVE_PENDING_REWARDS_TC_92           |
-#    |RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93         |
-#    |RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94      |
+    |CM_ACTIVE_ACCOUNT_TC_76                   |A            |true            |CM          |true            |false          |false        |
+    |RS_ACTIVE_SONP_NON_MASTER_TC_91           |A            |true            |RS          |true            |false          |true         |
+    |RS_ACTIVE_PENDING_REWARDS_TC_92           |A            |true            |RS          |true            |false          |false        |
+    |RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93         |A            |true            |RS          |true            |false          |false        |
+    |RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94      |A            |true            |RS          |true            |false          |false        |
 #    |RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95   |
 #    |RS_ACTIVE_MKT_PRICE_PLAN_NO_EXP_DATE_TC_96|
 #    |RS_ACTIVE_ETC_TC_97                       |
