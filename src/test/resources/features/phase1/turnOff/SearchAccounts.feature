@@ -53,18 +53,19 @@ Feature: Verify SearchAccounts TurnOff Api
     And response should have "customerType" as "<customerType>"
     And response should have "turnOffAllowed" flag as "<isTurnOffAllowed>"
     And response should have "masterAccount" flag as "<isMasterAccount>"
+    And response should have "sonpAccount" flag as "<isSONPAccount>"
     Examples:
-    |testCondition                             |accountStatus|isMeteredAccount|customerType|isTurnOffAllowed|isMasterAccount|
-    |ACTIVE_RS_NEW_NON_METERED_TC_56           |N            |false           |            |false           |false          |
-    |ACTIVE_MSB_ACCOUNT_TC_57                  |A            |true            |CM          |false           |true           |
-    |ACTIVE_RS_NEW_NON_METERED_TC_58           |A            |false           |            |false           |false          |
-    |INACTIVE_RS_METERED_TC_59                 |I            |true            |RS          |false           |false          |
-    |INACTIVE_BAD_DEBT_BALANCE_TC_60           |I            |true            |RS          |false           |false          |
-#    |RS_INACTIVE_WITH_SONP_TC_61               |
-#    |RS_INACTIVE_NON_METER_TC_62               |
-#    |RS_NEW_BANKRUPCY_TC_63                    |
-#    |RS_INACTIVE_BANKRUPCY_TC_64               |
-#    |CM_NEW_NON_METERED_TC_65                  |
+    |testCondition                             |accountStatus|isMeteredAccount|customerType|isTurnOffAllowed|isMasterAccount|isSONPAccount|
+    |ACTIVE_RS_NEW_NON_METERED_TC_56           |N            |false           |            |false           |false          |false        |
+    |ACTIVE_MSB_ACCOUNT_TC_57                  |A            |true            |CM          |false           |true           |true        |
+    |ACTIVE_RS_NEW_NON_METERED_TC_58           |A            |false           |            |false           |false          |false        |
+    |INACTIVE_RS_METERED_TC_59                 |I            |true            |RS          |false           |false          |false        |
+    |INACTIVE_BAD_DEBT_BALANCE_TC_60           |I            |true            |RS          |false           |false          |true        |
+    |RS_INACTIVE_WITH_SONP_TC_61               |I            |true            |RS          |false           |false          |true        |
+    |RS_INACTIVE_NON_METER_TC_62               |I            |false           |          |false           |false          |false        |
+    |RS_NEW_BANKRUPCY_TC_63                    |N            |false           |            |false           |false          |false        |
+    |RS_INACTIVE_BANKRUPCY_TC_64               |I            |false           |            |false           |false          |false        |
+    |CM_NEW_NON_METERED_TC_65                  |N            |false           |            |false           |false          |false        |
 #    |CM_ACTIVE_NON_METERED_TC_67               |
 #    |CM_INACTIVE_METERED_TC_68                 |
 #    |CM_INACTIVE_BAD_DEBT_TC_69                |

@@ -1063,15 +1063,27 @@ public final class DBQuery {
             """;
 
     public static final String GET_CUSTOMERCODE_PREM_CODE_INACTIVE_NON_METERED_ACCOUNT= """
-            SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
+            SELECT
+                T1.UCRACCT_CUST_CODE,
+                T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
+            JOIN UZBENRO T2 ON T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
+                           AND T1.UCRACCT_PREM_CODE = T2.UZBENRO_PREM_CODE
             WHERE T1.UCRACCT_STATUS_IND = 'I'
-            AND NOT EXISTS (
-                SELECT 'X'
-                FROM UCRSERV T3
-                WHERE T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
-                AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
-            )
+              AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO')
+              AND T2.UZBENRO_SCLS_CODE = 'RS'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM UCRSERV T3
+                  WHERE T3.UCRSERV_CUST_CODE = T1.UCRACCT_CUST_CODE
+                    AND T3.UCRSERV_PREM_CODE = T1.UCRACCT_PREM_CODE
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM UCRSCMP T4
+                  WHERE T4.UCRSCMP_CUST_CODE = T1.UCRACCT_CUST_CODE
+                    AND T4.UCRSCMP_PREM_CODE = T1.UCRACCT_PREM_CODE
+              )
             ORDER BY T1.UCRACCT_CUST_CODE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -1154,13 +1166,18 @@ public final class DBQuery {
     public static final String GET_CUSTOMERCODE_PREM_CODE_CM_NEW_NON_METERED= """
             SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
-            JOIN UZBENRO T2 ON (
-                T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
-            )
-            WHERE T1.UCRACCT_PREM_CODE = 8888888
-            AND T2.UZBENRO_SCLS_CODE = 'RS'
-            AND T1.UCRACCT_STATUS_IND = 'I'
-            ORDER BY T1.UCRACCT_ACTIVITY_DATE DESC
+            JOIN UZBENRO T3 ON T1.UCRACCT_CUST_CODE = T3.UZBENRO_CUST_CODE
+                           AND T1.UCRACCT_PREM_CODE = T3.UZBENRO_PREM_CODE
+            WHERE T1.UCRACCT_STATUS_IND = 'N'
+              AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO')
+              AND T3.UZBENRO_SCLS_CODE IN ('CM', 'IN')
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM UCRSERV T2
+                  WHERE T2.UCRSERV_CUST_CODE = T1.UCRACCT_CUST_CODE
+                    AND T2.UCRSERV_PREM_CODE = T1.UCRACCT_PREM_CODE
+              )
+            ORDER BY T1.UCRACCT_CUST_CODE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
