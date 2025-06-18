@@ -38,6 +38,11 @@ public class BaseSteps {
         verifyNumberOfMatches(numberOfMatches);
     }
 
+    @And("response should have pastDueAmount as {int}")
+    public void responseShouldShowPastDueAmountAs(int pastDue){
+        verifyPastDueAmount(pastDue);
+    }
+
     @And("response should have {string} as {string}")
     public void responseShouldHaveFieldAs(String field, String value){
         verifyFieldInResponse(field, value);
@@ -89,5 +94,14 @@ public class BaseSteps {
                 response.jsonPath().getInt("data.numberOfMatches"),
                 equalTo(expectedMatches));
     }
+
+    private void verifyPastDueAmount(int pastDueAmount){
+        Response response = testContext.getResponse();
+
+        assertThat("Unexpected past due amount",
+                response.jsonPath().getInt("data.accounts[0].pastDueAmount"),
+                equalTo(pastDueAmount));
+    }
+
 
 }

@@ -61,6 +61,7 @@ public class SearchAccountsHelper {
         payload.setTransactionType(TRANS_TYPE_TOFF);
         switch(combinationType){
             case INVALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC77:
+                payload.setCustomerLastName(FakerDataGenerator.generateLowerCaseString(5));
                 payload.setPremisesZipCode(FakerDataGenerator.generateDigits(5));
             case VALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC78:
                 payload.setPremisesZipCode(zipCode);
@@ -72,6 +73,7 @@ public class SearchAccountsHelper {
         switch(accountType){
             case RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC79:
                 account_Type="RS";
+                break;
             case SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC80:
                 account_Type="SR";
         }

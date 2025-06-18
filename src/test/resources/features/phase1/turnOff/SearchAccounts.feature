@@ -15,27 +15,38 @@ Feature: Verify SearchAccounts TurnOff Api
       Examples:
       |combinationType                             |noOfMatches|
       |INVALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC77|0          |
-      |VALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC78  |1          |
+      |VALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC78  |30          |
 
     @validFirstNameLastNameZipcodeRSOrSR @Phase1 @HappyFlow @SearchAccountTOFF
     Scenario Outline: SearchAccountsApi- Verify Response when a Valid Combination Of First Name, Last Name And Zipcode with transactionType As TOFF is input For "<accountType>"
     When a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For "<accountType>"
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as <noOfMatches>
+    And response should have "customerType" as "<customerType>"
+    And response should have "accountStatus" as "<accountStatus>"
+    And response should have "meteredAccount" flag as "<isMeteredAccount>"
+    And response should have "turnOffAllowed" flag as "<isTurnOffAllowed>"
     Examples:
-      |accountType                                 |
-      |RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC79       |
-      |SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC80|
+      |accountType                                 |noOfMatches|customerType|accountStatus|isMeteredAccount|isTurnOffAllowed|
+      |RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC79       |1          |RS          |A            |true            |true            |
+      |SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC80|1          |SR          |A            |true            |true            |
 
-    @validCustomerBusinessNamePastDueBalanceOrSONP @Phase1 @HappyFlow @SearchAccountTOFF
+    @validCustomerBusinessNamePastDueBalanceOrSONP @Phase1 @HappyFlow @SearchAccountTOFF @testrun1234
     Scenario Outline: SearchAccountsApi- Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And "<accountType>"
     When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And "<accountType>"
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "customerType" as "<customerType>"
+    And response should have "accountStatus" as "<accountStatus>"
+    And response should have "meteredAccount" flag as "<isMeteredAccount>"
+    And response should have "turnOffAllowed" flag as "<isTurnOffAllowed>"
+    And response should have "sonpAccount" flag as "<isSONPAccount>"
+    And response should have pastDueAmount as <pastDueAmount>
     Examples:
-      |accountType                                        |
-      |COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC81|
-      |COMMERCIAL_VALID_ACTIVE_SONP_ACCOUNT_TC82          |
+      |accountType                                        |customerType|accountStatus|isMeteredAccount|isTurnOffAllowed|isSONPAccount|pastDueAmount|
+      |COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC81|CM          |A            |true            |true            |true         |0            |
+      |COMMERCIAL_VALID_ACTIVE_SONP_ACCOUNT_TC82          |CM          |A            |true            |true            |true         |0            |
 
     @validCustomerBusinessNameActPendReward @Phase1 @HappyFlow @SearchAccountTOFF
     Scenario: SearchAccountsApi- Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And  Active/Pending Rewards Account TC_83
@@ -43,7 +54,7 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
-  @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF @testrun
+  @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF
   Scenario Outline: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for <testCondition>
     When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
