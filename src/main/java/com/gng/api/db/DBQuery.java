@@ -311,6 +311,7 @@ public final class DBQuery {
             JOIN UCRACCT ON UCRACCT.UCRACCT_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
                         AND UCRACCT.UCRACCT_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
             WHERE UZBENRO.UZBENRO_SSP_IND = ?
+            AND UCRACCT_STATUS_IND = 'A'
               AND EXISTS (
                   SELECT 1
                   FROM UZRSSPA
@@ -323,7 +324,7 @@ public final class DBQuery {
             """;
 
     public static String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC= """
-            "SELECT
+            SELECT
                 UZBENRO_CUST_CODE,
                 UZBENRO_PREM_CODE
             FROM UZBENRO

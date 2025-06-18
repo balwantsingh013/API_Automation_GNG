@@ -86,13 +86,13 @@ Feature: Verify SearchAccounts TurnOff Api
     |RS_ACTIVE_ETC_TC_97                       |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_ETC_RGB_PRICE_PLAN_TC_98        |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_GREENER_LIFE_TC_99              |A            |true            |RS          |true            |false          |false         |
-#    |RS_ACTIVE_CSV_PRICE_PLAN_TC_100           |
-#    |RS_FINAL_ACCOUNT_TC_101                   |
-#    |RS_ACTIVE_ACCOUNT_TC_102                  |
-#    |SSP_ACCOUNT_WITH_ETC_TC_105A              |
-#    |SSP_ACCOUNT_WITHOUT_ETC_105B              |
-#    |NON_SSP_ACCOUNT_WITH_ETC_105C             |
-#    |NON_SSP_ACCOUNT_WITHOUT_ETC_105D          |
+    |RS_ACTIVE_CSV_PRICE_PLAN_TC_100           |A            |true            |RS          |true            |false          |false         |
+    |RS_FINAL_ACCOUNT_TC_101                   |F            |true            |RS          |true            |false          |false         |
+    |RS_ACTIVE_ACCOUNT_TC_102                  |A            |true            |RS          |true            |false          |false         |
+    |SSP_ACCOUNT_WITH_ETC_TC_105A              |A            |true            |RS          |true            |false          |false         |
+    |SSP_ACCOUNT_WITHOUT_ETC_105B              |A            |true            |CM          |true            |false          |false         |
+    |NON_SSP_ACCOUNT_WITH_ETC_105C             |A            |true            |RS          |true            |false          |false         |
+    |NON_SSP_ACCOUNT_WITHOUT_ETC_105D          |A            |true            |CM          |true            |false          |false         |
 
   @validCustomerBusinessNameCMActiveETC @Phase1 @HappyFlow @SearchAccountTOFF @TC-85
   Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active Account with ETC TC_85

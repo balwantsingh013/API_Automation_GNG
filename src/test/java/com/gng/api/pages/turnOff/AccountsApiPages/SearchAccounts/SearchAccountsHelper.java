@@ -383,6 +383,12 @@ public class SearchAccountsHelper {
                 premisesCode=custPremCode.get("UCRSCMP_PREM_CODE").toString();
                 break;
 
+            case SSP_ACCOUNT_WITHOUT_ETC_105B:
+            case NON_SSP_ACCOUNT_WITHOUT_ETC_105D:
+                customerCode=custPremCode.get("UZBENRO_CUST_CODE").toString();
+                premisesCode=custPremCode.get("UZBENRO_PREM_CODE").toString();
+                break;
+
             default:
                 customerCode=custPremCode.get("UCRACCT_CUST_CODE").toString();
                 premisesCode=custPremCode.get("UCRACCT_PREM_CODE").toString();
