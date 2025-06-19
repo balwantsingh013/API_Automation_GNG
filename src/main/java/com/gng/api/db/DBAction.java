@@ -5,10 +5,8 @@ import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-//import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -509,5 +507,4 @@ public class DBAction {
         String logContent = "Query: " + query + "\nParameters: " + paramsString;
         Allure.addAttachment(title, new ByteArrayInputStream(logContent.getBytes(StandardCharsets.UTF_8)));
     }
-
 }

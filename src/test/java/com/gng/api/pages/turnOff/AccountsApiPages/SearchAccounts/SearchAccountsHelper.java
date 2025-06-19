@@ -43,27 +43,31 @@ public class SearchAccountsHelper {
         this.testContext = testContext;
     }
 
-
-    SearchAccountsRequest preparePayload(SearchAccountsApiLabel apiLabel) {
+    SearchAccountsRequest preparePayload(SearchAccountsTOffApiLabel apiLabel) {
         log.info("Preparing payload for {}", apiLabel);
-        String jsonFileName = apiLabel.equals(SearchAccountsApiLabel.search_accounts)
+        String jsonFileName = apiLabel.equals(SearchAccountsTOffApiLabel.search_accounts)
                 ? SearchAccountsApiLabel.search_accounts.toString()
                 : SearchAccountsApiLabel.search_accounts_mandatory.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, SearchAccountsRequest.class);
+    }
+
+    private void setTransactionTypeAndRequestId(SearchAccountsRequest payload) {
+        payload.setTransactionType(TRANS_TYPE_TOFF);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
     }
 
     public void  getLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel combinationType) {
         Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_LastNameZipCode();
         lastName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_LAST_NAME").toString();
         zipCode=accountDetailsLastNameZipCode.get("UCRADDR_ZIP").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setCustomerLastName(lastName);
-        payload.setTransactionType(TRANS_TYPE_TOFF);
+        setTransactionTypeAndRequestId(payload);
         switch(combinationType){
-            case INVALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC77:
+            case INVALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC_77:
                 payload.setCustomerLastName(FakerDataGenerator.generateLowerCaseString(5));
                 payload.setPremisesZipCode(FakerDataGenerator.generateDigits(5));
-            case VALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC78:
+                break;
+            case VALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC_78:
                 payload.setPremisesZipCode(zipCode);
         }
     }
@@ -71,37 +75,34 @@ public class SearchAccountsHelper {
     public void  getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel accountType) {
         String account_Type=null;
         switch(accountType){
-            case RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC79:
+            case RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC_79:
                 account_Type="RS";
                 break;
-            case SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC80:
+            case SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC_80:
                 account_Type="SR";
         }
         Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_ForResidentialOrSeniorResAccount(account_Type);
         firstName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_FIRST_NAME").toString();
         lastName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_LAST_NAME").toString();
         zipCode=accountDetailsLastNameZipCode.get("UCRADDR_ZIP").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setCustomerFirstName(firstName);
         payload.setCustomerLastName(lastName);
         payload.setPremisesZipCode(zipCode);
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-
-
+        setTransactionTypeAndRequestId(payload);
     }
 
     public void  getCustomerBusinessNameFromDbAndPreparePayload(SearchAccountsRequest payload, SearchAccountsTOffApiLabel accountType) {
         Map<String, Object> validCustomerBusinessName=null;
         switch(accountType){
-            case COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC81:
+            case COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC_81:
                 validCustomerBusinessName = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceCommercialAccount();
                 break;
 
-            case COMMERCIAL_VALID_ACTIVE_SONP_ACCOUNT_TC82:
+            case COMMERCIAL_VALID_ACTIVE_SONP_ACCOUNT_TC_82:
                 validCustomerBusinessName = ApplicationContext.get().getDbAction().getAccountDetails_ForSONPCommercialAccount();
                 break;
 
-            case COMMERCIAL_VALID_ACTIVE_PENDING_REWARDS_TC83:
+            case COMMERCIAL_VALID_ACTIVE_PENDING_REWARDS_TC_83:
                 validCustomerBusinessName = ApplicationContext.get().getDbAction().getCustomBusnsNm_ForActPenRewardCommercialAccount();
                 break;
 
@@ -122,16 +123,14 @@ public class SearchAccountsHelper {
                 break;
         }
         customerBusinessName=validCustomerBusinessName.get("UCBCUST_LAST_NAME").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
+        setTransactionTypeAndRequestId(payload);
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
     public void getAGLCNumberFromDbAndPreparePayloadTC_103(SearchAccountsRequest payload) {
         Map<String, Object> aglcNumber = ApplicationContext.get().getDbAction().getAGLCNumberRSActiveAccount();
         aglcAccountNumber=aglcNumber.get("GTBTRNH_AGLC_ACCT_NBR").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
+        setTransactionTypeAndRequestId(payload);
         payload.setAglcAccountNumber(aglcAccountNumber);
     }
 
@@ -169,16 +168,14 @@ public class SearchAccountsHelper {
         payload.setPremisesCity(premisesCity);
         payload.setPremisesStateCode(premisesStateCode);
         payload.setPremisesZipCode(premisesZipCode);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
+        setTransactionTypeAndRequestId(payload);
     }
 
     public void getSSNFromDbAndPreparePayloadTC_89(SearchAccountsRequest payload) {
         Map<String, Object> accountDetailsCustomerSSN = ApplicationContext.get().getDbAction().getCustomerSSNActiveRSAccount();
         String UnencryptedSSN=accountDetailsCustomerSSN.get("UCBCUST_SSN").toString();
         socialSecurityNumber= AesEncryptionSteps.encryptData(UnencryptedSSN);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
+        setTransactionTypeAndRequestId(payload);
         payload.setSocialSecurityNumber(socialSecurityNumber);
     }
 
@@ -324,17 +321,17 @@ public class SearchAccountsHelper {
                 custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountwithETC(SSpIndicator);
                 break;
 
-            case SSP_ACCOUNT_WITHOUT_ETC_105B:
+            case SSP_ACCOUNT_WITHOUT_ETC_TC_105B:
                 SSpIndicator="Y";
                 custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator);
                 break;
 
-            case NON_SSP_ACCOUNT_WITH_ETC_105C:
+            case NON_SSP_ACCOUNT_WITH_ETC_TC_105C:
                 SSpIndicator="N";
                 custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountwithETC(SSpIndicator);
                 break;
 
-            case NON_SSP_ACCOUNT_WITHOUT_ETC_105D:
+            case NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D:
                 SSpIndicator="N";
                 custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator);
                 break;
@@ -353,10 +350,9 @@ public class SearchAccountsHelper {
 
             case VALID_CUST_CODE_INVALID_PREM_CODE_TC_74:
                 customerCode=accountDetailsCustCode.getFirst().get("UCRACCT_CUST_CODE").toString();
-                payload.setRequestID(FakerDataGenerator.generateString(10));
+                setTransactionTypeAndRequestId(payload);
                 payload.setCustomerCode(customerCode);
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-                payload.setTransactionType(TRANS_TYPE_TOFF);
                 break;
 
             case RS_ACTIVE_SONP_NON_MASTER_TC_91:
@@ -368,8 +364,8 @@ public class SearchAccountsHelper {
                 premisesCode=custPremCode.get("UCRSCMP_PREM_CODE").toString();
                 break;
 
-            case SSP_ACCOUNT_WITHOUT_ETC_105B:
-            case NON_SSP_ACCOUNT_WITHOUT_ETC_105D:
+            case SSP_ACCOUNT_WITHOUT_ETC_TC_105B:
+            case NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D:
                 customerCode=custPremCode.get("UZBENRO_CUST_CODE").toString();
                 premisesCode=custPremCode.get("UZBENRO_PREM_CODE").toString();
                 break;
@@ -380,11 +376,9 @@ public class SearchAccountsHelper {
         }
 
         if(!(testCondition.equals(VALID_CUST_CODE_INVALID_PREM_CODE_TC_74))){
-            payload.setRequestID(FakerDataGenerator.generateString(10));
-            payload.setTransactionType(TRANS_TYPE_TOFF);
+            setTransactionTypeAndRequestId(payload);
             payload.setCustomerCode(customerCode);
             payload.setPremisesCode(premisesCode);
         }
     }
-
 }

@@ -4,7 +4,6 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel;
-import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
@@ -19,60 +18,49 @@ public class SearchAccountsApiPage extends BasePage {
         this.helper = new SearchAccountsHelper(testContext);
     }
 
-
-    public void validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel combinationType) {
+    public void validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel combinationType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getLastNameAndZipcodeFromDbAndPreparePayload(payload, combinationType);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-
+        executeSearchAccountsRequest(payload);
     }
 
-    public void validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
+    public void validateResponseForCombinationOfLastNameAndZipCode(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getFirstNameLastNameAndZipcodeFromDbAndPreparePayload(payload, accountType);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-
+        executeSearchAccountsRequest(payload);
     }
 
-    public void validateResponseForValidCustomerBusinessNameTC81_82(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
+    public void validateResponseForValidCustomerBusinessName(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel accountType) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getCustomerBusinessNameFromDbAndPreparePayload(payload, accountType);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
+        executeSearchAccountsRequest(payload);
     }
 
-    public void validateResponseForValidAGLCNumberTC103(SearchAccountsApiLabel apiLabel){
+    public void validateResponseForValidAGLCNumberTC103(SearchAccountsTOffApiLabel apiLabel){
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getAGLCNumberFromDbAndPreparePayloadTC_103(payload);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
+        executeSearchAccountsRequest(payload);
     }
 
-    public void validateResponseForValidAddressDetailsTC104(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
+    public void validateResponseForValidAddressDetailsTC104_105(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getAddressDetailsFromDbAndPreparePayloadTC_104(payload, testCondition);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
+        executeSearchAccountsRequest(payload);
     }
 
-    public void validateResponseForValidSSNTC89(SearchAccountsApiLabel apiLabel){
+    public void validateResponseForValidSSNTC89(SearchAccountsTOffApiLabel apiLabel){
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getSSNFromDbAndPreparePayloadTC_89(payload);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
+        executeSearchAccountsRequest(payload);
     }
 
-    public void validateResponseForValidCustomerANDPremiseCode(SearchAccountsApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
+    public void validateResponseForValidCustomerANDPremiseCode(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getCustomerPremisesCodeFromDbAndPreparePayload(payload, testCondition);
+        executeSearchAccountsRequest(payload);
+    }
+
+    private void executeSearchAccountsRequest(SearchAccountsRequest payload) {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);

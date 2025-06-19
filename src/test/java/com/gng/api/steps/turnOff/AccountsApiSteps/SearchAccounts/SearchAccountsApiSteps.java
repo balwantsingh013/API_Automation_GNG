@@ -4,9 +4,7 @@ import com.gng.api.pages.turnOff.AccountsApiPages.SearchAccounts.SearchAccountsA
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
-import io.cucumber.java.en.And;
-
-import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.search_accounts;
+import static com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel.search_accounts;
 
 @Slf4j
 public class SearchAccountsApiSteps {
@@ -25,14 +23,14 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC77_78(search_accounts, SearchAccountsTOffApiLabel.valueOf(combinationType));
     }
 
-    @When("a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is input For {string}")
+    @When("a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is provided For {string}")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_FirstName_LastName_And_Zipcode_with_transactionType_As_TOFF_is_input(String accountType) {
-        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCodeForTC79_80(search_accounts, SearchAccountsTOffApiLabel.valueOf(accountType));
+        searchAccountsApiPage.validateResponseForCombinationOfLastNameAndZipCode(search_accounts, SearchAccountsTOffApiLabel.valueOf(accountType));
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And {string}")
+    @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is provided For {string}")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_CustomerBusinessName_Parameter_with_transactionType_As_TOFF_is_input_For_Commercial_Active(String accountType) {
-        searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC81_82(search_accounts, SearchAccountsTOffApiLabel.valueOf(accountType));
+        searchAccountsApiPage.validateResponseForValidCustomerBusinessName(search_accounts, SearchAccountsTOffApiLabel.valueOf(accountType));
     }
 
     @When("a request is made to the SearchAccounts Api with Valid AGLC Account Number Parameter with transactionType As TOFF is input For Residential Active account")
@@ -40,9 +38,9 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidAGLCNumberTC103(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For Residential Active account {string}")
+    @When("a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For {string}")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_Address_Details_Parameters_with_TOFF_RS_Active_account(String testCondition) {
-        searchAccountsApiPage.validateResponseForValidAddressDetailsTC104(search_accounts, SearchAccountsTOffApiLabel.valueOf(testCondition));
+        searchAccountsApiPage.validateResponseForValidAddressDetailsTC104_105(search_accounts, SearchAccountsTOffApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance")
