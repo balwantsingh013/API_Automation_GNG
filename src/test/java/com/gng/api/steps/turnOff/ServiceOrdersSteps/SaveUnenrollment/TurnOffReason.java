@@ -20,25 +20,9 @@ public enum TurnOffReason {
     private final String reason;
     private final String subReason;
 
-    // Constructor
     TurnOffReason(String reason, String subReason) {
         this.reason = reason;
         this.subReason = subReason;
-    }
-
-    public static TurnOffReason fromString(String reasonString) {
-        // Normalize the input string: Convert to uppercase and replace spaces with underscores
-        String normalizedReason = reasonString.toUpperCase().replace(" ", "_");
-
-        // Iterate through the enum values and compare with the normalized string
-        for (TurnOffReason reason : TurnOffReason.values()) {
-            if (reason.name().equals(normalizedReason)) {
-                return reason;
-            }
-        }
-
-        // If no match is found, throw an exception
-        throw new IllegalArgumentException("Unknown reason: " + reasonString);
     }
 }
 
