@@ -35,11 +35,6 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC81_82(search_accounts, SearchAccountsTOffApiLabel.valueOf(accountType));
     }
 
-    @When("a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial final account")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_CustomerBusinessName_Parameter_with_TOFF_CM_Final_account() {
-        searchAccountsApiPage.validateResponseForValidCustomerBusinessNameTC88(search_accounts);
-    }
-
     @When("a request is made to the SearchAccounts Api with Valid AGLC Account Number Parameter with transactionType As TOFF is input For Residential Active account")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_AGLC_Number_Parameter_with_TOFF_RS_Active_account() {
         searchAccountsApiPage.validateResponseForValidAGLCNumberTC103(search_accounts);

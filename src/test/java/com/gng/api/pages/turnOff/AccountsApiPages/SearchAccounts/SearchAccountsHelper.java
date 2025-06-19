@@ -116,16 +116,12 @@ public class SearchAccountsHelper {
             case COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87:
                 validCustomerBusinessName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveCCV();
                 break;
+
+            case COMMERCIAL_VALID_FINAL_ACCOUNT_TC_88:
+                validCustomerBusinessName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMFinalAccount();
+                break;
         }
         customerBusinessName=validCustomerBusinessName.get("UCBCUST_LAST_NAME").toString();
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TRANS_TYPE_TOFF);
-        payload.setCustomerBusinessName(customerBusinessName);
-    }
-
-    public void getCustomerBusinessNameFromDbAndPreparePayloadTC_88(SearchAccountsRequest payload) {
-        Map<String, Object> accountDetailsCustomerBsnName = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMFinalAccount();
-        customerBusinessName=accountDetailsCustomerBsnName.get("UCBCUST_LAST_NAME").toString();
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TRANS_TYPE_TOFF);
         payload.setCustomerBusinessName(customerBusinessName);

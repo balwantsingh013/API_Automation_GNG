@@ -32,7 +32,7 @@ Feature: Verify SearchAccounts TurnOff Api
       |RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC79       |1          |RS          |A            |true            |true            |
       |SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC80|1          |SR          |A            |true            |true            |
 
-    @validCustomerBusinessNamePastDueBalanceOrSONP @Phase1 @HappyFlow @SearchAccountTOFF @testrun1234
+    @validCustomerBusinessNamePastDueBalanceOrSONP @Phase1 @HappyFlow @SearchAccountTOFF
     Scenario Outline: SearchAccountsApi- Verify Response For Verify that when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And "<accountType>"
     When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Active And "<accountType>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -51,6 +51,7 @@ Feature: Verify SearchAccounts TurnOff Api
       |COMMERCIAL_VALID_ACTIVE_ETC_TC_85                  |CM          |A            |true            |true            |false        |0            |
       |COMMERCIAL_VALID_ACTIVE_NO_ETC_TC_86               |CM          |A            |true            |true            |false        |0            |
       |COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87       |            |N            |false            |false            |false        |0            |
+      |COMMERCIAL_VALID_FINAL_ACCOUNT_TC_88               |CM          |F            |true            |true            |false        |0            |
 
   @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF
   Scenario Outline: SearchAccountsApi- Verify Response when a valid customer and premisesCode are provided for "TOFF" for <testCondition>
@@ -103,27 +104,30 @@ Feature: Verify SearchAccounts TurnOff Api
     |NON_SSP_ACCOUNT_WITH_ETC_105C             |A            |true            |RS          |true            |false          |false         |
     |NON_SSP_ACCOUNT_WITHOUT_ETC_105D          |A            |true            |CM          |true            |false          |false         |
 
-  @validCustomerBusinessNameCMFinalAccount @Phase1 @HappyFlow @SearchAccountTOFF @TC-88
-  Scenario: SearchAccountsApi- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial Final Account TC_88
-    When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is input For Commercial final account
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-
   @validAGLCAccountNumberRSActiveAccount @Phase1 @HappyFlow @SearchAccountTOFF @TC-103
   Scenario: SearchAccountsApi- Verify Response when a Valid AGLC Account Number Parameter with transactionType As TOFF is input For Residential Active Account TC_103
     When a request is made to the SearchAccounts Api with Valid AGLC Account Number Parameter with transactionType As TOFF is input For Residential Active account
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 1
+    And response should have "accountStatus" as "A"
+    And response should have "meteredAccount" flag as "true"
+    And response should have "customerType" as "RS"
+    And response should have "turnOffAllowed" flag as "true"
 
-  @ValidAddressDetailsRSActiveAccount @Phase1 @HappyFlow @SearchAccountTOFF
+  @ValidAddressDetailsRSActiveAccount @Phase1 @HappyFlow @SearchAccountTOFF @testrun1234
   Scenario Outline: SearchAccountsApi- Verify Response when a Valid Address Details parameters with transactionType As TOFF is input For Residential Active Account <testCondition>
     When a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For Residential Active account "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as <noOfMatches>
+    And response should have "customerType" as "<customerType>"
+    And response should have "meteredAccount" flag as "<isMeteredAccount>"
+    And response should have "turnOffAllowed" flag as "<isTurnOffAllowed>"
   Examples:
-  |testCondition                             |
-  |ALL_PREMISES_FIELDS_TC_104                |
-  |PREMISES_STREET_NAME_CITY_STATE_ZIP_TC_105|
+  |testCondition                             |noOfMatches|customerType|isMeteredAccount|isTurnOffAllowed|
+  |ALL_PREMISES_FIELDS_TC_104                |2         |RS          |true            |false            |
+  |PREMISES_STREET_NAME_CITY_STATE_ZIP_TC_105|30          |RS         |true            |false            |
 
 
   #Encryption API is failing

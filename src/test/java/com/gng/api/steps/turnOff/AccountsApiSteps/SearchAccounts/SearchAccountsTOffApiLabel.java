@@ -16,6 +16,7 @@ public enum SearchAccountsTOffApiLabel {
     COMMERCIAL_VALID_ACTIVE_ETC_TC_85,
     COMMERCIAL_VALID_ACTIVE_NO_ETC_TC_86,
     COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87,
+    COMMERCIAL_VALID_FINAL_ACCOUNT_TC_88,
 
     //Positive test conditions for Customer and Premises code search parameters
     ACTIVE_RS_NEW_NON_METERED_TC_56,
