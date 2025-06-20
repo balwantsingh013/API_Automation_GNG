@@ -2,7 +2,7 @@ package com.gng.api.steps.turnOff.Common.GetMarketerReferenceData;
 
 import com.gng.api.pages.turnOff.CommonPages.GetMarketerRefrenceDataPage.GetMarketerReferenceDataApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import io.cucumber.java.en.When;
+import io.cucumber.java.en.Given;
 
 import static com.gng.api.steps.turnOff.Common.GetMarketerReferenceData.GetMarketerReferenceDataLabel.get_marketer_reference_data;
 
@@ -18,10 +18,9 @@ public class GetMarketerReferenceDataApiSteps {
         testContext.setSaveEnrollmentApiPage(marketerReferenceDataApiPage);
     }
 
-    @When("a request is made to get Marketer Reference Data")
+    @Given("a request is made to get Marketer Reference Data")
     public void requestToGetMarketerReferenceData() {
         marketerReferenceDataApiPage.requestToGenerateMarketerReferenceData(get_marketer_reference_data);
-
     }
 
 

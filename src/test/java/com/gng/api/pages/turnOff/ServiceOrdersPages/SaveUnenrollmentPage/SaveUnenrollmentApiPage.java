@@ -29,6 +29,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
     public void validateInvalidRequestIDCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnType(payload, requestID);
+        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
         testContext.setResponse(response);
@@ -41,6 +42,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
         helper.setForwardingAddressDetailsBasedOnType(payload, forwardingAddressIs, type);
         helper.setEmailAddress(payload,setEmail);
         helper.setEtcExists(payload,etcExists);
+        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
         testContext.setResponse(response);
