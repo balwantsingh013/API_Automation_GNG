@@ -3,6 +3,7 @@ package com.gng.api.pojo.TestContext;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesResponse;
 import com.gng.api.pojo.Users.ResetPassword.ResetPasswordResponse;
 import io.restassured.response.Response;
@@ -42,6 +43,9 @@ public class TestContext {
     @Getter @Setter
     private Object saveEnrollmentApiPage;
     private SaveEnrollmentResponse saveEnrollmentResponse;
+    @Getter @Setter
+    private Object saveUnenrollmentApiPage;
+    private SaveUnenrollmentResponse saveUnenrollmentResponse;
     @Getter @Setter
     private Object getEligiblePlansAndOffersApiPage;
     private GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse;

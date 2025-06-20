@@ -1,0 +1,13 @@
+{
+  "requestID": "10920463111115",
+  "loginID": "sys",
+  "transactionType": "TOFF",
+  "customerCode": "6041173",
+  "premisesCode": "6014838",
+  "aglcAccountNumber": "00000000004222007919",
+  "forwardingAddressIs": "CA",
+  "turnOffReason": "Seasonal or Heat Only",
+  "requestedTurnOffDate": "20250315",
+  "aglcServiceOrderNumber": "4581842",
+  "etcExists": false
+}
