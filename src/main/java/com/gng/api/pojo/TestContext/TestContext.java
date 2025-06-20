@@ -45,6 +45,12 @@ public class TestContext {
     private Object saveEnrollmentApiPage;
     private SaveEnrollmentResponse saveEnrollmentResponse;
     @Getter @Setter
+    private Object getMarketerReferenceDataApiPage;
+    private SaveEnrollmentResponse getMarketerReferenceDataResponse;
+    @Getter @Setter
+    private Object getReasonsForLeavingApiPage;
+    private SaveEnrollmentResponse getReasonsForLeavingResponse;
+    @Getter @Setter
     private Object saveUnenrollmentApiPage;
     private SaveUnenrollmentResponse saveUnenrollmentResponse;
     @Getter @Setter

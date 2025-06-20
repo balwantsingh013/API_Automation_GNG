@@ -15,7 +15,7 @@ public class GetMarketerReferenceDataApiSteps {
     public GetMarketerReferenceDataApiSteps(TestContext testContext, GetMarketerReferenceDataApiPage marketerReferenceDataApiPage) {
         this.testContext = testContext;
         this.marketerReferenceDataApiPage = marketerReferenceDataApiPage;
-        testContext.setSaveEnrollmentApiPage(marketerReferenceDataApiPage);
+        testContext.setGetMarketerReferenceDataApiPage(marketerReferenceDataApiPage);
     }
 
     @Given("a request is made to get Marketer Reference Data")
