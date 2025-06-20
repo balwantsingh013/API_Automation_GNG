@@ -13,7 +13,7 @@ public class GetReasonsForLeavingApiSteps {
     private final GetReasonsForLeavingApiPage reasonsForLeavingApiPage;
 
     @ParameterType("true|false")
-    public Boolean booleanValue(String value) {
+    public Boolean booleanValueOf(String value) {
         return Boolean.valueOf(value);
     }
 
@@ -25,6 +25,6 @@ public class GetReasonsForLeavingApiSteps {
 
     @When("a request is made to the GetReasonsForLeaving Api with Valid parameters and etcExists flag is {string}")
     public void verify_GetReasons_For_Leaving_With_ETC_Exists(String etcExistsValue) {
-        reasonsForLeavingApiPage.requestToGetReasonsForLeavingWithETCFlag(get_reasons_for_leaving, booleanValue(etcExistsValue));
+        reasonsForLeavingApiPage.requestToGetReasonsForLeavingWithETCFlag(get_reasons_for_leaving, booleanValueOf(etcExistsValue));
     }
 }

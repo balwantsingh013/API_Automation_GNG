@@ -7,6 +7,7 @@ import com.gng.api.steps.turnOff.Common.GetReasonsForLeaving.GetReasonsForLeavin
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
+import static com.gng.api.constants.ApiEndPoint.GET_REASONS_FOR_LEAVING;
 import static com.gng.api.constants.ApiEndPoint.SAVE_UNENROLLMENT;
 
 public class GetReasonsForLeavingApiPage extends BasePage {
@@ -22,10 +23,8 @@ public class GetReasonsForLeavingApiPage extends BasePage {
 
         GetReasonsForLeavingRequest payload = helper.preparePayload(apiLabel);
         helper.setEtcExistsAndRequestID(payload,etcExists);
-
         setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_REASONS_FOR_LEAVING, 200);
         testContext.setResponse(response);
-
     }
 }
