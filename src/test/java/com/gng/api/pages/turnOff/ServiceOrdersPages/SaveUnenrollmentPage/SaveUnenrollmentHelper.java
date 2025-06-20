@@ -115,6 +115,10 @@ public class SaveUnenrollmentHelper {
             payload.setEtcExists(etcExists);
     }
 
+    public void setMarketerReferenceData(SaveUnenrollmentRequest payload, long marketerReferenceData){
+        payload.setMarketerReferenceData(marketerReferenceData);
+    }
+
     public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,String forwardingAddressIs, String type){
         if(forwardingAddressIs.equals("NA")){
             payload.setForwardingAddressIs("NA");

@@ -28,6 +28,7 @@ public class TestContext {
     private String expirationDate;
     private String suspenseDate;
     private String userIDRemind;
+    private Long marketerReferenceData;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes
@@ -43,6 +44,12 @@ public class TestContext {
     @Getter @Setter
     private Object saveEnrollmentApiPage;
     private SaveEnrollmentResponse saveEnrollmentResponse;
+    @Getter @Setter
+    private Object getMarketerReferenceDataApiPage;
+    private SaveEnrollmentResponse getMarketerReferenceDataResponse;
+    @Getter @Setter
+    private Object getReasonsForLeavingApiPage;
+    private SaveEnrollmentResponse getReasonsForLeavingResponse;
     @Getter @Setter
     private Object saveUnenrollmentApiPage;
     private SaveUnenrollmentResponse saveUnenrollmentResponse;
