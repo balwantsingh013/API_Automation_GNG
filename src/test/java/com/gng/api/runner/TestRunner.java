@@ -25,7 +25,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        tags = "@SaveUnenrollment",
+        tags = "@testing",
 
         plugin = {
                 "pretty",
@@ -38,7 +38,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @Override
-    @DataProvider(parallel = true)
+    @DataProvider(parallel = false)
     public Object[][] scenarios() {
         return super.scenarios();
     }
