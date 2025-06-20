@@ -15,6 +15,8 @@ public final class ApiEndPoint {
     public static final String AES_ENCRYPTION = "/api/AesEncryption/Encrypt";
     public static final String AES_DECRYPTION = "/api/AesEncryption/Decrypt";
 
+    public static final String GET_MARKETER_REFERENCE_DATA="/Common/GetMarketerReferenceData";
+
 
     private ApiEndPoint() {
     }
