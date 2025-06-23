@@ -41,6 +41,7 @@ public class AesEncryptionSteps {
         ExtentReportManager.logInfoToReport("Payload: " + payload);
 
         Response response = RestAssured.given()
+                .relaxedHTTPSValidation()
                 .contentType(ContentType.JSON)
                 .body(payload)
                 .post(uri)
