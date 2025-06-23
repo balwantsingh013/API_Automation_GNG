@@ -7,6 +7,7 @@ Feature: Verify SaveUnenrollment Api
 
   @HappyFlow @SaveUnenrollment
   Scenario Outline: SaveUnenrollmentApi - Verify SaveUnenrollment Api positive flow <testCondition>
+    Given a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment Api for account with "<pricePlan>" plan "<accountType>" type with forwardingAddressIs "<forwardingAddressIs>" with type "<addressType>" and turnoffreason "<testCondition>" and setEmail "<setEmail>" with etcExists "<etcExists>"
     Then verify response code of "SaveUnenrollment" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
@@ -30,6 +31,7 @@ Feature: Verify SaveUnenrollment Api
 
   @SaveUnenrollmentWithInvalidRequestID @NegativeFlow @SaveUnenrollment
   Scenario Outline: Verify SaveUnenrollment Api with invalid requestID "<requestID>"
+    Given a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment Api with "<requestID>"
     Then verify response code of "SaveUnenrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -39,3 +41,4 @@ Feature: Verify SaveUnenrollment Api
       | EMPTY_REQUEST_ID     | 10001     | Missing Request ID   |
       | DUPLICATE_REQUEST_ID | 10003     | Duplicate Request ID |
       | LONG_REQUEST_ID      | 10002     | Invalid Request ID   |
+

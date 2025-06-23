@@ -25,5 +25,11 @@ public class GetMarketerReferenceDataApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_MARKETER_REFERENCE_DATA, 200);
         testContext.setResponse(response);
+        storeMarketerReferenceData(response);
+    }
+
+    private void storeMarketerReferenceData(Response response) {
+        testContext.setResponse(response);
+        testContext.setMarketerReferenceData(response.jsonPath().getLong("data.marketerReferenceData"));
     }
 }

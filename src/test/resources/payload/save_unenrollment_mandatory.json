@@ -9,5 +9,6 @@
   "turnOffReason": "Seasonal or Heat Only",
   "requestedTurnOffDate": "20250315",
   "aglcServiceOrderNumber": "4581842",
-  "etcExists": false
+  "etcExists": false,
+  "marketerReferenceData": 640294751713
 }

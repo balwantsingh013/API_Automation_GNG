@@ -25,5 +25,6 @@
   "emailAddress": "",
   "requestedTurnOffDate": "20250315",
   "aglcServiceOrderNumber": "648165758",
-  "etcExists": false
+  "etcExists": false,
+  "marketerReferenceData": 640294751713
 }
