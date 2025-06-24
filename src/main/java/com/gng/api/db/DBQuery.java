@@ -962,34 +962,6 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String GET_SSN_FOR_ACTIVE_RS_ACCOUNT = """
-            SELECT
-                T3.UCBCUST_SSN
-            FROM UABOPEN T1
-            JOIN UCRACCT T2 ON T1.UABOPEN_CUST_CODE = T2.UCRACCT_CUST_CODE
-                           AND T1.UABOPEN_PREM_CODE = T2.UCRACCT_PREM_CODE
-            JOIN UCBCUST T3 ON T2.UCRACCT_CUST_CODE = T3.UCBCUST_CUST_CODE
-            WHERE T2.UCRACCT_STATUS_IND = 'A'
-              AND T3.UCBCUST_SSN IS NOT null
-              AND T1.UABOPEN_SRAT_CODE <> 'RDEP'
-              AND T1.UABOPEN_BALANCE_IND = 'P'
-              AND T1.UABOPEN_BALANCE > 200
-              AND T1.UABOPEN_DUE_DATE < TRUNC(SYSDATE)
-              AND EXISTS (
-                  SELECT 1
-                  FROM UCRSCMP T4
-                  JOIN UCRSERV T5 ON T5.UCRSERV_CUST_CODE = T1.UABOPEN_CUST_CODE
-                                 AND T5.UCRSERV_PREM_CODE = T1.UABOPEN_PREM_CODE
-                  WHERE T4.UCRSCMP_CUST_CODE = T2.UCRACCT_CUST_CODE
-                    AND T4.UCRSCMP_PREM_CODE = T2.UCRACCT_PREM_CODE
-                    AND T4.UCRSCMP_PLAN_CODE = 'PRP' -- UPDATE FOR EACH PRICE PLAN
-                    AND TRUNC(SYSDATE) BETWEEN T4.UCRSCMP_START_DATE AND T4.UCRSCMP_END_DATE
-                    AND T4.UCRSCMP_SCTY_CODE = 'COMM'
-              )
-            ORDER BY T1.UABOPEN_CUST_CODE DESC
-            FETCH FIRST 1 ROWS ONLY
-            """;
-
     public static final String select_CITY_STATE_ZIP = """
             SELECT t.UCRADDR_CITY, t.UCRADDR_STAT_CODE, t.UCRADDR_ZIP 
             FROM UCRADDR t

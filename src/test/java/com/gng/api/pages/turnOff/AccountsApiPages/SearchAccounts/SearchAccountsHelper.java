@@ -172,11 +172,8 @@ public class SearchAccountsHelper {
     }
 
     public void getSSNFromDbAndPreparePayloadTC_89(SearchAccountsRequest payload) {
-        Map<String, Object> accountDetailsCustomerSSN = ApplicationContext.get().getDbAction().getCustomerSSNActiveRSAccount();
-        String UnencryptedSSN=accountDetailsCustomerSSN.get("UCBCUST_SSN").toString();
-        socialSecurityNumber= AesEncryptionSteps.encryptData(UnencryptedSSN);
         setTransactionTypeAndRequestId(payload);
-        payload.setSocialSecurityNumber(socialSecurityNumber);
+        payload.setSocialSecurityNumber("MqySlEqHo3yL+k8nKX3vBdAr7RC4e8kvzJCuhdG/QDc=");
     }
 
     public void getCustomerPremisesCodeFromDbAndPreparePayload(SearchAccountsRequest payload,SearchAccountsTOffApiLabel testCondition) {
