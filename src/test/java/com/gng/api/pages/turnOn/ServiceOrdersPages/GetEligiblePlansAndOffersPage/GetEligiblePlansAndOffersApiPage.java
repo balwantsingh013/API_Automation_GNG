@@ -38,7 +38,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setSocialSecurityNumber(encryptData("666495180"));
-        payload.setLoginID("mmoloney");
         payload.setEnrollmentSource("PHONE CALL");
         payload.setCallerID("9123545042");
         payload.setCreditCheckOption("yes");
@@ -61,6 +60,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         payload.setHomePhoneNumber("4165245244");
         payload.setHomePhoneType("M");
         payload.setSocialSecurityNumber(encryptData("666066117"));
+        payload.setEnrollmentSource("MAIL");
+        payload.setGenerationCode(null);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
@@ -90,6 +91,9 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         payload.setBillingCity("WARRENTON");
         payload.setBillingZipCode("30828");
         payload.setSocialSecurityNumber(encryptData("666314835"));
+        payload.setCustomerLastName("BLUE");
+        payload.setCustomerMiddleName(null);
+        payload.setCustomerFirstName("RILEY");
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
