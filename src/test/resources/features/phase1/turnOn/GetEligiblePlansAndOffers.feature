@@ -9,6 +9,18 @@ Feature: Verify GetEligiblePlansAndOffers Api
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC 318 UC 39
     When  a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 12
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44

@@ -71,6 +71,23 @@ public class BaseSteps {
         verifyReasonForTurnOffAlert(alert, reasonForTurnOff);
     }
 
+    @And("response should have plan with code {string} and description {string}")
+    public void responseShouldHavePlanWithCodeAndDescription(String planCode, String planDescription) {
+        verifyPlanDetails(planCode, planDescription);
+    }
+
+    private void verifyPlanDetails(String expectedPlanCode, String expectedPlanDescription) {
+        Response response = testContext.getResponse();
+        List<Map<String, String>> plans = response.jsonPath().getList("data.plans");
+
+        boolean planFound = plans.stream()
+                .anyMatch(plan -> expectedPlanCode.equals(plan.get("planCode")) &&
+                        expectedPlanDescription.equals(plan.get("planDescription")));
+
+        assertThat("Expected plan with code and description not found", planFound);
+    }
+
+
     private void verifyReasonForTurnOffAlert(String alert, String reasonForTurnOff) {
         Response response = testContext.getResponse();
         List<Map<String, String>> turnOffReasons = response.jsonPath().getList("data.turnOffReasons");
@@ -137,6 +154,7 @@ public class BaseSteps {
                 response.jsonPath().getInt("data.numberOfMatches"),
                 equalTo(expectedMatches));
     }
+
 
     private void verifyPastDueAmount(int pastDueAmount){
         Response response = testContext.getResponse();
