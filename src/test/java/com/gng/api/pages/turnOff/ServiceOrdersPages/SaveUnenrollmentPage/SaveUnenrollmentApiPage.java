@@ -37,7 +37,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
 
     public void validateForActiveRAMVS(SaveUnenrollmentApiLabel apiLabel, String pricePlan, String sclsCode, String forwardingAddressIs, String type, SaveUnenrollmentApiLabel testCondition, Boolean setEmail, Boolean etcExists){
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerCodePremCodeAGLCServiceNo(payload, pricePlan, sclsCode);
+        helper.setCustomerCodePremCodeAGLCServiceNo(payload, pricePlan, sclsCode, testCondition);
         helper.setTurnOffReasonAndSubReason(payload, testCondition);
         helper.setForwardingAddressDetailsBasedOnType(payload, forwardingAddressIs, type);
         helper.setEmailAddress(payload,setEmail);

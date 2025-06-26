@@ -661,11 +661,11 @@ public final class DBQuery {
                 UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=3 WHERE USER_ID= ?
             """;
 
-    public static final String select_UZBPSTO_OBJECT_Value = """
+    public static final String SELECT_UZBPSTO_OBJECT_Value = """
                 SELECT UZBPSTO_OBJECT FROM UZBPSTO WHERE UZBPSTO_OBJECT = 'SPK_WEB_API'
             """;
 
-    public static final String select_UZRPSTO_PARM_NAME_Value = """
+    public static final String SELECT_UZRPSTO_PARM_NAME_Value = """
                 SELECT UZRPSTO_OBJECT, UZRPSTO_PARM_VALUE
                 FROM UZRPSTO
                 WHERE UZRPSTO_PARM_NAME = 'FAILED_LOGINS_TO_LOCK'
@@ -962,14 +962,14 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String select_CITY_STATE_ZIP = """
+    public static final String SELECT_CITY_STATE_ZIP = """
             SELECT t.UCRADDR_CITY, t.UCRADDR_STAT_CODE, t.UCRADDR_ZIP 
             FROM UCRADDR t
             WHERE t.UCRADDR_ZIP IS NOT NULL
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String select_CUST_PREM_AGLC_SERVICE_CODES = """
+    public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES = """
             SELECT
                 t2.gtbtrnh_cust_code,
                 t2.gtbtrnh_prem_code,
@@ -994,6 +994,116 @@ public final class DBQuery {
                 AND t5.ucracct_status_ind = 'A'
                 AND t4.ucrserv_scls_code = ?
                 AND t3.gtrrndn_serv_ord_num IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP = """
+            SELECT
+                T2.GTBTRNH_CUST_CODE,
+                T2.GTBTRNH_PREM_CODE,
+                T2.GTBTRNH_AGLC_ACCT_NBR,
+                T3.GTRRNDN_SERV_ORD_NUM
+            FROM
+                UZBENRO T1
+            JOIN
+                GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                          AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+            JOIN
+                GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+            JOIN
+                UCRSERV T4 ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
+            JOIN
+                UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
+                          AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
+            WHERE
+                T1.UZBENRO_SSP_IND = 'N'
+                AND T1.UZBENRO_PRICE_PLAN=?
+                AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM UZRSSPA R
+                    WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
+                      AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
+                )
+                AND T5.UCRACCT_STATUS_IND = 'A'
+                AND T4.UCRSERV_SCLS_CODE IN (?)
+            ORDER BY
+                T1.UZBENRO_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE = """
+            SELECT
+                T2.GTBTRNH_CUST_CODE,
+                T2.GTBTRNH_PREM_CODE,
+                T2.GTBTRNH_AGLC_ACCT_NBR,
+                T3.GTRRNDN_SERV_ORD_NUM
+            FROM
+                UZBENRO T1
+            JOIN
+                GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                         AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+            JOIN
+                GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+            JOIN
+                UCRSERV T4 ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
+            JOIN
+                UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
+                         AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
+            JOIN
+            	GZRCBHT T6
+                ON T6.GZRCBHT_CUST_CODE = T1.UZBENRO_CUST_CODE
+            WHERE
+                T1.UZBENRO_SSP_IND = 'N'
+                AND T6.GZRCBHT_SRAT_CODE = 'CR03'
+                AND T1.UZBENRO_PRICE_PLAN = ?
+                AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM UZRSSPA R
+                    WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
+                      AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
+                )
+                AND T5.UCRACCT_STATUS_IND = 'A'
+                AND T4.UCRSERV_SCLS_CODE IN (?)
+            ORDER BY
+                T1.UZBENRO_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS = """
+            SELECT
+                T2.GTBTRNH_CUST_CODE,
+                T2.GTBTRNH_PREM_CODE,
+                T2.GTBTRNH_AGLC_ACCT_NBR,
+                T3.GTRRNDN_SERV_ORD_NUM
+            FROM
+                UZBENRO T1
+            JOIN
+                GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                         AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+            JOIN
+                GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+            JOIN
+                GZBRWDS T4 ON T1.UZBENRO_CUST_CODE = T4.GZBRWDS_CUST_CODE
+                         AND T1.UZBENRO_PREM_CODE = T4.GZBRWDS_PREM_CODE
+            WHERE
+                T1.UZBENRO_SSP_IND = 'N'
+                AND T1.UZBENRO_PRICE_PLAN = ?
+                AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM UZRSSPA R
+                    WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
+                      AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
+                )
+                AND EXISTS (
+                    SELECT 1
+                    FROM GZBRWDS BW
+                    JOIN UCRSCMP CMP ON BW.GZBRWDS_CUST_CODE = CMP.UCRSCMP_CUST_CODE
+                                    AND BW.GZBRWDS_PREM_CODE = CMP.UCRSCMP_PREM_CODE
+                    WHERE BW.GZBRWDS_REWARD_ID = '1'
+                )
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -1022,6 +1132,43 @@ public final class DBQuery {
             AND UCRMBIL_STATUS_IND <> 'T'
             AND UCRMBIL_STATUS_IND <> 'X'
             AND T2.ucracct_status_ind = 'A'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_SONP = """
+            SELECT
+                T2.GTBTRNH_CUST_CODE,
+                T2.GTBTRNH_PREM_CODE,
+                T2.GTBTRNH_AGLC_ACCT_NBR,
+                T3.GTRRNDN_SERV_ORD_NUM
+            FROM
+                UZBENRO T1
+            JOIN
+                GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                         AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+            JOIN
+                GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+            JOIN
+                GZBRWDS T4 ON T1.UZBENRO_CUST_CODE = T4.GZBRWDS_CUST_CODE
+                         AND T1.UZBENRO_PREM_CODE = T4.GZBRWDS_PREM_CODE
+            WHERE
+                T1.UZBENRO_SSP_IND = 'N'
+                AND T1.UZBENRO_PRICE_PLAN = ?
+                AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM UZRSSPA R
+                    WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
+                      AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
+                )
+                AND EXISTS (
+                    SELECT 1
+                    FROM UCBSVCO V
+                    WHERE V.UCBSVCO_CUST_CODE = T1.UZBENRO_CUST_CODE
+                      AND V.UCBSVCO_PREM_CODE = T1.UZBENRO_PREM_CODE
+                      AND V.UCBSVCO_SOTP_CODE = 'SONP'
+                      AND V.UCBSVCO_STUS_CODE IN ('O', 'X', 'C')
+                )
             FETCH FIRST 1 ROWS ONLY
             """;
 

@@ -38,13 +38,37 @@ public class DBAction {
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC207(String pricePlan, String sclsCode) {
-        String query = DBQuery.select_CUST_PREM_AGLC_SERVICE_CODES;
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code ", query);
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC211(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and GPP plan", query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC217(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and greener life", query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC218(String pricePlan) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with active/pending rewards", query);
+        return jdbcTemplate.queryForMap(query, pricePlan);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC219(String pricePlan) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_SONP;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and SONP", query);
+        return jdbcTemplate.queryForMap(query, pricePlan);
+    }
+
     public Map<String, Object> cityStateZip() {
-        String query = DBQuery.select_CITY_STATE_ZIP;
+        String query = DBQuery.SELECT_CITY_STATE_ZIP;
         logQueryInAllure("Get city, state and zip", query);
         return jdbcTemplate.queryForMap(query);
     }
@@ -215,13 +239,13 @@ public class DBAction {
     }
 
     public String select_UZBPSTO_OBJECT_Value() {
-        String query = DBQuery.select_UZBPSTO_OBJECT_Value;
+        String query = DBQuery.SELECT_UZBPSTO_OBJECT_Value;
         logQueryInAllure("Get UZBPSTO_OBJECT Value", query);
         return jdbcTemplate.queryForObject(query, String.class);
     }
 
     public Map<String, Object> select_UZRPSTO_PARM_NAME_Value() {
-        String query = DBQuery.select_UZRPSTO_PARM_NAME_Value;
+        String query = DBQuery.SELECT_UZRPSTO_PARM_NAME_Value;
         logQueryInAllure("Get UZRPSTO_PARM_NAME Value", query);
         return jdbcTemplate.queryForMap(query);
     }
