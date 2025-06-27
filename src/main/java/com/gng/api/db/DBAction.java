@@ -61,10 +61,34 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan);
     }
 
-    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC219(String pricePlan) {
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC220(String pricePlan) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_SONP;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and SONP", query);
         return jdbcTemplate.queryForMap(query, pricePlan);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC212(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACN;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with ETC", query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC221(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with ETC", query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC214(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with past due balance", query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC226(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_INDEXED_PRICE_PLAN;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with past due balance", query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
     public Map<String, Object> cityStateZip() {

@@ -19,7 +19,10 @@ public enum TurnOffReason {
     MOVING_OUTSIDE_POOL_GROUP_ETC_WAIVED("Moving","Outside Pool (Delivery) Group - ETC Waived"),
     MOVING_SERVICE_TRANSFER_ETC_WAIVED("Moving","Service Transfer - ETC Waived"),
     MOVING_OUTSIDE_AGLC_TERRITORY_ETC_WAIVED("Moving","Outside AGLC Territory/Outside Georgia – ETC Waived"),
-    OTHER_DECEASED_ETC_WAIVED("Other", "Deceased - ETC Waived");
+    OTHER_DECEASED_ETC_WAIVED("Other", "Deceased - ETC Waived"),
+    OTHER_REGULATED_PROVIDER_ETC_WAIVED("Other", "Regulated Provider - ETC Waived"),
+    OTHER_RENOVATION_ELECTRIC_CONVERSION("Other", "Renovation/Electric Conversion"),
+    MOVING_OUTSIDE_POOL_GROUP("Moving","Outside Pool (Delivery) Group");
 
     private final String reason;
     private final String subReason;
