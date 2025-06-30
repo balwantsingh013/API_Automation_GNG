@@ -1,5 +1,5 @@
 baseUri: "https://wapi-uat2.gng.vertexna.net/api/v1"
-aesBaseUri: "https://10.209.32.15:443"
+aesBaseUri: "http://10.209.32.15:83"
 authUri: "/Authentication/GetToken"
 vendorId: "36763663.vistio.uat2testing"
 vendorSecret: "iohR@s5u(/yudfs&6"
