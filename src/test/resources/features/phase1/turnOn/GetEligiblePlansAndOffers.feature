@@ -9,57 +9,171 @@ Feature: Verify GetEligiblePlansAndOffers Api
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC 318 UC 39
     When  a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 12
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_319_UC 44
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 12
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC320UC46 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 320 UC 46
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes yes with no promotion code  TC_320_UC 46
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 12
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC321UC64 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 321 UC 64
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_321_UC 64
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 10
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC322UC45 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 322 UC 45
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_322_UC 45
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 8
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC323UCNA @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 323 UC NA
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_323_UC NA
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 12
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC324UCNA @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 324 UC NA
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_324_UC NA
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 3
+    And response should have plan with code "VML" and description "Variable Market Limited"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsServiceTransferWithNoPromotionCodeTC325UC55 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code TC 325 UC 55
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code  TC_325_UC 55
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 13
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
+    And response should have plan with code "VML" and description "Variable Market Limited"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsCommWithNoPromotionCodeTC326UC56 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code TC 326 UC 56
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code  TC_326_UC 56
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 12
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC327UC40  @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 327 UC 40
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_327_UC 40
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 8
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC328UCNA @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 328 UC NA
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should return numberOfMatches as 8
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
