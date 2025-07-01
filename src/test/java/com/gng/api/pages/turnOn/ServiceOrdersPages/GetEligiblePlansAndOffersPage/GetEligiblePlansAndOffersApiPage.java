@@ -1,9 +1,14 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
 import com.gng.api.pages.BasePage;
+import java.util.Optional;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
+import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
@@ -12,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import java.io.IOException;
 
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
+import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
 
 public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
@@ -158,6 +164,49 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+    }
+
+    public String GetCustCodeBySSN(String encryptedSSN){
+        SearchAccountsRequest searchPayload = BasePage.deserializeJsonToPojo(SearchAccountsApiLabel.search_accounts.toString(),
+                SearchAccountsRequest.class);
+        searchPayload.setRequestID(FakerDataGenerator.generateString(10));
+        searchPayload.setSocialSecurityNumber(encryptedSSN);
+        setRequestSpecification(searchPayload, testContext.getAuthToken());
+
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        SearchAccountsResponse searchAccountsResponse = deserializeResponseToPojo(response, SearchAccountsResponse.class);
+
+        String custCode = "";
+        if (searchAccountsResponse != null && searchAccountsResponse.isSuccess())
+        {
+            custCode = Optional.of(searchAccountsResponse)
+                    .map(SearchAccountsResponse::getData)
+                    .map(SearchAccountsResponse.SearchData::getAccounts)
+                    .filter(accounts -> !accounts.isEmpty())
+                    .map(accounts -> accounts.getFirst().getCustomerCode())
+                    .orElse(null);
+        }
+        return custCode;
+
+    }
+
+    public void setRequestParamsBasedOnTypeTC329(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
+     String accountType, String creditCheck,  String promotionCode, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel requestID) {
+
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        String custCode = "";
+        String encryptedSSN = AesEncryptionSteps.encryptData(ssn);
+        if (ssn != null && !ssn.trim().isEmpty()) {
+           custCode = GetCustCodeBySSN(encryptedSSN);
+        }
+        helper.setRequestParamsBasedOnTypeTC329(payload, premiseType, accountType, creditCheck, promotionCode, valueScore, creditMin, creditMax, encryptedSSN, custCode, requestID);
+
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(offersResponse);
     }
 
     public void validateInvalidRequestIDCasesTC155_157(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {

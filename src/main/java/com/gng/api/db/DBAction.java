@@ -1,5 +1,6 @@
 package com.gng.api.db;
 
+import com.github.javafaker.Bool;
 import com.gng.api.report.ExtentReportManager;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
@@ -494,9 +495,31 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getEligiblePlansAndOffersRequestParams(String premiseType,
+                                                                      String accountType,
+                                                                      String creditCheck,
+                                                                      Boolean promotionCode,
+                                                                      String valueScore,
+                                                                      String creditMin,
+                                                                      String creditMax,
+                                                                      String custCode) {
+        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_PARAMS
+                .replace("<premiseType>", premiseType)
+                .replace("<accountType>", accountType)
+                .replace("<creditCheck>", creditCheck)
+               // .replace("<promotionCode>", promotionCode)
+                .replace("<valueScore>", valueScore)
+                .replace("<creditMin>", creditMin)
+                .replace("<creditMax>", creditMax)
+                .replace("<custCode>", custCode);
 
+        query = promotionCode ? query.replace("AND e.\"UZBENRO_MKT_PROG_CODE\" IS NULL",
+                "AND e.\"UZBENRO_MKT_PROG_CODE\" IS NOT NULL")
+                : query;
 
-
+        logQueryInAllure("Get EligiblePlansAndOffersRequestParams", query);
+        return jdbcTemplate.queryForMap(query);
+    }
 
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string

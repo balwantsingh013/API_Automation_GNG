@@ -1,9 +1,15 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts.SearchAccountsHelper;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
+import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
@@ -12,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.gng.api.constants.TestConstant.*;
 
@@ -32,6 +40,15 @@ public class GetEligiblePlansAndOffersHelper {
                 : GetEligiblePlansAndOffersApiLabel.get_eligible_plans_and_offers_mandatory.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, GetEligiblePlansAndOffersRequest.class);
     }
+//
+//    public SearchAccountsResponse GetSearchAccountsRequest prepareSearchPayload(SearchAccountsApiLabel apiLabel) {
+//        log.info("Preparing payload for {}", apiLabel);
+//        String jsonFileName = apiLabel.equals(SearchAccountsApiLabel.search_accounts)
+//                ? SearchAccountsApiLabel.search_accounts.toString()
+//                : SearchAccountsApiLabel.search_accounts_mandatory.toString();
+//        return BasePage.deserializeJsonToPojo(jsonFileName, SearchAccountsRequest.class);
+//    }
+
 
 
     public void setTransactionTypeBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel transactionType) {
@@ -1396,10 +1413,84 @@ public class GetEligiblePlansAndOffersHelper {
 
     }
 
+    public void setRequestParamsBasedOnTypeTC329(GetEligiblePlansAndOffersRequest payload, String premiseType, String accountType, String creditCheck, String promotionCode, String valueScore,
+     String creditMin, String creditMax, String encryptedSSN, String custCode, GetEligiblePlansAndOffersApiLabel requestID) {
+        switch (requestID) {
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329:
+                Boolean parsedPromotionCode = Boolean.parseBoolean(promotionCode);
+                Map<String, Object> requestParams = ApplicationContext.get().getDbAction()
+                        .getEligiblePlansAndOffersRequestParams(premiseType, accountType, creditCheck, parsedPromotionCode, valueScore, creditMin, creditMax, custCode);
 
+                payload.setLoginID("ACNCSR");
+                payload.setTransactionType("TNON");
+                Optional.ofNullable(requestParams.get("UZBENRO_SCLS_CODE"))
+                        .ifPresent(value -> payload.setCustomerType(value.toString()));
 
+                Optional.ofNullable(requestParams.get("UCBCUST_LAST_NAME"))
+                        .ifPresent(value -> payload.setCustomerLastName(value.toString()));
 
+                Optional.ofNullable(requestParams.get("UCBCUST_MIDDLE_NAME"))
+                        .ifPresent(value -> payload.setCustomerMiddleName(value.toString()));
 
+                Optional.ofNullable(requestParams.get("UCBCUST_FIRST_NAME"))
+                        .ifPresent(value -> payload.setCustomerFirstName(value.toString()));
+
+                Optional.ofNullable(encryptedSSN)
+                        .ifPresent(payload::setSocialSecurityNumber);
+
+                Optional.ofNullable(requestParams.get("UZBENRO_AGLC_PREM_ID"))
+                        .ifPresent(value -> payload.setAglcServiceLocationID(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_STREET_NUMBER"))
+                        .ifPresent(value -> payload.setPremisesStreetNumber(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_PDIR_CODE_PRE"))
+                    .ifPresent(value -> payload.setPremisesStreetPreDirection(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_STREET_NAME"))
+                        .ifPresent(value -> payload.setPremisesStreetName(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_SSFX_CODE"))
+                        .ifPresent(value -> payload.setPremisesStreetSuffix(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_PDIR_CODE_POST"))
+                        .ifPresent(value -> payload.setPremisesStreetPostDirection(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_UTYP_CODE"))
+                        .ifPresent(value -> payload.setPremisesUnitType(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_UNIT"))
+                        .ifPresent(value -> payload.setPremisesUnitNumber(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_CITY"))
+                        .ifPresent(value -> payload.setPremisesCity(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_STAT_CODE_ADDR"))
+                        .ifPresent(value -> payload.setPremisesStateCode(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_ZIPC_CODE"))
+                        .ifPresent(value -> payload.setPremisesZipCode(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UCBPREM_TJUR_CODE"))
+                        .ifPresent(value -> payload.setPremisesCountyCode(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UZBENRO_PREM_TYPE"))
+                        .ifPresent(value -> payload.setAcnStatusIndicator(value.toString()));
+
+                Optional.ofNullable(requestParams.get("UZBENRO_LANDLORD_TENANT"))
+                        .ifPresent(value -> payload.setTenantLandlord(value.toString()));
+
+                if (Objects.equals(creditCheck, "NUMBR")){
+                    payload.setCreditCheckOption("yes");
+                } else {
+                    payload.setCreditCheckOption("no");
+                }
+                payload.setConfirmCreditCheck(false);
+                break;
+            default:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+        }
+    }
 }
 
 

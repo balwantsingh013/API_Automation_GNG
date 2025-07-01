@@ -61,6 +61,16 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
+  @GetEligiblePlansAndOffersPositive @HappyFlow
+  Scenario Outline:  GetEligiblePlansAndOffersAPi - Verify GetEligiblePlansAndOffers Api positive flow <requestId>
+    //Given a request is made to get available price plans
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<promotionCode>" promotion "<valueScore>" value score "<creditScoreMin>" min "<creditScoreMax>" max "<ssn>" ssn "<requestId>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Examples:
+    |premiseType|accountType|creditCheck|promotionCode|valueScore|creditScoreMin|creditScoreMax|ssn      |requestId                           |
+    |ACN        |RS         |NUMR       | false       |12        |400           |599           |666596640|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329|
+
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
     When a request is made to the GetEligiblePlansAndOffers Api with "<requestID>"TC155_157
