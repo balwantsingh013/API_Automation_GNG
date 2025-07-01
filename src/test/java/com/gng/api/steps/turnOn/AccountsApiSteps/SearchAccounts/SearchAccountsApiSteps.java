@@ -234,14 +234,14 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateMissingStreetNameAddressFieldsCasesTC106(search_accounts, SearchAccountsApiLabel.valueOf(premisesStreetName));
     }
 
-    @When("a request is made to the SearchAccounts Api with an invalid {string} TC_107")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode) {
-        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts, customerCode);
+    @When("a request is made to the SearchAccounts Api with customer code {string} and premises code {string} that do not exist in database TC_107")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode, String premisesCode) {
+        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodePremiseCodeTC107(search_accounts, customerCode, premisesCode);
     }
 
-    @When("a request is made to the SearchAccounts Api with returned records exceeds the PSTO value  TC_108")
-    public void a_request_is_made_to_the_SearchAccounts_Api_returned_records_exceeds_the_PSTO_value_TC108() {
-        searchAccountsApiPage.validateReturnedRecordsExceedsPSTOValueTC108(search_accounts);
+    @When("a request is made to the SearchAccounts Api with customer business name as {string} returned records exceeds the PSTO value TC_108")
+    public void a_request_is_made_to_the_SearchAccounts_Api_returned_records_exceeds_the_PSTO_value_TC108(String customerBusinessName) {
+        searchAccountsApiPage.validateReturnedRecordsExceedsPSTOValueTC108(search_accounts, customerBusinessName);
     }
 
     @When("a request is made to the SearchAccounts Api with Account Number Search B Type No SSP  TC_109")
@@ -324,6 +324,11 @@ public class SearchAccountsApiSteps {
     @When("a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_an_SSP_Participant_Code_TC121e() {
         searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts_mandatory);
+    }
+
+    @When("a request is made to the SearchAccounts Api TurnOn with a valid SSN")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_valid_ssn() {
+        searchAccountsApiPage.verifySearchAccountAPIWhenValidSSNIsPassed(search_accounts);
     }
 
 

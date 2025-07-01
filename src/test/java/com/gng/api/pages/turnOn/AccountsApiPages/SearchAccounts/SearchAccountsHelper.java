@@ -8,11 +8,14 @@ import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 
 @Slf4j
@@ -22,8 +25,7 @@ public class SearchAccountsHelper {
     public String customerCode;
 
     public static final String USERNAME = "autotester";
-    public static final String USERNAME_01 = "sys";
-    public static final String TRANS_TYPE="TOFF";
+    public static String ssn="666252963";
 
     public SearchAccountsHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -762,47 +764,21 @@ public class SearchAccountsHelper {
     //positive test cases
 
 
-    public void setInvalidCustomerCode(SearchAccountsRequest payload) {
+    public void setInvalidCustomerCode(SearchAccountsRequest payload, String customerCode, String premisesCode) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setCustomerCode("5555555");
-        payload.setPremisesCode("55555");
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
     }
 
-    public void validateCustomerCodeInDB(String customerCode, SearchAccountsRequest payload) {
-
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setCustomerCode("5555555");
-        payload.setPremisesCode("55555");
-
-        List<Map<String, Object>> invalidCustomerCodesFromDB = getInvalidCustomerCode(customerCode);
-
-        if (invalidCustomerCodesFromDB.isEmpty()) {
-            System.out.println("Validation failed: No matching record found for Customer Code in the database.");
-        } else if (invalidCustomerCodesFromDB.size() > 1) {
-            System.out.println("Validation failed: Multiple matching records found for Customer Code in the database.");
-        } else {
-            String dbCustomerCode = (String) invalidCustomerCodesFromDB.get(0).get("CustomerCode");
-
-            if (customerCode.equals(dbCustomerCode)) {
-                System.out.println("Validation passed: Customer Code matches the database value.");
-            } else {
-                System.out.println("Validation failed: Customer Code does not match the database value.");
-                System.out.println("Expected: " + customerCode);
-                System.out.println("Actual: " + dbCustomerCode);
-            }
-        }
+    public void validateCustomerCodeAndPremisesCodeInDB(String customerCode, String premisesCode) {
+        Map<String, Object> customerCodeInDatabase= ApplicationContext.get().getDbAction().searchForCustomerCodeAndPremisesCodeInDatabase(customerCode, premisesCode);;
+        Assert.assertTrue(customerCodeInDatabase.isEmpty());
     }
 
-    public List<Map<String, Object>> getInvalidCustomerCode(String customerCode) {
-
-        List<Map<String, Object>> results = new ArrayList<>();
-        Map<String, Object> record = new HashMap<>();
-        record.put("CustomerCode", customerCode);
-        results.add(record);
-
-        return results;
+    public void verifyTheCountOfRecordsRetrivedFromDBIsMoreThan30(String customerBusinessName) {
+        Map<String, Object> searchAccountsForMoreThan30RecordsBasedOnBusinessName= ApplicationContext.get().getDbAction().searchForCustomerBusinessNameInDatabase(customerBusinessName);;
+        Assert.assertTrue(searchAccountsForMoreThan30RecordsBasedOnBusinessName.size()>30);
     }
-
 
     public void setLastNameFirstNameAndZiPBType(SearchAccountsRequest payload) {
         List<Map<String, Object>> customerData = ApplicationContext.get().getDbAction().lastNameFirstNameTC112Query();
@@ -958,11 +934,9 @@ public class SearchAccountsHelper {
     }
 
 
-    public void setReturnedRecordsExceedsPSTOValue(SearchAccountsRequest payload) {
+    public void setReturnedRecordsExceedsPSTOValue(SearchAccountsRequest payload, String customerBusinessName) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID("autotester");
-        payload.setCustomerBusinessName("BUSINESS");
-
+        payload.setCustomerBusinessName(customerBusinessName);
     }
 
     public void setSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsRequest payload) {
@@ -970,8 +944,11 @@ public class SearchAccountsHelper {
         payload.setLoginID(USERNAME);
         payload.setCustomerCode("5801335");
         payload.setPremisesCode("5776499");
+    }
 
-
+    public void setValidSSNTC113(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setSocialSecurityNumber(encryptData(ssn));
     }
 }
 

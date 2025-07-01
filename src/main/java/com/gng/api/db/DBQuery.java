@@ -969,6 +969,17 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_CUSTOMER_CODE_AND_PREMISES_CODE = """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM UZBENRO
+            WHERE UZBENRO_CUST_CODE=?
+            AND UZBENRO_PREM_CODE=?
+            """;
+
+    public static final String GET_RECORDS_MATCHING_CUSTOMER_BUSINESS_NAME = """
+            
+            """;
+
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES = """
             SELECT
                 t2.gtbtrnh_cust_code,

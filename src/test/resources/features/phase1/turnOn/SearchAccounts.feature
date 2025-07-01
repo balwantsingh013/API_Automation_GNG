@@ -419,22 +419,19 @@ Feature: Verify SearchAccounts Api
       | MissingStreetName                                          | errorCode | errorMessage                                                                                                                                                                                        |
       | PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106 | 10116     | At least one of the following is required: GNG Account Number, Business Name, Last Name and Zip Code, Social Security Number, Federal Tax ID, Phone Number, AGLC Account Number or Premises Address |
 
-  @SearchAccountsCustomerCodeNotInUserTable @Phase1 @HappyFlow
-  Scenario: Verify response code for invalid "<CustomerCode>" TC107
-    When a request is made to the SearchAccounts Api with an invalid "<CustomerCode>" TC_107
+  @SearchAccountsCustomerCodeAndPremisesCodeNotInTable @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response when Customer Code and premises code are passed that do not exist in the database TC107
+    When a request is made to the SearchAccounts Api with customer code "5555555" and premises code "55555" that do not exist in database TC_107
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
-  @SearchAccountsReturnedRecordsExceedsPSTOValue @Phase1 @HappyFlow
-  Scenario: Verify response code for returned records exceeds the PSTO value TC108
-    When a request is made to the SearchAccounts Api with returned records exceeds the PSTO value  TC_108
+  @SearchAccountsReturned30RecordsWhenExceedsPSTOValue @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response code for returned records exceeds the PSTO value TC108
+    When a request is made to the SearchAccounts Api with customer business name as "BUSINESS" returned records exceeds the PSTO value TC_108
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 30
-
-
-
 
   @SearchAccountsAccountNumberSearchBTypeNoSSP @Phase1 @HappyFlow
   Scenario: Verify response code with Account Number Search B Type No SSP  TC109
@@ -443,16 +440,12 @@ Feature: Verify SearchAccounts Api
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 30
 
-
-
   @SearchAccountsAccountNumberSearchETypeNoSSP @Phase1 @HappyFlow
   Scenario: Verify response code Account Number Search E Type No SSP TC110
     When a request is made to the SearchAccounts Api with Account Number Search E Type No SSP  TC_110
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 1
-
-
 
   @SearchAccountsSSPBasedOnTheProvidedLastNameAndZipCode @Phase1 @HappyFlow
   Scenario: Verify response code SSP Based  TC111
@@ -468,7 +461,6 @@ Feature: Verify SearchAccounts Api
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 1
 
-
   @SearchAccountswithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
   Scenario: Verify response code with AGLC Account Number E Type No SSP TC_114
     When   a request is made to the SearchAccounts Api with AGLC Account Number E Type No SSP TC_114
@@ -476,16 +468,12 @@ Feature: Verify SearchAccounts Api
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
-
-
   @SearchAccountsWithCustomerDataETypeSSP @Phase1 @HappyFlow
   Scenario: Verify response code with  Customer Data E Type SSP TC_115
     When a request is made to the SearchAccounts Api with Customer Data E Type SSP TC_115
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
-
-
 
   @SearchAccountsWithStreetNameAndCityAndStateCodeAndZipCode @Phase1 @HappyFlow
   Scenario: Verify response code with Street Name And City And State Code And Zip Code TC_116
@@ -513,13 +501,11 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 0
 
-
   @SearchAccountsWildcardSearch @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records with Wildcard Search TC_121
     When a request is made to the SearchAccounts Api with Wildcard Search TC_121
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 1
-
 
   @SearchAccountsPartialPayment @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records with Partial Payment TC_121a
@@ -558,3 +544,10 @@ Feature: Verify SearchAccounts Api
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
+
+#  @SearchAccountsTurnOnValidSSN @Phase1 @HappyFlow
+#  Scenario: Verify the Search accounts api returns matching enrollment record in SSP when provided with SSN TC113
+#    When a request is made to the SearchAccounts Api TurnOn with a valid SSN
+#    Then verify response code of "SearchAccounts" Api is 200
+#    And response should have ErrorCode 0 and ErrorMessage ""
+#    And response should return numberOfMatches as 1

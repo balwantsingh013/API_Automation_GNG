@@ -49,6 +49,18 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> searchForCustomerCodeAndPremisesCodeInDatabase(String customerCode, String premisesCode) {
+        String query = DBQuery.GET_CUSTOMER_CODE_AND_PREMISES_CODE;
+        logQueryInAllure("Get Customer code and premises code", query);
+        return jdbcTemplate.queryForMap(query, customerCode, premisesCode);
+    }
+
+    public Map<String, Object> searchForCustomerBusinessNameInDatabase(String customebusinessNamee) {
+        String query = DBQuery.GET_RECORDS_MATCHING_CUSTOMER_BUSINESS_NAME;
+        logQueryInAllure("Get Records matching customer business name", query);
+        return jdbcTemplate.queryForMap(query, customebusinessNamee);
+    }
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC217(String pricePlan, String sclsCode) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and greener life", query);

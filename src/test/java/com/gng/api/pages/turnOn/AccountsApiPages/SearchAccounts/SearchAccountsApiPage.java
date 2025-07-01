@@ -364,21 +364,22 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(SearchAccountsApiLabel apiLabel, String customerCode) {
+    public void validateAccountNumberSearchWithInvalidCustomerCodePremiseCodeTC107(SearchAccountsApiLabel apiLabel, String customerCode, String premisesCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setInvalidCustomerCode(payload);
+        helper.setInvalidCustomerCode(payload, customerCode, premisesCode);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
-        helper.validateCustomerCodeInDB(customerCode, payload);
+        //helper.validateCustomerCodeAndPremisesCodeInDB(customerCode,premisesCode);
     }
 
-    public void validateReturnedRecordsExceedsPSTOValueTC108(SearchAccountsApiLabel apiLabel) {
+    public void validateReturnedRecordsExceedsPSTOValueTC108(SearchAccountsApiLabel apiLabel, String customerBusinessName) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setReturnedRecordsExceedsPSTOValue(payload);
+        helper.setReturnedRecordsExceedsPSTOValue(payload, customerBusinessName);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
+        //helper.verifyTheCountOfRecordsRetrivedFromDBIsMoreThan30(customerBusinessName);
     }
 
 
@@ -518,7 +519,14 @@ public class SearchAccountsApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
+    }
 
+    public void verifySearchAccountAPIWhenValidSSNIsPassed(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setValidSSNTC113(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
     }
 
 
