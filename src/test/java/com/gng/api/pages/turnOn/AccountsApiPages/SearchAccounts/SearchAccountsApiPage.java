@@ -365,44 +365,43 @@ public class SearchAccountsApiPage extends BasePage {
     }
 
     public void validateAccountNumberSearchWithInvalidCustomerCodePremiseCodeTC107(SearchAccountsApiLabel apiLabel, String customerCode, String premisesCode) {
+        helper.validateCustomerCodeAndPremisesCodeInDB(customerCode,premisesCode);
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setInvalidCustomerCode(payload, customerCode, premisesCode);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
-        //helper.validateCustomerCodeAndPremisesCodeInDB(customerCode,premisesCode);
     }
 
     public void validateReturnedRecordsExceedsPSTOValueTC108(SearchAccountsApiLabel apiLabel, String customerBusinessName) {
+        helper.verifyTheCountOfRecordsRetrivedFromDBIsMoreThan30(customerBusinessName);
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setReturnedRecordsExceedsPSTOValue(payload, customerBusinessName);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
-        //helper.verifyTheCountOfRecordsRetrivedFromDBIsMoreThan30(customerBusinessName);
     }
 
-
-    public void validateAccountNumberSearchBTypeNoSSPOnTypeTC109(SearchAccountsApiLabel apiLabel) {
+    public void validateAccountNumberSearchBTypeNoSSPOnTypeTC109(SearchAccountsApiLabel apiLabel, String sspIndicator) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setAccountNumberSearchWithoutSSNBasedOnTypeTC109(payload);
+        helper.setAccountNumberSearchWithoutSSPBasedOnTypeTC109(payload, sspIndicator);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
-    public void validateAccountNumberSearchETypeNoSSPOnTypeTC110(SearchAccountsApiLabel apiLabel) {
+    public void validateAccountNumberSearchETypeNoSSPOnTypeTC110(SearchAccountsApiLabel apiLabel, String sspIndicator) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setAccountNumberSearchETypeNoSSP(payload);
+        helper.setAccountNumberSearchETypeNoSSP(payload, sspIndicator);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
 
-    public void validateLastNameAndZiPBTypESSPBasedOnTypeTC111(SearchAccountsApiLabel apiLabel) {
+    public void validateLastNameAndZiPBTypESSPBasedOnTypeTC111(SearchAccountsApiLabel apiLabel, String sspIndicator) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setLastNameAndZiPBType(payload);
+        helper.setLastNameAndZiPBType(payload, sspIndicator);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);

@@ -776,8 +776,8 @@ public class SearchAccountsHelper {
     }
 
     public void verifyTheCountOfRecordsRetrivedFromDBIsMoreThan30(String customerBusinessName) {
-        Map<String, Object> searchAccountsForMoreThan30RecordsBasedOnBusinessName= ApplicationContext.get().getDbAction().searchForCustomerBusinessNameInDatabase(customerBusinessName);;
-        Assert.assertTrue(searchAccountsForMoreThan30RecordsBasedOnBusinessName.size()>30);
+        Long countOfRecordsBasedOnBusinessName= ApplicationContext.get().getDbAction().searchForCustomerBusinessNameInDatabase(customerBusinessName);;
+        Assert.assertTrue(countOfRecordsBasedOnBusinessName>30);
     }
 
     public void setLastNameFirstNameAndZiPBType(SearchAccountsRequest payload) {
@@ -851,20 +851,11 @@ public class SearchAccountsHelper {
 
     }
 
-
-    public void setAccountNumberSearchETypeNoSSP(SearchAccountsRequest payload) {
-        List<Map<String, Object>> accountNumberData = ApplicationContext.get().getDbAction().accountNumberSearchETypeNoSSPDBTC110Query();
-
-        Map<String, Object> data = accountNumberData.getFirst();
-
-        String premisesCode = data.get("PREMISESCODE").toString();
-        String customerCode = data.get("CUSTOMERCODE").toString();
-
+    public void setAccountNumberSearchETypeNoSSP(SearchAccountsRequest payload, String sspIndicator) {
+        Map<String, Object> accountNumberData = ApplicationContext.get().getDbAction().accountNumberSearchETypeNoSSPDBTC110Query(sspIndicator);
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME);
-        payload.setPremisesCode(premisesCode);
-        payload.setCustomerCode(customerCode);
-
+        payload.setCustomerCode(accountNumberData.get("UZBENRO_CUST_CODE").toString());
+        payload.setPremisesCode(accountNumberData.get("UZBENRO_PREM_CODE").toString());
     }
 
     public void setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(SearchAccountsRequest payload) {
@@ -917,22 +908,19 @@ public class SearchAccountsHelper {
     }
 
 
-    public void setAccountNumberSearchWithoutSSNBasedOnTypeTC109(SearchAccountsRequest payload) {
+    public void setAccountNumberSearchWithoutSSPBasedOnTypeTC109(SearchAccountsRequest payload, String sspIndicator) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME);
-        payload.setCustomerCode("5801335");
-        payload.setPremisesCode("5776499");
-
+        Map<String, Object>  custPremCodeNoSSP = ApplicationContext.get().getDbAction().custCodePremCodeNoSSPAccount(sspIndicator);
+        payload.setCustomerCode(custPremCodeNoSSP.get("UZBENRO_CUST_CODE").toString());
+        payload.setPremisesCode(custPremCodeNoSSP.get("UZBENRO_PREM_CODE").toString());
     }
 
-    public void setLastNameAndZiPBType(SearchAccountsRequest payload) {
+    public void setLastNameAndZiPBType(SearchAccountsRequest payload, String sspIndicator) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID("autotester");
-        payload.setCustomerLastName("STONE");
-        payload.setPremisesZipCode("30132");
-
+        Map<String, Object>  lastNameZipNoSSP = ApplicationContext.get().getDbAction().lastNameZipNoSSPAccount(sspIndicator);
+        payload.setCustomerLastName(lastNameZipNoSSP.get("UZBENRO_DSM_LAST_NAME").toString());
+        payload.setPremisesZipCode(lastNameZipNoSSP.get("UCRADDR_ZIP").toString());
     }
-
 
     public void setReturnedRecordsExceedsPSTOValue(SearchAccountsRequest payload, String customerBusinessName) {
         payload.setRequestID(FakerDataGenerator.generateString(10));

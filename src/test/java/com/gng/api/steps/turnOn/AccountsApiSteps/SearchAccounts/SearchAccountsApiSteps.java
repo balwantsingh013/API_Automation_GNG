@@ -244,19 +244,19 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateReturnedRecordsExceedsPSTOValueTC108(search_accounts, customerBusinessName);
     }
 
-    @When("a request is made to the SearchAccounts Api with Account Number Search B Type No SSP  TC_109")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_B_Type_No_SSP_TC109() {
-        searchAccountsApiPage.validateAccountNumberSearchBTypeNoSSPOnTypeTC109(search_accounts);
+    @When("a request is made to the SearchAccounts Api for Account Number with B Type No SSP {string} TC_109")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_B_Type_No_SSP_TC109(String sspIndicator) {
+        searchAccountsApiPage.validateAccountNumberSearchBTypeNoSSPOnTypeTC109(search_accounts, sspIndicator);
     }
 
-    @When("a request is made to the SearchAccounts Api with Account Number Search E Type No SSP  TC_110")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_E_Type_No_SSP_TC110() {
-        searchAccountsApiPage.validateAccountNumberSearchETypeNoSSPOnTypeTC110(search_accounts);
+    @When("a request is made to the SearchAccounts Api for Account Number with E Type No SSP {string} TC_110")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_E_Type_No_SSP_TC110(String sspIndicator) {
+        searchAccountsApiPage.validateAccountNumberSearchETypeNoSSPOnTypeTC110(search_accounts,sspIndicator);
     }
 
-    @When("a request is made to the SearchAccounts Api with SSP Based TC_111")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_SSP_Based_TC111() {
-        searchAccountsApiPage.validateLastNameAndZiPBTypESSPBasedOnTypeTC111(search_accounts);
+    @When("a request is made to the SearchAccounts Api with SSP {string} TC_111")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_SSP_Based_TC111(String sspIndicator) {
+        searchAccountsApiPage.validateLastNameAndZiPBTypESSPBasedOnTypeTC111(search_accounts, sspIndicator);
     }
 
     @When("a request is made to the SearchAccounts Api with First Name & Last Name & Zip - E Type, SSP TC_112")

@@ -7,6 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,16 +50,33 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> custCodePremCodeNoSSPAccount(String sspIndicator) {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_NO_SSP;
+        logQueryInAllure("Get Customer code, premises code for account without SSP", query);
+        return jdbcTemplate.queryForMap(query, sspIndicator);
+    }
+
+    public Map<String, Object> lastNameZipNoSSPAccount(String sspIndicator) {
+        String query = DBQuery.SELECT_LAST_NAME_ZIP_NO_SSP;
+        logQueryInAllure("Get Customer code, premises code for account without SSP", query);
+        return jdbcTemplate.queryForMap(query, sspIndicator);
+    }
+
     public Map<String, Object> searchForCustomerCodeAndPremisesCodeInDatabase(String customerCode, String premisesCode) {
         String query = DBQuery.GET_CUSTOMER_CODE_AND_PREMISES_CODE;
         logQueryInAllure("Get Customer code and premises code", query);
-        return jdbcTemplate.queryForMap(query, customerCode, premisesCode);
+        List<Map<String, Object>> results = jdbcTemplate.queryForList(query, customerCode, premisesCode);
+        if (results.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return results.getFirst();
     }
 
-    public Map<String, Object> searchForCustomerBusinessNameInDatabase(String customebusinessNamee) {
+    public Long searchForCustomerBusinessNameInDatabase(String customerBusinessName) {
         String query = DBQuery.GET_RECORDS_MATCHING_CUSTOMER_BUSINESS_NAME;
         logQueryInAllure("Get Records matching customer business name", query);
-        return jdbcTemplate.queryForMap(query, customebusinessNamee);
+        Long count = jdbcTemplate.queryForObject(query, Long.class, customerBusinessName+"%");
+        return count;
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC217(String pricePlan, String sclsCode) {
@@ -248,10 +266,10 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public List<Map<String, Object>> accountNumberSearchETypeNoSSPDBTC110Query() {
+    public Map<String, Object> accountNumberSearchETypeNoSSPDBTC110Query(String sspIndicator) {
         String query = DBQuery.ACCOUNT_NUMBER_E_TYPE_NO_SSP_TC110;
-        logQueryInAllure("Last name and First Name ", query);
-        return jdbcTemplate.queryForList(query);
+        logQueryInAllure("customer code and premises code for E type No SSP ", query);
+        return jdbcTemplate.queryForMap(query, sspIndicator);
     }
 
     public List<Map<String, Object>> aglcAccountNumberETypeNoSSPTC114Query() {
