@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel.VALID_CUST_CODE_INVALID_PREM_CODE_TC_74;
 
 @Slf4j
@@ -25,7 +26,7 @@ public class SearchAccountsHelper {
     public String zipCode;
     public String firstName;
     public String customerBusinessName;
-    public String socialSecurityNumber;
+    public String socialSecurityNumber= "666398181";
     public static final String TRANS_TYPE_TOFF="TOFF";
     public String aglcAccountNumber;
     public String premisesStreetNumber;
@@ -172,11 +173,8 @@ public class SearchAccountsHelper {
     }
 
     public void getSSNFromDbAndPreparePayloadTC_89(SearchAccountsRequest payload) {
-        Map<String, Object> accountDetailsCustomerSSN = ApplicationContext.get().getDbAction().getCustomerSSNActiveRSAccount();
-        String UnencryptedSSN=accountDetailsCustomerSSN.get("UCBCUST_SSN").toString();
-        socialSecurityNumber= AesEncryptionSteps.encryptData(UnencryptedSSN);
         setTransactionTypeAndRequestId(payload);
-        payload.setSocialSecurityNumber(socialSecurityNumber);
+        payload.setSocialSecurityNumber(encryptData(socialSecurityNumber));
     }
 
     public void getCustomerPremisesCodeFromDbAndPreparePayload(SearchAccountsRequest payload,SearchAccountsTOffApiLabel testCondition) {

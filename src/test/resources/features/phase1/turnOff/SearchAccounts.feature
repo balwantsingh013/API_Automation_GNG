@@ -134,13 +134,16 @@ Feature: Verify SearchAccounts TurnOff Api
   |ALL_PREMISES_FIELDS_TC_104                |2          |RS          |true            |false            |
   |PREMISES_STREET_NAME_CITY_STATE_ZIP_TC_105|30         |RS          |true            |false            |
 
-
-  #Encryption API is failing
-#  @validSSNActiveRSPastDueBalance @Phase1 @HappyFlow @SearchAccountTOFF
-#  Scenario: SearchAccountsApi- Verify Response when a Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance TC_89
-#    When a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance
-#    Then verify response code of "SearchAccounts" Api is 200
-#    And response should have ErrorCode 0 and ErrorMessage ""
+  @validSSNActiveRSPastDueBalance @Phase1 @HappyFlow @SearchAccountTOFF
+  Scenario: SearchAccountsApiTOFF- Verify Response when a Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance TC_89
+    When a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 1
+    And response should have "accountStatus" as "A"
+    And response should have "meteredAccount" flag as "true"
+    And response should have "customerType" as "RS"
+    And response should have "turnOffAllowed" flag as "true"
 
 
 
