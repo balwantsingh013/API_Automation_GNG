@@ -435,7 +435,7 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateStreetNameAndCityAndStateCodeAndZipCodeTC116(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setStreetNameAndCityAndStateCodeAndZipCode(payload);
+        helper.setStreetNameCityStateZip(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
@@ -443,7 +443,7 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void validateNumberAndPreDirAndSuffixAndPostDirAndStreetNameAndCityAndStateCodeAndZipCodeTC117(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerDataETypeSSP(payload);
+        helper.setAddressDetailsWithPreDirection(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
@@ -476,9 +476,6 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
-
-
-
 
     public void validatePartialPaymentTC121a(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);

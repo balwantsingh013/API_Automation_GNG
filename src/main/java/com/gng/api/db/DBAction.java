@@ -62,6 +62,24 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sspIndicator);
     }
 
+    public Map<String, Object> getStreetCityStateZipDetails() {
+        String query = DBQuery.SELECT_CITY_STATE_ZIP;
+        logQueryInAllure("Get address details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getPhoneNumber() {
+        String query = DBQuery.SELECT_PHONE_NUMBER;
+        logQueryInAllure("Get phone number", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAddressDetails() {
+        String query = DBQuery.SELECT_ADDRESS_DETAILS;
+        logQueryInAllure("Get address details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> searchForCustomerCodeAndPremisesCodeInDatabase(String customerCode, String premisesCode) {
         String query = DBQuery.GET_CUSTOMER_CODE_AND_PREMISES_CODE;
         logQueryInAllure("Get Customer code and premises code", query);
@@ -279,10 +297,10 @@ public class DBAction {
     }
 
 
-    public List<Map<String, Object>> customerDataWithETypeTC115Query() {
+    public Map<String, Object> customerDataWithETypeTC115Query() {
         String query = DBQuery.CUSTOMER_DATA_WITH_TYPE_TC115;
         logQueryInAllure("Customer Data Not Found With E type ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
 

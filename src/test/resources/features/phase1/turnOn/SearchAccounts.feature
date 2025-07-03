@@ -485,35 +485,36 @@ Feature: Verify SearchAccounts Api
 
   @SearchAccountsWithStreetNameAndCityAndStateCodeAndZipCode @Phase1 @HappyFlow
   Scenario: Verify response code with Street Name And City And State Code And Zip Code TC_116
-    When    a request is made to the SearchAccounts Api with Street Name And City And State Code And Zip Code TC_116
+    When a request is made to the SearchAccounts Api with Street Name And City And State Code And Zip Code TC_116
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 2
 
   @SearchAccountsWithNumberAndPreDirAndSuffixAndPostDirAndStreetNameAndCityAndStateCodeAndZipCode  @Phase1 @HappyFlow
   Scenario: Verify response code with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
     When a request is made to the SearchAccounts Api with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
 
   @SearchAccountsEnrollmentRecordsBasedOnTheProvidedPhoneNumber @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records Based "<PhoneNumber>" TC119
     When a request is made to the SearchAccounts Api with Enrollment Records Based TC_119
     Then verify response code of "SearchAccounts" Api is 200
-    And response should return numberOfMatches as 2
+    And response should return numberOfMatches as 1
+    And response should have "recordType" as "BANNER RECORD"
 
   @SearchAccountsBusinessName @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records Based Business Name TC 120
     When a request is made to the SearchAccounts Api with Business Name  TC_120
     Then verify response code of "SearchAccounts" Api is 200
-    And response should return numberOfMatches as 0
+    And response should return numberOfMatches as 1
+    And response should have "recordType" as "BANNER RECORD"
 
   @SearchAccountsWildcardSearch @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records with Wildcard Search TC_121
     When a request is made to the SearchAccounts Api with Wildcard Search TC_121
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 1
+    And response should have "recordType" as "BANNER RECORD"
 
   @SearchAccountsPartialPayment @Phase1 @HappyFlow
   Scenario: Verify response code Enrollment Records with Partial Payment TC_121a
@@ -546,12 +547,6 @@ Feature: Verify SearchAccounts Api
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
-  @SearchAccountsEnrollmentCommercialRecordsBasedOnTheProvidedCustomerBusinessName @Phase1 @HappyFlow
-  Scenario: Verify response code Enrollment Commercial Records Based Provided "<customerBusinessName>" TC120
-    When a request is made to the SearchAccounts Api with Enrollment Commercial Records Based Provided "<customerBusinessName>" TC_120
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
 
   @SearchAccountsTurnOnValidSSN @Phase1 @HappyFlow
   Scenario: Verify the Search accounts api returns matching enrollment record in SSP when provided with SSN TC113

@@ -964,17 +964,56 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CITY_STATE_ZIP = """
-            SELECT t.UCRADDR_CITY, t.UCRADDR_STAT_CODE, t.UCRADDR_ZIP 
-            FROM UCRADDR t
-            WHERE t.UCRADDR_ZIP IS NOT NULL
+            SELECT
+                UCRADDR_STREET_NAME,
+                UCRADDR_CITY,
+                UCRADDR_STAT_CODE,
+                UCRADDR_ZIP
+            FROM
+                UCRADDR
+            WHERE
+                UCRADDR_STREET_NAME IS NOT NULL
+                AND UCRADDR_CITY IS NOT NULL
+                AND UCRADDR_STAT_CODE IS NOT NULL
+                AND LENGTH(UCRADDR_ZIP) = 5
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    public static final String SELECT_ADDRESS_DETAILS = """
+            SELECT
+                UCRADDR_STREET_NAME,
+                UCRADDR_STREET_NUMBER,
+                UCRADDR_PDIR_CODE_PRE,
+                UCRADDR_PDIR_CODE_POST,
+                UCRADDR_SSFX_CODE,
+                UCRADDR_CITY,
+                UCRADDR_STAT_CODE,
+                UCRADDR_ZIP
+            FROM
+                UCRADDR
+            WHERE
+                UCRADDR_STREET_NAME IS NOT NULL
+                AND UCRADDR_STREET_NUMBER IS NOT NULL
+                AND UCRADDR_PDIR_CODE_PRE IS NOT NULL
+                AND UCRADDR_PDIR_CODE_POST IS NOT NULL
+                AND UCRADDR_SSFX_CODE IS NOT NULL
+                AND UCRADDR_CITY IS NOT NULL
+                AND UCRADDR_STAT_CODE IS NOT NULL
+                AND LENGTH(UCRADDR_ZIP) = 5
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
 
     public static final String GET_CUSTOMER_CODE_AND_PREMISES_CODE = """
             SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
             FROM UZBENRO
             WHERE UZBENRO_CUST_CODE=?
             AND UZBENRO_PREM_CODE=?
+            """;
+
+    public static final String SELECT_PHONE_NUMBER = """
+            SELECT UCRTELE_PHONE_AREA,UCRTELE_PHONE_NUMBER FROM UCRTELE
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_CODE_NO_SSP = """
