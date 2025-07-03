@@ -680,6 +680,50 @@ public final class DBQuery {
             UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
             """;
 
+    public static final String PAST_DUE_BALANCE_AND_PARTIAL_PAYMENT = """
+            SELECT   T2.GZBRTPP_CUST_CODE,
+                     T2.GZBRTPP_PREM_CODE,
+                     T2.GZBRTPP_PAYMENT_REF,
+                     T2.GZBRTPP_AMOUNT,
+                     T2.GZBRTPP_AR_TRANS
+            FROM     GZBRTPP T2
+            JOIN     UABOPEN T1
+                ON   T2.GZBRTPP_CUST_CODE = T1.UABOPEN_CUST_CODE
+            JOIN     UCRACCT T5
+                ON   T5.UCRACCT_CUST_CODE = T2.GZBRTPP_CUST_CODE
+            WHERE    T2.GZBRTPP_PAYMENT_REF IS NOT NULL
+            AND      T2.GZBRTPP_AMOUNT > 0
+            AND      T5.UCRACCT_STATUS_IND = 'A'
+            AND      T1.UABOPEN_SRAT_CODE <> 'RDEP'
+            AND      T1.UABOPEN_BALANCE_IND = 'P'
+            AND      T1.UABOPEN_BALANCE > 200
+            AND      T1.UABOPEN_DUE_DATE < TRUNC(SYSDATE)
+            AND T2.GZBRTPP_AR_TRANS IS NULL
+            AND      EXISTS (
+                         SELECT  1
+                         FROM    UCRSCMP T3
+                         JOIN    UCRSERV T4
+                             ON  T4.UCRSERV_CUST_CODE = T1.UABOPEN_CUST_CODE
+                             AND T4.UCRSERV_PREM_CODE = T1.UABOPEN_PREM_CODE
+                     )
+            ORDER BY T1.UABOPEN_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String PAST_DUE_BALANCE_AND_NO_PAYMENT = """
+            SELECT   T2.GZBRTPP_CUST_CODE,
+                     T2.GZBRTPP_PREM_CODE
+            FROM     GZBRTPP T2
+            JOIN     UABOPEN T1
+                ON   T2.GZBRTPP_CUST_CODE = T1.UABOPEN_CUST_CODE
+            JOIN     UCRACCT T5
+                ON   T5.UCRACCT_CUST_CODE = T2.GZBRTPP_CUST_CODE
+            WHERE    T2.GZBRTPP_PAYMENT_REF IS NOT NULL
+            AND      T5.UCRACCT_STATUS_IND = 'A'
+            AND GZBRTPP_AR_TRANS IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String ACTIVE_RESIDENTIAL_OR_COMMERCIAL_CUSTOMERS = """
             SELECT T1.UCRACCT_CUST_CODE, T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1, UCBCUST T2, UCRSERV T3, UCRSCMP T5
@@ -1013,6 +1057,28 @@ public final class DBQuery {
 
     public static final String SELECT_PHONE_NUMBER = """
             SELECT UCRTELE_PHONE_AREA,UCRTELE_PHONE_NUMBER FROM UCRTELE
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_CODE_NOT_IN_SSP_PARTICIPANT_PARENT_TABLE= """
+            SELECT T1.UZRSSPA_CUST_CODE, T1.UZRSSPA_PREM_CODE
+            FROM UZRSSPA T1
+             WHERE NOT EXISTS (
+                   SELECT 1
+                   FROM   uzbsspp T
+                   WHERE  T1.UZRSSPA_CUST_CODE= T.UZBSSPP_PARTICIPANT_CODE
+                                            )
+            AND LENGTH(T1.UZRSSPA_PREM_CODE)=7
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_CODE_SSP_PARTICIPANT_CODE= """
+            SELECT T1.UZRSSPA_CUST_CODE, T1.UZRSSPA_PREM_CODE
+            FROM UZRSSPA T1
+            JOIN UZBSSPP T2
+            ON T1.UZRSSPA_CUST_CODE= T2.UZBSSPP_PARTICIPANT_CODE
+            WHERE T1.UZRSSPA_CUST_CODE= T2.UZBSSPP_PARTICIPANT_CODE
+            AND T2.UZBSSPP_STATUS=?
             FETCH FIRST 1 ROWS ONLY
             """;
 

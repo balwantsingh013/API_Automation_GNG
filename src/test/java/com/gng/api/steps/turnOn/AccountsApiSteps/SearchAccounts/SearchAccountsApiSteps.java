@@ -320,10 +320,14 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateMultiplePaymentTC121d(search_accounts_mandatory);
     }
 
+    @When("a request is made to the SearchAccounts Api with an SSP Participant Code for {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_an_SSP_Participant_Code_TC121e(String testCondition) {
+        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
+    }
 
-    @When("a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_an_SSP_Participant_Code_TC121e() {
-        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts_mandatory);
+    @When("a request is made to the SearchAccounts Api with account that does not exist in SSP Participant parent table TC_112e_3")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_an_not_in_ssp_parent_table_TC121e3() {
+        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e3(search_accounts);
     }
 
     @When("a request is made to the SearchAccounts Api TurnOn with a valid SSN")

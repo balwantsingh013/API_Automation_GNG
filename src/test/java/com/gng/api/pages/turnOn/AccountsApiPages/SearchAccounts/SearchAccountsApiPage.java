@@ -508,10 +508,17 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-
-    public void validateSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsApiLabel apiLabel) {
+    public void validateSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsApiLabel apiLabel,SearchAccountsApiLabel testCondition) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setSSPParticipantCodeBasedOnTypeTC121e(payload);
+        helper.setSSPParticipantCodeBasedOnTypeTC121e(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateSSPParticipantCodeBasedOnTypeTC121e3(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustCodePremCodeBasedOnTypeTC121e3(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);

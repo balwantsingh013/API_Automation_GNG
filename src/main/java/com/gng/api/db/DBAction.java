@@ -56,6 +56,18 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sspIndicator);
     }
 
+    public Map<String, Object> custCodePremCodeSSPParticipantCodeAccount(String status) {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_SSP_PARTICIPANT_CODE;
+        logQueryInAllure("Get Customer code, premises code for account without SSP", query);
+        return jdbcTemplate.queryForMap(query, status);
+    }
+
+    public Map<String, Object> getCustCodePremCodeNotInSSPParticipantParentTable() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_NOT_IN_SSP_PARTICIPANT_PARENT_TABLE;
+        logQueryInAllure("Get Customer code, premises code for account no in SSP Participant parent table", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> lastNameZipNoSSPAccount(String sspIndicator) {
         String query = DBQuery.SELECT_LAST_NAME_ZIP_NO_SSP;
         logQueryInAllure("Get Customer code, premises code for account without SSP", query);
@@ -451,6 +463,18 @@ public class DBAction {
 
     public Map<String, Object> getAccountDetails_ForPastDueBalanceCommercialAccount() {
         String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForPastDueBalanceAndPartialPayment() {
+        String query = DBQuery.PAST_DUE_BALANCE_AND_PARTIAL_PAYMENT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForPastDueBalanceAndNoPayment() {
+        String query = DBQuery.PAST_DUE_BALANCE_AND_NO_PAYMENT;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }

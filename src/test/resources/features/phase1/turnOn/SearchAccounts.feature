@@ -541,12 +541,22 @@ Feature: Verify SearchAccounts Api
     And response should return numberOfMatches as 0
 
   @SearchAccountsSSPParticipantCode @Phase1 @HappyFlow
-  Scenario: Verify response code for SSP Participant Code TC121e
-    When a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e
+  Scenario Outline: Verify response code for SSP Participant Code <TestCondition>
+    When a request is made to the SearchAccounts Api with an SSP Participant Code for "<TestCondition>"
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 0
+    And response should return numberOfMatches as 1
+    Examples:
+    |TestCondition                   |
+    |ACTIVE_UZBSSPP_STATUS_TC121E_1  |
+    |INACTIVE_UZBSSPP_STATUS_TC121E_2|
 
+  @SearchAccountsNotInSSPParticipantParentTable @Phase1 @HappyFlow
+  Scenario: Verify response for search account API when customer code is not in SSP Participant Parent table TC_121E_3
+    When a request is made to the SearchAccounts Api with account that does not exist in SSP Participant parent table TC_112e_3
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 1
 
   @SearchAccountsTurnOnValidSSN @Phase1 @HappyFlow
   Scenario: Verify the Search accounts api returns matching enrollment record in SSP when provided with SSN TC113

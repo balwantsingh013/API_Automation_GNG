@@ -10,12 +10,11 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.INACTIVE_UZBSSPP_STATUS_TC121E_2;
 
 
 @Slf4j
@@ -869,9 +868,9 @@ public class SearchAccountsHelper {
 
     public void setPartialPayment(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        Map<String, Object> accountNumberData = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceCommercialAccount();
-        payload.setCustomerCode(accountNumberData.get("UCRACCT_CUST_CODE").toString());
-        payload.setPremisesCode(accountNumberData.get("UCRACCT_PREM_CODE").toString());
+        Map<String, Object> accountNumberData = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceAndPartialPayment();
+        payload.setCustomerCode(accountNumberData.get("GZBRTPP_CUST_CODE").toString());
+        payload.setPremisesCode(accountNumberData.get("GZBRTPP_PREM_CODE").toString());
     }
 
     public void setFullPayment(SearchAccountsRequest payload) {
@@ -883,9 +882,9 @@ public class SearchAccountsHelper {
 
     public void setNoPayment(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME);
-        payload.setPremisesCode("5776499");
-        payload.setCustomerCode("5801335");
+        Map<String, Object> accountNumberData = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceAndNoPayment();
+        payload.setCustomerCode(accountNumberData.get("GZBRTPP_CUST_CODE").toString());
+        payload.setPremisesCode(accountNumberData.get("GZBRTPP_PREM_CODE").toString());
     }
 
     public void setMultiplePayments(SearchAccountsRequest payload) {
@@ -937,11 +936,22 @@ public class SearchAccountsHelper {
         payload.setCustomerBusinessName(customerBusinessName);
     }
 
-    public void setSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsRequest payload) {
+    public void setSSPParticipantCodeBasedOnTypeTC121e(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
+        String status="A";
+        if(testCondition.equals(INACTIVE_UZBSSPP_STATUS_TC121E_2)){
+            status="I";
+        }
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME);
-        payload.setCustomerCode("5801335");
-        payload.setPremisesCode("5776499");
+        Map<String, Object>  custPremCodeSSPParticipantCode = ApplicationContext.get().getDbAction().custCodePremCodeSSPParticipantCodeAccount(status);
+        payload.setCustomerCode(custPremCodeSSPParticipantCode.get("UZRSSPA_CUST_CODE").toString());
+        payload.setPremisesCode(custPremCodeSSPParticipantCode.get("UZRSSPA_PREM_CODE").toString());
+    }
+
+    public void setCustCodePremCodeBasedOnTypeTC121e3(SearchAccountsRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        Map<String, Object>  custPremCodeNotInSSPParticipantTable = ApplicationContext.get().getDbAction().getCustCodePremCodeNotInSSPParticipantParentTable();
+        payload.setCustomerCode(custPremCodeNotInSSPParticipantTable.get("UZRSSPA_CUST_CODE").toString());
+        payload.setPremisesCode(custPremCodeNotInSSPParticipantTable.get("UZRSSPA_PREM_CODE").toString());
     }
 
     public void setValidSSNTC113(SearchAccountsRequest payload) {
