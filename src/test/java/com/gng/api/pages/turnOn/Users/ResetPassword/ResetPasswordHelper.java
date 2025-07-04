@@ -11,8 +11,6 @@ import com.gng.api.steps.turnOn.UsersApiSteps.ResetPassword.ResetPasswordApiLabe
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
-
-import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.util.CommonUtil.removeFieldFromJson;
