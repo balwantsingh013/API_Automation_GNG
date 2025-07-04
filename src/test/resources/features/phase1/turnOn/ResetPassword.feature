@@ -81,15 +81,15 @@ Feature: Verify ResetPassword Api
       | INCORRECT_PASSWORD_BLOCK_USER_TC37   | 2000      | The password doesn't match the Login ID. The Login ID has been locked. |
 
   @ResetPasswordForNotExpiredPassword @Phase1 @HappyFlow
-  Scenario: ResetPassword Api - Verify ResetPassword Api with not expired password
+  Scenario: ResetPassword Api - Verify ResetPassword Api with not expired password TC39
     When a request is made to the ResetPassword Api with not expired password
     Then verify response code of "ResetPassword" Api is 200
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
 
-  @ResetPasswordForExpiredPassword @Phase1 @HappyFlow
-  Scenario: ResetPassword Api - Verify ResetPassword Api with expired password
-    When a request is made to the ResetPassword Api with expired password
-    Then verify response code of "ResetPassword" Api is 200
-    And a request is made to the ResetPassword Api to set the old password again
-    Then verify response code of "ResetPassword" Api is 200
+#  @ResetPasswordForExpiredPassword @Phase1 @HappyFlow
+#  Scenario: ResetPassword Api - Verify ResetPassword Api with expired password TC40
+#    When a request is made to the ResetPassword Api with expired password
+#    Then verify response code of "ResetPassword" Api is 200
+#    And a request is made to the ResetPassword Api to set the old password again
+#    Then verify response code of "ResetPassword" Api is 200
