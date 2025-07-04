@@ -224,10 +224,10 @@ public class DBAction {
         return jdbcTemplate.update(query, user);
     }
 
-    public List<Map<String, Object>> PasswordExpiredCheckQuery() {
+    public Map<String, Object> PasswordExpiredCheckQuery() {
         String query = DBQuery.EXPIRED_PASSWORD_CHECK_QUERY;
         logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public List<Map<String, Object>> failedLoginCountQuery() {

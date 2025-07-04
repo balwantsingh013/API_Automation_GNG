@@ -50,6 +50,29 @@ public class ResetPasswordApiPage   extends BasePage  {
         testContext.setResponse(response);
     }
 
+    public void validateResetPasswordWithNotExpiredPassword(ResetPasswordApiLabel apiLabel) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.resetPasswordForNotExpiredPassword(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResetPasswordWithExpiredPassword(ResetPasswordApiLabel apiLabel) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.resetPasswordForExpiredPassword(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResetPassword(ResetPasswordApiLabel apiLabel) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.changeThePasswordBackToOldPassword(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
 
     public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel oldPassword)
     {

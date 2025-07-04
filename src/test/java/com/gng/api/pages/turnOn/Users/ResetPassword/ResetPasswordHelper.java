@@ -12,6 +12,7 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.util.CommonUtil.removeFieldFromJson;
@@ -21,6 +22,9 @@ import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
 public class ResetPasswordHelper {
     private final TestContext testContext;
     String validEncryptedPassword;
+    public static String valid_password="Password@2";
+    public static String old_valid_password="Password@1";
+    public static String loginId="autotester";
     public ResetPasswordHelper(TestContext testContext) {
         this.testContext = testContext;
     }
@@ -97,6 +101,33 @@ public class ResetPasswordHelper {
                 payload.setLoginID(FakerDataGenerator.generateString(6));
                 break;
         }
+    }
+
+    public void resetPasswordForNotExpiredPassword(ResetPasswordRequest payload){
+        Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
+        Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "N", "Password should not be expired");
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
+        payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
+        payload.setLoginID(loginId);
+    }
+
+    public void resetPasswordForExpiredPassword(ResetPasswordRequest payload){
+        int rowUpdated=ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(loginId);
+        Assert.assertEquals(rowUpdated, 1, "Expected exactly one row to be updated");
+        Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
+        Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "Y", "Password should not be expired");
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
+        payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
+        payload.setLoginID(loginId);
+    }
+
+    public void changeThePasswordBackToOldPassword(ResetPasswordRequest payload){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setNewPassword(AesEncryptionSteps.encryptData(old_valid_password));
+        payload.setOldPassword(AesEncryptionSteps.encryptData(valid_password));
+        payload.setLoginID(loginId);
     }
 
     public void setOldPasswordBasedOnTypeTC29_TC31(ResetPasswordRequest payload, ResetPasswordApiLabel oldPassword) {

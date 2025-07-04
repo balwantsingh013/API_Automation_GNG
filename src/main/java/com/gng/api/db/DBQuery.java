@@ -571,7 +571,6 @@ public final class DBQuery {
             SELECT failed_logins FROM USERS WHERE USER_ID = 'autotester'
             """;
 
-
     public static final String EXPIRED_PASSWORD_ROLLBACK_QUERY = """
             UPDATE USERS SET USER_LOCKED_IND = 'N', FAILED_LOGINS = 0, PASSWORD_EXPIRE = SYSDATE +30 WHERE USER_ID = ?
             """;
