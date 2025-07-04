@@ -87,9 +87,9 @@ Feature: Verify ResetPassword Api
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
 
-#  @ResetPasswordForExpiredPassword @Phase1 @HappyFlow
-#  Scenario: ResetPassword Api - Verify ResetPassword Api with expired password TC40
-#    When a request is made to the ResetPassword Api with expired password
-#    Then verify response code of "ResetPassword" Api is 200
-#    And a request is made to the ResetPassword Api to set the old password again
-#    Then verify response code of "ResetPassword" Api is 200
+  @ResetPasswordForExpiredPassword @Phase1 @HappyFlow
+  Scenario: ResetPassword Api - Verify ResetPassword Api with expired password TC40
+    When a request is made to the ResetPassword Api with expired password
+    Then verify response code of "ResetPassword" Api is 200
+    And a request is made to the ResetPassword Api to set the old password again
+    Then verify response code of "ResetPassword" Api is 200
