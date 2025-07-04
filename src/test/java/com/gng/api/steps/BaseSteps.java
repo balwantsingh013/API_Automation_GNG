@@ -172,6 +172,9 @@ public class BaseSteps {
             case "empty" ->{
                 assertTrue("Unexpected " + field + " is empty", response.jsonPath().getString("data.accounts[0]." + field).trim().isEmpty());
             }
+            case "null" -> {
+                assertNull("Unexpected " + field + " is not null", response.jsonPath().getString("data.accounts[0]." + field));
+            }
             case "not exist" -> {
                 assertEquals("Unexpected " + field + " amount", 0.0,
                         response.jsonPath().getDouble("data.accounts[0]." + field));
