@@ -786,7 +786,6 @@ public class SearchAccountsHelper {
         String premisesZipCode = data.get("PREMISESZIPCODE").toString();
         String customerLastName = data.get("CUSTOMERLASTNAMEBUSINESS").toString();
         String customerFirstName = data.get("CUSTOMERFIRSTNAME").toString();
-
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
         payload.setPremisesZipCode(premisesZipCode);
@@ -794,18 +793,15 @@ public class SearchAccountsHelper {
         payload.setCustomerFirstName(customerFirstName);
     }
 
-
     public void setaglcAccountNumberType(SearchAccountsRequest payload) {
         List<Map<String, Object>> aglcAccNumber = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
         Map<String, Object> data = aglcAccNumber.get(0);
-
 
         String aglcAccountNumber = data.get("uzbenro_old_acct_num").toString();
 
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
         payload.setAglcAccountNumber(aglcAccountNumber);
-
     }
 
 
@@ -830,7 +826,6 @@ public class SearchAccountsHelper {
         payload.setPremisesStreetName(premisesStreetName);
         payload.setPremisesStreetSuffix(premisesStreetSuffix);
         payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
-       // payload.setPremisesUnitNumber(premisesUnitNumber);
         payload.setPremisesUnitType(premisesUnitType);
         payload.setPremisesCity(premisesCity);
         payload.setPremisesStateCode(premisesStateCode);
@@ -845,9 +840,29 @@ public class SearchAccountsHelper {
         payload.setPremisesCode(accountNumberData.get("UZBENRO_PREM_CODE").toString());
     }
 
-    public void setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(SearchAccountsRequest payload) {
+    public void setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        Map<String, Object>  phoneNumber = ApplicationContext.get().getDbAction().getPhoneNumber();
+        String telecode="";
+        String status="";
+        switch (testCondition) {
+            case SEARCH_BASED_ON_PHONE_BI_A_TC_119_1 -> {
+                telecode = "BI";
+                status = "A";
+            }
+            case SEARCH_BASED_ON_PHONE_BI_I_TC_119_2 -> {
+                telecode = "BI";
+                status = "I";
+            }
+            case SEARCH_BASED_ON_PHONE_BU_A_TC_119_3 -> {
+                telecode = "BU";
+                status = "A";
+            }
+            case SEARCH_BASED_ON_PHONE_BU_I_TC_119_4 -> {
+                telecode = "BU";
+                status = "I";
+            }
+        }
+        Map<String, Object>  phoneNumber = ApplicationContext.get().getDbAction().getPhoneNumber(telecode,status);
         payload.setPhoneNumber(phoneNumber.get("UCRTELE_PHONE_AREA").toString()+phoneNumber.get("UCRTELE_PHONE_NUMBER").toString());
     }
 
@@ -864,6 +879,15 @@ public class SearchAccountsHelper {
         payload.setPremisesZipCode(lastNameFirstNameZip.get("UCRADDR_ZIP").toString());
         payload.setCustomerLastName(lastNameFirstNameZip.get("UZBENRO_DSM_LAST_NAME").toString().substring(0, 3));
         payload.setCustomerFirstName(lastNameFirstNameZip.get("UZBENRO_DSM_FIRST_NAME").toString().substring(0, 2));
+    }
+
+    public void setWildcardSearchWithCity(SearchAccountsRequest payload){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        Map<String, Object>  streetNameCityStateZipData = ApplicationContext.get().getDbAction().getStreetCityStateZipDetails();
+        payload.setPremisesStreetName(streetNameCityStateZipData.get("UCRADDR_STREET_NAME").toString());
+        payload.setPremisesCity(streetNameCityStateZipData.get("UCRADDR_CITY").toString().substring(0, 2));
+        payload.setPremisesStateCode(streetNameCityStateZipData.get("UCRADDR_STAT_CODE").toString());
+        payload.setPremisesZipCode(streetNameCityStateZipData.get("UCRADDR_ZIP").toString());
     }
 
     public void setPartialPayment(SearchAccountsRequest payload) {

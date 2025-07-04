@@ -431,23 +431,23 @@ Feature: Verify SearchAccounts Api
     And response should have "recordType" as "BANNER RECORD"
     And response should have "sspStatusIndicator" as "false"
 
-#  @SearchAccountsAccountNumberSearchETypeNoSSP @Phase1 @HappyFlow
-#  Scenario: SearchAccountsApiTurnOn- Verify response when an Account Number is searched for E Type No SSP TC110
-#    When a request is made to the SearchAccounts Api for Account Number with E Type No SSP "N" TC_110
-#    Then verify response code of "SearchAccounts" Api is 200
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should return numberOfMatches as 1
-#    And response should have "recordType" as "ENROLLMENT RECORD"
-#    And response should have "sspStatusIndicator" as "false"
+  @SearchAccountsAccountNumberSearchETypeNoSSP @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response when an Account Number is searched for E Type No SSP TC110
+    When a request is made to the SearchAccounts Api for Account Number with E Type No SSP "N" TC_110
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 1
+    And response should have "recordType" as "ENROLLMENT RECORD"
+    And response should have "sspStatusIndicator" as "false"
 
   @SearchAccountsSSPBasedOnTheProvidedLastNameAndZipCode @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code SSP Based  TC111
+  Scenario: SearchAccountsApiTurnOn- Verify response for search accounts api when last name and zip are passed for SSP account with status indicator true TC111
     When a request is made to the SearchAccounts Api with SSP "Y" TC_111
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should have "recordType" as "SSP ACCOUNT RECORD"
     And response should have "transactionType" as "TNON"
-#    And response should have "sspStatusIndicator" as "true"
+    And response should have "sspStatusIndicator" as "true"
 
   @withFirstLastNameZipETypeSSP @Phase1 @HappyFlow
   Scenario: SearchAccountsApiTurnOn- Verify response code SSP Based with First Name & Last Name & Zip - E Type  TC112
@@ -471,43 +471,58 @@ Feature: Verify SearchAccounts Api
     And response should return numberOfMatches as 0
 
   @SearchAccountsWithStreetNameAndCityAndStateCodeAndZipCode @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code with Street Name And City And State Code And Zip Code TC_116
+  Scenario: SearchAccountsApiTurnOn- Verify response when Street Name, City, State Code And Zip Code are passed in Search accounts api TC_116
     When a request is made to the SearchAccounts Api with Street Name And City And State Code And Zip Code TC_116
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
   @SearchAccountsWithNumberAndPreDirAndSuffixAndPostDirAndStreetNameAndCityAndStateCodeAndZipCode  @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
+  Scenario: SearchAccountsApiTurnOn- Verify response when Street Number, PreDir, Suffix, PostDir, Street Name, City, State Code And Zip Code are passed in Search accounts api TC_117
     When a request is made to the SearchAccounts Api with Number And PreDir And Suffix And PostDir And Street Name And City And State Code And Zip Code TC_117
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 
-  @SearchAccountsEnrollmentRecordsBasedOnTheProvidedPhoneNumber @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code Enrollment Records Based "<PhoneNumber>" TC119
-    When a request is made to the SearchAccounts Api with Enrollment Records Based TC_119
+  @SearchAccounRecordsBasedOnTheProvidedPhoneNumber @Phase1 @HappyFlow
+  Scenario Outline: SearchAccountsApiTurnOn- Verify response when a search is performed <testCondition>
+    When a request is made to the SearchAccounts Api "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 1
     And response should have "recordType" as "BANNER RECORD"
+    Examples:
+    |testCondition                      |
+    |SEARCH_BASED_ON_PHONE_BI_A_TC_119_1|
+    |SEARCH_BASED_ON_PHONE_BI_I_TC_119_2|
+    |SEARCH_BASED_ON_PHONE_BU_A_TC_119_3|
+    |SEARCH_BASED_ON_PHONE_BU_I_TC_119_4|
 
   @SearchAccountsBusinessName @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code Enrollment Records Based Business Name TC 120
-    When a request is made to the SearchAccounts Api with Business Name  TC_120
+  Scenario: SearchAccountsApiTurnOn- Verify if the Records are retrieved Based on Business Name in Search Accounts API TC 120
+    When a request is made to the SearchAccounts Api with Business Name TC_120
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 1
     And response should have "recordType" as "BANNER RECORD"
 
-  @SearchAccountsWildcardSearch @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code Enrollment Records with Wildcard Search TC_121
-    When a request is made to the SearchAccounts Api with Wildcard Search TC_121
+  @SearchAccountsWildcardSearchName @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response when a Wildcard Search is performed with firstname and lastname TC_121_1
+    When a request is made to the SearchAccounts Api with Wildcard Search TC_121_1
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 1
     And response should have "recordType" as "BANNER RECORD"
+
+  @SearchAccountsWildcardSearchCity @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response when a Wildcard Search is performed with city TC_121_2
+    When a request is made to the SearchAccounts Api with Wildcard Search TC_121_2
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should return numberOfMatches as 30
 
   @SearchAccountsPartialPayment @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code Enrollment Records with Partial Payment TC_121a
-    When a request is made to the SearchAccounts Api with Partial Payment TC_121a
+  Scenario: SearchAccountsApiTurnOn- Verify response for Accounts with Partial Payment TC_121a
+    When a request is made to the SearchAccounts Api with Account details that have Partial Payment TC_121a
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 1
+    And response should have "pastDueAmount" to "exist"
+    And response should have "paymentAmount" to "exist"
+    And response should have "paymentConfirmationNumber" to "not empty"
 
   @SearchAccountsFullPayment @Phase1 @HappyFlow
   Scenario: SearchAccountsApiTurnOn- Verify response code Enrollment Records with Full Payment TC_121b
@@ -516,10 +531,12 @@ Feature: Verify SearchAccounts Api
     And response should return numberOfMatches as 1
 
   @SearchAccountsNoPayment @Phase1 @HappyFlow
-  Scenario: SearchAccountsApiTurnOn- Verify response code Enrollment Records with No Payment TC_121c
-    When a request is made to the SearchAccounts Api with No Payment TC_121c
+  Scenario: SearchAccountsApiTurnOn- Verify response for Accounts with No Payment TC_121c
+    When a request is made to the SearchAccounts Api with Account details that have No Payment TC_121c
     Then verify response code of "SearchAccounts" Api is 200
     And response should return numberOfMatches as 1
+    And response should have "paymentAmount" to "not exist"
+    And response should have "paymentConfirmationNumber" to "empty"
 
   @SearchAccountsMultiplePayment @Phase1 @HappyFlow
   Scenario: SearchAccountsApiTurnOn- Verify response code Enrollment Records with Multiple Payment TC_121d

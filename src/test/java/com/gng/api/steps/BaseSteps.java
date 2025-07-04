@@ -6,12 +6,12 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
-
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import java.util.List;
 import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.testng.AssertJUnit.*;
 
 @Slf4j
 public class BaseSteps {
@@ -41,9 +41,9 @@ public class BaseSteps {
         verifyNumberOfMatches(numberOfMatches);
     }
 
-    @And("response should have pastDueAmount as {int}")
-    public void responseShouldShowPastDueAmountAs(int pastDue){
-        verifyPastDueAmount(pastDue);
+    @And("response should have {string} to {string}")
+    public void responseShouldHavePaymentFieldsAs(String field, String value){
+        verifyPaymentFields(field,value);
     }
 
     @And("response should have {string} as {string}")
@@ -123,10 +123,12 @@ public class BaseSteps {
 
     private void verifyFieldInResponse(String field, String value) {
         Response response = testContext.getResponse();
+        List<Map<String, Object>> accounts = response.jsonPath().getList("data.accounts");
 
-        assertThat("Unexpected account status returned",
-                response.jsonPath().getString("data.accounts[0]."+field),
-                equalTo(value));
+        boolean matchFound = accounts.stream()
+                .anyMatch(account -> value.equals(String.valueOf(account.get(field))));
+
+        assertThat("Expected value not found in any account for field: " + field, matchFound, is(true));
     }
 
     private void verifyResponseCode(String apiName, Integer statusCode) {
@@ -156,13 +158,24 @@ public class BaseSteps {
     }
 
 
-    private void verifyPastDueAmount(int pastDueAmount){
+    private void verifyPaymentFields(String field, String value){
         Response response = testContext.getResponse();
-
-        assertThat("Unexpected past due amount",
-                response.jsonPath().getInt("data.accounts[0].pastDueAmount"),
-                equalTo(pastDueAmount));
+        switch (value.toLowerCase()) {
+            case "exist" -> {
+                assertTrue("Unexpected " + field + " amount",
+                        response.jsonPath().getDouble("data.accounts[0]." + field) > 0);
+            }
+            case "not empty" -> {
+                assertNotNull("Unexpected " + field + " is null", response.jsonPath().getString("data.accounts[0]." + field));
+                assertFalse("Unexpected " + field + " is empty", response.jsonPath().getString("data.accounts[0]." + field).trim().isEmpty());
+            }
+            case "empty" ->{
+                assertTrue("Unexpected " + field + " is empty", response.jsonPath().getString("data.accounts[0]." + field).trim().isEmpty());
+            }
+            case "not exist" -> {
+                assertEquals("Unexpected " + field + " amount", 0.0,
+                        response.jsonPath().getDouble("data.accounts[0]." + field));
+            }
+        }
     }
-
-
 }

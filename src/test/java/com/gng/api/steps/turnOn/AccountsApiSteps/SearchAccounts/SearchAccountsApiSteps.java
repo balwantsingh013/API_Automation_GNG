@@ -285,22 +285,26 @@ public class SearchAccountsApiSteps {
     }
 
 
-    @When("a request is made to the SearchAccounts Api with Enrollment Records Based TC_119")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Enrollment_Records_Based_TC119() {
-        searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts);
+    @When("a request is made to the SearchAccounts Api {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_Based_on_phone_numberTC119(String testCondition) {
+        searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
     }
-    @When("a request is made to the SearchAccounts Api with Business Name  TC_120")
+    @When("a request is made to the SearchAccounts Api with Business Name TC_120")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Business_Name_TC_120() {
         searchAccountsApiPage.validateBusinessNameTC120(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with Wildcard Search TC_121")
+    @When("a request is made to the SearchAccounts Api with Wildcard Search TC_121_1")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Wildcard_Search_TC_121() {
         searchAccountsApiPage.validateWildcardSearchTC121(search_accounts);
     }
 
+    @When("a request is made to the SearchAccounts Api with Wildcard Search TC_121_2")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Wildcard_Search_TC_121_2() {
+        searchAccountsApiPage.validateWildcardSearchWithCityTC121_2(search_accounts);
+    }
 
-    @When("a request is made to the SearchAccounts Api with Partial Payment TC_121a")
+    @When("a request is made to the SearchAccounts Api with Account details that have Partial Payment TC_121a")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Partial_Payment_TC_121a() {
         searchAccountsApiPage.validatePartialPaymentTC121a(search_accounts);
     }
@@ -310,7 +314,7 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateFullPaymentTC121b(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with No Payment TC_121c")
+    @When("a request is made to the SearchAccounts Api with Account details that have No Payment TC_121c")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_No_Payment_TC_121c() {
         searchAccountsApiPage.validateNoPaymentTC121c(search_accounts);
     }

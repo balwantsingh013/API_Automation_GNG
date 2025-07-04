@@ -611,11 +611,14 @@ public final class DBQuery {
 
     public static final String ACCOUNT_NUMBER_E_TYPE_NO_SSP_TC110 ="""
             SELECT C.UZBENRO_CUST_CODE,
-                                C.UZBENRO_PREM_CODE
-                         FROM   UZBENRO C
-                         WHERE  C.UZBENRO_SSP_IND = ?
-                         AND    C.UZBENRO_ENRO_STATUS ='INCL'
-              FETCH FIRST 1 ROWS ONLY
+                   C.UZBENRO_PREM_CODE
+            FROM   UZBENRO C
+            WHERE  C.UZBENRO_SSP_IND = ?
+            AND    C.UZBENRO_ENRO_STATUS ='INCL'
+            AND C.UZBENRO_SOURCE='PHONE'
+            AND C.UZBENRO_PREM_TYPE='NACN'
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
            """;
 
     public static final String AGLC_ACCOUNT_NUMBER_TC114 = """
@@ -1016,7 +1019,7 @@ public final class DBQuery {
             FROM
                 UCRADDR
             WHERE
-                UCRADDR_STREET_NAME IS NOT NULL
+                UCRADDR_STREET_NAME='YORKTOWN'
                 AND UCRADDR_CITY IS NOT NULL
                 AND UCRADDR_STAT_CODE IS NOT NULL
                 AND LENGTH(UCRADDR_ZIP) = 5
@@ -1057,6 +1060,8 @@ public final class DBQuery {
 
     public static final String SELECT_PHONE_NUMBER = """
             SELECT UCRTELE_PHONE_AREA,UCRTELE_PHONE_NUMBER FROM UCRTELE
+            WHERE UCRTELE_TELE_CODE=?
+            AND UCRTELE_STATUS_IND=?
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -1097,21 +1102,33 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_LAST_NAME_ZIP_NO_SSP = """
-            SELECT T1.UZBENRO_DSM_LAST_NAME,
-                   T2.UCRADDR_ZIP
-            FROM   UZBENRO T1
-            JOIN   UCRADDR T2
-                   ON T1.UZBENRO_CUST_CODE = T2.UCRADDR_CUST_CODE
-            WHERE  T1.UZBENRO_DSM_LAST_NAME IS NOT NULL
-              AND  T2.UCRADDR_ZIP IS NOT NULL
-              AND  LENGTH(T2.UCRADDR_ZIP) = 5
-              AND  T1.UZBENRO_SSP_IND = ?
-              AND  EXISTS (
-                       SELECT 1
-                       FROM   UCRACCT T
-                       WHERE  T.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
-                         AND  T.UCRACCT_STATUS_IND = 'A'
-                   )
+            SELECT   T3.UZBENRO_DSM_LAST_NAME,
+                     T4.UCRADDR_ZIP
+            FROM     UZRSSPA T1
+            JOIN     UZBSSPP T2
+                ON   T1.UZRSSPA_CUST_CODE = T2.UZBSSPP_PARTICIPANT_CODE
+            JOIN     UZBENRO T3
+                ON   T3.UZBENRO_CUST_CODE = T1.UZRSSPA_CUST_CODE
+            JOIN     UCRADDR T4
+                ON   T4.UCRADDR_CUST_CODE = T3.UZBENRO_CUST_CODE
+            WHERE    T2.UZBSSPP_STATUS = 'A'
+            AND      T3.UZBENRO_DSM_LAST_NAME IS NOT NULL
+            AND      LENGTH(T4.UCRADDR_ZIP) = 5
+            AND      T3.UZBENRO_SSP_IND = ?
+            AND      EXISTS (
+                         SELECT 1
+                         FROM   UCRACCT
+                         WHERE  UCRACCT_CUST_CODE = T3.UZBENRO_CUST_CODE
+                         AND    UCRACCT_PREM_CODE = T3.UZBENRO_PREM_CODE
+                     )
+            AND      EXISTS (
+                         SELECT 1
+                         FROM   UZRSSPA
+                         WHERE  UZRSSPA_CUST_CODE = T3.UZBENRO_CUST_CODE
+                         AND    UZRSSPA_PREM_CODE = T3.UZBENRO_PREM_CODE
+                     )
+            AND      F_GET_PLAN_TYPE_IND(T3.UZBENRO_PRICE_PLAN) NOT IN ('G', 'F')
+            ORDER BY T3.UZBENRO_DSM_LAST_NAME
             FETCH FIRST 1 ROWS ONLY
             """;
 

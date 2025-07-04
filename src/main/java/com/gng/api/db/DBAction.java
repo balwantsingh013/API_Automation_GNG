@@ -80,10 +80,10 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getPhoneNumber() {
+    public Map<String, Object> getPhoneNumber(String telecode, String status) {
         String query = DBQuery.SELECT_PHONE_NUMBER;
         logQueryInAllure("Get phone number", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, telecode, status);
     }
 
     public Map<String, Object> getAddressDetails() {

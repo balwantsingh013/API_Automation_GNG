@@ -450,9 +450,9 @@ public class SearchAccountsApiPage extends BasePage {
     }
 
 
-    public void validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(SearchAccountsApiLabel apiLabel) {
+    public void validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(payload);
+        helper.setEnrollmentRecordsBasedOnTheProvidedPhoneNumber(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
@@ -467,11 +467,17 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-
-
     public void validateWildcardSearchTC121(SearchAccountsApiLabel apiLabel) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.setWildcardSearch(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateWildcardSearchWithCityTC121_2(SearchAccountsApiLabel apiLabel) {
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setWildcardSearchWithCity(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
