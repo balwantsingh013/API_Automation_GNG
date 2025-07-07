@@ -54,6 +54,12 @@ public class ResetPasswordApiSteps {
         resetPasswordApiPage.validateResetPasswordWithExpiredPassword(reset_password);
     }
 
+    @When("a request is made to the ResetPassword Api with locked out account details")
+    public void a_request_is_made_to_reset_password_for_locked_out_account()
+    {
+        resetPasswordApiPage.validateResetPasswordForLockedOutAccount(reset_password);
+    }
+
     @When("a request is made to the ResetPassword Api to set the old password again")
     public void a_request_is_made_to_reset_password_to_set_old_password_again() {
         resetPasswordApiPage.validateResetPassword(reset_password);
@@ -67,6 +73,11 @@ public class ResetPasswordApiSteps {
     @When("update the failed login count to {int}")
     public void update_the_failed_login_count(int count){
         resetPasswordApiPage.updateTheFailedLoginCount(count);
+    }
+
+    @When("update the locked indicator to {string} and failed logins to {int}")
+    public void update_the_locked_indicaor(String lockedOutIndicator, int count){
+        resetPasswordApiPage.updateTheLockedIndicator(lockedOutIndicator,count);
     }
 
 }

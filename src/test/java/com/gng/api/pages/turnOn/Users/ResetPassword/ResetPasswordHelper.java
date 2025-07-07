@@ -114,7 +114,16 @@ public class ResetPasswordHelper {
         int rowUpdated=ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(loginId);
         Assert.assertEquals(rowUpdated, 1, "Expected exactly one row to be updated");
         Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
-        Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "Y", "Password should not be expired");
+        Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "Y", "Password is not be expired");
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
+        payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
+        payload.setLoginID(loginId);
+    }
+
+    public void resetPasswordForLockedOutAccount(ResetPasswordRequest payload){
+        Map<String, Object> isAccountLocked=ApplicationContext.get().getDbAction().checkUserLockStatusQuery();
+        Assert.assertEquals(isAccountLocked.get("USER_LOCKED_IND"), "Y", "Account is not locked");
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
         payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
@@ -137,6 +146,10 @@ public class ResetPasswordHelper {
         ApplicationContext.get().getDbAction().updateFailedLoginsCount(count);
         int failedLoginsCount = ApplicationContext.get().getDbAction().failedLoginsCount();
         Assert.assertEquals(failedLoginsCount,count);
+    }
+
+    public void updateLockedOutIndicator(String lockedOutIndicator, int count){
+        ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count);
     }
 
     public void setOldPasswordBasedOnTypeTC29_TC31(ResetPasswordRequest payload, ResetPasswordApiLabel oldPassword) {

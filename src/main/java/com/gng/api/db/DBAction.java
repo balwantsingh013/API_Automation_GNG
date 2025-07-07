@@ -212,6 +212,12 @@ public class DBAction {
         return jdbcTemplate.update(query, count);
     }
 
+    public int updateUserLockedStatus(String lockedOutIndicato, int count) {
+        String query = DBQuery.UPDATE_USER_LOCK_STATUS_QUERY;
+        logQueryInAllure("Failed login counts ", query);
+        return jdbcTemplate.update(query, lockedOutIndicato, count);
+    }
+
     public void rollBackQuery(String user) {
         String query = DBQuery.ROLLBACK_QUERIES;
         String formattedQuery = query.replace("?", "'" + user + "'");
@@ -254,10 +260,10 @@ public class DBAction {
         return jdbcTemplate.update(query, user);
     }
 
-    public List<Map<String, Object>> checkUserLockStatusQuery() {
+    public Map<String, Object> checkUserLockStatusQuery() {
         String query = DBQuery.CHECK_USER_LOCK_STATUS_QUERY;
-        logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.queryForList(query);
+        logQueryInAllure("check lock status of an account", query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public int failedUserLockCountQuery() {

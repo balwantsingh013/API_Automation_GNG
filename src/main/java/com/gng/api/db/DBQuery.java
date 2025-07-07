@@ -623,7 +623,7 @@ public final class DBQuery {
 
 
     public static final String UPDATE_USER_LOCK_STATUS_QUERY = """
-            UPDATE USERS SET user_locked_ind ='Y', failed_logins=4 WHERE USER_ID='autotester'
+            UPDATE USERS SET user_locked_ind =? , failed_logins=? WHERE USER_ID='autotester'
             """;
 
     public static final String CHECK_USER_LOCK_STATUS_QUERY = """

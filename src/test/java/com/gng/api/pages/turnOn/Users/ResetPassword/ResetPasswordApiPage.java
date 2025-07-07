@@ -66,6 +66,14 @@ public class ResetPasswordApiPage   extends BasePage  {
         testContext.setResponse(response);
     }
 
+    public void validateResetPasswordForLockedOutAccount(ResetPasswordApiLabel apiLabel) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.resetPasswordForLockedOutAccount(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
+
     public void validateResetPassword(ResetPasswordApiLabel apiLabel) {
         ResetPasswordRequest payload = helper.preparePayload(apiLabel);
         helper.changeThePasswordBackToOldPassword(payload);
@@ -80,6 +88,10 @@ public class ResetPasswordApiPage   extends BasePage  {
 
     public void updateTheFailedLoginCount(int count){
         helper.updateNumberOfFailedLogins(count);
+    }
+
+    public void updateTheLockedIndicator(String lockedOutIndicator, int count){
+        helper.updateLockedOutIndicator(lockedOutIndicator, count);
     }
 
     public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel oldPassword)
