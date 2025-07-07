@@ -234,29 +234,29 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateMissingStreetNameAddressFieldsCasesTC106(search_accounts, SearchAccountsApiLabel.valueOf(premisesStreetName));
     }
 
-    @When("a request is made to the SearchAccounts Api with an invalid {string} TC_107")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode) {
-        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodeBasedOnTypeTC107(search_accounts, customerCode);
+    @When("a request is made to the SearchAccounts Api with customer code {string} and premises code {string} that do not exist in database TC_107")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC107(String customerCode, String premisesCode) {
+        searchAccountsApiPage.validateAccountNumberSearchWithInvalidCustomerCodePremiseCodeTC107(search_accounts, customerCode, premisesCode);
     }
 
-    @When("a request is made to the SearchAccounts Api with returned records exceeds the PSTO value  TC_108")
-    public void a_request_is_made_to_the_SearchAccounts_Api_returned_records_exceeds_the_PSTO_value_TC108() {
-        searchAccountsApiPage.validateReturnedRecordsExceedsPSTOValueTC108(search_accounts);
+    @When("a request is made to the SearchAccounts Api with customer business name as {string} returned records exceeds the PSTO value TC_108")
+    public void a_request_is_made_to_the_SearchAccounts_Api_returned_records_exceeds_the_PSTO_value_TC108(String customerBusinessName) {
+        searchAccountsApiPage.validateReturnedRecordsExceedsPSTOValueTC108(search_accounts, customerBusinessName);
     }
 
-    @When("a request is made to the SearchAccounts Api with Account Number Search B Type No SSP  TC_109")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_B_Type_No_SSP_TC109() {
-        searchAccountsApiPage.validateAccountNumberSearchBTypeNoSSPOnTypeTC109(search_accounts);
+    @When("a request is made to the SearchAccounts Api for Account Number with B Type No SSP {string} TC_109")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_B_Type_No_SSP_TC109(String sspIndicator) {
+        searchAccountsApiPage.validateAccountNumberSearchBTypeNoSSPOnTypeTC109(search_accounts, sspIndicator);
     }
 
-    @When("a request is made to the SearchAccounts Api with Account Number Search E Type No SSP  TC_110")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_E_Type_No_SSP_TC110() {
-        searchAccountsApiPage.validateAccountNumberSearchETypeNoSSPOnTypeTC110(search_accounts);
+    @When("a request is made to the SearchAccounts Api for Account Number with E Type No SSP {string} TC_110")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_Account_Number_Search_E_Type_No_SSP_TC110(String sspIndicator) {
+        searchAccountsApiPage.validateAccountNumberSearchETypeNoSSPOnTypeTC110(search_accounts,sspIndicator);
     }
 
-    @When("a request is made to the SearchAccounts Api with SSP Based TC_111")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_SSP_Based_TC111() {
-        searchAccountsApiPage.validateLastNameAndZiPBTypESSPBasedOnTypeTC111(search_accounts);
+    @When("a request is made to the SearchAccounts Api with SSP {string} TC_111")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_SSP_Based_TC111(String sspIndicator) {
+        searchAccountsApiPage.validateLastNameAndZiPBTypESSPBasedOnTypeTC111(search_accounts, sspIndicator);
     }
 
     @When("a request is made to the SearchAccounts Api with First Name & Last Name & Zip - E Type, SSP TC_112")
@@ -285,22 +285,26 @@ public class SearchAccountsApiSteps {
     }
 
 
-    @When("a request is made to the SearchAccounts Api with Enrollment Records Based TC_119")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_Enrollment_Records_Based_TC119() {
-        searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts);
+    @When("a request is made to the SearchAccounts Api {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_Based_on_phone_numberTC119(String testCondition) {
+        searchAccountsApiPage.validateEnrollmentRecordsBasedOnTheProvidedPhoneNumberTC119(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
     }
-    @When("a request is made to the SearchAccounts Api with Business Name  TC_120")
+    @When("a request is made to the SearchAccounts Api with Business Name TC_120")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Business_Name_TC_120() {
         searchAccountsApiPage.validateBusinessNameTC120(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with Wildcard Search TC_121")
+    @When("a request is made to the SearchAccounts Api with Wildcard Search TC_121_1")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Wildcard_Search_TC_121() {
         searchAccountsApiPage.validateWildcardSearchTC121(search_accounts);
     }
 
+    @When("a request is made to the SearchAccounts Api with Wildcard Search TC_121_2")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Wildcard_Search_TC_121_2() {
+        searchAccountsApiPage.validateWildcardSearchWithCityTC121_2(search_accounts);
+    }
 
-    @When("a request is made to the SearchAccounts Api with Partial Payment TC_121a")
+    @When("a request is made to the SearchAccounts Api with Account details that have Partial Payment TC_121a")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Partial_Payment_TC_121a() {
         searchAccountsApiPage.validatePartialPaymentTC121a(search_accounts);
     }
@@ -310,7 +314,7 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateFullPaymentTC121b(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api with No Payment TC_121c")
+    @When("a request is made to the SearchAccounts Api with Account details that have No Payment TC_121c")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_No_Payment_TC_121c() {
         searchAccountsApiPage.validateNoPaymentTC121c(search_accounts);
     }
@@ -320,10 +324,19 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateMultiplePaymentTC121d(search_accounts_mandatory);
     }
 
+    @When("a request is made to the SearchAccounts Api with an SSP Participant Code for {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_an_SSP_Participant_Code_TC121e(String testCondition) {
+        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
+    }
 
-    @When("a request is made to the SearchAccounts Api with an SSP Participant Code TC_121e")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_an_SSP_Participant_Code_TC121e() {
-        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e(search_accounts_mandatory);
+    @When("a request is made to the SearchAccounts Api with account that does not exist in SSP Participant parent table TC_112e_3")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_an_not_in_ssp_parent_table_TC121e3() {
+        searchAccountsApiPage.validateSSPParticipantCodeBasedOnTypeTC121e3(search_accounts);
+    }
+
+    @When("a request is made to the SearchAccounts Api TurnOn with a valid SSN")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_valid_ssn() {
+        searchAccountsApiPage.verifySearchAccountAPIWhenValidSSNIsPassed(search_accounts);
     }
 
 

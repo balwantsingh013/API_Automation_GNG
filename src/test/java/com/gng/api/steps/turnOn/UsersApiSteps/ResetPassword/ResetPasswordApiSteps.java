@@ -41,4 +41,21 @@ public class ResetPasswordApiSteps {
     {
         resetPasswordApiPage.validatePasswordDoesNotMatchWithLoginID(reset_password, ResetPasswordApiLabel.valueOf(oldPassword));
     }
+
+    @When("a request is made to the ResetPassword Api with not expired password")
+    public void a_request_is_made_to_reset_password_for_not_expired_password()
+    {
+        resetPasswordApiPage.validateResetPasswordWithNotExpiredPassword(reset_password);
+    }
+
+    @When("a request is made to the ResetPassword Api with expired password")
+    public void a_request_is_made_to_reset_password_for_expired_password()
+    {
+        resetPasswordApiPage.validateResetPasswordWithExpiredPassword(reset_password);
+    }
+
+    @When("a request is made to the ResetPassword Api to set the old password again")
+    public void a_request_is_made_to_reset_password_to_set_old_password_again() {
+        resetPasswordApiPage.validateResetPassword(reset_password);
+    }
 }
