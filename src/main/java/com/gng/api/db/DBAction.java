@@ -442,10 +442,16 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query,SSpIndicator, customerType);
     }
 
-    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETC(String SSpIndicator, String customerType) {
+    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETC() {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC;
         logQueryInAllure("Get Active Customer Details", query);
-        return jdbcTemplate.queryForMap(query,SSpIndicator, customerType);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETCTC105B() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC_TC105B;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
     }
 
 

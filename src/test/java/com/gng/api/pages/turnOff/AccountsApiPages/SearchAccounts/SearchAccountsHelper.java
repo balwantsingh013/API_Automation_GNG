@@ -322,9 +322,7 @@ public class SearchAccountsHelper {
                 break;
 
             case SSP_ACCOUNT_WITHOUT_ETC_TC_105B:
-                SSpIndicator="Y";
-                customerType="CM";
-                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator, customerType);
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETCTC105B();
                 break;
 
             case NON_SSP_ACCOUNT_WITH_ETC_TC_105C:
@@ -334,9 +332,7 @@ public class SearchAccountsHelper {
                 break;
 
             case NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D:
-                SSpIndicator="N";
-                customerType="RS";
-                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator, customerType);
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC();
                 break;
         }
 

@@ -303,6 +303,39 @@ public final class DBQuery {
                 FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC_TC105B= """
+            SELECT
+                UZ.UZBENRO_CUST_CODE,
+                UZ.UZBENRO_PREM_CODE
+            FROM UZBENRO UZ
+            JOIN UCRSERV US ON UZ.UZBENRO_CUST_CODE = US.UCRSERV_CUST_CODE
+            WHERE UZ.UZBENRO_SSP_IND = 'N'
+              AND US.UCRSERV_SCLS_CODE = 'CM'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM UCBSVCO SV
+                  WHERE SV.UCBSVCO_PREM_CODE = UZ.UZBENRO_PREM_CODE
+                    AND SV.UCBSVCO_CUST_CODE = UZ.UZBENRO_CUST_CODE
+                    AND SV.UCBSVCO_SOTP_CODE = 'SONP'
+                    AND SV.UCBSVCO_STUS_CODE IN ('O', 'X', 'C')
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM UCRACCT UA
+                  WHERE UA.UCRACCT_CUST_CODE = UZ.UZBENRO_CUST_CODE
+                    AND UA.UCRACCT_PREM_CODE = UZ.UZBENRO_PREM_CODE
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM UZRSSPA RS
+                  WHERE RS.UZRSSPA_CUST_CODE = UZ.UZBENRO_CUST_CODE
+                    AND RS.UZRSSPA_PREM_CODE = UZ.UZBENRO_PREM_CODE
+              )
+              AND F_GET_PLAN_TYPE_IND(UZ.UZBENRO_PRICE_PLAN) NOT IN ('G', 'F')
+            ORDER BY UZ.UZBENRO_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITH_ETC= """
             SELECT
                 UCRACCT.UCRACCT_CUST_CODE,
@@ -331,8 +364,8 @@ public final class DBQuery {
                 UZ.UZBENRO_PREM_CODE
             FROM UZBENRO UZ
             JOIN UCRSERV US ON UZ.UZBENRO_CUST_CODE = US.UCRSERV_CUST_CODE
-            WHERE UZ.UZBENRO_SSP_IND = ?
-              AND US.UCRSERV_SCLS_CODE = ?
+            WHERE UZ.UZBENRO_SSP_IND = 'N'
+              AND US.UCRSERV_SCLS_CODE = 'RS'
               AND NOT EXISTS (
                   SELECT 1
                   FROM UCBSVCO SV
