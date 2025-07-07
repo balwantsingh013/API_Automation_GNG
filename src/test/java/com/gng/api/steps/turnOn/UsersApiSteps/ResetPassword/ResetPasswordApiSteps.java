@@ -58,4 +58,15 @@ public class ResetPasswordApiSteps {
     public void a_request_is_made_to_reset_password_to_set_old_password_again() {
         resetPasswordApiPage.validateResetPassword(reset_password);
     }
+
+    @When("verify if the failed login count is updated to {int}")
+    public void verify_the_failed_login_count(int count){
+        resetPasswordApiPage.verifyTheFailedLoginCount(count);
+    }
+
+    @When("update the failed login count to {int}")
+    public void update_the_failed_login_count(int count){
+        resetPasswordApiPage.updateTheFailedLoginCount(count);
+    }
+
 }

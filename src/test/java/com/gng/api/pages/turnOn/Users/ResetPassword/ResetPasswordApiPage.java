@@ -74,6 +74,14 @@ public class ResetPasswordApiPage   extends BasePage  {
         testContext.setResponse(response);
     }
 
+    public void verifyTheFailedLoginCount(int count){
+        helper.verifyTheNumberOfFailedLogins(count);
+    }
+
+    public void updateTheFailedLoginCount(int count){
+        helper.updateNumberOfFailedLogins(count);
+    }
+
     public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel oldPassword)
     {
         ResetPasswordRequest payload = helper.preparePayload(apiLabel);

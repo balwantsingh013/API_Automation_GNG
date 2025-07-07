@@ -128,6 +128,17 @@ public class ResetPasswordHelper {
         payload.setLoginID(loginId);
     }
 
+    public void verifyTheNumberOfFailedLogins(int count){
+        int failedLoginsCount =  ApplicationContext.get().getDbAction().failedLoginsCount();
+        Assert.assertEquals(failedLoginsCount,count);
+    }
+
+    public void updateNumberOfFailedLogins(int count){
+        ApplicationContext.get().getDbAction().updateFailedLoginsCount(count);
+        int failedLoginsCount = ApplicationContext.get().getDbAction().failedLoginsCount();
+        Assert.assertEquals(failedLoginsCount,count);
+    }
+
     public void setOldPasswordBasedOnTypeTC29_TC31(ResetPasswordRequest payload, ResetPasswordApiLabel oldPassword) {
         switch (oldPassword) {
             case WITHOUT_OLD_PASSWORD_TC29:

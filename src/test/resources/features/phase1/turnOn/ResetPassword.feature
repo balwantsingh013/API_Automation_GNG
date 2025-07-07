@@ -82,14 +82,20 @@ Feature: Verify ResetPassword Api
 
   @ResetPasswordForNotExpiredPassword @Phase1 @HappyFlow
   Scenario: ResetPassword Api - Verify ResetPassword Api with not expired password TC39
+    Given update the failed login count to 1
     When a request is made to the ResetPassword Api with not expired password
     Then verify response code of "ResetPassword" Api is 200
+    And verify if the failed login count is updated to 0
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
+    And verify if the failed login count is updated to 0
 
   @ResetPasswordForExpiredPassword @Phase1 @HappyFlow
   Scenario: ResetPassword Api - Verify ResetPassword Api with expired password TC40
+    Given update the failed login count to 2
     When a request is made to the ResetPassword Api with expired password
     Then verify response code of "ResetPassword" Api is 200
+    And verify if the failed login count is updated to 0
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
+    And verify if the failed login count is updated to 0
