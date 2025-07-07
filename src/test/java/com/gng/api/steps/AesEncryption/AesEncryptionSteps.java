@@ -49,6 +49,7 @@ public class AesEncryptionSteps {
                 .extract()
                 .response();
 
+
         // Log API request and response details
         ExtentReportManager.addRequestDetailsToReport(RestAssured.given().contentType(ContentType.JSON).body(payload));
         ExtentReportManager.addResponseDetailsToReport(response, 200);
