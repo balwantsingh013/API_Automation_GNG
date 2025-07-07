@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
@@ -222,8 +223,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
     }
 
-    public void setRequestParamsBasedOnTypeTC329(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-     String accountType, String creditCheck,  String promotionCode, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel requestID) {
+    public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
+     String accountType, String creditCheck,  String promotionCode, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -232,7 +233,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         if (ssn != null && !ssn.trim().isEmpty()) {
            custCode = GetCustCodeBySSN(encryptedSSN);
         }
-        helper.setRequestParamsBasedOnTypeTC329(payload, premiseType, accountType, creditCheck, promotionCode, valueScore, creditMin, creditMax, encryptedSSN, custCode, requestID);
+        helper.setRequestParamsBasedOnType(payload, premiseType, accountType, creditCheck, promotionCode, valueScore, creditMin, creditMax, encryptedSSN, custCode, testCondition);
 
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);

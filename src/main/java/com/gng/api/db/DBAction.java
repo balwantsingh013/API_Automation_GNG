@@ -587,6 +587,25 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getEligiblePlansAndOffersCreditSkipRequestParams(String premiseType,
+                                                                      String accountType,
+                                                                      String creditCheck,
+                                                                      Boolean promotionCode,
+                                                                      String custCode) {
+        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_PARAMS
+                .replace("<premiseType>", premiseType)
+                .replace("<accountType>", accountType)
+                .replace("<creditCheck>", creditCheck)
+                .replace("<custCode>", custCode);
+
+        query = promotionCode ? query.replace("AND e.\"UZBENRO_MKT_PROG_CODE\" IS NULL",
+                "AND e.\"UZBENRO_MKT_PROG_CODE\" IS NOT NULL")
+                : query;
+
+        logQueryInAllure("Get EligiblePlansAndOffersRequestParams", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string
         String paramsString = params != null ? java.util.Arrays.toString(params) : "None";

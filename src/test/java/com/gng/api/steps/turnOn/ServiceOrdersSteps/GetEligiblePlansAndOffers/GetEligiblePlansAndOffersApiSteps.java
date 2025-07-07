@@ -79,9 +79,9 @@ public class GetEligiblePlansAndOffersApiSteps {
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} premise {string} account type {string} credit check {string} promotion {string} value score {string} min {string} max {string} ssn {string} condition")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Active(String premiseType, String accountType, String creditCheck, String promotionCode, String valueScore, String creditMin,
-      String creditMax, String ssn, String requestID) {
-        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnTypeTC329(get_eligible_plans_and_offers, premiseType, accountType, creditCheck, promotionCode, valueScore, creditMin, creditMax,
-                ssn, GetEligiblePlansAndOffersApiLabel.valueOf(requestID));
+      String creditMax, String ssn, String testCondition) {
+        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnType(get_eligible_plans_and_offers, premiseType, accountType, creditCheck, promotionCode, valueScore, creditMin, creditMax,
+                ssn, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string}TC155_157")

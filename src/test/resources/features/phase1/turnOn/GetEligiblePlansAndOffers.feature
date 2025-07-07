@@ -176,14 +176,76 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have plan with code "RF6" and description "6-Month Fixed"
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
-  Scenario Outline:  GetEligiblePlansAndOffersAPi - Verify GetEligiblePlansAndOffers Api positive flow <requestId>
-    //Given a request is made to get available price plans
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<promotionCode>" promotion "<valueScore>" value score "<creditScoreMin>" min "<creditScoreMax>" max "<ssn>" ssn "<requestId>" condition
+  Scenario Outline: GetEligiblePlansAndOffersAPi - returns 9 plans for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<promotionCode>" promotion "<valueScore>" value score "<creditScoreMin>" min "<creditScoreMax>" max "<ssn>" ssn "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 9
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
     Examples:
-    |premiseType|accountType|creditCheck|promotionCode|valueScore|creditScoreMin|creditScoreMax|ssn      |requestId                           |
-    |ACN        |RS         |NUMR       | false       |12        |400           |599           |666596640|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329|
+    |premiseType|accountType|creditCheck|promotionCode|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+    |ACN        |RS         |NUMR       |false        |12        |400           |599           |666596640|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329|
+    |ACN        |RS         |NUMR       |false        |13        |250           |399           |666165111|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330|
+    |ACN        |RS         |NUMR       |false        |5         |50            |249           |666361164|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331|
+    |ACN        |RS         |ACNL       |false        |30        |9999          |9999          |666440412|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333|
+
+  @GetEligiblePlansAndOffersPositive @HappyFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPI - returns 1 plan for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<promotionCode>" promotion "<valueScore>" value score "<creditScoreMin>" min "<creditScoreMax>" max "<ssn>" ssn "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 1
+    And response should have plan with code "VML" and description "Variable Market Limited"
+    Examples:
+    |premiseType|accountType|creditCheck|promotionCode|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+    |ACN        |RS         |NUMR       |false        |20        |0             |49            |661516486|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_332|
+    |ACN        |RS         |NUMR       |false        |40        |40            |9000          |666126333|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_334|
+
+  @GetEligiblePlansAndOffersPositive @HappyFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPI - returns 6 plans for TC <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<promotionCode>" promotion "<valueScore>" value score "<creditScoreMin>" min "<creditScoreMax>" max "<ssn>" ssn "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 6
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
+    Examples:
+      |premiseType|accountType|creditCheck|promotionCode|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+      |ACN        |RS         |SKIP       |false        |20        |0             |49            |666325926|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_335|
+
+  @GetEligiblePlansAndOffersPositive @HappyFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPI - returns 12 plans for TC <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<promotionCode>" promotion "<valueScore>" value score "<creditScoreMin>" min "<creditScoreMax>" max "<ssn>" ssn "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 12
+    And response should have plan with code "MVS" and description "Variable Select"
+    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
+    And response should have plan with code "MI" and description "Market Intro"
+    And response should have plan with code "RGB" and description "Guaranteed Bill"
+    And response should have plan with code "GPP" and description "12-Month Fixed"
+    And response should have plan with code "24M" and description "24-Month Fixed"
+    And response should have plan with code "18M" and description "18-Month Fixed"
+    And response should have plan with code "RF6" and description "6-Month Fixed"
+    And response should have plan with code "TRD" and description "Volume Discount"
+    And response should have plan with code "VML" and description "Variable Market Limited"
+    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
+    And response should have plan with code "PRP" and description "Pre-Pay"
+    Examples:
+      |premiseType|accountType|creditCheck|promotionCode|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+      |ACN        |RS         |SKIP       |false        |          |              |              |666325926|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337|
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
