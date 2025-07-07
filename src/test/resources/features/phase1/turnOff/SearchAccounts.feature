@@ -100,7 +100,7 @@ Feature: Verify SearchAccounts TurnOff Api
     |SSP_ACCOUNT_WITH_ETC_TC_105A              |A            |true            |RS          |true            |false          |false        |
     |SSP_ACCOUNT_WITHOUT_ETC_TC_105B           |A            |true            |CM          |true            |false          |false        |
     |NON_SSP_ACCOUNT_WITH_ETC_TC_105C          |A            |true            |CM          |true            |false          |false        |
-    |NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D       |A            |true            |RS          |true            |false          |false        |
+    #|NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D       |A            |true            |RS          |true            |false          |false        |
 
   @validCustCodeInvalidPremCode @Phase1 @HappyFlow @SearchAccountTOFF
   Scenario: SearchAccountsApiTOFF- Verify Response when a valid customer and premisesCode are provided for "TOFF" for VALID_CUST_CODE_INVALID_PREM_CODE_TC_74

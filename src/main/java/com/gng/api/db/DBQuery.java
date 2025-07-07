@@ -1363,7 +1363,6 @@ public final class DBQuery {
                 AND T3.GTRRNDN_SERV_ORD_NUM IS NOT NULL
                 AND T4.UCRSERV_SCLS_CODE = ?
                 AND T5.UCRACCT_CYCL_CODE NOT IN ('DEPO')
-                AND T6.UCBCUST_PROSPECT_VALUE_SCORE IN ('100', '101', '102', '103')
                 AND T7.UCRSCMP_PLAN_CODE = ?
                 AND T7.UCRSCMP_END_DATE > SYSDATE
                 AND T7.UCRSCMP_START_DATE < SYSDATE
@@ -1380,50 +1379,49 @@ public final class DBQuery {
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PLAN_PAST_DUE_BALANCE= """
             SELECT
-                t2.gtbtrnh_cust_code,
-                t2.gtbtrnh_prem_code,
-                t2.gtbtrnh_aglc_acct_nbr,
-                t3.gtrrndn_serv_ord_num
-            FROM
-                uzbenro t1
-            JOIN
-                gtbtrnh t2 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
-            JOIN
-                gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
-            JOIN
-                ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
-            JOIN
-                ucracct t5 ON t4.ucrserv_prem_code = t5.ucracct_prem_code
-            JOIN
-                ucbcust t6 ON t5.ucracct_cust_code = t6.ucbcust_cust_code
-            JOIN
-                ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
-            JOIN
-                uabopen t8 ON t8.uabopen_cust_code = t5.ucracct_cust_code
-            WHERE
-                t5.ucracct_status_ind = 'A'
-                AND t4.ucrserv_scls_code = ?
-                AND t3.gtrrndn_serv_ord_num IS NOT NULL
-                AND t5.ucracct_cycl_code NOT IN ('DEPO')
-                AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
-                AND t7.ucrscmp_plan_code = ?
-                AND t7.ucrscmp_end_date > SYSDATE
-                AND t7.ucrscmp_start_date < SYSDATE
-                AND t7.ucrscmp_scty_code = 'COMM'
-                AND t8.uabopen_srat_code <> 'RDEP'
-                AND t8.uabopen_balance_ind = 'P'
-                AND t8.uabopen_balance > 200
-                AND t8.uabopen_due_date < TRUNC(SYSDATE)
-                AND EXISTS (
-                    SELECT 'X'
-                    FROM ucrscmp t7, ucrserv t4
-                    WHERE t7.ucrscmp_plan_code = 'MVS'
-                      AND TRUNC(SYSDATE) BETWEEN t7.ucrscmp_start_date AND t7.ucrscmp_end_date
-                      AND t7.ucrscmp_scty_code = 'COMM'
-                )
-            ORDER BY
-                t8.uabopen_cust_code DESC
-            FETCH FIRST 1 ROWS ONLY
+                                       t2.gtbtrnh_cust_code,
+                                       t2.gtbtrnh_prem_code,
+                                       t2.gtbtrnh_aglc_acct_nbr,
+                                       t3.gtrrndn_serv_ord_num
+                                   FROM
+                                       uzbenro t1
+                                   JOIN
+                                       gtbtrnh t2 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
+                                   JOIN
+                                       gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
+                                   JOIN
+                                       ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
+                                   JOIN
+                                       ucracct t5 ON t4.ucrserv_prem_code = t5.ucracct_prem_code
+                                   JOIN
+                                       ucbcust t6 ON t5.ucracct_cust_code = t6.ucbcust_cust_code
+                                   JOIN
+                                       ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
+                                   JOIN
+                                       uabopen t8 ON t8.uabopen_cust_code = t5.ucracct_cust_code
+                                   WHERE
+                                       t5.ucracct_status_ind = 'A'
+                                       AND t4.ucrserv_scls_code = ?
+                                       AND t3.gtrrndn_serv_ord_num IS NOT NULL
+                                       AND t5.ucracct_cycl_code NOT IN ('DEPO')
+                                       AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
+                                       AND t7.ucrscmp_end_date > SYSDATE
+                                       AND t7.ucrscmp_start_date < SYSDATE
+                                       AND t7.ucrscmp_scty_code = 'COMM'
+                                       AND t8.uabopen_srat_code <> 'RDEP'
+                                       AND t8.uabopen_balance_ind = 'P'
+                                       AND t8.uabopen_balance > 200
+                                       AND t8.uabopen_due_date < TRUNC(SYSDATE)
+                                       AND EXISTS (
+                                           SELECT 'X'
+                                           FROM ucrscmp t7, ucrserv t4
+                                           WHERE t7.ucrscmp_plan_code = ?
+                                             AND TRUNC(SYSDATE) BETWEEN t7.ucrscmp_start_date AND t7.ucrscmp_end_date
+                                             AND t7.ucrscmp_scty_code = 'COMM'
+                                       )
+                                   ORDER BY
+                                       t8.uabopen_cust_code DESC
+                                   FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN= """
