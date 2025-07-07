@@ -4,12 +4,12 @@ pipeline {
     parameters {
         string(
             name: 'Environment',
-            defaultValue: 'dev',
+            defaultValue: 'uat2',
             description: 'Environment to run API tests against (dev, test, staging, prod)'
         )
         string(
             name: 'FEATURE_FILE',
-            defaultValue: 'src/test/resources/features',
+            defaultValue: 'src/test/resources/features/phase1/turnOn',
             description: 'Feature file path or directory'
         )
         string(
@@ -26,12 +26,12 @@ pipeline {
 
     tools {
         maven 'Maven-3.9.6'
-        jdk 'JDK-21'
+        jdk 'JDK-22'
     }
 
     environment {
         MAVEN_HOME = tool('Maven-3.9.6')
-        JAVA_HOME = tool('JDK-21')
+        JAVA_HOME = tool('JDK-22')
         PATH = "${env.PATH};${MAVEN_HOME}\\bin;${JAVA_HOME}\\bin"
     }
 
