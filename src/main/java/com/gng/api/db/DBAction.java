@@ -436,16 +436,16 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getCustPremCodeSSPAccountwithETC(String SSpIndicator) {
+    public Map<String, Object> getCustPremCodeSSPAccountwithETC(String SSpIndicator, String customerType) {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITH_ETC;
         logQueryInAllure("Get Active Customer Details", query);
-        return jdbcTemplate.queryForMap(query,SSpIndicator);
+        return jdbcTemplate.queryForMap(query,SSpIndicator, customerType);
     }
 
-    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETC(String SSpIndicator) {
+    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETC(String SSpIndicator, String customerType) {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC;
         logQueryInAllure("Get Active Customer Details", query);
-        return jdbcTemplate.queryForMap(query,SSpIndicator);
+        return jdbcTemplate.queryForMap(query,SSpIndicator, customerType);
     }
 
 
@@ -498,7 +498,7 @@ public class DBAction {
     }
 
     public Map<String, Object> getCustomerBusinessNameCMActiveNoETC() {
-        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_No_ETC;
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_NO_ETC;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }

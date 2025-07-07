@@ -310,8 +310,10 @@ public final class DBQuery {
             FROM UZBENRO
             JOIN UCRACCT ON UCRACCT.UCRACCT_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
                         AND UCRACCT.UCRACCT_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
+            JOIN UCRSERV ON UZBENRO_CUST_CODE = UCRSERV_CUST_CODE
             WHERE UZBENRO.UZBENRO_SSP_IND = ?
             AND UCRACCT_STATUS_IND = 'A'
+            AND UCRSERV_SCLS_CODE IN (?)
               AND EXISTS (
                   SELECT 1
                   FROM UZRSSPA
@@ -325,25 +327,35 @@ public final class DBQuery {
 
     public static String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC= """
             SELECT
-                UZBENRO_CUST_CODE,
-                UZBENRO_PREM_CODE
-            FROM UZBENRO
-            WHERE UZBENRO_SSP_IND = ?
-              AND EXISTS (
+                UZ.UZBENRO_CUST_CODE,
+                UZ.UZBENRO_PREM_CODE
+            FROM UZBENRO UZ
+            JOIN UCRSERV US ON UZ.UZBENRO_CUST_CODE = US.UCRSERV_CUST_CODE
+            WHERE UZ.UZBENRO_SSP_IND = ?
+              AND US.UCRSERV_SCLS_CODE = ?
+              AND NOT EXISTS (
                   SELECT 1
-                  FROM UCRACCT
-                  WHERE UCRACCT_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
-                    AND UCRACCT_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
+                  FROM UCBSVCO SV
+                  WHERE SV.UCBSVCO_PREM_CODE = UZ.UZBENRO_PREM_CODE
+                    AND SV.UCBSVCO_CUST_CODE = UZ.UZBENRO_CUST_CODE
+                    AND SV.UCBSVCO_SOTP_CODE = 'SONP'
+                    AND SV.UCBSVCO_STUS_CODE IN ('O', 'X', 'C')
               )
               AND EXISTS (
                   SELECT 1
-                  FROM UZRSSPA
-                  WHERE UZRSSPA_CUST_CODE = UZBENRO.UZBENRO_CUST_CODE
-                    AND UZRSSPA_PREM_CODE = UZBENRO.UZBENRO_PREM_CODE
+                  FROM UCRACCT UA
+                  WHERE UA.UCRACCT_CUST_CODE = UZ.UZBENRO_CUST_CODE
+                    AND UA.UCRACCT_PREM_CODE = UZ.UZBENRO_PREM_CODE
               )
-              AND F_GET_PLAN_TYPE_IND(UZBENRO_PRICE_PLAN) NOT IN ('G', 'F')
-            ORDER BY UZBENRO_ACTIVITY_DATE DESC
-                FETCH FIRST 1 ROWS ONLY
+              AND EXISTS (
+                  SELECT 1
+                  FROM UZRSSPA RS
+                  WHERE RS.UZRSSPA_CUST_CODE = UZ.UZBENRO_CUST_CODE
+                    AND RS.UZRSSPA_PREM_CODE = UZ.UZBENRO_PREM_CODE
+              )
+              AND F_GET_PLAN_TYPE_IND(UZ.UZBENRO_PRICE_PLAN) NOT IN ('G', 'F')
+            ORDER BY UZ.UZBENRO_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String GET_ACCOUNT_INFO_API_SUCCESS_RESPONSE_PARAMETERS = "WITH CustPremCode AS (\n" +
@@ -779,9 +791,10 @@ public final class DBQuery {
 
     public static final String GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT = """
             SELECT T2.UCBCUST_LAST_NAME
-            FROM UCRACCT T1, UCBCUST T2, UCRSERV T3, UCRSCMP T5
+            FROM UCRACCT T1, UCBCUST T2, UCRSERV T3, UCRSCMP T5,UABOPEN T7
             WHERE T1.UCRACCT_CUST_CODE = T2.UCBCUST_CUST_CODE
               AND T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+              AND T1.UCRACCT_CUST_CODE = T7.UABOPEN_CUST_CODE
               AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
               AND T1.UCRACCT_CUST_CODE = T5.UCRSCMP_CUST_CODE
               AND T1.UCRACCT_PREM_CODE = T5.UCRSCMP_PREM_CODE
@@ -793,6 +806,7 @@ public final class DBQuery {
               AND T5.UCRSCMP_END_DATE > SYSDATE
               AND T5.UCRSCMP_START_DATE < SYSDATE
               AND T5.UCRSCMP_SCTY_CODE = 'COMM'
+              AND T7.UABOPEN_BALANCE > 200
               AND EXISTS (
                 SELECT 'X' FROM GZRCBHT T6
                 WHERE T1.UCRACCT_CUST_CODE = T6.GZRCBHT_CUST_CODE
@@ -877,7 +891,7 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_No_ETC= """
+    public static final String GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_NO_ETC = """
             SELECT
                 T2.UCBCUST_LAST_NAME
             FROM UCRACCT T1
@@ -900,7 +914,7 @@ public final class DBQuery {
                   WHERE T5.GZRCBHT_CUST_CODE = T1.UCRACCT_CUST_CODE
                     AND T5.GZRCBHT_PREM_CODE = T1.UCRACCT_PREM_CODE
               )
-            ORDER BY T1.UCRACCT_CUST_CODE DESC
+            ORDER BY UCBCUST_LAST_NAME DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -938,9 +952,11 @@ public final class DBQuery {
             JOIN UZBENRO T2 ON T1.UCRACCT_CUST_CODE = T2.UZBENRO_CUST_CODE
                            AND T1.UCRACCT_PREM_CODE = T2.UZBENRO_PREM_CODE
             JOIN UCBCUST T3 ON T1.UCRACCT_CUST_CODE = T3.UCBCUST_CUST_CODE
+            JOIN UCBSVCO T5 ON T5.UCBSVCO_CUST_CODE= T1.UCRACCT_CUST_CODE
             WHERE T1.UCRACCT_STATUS_IND = 'F'
               AND T1.UCRACCT_CYCL_CODE NOT IN ('DEPO')
               AND T2.UZBENRO_SCLS_CODE = 'CM'
+              AND T5.ucbsvco_sotp_code <> 'SONP'
               AND NOT EXISTS (
                   SELECT 1
                   FROM UCRSERV T4

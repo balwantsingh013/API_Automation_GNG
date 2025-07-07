@@ -182,6 +182,7 @@ public class SearchAccountsHelper {
         String account_Type=null;
         List<Map<String, Object>> accountDetailsCustCode=null;
         String SSpIndicator;
+        String customerType="";
 
         switch (testCondition) {
             case ACTIVE_RS_NEW_NON_METERED_TC_56:
@@ -316,22 +317,26 @@ public class SearchAccountsHelper {
 
             case SSP_ACCOUNT_WITH_ETC_TC_105A:
                 SSpIndicator="Y";
-                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountwithETC(SSpIndicator);
+                customerType="RS";
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountwithETC(SSpIndicator, customerType);
                 break;
 
             case SSP_ACCOUNT_WITHOUT_ETC_TC_105B:
                 SSpIndicator="Y";
-                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator);
+                customerType="CM";
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator, customerType);
                 break;
 
             case NON_SSP_ACCOUNT_WITH_ETC_TC_105C:
                 SSpIndicator="N";
-                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountwithETC(SSpIndicator);
+                customerType="CM";
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountwithETC(SSpIndicator, customerType);
                 break;
 
             case NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D:
                 SSpIndicator="N";
-                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator);
+                customerType="RS";
+                custPremCode = ApplicationContext.get().getDbAction().getCustPremCodeSSPAccountiWithoutETC(SSpIndicator, customerType);
                 break;
         }
 

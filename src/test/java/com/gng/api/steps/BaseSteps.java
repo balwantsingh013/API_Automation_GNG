@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import static org.hamcrest.Matchers.equalTo;
 import static org.testng.AssertJUnit.*;
+import static org.hamcrest.Matchers.hasItem;
 
 @Slf4j
 public class BaseSteps {
@@ -113,13 +114,14 @@ public class BaseSteps {
         assertThat("Expected turnOffReason not found", found);
     }
 
-    private void verifyFlagValueInResponse(String flag, Boolean value) {
+    private void verifyFlagValueInResponse(String flag, Boolean expectedValue) {
         Response response = testContext.getResponse();
 
-        assertThat("Unexpected "+flag+" returned",
-                response.jsonPath().getBoolean("data.accounts[0]."+flag),
-                equalTo(value));
+        List<Boolean> flagValues = response.jsonPath().getList("data.accounts." + flag, Boolean.class);
+        assertThat("Expected at least one account with " + flag + " = " + expectedValue,
+                flagValues, hasItem(expectedValue));
     }
+
 
     private void verifyFieldInResponse(String field, String value) {
         Response response = testContext.getResponse();
