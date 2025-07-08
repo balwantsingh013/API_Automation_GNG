@@ -11,7 +11,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -114,8 +113,6 @@ public class BaseSteps {
         }
     }
 
-
-
     private void verifyNumberOfTurnOffReasons(int count) {
         Response response = testContext.getResponse();
         assertThat("Unexpected number of turnOffReasons returned", response.jsonPath().getList("data.turnOffReasons").size(), equalTo(count));
@@ -124,7 +121,7 @@ public class BaseSteps {
     private String normalize(Object value) {
         return Optional.ofNullable(value)
                 .map(Object::toString)
-                .map(s -> s.replaceAll("\\u00A0", " ")) // Replace non-breaking spaces
+                .map(s -> s.replaceAll("\\u00A0", " "))
                 .map(String::trim)
                 .orElse("");
     }
@@ -147,8 +144,6 @@ public class BaseSteps {
         }
     }
 
-
-
     private void verifyFlagValueInResponse(String flag, Boolean expectedValue) {
         Response response = testContext.getResponse();
 
@@ -156,7 +151,6 @@ public class BaseSteps {
         assertThat("Expected at least one account with " + flag + " = " + expectedValue,
                 flagValues, hasItem(expectedValue));
     }
-
 
     private void verifyFieldInResponse(String field, String value) {
         Response response = testContext.getResponse();
@@ -193,7 +187,6 @@ public class BaseSteps {
                 response.jsonPath().getInt("data.numberOfMatches"),
                 equalTo(expectedMatches));
     }
-
 
     private void verifyPaymentFields(String field, String value){
         Response response = testContext.getResponse();
