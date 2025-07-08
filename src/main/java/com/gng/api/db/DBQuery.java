@@ -1801,13 +1801,14 @@ public final class DBQuery {
                 AND e."UZBENRO_MKT_PROG_CODE" IS NULL
                 AND e."UZBENRO_CRED_SCORE_STATUS" = '<creditCheck>'
                 AND e."UZBENRO_CRED_SCORE" BETWEEN <creditMin> AND <creditMax>
+                AND e."UZBENRO_SSP_IND" = 'Y'
                 AND g."UCBCUST_CURRENT_VALUE_SCORE" = '<valueScore>'
                 AND g."UCBCUST_CUST_CODE" = '<custCode>'
             ORDER BY e."UZBENRO_ENRO_STATUS_DATE" DESC
             FETCH FIRST 1 ROWS ONLY
     """;
 
-    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_CREDIT_SKIP_PARAMS= """   
+    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_CREDIT_MATCH_PARAMS= """   
             SELECT
                 g."UCBCUST_LAST_NAME",
                 g."UCBCUST_MIDDLE_NAME",
@@ -1838,8 +1839,48 @@ public final class DBQuery {
                 AND e."UZBENRO_AGLC_PREM_ID" IS NOT NULL
                 AND e."UZBENRO_SCLS_CODE" = '<accountType>'
                 AND e."UZBENRO_PREM_TYPE" = '<premiseType>'
+                --AND e."UZBENRO_CREDIT_SCORE_TEXT" = '<creditMatchCode>'
                 AND e."UZBENRO_MKT_PROG_CODE" IS NULL
                 AND g."UCBCUST_CUST_CODE" = '<custCode>'
+            ORDER BY e."UZBENRO_ENRO_STATUS_DATE" DESC
+            FETCH FIRST 1 ROWS ONLY
+    """;
+
+    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_BY_ENROLLMENT_VALUE_SCORE_PARAMS= """   
+            SELECT
+                g."UCBCUST_LAST_NAME",
+                g."UCBCUST_MIDDLE_NAME",
+                g."UCBCUST_FIRST_NAME",
+                g."UCBCUST_SSN",
+                e."UZBENRO_AGLC_PREM_ID",
+                e."UZBENRO_SCLS_CODE",
+                b."UCBPREM_STREET_NUMBER",
+                b."UCBPREM_PDIR_CODE_PRE",
+                b."UCBPREM_STREET_NAME",
+                b."UCBPREM_SSFX_CODE",
+                b."UCBPREM_PDIR_CODE_POST",
+                b."UCBPREM_UTYP_CODE",
+                b."UCBPREM_UNIT",
+                b."UCBPREM_CITY",
+                b."UCBPREM_STAT_CODE_ADDR",
+                b."UCBPREM_ZIPC_CODE",
+                b."UCBPREM_TJUR_CODE",
+                e."UZBENRO_LANDLORD_TENANT"
+            FROM UZBENRO e
+            JOIN ucbcust g ON e."UZBENRO_CUST_ID" = g."UCBCUST_CUST_CODE"
+            JOIN ucbprem b ON e."UZBENRO_PREM_ID" = b."UCBPREM_CODE"
+            JOIN ucraddr h ON e."UZBENRO_CUST_ID" = h."UCRADDR_CUST_CODE"
+            JOIN ucrchst i ON e."UZBENRO_CUST_ID" = i."UCRCHST_CUST_CODE"
+            WHERE
+                e."UZBENRO_ENRO_STATUS" = '<enrollmentStatus>'
+                AND e."UZBENRO_LANDLORD_TENANT" IS NOT NULL
+                AND e."UZBENRO_AGLC_PREM_ID" IS NOT NULL
+                AND e."UZBENRO_SCLS_CODE" = '<accountType>'
+                AND e."UZBENRO_PREM_TYPE" = '<premiseType>'
+                AND e."UZBENRO_CRED_SCORE_STATUS" = '<creditCheck>'
+                AND e."UZBENRO_MKT_PROG_CODE" IS NULL
+                AND g."UCBCUST_CUST_CODE" = '<custCode>'
+                AND g."UCBCUST_CURRENT_VALUE_SCORE" = '<valueScore>'
             ORDER BY e."UZBENRO_ENRO_STATUS_DATE" DESC
             FETCH FIRST 1 ROWS ONLY
     """;
