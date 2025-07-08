@@ -1,6 +1,7 @@
 package com.gng.api.steps;
 
 import com.gng.api.pojo.TestContext.TestContext;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -10,6 +11,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.testng.AssertJUnit.*;
 import static org.hamcrest.Matchers.hasItem;
@@ -62,14 +66,17 @@ public class BaseSteps {
         verifyNumberOfTurnOffReasons(count);
     }
 
-    @And("response should have turnOffReason with reasonForTurnOff as {string} and subReasonForTurnOff as {string}")
-    public void responseShouldHaveTurnOffReason(String reasonForTurnOff, String subReasonForTurnOff) {
-        verifyTurnOffReason(reasonForTurnOff, subReasonForTurnOff);
+    @And("the response should contain the following turnOffReasons:")
+    public void verifyTurnOffReasons(DataTable dataTable) {
+        List<Map<String, String>> expectedReasons = dataTable.asMaps(String.class, String.class);
+        validateTurnOffReasons(expectedReasons);
     }
 
-    @And("response should have reasonForTurnOffAlert as {string} for reasonForTurnOff {string}")
-    public void responseShouldHaveReasonForTurnOffAlert(String alert, String reasonForTurnOff) {
-        verifyReasonForTurnOffAlert(alert, reasonForTurnOff);
+
+    @And("the response should contain the following reasonForTurnOffAlerts:")
+    public void verifyReasonForTurnOffAlerts(DataTable dataTable) {
+        List<Map<String, String>> expectedAlerts = dataTable.asMaps(String.class, String.class);
+        validateReasonForTurnOffAlerts(expectedAlerts);
     }
 
     @And("response should have plan with code {string} and description {string}")
@@ -89,30 +96,58 @@ public class BaseSteps {
     }
 
 
-    private void verifyReasonForTurnOffAlert(String alert, String reasonForTurnOff) {
+    private void validateReasonForTurnOffAlerts(List<Map<String, String>> expectedAlerts) {
         Response response = testContext.getResponse();
-        List<Map<String, String>> turnOffReasons = response.jsonPath().getList("data.turnOffReasons");
-        String actualAlert = turnOffReasons.stream()
-                .filter(reason -> reason.get("reasonForTurnOff").equals(reasonForTurnOff))
-                .findFirst()
-                .map(reason -> reason.get("reasonForTurnOffAlert"))
-                .orElse(null);
-        assertThat("Unexpected reasonForTurnOffAlert returned", actualAlert, equalTo(alert));
+        List<Map<String, Object>> actualReasons = response.jsonPath().getList("data.turnOffReasons");
+
+        for (Map<String, String> expected : expectedAlerts) {
+            String reason = normalize(expected.get("reasonForTurnOff"));
+            String expectedAlert = normalize(expected.get("reasonForTurnOffAlert"));
+
+            String actualAlert = actualReasons.stream()
+                    .filter(r -> reason.equals(normalize(r.get("reasonForTurnOff"))))
+                    .map(r -> normalize(r.get("reasonForTurnOffAlert")))
+                    .findFirst()
+                    .orElse("");
+
+            assertThat("Unexpected reasonForTurnOffAlert for: " + reason, actualAlert, equalTo(expectedAlert));
+        }
     }
+
+
 
     private void verifyNumberOfTurnOffReasons(int count) {
         Response response = testContext.getResponse();
         assertThat("Unexpected number of turnOffReasons returned", response.jsonPath().getList("data.turnOffReasons").size(), equalTo(count));
     }
 
-    private void verifyTurnOffReason(String reasonForTurnOff, String subReasonForTurnOff) {
-        Response response = testContext.getResponse();
-        List<Map<String, String>> turnOffReasons = response.jsonPath().getList("data.turnOffReasons");
-        boolean found = turnOffReasons.stream()
-                .anyMatch(reason -> reason.get("reasonForTurnOff").equals(reasonForTurnOff) &&
-                        reason.get("subReasonForTurnOff").equals(subReasonForTurnOff));
-        assertThat("Expected turnOffReason not found", found);
+    private String normalize(Object value) {
+        return Optional.ofNullable(value)
+                .map(Object::toString)
+                .map(s -> s.replaceAll("\\u00A0", " ")) // Replace non-breaking spaces
+                .map(String::trim)
+                .orElse("");
     }
+
+    private void validateTurnOffReasons(List<Map<String, String>> expectedReasons) {
+        Response response = testContext.getResponse();
+        List<Map<String, Object>> actualReasons = response.jsonPath().getList("data.turnOffReasons");
+
+        for (Map<String, String> expected : expectedReasons) {
+            String expectedReason = normalize(expected.get("reasonForTurnOff"));
+            String expectedSubReason = normalize(expected.get("subReasonForTurnOff"));
+
+            boolean matchFound = actualReasons.stream().anyMatch(actual -> {
+                String actualReason = normalize(actual.get("reasonForTurnOff"));
+                String actualSubReason = normalize(actual.get("subReasonForTurnOff"));
+                return expectedReason.equals(actualReason) && expectedSubReason.equals(actualSubReason);
+            });
+
+            assertThat("Expected turnOffReason not found: " + expectedReason + " / " + expectedSubReason, matchFound);
+        }
+    }
+
+
 
     private void verifyFlagValueInResponse(String flag, Boolean expectedValue) {
         Response response = testContext.getResponse();
