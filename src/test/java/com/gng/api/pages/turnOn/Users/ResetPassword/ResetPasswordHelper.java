@@ -237,6 +237,8 @@ public class ResetPasswordHelper {
                 log.info(encryptedSpecial);
                 ExtentReportManager.logInfoToReport(encryptedSpecial);
                 payload.setNewPassword(encryptedSpecial);
+                payload.setLoginID(loginId);
+                payload.setOldPassword(old_valid_password);
                 break;
             case OLD_PASSWORD_NEW_PASSWORD_SAME_TC35:
                 payload.setRequestID(FakerDataGenerator.generateString(10));

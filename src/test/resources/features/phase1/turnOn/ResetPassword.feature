@@ -80,7 +80,7 @@ Feature: Verify ResetPassword Api
       | INCORRECT_PASSWORD_UNBLOCK_USER_TC36 | 2000      | The password doesn't match the Login ID                                |
       | INCORRECT_PASSWORD_BLOCK_USER_TC37   | 2000      | The password doesn't match the Login ID. The Login ID has been locked. |
 
-  @ResetPasswordForExpiredNotExpiredLockedPassword @Phase1 @HappyFlow
+  @ResetPasswordForExpiredNotExpiredLockedPassword @Phase1
   Scenario: ResetPassword Api - Verify ResetPassword Api with valid_password_TC_38_39_40
     Given update the failed login count to 1
     When a request is made to the ResetPassword Api with "NOT_EXPIRED_PASSWORD_TC_39"
