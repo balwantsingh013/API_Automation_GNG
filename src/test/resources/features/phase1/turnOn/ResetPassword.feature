@@ -75,33 +75,32 @@ Feature: Verify ResetPassword Api
     When a request is made to validate oldPassword "<oldPassword>" doesn't match with LoginID TC36
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-
     Examples:
       | oldPassword                          | errorCode | errorMessage                                                           |
       | INCORRECT_PASSWORD_UNBLOCK_USER_TC36 | 2000      | The password doesn't match the Login ID                                |
       | INCORRECT_PASSWORD_BLOCK_USER_TC37   | 2000      | The password doesn't match the Login ID. The Login ID has been locked. |
 
-  @ResetPasswordForNotExpiredPassword @Phase1 @HappyFlow
-  Scenario: ResetPassword Api - Verify ResetPassword Api with not expired password TC39
+  @ResetPasswordForExpiredNotExpiredPassword @Phase1 @HappyFlow @Order1
+  Scenario: ResetPassword Api - Verify ResetPassword Api with NOT_EXPIRED_PASSWORD_TC_39
     Given update the failed login count to 1
-    When a request is made to the ResetPassword Api with not expired password
+    When a request is made to the ResetPassword Api with "NOT_EXPIRED_PASSWORD_TC_39"
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
 
-  @ResetPasswordForExpiredPassword @Phase1 @HappyFlow
-  Scenario: ResetPassword Api - Verify ResetPassword Api with expired password TC40
+  @ResetPasswordForExpiredNotExpiredPassword @Phase1 @HappyFlow @Order2
+  Scenario: ResetPassword Api - Verify ResetPassword Api with EXPIRED_PASSWORD_TC_40
     Given update the failed login count to 2
-    When a request is made to the ResetPassword Api with expired password
+    When a request is made to the ResetPassword Api with "EXPIRED_PASSWORD_TC_40"
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
 
-  @ResetPasswordForLockedOutAccount @Phase1 @NegativeFlow
+  @ResetPasswordForLockedOutAccount @Phase1 @NegativeFlow @Order3
   Scenario: ResetPassword Api - Verify ResetPassword Api for locked out account TC38
     Given update the locked indicator to "Y" and failed logins to 4 for "VALID_PASSWORD_TEST_CONDITION"
     When a request is made to the ResetPassword Api with locked out account details

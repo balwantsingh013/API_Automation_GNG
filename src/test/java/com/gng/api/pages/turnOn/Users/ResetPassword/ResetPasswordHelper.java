@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import java.util.Map;
 
+import static com.gng.api.steps.turnOn.UsersApiSteps.ResetPassword.ResetPasswordApiLabel.EXPIRED_PASSWORD_TC_40;
 import static com.gng.api.steps.turnOn.UsersApiSteps.ResetPassword.ResetPasswordApiLabel.INVALID_PASSWORD_TEST_CONDITION;
 import static com.gng.api.util.CommonUtil.removeFieldFromJson;
 import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
@@ -103,20 +104,17 @@ public class ResetPasswordHelper {
         }
     }
 
-    public void resetPasswordForNotExpiredPassword(ResetPasswordRequest payload){
-        Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
-        Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "N", "Password should not be expired");
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
-        payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
-        payload.setLoginID(loginId);
-    }
-
-    public void resetPasswordForExpiredPassword(ResetPasswordRequest payload){
-        int rowUpdated=ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(loginId);
-        Assert.assertEquals(rowUpdated, 1, "Expected exactly one row to be updated");
-        Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
-        Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "Y", "Password is not be expired");
+    public void resetPasswordForExpiredPassword(ResetPasswordRequest payload, ResetPasswordApiLabel testCondition){
+        if(testCondition.equals(EXPIRED_PASSWORD_TC_40)) {
+            int rowUpdated = ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(loginId);
+            Assert.assertEquals(rowUpdated, 1, "Expected exactly one row to be updated");
+            Map<String, Object> isPasswordExpired = ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
+            Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "Y", "Password is not be expired");
+        }
+        else{
+            Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
+            Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "N", "Password should not be expired");
+        }
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
         payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
