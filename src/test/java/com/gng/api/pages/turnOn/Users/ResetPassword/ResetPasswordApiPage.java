@@ -90,8 +90,8 @@ public class ResetPasswordApiPage   extends BasePage  {
         helper.updateNumberOfFailedLogins(count);
     }
 
-    public void updateTheLockedIndicator(String lockedOutIndicator, int count){
-        helper.updateLockedOutIndicator(lockedOutIndicator, count);
+    public void updateTheLockedIndicator(String lockedOutIndicator, int count, ResetPasswordApiLabel testCondition){
+        helper.updateLockedOutIndicator(lockedOutIndicator, count, testCondition);
     }
 
     public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel oldPassword)

@@ -41,7 +41,7 @@ Feature: Verify ResetPassword Api
 
   @ResetPasswordInvalidOldPassword @Phase1  @NegativeFlow
   Scenario Outline: ResetPassword Api - Verify response code for invalid OldPassword "<oldPassword>"
-    Given update the locked indicator to "N" and failed logins to 0
+    Given update the locked indicator to "N" and failed logins to 0 for "INVALID_PASSWORD_TEST_CONDITION"
     When a request is made to the ResetPassword Api with "<oldPassword>"TC29_TC31
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -56,7 +56,7 @@ Feature: Verify ResetPassword Api
 
   @ResetPasswordInvalidNewPassword @Phase1  @NegativeFlow
   Scenario Outline: ResetPassword Api - Verify response code for invalid NewPassword "<newPassword>"
-    Given update the locked indicator to "N" and failed logins to 0
+    Given update the locked indicator to "N" and failed logins to 0 for "INVALID_PASSWORD_TEST_CONDITION"
     When a request is made to the ResetPassword Api with "<newPassword>"TC32_TC35
     Then verify response code of "ResetPassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -103,7 +103,7 @@ Feature: Verify ResetPassword Api
 
   @ResetPasswordForLockedOutAccount @Phase1 @NegativeFlow
   Scenario: ResetPassword Api - Verify ResetPassword Api for locked out account TC38
-    Given update the locked indicator to "Y" and failed logins to 4
+    Given update the locked indicator to "Y" and failed logins to 4 for "VALID_PASSWORD_TEST_CONDITION"
     When a request is made to the ResetPassword Api with locked out account details
     And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID"
-    Then update the locked indicator to "Y" and failed logins to 0
+    Then update the locked indicator to "N" and failed logins to 0 for "VALID_PASSWORD_TEST_CONDITION"

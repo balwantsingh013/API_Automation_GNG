@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import java.util.Map;
 
+import static com.gng.api.steps.turnOn.UsersApiSteps.ResetPassword.ResetPasswordApiLabel.INVALID_PASSWORD_TEST_CONDITION;
 import static com.gng.api.util.CommonUtil.removeFieldFromJson;
 import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
 
@@ -23,6 +24,7 @@ public class ResetPasswordHelper {
     public static String valid_password="Password@2";
     public static String old_valid_password="Password@1";
     public static String loginId="autotester";
+    public static String loginId2="sys";
     public ResetPasswordHelper(TestContext testContext) {
         this.testContext = testContext;
     }
@@ -148,8 +150,13 @@ public class ResetPasswordHelper {
         Assert.assertEquals(failedLoginsCount,count);
     }
 
-    public void updateLockedOutIndicator(String lockedOutIndicator, int count){
-        ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count);
+    public void updateLockedOutIndicator(String lockedOutIndicator, int count, ResetPasswordApiLabel testCondition){
+        if(testCondition.equals(INVALID_PASSWORD_TEST_CONDITION)){
+            ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count, loginId2);
+        }
+        else{
+            ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count, loginId);
+        }
     }
 
     public void setOldPasswordBasedOnTypeTC29_TC31(ResetPasswordRequest payload, ResetPasswordApiLabel oldPassword) {

@@ -212,10 +212,10 @@ public class DBAction {
         return jdbcTemplate.update(query, count);
     }
 
-    public int updateUserLockedStatus(String lockedOutIndicato, int count) {
+    public int updateUserLockedStatus(String lockedOutIndicato, int count, String loginId) {
         String query = DBQuery.UPDATE_USER_LOCK_STATUS_QUERY;
         logQueryInAllure("Failed login counts ", query);
-        return jdbcTemplate.update(query, lockedOutIndicato, count);
+        return jdbcTemplate.update(query, lockedOutIndicato, count, loginId);
     }
 
     public void rollBackQuery(String user) {

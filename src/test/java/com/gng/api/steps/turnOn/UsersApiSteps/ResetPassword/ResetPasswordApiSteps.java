@@ -75,9 +75,9 @@ public class ResetPasswordApiSteps {
         resetPasswordApiPage.updateTheFailedLoginCount(count);
     }
 
-    @When("update the locked indicator to {string} and failed logins to {int}")
-    public void update_the_locked_indicaor(String lockedOutIndicator, int count){
-        resetPasswordApiPage.updateTheLockedIndicator(lockedOutIndicator,count);
+    @When("update the locked indicator to {string} and failed logins to {int} for {string}")
+    public void update_the_locked_indicaor(String lockedOutIndicator, int count, String testCondition){
+        resetPasswordApiPage.updateTheLockedIndicator(lockedOutIndicator,count, ResetPasswordApiLabel.valueOf(testCondition));
     }
 
 }
