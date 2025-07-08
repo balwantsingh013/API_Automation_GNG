@@ -80,29 +80,21 @@ Feature: Verify ResetPassword Api
       | INCORRECT_PASSWORD_UNBLOCK_USER_TC36 | 2000      | The password doesn't match the Login ID                                |
       | INCORRECT_PASSWORD_BLOCK_USER_TC37   | 2000      | The password doesn't match the Login ID. The Login ID has been locked. |
 
-  @ResetPasswordForExpiredNotExpiredPassword @Phase1 @HappyFlow @Order1
-  Scenario: ResetPassword Api - Verify ResetPassword Api with NOT_EXPIRED_PASSWORD_TC_39
+  @ResetPasswordForExpiredNotExpiredLockedPassword @Phase1 @HappyFlow
+  Scenario: ResetPassword Api - Verify ResetPassword Api with valid_password_TC_38_39_40
     Given update the failed login count to 1
     When a request is made to the ResetPassword Api with "NOT_EXPIRED_PASSWORD_TC_39"
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
-    And verify if the failed login count is updated to 0
-
-  @ResetPasswordForExpiredNotExpiredPassword @Phase1 @HappyFlow @Order2
-  Scenario: ResetPassword Api - Verify ResetPassword Api with EXPIRED_PASSWORD_TC_40
     Given update the failed login count to 2
     When a request is made to the ResetPassword Api with "EXPIRED_PASSWORD_TC_40"
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
-    And verify if the failed login count is updated to 0
-
-  @ResetPasswordForLockedOutAccount @Phase1 @NegativeFlow @Order3
-  Scenario: ResetPassword Api - Verify ResetPassword Api for locked out account TC38
     Given update the locked indicator to "Y" and failed logins to 4 for "VALID_PASSWORD_TEST_CONDITION"
-    When a request is made to the ResetPassword Api with locked out account details
+    When a request is made to the ResetPassword Api with locked out account details TC38
     And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID"
     Then update the locked indicator to "N" and failed logins to 0 for "VALID_PASSWORD_TEST_CONDITION"

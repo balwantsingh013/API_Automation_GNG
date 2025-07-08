@@ -1,33 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Test Suite" parallel="tests">
-
-    <test name="ResetPassword_Order1" parallel="false">
-        <parameter name="cucumber.filter.tags" value="@Order1" />
-        <classes>
-            <class name="com.gng.api.runner.TestRunner"/>
-        </classes>
-    </test>
-
-    <test name="ResetPassword_Order2" parallel="false">
-        <parameter name="cucumber.filter.tags" value="@Order2" />
-        <classes>
-            <class name="com.gng.api.runner.TestRunner"/>
-        </classes>
-    </test>
-
-    <test name="ResetPassword_Order3" parallel="false">
-        <parameter name="cucumber.filter.tags" value="@Order3" />
-        <classes>
-            <class name="com.gng.api.runner.TestRunner"/>
-        </classes>
-    </test>
-
+<suite name="Test Suite">
     <test verbose="2" name="TestRunner">
-        <parameter name="cucumber.filter.tags" value="not @Order1 and not @Order2 and not @Order3" />
         <classes>
             <class name="com.gng.api.runner.TestRunner"/>
         </classes>
     </test>
-
 </suite>

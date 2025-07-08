@@ -48,7 +48,7 @@ public class ResetPasswordApiSteps {
         resetPasswordApiPage.validateResetPasswordWithExpiredPassword(reset_password, ResetPasswordApiLabel.valueOf(testCondition));
     }
 
-    @When("a request is made to the ResetPassword Api with locked out account details")
+    @When("a request is made to the ResetPassword Api with locked out account details TC38")
     public void a_request_is_made_to_reset_password_for_locked_out_account()
     {
         resetPasswordApiPage.validateResetPasswordForLockedOutAccount(reset_password);
