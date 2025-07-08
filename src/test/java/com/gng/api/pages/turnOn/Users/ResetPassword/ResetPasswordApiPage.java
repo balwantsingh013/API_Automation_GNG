@@ -50,17 +50,17 @@ public class ResetPasswordApiPage   extends BasePage  {
         testContext.setResponse(response);
     }
 
-    public void validateResetPasswordWithNotExpiredPassword(ResetPasswordApiLabel apiLabel) {
+    public void validateResetPasswordWithExpiredPassword(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel testCondition) {
         ResetPasswordRequest payload = helper.preparePayload(apiLabel);
-        helper.resetPasswordForNotExpiredPassword(payload);
+        helper.resetPasswordForExpiredPassword(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
         testContext.setResponse(response);
     }
 
-    public void validateResetPasswordWithExpiredPassword(ResetPasswordApiLabel apiLabel) {
+    public void validateResetPasswordForLockedOutAccount(ResetPasswordApiLabel apiLabel) {
         ResetPasswordRequest payload = helper.preparePayload(apiLabel);
-        helper.resetPasswordForExpiredPassword(payload);
+        helper.resetPasswordForLockedOutAccount(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
         testContext.setResponse(response);
@@ -72,6 +72,18 @@ public class ResetPasswordApiPage   extends BasePage  {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
         testContext.setResponse(response);
+    }
+
+    public void verifyTheFailedLoginCount(int count){
+        helper.verifyTheNumberOfFailedLogins(count);
+    }
+
+    public void updateTheFailedLoginCount(int count){
+        helper.updateNumberOfFailedLogins(count);
+    }
+
+    public void updateTheLockedIndicator(String lockedOutIndicator, int count, ResetPasswordApiLabel testCondition){
+        helper.updateLockedOutIndicator(lockedOutIndicator, count, testCondition);
     }
 
     public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel oldPassword)

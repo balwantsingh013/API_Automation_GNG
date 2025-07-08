@@ -200,10 +200,22 @@ public class DBAction {
         return jdbcTemplate.update(query);
     }
 
-    public List<Map<String, Object>> togetthefailedcountsandvalidateshouldbe4() {
+    public int failedLoginsCount() {
         String query = DBQuery.FAILED_LOGIN_COUNTS;
+        logQueryInAllure("Failed login counts", query);
+        return jdbcTemplate.queryForObject(query, Integer.class);
+    }
+
+    public int updateFailedLoginsCount(int count) {
+        String query = DBQuery.ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY;
         logQueryInAllure("Failed login counts ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.update(query, count);
+    }
+
+    public int updateUserLockedStatus(String lockedOutIndicato, int count, String loginId) {
+        String query = DBQuery.UPDATE_USER_LOCK_STATUS_QUERY;
+        logQueryInAllure("Failed login counts ", query);
+        return jdbcTemplate.update(query, lockedOutIndicato, count, loginId);
     }
 
     public void rollBackQuery(String user) {
@@ -248,10 +260,10 @@ public class DBAction {
         return jdbcTemplate.update(query, user);
     }
 
-    public List<Map<String, Object>> checkUserLockStatusQuery() {
+    public Map<String, Object> checkUserLockStatusQuery() {
         String query = DBQuery.CHECK_USER_LOCK_STATUS_QUERY;
-        logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.queryForList(query);
+        logQueryInAllure("check lock status of an account", query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public int failedUserLockCountQuery() {
