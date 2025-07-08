@@ -24,6 +24,7 @@ import static com.gng.api.constants.TestConstant.REPORT_PATH;
 @Slf4j
 public class ExtentReportManager {
 
+    // Thread-safe ThreadLocal variables for parallel execution
     private static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
     private static final ThreadLocal<ExtentTest> extentLogger = new ThreadLocal<>();
     private static final ThreadLocal<QueryableRequestSpecification> qReqSpec = new ThreadLocal<>();
@@ -31,12 +32,13 @@ public class ExtentReportManager {
     private static final ThreadLocal<String> expectedStatusCode = new ThreadLocal<>();
     private static final ThreadLocal<Long> testStartTime = new ThreadLocal<>();
 
-    // Statistics tracking
+    // Thread-safe statistics tracking for parallel execution
     private static final AtomicInteger totalTests = new AtomicInteger(0);
     private static final AtomicInteger passedTests = new AtomicInteger(0);
     private static final AtomicInteger failedTests = new AtomicInteger(0);
     private static final AtomicInteger skippedTests = new AtomicInteger(0);
     private static final Map<String, Integer> statusCodeCounts = new ConcurrentHashMap<>();
+    private static final Map<String, AtomicInteger> threadTestCounts = new ConcurrentHashMap<>();
 
     private static ExtentReports extent;
     private static ExtentSparkReporter spark;
@@ -44,25 +46,26 @@ public class ExtentReportManager {
     private ExtentReportManager() {
     }
 
-    public static void initialiseExtentReport() {
-        extent = new ExtentReports();
-        spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-" + CommonUtil.getCurrentDateTime() + ".html");
-        setConfig();
+    public static synchronized void initialiseExtentReport() {
+        if (extent == null) {
+            extent = new ExtentReports();
+            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-" + CommonUtil.getCurrentDateTime() + ".html");
+            setConfig();
+            log.info("📊 Extent Report initialized for parallel execution");
+        }
     }
 
     private static void setConfig() {
-        // Professional configuration
-        spark.config().setDocumentTitle("GNG API Test Report");
+        // Professional configuration with parallel execution enhancements
+        spark.config().setDocumentTitle("GNG API Test Report - Parallel Execution");
         spark.config().setReportName("GNG API Automation Test Results");
-        spark.config().setTheme(Theme.STANDARD); // Better readability with light theme
+        spark.config().setTheme(Theme.STANDARD);
         spark.config().setOfflineMode(true);
         spark.config().setEncoding("utf-8");
         spark.config().setTimeStampFormat("MMM dd, yyyy HH:mm:ss");
 
-        // Enhanced CSS for professional appearance
+        // Enhanced CSS for professional appearance with parallel execution indicators
         spark.config().setCss(getProfessionalCSS());
-
-        // Enhanced JavaScript for better interactions
         spark.config().setJs(getProfessionalJavaScript());
 
         extent.attachReporter(spark);
@@ -81,6 +84,32 @@ public class ExtentReportManager {
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
             .navbar-brand { color: white !important; font-weight: bold; font-size: 24px; }
+            
+            /* Parallel Execution Indicator */
+            .parallel-indicator {
+                background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+                color: white !important;
+                padding: 5px 12px !important;
+                border-radius: 15px !important;
+                font-size: 11px !important;
+                font-weight: bold !important;
+                display: inline-block !important;
+                margin-left: 10px !important;
+                box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+            }
+            
+            /* Thread Information Styling */
+            .thread-info {
+                background: linear-gradient(135deg, #9b59b6, #8e44ad) !important;
+                color: white !important;
+                padding: 8px 15px !important;
+                border-radius: 20px !important;
+                font-size: 12px !important;
+                font-weight: bold !important;
+                display: inline-block !important;
+                margin: 5px 0 !important;
+                box-shadow: 0 3px 10px rgba(155, 89, 182, 0.3) !important;
+            }
             
             /* Card and Panel Styling */
             .card-panel { 
@@ -291,46 +320,22 @@ public class ExtentReportManager {
                 box-shadow: 0 4px 12px rgba(162, 155, 254, 0.3) !important;
             }
             
-            /* Collapsible Content */
-            .collapsible-content {
-                transition: all 0.3s ease !important;
-                border-radius: 8px !important;
-                padding: 15px !important;
-                background: rgba(255, 255, 255, 0.05) !important;
-                margin-top: 10px !important;
-            }
-            
-            /* Dashboard Statistics */
-            .stats-container {
-                background: linear-gradient(135deg, #636e72, #2d3436) !important;
+            /* Parallel Execution Stats */
+            .parallel-stats {
+                background: linear-gradient(135deg, #00b894, #00cec9) !important;
                 color: white !important;
-                padding: 25px !important;
+                padding: 20px !important;
                 border-radius: 15px !important;
                 margin: 20px 0 !important;
-                box-shadow: 0 8px 25px rgba(99, 110, 114, 0.3) !important;
+                box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3) !important;
             }
             
-            .stat-item {
+            .thread-stat-item {
                 background: rgba(255, 255, 255, 0.1) !important;
-                padding: 15px !important;
-                border-radius: 10px !important;
-                margin: 10px 0 !important;
-                border-left: 5px solid #74b9ff !important;
-            }
-            
-            /* Hover Effects */
-            .card-panel:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 12px 40px rgba(0,0,0,0.15) !important;
-                transition: all 0.3s ease !important;
-            }
-            
-            /* Mobile Responsiveness */
-            @media (max-width: 768px) {
-                .api-request-section, .api-response-section {
-                    margin: 10px 5px !important;
-                    padding: 15px !important;
-                }
+                padding: 12px !important;
+                border-radius: 8px !important;
+                margin: 8px 0 !important;
+                border-left: 4px solid #55efc4 !important;
             }
             """;
     }
@@ -344,42 +349,25 @@ public class ExtentReportManager {
                     card.style.transition = 'all 0.3s ease';
                 });
                 
-                // Add click-to-expand functionality
-                const sections = document.querySelectorAll('.api-request-section, .api-response-section');
-                sections.forEach(section => {
-                    section.style.cursor = 'pointer';
-                    section.addEventListener('click', function() {
-                        const content = this.querySelector('.collapsible-content');
-                        if (content) {
-                            if (content.style.display === 'none') {
-                                content.style.display = 'block';
-                                content.style.animation = 'fadeIn 0.3s ease';
-                            } else {
-                                content.style.display = 'none';
-                            }
-                        }
-                    });
+                // Add parallel execution indicators
+                const testNodes = document.querySelectorAll('.test-node');
+                testNodes.forEach(node => {
+                    const threadInfo = node.querySelector('.thread-info');
+                    if (threadInfo) {
+                        threadInfo.style.animation = 'pulse 2s infinite';
+                    }
                 });
                 
                 // Add fade-in animation
                 const style = document.createElement('style');
                 style.textContent = `
-                    @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(-10px); }
-                        to { opacity: 1; transform: translateY(0); }
-                    }
-                    @keyframes slideIn {
-                        from { transform: translateX(-20px); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
+                    @keyframes pulse {
+                        0% { opacity: 1; transform: scale(1); }
+                        50% { opacity: 0.8; transform: scale(1.05); }
+                        100% { opacity: 1; transform: scale(1); }
                     }
                 `;
                 document.head.appendChild(style);
-                
-                // Add status code color coding
-                const statusElements = document.querySelectorAll('[class*="status-"]');
-                statusElements.forEach(element => {
-                    element.style.animation = 'slideIn 0.5s ease';
-                });
             });
             """;
     }
@@ -394,34 +382,50 @@ public class ExtentReportManager {
             extent.setSystemInfo("🌐 Base URI", ApplicationContext.get().getEnvConfig().getBaseUri());
             extent.setSystemInfo("👤 Tester", System.getProperty("user.name"));
             extent.setSystemInfo("🕒 Execution Start", CommonUtil.getCurrentDateTime());
+
+            // Add parallel execution info
+            String parallelMode = System.getProperty("parallel", "none");
+            String threadCount = System.getProperty("threadcount", "1");
+            extent.setSystemInfo("🚀 Parallel Mode", parallelMode);
+            extent.setSystemInfo("🧵 Thread Count", threadCount);
+            extent.setSystemInfo("💾 Available Processors", String.valueOf(Runtime.getRuntime().availableProcessors()));
+
         } catch (UnknownHostException e) {
             log.error("Error setting system info: {}", e.getMessage());
         }
     }
 
-    public static void generateReport(ITestResult result) {
+    public static synchronized void generateReport(ITestResult result) {
         ExtentTest logger = extentLogger.get();
         long executionTime = System.currentTimeMillis() - testStartTime.get();
+        String threadName = Thread.currentThread().getName();
 
+        // Track thread-specific test counts
+        threadTestCounts.computeIfAbsent(threadName, k -> new AtomicInteger(0)).incrementAndGet();
         totalTests.incrementAndGet();
 
         if (result.getStatus() == ITestResult.FAILURE) {
             failedTests.incrementAndGet();
-            logFailureDetails(logger, result, executionTime);
+            logFailureDetails(logger, result, executionTime, threadName);
         } else if (result.getStatus() == ITestResult.SUCCESS) {
             passedTests.incrementAndGet();
-            logSuccessDetails(logger, executionTime);
+            logSuccessDetails(logger, executionTime, threadName);
         } else if (result.getStatus() == ITestResult.SKIP) {
             skippedTests.incrementAndGet();
-            logSkipDetails(logger, executionTime);
+            logSkipDetails(logger, executionTime, threadName);
         }
 
         cleanupThreadLocals();
         extent.flush();
     }
 
-    private static void logFailureDetails(ExtentTest logger, ITestResult result, long executionTime) {
+    private static void logFailureDetails(ExtentTest logger, ITestResult result, long executionTime, String threadName) {
         StringBuilder failureLog = new StringBuilder();
+
+        // Thread information
+        failureLog.append("<div class='thread-info'>");
+        failureLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        failureLog.append("</div>");
 
         // Error section with professional styling
         failureLog.append("<div class='error-section'>");
@@ -442,8 +446,13 @@ public class ExtentReportManager {
         logger.fail(failureLog.toString());
     }
 
-    private static void logSuccessDetails(ExtentTest logger, long executionTime) {
+    private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
         StringBuilder successLog = new StringBuilder();
+
+        // Thread information
+        successLog.append("<div class='thread-info'>");
+        successLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        successLog.append("</div>");
 
         successLog.append("<div class='info-log'>");
         successLog.append("✅ <strong>Test Passed Successfully</strong>");
@@ -468,8 +477,13 @@ public class ExtentReportManager {
         logger.pass(successLog.toString());
     }
 
-    private static void logSkipDetails(ExtentTest logger, long executionTime) {
+    private static void logSkipDetails(ExtentTest logger, long executionTime, String threadName) {
         StringBuilder skipLog = new StringBuilder();
+
+        // Thread information
+        skipLog.append("<div class='thread-info'>");
+        skipLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        skipLog.append("</div>");
 
         skipLog.append("<div class='warning-log'>");
         skipLog.append("⏭️ <strong>Test Skipped</strong>");
@@ -647,7 +661,7 @@ public class ExtentReportManager {
         logger.fail(formattedMsg);
     }
 
-    public static void addTestStatistics() {
+    public static synchronized void addTestStatistics() {
         ExtentTest statsTest = extent.createTest("📊 Test Execution Summary");
 
         StringBuilder stats = new StringBuilder();
@@ -677,6 +691,22 @@ public class ExtentReportManager {
         stats.append(" <span class='status-404'>(").append(String.format("%.1f", skipPercentage)).append("%)</span>");
         stats.append("</div>");
 
+        // Thread-specific statistics for parallel execution
+        if (threadTestCounts.size() > 1) {
+            stats.append("<div class='parallel-stats'>");
+            stats.append("<h4>🧵 Thread-wise Test Distribution</h4>");
+            threadTestCounts.entrySet().stream()
+                    .sorted(Map.Entry.<String, AtomicInteger>comparingByValue(
+                            (a, b) -> Integer.compare(b.get(), a.get())))
+                    .forEach(entry -> {
+                        stats.append("<div class='thread-stat-item'>");
+                        stats.append("<strong>Thread ").append(entry.getKey()).append(":</strong> ");
+                        stats.append(entry.getValue().get()).append(" tests");
+                        stats.append("</div>");
+                    });
+            stats.append("</div>");
+        }
+
         // Status code distribution
         if (!statusCodeCounts.isEmpty()) {
             stats.append("<h4>🌐 HTTP Status Code Distribution</h4>");
@@ -694,15 +724,17 @@ public class ExtentReportManager {
         statsTest.info(stats.toString());
     }
 
-    public static void flushReports() {
-        log.info("📊 Publishing Professional Extent Reports with Enhanced Styling");
+    public static synchronized void flushReports() {
+        log.info("📊 Publishing Professional Extent Reports with Enhanced Styling and Parallel Execution Support");
         addTestStatistics();
         extent.flush();
     }
 
     public static void addRequestDetailsToReport(RequestSpecification reqSpec) {
-        QueryableRequestSpecification queryable = SpecificationQuerier.query(reqSpec);
-        qReqSpec.set(queryable);
+        if (reqSpec != null) {
+            QueryableRequestSpecification queryable = SpecificationQuerier.query(reqSpec);
+            qReqSpec.set(queryable);
+        }
     }
 
     public static void addResponseDetailsToReport(Response resp, int statusCode) {
@@ -722,6 +754,4 @@ public class ExtentReportManager {
         extentLogger.remove();
         cleanupThreadLocals();
     }
-
-
 }

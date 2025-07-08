@@ -26,10 +26,8 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         dryRun = false,
         monochrome = true,
         //tags = "@validAGLCAccountNumberRSActiveAccount",
-
         plugin = {
                 "pretty",
-
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         }
 )
@@ -45,21 +43,29 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
-        log.info("*** Setup ***");
+        log.info("*** Test Suite Setup ***");
+
+        // Log parallel execution configuration
+        logParallelExecutionConfig();
+
+        // Initialize components
         RestAssured.filters(new AllureRestAssuredFilter());
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
         ApplicationContext.get().loadEnvConfig();
         LogUtil.configureLogging();
         ExtentReportManager.initialiseExtentReport();
+
+        log.info("*** Test Suite Setup Complete ***");
     }
 
     @AfterSuite(alwaysRun = true)
     public void afterSuite() {
-        log.info("*** Tear Down ***");
+        log.info("*** Test Suite Teardown ***");
         log.info("Database Connection AutoClosed by JDBCTemplate");
         ExtentReportManager.clearThreadLocals();
         ExtentReportManager.flushReports();
         testNGCucumberRunner.finish();
+        log.info("*** Test Suite Teardown Complete ***");
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -71,6 +77,9 @@ public class TestRunner extends AbstractTestNGCucumberTests {
             scenarioName = pickle.getPickle().getName();
         }
 
+        // Log thread information for parallel execution monitoring
+        logThreadInfo(scenarioName);
+
         ExtentReportManager.createTest(scenarioName);
     }
 
@@ -79,5 +88,41 @@ public class TestRunner extends AbstractTestNGCucumberTests {
         ExtentReportManager.addRequestDetailsToReport(getRequestSpec());
         ExtentReportManager.generateReport(result);
         removeRequestSpec();
+    }
+
+    /**
+     * Logs the parallel execution configuration at suite startup
+     */
+    private void logParallelExecutionConfig() {
+        String parallelMode = System.getProperty("parallel", "none");
+        String threadCount = System.getProperty("threadcount", "1");
+        String parallelCount = System.getProperty("parallelcount", "1");
+
+        log.info("═══════════════════════════════════════════════════════════════");
+        log.info("               PARALLEL EXECUTION CONFIGURATION");
+        log.info("═══════════════════════════════════════════════════════════════");
+        log.info("🔧 Parallel Mode: {}", parallelMode);
+        log.info("🧵 Thread Count: {}", threadCount);
+        log.info("📊 Parallel Count: {}", parallelCount);
+        log.info("💻 Available Processors: {}", Runtime.getRuntime().availableProcessors());
+
+        if ("none".equalsIgnoreCase(parallelMode) || "1".equals(threadCount)) {
+            log.info("🔄 Execution Mode: SEQUENTIAL");
+        } else {
+            log.info("🚀 Execution Mode: PARALLEL");
+            log.info("⚡ Expected Performance Improvement: {}x",
+                    Math.min(Integer.parseInt(threadCount), Runtime.getRuntime().availableProcessors()));
+        }
+        log.info("═══════════════════════════════════════════════════════════════");
+    }
+
+    /**
+     * Logs thread information for each test method execution
+     */
+    private void logThreadInfo(String scenarioName) {
+        String threadName = Thread.currentThread().getName();
+        long threadId = Thread.currentThread().getId();
+
+        log.debug("🧵 [Thread-{}] [{}] Executing scenario: {}", threadId, threadName, scenarioName);
     }
 }
