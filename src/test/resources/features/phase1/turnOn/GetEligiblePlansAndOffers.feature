@@ -249,8 +249,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
       |NACN       |RS         |OVER       |666441375|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
-  Scenario Outline: GetEligiblePlansAndOffersAPI - returns 3 plans for TC <testCondition>
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<promotionCode>" promotion "<valueScore>" value score "<enrollmentStatus>" enrollment status "<ssn>" ssn "<testCondition>" condition
+  Scenario Outline: GetEligiblePlansAndOffersAPI - returns 1 plan for TC 338e
+    When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<valueScore>" value score "<enrollmentStatus>" enrollment status "<ssn>" ssn tc 338e
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 3
@@ -258,8 +258,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
     And response should have plan with code "PRP" and description "Pre-Pay"
     Examples:
-      |premiseType|accountType|creditCheck|promotionCode|valueScore|enrollmentStatus|ssn      |testCondition                        |
-      |NACN       |RS         |NUMBR       |false        |110      |CRDS            |666441375|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338e|
+      |premiseType|accountType|creditCheck|valueScore|enrollmentStatus|ssn      |
+      |NACN       |RS         |NUMBR      |110       |CRDS            |666441375|
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns 4 plans for <testCondition>

@@ -242,7 +242,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(offersResponse);
     }
 
-    public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
+    public void setRequestParamsWithEnrollmentStatus(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
                                             String accountType, String creditCheck, String valueScore, String enrollmentStatus, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
