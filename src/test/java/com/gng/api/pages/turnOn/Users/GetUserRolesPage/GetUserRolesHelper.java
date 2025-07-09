@@ -16,6 +16,7 @@ import org.testng.Assert;
 import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.pages.turnOn.Users.ResetPassword.ResetPasswordHelper.old_valid_password;
 @Slf4j
 public class GetUserRolesHelper {
     private final TestContext testContext;
@@ -218,15 +219,10 @@ public class GetUserRolesHelper {
         }
     }
 
-
-
-    public void validatePasswordCredentials(GetUserRolesRequest payload) {
+    public void setValidPassword(GetUserRolesRequest payload) {
         payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-        payload.setLoginID("autotester");
-        payload.setPassword("gQ0diQBSDMqsYPNevswiPuZ2/W8R5B4rD3JoxskVGbc=");
-
+        payload.setPassword(AesEncryptionSteps.encryptData(old_valid_password));
     }
-
 
     public String validatePasswordExpiredInDB(GetUserRolesRequest payload) {
         String user = ApplicationContext.get().getDbAction().getActiveUserID();
