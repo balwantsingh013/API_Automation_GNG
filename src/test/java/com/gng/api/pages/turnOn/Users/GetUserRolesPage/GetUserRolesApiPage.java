@@ -105,7 +105,7 @@ public class GetUserRolesApiPage extends BasePage {
     public void validateSuccessfulResponseCasesTC19(GetUserRolesApiLabel apiLabel) {
         GetUserRolesRequest payload = helper.preparePayload(apiLabel);
         helper.updateFailedLoginsQuery();
-        helper.validatePasswordCredentials(payload);
+        helper.setValidPassword(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_USER_ROLES, 200);
         testContext.setResponse(response);

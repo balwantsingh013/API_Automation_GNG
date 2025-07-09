@@ -83,6 +83,22 @@ public class BaseSteps {
         verifyPlanDetails(planCode, planDescription);
     }
 
+    @And("response should have role with ID {string} and description {string}")
+    public void responseShouldHaveRoleWithIDAndDescription(String roleID, String roleDescription) {
+        verifyRoleDetails(roleID, roleDescription);
+    }
+
+    private void verifyRoleDetails(String expectedRoleID, String expectedRoleDescription) {
+        Response response = testContext.getResponse();
+        List<Map<String, String>> roles = response.jsonPath().getList("data.roles");
+
+        boolean roleFound = roles.stream()
+                .anyMatch(role -> expectedRoleID.equals(role.get("roleID")) &&
+                                  expectedRoleDescription.equals(role.get("roleDescription")));
+
+        assertThat("Expected role with ID and description not found", roleFound);
+    }
+
     private void verifyPlanDetails(String expectedPlanCode, String expectedPlanDescription) {
         Response response = testContext.getResponse();
         List<Map<String, String>> plans = response.jsonPath().getList("data.plans");
