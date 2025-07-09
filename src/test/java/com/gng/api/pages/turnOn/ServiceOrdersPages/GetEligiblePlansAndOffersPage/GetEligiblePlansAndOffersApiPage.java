@@ -224,7 +224,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
 
     public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-     String accountType, String creditCheck,  String promotionCode, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
+     String accountType, String creditCheck, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -233,7 +233,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         if (ssn != null && !ssn.trim().isEmpty()) {
            custCode = GetCustCodeBySSN(encryptedSSN);
         }
-        helper.setRequestParamsBasedOnType(payload, premiseType, accountType, creditCheck, promotionCode, valueScore, creditMin, creditMax, encryptedSSN, custCode, testCondition);
+        helper.setRequestParamsBasedOnType(payload, premiseType, accountType, creditCheck, valueScore, creditMin, creditMax, encryptedSSN, custCode, testCondition);
 
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
@@ -243,7 +243,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
 
     public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-                                            String accountType, String creditCheck, String promotionCode, String valueScore, String enrollmentStatus, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
+                                            String accountType, String creditCheck, String valueScore, String enrollmentStatus, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -253,7 +253,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
             custCode = GetCustCodeBySSN(encryptedSSN);
         }
 
-        helper.setTestCondition338e(payload, premiseType, accountType, creditCheck, promotionCode, valueScore, enrollmentStatus, encryptedSSN, custCode, testCondition);
+        helper.setTestCondition338e(payload, premiseType, accountType, creditCheck, valueScore, enrollmentStatus, encryptedSSN, custCode);
 
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);

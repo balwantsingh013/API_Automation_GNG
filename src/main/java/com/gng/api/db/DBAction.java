@@ -564,7 +564,6 @@ public class DBAction {
     public Map<String, Object> getEligiblePlansAndOffersRequestParams(String premiseType,
                                                                       String accountType,
                                                                       String creditCheck,
-                                                                      Boolean promotionCode,
                                                                       String valueScore,
                                                                       String creditMin,
                                                                       String creditMax,
@@ -590,11 +589,6 @@ public class DBAction {
             query = query.replace(" AND g.\"UCBCUST_CURRENT_VALUE_SCORE\" = '<valueScore>'", "");
         }
 
-        if (Boolean.TRUE.equals(promotionCode)) {
-            query = query.replace("AND e.\"UZBENRO_MKT_PROG_CODE\" IS NULL",
-                    "AND e.\"UZBENRO_MKT_PROG_CODE\" IS NOT NULL");
-        }
-
         if (!Boolean.TRUE.equals(ssp)) {
             query = query.replace("AND e.\"UZBENRO_SSP_IND\" = 'Y'",
                      "");
@@ -608,7 +602,6 @@ public class DBAction {
                                                                       String accountType,
                                                                       String creditCheck,
                                                                       String creditMatchCode,
-                                                                      Boolean promotionCode,
                                                                       String custCode) {
         String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_CREDIT_MATCH_PARAMS
                 .replace("<premiseType>", premiseType)
@@ -623,10 +616,6 @@ public class DBAction {
             query = query.replace("AND e.\"UZBENRO_CREDIT_SCORE_TEXT\" = '<creditMatchode>'", "");
         }
 
-        query = promotionCode ? query.replace("AND e.\"UZBENRO_MKT_PROG_CODE\" IS NULL",
-                "AND e.\"UZBENRO_MKT_PROG_CODE\" IS NOT NULL")
-                : query;
-
         logQueryInAllure("Get EligiblePlansAndOffersRequestParams", query);
         return jdbcTemplate.queryForMap(query);
     }
@@ -634,7 +623,6 @@ public class DBAction {
     public Map<String, Object> getEligiblePlansAndOffersByEnrollmentAndValueScoreRequestParams(String premiseType,
                                                                                  String accountType,
                                                                                  String creditCheck,
-                                                                                 Boolean promotionCode,
                                                                                  String valueScore,
                                                                                  String enrollmentStatus,
                                                                                  String custCode) {
@@ -650,10 +638,6 @@ public class DBAction {
         } else {
             query = query.replace(" AND g.\"UCBCUST_CURRENT_VALUE_SCORE\" = '<valueScore>'", "");
         }
-
-        query = promotionCode ? query.replace("AND e.\"UZBENRO_MKT_PROG_CODE\" IS NULL",
-                "AND e.\"UZBENRO_MKT_PROG_CODE\" IS NOT NULL")
-                : query;
 
         logQueryInAllure("Get EligiblePlansAndOffersRequestParams", query);
         return jdbcTemplate.queryForMap(query);
