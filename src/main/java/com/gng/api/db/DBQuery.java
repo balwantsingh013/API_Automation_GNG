@@ -600,6 +600,15 @@ public final class DBQuery {
             SELECT failed_logins FROM USERS WHERE USER_ID='autotester'
             """;
 
+    public static final String PASSWORD_EXPIRATION_SYSDATE_PLUS_45 = """
+        SELECT CASE
+        WHEN TRUNC(password_expire) = TRUNC(SYSDATE + 45) THEN 'TRUE'
+        ELSE 'FALSE'
+        END AS password_expiry_status
+        FROM users
+        WHERE user_id = 'autotester'
+    """;
+
     public static final String ROLLBACK_QUERIES = """
             UPDATE USERS SET USER_LOCKED_IND ='N', FAILED_LOGINS=0 WHERE USER_ID= ?
             """;

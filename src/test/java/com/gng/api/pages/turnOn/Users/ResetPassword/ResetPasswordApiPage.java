@@ -78,6 +78,10 @@ public class ResetPasswordApiPage   extends BasePage  {
         helper.verifyTheNumberOfFailedLogins(count);
     }
 
+    public void verifyPasswordExpirationUpdated() {
+        helper.verifyPasswordExpirationStatus();
+    }
+
     public void updateTheFailedLoginCount(int count){
         helper.updateNumberOfFailedLogins(count);
     }

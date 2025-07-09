@@ -86,12 +86,14 @@ Feature: Verify ResetPassword Api
     When a request is made to the ResetPassword Api with "NOT_EXPIRED_PASSWORD_TC_39"
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
+    When verify if the password expiration is updated to Sysdate plus 45 days
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
     Given update the failed login count to 2
     When a request is made to the ResetPassword Api with "EXPIRED_PASSWORD_TC_40"
     Then verify response code of "ResetPassword" Api is 200
     And verify if the failed login count is updated to 0
+    When verify if the password expiration is updated to Sysdate plus 45 days
     And a request is made to the ResetPassword Api to set the old password again
     Then verify response code of "ResetPassword" Api is 200
     Given update the locked indicator to "Y" and failed logins to 4 for "VALID_PASSWORD_TEST_CONDITION"

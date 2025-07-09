@@ -206,6 +206,13 @@ public class DBAction {
         return jdbcTemplate.queryForObject(query, Integer.class);
     }
 
+    public boolean isPasswordExpirationUpdatedToSysdatePlus45() {
+        String query = DBQuery.PASSWORD_EXPIRATION_SYSDATE_PLUS_45;
+        logQueryInAllure("Password expiration status", query);
+        String result = jdbcTemplate.queryForObject(query, String.class);
+        return "TRUE".equalsIgnoreCase(result);
+    }
+
     public int updateFailedLoginsCount(int count) {
         String query = DBQuery.ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY;
         logQueryInAllure("Failed login counts ", query);

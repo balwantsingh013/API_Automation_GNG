@@ -64,6 +64,11 @@ public class ResetPasswordApiSteps {
         resetPasswordApiPage.verifyTheFailedLoginCount(count);
     }
 
+    @When("verify if the password expiration is updated to Sysdate plus 45 days")
+    public void verify_password_expiration_updated() {
+        resetPasswordApiPage.verifyPasswordExpirationUpdated();
+    }
+
     @When("update the failed login count to {int}")
     public void update_the_failed_login_count(int count){
         resetPasswordApiPage.updateTheFailedLoginCount(count);

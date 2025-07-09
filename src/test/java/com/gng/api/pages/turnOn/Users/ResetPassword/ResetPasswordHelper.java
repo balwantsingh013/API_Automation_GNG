@@ -142,6 +142,11 @@ public class ResetPasswordHelper {
         Assert.assertEquals(failedLoginsCount,count);
     }
 
+    public void verifyPasswordExpirationStatus() {
+        boolean isUpdated = ApplicationContext.get().getDbAction().isPasswordExpirationUpdatedToSysdatePlus45();
+        Assert.assertTrue( isUpdated, "Password expiration is not updated to SYSDATE + 45");
+    }
+
     public void updateNumberOfFailedLogins(int count){
         ApplicationContext.get().getDbAction().updateFailedLoginsCount(count);
         int failedLoginsCount = ApplicationContext.get().getDbAction().failedLoginsCount();
