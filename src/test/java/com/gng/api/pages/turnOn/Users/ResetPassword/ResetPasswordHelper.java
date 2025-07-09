@@ -25,7 +25,9 @@ public class ResetPasswordHelper {
     public static String valid_password="Password@2";
     public static String old_valid_password="Password@1";
     public static String loginId="autotester";
-    public static String loginId2="sys";
+    public static String loginId2="autotester1";
+    public static String loginId3="autotester2";
+    public static String loginId4 ="sys";
     public ResetPasswordHelper(TestContext testContext) {
         this.testContext = testContext;
     }
@@ -108,17 +110,18 @@ public class ResetPasswordHelper {
         if(testCondition.equals(EXPIRED_PASSWORD_TC_40)) {
             int rowUpdated = ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(loginId);
             Assert.assertEquals(rowUpdated, 1, "Expected exactly one row to be updated");
-            Map<String, Object> isPasswordExpired = ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
+            Map<String, Object> isPasswordExpired = ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery(loginId);
             Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "Y", "Password is not be expired");
+            payload.setLoginID(loginId);
         }
         else{
-            Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery();
+            Map<String, Object> isPasswordExpired=ApplicationContext.get().getDbAction().PasswordExpiredCheckQuery(loginId3);
             Assert.assertEquals(isPasswordExpired.get("IS_EXPIRED"), "N", "Password should not be expired");
+            payload.setLoginID(loginId3);
         }
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
         payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
-        payload.setLoginID(loginId);
     }
 
     public void resetPasswordForLockedOutAccount(ResetPasswordRequest payload){
@@ -127,33 +130,61 @@ public class ResetPasswordHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setNewPassword(AesEncryptionSteps.encryptData(valid_password));
         payload.setOldPassword(AesEncryptionSteps.encryptData(old_valid_password));
-        payload.setLoginID(loginId);
+        payload.setLoginID(loginId2);
     }
 
-    public void changeThePasswordBackToOldPassword(ResetPasswordRequest payload){
+    public void changeThePasswordBackToOldPassword(ResetPasswordRequest payload, ResetPasswordApiLabel testCondition){
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setNewPassword(AesEncryptionSteps.encryptData(old_valid_password));
         payload.setOldPassword(AesEncryptionSteps.encryptData(valid_password));
-        payload.setLoginID(loginId);
+        if(testCondition.equals(EXPIRED_PASSWORD_TC_40)) {
+            payload.setLoginID(loginId);
+        }
+        else{
+            payload.setLoginID(loginId3);
+        }
     }
 
-    public void verifyTheNumberOfFailedLogins(int count){
-        int failedLoginsCount =  ApplicationContext.get().getDbAction().failedLoginsCount();
+    public void verifyTheNumberOfFailedLogins(int count, ResetPasswordApiLabel testCondition){
+        String user=resolveUser(testCondition,loginId, loginId3);
+        int failedLoginsCount =  ApplicationContext.get().getDbAction().failedLoginsCount(user);
         Assert.assertEquals(failedLoginsCount,count);
     }
 
-    public void updateNumberOfFailedLogins(int count){
-        ApplicationContext.get().getDbAction().updateFailedLoginsCount(count);
-        int failedLoginsCount = ApplicationContext.get().getDbAction().failedLoginsCount();
+    public void verifyPasswordExpirationStatus(ResetPasswordApiLabel testCondition) {
+        String user=resolveUser(testCondition,loginId, loginId3);
+        boolean isUpdated = ApplicationContext.get().getDbAction().isPasswordExpirationUpdatedToSysdatePlus45(user);
+        Assert.assertTrue( isUpdated, "Password expiration is not updated to SYSDATE + 45");
+    }
+
+    public void updateNumberOfFailedLogins(int count, ResetPasswordApiLabel testCondition){
+        String user=resolveUser(testCondition,loginId, loginId3);
+        ApplicationContext.get().getDbAction().updateFailedLoginsCount(count,user);
+        int failedLoginsCount = ApplicationContext.get().getDbAction().failedLoginsCount(user);
         Assert.assertEquals(failedLoginsCount,count);
+    }
+
+    public String resolveUser(ResetPasswordApiLabel testCondition, String loginId, String loginId3) {
+        if (testCondition.equals(EXPIRED_PASSWORD_TC_40)) {
+            return loginId;
+        } else {
+            return loginId3;
+        }
     }
 
     public void updateLockedOutIndicator(String lockedOutIndicator, int count, ResetPasswordApiLabel testCondition){
-        if(testCondition.equals(INVALID_PASSWORD_TEST_CONDITION)){
-            ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count, loginId2);
-        }
-        else{
-            ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count, loginId);
+        switch(testCondition){
+            case INVALID_PASSWORD_TEST_CONDITION:
+                ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count, loginId4);
+                break;
+
+            case VALID_PASSWORD_TEST_CONDITION:
+                ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count, loginId);
+                break;
+
+            case LOCKED_OUT_ACCOUNT_TC38:
+                ApplicationContext.get().getDbAction().updateUserLockedStatus(lockedOutIndicator, count, loginId2);
+                break;
         }
     }
 
@@ -276,7 +307,7 @@ public class ResetPasswordHelper {
                 }
                 // Set payload details
                 String requestID = FakerDataGenerator.getRandomNumericString(6);
-                validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateString(7));
+                validEncryptedPassword = AesEncryptionSteps.encryptData(FakerDataGenerator.generateAlphanumeric(7));
 
                 payload.setRequestID(requestID);
                 payload.setLoginID(user);
