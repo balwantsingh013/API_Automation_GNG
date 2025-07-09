@@ -597,7 +597,7 @@ public final class DBQuery {
                 UPDATE USERS SET user_locked_ind ='N', failed_logins=3 WHERE USER_ID='autotester'
             """;
     public static final String FAILED_LOGIN_COUNTS = """
-            SELECT failed_logins FROM USERS WHERE USER_ID='autotester'
+            SELECT failed_logins FROM USERS WHERE USER_ID=?
             """;
 
     public static final String PASSWORD_EXPIRATION_SYSDATE_PLUS_45 = """
@@ -606,7 +606,7 @@ public final class DBQuery {
         ELSE 'FALSE'
         END AS password_expiry_status
         FROM users
-        WHERE user_id = 'autotester'
+        WHERE user_id = ?
     """;
 
     public static final String ROLLBACK_QUERIES = """
@@ -619,7 +619,7 @@ public final class DBQuery {
             WHERE USER_ID = ?
             """;
     public static final String EXPIRED_PASSWORD_CHECK_QUERY = """
-            SELECT CASE WHEN PASSWORD_EXPIRE < SYSDATE THEN 'Y' ELSE 'N' END AS is_expired FROM USERS WHERE USER_ID = 'autotester'
+            SELECT CASE WHEN PASSWORD_EXPIRE < SYSDATE THEN 'Y' ELSE 'N' END AS is_expired FROM USERS WHERE USER_ID = ?
             """;
 
     public static final String FAILED_LOGIN_COUNTS_FOR_EXPIRED_PASSWORD = """
@@ -636,14 +636,14 @@ public final class DBQuery {
             """;
 
     public static final String CHECK_USER_LOCK_STATUS_QUERY = """
-            SELECT user_locked_ind FROM users WHERE USER_ID = 'autotester'
+            SELECT user_locked_ind FROM users WHERE USER_ID = 'autotester1'
             """;
     public static final String FAILED_LOGIN_COUNTS_FOR_USER_LOCK_STATUS_QUERY = """
             UPDATE users SET user_locked_ind = 'N', failed_logins = 0 WHERE USER_ID = 'autotester'
             """;
 
     public static final String ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY = """
-            UPDATE USERS SET user_locked_ind ='N', failed_logins=? WHERE USER_ID='autotester'
+            UPDATE USERS SET user_locked_ind ='N', failed_logins=? WHERE USER_ID=?
             """;
     public static final String UPDATE_FAILED_LOGIN_QUERY = """
             UPDATE USERS SET user_locked_ind ='N', failed_logins=2 WHERE USER_ID='autotester'
@@ -712,6 +712,7 @@ public final class DBQuery {
                 SELECT USER_ID
                 FROM USERS
                 WHERE FAILED_LOGINS = 3 AND USER_LOCKED_IND = 'N'
+                AND USER_ID NOT LIKE '%,%'
                 FETCH FIRST 1 ROWS ONLY
             """;
 

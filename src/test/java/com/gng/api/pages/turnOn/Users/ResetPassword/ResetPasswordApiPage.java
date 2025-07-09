@@ -66,24 +66,24 @@ public class ResetPasswordApiPage   extends BasePage  {
         testContext.setResponse(response);
     }
 
-    public void validateResetPassword(ResetPasswordApiLabel apiLabel) {
+    public void validateResetPassword(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel testCondition) {
         ResetPasswordRequest payload = helper.preparePayload(apiLabel);
-        helper.changeThePasswordBackToOldPassword(payload);
+        helper.changeThePasswordBackToOldPassword(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
         testContext.setResponse(response);
     }
 
-    public void verifyTheFailedLoginCount(int count){
-        helper.verifyTheNumberOfFailedLogins(count);
+    public void verifyTheFailedLoginCount(int count, ResetPasswordApiLabel testCondition){
+        helper.verifyTheNumberOfFailedLogins(count, testCondition);
     }
 
-    public void verifyPasswordExpirationUpdated() {
-        helper.verifyPasswordExpirationStatus();
+    public void verifyPasswordExpirationUpdated(ResetPasswordApiLabel testCondition) {
+        helper.verifyPasswordExpirationStatus(testCondition);
     }
 
-    public void updateTheFailedLoginCount(int count){
-        helper.updateNumberOfFailedLogins(count);
+    public void updateTheFailedLoginCount(int count, ResetPasswordApiLabel testCondition){
+        helper.updateNumberOfFailedLogins(count, testCondition);
     }
 
     public void updateTheLockedIndicator(String lockedOutIndicator, int count, ResetPasswordApiLabel testCondition){

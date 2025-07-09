@@ -200,23 +200,23 @@ public class DBAction {
         return jdbcTemplate.update(query);
     }
 
-    public int failedLoginsCount() {
+    public int failedLoginsCount(String user) {
         String query = DBQuery.FAILED_LOGIN_COUNTS;
         logQueryInAllure("Failed login counts", query);
-        return jdbcTemplate.queryForObject(query, Integer.class);
+        return jdbcTemplate.queryForObject(query, Integer.class, user);
     }
 
-    public boolean isPasswordExpirationUpdatedToSysdatePlus45() {
+    public boolean isPasswordExpirationUpdatedToSysdatePlus45(String user) {
         String query = DBQuery.PASSWORD_EXPIRATION_SYSDATE_PLUS_45;
         logQueryInAllure("Password expiration status", query);
-        String result = jdbcTemplate.queryForObject(query, String.class);
+        String result = jdbcTemplate.queryForObject(query, String.class, user);
         return "TRUE".equalsIgnoreCase(result);
     }
 
-    public int updateFailedLoginsCount(int count) {
+    public int updateFailedLoginsCount(int count, String user) {
         String query = DBQuery.ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY;
         logQueryInAllure("Failed login counts ", query);
-        return jdbcTemplate.update(query, count);
+        return jdbcTemplate.update(query, count, user);
     }
 
     public int updateUserLockedStatus(String lockedOutIndicato, int count, String loginId) {
@@ -243,10 +243,10 @@ public class DBAction {
         return jdbcTemplate.update(query, user);
     }
 
-    public Map<String, Object> PasswordExpiredCheckQuery() {
+    public Map<String, Object> PasswordExpiredCheckQuery(String user) {
         String query = DBQuery.EXPIRED_PASSWORD_CHECK_QUERY;
         logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, user);
     }
 
     public List<Map<String, Object>> failedLoginCountQuery() {
