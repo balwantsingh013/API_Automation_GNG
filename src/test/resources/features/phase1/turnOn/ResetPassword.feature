@@ -70,7 +70,7 @@ Feature: Verify ResetPassword Api
       | ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC34B | 11117     | New password must be 7 to 10 characters. It must contain a combination of alphabetic and numeric characters |
       | OLD_PASSWORD_NEW_PASSWORD_SAME_TC35                        | 10110     | Invalid Login Credentials                                                                                   |
 
-  @ResetPasswordOldPasswordMismatchWithDB @Phase1 @DBValidation
+  @ResetPasswordOldPasswordMismatchWithDB @Phase1 @DBValidation @NegativeFlow
   Scenario Outline: ResetPassword Api - TC-36-37 - Validate the case where old password doesn't match with LoginID "<oldPassword>"
     When a request is made to validate oldPassword "<oldPassword>" doesn't match with LoginID TC36
     Then verify response code of "ResetPassword" Api is 200
@@ -80,14 +80,14 @@ Feature: Verify ResetPassword Api
       | INCORRECT_PASSWORD_UNBLOCK_USER_TC36 | 2000      | The password doesn't match the Login ID                                |
       | INCORRECT_PASSWORD_BLOCK_USER_TC37   | 2000      | The password doesn't match the Login ID. The Login ID has been locked. |
 
-  @ResetPasswordForExpiredNotExpiredLockedPassword @Phase1
+  @ResetPasswordForExpiredNotExpiredLockedPassword @Phase1 @NegativeFlow
   Scenario: ResetPassword Api - Verify ResetPassword Api with valid_password_TC_38
     Given update the locked indicator to "Y" and failed logins to 4 for "LOCKED_OUT_ACCOUNT_TC38"
     When a request is made to the ResetPassword Api with locked out account details TC38
     And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID"
     Then update the locked indicator to "N" and failed logins to 0 for "LOCKED_OUT_ACCOUNT_TC38"
 
-  @ResetPasswordForExpiredNotExpiredPassword @Phase1
+  @ResetPasswordForExpiredNotExpiredPassword @Phase1 @HappyFlow
   Scenario Outline: ResetPassword Api - Verify ResetPassword Api with <testCondition>
     Given update the failed login count to <countBeforeAPICall> for "<testCondition>"
     When a request is made to the ResetPassword Api with "<testCondition>"
