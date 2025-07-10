@@ -25,7 +25,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        //tags = "@validAGLCAccountNumberRSActiveAccount",
+        //tags = "@HappyFlow",
         plugin = {
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
@@ -45,7 +45,10 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     public void beforeSuite() {
         log.info("*** Test Suite Setup ***");
 
-        // Log parallel execution configuration
+        // ✅ SINGLE METHOD TO HANDLE ALL PARALLEL CONFIGURATION
+        configureCompleteExecutionMode();
+
+        // Log final configuration
         logParallelExecutionConfig();
 
         // Initialize components
@@ -56,6 +59,101 @@ public class TestRunner extends AbstractTestNGCucumberTests {
         ExtentReportManager.initialiseExtentReport();
 
         log.info("*** Test Suite Setup Complete ***");
+    }
+
+    /**
+     * ✅ COMPLETE EXECUTION MODE CONFIGURATION - HANDLES EVERYTHING
+     * This single method manages all parallel/sequential configuration
+     */
+    private void configureCompleteExecutionMode() {
+        // Read runtime properties
+        String parallelMode = System.getProperty("parallel", "none");
+        String threadCount = System.getProperty("threadcount", "1");
+        String dataProviderThreadCount = System.getProperty("dataproviderthreadcount", threadCount);
+        String parallelCount = System.getProperty("parallelcount", threadCount);
+
+        log.info("🔍 Input Configuration:");
+        log.info("   parallel: {}", parallelMode);
+        log.info("   threadcount: {}", threadCount);
+        log.info("   dataproviderthreadcount: {}", dataProviderThreadCount);
+        log.info("   parallelcount: {}", parallelCount);
+
+        // Determine execution mode
+        boolean shouldRunParallel = !"none".equalsIgnoreCase(parallelMode) &&
+                !threadCount.equals("1") &&
+                Integer.parseInt(threadCount) > 1;
+
+        if (shouldRunParallel) {
+            configureParallelExecution(parallelMode, threadCount, dataProviderThreadCount, parallelCount);
+        } else {
+            configureSequentialExecution();
+        }
+    }
+
+    /**
+     * ✅ CONFIGURE PARALLEL EXECUTION - ALL PROPERTIES SET CONSISTENTLY
+     */
+    private void configureParallelExecution(String parallelMode, String threadCount,
+                                            String dataProviderThreadCount, String parallelCount) {
+
+        log.info("🚀 Configuring PARALLEL execution...");
+
+        // Set all TestNG and system properties for parallel execution
+        System.setProperty("parallel", parallelMode);
+        System.setProperty("threadcount", threadCount);
+        System.setProperty("dataproviderthreadcount", dataProviderThreadCount);
+        System.setProperty("parallelcount", parallelCount);
+
+        // TestNG internal properties
+        System.setProperty("testng.parallel", parallelMode);
+        System.setProperty("testng.thread.count", threadCount);
+        System.setProperty("testng.data.provider.thread.count", dataProviderThreadCount);
+        System.setProperty("testng.preserve.order", "false");
+        System.setProperty("testng.use.unlimited.threads", "false");
+
+        // Maven Surefire properties
+        System.setProperty("maven.surefire.parallel", parallelMode);
+        System.setProperty("maven.surefire.threadCount", threadCount);
+        System.setProperty("maven.surefire.dataProviderThreadCount", dataProviderThreadCount);
+
+        // Force TestNG DataProvider to respect parallel settings
+        System.setProperty("testng.dataprovider.parallel", "true");
+
+        log.info("✅ PARALLEL execution configured:");
+        log.info("   Mode: {} | Threads: {} | DataProvider Threads: {}",
+                parallelMode, threadCount, dataProviderThreadCount);
+        log.info("   Max Parallelism: {} × {} = {}",
+                threadCount, parallelCount,
+                Integer.parseInt(threadCount) * Integer.parseInt(parallelCount));
+    }
+
+    /**
+     * ✅ CONFIGURE SEQUENTIAL EXECUTION - FORCE ALL PARALLEL SETTINGS OFF
+     */
+    private void configureSequentialExecution() {
+        log.info("🔄 Configuring SEQUENTIAL execution...");
+
+        // Force all parallel settings to sequential values
+        System.setProperty("parallel", "none");
+        System.setProperty("threadcount", "1");
+        System.setProperty("dataproviderthreadcount", "1");
+        System.setProperty("parallelcount", "1");
+
+        // TestNG internal properties
+        System.setProperty("testng.parallel", "none");
+        System.setProperty("testng.thread.count", "1");
+        System.setProperty("testng.data.provider.thread.count", "1");
+        System.setProperty("testng.preserve.order", "true");
+
+        // Maven Surefire properties
+        System.setProperty("maven.surefire.parallel", "none");
+        System.setProperty("maven.surefire.threadCount", "1");
+        System.setProperty("maven.surefire.dataProviderThreadCount", "1");
+
+        // Force TestNG DataProvider to sequential
+        System.setProperty("testng.dataprovider.parallel", "false");
+
+        log.info("✅ SEQUENTIAL execution configured");
     }
 
     @AfterSuite(alwaysRun = true)
@@ -72,13 +170,13 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     public void beforeMethod(Method method, Object[] testData) {
         setRequestSpec();
 
-        // EXISTING LOGIC PRESERVED - Enhanced scenario name extraction with timeline safety
+        // Extract scenario name safely
         String scenarioName = extractScenarioNameSafely(method, testData);
 
-        // Log thread information for parallel execution monitoring
+        // Log thread information for monitoring
         logThreadInfo(scenarioName);
 
-        // Create test with timeline-safe name
+        // Create test with clean name
         ExtentReportManager.createTest(scenarioName);
     }
 
@@ -90,38 +188,36 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     /**
-     * ENHANCED: Extract scenario name with timeline safety - PRESERVES EXISTING LOGIC
+     * ✅ ENHANCED: Extract scenario name with timeline safety - PRESERVES EXISTING LOGIC
      */
     private String extractScenarioNameSafely(Method method, Object[] testData) {
         String scenarioName = "";
 
-        // EXISTING LOGIC PRESERVED
+        // Extract scenario name from Cucumber PickleWrapper
         if (testData != null && testData.length > 0 && testData[0] instanceof PickleWrapper pickle) {
             scenarioName = pickle.getPickle().getName();
         }
 
-        // ADDED: Timeline safety check - only applied if scenarioName is empty or problematic
+        // Fallback to method name if scenario name is empty
         if (scenarioName == null || scenarioName.trim().isEmpty()) {
-            // Fallback to method name if no scenario name available
             scenarioName = method.getName();
         }
 
-        // ADDED: Clean name to prevent timeline issues (doesn't change valid names)
+        // Clean name for timeline display
         return cleanNameForTimeline(scenarioName);
     }
 
     /**
-     * ADDED: Clean name to prevent timeline display issues - MINIMAL CHANGES
+     * ✅ CLEAN NAME FOR TIMELINE DISPLAY - MINIMAL CHANGES
      */
     private String cleanNameForTimeline(String name) {
         if (name == null || name.trim().isEmpty()) {
             return "API Test Scenario";
         }
 
-        // Only clean if there are actual problems, preserve good names
         String cleanName = name.trim();
 
-        // Remove only problematic characters that cause timeline issues
+        // Remove problematic characters that cause timeline issues
         if (cleanName.contains("offsetWidth") || cleanName.matches(".*[<>\"'&].*")) {
             cleanName = cleanName
                     .replaceAll("offsetWidth", "TestScenario")
@@ -129,7 +225,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
                     .replaceAll("\\s+", " ");
         }
 
-        // Limit length only if it's excessive (over 150 chars)
+        // Limit length if excessive
         if (cleanName.length() > 150) {
             cleanName = cleanName.substring(0, 147) + "...";
         }
@@ -138,33 +234,38 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     /**
-     * EXISTING METHOD PRESERVED - Logs the parallel execution configuration at suite startup
+     * ✅ ENHANCED LOGGING - SHOWS COMPLETE EXECUTION CONFIGURATION
      */
     private void logParallelExecutionConfig() {
         String parallelMode = System.getProperty("parallel", "none");
         String threadCount = System.getProperty("threadcount", "1");
         String parallelCount = System.getProperty("parallelcount", "1");
+        String dataProviderThreadCount = System.getProperty("dataproviderthreadcount", "1");
 
         log.info("═══════════════════════════════════════════════════════════════");
-        log.info("               PARALLEL EXECUTION CONFIGURATION");
+        log.info("               FINAL EXECUTION CONFIGURATION");
         log.info("═══════════════════════════════════════════════════════════════");
         log.info("🔧 Parallel Mode: {}", parallelMode);
         log.info("🧵 Thread Count: {}", threadCount);
         log.info("📊 Parallel Count: {}", parallelCount);
+        log.info("🔄 DataProvider Threads: {}", dataProviderThreadCount);
         log.info("💻 Available Processors: {}", Runtime.getRuntime().availableProcessors());
 
         if ("none".equalsIgnoreCase(parallelMode) || "1".equals(threadCount)) {
             log.info("🔄 Execution Mode: SEQUENTIAL");
+            log.info("📝 All tests will run one after another");
         } else {
             log.info("🚀 Execution Mode: PARALLEL");
             log.info("⚡ Expected Performance Improvement: {}x",
                     Math.min(Integer.parseInt(threadCount), Runtime.getRuntime().availableProcessors()));
+            log.info("🎯 Max Concurrent Tests: {}",
+                    Integer.parseInt(threadCount) * Integer.parseInt(dataProviderThreadCount));
         }
         log.info("═══════════════════════════════════════════════════════════════");
     }
 
     /**
-     * EXISTING METHOD PRESERVED - Logs thread information for each test method execution
+     * ✅ THREAD MONITORING - LOGS THREAD INFORMATION FOR EACH TEST
      */
     private void logThreadInfo(String scenarioName) {
         String threadName = Thread.currentThread().getName();
