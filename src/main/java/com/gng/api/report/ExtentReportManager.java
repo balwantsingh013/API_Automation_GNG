@@ -20,9 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.gng.api.constants.TestConstant.REPORT_PATH;
+import static net.masterthought.cucumber.util.Util.formatDuration;
 
 @Slf4j
 public class ExtentReportManager {
+
+    private static final long suiteStartTime = System.currentTimeMillis();
 
     // Thread-safe ThreadLocal variables for parallel execution
     private static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
@@ -1064,7 +1067,7 @@ public class ExtentReportManager {
             extent.setSystemInfo("⚙️ Config", ApplicationContext.get().getEnvConfigFile());
             extent.setSystemInfo("🌐 Base URI", ApplicationContext.get().getEnvConfig().getBaseUri());
             extent.setSystemInfo("👤 Tester", System.getProperty("user.name"));
-            extent.setSystemInfo("🕒 Execution Start", CommonUtil.getCurrentDateTime());
+            extent.setSystemInfo("🕒 Execution Start", CommonUtil.getCurrentDateTimeFormatted());
 
             // Add parallel execution info with enhanced details
             String parallelMode = System.getProperty("parallel", "none");
@@ -1540,11 +1543,28 @@ public class ExtentReportManager {
         return "unknown-status";
     }
 
+
     public static synchronized void flushReports() {
         log.info("📊 Publishing Professional Extent Reports with Timeline Fix");
+
         addTestStatistics();
+
+        // ✅ Add Total Execution Time
+        long totalExecutionMillis = System.currentTimeMillis() - suiteStartTime;
+        String duration = formatDuration(totalExecutionMillis);
+        extent.setSystemInfo("⏱️ Total Execution Time", duration);
+
         extent.flush();
     }
+
+    public static String formatDuration(long millis) {
+        long seconds = millis / 1000 % 60;
+        long minutes = millis / (1000 * 60) % 60;
+        long hours = millis / (1000 * 60 * 60);
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+
 
     public static void addRequestDetailsToReport(RequestSpecification reqSpec) {
         if (reqSpec != null) {
