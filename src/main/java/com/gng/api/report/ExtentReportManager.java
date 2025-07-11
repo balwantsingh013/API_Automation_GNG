@@ -124,6 +124,23 @@ public class ExtentReportManager {
         line-height: 1.4 !important;
     }
     
+                /* === FORCE ERROR SECTION TEXT TO BE WHITE === */
+                .error-section,
+                .error-section *,
+                .error-section h1,
+                .error-section h2,
+                .error-section h3,
+                .error-section h4,
+                .error-section h5,
+                .error-section h6,
+                .error-section p,
+                .error-section span,
+                .error-section div,
+                .error-section strong {
+                    color: white !important;
+                    text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+                }
+    
     /* Prevent timeline layout issues */
     .timeline-container,
     .timeline-view,
