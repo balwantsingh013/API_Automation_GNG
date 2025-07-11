@@ -41,4 +41,42 @@ public class ResetPasswordApiSteps {
     {
         resetPasswordApiPage.validatePasswordDoesNotMatchWithLoginID(reset_password, ResetPasswordApiLabel.valueOf(oldPassword));
     }
+
+    @When("a request is made to the ResetPassword Api with {string}")
+    public void a_request_is_made_to_reset_password_for_expired_password(String testCondition)
+    {
+        resetPasswordApiPage.validateResetPasswordWithExpiredPassword(reset_password, ResetPasswordApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the ResetPassword Api with locked out account details TC38")
+    public void a_request_is_made_to_reset_password_for_locked_out_account()
+    {
+        resetPasswordApiPage.validateResetPasswordForLockedOutAccount(reset_password);
+    }
+
+    @When("a request is made to the ResetPassword Api to set the old password again for {string}")
+    public void a_request_is_made_to_reset_password_to_set_old_password_again(String testCondition) {
+        resetPasswordApiPage.validateResetPassword(reset_password, ResetPasswordApiLabel.valueOf(testCondition));
+    }
+
+    @When("verify if the failed login count is updated to {int} for {string}")
+    public void verify_the_failed_login_count(int count, String testCondition){
+        resetPasswordApiPage.verifyTheFailedLoginCount(count, ResetPasswordApiLabel.valueOf(testCondition));
+    }
+
+    @When("verify if the password expiration is updated to Sysdate plus 45 days for {string}")
+    public void verify_password_expiration_updated(String testCondition) {
+        resetPasswordApiPage.verifyPasswordExpirationUpdated(ResetPasswordApiLabel.valueOf(testCondition));
+    }
+
+    @When("update the failed login count to {int} for {string}")
+    public void update_the_failed_login_count(int count, String testCondition){
+        resetPasswordApiPage.updateTheFailedLoginCount(count, ResetPasswordApiLabel.valueOf(testCondition));
+    }
+
+    @When("update the locked indicator to {string} and failed logins to {int} for {string}")
+    public void update_the_locked_indicaor(String lockedOutIndicator, int count, String testCondition){
+        resetPasswordApiPage.updateTheLockedIndicator(lockedOutIndicator,count, ResetPasswordApiLabel.valueOf(testCondition));
+    }
+
 }

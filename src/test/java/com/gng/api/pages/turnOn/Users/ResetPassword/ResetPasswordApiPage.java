@@ -50,6 +50,45 @@ public class ResetPasswordApiPage   extends BasePage  {
         testContext.setResponse(response);
     }
 
+    public void validateResetPasswordWithExpiredPassword(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel testCondition) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.resetPasswordForExpiredPassword(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResetPasswordForLockedOutAccount(ResetPasswordApiLabel apiLabel) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.resetPasswordForLockedOutAccount(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateResetPassword(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel testCondition) {
+        ResetPasswordRequest payload = helper.preparePayload(apiLabel);
+        helper.changeThePasswordBackToOldPassword(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, RESET_PASSWORD, 200);
+        testContext.setResponse(response);
+    }
+
+    public void verifyTheFailedLoginCount(int count, ResetPasswordApiLabel testCondition){
+        helper.verifyTheNumberOfFailedLogins(count, testCondition);
+    }
+
+    public void verifyPasswordExpirationUpdated(ResetPasswordApiLabel testCondition) {
+        helper.verifyPasswordExpirationStatus(testCondition);
+    }
+
+    public void updateTheFailedLoginCount(int count, ResetPasswordApiLabel testCondition){
+        helper.updateNumberOfFailedLogins(count, testCondition);
+    }
+
+    public void updateTheLockedIndicator(String lockedOutIndicator, int count, ResetPasswordApiLabel testCondition){
+        helper.updateLockedOutIndicator(lockedOutIndicator, count, testCondition);
+    }
 
     public void validatePasswordDoesNotMatchWithLoginID(ResetPasswordApiLabel apiLabel, ResetPasswordApiLabel oldPassword)
     {

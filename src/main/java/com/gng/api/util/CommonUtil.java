@@ -52,6 +52,12 @@ public class CommonUtil {
         return LocalDateTime.now().format(formatter);
     }
 
+    public static String getCurrentDateTimeFormatted() {
+        // Format: dd-MM-yyyy HH:mm:ss (e.g., 10-07-2025 15:42:10)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        return LocalDateTime.now().format(formatter);
+    }
+
 
     public static String removeFieldFromJson(Object object, String fieldToRemove) {
         try {

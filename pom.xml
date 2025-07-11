@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -16,8 +17,23 @@
         <maven.compiler.target>21</maven.compiler.target>
         <maven-compiler.version>3.11.0</maven-compiler.version>
         <surefire.version>3.5.0</surefire.version>
+
+        <!-- Dynamic Parallel Execution Properties -->
+        <parallel>none</parallel>
+        <parallelcount>1</parallelcount>
+        <threadcount>1</threadcount>
+        <dataproviderthreadcount>1</dataproviderthreadcount>
+        <useUnlimitedThreads>false</useUnlimitedThreads>
+        <perCoreThreadCount>false</perCoreThreadCount>
+        <threadCountSuites>1</threadCountSuites>
+        <threadCountClasses>1</threadCountClasses>
+        <threadCountMethods>1</threadCountMethods>
+
+        <!-- Default surefire properties (keeping existing ones) -->
         <surefire.parallel>methods</surefire.parallel>
         <surefire.threadCount>1</surefire.threadCount>
+
+        <!-- Other existing properties -->
         <maven.cucumber.reporting.version>5.8.2</maven.cucumber.reporting.version>
         <cucumber.version>7.21.1</cucumber.version>
         <testng.version>7.10.2</testng.version>
@@ -47,9 +63,9 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
-
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -60,20 +76,33 @@
                         <suiteXmlFile>testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
                     <testFailureIgnore>true</testFailureIgnore>
+
+                    <!-- Dynamic Parallel Execution Configuration -->
+                    <parallel>${parallel}</parallel>
+                    <threadCount>${threadcount}</threadCount>
+                    <useUnlimitedThreads>${useUnlimitedThreads}</useUnlimitedThreads>
+                    <perCoreThreadCount>${perCoreThreadCount}</perCoreThreadCount>
+                    <threadCountSuites>${threadCountSuites}</threadCountSuites>
+                    <threadCountClasses>${threadCountClasses}</threadCountClasses>
+                    <threadCountMethods>${threadCountMethods}</threadCountMethods>
+
+                    <!-- Data Provider Thread Configuration -->
                     <properties>
                         <property>
                             <name>dataproviderthreadcount</name>
-                            <value>${surefire.threadCount}</value>
+                            <value>${dataproviderthreadcount}</value>
                         </property>
                     </properties>
-                    <parallel>classes</parallel>
-                    <threadCount>${surefire.threadCount}</threadCount>
+
+                    <!-- Allure Configuration -->
                     <systemPropertyVariables>
-                        <allure.results.directory>${project.build.directory}/allure-results
-                        </allure.results.directory>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        <parallel.mode>${parallel}</parallel.mode>
+                        <thread.count>${threadcount}</thread.count>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>net.masterthought</groupId>
                 <artifactId>maven-cucumber-reporting</artifactId>
@@ -99,6 +128,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
@@ -135,6 +165,8 @@
 
         </plugins>
     </build>
+
+    <!-- Rest of dependencies remain the same -->
     <dependencies>
         <dependency>
             <groupId>net.masterthought</groupId>
@@ -227,13 +259,11 @@
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-cucumber7-jvm -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-cucumber7-jvm</artifactId>
             <version>2.29.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
@@ -270,12 +300,10 @@
             <artifactId>xchart</artifactId>
             <version>3.8.0</version>
         </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>5.2.3</version>  <!-- Use the latest version -->
-            </dependency>
-
-
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
     </dependencies>
 </project>

@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,65 @@ public class DBAction {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and GPP plan", query);
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
+    }
+
+    public Map<String, Object> custCodePremCodeNoSSPAccount(String sspIndicator) {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_NO_SSP;
+        logQueryInAllure("Get Customer code, premises code for account without SSP", query);
+        return jdbcTemplate.queryForMap(query, sspIndicator);
+    }
+
+    public Map<String, Object> custCodePremCodeSSPParticipantCodeAccount(String status) {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_SSP_PARTICIPANT_CODE;
+        logQueryInAllure("Get Customer code, premises code for account without SSP", query);
+        return jdbcTemplate.queryForMap(query, status);
+    }
+
+    public Map<String, Object> getCustCodePremCodeNotInSSPParticipantParentTable() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_NOT_IN_SSP_PARTICIPANT_PARENT_TABLE;
+        logQueryInAllure("Get Customer code, premises code for account no in SSP Participant parent table", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> lastNameZipNoSSPAccount(String sspIndicator) {
+        String query = DBQuery.SELECT_LAST_NAME_ZIP_NO_SSP;
+        logQueryInAllure("Get Customer code, premises code for account without SSP", query);
+        return jdbcTemplate.queryForMap(query, sspIndicator);
+    }
+
+    public Map<String, Object> getStreetCityStateZipDetails() {
+        String query = DBQuery.SELECT_CITY_STATE_ZIP;
+        logQueryInAllure("Get address details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getPhoneNumber(String telecode, String status) {
+        String query = DBQuery.SELECT_PHONE_NUMBER;
+        logQueryInAllure("Get phone number", query);
+        return jdbcTemplate.queryForMap(query, telecode, status);
+    }
+
+    public Map<String, Object> getAddressDetails() {
+        String query = DBQuery.SELECT_ADDRESS_DETAILS;
+        logQueryInAllure("Get address details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> searchForCustomerCodeAndPremisesCodeInDatabase(String customerCode, String premisesCode) {
+        String query = DBQuery.GET_CUSTOMER_CODE_AND_PREMISES_CODE;
+        logQueryInAllure("Get Customer code and premises code", query);
+        List<Map<String, Object>> results = jdbcTemplate.queryForList(query, customerCode, premisesCode);
+        if (results.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return results.getFirst();
+    }
+
+    public Long searchForCustomerBusinessNameInDatabase(String customerBusinessName) {
+        String query = DBQuery.GET_RECORDS_MATCHING_CUSTOMER_BUSINESS_NAME;
+        logQueryInAllure("Get Records matching customer business name", query);
+        Long count = jdbcTemplate.queryForObject(query, Long.class, customerBusinessName+"%");
+        return count;
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC217(String pricePlan, String sclsCode) {
@@ -141,10 +201,29 @@ public class DBAction {
         return jdbcTemplate.update(query);
     }
 
-    public List<Map<String, Object>> togetthefailedcountsandvalidateshouldbe4() {
+    public int failedLoginsCount(String user) {
         String query = DBQuery.FAILED_LOGIN_COUNTS;
+        logQueryInAllure("Failed login counts", query);
+        return jdbcTemplate.queryForObject(query, Integer.class, user);
+    }
+
+    public boolean isPasswordExpirationUpdatedToSysdatePlus45(String user) {
+        String query = DBQuery.PASSWORD_EXPIRATION_SYSDATE_PLUS_45;
+        logQueryInAllure("Password expiration status", query);
+        String result = jdbcTemplate.queryForObject(query, String.class, user);
+        return "TRUE".equalsIgnoreCase(result);
+    }
+
+    public int updateFailedLoginsCount(int count, String user) {
+        String query = DBQuery.ROLL_BACK_QUERY_FOR_USER_LOCK_STATUS_QUERY;
         logQueryInAllure("Failed login counts ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.update(query, count, user);
+    }
+
+    public int updateUserLockedStatus(String lockedOutIndicato, int count, String loginId) {
+        String query = DBQuery.UPDATE_USER_LOCK_STATUS_QUERY;
+        logQueryInAllure("Failed login counts ", query);
+        return jdbcTemplate.update(query, lockedOutIndicato, count, loginId);
     }
 
     public void rollBackQuery(String user) {
@@ -165,10 +244,10 @@ public class DBAction {
         return jdbcTemplate.update(query, user);
     }
 
-    public List<Map<String, Object>> PasswordExpiredCheckQuery() {
+    public Map<String, Object> PasswordExpiredCheckQuery(String user) {
         String query = DBQuery.EXPIRED_PASSWORD_CHECK_QUERY;
         logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query, user);
     }
 
     public List<Map<String, Object>> failedLoginCountQuery() {
@@ -189,10 +268,10 @@ public class DBAction {
         return jdbcTemplate.update(query, user);
     }
 
-    public List<Map<String, Object>> checkUserLockStatusQuery() {
+    public Map<String, Object> checkUserLockStatusQuery() {
         String query = DBQuery.CHECK_USER_LOCK_STATUS_QUERY;
-        logQueryInAllure("password doesn't match the login ID", query);
-        return jdbcTemplate.queryForList(query);
+        logQueryInAllure("check lock status of an account", query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public int failedUserLockCountQuery() {
@@ -237,10 +316,10 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public List<Map<String, Object>> accountNumberSearchETypeNoSSPDBTC110Query() {
+    public Map<String, Object> accountNumberSearchETypeNoSSPDBTC110Query(String sspIndicator) {
         String query = DBQuery.ACCOUNT_NUMBER_E_TYPE_NO_SSP_TC110;
-        logQueryInAllure("Last name and First Name ", query);
-        return jdbcTemplate.queryForList(query);
+        logQueryInAllure("customer code and premises code for E type No SSP ", query);
+        return jdbcTemplate.queryForMap(query, sspIndicator);
     }
 
     public List<Map<String, Object>> aglcAccountNumberETypeNoSSPTC114Query() {
@@ -250,10 +329,10 @@ public class DBAction {
     }
 
 
-    public List<Map<String, Object>> customerDataWithETypeTC115Query() {
+    public Map<String, Object> customerDataWithETypeTC115Query() {
         String query = DBQuery.CUSTOMER_DATA_WITH_TYPE_TC115;
         logQueryInAllure("Customer Data Not Found With E type ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
 
@@ -377,16 +456,22 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getCustPremCodeSSPAccountwithETC(String SSpIndicator) {
+    public Map<String, Object> getCustPremCodeSSPAccountwithETC(String SSpIndicator, String customerType) {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITH_ETC;
         logQueryInAllure("Get Active Customer Details", query);
-        return jdbcTemplate.queryForMap(query,SSpIndicator);
+        return jdbcTemplate.queryForMap(query,SSpIndicator, customerType);
     }
 
-    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETC(String SSpIndicator) {
+    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETC() {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC;
         logQueryInAllure("Get Active Customer Details", query);
-        return jdbcTemplate.queryForMap(query,SSpIndicator);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeSSPAccountiWithoutETCTC105B() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC_TC105B;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
     }
 
 
@@ -404,6 +489,18 @@ public class DBAction {
 
     public Map<String, Object> getAccountDetails_ForPastDueBalanceCommercialAccount() {
         String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForPastDueBalanceAndPartialPayment() {
+        String query = DBQuery.PAST_DUE_BALANCE_AND_PARTIAL_PAYMENT;
+        logQueryInAllure("Get CustomerBusinessName", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getAccountDetails_ForPastDueBalanceAndNoPayment() {
+        String query = DBQuery.PAST_DUE_BALANCE_AND_NO_PAYMENT;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }
@@ -427,7 +524,7 @@ public class DBAction {
     }
 
     public Map<String, Object> getCustomerBusinessNameCMActiveNoETC() {
-        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_No_ETC;
+        String query = DBQuery.GET_CUSTOMERBUSINESSNAME_FOR_ACTIVE_CM_NO_ETC;
         logQueryInAllure("Get CustomerBusinessName", query);
         return jdbcTemplate.queryForMap(query);
     }

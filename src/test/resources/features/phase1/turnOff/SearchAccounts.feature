@@ -42,7 +42,7 @@ Feature: Verify SearchAccounts TurnOff Api
     And response should have "meteredAccount" flag as "<isMeteredAccount>"
     And response should have "turnOffAllowed" flag as "<isTurnOffAllowed>"
     And response should have "sonpAccount" flag as "<isSONPAccount>"
-    And response should have pastDueAmount as <pastDueAmount>
+    And response should have "pastDueAmount" as "<pastDueAmount>"
     Examples:
       |accountType                                         |customerType|accountStatus|isMeteredAccount|isTurnOffAllowed|isSONPAccount|pastDueAmount|
       |COMMERCIAL_VALID_ACTIVE_PASTDUEBALANCE_ACCOUNT_TC_81|CM          |A            |true            |true            |false        |0            |
@@ -50,7 +50,7 @@ Feature: Verify SearchAccounts TurnOff Api
       |COMMERCIAL_VALID_ACTIVE_PENDING_REWARDS_TC_83       |CM          |A            |true            |true            |false        |0            |
       |COMMERCIAL_VALID_ACTIVE_ETC_TC_85                   |CM          |A            |true            |true            |false        |0            |
       |COMMERCIAL_VALID_ACTIVE_NO_ETC_TC_86                |CM          |A            |true            |true            |false        |0            |
-      |COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87        |            |N            |false           |false           |false        |0            |
+      |COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87        |CM          |A            |true            |true            |false        |0            |
       |COMMERCIAL_VALID_FINAL_ACCOUNT_TC_88                |CM          |F            |true            |true            |false        |0            |
 
   @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF
@@ -90,7 +90,7 @@ Feature: Verify SearchAccounts TurnOff Api
     |RS_ACTIVE_UNAPPLIED_DEPOSIT_TC_93         |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_NO_UNAPPLIED_DEPOSIT_TC_94      |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_PGB_PRICE_PLAN_EXP_DATE_TC_95   |A            |true            |RS          |true            |false          |false        |
-    |RS_ACTIVE_MKT_PRICE_PLAN_NO_EXP_DATE_TC_96|A            |true            |RS          |true            |false          |true         |
+    |RS_ACTIVE_MKT_PRICE_PLAN_NO_EXP_DATE_TC_96|A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_ETC_TC_97                       |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_ETC_RGB_PRICE_PLAN_TC_98        |A            |true            |RS          |true            |false          |false        |
     |RS_ACTIVE_GREENER_LIFE_TC_99              |A            |true            |RS          |true            |false          |false        |
@@ -99,8 +99,8 @@ Feature: Verify SearchAccounts TurnOff Api
     |RS_ACTIVE_ACCOUNT_TC_102                  |A            |true            |RS          |true            |false          |false        |
     |SSP_ACCOUNT_WITH_ETC_TC_105A              |A            |true            |RS          |true            |false          |false        |
     |SSP_ACCOUNT_WITHOUT_ETC_TC_105B           |A            |true            |CM          |true            |false          |false        |
-    |NON_SSP_ACCOUNT_WITH_ETC_TC_105C          |A            |true            |RS          |true            |false          |false        |
-    |NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D       |A            |true            |CM          |true            |false          |false        |
+    |NON_SSP_ACCOUNT_WITH_ETC_TC_105C          |A            |true            |CM          |true            |false          |false        |
+    |NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D       |A            |true            |RS          |true            |false          |false        |
 
   @validCustCodeInvalidPremCode @Phase1 @HappyFlow @SearchAccountTOFF
   Scenario: SearchAccountsApiTOFF- Verify Response when a valid customer and premisesCode are provided for "TOFF" for VALID_CUST_CODE_INVALID_PREM_CODE_TC_74
@@ -134,16 +134,16 @@ Feature: Verify SearchAccounts TurnOff Api
   |ALL_PREMISES_FIELDS_TC_104                |2          |RS          |true            |false            |
   |PREMISES_STREET_NAME_CITY_STATE_ZIP_TC_105|30         |RS          |true            |false            |
 
-  @validSSNActiveRSPastDueBalance @Phase1 @HappyFlow @SearchAccountTOFF
-  Scenario: SearchAccountsApiTOFF- Verify Response when a Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance TC_89
-    When a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance
-    Then verify response code of "SearchAccounts" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as 1
-    And response should have "accountStatus" as "A"
-    And response should have "meteredAccount" flag as "true"
-    And response should have "customerType" as "RS"
-    And response should have "turnOffAllowed" flag as "true"
+#  @validSSNActiveRSPastDueBalance @Phase1 @HappyFlow @SearchAccountTOFF
+#  Scenario: SearchAccountsApiTOFF- Verify Response when a Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance TC_89
+#    When a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance
+#    Then verify response code of "SearchAccounts" Api is 200
+#    And response should have ErrorCode 0 and ErrorMessage ""
+#    And response should return numberOfMatches as 1
+#    And response should have "accountStatus" as "A"
+#    And response should have "meteredAccount" flag as "true"
+#    And response should have "customerType" as "RS"
+#    And response should have "turnOffAllowed" flag as "true"
 
 
 

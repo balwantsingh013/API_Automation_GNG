@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+import static com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.SaveUnenrollmentApiLabel.NEW_ADDRESS;
+
 @Slf4j
 public class SaveUnenrollmentHelper {
 
@@ -163,36 +165,37 @@ public class SaveUnenrollmentHelper {
         payload.setMarketerReferenceData(marketerReferenceData);
     }
 
-    public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,String forwardingAddressIs, String type){
-        if(forwardingAddressIs.equals("NA")){
+    public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,SaveUnenrollmentApiLabel forwardingAddressIs, SaveUnenrollmentApiLabel type){
+        if(forwardingAddressIs.equals(NEW_ADDRESS)){
             payload.setForwardingAddressIs("NA");
 
-            Map<String, Object> addressCityStateZip = ApplicationContext.get().getDbAction().cityStateZip();
-            String city = addressCityStateZip.get("UCRADDR_CITY").toString();
-            String state = addressCityStateZip.get("UCRADDR_STAT_CODE").toString();
-            String zip= addressCityStateZip.get("UCRADDR_ZIP").toString();
+            Map<String, Object> addressDetails = ApplicationContext.get().getDbAction().getAddressDetails();
+            String city = addressDetails.get("UCRADDR_CITY").toString();
+            String state = addressDetails.get("UCRADDR_STAT_CODE").toString();
+            String zip= addressDetails.get("UCRADDR_ZIP").toString();
 
             payload.setForwardingAddressCity(city);
             payload.setForwardingAddressStateCode(state);
             payload.setForwardingAddressZipCode(zip);
 
             switch(type){
-                case "S":
+                case ADDRESS_TYPE_STREET:
                     payload.setForwardingAddressType("S");
-                    payload.setForwardingAddressStreetNumber("609");
-                    payload.setForwardingAddressStreetName("STOKESWOOD");
-                    payload.setForwardingAddressStreetSuffix("AVE");
-                    payload.setForwardingAddressStreetPostDirection("SE");
+                    payload.setForwardingAddressStreetNumber(addressDetails.get("UCRADDR_STREET_NUMBER").toString());
+                    payload.setForwardingAddressStreetName(addressDetails.get("UCRADDR_STREET_NAME").toString());
+                    payload.setForwardingAddressStreetSuffix(addressDetails.get("UCRADDR_SSFX_CODE").toString());
+                    payload.setForwardingAddressStreetPostDirection(addressDetails.get("UCRADDR_PDIR_CODE_POST").toString());
+                    payload.setForwardingAddressStreetPreDirection(addressDetails.get("UCRADDR_PDIR_CODE_PRE").toString());
                     break;
 
-                case "R":
+                case ADDRESS_TYPE_RURAL:
                     payload.setForwardingAddressType("R");
-                    payload.setForwardingAddressRuralRoute("RR2");
+                    payload.setForwardingAddressRuralRoute(FakerDataGenerator.generateAlphanumeric(3));
                     break;
 
-                case "P":
+                case ADDRESS_TYPE_POBOX:
                     payload.setForwardingAddressType("P");
-                    payload.setForwardingAddressPOBox("2A");
+                    payload.setForwardingAddressPOBox(FakerDataGenerator.generateAlphanumeric(2));
                     break;
 
                 default:
