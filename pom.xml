@@ -22,6 +22,7 @@
         <parallel>none</parallel>
         <parallelcount>1</parallelcount>
         <threadcount>1</threadcount>
+        <dataproviderthreadcount>1</dataproviderthreadcount>
         <useUnlimitedThreads>false</useUnlimitedThreads>
         <perCoreThreadCount>false</perCoreThreadCount>
         <threadCountSuites>1</threadCountSuites>
@@ -89,7 +90,7 @@
                     <properties>
                         <property>
                             <name>dataproviderthreadcount</name>
-                            <value>${parallelcount}</value>
+                            <value>${dataproviderthreadcount}</value>
                         </property>
                     </properties>
 
