@@ -11,18 +11,18 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should return numberOfMatches as 12
     And the response should contain the following plans:
-      | planCode | planDescription  |
-      | MVS      | Variable Select  |
+      | planCode | planDescription                   |
+      | MVS      | Variable Select                   |
       |CSV       |MVS with Price Protection Guarantee|
-      | MI       | Market Intro            |
-      | RGB      | Guaranteed Bill         |
-      | GPP      | 12-Month Fixed          |
-      | 24M      | 24-Month Fixed          |
-      | 18M      | 18-Month Fixed          |
-      | RF6      | 6-Month Fixed           |
-      | TRD      | Volume Discount         |
-      | PGB      | Pre-Pay Guaranteed Bill |
-      | PRP      | Pre-Pay                 |
+      | MI       | Market Intro                      |
+      | RGB      | Guaranteed Bill                   |
+      | GPP      | 12-Month Fixed                    |
+      | 24M      | 24-Month Fixed                    |
+      | 18M      | 18-Month Fixed                    |
+      | RF6      | 6-Month Fixed                     |
+      | TRD      | Volume Discount                   |
+      | PGB      | Pre-Pay Guaranteed Bill           |
+      | PRP      | Pre-Pay                           |
 
   @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44
