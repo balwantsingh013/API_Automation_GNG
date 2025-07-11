@@ -12,7 +12,7 @@ Feature: Verify SaveUnenrollment Api
     Then verify response code of "SaveUnenrollment" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     Examples:
-    |pricePlan|accountType|forwardingAddressIs         |addressType                       |testCondition                                  |setEmail   |etcExists     |
+    |pricePlan|accountType|forwardingAddressIs         |addressType              |testCondition                                  |setEmail   |etcExists     |
     |MVS      |RS         |CURRENT_ADDRESS             |ADDRESS_TYPE_NOT_PRESENT |SEASONAL_OR_HEAT_ONLY_TC207                    |false      |false         |
     |MI       |RS         |NEW_ADDRESS                 |ADDRESS_TYPE_STREET      |MOVING_OUTSIDE_AGLC_TC208                      |true       |false         |
     |MAP      |RS         |NEW_ADDRESS                 |ADDRESS_TYPE_RURAL       |OTHER_MILITARY_TC209                           |true       |false         |
