@@ -71,16 +71,16 @@ public class BaseSteps {
         validateTurnOffReasons(expectedReasons);
     }
 
-
     @And("the response should contain the following reasonForTurnOffAlerts:")
     public void verifyReasonForTurnOffAlerts(DataTable dataTable) {
         List<Map<String, String>> expectedAlerts = dataTable.asMaps(String.class, String.class);
         validateReasonForTurnOffAlerts(expectedAlerts);
     }
 
-    @And("response should have plan with code {string} and description {string}")
-    public void responseShouldHavePlanWithCodeAndDescription(String planCode, String planDescription) {
-        verifyPlanDetails(planCode, planDescription);
+    @And("the response should contain the following plans:")
+    public void verifyPlans(DataTable dataTable) {
+        List<Map<String, String>> expectedPlans = dataTable.asMaps(String.class, String.class);
+        validatePlans(expectedPlans);
     }
 
     @And("response should have role with ID {string} and description {string}")
@@ -99,17 +99,23 @@ public class BaseSteps {
         assertThat("Expected role with ID and description not found", roleFound);
     }
 
-    private void verifyPlanDetails(String expectedPlanCode, String expectedPlanDescription) {
+    private void validatePlans(List<Map<String, String>> expectedPlans) {
         Response response = testContext.getResponse();
-        List<Map<String, String>> plans = response.jsonPath().getList("data.plans");
+        List<Map<String, Object>> actualPlans = response.jsonPath().getList("data.plans");
 
-        boolean planFound = plans.stream()
-                .anyMatch(plan -> expectedPlanCode.equals(plan.get("planCode")) &&
-                        expectedPlanDescription.equals(plan.get("planDescription")));
+        for (Map<String, String> expected : expectedPlans) {
+            String expectedCode = normalize(expected.get("planCode"));
+            String expectedDesc = normalize(expected.get("planDescription"));
 
-        assertThat("Expected plan with code and description not found", planFound);
+            boolean matchFound = actualPlans.stream().anyMatch(plan -> {
+                String actualCode = normalize(plan.get("planCode"));
+                String actualDesc = normalize(plan.get("planDescription"));
+                return expectedCode.equals(actualCode) && expectedDesc.equals(actualDesc);
+            });
+
+            assertThat("Plan not found: code=" + expectedCode + ", description=" + expectedDesc, matchFound);
+        }
     }
-
 
     private void validateReasonForTurnOffAlerts(List<Map<String, String>> expectedAlerts) {
         Response response = testContext.getResponse();

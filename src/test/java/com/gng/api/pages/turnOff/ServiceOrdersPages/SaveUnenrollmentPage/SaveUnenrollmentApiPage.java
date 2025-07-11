@@ -35,7 +35,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateForActiveRAMVS(SaveUnenrollmentApiLabel apiLabel, String pricePlan, String sclsCode, String forwardingAddressIs, String type, SaveUnenrollmentApiLabel testCondition, Boolean setEmail, Boolean etcExists){
+    public void validateForActiveRAMVS(SaveUnenrollmentApiLabel apiLabel, String pricePlan, String sclsCode, SaveUnenrollmentApiLabel forwardingAddressIs, SaveUnenrollmentApiLabel type, SaveUnenrollmentApiLabel testCondition, Boolean setEmail, Boolean etcExists){
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setCustomerCodePremCodeAGLCServiceNo(payload, pricePlan, sclsCode, testCondition);
         helper.setTurnOffReasonAndSubReason(payload, testCondition);
