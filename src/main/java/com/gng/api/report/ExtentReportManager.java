@@ -68,15 +68,15 @@ public class ExtentReportManager {
         spark.config().setEncoding("utf-8");
         spark.config().setTimeStampFormat("MMM dd, yyyy HH:mm:ss");
 
-        // Enhanced CSS for professional appearance with timeline fixes - ONLY TIMELINE FIXES ADDED
-        spark.config().setCss(getProfessionalCSSWithTimelineFix());
+        // Enhanced CSS for professional appearance with timeline fixes and updated column styling
+        spark.config().setCss(getProfessionalCSSWithUpdatedColumns());
         spark.config().setJs(getTimelineFixJavaScript());
 
         extent.attachReporter(spark);
         setSystemInfo();
     }
 
-    private static String getProfessionalCSSWithTimelineFix() {
+    private static String getProfessionalCSSWithUpdatedColumns() {
         return """
     /* === CORE STYLES === */
     body { 
@@ -237,7 +237,141 @@ public class ExtentReportManager {
         text-align: center !important;
     }
     
-    /* === ENHANCED TIMESTAMP FORMATTING === */
+    /* === ENHANCED TEST DETAILS VISIBILITY - UPDATED COLUMN STYLING === */
+    /* Better column separation and visibility for STATUS, TIMESTAMP, DETAILS */
+    .test-details-container,
+    .test-info-container,
+    .test-execution-details {
+        display: grid !important;
+        grid-template-columns: 130px 220px 1fr !important; /* Increased column widths */
+        gap: 25px !important; /* Increased gap */
+        padding: 18px !important; /* Increased padding */
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0) !important;
+        border-radius: 14px !important; /* Increased radius */
+        margin: 12px 0 !important; /* Increased margin */
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08) !important; /* Enhanced shadow */
+    }
+    
+    /* FIXED: Column headers with light, subtle backgrounds */
+    .status-column, .timestamp-column, .details-column,
+    .test-status, .test-timestamp, .test-details {
+        padding: 10px 15px !important; /* Increased padding */
+        border-radius: 10px !important; /* Increased radius */
+        font-weight: 700 !important; /* Made bolder */
+        font-size: 10px !important; /* Increased from 9px */
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* STATUS column styling - Light blue background */
+    .status-column, .test-status {
+        background: rgba(59, 130, 246, 0.1) !important; /* Very light blue */
+        color: #1e40af !important; /* Dark blue text */
+        text-align: center !important;
+        border: 1px solid rgba(59, 130, 246, 0.2) !important;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.6px !important;
+        font-weight: 800 !important;
+    }
+    
+    /* TIMESTAMP column styling - Light green background (FIXED: removed heavy background) */
+    .timestamp-column, .test-timestamp {
+        background: rgba(5, 150, 105, 0.1) !important; /* Very light green */
+        color: #059669 !important; /* Dark green text */
+        text-align: center !important;
+        border: 1px solid rgba(5, 150, 105, 0.2) !important;
+        box-shadow: 0 2px 4px rgba(5, 150, 105, 0.1) !important;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+        font-size: 10px !important; /* Increased size */
+        font-weight: 700 !important;
+        letter-spacing: 0.6px !important;
+    }
+    
+    /* DETAILS column styling - Light purple background */
+    .details-column, .test-details {
+        background: rgba(124, 58, 237, 0.1) !important; /* Very light purple */
+        color: #7c3aed !important; /* Dark purple text */
+        border: 1px solid rgba(124, 58, 237, 0.2) !important;
+        box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1) !important;
+        font-weight: 600 !important;
+        font-size: 10px !important;
+    }
+    
+    /* === TABLE HEADER STYLING === */
+    /* Specific styling for table headers in the three columns */
+    th.status-col, .status-col {
+        background: rgba(59, 130, 246, 0.15) !important; /* Slightly more visible than body */
+        color: #1e40af !important;
+        font-weight: 800 !important;
+        text-align: center !important;
+        padding: 12px 8px !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.8px !important;
+        font-size: 9px !important;
+    }
+    
+    th.timestamp-col, .timestamp-col {
+        background: rgba(5, 150, 105, 0.15) !important; /* Slightly more visible than body */
+        color: #059669 !important;
+        font-weight: 800 !important;
+        text-align: center !important;
+        padding: 12px 8px !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(5, 150, 105, 0.3) !important;
+        font-family: 'Consolas', 'Monaco', monospace !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.8px !important;
+        font-size: 9px !important;
+    }
+    
+    th.details-col, .details-col {
+        background: rgba(124, 58, 237, 0.15) !important; /* Slightly more visible than body */
+        color: #7c3aed !important;
+        font-weight: 800 !important;
+        text-align: center !important;
+        padding: 12px 8px !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(124, 58, 237, 0.3) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.8px !important;
+        font-size: 9px !important;
+    }
+    
+    /* === TABLE BODY CELL STYLING === */
+    /* Light backgrounds for table body cells */
+    td.status-col, tbody .status-col {
+        background: rgba(59, 130, 246, 0.05) !important; /* Very subtle blue */
+        color: #1e40af !important;
+        text-align: center !important;
+        padding: 10px 8px !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+    }
+    
+    td.timestamp-col, tbody .timestamp-col {
+        background: rgba(5, 150, 105, 0.05) !important; /* Very subtle green */
+        color: #059669 !important;
+        text-align: center !important;
+        padding: 10px 8px !important;
+        border-radius: 6px !important;
+        font-family: 'Consolas', 'Monaco', monospace !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    td.details-col, tbody .details-col {
+        background: rgba(124, 58, 237, 0.05) !important; /* Very subtle purple */
+        color: #7c3aed !important;
+        padding: 10px 8px !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+    }
+    
+    /* === ENHANCED TIMESTAMP FORMATTING - FIXED === */
     /* Universal timestamp styling for proper DD-MM-YYYY HH:MM:SS format */
     .execution-timestamp,
     .test-timestamp,
@@ -256,62 +390,31 @@ public class ExtentReportManager {
         font-size: 11px !important; /* Increased from 9px for better readability */
         font-weight: 700 !important; /* Made bolder */
         letter-spacing: 0.8px !important; /* Increased spacing */
-        background: linear-gradient(135deg, #1f2937, #374151) !important;
-        color: #f1f5f9 !important; /* Lighter color for better contrast */
+        background: rgba(5, 150, 105, 0.1) !important; /* Light green background instead of heavy gradient */
+        color: #059669 !important; /* Dark green text for better contrast */
         padding: 6px 12px !important; /* Increased padding */
         border-radius: 10px !important; /* Increased border radius */
         display: inline-block !important;
-        border: 1px solid #4b5563 !important;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important; /* Enhanced shadow */
-        text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important; /* Stronger text shadow */
+        border: 1px solid rgba(5, 150, 105, 0.2) !important;
+        box-shadow: 0 2px 4px rgba(5, 150, 105, 0.1) !important; /* Light shadow */
+        text-shadow: none !important; /* Removed text shadow for cleaner look */
         white-space: nowrap !important;
         min-width: 140px !important; /* Minimum width for proper display */
         text-align: center !important;
     }
     
-    /* Special timestamp styling for main header */
+    /* FIXED: Special timestamp styling for main header - lighter approach */
     .enhanced-stats-header .execution-timestamp {
-        background: rgba(255, 255, 255, 0.2) !important; /* More visible background */
+        background: rgba(255, 255, 255, 0.15) !important; /* Light background instead of heavy styling */
         color: white !important;
         font-size: 12px !important; /* Larger for main header */
-        font-weight: 800 !important; /* Extra bold */
+        font-weight: 700 !important; /* Reduced from 800 */
         padding: 8px 16px !important; /* More padding */
-        border: 2px solid rgba(255, 255, 255, 0.3) !important; /* Thicker border */
-        backdrop-filter: blur(15px) !important; /* More blur */
-        letter-spacing: 1px !important; /* More spacing */
-        text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important; /* Stronger shadow */
-        border-radius: 12px !important;
-    }
-    
-    /* Column header timestamp styling */
-    .timestamp-column, .test-timestamp {
-        background: linear-gradient(135deg, #059669, #10b981) !important;
-        color: white !important;
-        text-align: center !important;
-        box-shadow: 0 3px 8px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
-        font-size: 10px !important; /* Increased size */
-        font-weight: 700 !important;
-        letter-spacing: 0.6px !important;
-        padding: 8px 12px !important; /* Increased padding */
-        border-radius: 8px !important;
-    }
-    
-    /* Test execution time badges with proper formatting */
-    .test-execution-time,
-    .execution-duration,
-    .test-duration {
-        background: linear-gradient(135deg, #dc2626, #ef4444) !important;
-        color: white !important;
-        padding: 5px 10px !important; /* Increased padding */
-        border-radius: 14px !important; /* Increased radius */
-        font-size: 9px !important; /* Increased from 8px */
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.4px !important;
-        box-shadow: 0 3px 8px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
-        font-family: 'Consolas', 'Monaco', monospace !important;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Thinner border */
+        backdrop-filter: blur(10px) !important; /* Reduced blur */
+        letter-spacing: 0.8px !important; /* Reduced spacing */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important; /* Lighter shadow */
+        border-radius: 10px !important; /* Reduced radius */
     }
     
     /* === TEST EXECUTION STEPS HEADER REDUCTION === */
@@ -341,53 +444,6 @@ public class ExtentReportManager {
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
-    }
-    
-    /* === ENHANCED TEST DETAILS VISIBILITY === */
-    /* Better column separation and visibility for STATUS, TIMESTAMP, DETAILS */
-    .test-details-container,
-    .test-info-container,
-    .test-execution-details {
-        display: grid !important;
-        grid-template-columns: 130px 220px 1fr !important; /* Increased column widths */
-        gap: 25px !important; /* Increased gap */
-        padding: 18px !important; /* Increased padding */
-        background: linear-gradient(135deg, #f8fafc, #e2e8f0) !important;
-        border-radius: 14px !important; /* Increased radius */
-        margin: 12px 0 !important; /* Increased margin */
-        border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.08) !important; /* Enhanced shadow */
-    }
-    
-    /* Column headers with better visibility */
-    .status-column, .timestamp-column, .details-column,
-    .test-status, .test-timestamp, .test-details {
-        padding: 10px 15px !important; /* Increased padding */
-        border-radius: 10px !important; /* Increased radius */
-        font-weight: 700 !important; /* Made bolder */
-        font-size: 10px !important; /* Increased from 9px */
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-    }
-    
-    /* STATUS column styling */
-    .status-column, .test-status {
-        background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
-        color: white !important;
-        text-align: center !important;
-        box-shadow: 0 3px 8px rgba(30, 64, 175, 0.4) !important; /* Enhanced shadow */
-        text-transform: uppercase !important;
-        letter-spacing: 0.6px !important;
-        font-weight: 800 !important;
-    }
-    
-    /* DETAILS column styling */
-    .details-column, .test-details {
-        background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
-        color: white !important;
-        box-shadow: 0 3px 8px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
-        font-weight: 600 !important;
-        font-size: 10px !important;
     }
     
     /* === COMPONENT STYLES === */
@@ -666,453 +722,471 @@ public class ExtentReportManager {
     
     /* Status-specific progress colors */
     .success-status { background: linear-gradient(90deg, #059669, #10b981) !important; }
-                .redirect-status { background: linear-gradient(90deg, #1e40af, #3b82f6) !important; }
-                   .client-error-status { background: linear-gradient(90deg, #dc2626, #ef4444) !important; }
-                   .server-error-status { background: linear-gradient(90deg, #374151, #4b5563) !important; }
-                   .unknown-status { background: linear-gradient(90deg, #6b7280, #9ca3af) !important; }
-                
-                   /* === SUCCESS RATE SECTION === */
-                   .success-rate-section {
-                       background: linear-gradient(135deg, #1e40af, #3b82f6, #60a5fa) !important;
-                       color: white !important;
-                       padding: 15px !important; /* Increased from 12px */
-                       border-radius: 12px !important; /* Increased from 10px */
-                       text-align: center !important;
-                       margin-top: 18px !important; /* Increased from 15px */
-                       box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   .success-rate-label {
-                       font: 700 12px 'Segoe UI', sans-serif !important; /* Increased from 10px */
-                       margin-bottom: 10px !important; /* Increased from 8px */
-                       text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
-                   }
-                
-                   .success-rate-value {
-                       font: 900 24px 'Segoe UI', sans-serif !important; /* Increased from 20px */
-                       padding: 10px 20px !important; /* Increased padding */
-                       border-radius: 24px !important; /* Increased from 20px */
-                       display: inline-block !important;
-                       margin-top: 8px !important; /* Increased from 6px */
-                       text-shadow: 0 3px 6px rgba(0,0,0,0.4) !important;
-                       border: 2px solid rgba(255,255,255,0.3) !important;
-                   }
-                
-                   .success-rate-value.excellent { background: linear-gradient(135deg, #059669, #10b981) !important; box-shadow: 0 6px 16px rgba(5, 150, 105, 0.5) !important; }
-                   .success-rate-value.good { background: linear-gradient(135deg, #d97706, #f59e0b) !important; box-shadow: 0 6px 16px rgba(217, 119, 6, 0.5) !important; }
-                   .success-rate-value.needs-improvement { background: linear-gradient(135deg, #dc2626, #ef4444) !important; box-shadow: 0 6px 16px rgba(220, 38, 38, 0.5) !important; }
-                
-                   /* === PERFORMANCE METRICS === */
-                   .perf-value {
-                       font: 800 10px 'Segoe UI', sans-serif !important; /* Increased from 9px */
-                       padding: 7px 14px !important; /* Increased padding */
-                       border-radius: 14px !important; /* Increased from 12px */
-                       color: white !important;
-                       text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
-                       box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important; /* Enhanced shadow */
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   .execution-mode { background: linear-gradient(135deg, #1e40af, #3b82f6) !important; }
-                   .thread-count { background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important; }
-                   .parallel-count { background: linear-gradient(135deg, #059669, #10b981) !important; }
-                   .core-count { background: linear-gradient(135deg, #0891b2, #06b6d4) !important; }
-                
-                   /* === STATUS CODE STYLING === */
-                   :is(.status-200, .status-201, .status-202, .status-204) {\s
-                       background: linear-gradient(135deg, #059669, #10b981) !important;\s
-                       color: white !important;\s
-                       padding: 4px 10px !important; /* Increased padding */
-                       border-radius: 14px !important; /* Increased from 12px */
-                       font-weight: 700 !important;
-                       font-size: 9px !important; /* Increased from 8px */
-                       box-shadow: 0 3px 10px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   :is(.status-400, .status-401, .status-403, .status-404, .status-422) {\s
-                       background: linear-gradient(135deg, #dc2626, #ef4444) !important;\s
-                       color: white !important;\s
-                       padding: 4px 10px !important; /* Increased padding */
-                       border-radius: 14px !important; /* Increased from 12px */
-                       font-weight: 700 !important;
-                       font-size: 9px !important; /* Increased from 8px */
-                       box-shadow: 0 3px 10px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   :is(.status-500, .status-502, .status-503) {\s
-                       background: linear-gradient(135deg, #374151, #4b5563) !important;\s
-                       color: white !important;\s
-                       padding: 4px 10px !important; /* Increased padding */
-                       border-radius: 14px !important; /* Increased from 12px */
-                       font-weight: 700 !important;
-                       font-size: 9px !important; /* Increased from 8px */
-                       box-shadow: 0 3px 10px rgba(55, 65, 81, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   /* === TEST STATUS STYLING === */
-                   .test-node .status-pass {\s
-                       background: linear-gradient(135deg, #059669, #10b981) !important;
-                       color: white !important;
-                       padding: 5px 12px !important; /* Increased padding */
-                       border-radius: 18px !important; /* Increased from 16px */
-                       font-weight: 700 !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                       box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   .test-node .status-fail {\s
-                       background: linear-gradient(135deg, #dc2626, #ef4444) !important;
-                       color: white !important;
-                       padding: 5px 12px !important; /* Increased padding */
-                       border-radius: 18px !important; /* Increased from 16px */
-                       font-weight: 700 !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                       box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   .test-node .status-skip {\s
-                       background: linear-gradient(135deg, #d97706, #f59e0b) !important;
-                       color: white !important;
-                       padding: 5px 12px !important; /* Increased padding */
-                       border-radius: 18px !important; /* Increased from 16px */
-                       font-weight: 700 !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                       box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   /* === SPECIALIZED SECTIONS === */
-                   .response-time-badge {
-                       background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
-                       color: white !important;
-                       padding: 5px 12px !important; /* Increased padding */
-                       border-radius: 18px !important; /* Increased from 16px */
-                       font-weight: 700 !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                       display: inline-block !important;
-                       margin: 5px 0 !important; /* Increased from 4px */
-                       box-shadow: 0 3px 12px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   :is(.api-request-section, .api-response-section) {
-                       color: white !important;
-                       padding: 15px !important; /* Increased from 12px */
-                       border-radius: 12px !important; /* Increased from 10px */
-                       margin: 12px 0 !important; /* Increased from 10px */
-                       border: 2px solid rgba(255,255,255,0.2) !important;
-                   }
-                
-                   .api-request-section {\s
-                       background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
-                       box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
-                   }
-                
-                   .api-response-section {\s
-                       background: linear-gradient(135deg, #059669, #10b981) !important;
-                       box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
-                   }
-                
-                   :is(.api-request-section, .api-response-section) h4 {
-                       color: white !important;
-                       margin-bottom: 12px !important; /* Increased from 10px */
-                       font: 700 11px 'Segoe UI', sans-serif !important; /* Increased from 10px */
-                       text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
-                   }
-                
-                   :is(.request-detail-item, .response-detail-item) {
-                       background: rgba(255, 255, 255, 0.15) !important;
-                       padding: 12px !important; /* Increased from 10px */
-                       border-radius: 10px !important; /* Increased from 8px */
-                       margin: 10px 0 !important; /* Increased from 8px */
-                       border-left: 3px solid rgba(255,255,255,0.4) !important; /* Increased from 2px */
-                       backdrop-filter: blur(10px) !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* === LOG STYLING === */
-                   .info-log {
-                       background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
-                       color: white !important;
-                       padding: 10px 18px !important; /* Increased padding */
-                       border-radius: 22px !important; /* Increased from 20px */
-                       margin: 10px 0 !important; /* Increased from 8px */
-                       border-left: 3px solid #60a5fa !important; /* Increased from 2px */
-                       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
-                       font-weight: 600 !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   .warning-log {
-                       background: linear-gradient(135deg, #d97706, #f59e0b) !important;
-                       color: white !important;
-                       padding: 10px 18px !important; /* Increased padding */
-                       border-radius: 22px !important; /* Increased from 20px */
-                       margin: 10px 0 !important; /* Increased from 8px */
-                       border-left: 3px solid #fbbf24 !important; /* Increased from 2px */
-                       box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
-                       font-weight: 600 !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   .error-section {
-                       background: linear-gradient(135deg, #dc2626, #ef4444) !important;
-                       color: white !important;
-                       padding: 15px !important; /* Increased from 12px */
-                       border-radius: 12px !important; /* Increased from 10px */
-                       margin: 12px 0 !important; /* Increased from 10px */
-                       border-left: 4px solid #f87171 !important; /* Increased from 3px */
-                       box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   .db-log {
-                       background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
-                       color: white !important;
-                       padding: 10px 18px !important; /* Increased padding */
-                       border-radius: 22px !important; /* Increased from 20px */
-                       margin: 10px 0 !important; /* Increased from 8px */
-                       border-left: 3px solid #a855f7 !important; /* Increased from 2px */
-                       box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
-                       text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
-                       font-weight: 600 !important;
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* === UTILITY CLASSES === */
-                   .code-block {
-                       background: #1f2937 !important;
-                       color: #f9fafb !important;
-                       padding: 15px !important; /* Increased from 12px */
-                       border-radius: 10px !important; /* Increased from 8px */
-                       margin: 10px 0 !important; /* Increased from 8px */
-                       overflow-x: auto !important;
-                       box-shadow: inset 0 2px 6px rgba(0,0,0,0.3) !important; /* Enhanced shadow */
-                       border: 1px solid #374151 !important;
-                       font: 9px/1.5 'Fira Code', 'Monaco', 'Consolas', monospace !important; /* Increased from 8px */
-                   }
-                
-                   .card-panel {\s
-                       box-shadow: 0 8px 30px rgba(0,0,0,0.08) !important; /* Enhanced shadow */
-                       border-radius: 12px !important; /* Increased from 10px */
-                       border: 1px solid #e5e7eb !important;
-                       margin-bottom: 18px !important; /* Increased from 15px */
-                       background: white !important;
-                       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                   }
-                
-                   .card-panel:hover {
-                       transform: translateY(-3px) !important; /* Increased from -2px */
-                       box-shadow: 0 12px 35px rgba(0,0,0,0.12) !important; /* Enhanced shadow */
-                       border-color: #3b82f6 !important;
-                   }
-                
-                   .collapsible-content {
-                       transition: all 0.3s ease !important;
-                       border-radius: 6px !important; /* Increased from 5px */
-                       padding: 10px !important; /* Increased from 8px */
-                       background: rgba(255, 255, 255, 0.05) !important;
-                       margin-top: 8px !important; /* Increased from 6px */
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* === GENERAL TEXT SIZE IMPROVEMENTS === */
-                   /* Apply better readable font sizes to common text elements */
-                   p, span, div, td, th, li, ul, ol {
-                       font-size: 10px !important; /* Increased from 9px for better readability */
-                   }
-                
-                   h1 { font-size: 18px !important; } /* Increased from 16px */
-                   h2 { font-size: 16px !important; } /* Increased from 14px */
-                   h3 { font-size: 14px !important; } /* Increased from 12px */
-                   h4 { font-size: 12px !important; } /* Increased from 10px */
-                   h5 { font-size: 10px !important; } /* Increased from 9px */
-                   h6 { font-size: 9px !important; } /* Increased from 8px */
-                
-                   /* Test details and step information */
-                   .test-detail, .step-detail, .scenario-detail {
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* Navigation and menu items */
-                   .nav-item, .menu-item, .nav-link {
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* Table content */
-                   table, table td, table th {
-                       font-size: 9px !important; /* Increased from 8px */
-                   }
-                
-                   /* Button text */
-                   button, .btn, .button {
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* Form elements */
-                   input, select, textarea, label {
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* Test node content */
-                   .test-node, .category-node, .feature-node {
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* Timeline content */
-                   .timeline .node, .timeline .category {
-                       font-size: 9px !important; /* Increased from 8px */
-                   }
-                
-                   /* System info */
-                   .system-info, .environment-info {
-                       font-size: 9px !important; /* Increased from 8px */
-                   }
-                
-                   /* Dashboard content */
-                   .dashboard-item, .widget-content {
-                       font-size: 10px !important; /* Increased from 9px */
-                   }
-                
-                   /* Status indicators */
-                   .status-indicator, .badge, .label {
-                       font-size: 9px !important; /* Increased from 8px */
-                   }
-                
-                   /* === RESPONSIVE DESIGN === */
-                   @media (max-width: 768px) {
-                       .stats-dashboard {
-                           grid-template-columns: 1fr !important;
-                           gap: 12px !important; /* Increased from 10px */
-                       }
-                
-                       .test-details-container {
-                           grid-template-columns: 110px 170px 1fr !important; /* Adjusted for mobile */
-                           gap: 12px !important; /* Increased gap */
-                           padding: 12px !important; /* Increased padding */
-                       }
-                
-                       :is(.stat-row, .thread-stat-row, .status-code-row, .performance-row) {
-                           flex-direction: column !important;
-                           text-align: center !important;
-                           gap: 10px !important; /* Increased from 8px */
-                       }
-                
-                       .stat-value-container {
-                           justify-content: center !important;
-                           margin-top: 10px !important; /* Increased from 8px */
-                       }
-                
-                       :is(.thread-progress-bar, .status-progress-bar) {
-                           margin: 10px 0 !important; /* Increased from 8px */
-                           width: 100% !important;
-                       }
-                
-                       :is(.api-request-section, .api-response-section) {
-                           margin: 10px 3px !important; /* Increased margins */
-                           padding: 12px !important; /* Increased from 10px */
-                       }
-                
-                       .stats-title { font-size: 15px !important; } /* Increased from 13px */
-                       .card-title { font-size: 11px !important; } /* Increased from 10px */
-                
-                       /* Mobile text adjustments */
-                       body { font-size: 9px !important; } /* Increased from 8px */
-                       p, span, div, td, th, li, ul, ol { font-size: 9px !important; } /* Increased from 8px */
-                
-                       /* Mobile specific improvements */
-                       .thread-info { font-size: 8px !important; } /* Increased from 7px */
-                       .response-time-badge { font-size: 8px !important; } /* Increased from 7px */
-                       .perf-value { font-size: 8px !important; } /* Increased from 7px */
-                       .code-block { font-size: 8px !important; } /* Increased from 7px */
-                
-                       /* Mobile header improvements */
-                       .enhanced-stats-header { padding: 12px !important; } /* Increased from 10px */
-                       .card-header { padding: 10px !important; } /* Increased from 8px */
-                       .card-body { padding: 12px !important; } /* Increased from 10px */
-                
-                       /* Mobile test names - better readable */
-                       .test-name, .scenario-name, .feature-name,
-                       .test-node .node-name, .test-node .test-name {
-                           font-size: 8px !important; /* Increased from 7px */
-                           max-width: 280px !important; /* Increased from 250px */
-                       }
-                
-                       /* Mobile timestamp styling - better formatting */
-                       .test-timestamp-badge, .execution-timestamp {
-                           font-size: 8px !important; /* Increased from 7px */
-                           padding: 3px 8px !important; /* Increased padding */
-                           letter-spacing: 0.4px !important;
-                       }
-                   }
-                
-                   /* === ANIMATIONS === */
-                   @keyframes countUp {
-                       from { opacity: 0; transform: translateY(12px); } /* Increased from 10px */
-                       to { opacity: 1; transform: translateY(0); }
-                   }
-                
-                   @keyframes progressFill {
-                       from { width: 0%; }
-                       to { width: var(--target-width); }
-                   }
-                
-                   @keyframes slideIn {
-                       from { opacity: 0; transform: translateY(-8px); } /* Increased from -6px */
-                       to { opacity: 1; transform: translateY(0); }
-                   }
-                
-                   @keyframes fadeInUp {
-                       from { opacity: 0; transform: translateY(25px); } /* Increased from 20px */
-                       to { opacity: 1; transform: translateY(0); }
-                   }
-                
-                   @keyframes shimmer {
-                       0% { left: -100%; }
-                       100% { left: 100%; }
-                   }
-                
-                   @keyframes pulse {
-                       0% { opacity: 1; transform: scale(1); }
-                       50% { opacity: 0.9; transform: scale(1.02); } /* Increased from 1.01 */
-                       100% { opacity: 1; transform: scale(1); }
-                   }
-                
-                   /* Apply animations */
-                   .stat-value { animation: countUp 0.8s ease-out !important; }
-                   .progress-fill { animation: progressFill 1.2s ease-out !important; }
-                   .stats-card { animation: fadeInUp 0.6s ease-out !important; }
-                
-                   /* Shimmer effect for progress bars */
-                   :is(.progress-fill, .thread-progress-fill, .status-progress-fill)::after {
-                       content: '' !important;
-                       position: absolute !important;
-                       top: 0 !important;
-                       left: -100% !important;
-                       width: 100% !important;
-                       height: 100% !important;
-                       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent) !important;
-                       animation: shimmer 2.5s infinite !important;
-                   }
-                   """;
-                }
-
+    .redirect-status { background: linear-gradient(90deg, #1e40af, #3b82f6) !important; }
+    .client-error-status { background: linear-gradient(90deg, #dc2626, #ef4444) !important; }
+    .server-error-status { background: linear-gradient(90deg, #374151, #4b5563) !important; }
+    .unknown-status { background: linear-gradient(90deg, #6b7280, #9ca3af) !important; }
+    
+    /* === SUCCESS RATE SECTION === */
+    .success-rate-section {
+        background: linear-gradient(135deg, #1e40af, #3b82f6, #60a5fa) !important;
+        color: white !important;
+        padding: 15px !important; /* Increased from 12px */
+        border-radius: 12px !important; /* Increased from 10px */
+        text-align: center !important;
+        margin-top: 18px !important; /* Increased from 15px */
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    .success-rate-label {
+        font: 700 12px 'Segoe UI', sans-serif !important; /* Increased from 10px */
+        margin-bottom: 10px !important; /* Increased from 8px */
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+    }
+    
+    .success-rate-value {
+        font: 900 24px 'Segoe UI', sans-serif !important; /* Increased from 20px */
+        padding: 10px 20px !important; /* Increased padding */
+        border-radius: 24px !important; /* Increased from 20px */
+        display: inline-block !important;
+        margin-top: 8px !important; /* Increased from 6px */
+        text-shadow: 0 3px 6px rgba(0,0,0,0.4) !important;
+        border: 2px solid rgba(255,255,255,0.3) !important;
+    }
+    
+    .success-rate-value.excellent { background: linear-gradient(135deg, #059669, #10b981) !important; box-shadow: 0 6px 16px rgba(5, 150, 105, 0.5) !important; }
+    .success-rate-value.good { background: linear-gradient(135deg, #d97706, #f59e0b) !important; box-shadow: 0 6px 16px rgba(217, 119, 6, 0.5) !important; }
+    .success-rate-value.needs-improvement { background: linear-gradient(135deg, #dc2626, #ef4444) !important; box-shadow: 0 6px 16px rgba(220, 38, 38, 0.5) !important; }
+    
+    /* === PERFORMANCE METRICS === */
+    .perf-value {
+        font: 800 10px 'Segoe UI', sans-serif !important; /* Increased from 9px */
+        padding: 7px 14px !important; /* Increased padding */
+        border-radius: 14px !important; /* Increased from 12px */
+        color: white !important;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important; /* Enhanced shadow */
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    .execution-mode { background: linear-gradient(135deg, #1e40af, #3b82f6) !important; }
+    .thread-count { background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important; }
+    .parallel-count { background: linear-gradient(135deg, #059669, #10b981) !important; }
+    .core-count { background: linear-gradient(135deg, #0891b2, #06b6d4) !important; }
+    
+    /* === STATUS CODE STYLING === */
+    :is(.status-200, .status-201, .status-202, .status-204) { 
+        background: linear-gradient(135deg, #059669, #10b981) !important; 
+        color: white !important; 
+        padding: 4px 10px !important; /* Increased padding */
+        border-radius: 14px !important; /* Increased from 12px */
+        font-weight: 700 !important;
+        font-size: 9px !important; /* Increased from 8px */
+        box-shadow: 0 3px 10px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    :is(.status-400, .status-401, .status-403, .status-404, .status-422) { 
+        background: linear-gradient(135deg, #dc2626, #ef4444) !important; 
+        color: white !important; 
+        padding: 4px 10px !important; /* Increased padding */
+        border-radius: 14px !important; /* Increased from 12px */
+        font-weight: 700 !important;
+        font-size: 9px !important; /* Increased from 8px */
+        box-shadow: 0 3px 10px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    :is(.status-500, .status-502, .status-503) { 
+        background: linear-gradient(135deg, #374151, #4b5563) !important; 
+        color: white !important; 
+        padding: 4px 10px !important; /* Increased padding */
+        border-radius: 14px !important; /* Increased from 12px */
+        font-weight: 700 !important;
+        font-size: 9px !important; /* Increased from 8px */
+        box-shadow: 0 3px 10px rgba(55, 65, 81, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* === TEST STATUS STYLING === */
+    .test-node .status-pass { 
+        background: linear-gradient(135deg, #059669, #10b981) !important;
+        color: white !important;
+        padding: 5px 12px !important; /* Increased padding */
+        border-radius: 18px !important; /* Increased from 16px */
+        font-weight: 700 !important;
+        font-size: 10px !important; /* Increased from 9px */
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    .test-node .status-fail { 
+        background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+        color: white !important;
+        padding: 5px 12px !important; /* Increased padding */
+        border-radius: 18px !important; /* Increased from 16px */
+        font-weight: 700 !important;
+        font-size: 10px !important; /* Increased from 9px */
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    .test-node .status-skip { 
+        background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+        color: white !important;
+        padding: 5px 12px !important; /* Increased padding */
+        border-radius: 18px !important; /* Increased from 16px */
+        font-weight: 700 !important;
+        font-size: 10px !important; /* Increased from 9px */
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* === SPECIALIZED SECTIONS === */
+    .response-time-badge {
+        background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
+        color: white !important;
+        padding: 5px 12px !important; /* Increased padding */
+        border-radius: 18px !important; /* Increased from 16px */
+        font-weight: 700 !important;
+        font-size: 10px !important; /* Increased from 9px */
+        display: inline-block !important;
+        margin: 5px 0 !important; /* Increased from 4px */
+        box-shadow: 0 3px 12px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    :is(.api-request-section, .api-response-section) {
+        color: white !important;
+        padding: 15px !important; /* Increased from 12px */
+        border-radius: 12px !important; /* Increased from 10px */
+        margin: 12px 0 !important; /* Increased from 10px */
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    .api-request-section { 
+        background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
+        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
+    }
+    
+    .api-response-section { 
+        background: linear-gradient(135deg, #059669, #10b981) !important;
+        box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
+    }
+    
+    :is(.api-request-section, .api-response-section) h4 {
+        color: white !important;
+        margin-bottom: 12px !important; /* Increased from 10px */
+        font: 700 11px 'Segoe UI', sans-serif !important; /* Increased from 10px */
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+    }
+    
+    :is(.request-detail-item, .response-detail-item) {
+        background: rgba(255, 255, 255, 0.15) !important;
+        padding: 12px !important; /* Increased from 10px */
+        border-radius: 10px !important; /* Increased from 8px */
+        margin: 10px 0 !important; /* Increased from 8px */
+        border-left: 3px solid rgba(255,255,255,0.4) !important; /* Increased from 2px */
+        backdrop-filter: blur(10px) !important;
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* === LOG STYLING === */
+    .info-log {
+        background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
+        color: white !important;
+        padding: 10px 18px !important; /* Increased padding */
+        border-radius: 22px !important; /* Increased from 20px */
+        margin: 10px 0 !important; /* Increased from 8px */
+        border-left: 3px solid #60a5fa !important; /* Increased from 2px */
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+        font-weight: 600 !important;
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    .warning-log {
+        background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+        color: white !important;
+        padding: 10px 18px !important; /* Increased padding */
+        border-radius: 22px !important; /* Increased from 20px */
+        margin: 10px 0 !important; /* Increased from 8px */
+        border-left: 3px solid #fbbf24 !important; /* Increased from 2px */
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+        font-weight: 600 !important;
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    .error-section {
+        background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+        color: white !important;
+        padding: 15px !important; /* Increased from 12px */
+        border-radius: 12px !important; /* Increased from 10px */
+        margin: 12px 0 !important; /* Increased from 10px */
+        border-left: 4px solid #f87171 !important; /* Increased from 3px */
+        box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    .db-log {
+        background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
+        color: white !important;
+        padding: 10px 18px !important; /* Increased padding */
+        border-radius: 22px !important; /* Increased from 20px */
+        margin: 10px 0 !important; /* Increased from 8px */
+        border-left: 3px solid #a855f7 !important; /* Increased from 2px */
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+        font-weight: 600 !important;
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* === UTILITY CLASSES === */
+    .code-block {
+        background: #1f2937 !important;
+        color: #f9fafb !important;
+        padding: 15px !important; /* Increased from 12px */
+        border-radius: 10px !important; /* Increased from 8px */
+        margin: 10px 0 !important; /* Increased from 8px */
+        overflow-x: auto !important;
+        box-shadow: inset 0 2px 6px rgba(0,0,0,0.3) !important; /* Enhanced shadow */
+        border: 1px solid #374151 !important;
+        font: 9px/1.5 'Fira Code', 'Monaco', 'Consolas', monospace !important; /* Increased from 8px */
+    }
+    
+    .card-panel { 
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08) !important; /* Enhanced shadow */
+        border-radius: 12px !important; /* Increased from 10px */
+        border: 1px solid #e5e7eb !important;
+        margin-bottom: 18px !important; /* Increased from 15px */
+        background: white !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    .card-panel:hover {
+        transform: translateY(-3px) !important; /* Increased from -2px */
+        box-shadow: 0 12px 35px rgba(0,0,0,0.12) !important; /* Enhanced shadow */
+        border-color: #3b82f6 !important;
+    }
+    
+    .collapsible-content {
+        transition: all 0.3s ease !important;
+        border-radius: 6px !important; /* Increased from 5px */
+        padding: 10px !important; /* Increased from 8px */
+        background: rgba(255, 255, 255, 0.05) !important;
+        margin-top: 8px !important; /* Increased from 6px */
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* === GENERAL TEXT SIZE IMPROVEMENTS === */
+    /* Apply better readable font sizes to common text elements */
+    p, span, div, td, th, li, ul, ol {
+        font-size: 10px !important; /* Increased from 9px for better readability */
+    }
+    
+    h1 { font-size: 18px !important; } /* Increased from 16px */
+    h2 { font-size: 16px !important; } /* Increased from 14px */
+    h3 { font-size: 14px !important; } /* Increased from 12px */
+    h4 { font-size: 12px !important; } /* Increased from 10px */
+    h5 { font-size: 10px !important; } /* Increased from 9px */
+    h6 { font-size: 9px !important; } /* Increased from 8px */
+    
+    /* Test details and step information */
+    .test-detail, .step-detail, .scenario-detail {
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* Navigation and menu items */
+    .nav-item, .menu-item, .nav-link {
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* Table content */
+    table, table td, table th {
+        font-size: 9px !important; /* Increased from 8px */
+    }
+    
+    /* Button text */
+    button, .btn, .button {
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* Form elements */
+    input, select, textarea, label {
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* Test node content */
+    .test-node, .category-node, .feature-node {
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* Timeline content */
+    .timeline .node, .timeline .category {
+        font-size: 9px !important; /* Increased from 8px */
+    }
+    
+    /* System info */
+    .system-info, .environment-info {
+        font-size: 9px !important; /* Increased from 8px */
+    }
+    
+    /* Dashboard content */
+    .dashboard-item, .widget-content {
+        font-size: 10px !important; /* Increased from 9px */
+    }
+    
+    /* Status indicators */
+    .status-indicator, .badge, .label {
+        font-size: 9px !important; /* Increased from 8px */
+    }
+    
+    /* === RESPONSIVE DESIGN FOR COLUMNS === */
+    @media (max-width: 768px) {
+        .stats-dashboard {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important; /* Increased from 10px */
+        }
+        
+        .test-details-container {
+            grid-template-columns: 110px 170px 1fr !important; /* Adjusted for mobile */
+            gap: 12px !important; /* Increased gap */
+            padding: 12px !important; /* Increased padding */
+        }
+        
+        :is(.stat-row, .thread-stat-row, .status-code-row, .performance-row) {
+            flex-direction: column !important;
+            text-align: center !important;
+            gap: 10px !important; /* Increased from 8px */
+        }
+        
+        .stat-value-container {
+            justify-content: center !important;
+            margin-top: 10px !important; /* Increased from 8px */
+        }
+        
+        :is(.thread-progress-bar, .status-progress-bar) {
+            margin: 10px 0 !important; /* Increased from 8px */
+            width: 100% !important;
+        }
+        
+        :is(.api-request-section, .api-response-section) {
+            margin: 10px 3px !important; /* Increased margins */
+            padding: 12px !important; /* Increased from 10px */
+        }
+        
+        .stats-title { font-size: 15px !important; } /* Increased from 13px */
+        .card-title { font-size: 11px !important; } /* Increased from 10px */
+        
+        /* Mobile text adjustments */
+        body { font-size: 9px !important; } /* Increased from 8px */
+        p, span, div, td, th, li, ul, ol { font-size: 9px !important; } /* Increased from 8px */
+        
+        /* Mobile specific improvements */
+        .thread-info { font-size: 8px !important; } /* Increased from 7px */
+        .response-time-badge { font-size: 8px !important; } /* Increased from 7px */
+        .perf-value { font-size: 8px !important; } /* Increased from 7px */
+        .code-block { font-size: 8px !important; } /* Increased from 7px */
+        
+        /* Mobile header improvements */
+        .enhanced-stats-header { padding: 12px !important; } /* Increased from 10px */
+        .card-header { padding: 10px !important; } /* Increased from 8px */
+        .card-body { padding: 12px !important; } /* Increased from 10px */
+        
+        /* Mobile test names - better readable */
+        .test-name, .scenario-name, .feature-name,
+        .test-node .node-name, .test-node .test-name {
+            font-size: 8px !important; /* Increased from 7px */
+            max-width: 280px !important; /* Increased from 250px */
+        }
+        
+        /* Mobile timestamp styling - better formatting */
+        .test-timestamp-badge, .execution-timestamp {
+            font-size: 8px !important; /* Increased from 7px */
+            padding: 3px 8px !important; /* Increased padding */
+            letter-spacing: 0.4px !important;
+        }
+        
+        /* Mobile column headers */
+        .status-column, .timestamp-column, .details-column,
+        .test-status, .test-timestamp, .test-details {
+            padding: 8px 6px !important;
+            font-size: 8px !important;
+        }
+        
+        /* Mobile table headers */
+        th.status-col, th.timestamp-col, th.details-col {
+            padding: 8px 4px !important;
+            font-size: 7px !important;
+        }
+        
+        /* Mobile table body cells */
+        td.status-col, td.timestamp-col, td.details-col {
+            padding: 6px 4px !important;
+            font-size: 8px !important;
+        }
+    }
+    
+    /* === ANIMATIONS === */
+    @keyframes countUp {
+        from { opacity: 0; transform: translateY(12px); } /* Increased from 10px */
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes progressFill {
+        from { width: 0%; }
+        to { width: var(--target-width); }
+    }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-8px); } /* Increased from -6px */
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(25px); } /* Increased from 20px */
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.9; transform: scale(1.02); } /* Increased from 1.01 */
+        100% { opacity: 1; transform: scale(1); }
+    }
+    
+    /* Apply animations */
+    .stat-value { animation: countUp 0.8s ease-out !important; }
+    .progress-fill { animation: progressFill 1.2s ease-out !important; }
+    .stats-card { animation: fadeInUp 0.6s ease-out !important; }
+    
+    /* Shimmer effect for progress bars */
+    :is(.progress-fill, .thread-progress-fill, .status-progress-fill)::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent) !important;
+        animation: shimmer 2.5s infinite !important;
+    }
+    """;
+    }
 
     // TIMELINE FIX JAVASCRIPT - ONLY FIXES TIMELINE ISSUES, DOESN'T CHANGE EXISTING FUNCTIONALITY
     private static String getTimelineFixJavaScript() {
@@ -1810,7 +1884,6 @@ public class ExtentReportManager {
         return "unknown-status";
     }
 
-
     public static synchronized void flushReports() {
         log.info("📊 Publishing Professional Extent Reports with Timeline Fix");
 
@@ -1830,8 +1903,6 @@ public class ExtentReportManager {
         long hours = millis / (1000 * 60 * 60);
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
-
-
 
     public static void addRequestDetailsToReport(RequestSpecification reqSpec) {
         if (reqSpec != null) {
