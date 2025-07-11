@@ -3,13 +3,8 @@ package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPag
 
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
-import com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts.SearchAccountsHelper;
-import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
-import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
-import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
@@ -1486,7 +1481,7 @@ public class GetEligiblePlansAndOffersHelper {
         Optional.ofNullable(requestParams.get("UCBCUST_FIRST_NAME"))
                 .ifPresent(value -> payload.setCustomerFirstName(value.toString()));
 
-        Optional.ofNullable(encryptedSSN)
+      Optional.ofNullable(encryptedSSN)
                 .ifPresent(payload::setSocialSecurityNumber);
 
         Optional.ofNullable(requestParams.get("UZBENRO_AGLC_PREM_ID"))
@@ -1532,9 +1527,6 @@ public class GetEligiblePlansAndOffersHelper {
                 .ifPresent(value -> payload.setTenantLandlord(value.toString()));
 
     }
-
-
-
 }
 
 

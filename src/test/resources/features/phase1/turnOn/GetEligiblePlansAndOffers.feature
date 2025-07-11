@@ -192,7 +192,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have plan with code "TRD" and description "Volume Discount"
     Examples:
     |premiseType|accountType|creditCheck|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
-    |ACN        |RS         |NUMR       |12        |400           |599           |666596640|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329|
+    |ACN        |RS         |NUMR       |12        |400           |599           |666249255|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329|
     |ACN        |RS         |NUMR       |13        |250           |399           |666165111|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330|
     |ACN        |RS         |NUMR       |5         |50            |249           |666361164|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331|
     |ACN        |RS         |ACNL       |30        |9999          |9999          |666440412|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333|
@@ -248,7 +248,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       |NACN       |RS         |SKIP       |666325926|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337 |
       |NACN       |RS         |OVER       |666441375|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
 
-  @GetEligiblePlansAndOffersPositive @HappyFlow
+  @GetEligiblePlansAndOffersPositive338e @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns 1 plan for TC 338e
     When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<valueScore>" value score "<enrollmentStatus>" enrollment status "<ssn>" ssn tc 338e
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200

@@ -243,7 +243,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
 
     public void setRequestParamsWithEnrollmentStatus(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-                                            String accountType, String creditCheck, String valueScore, String enrollmentStatus, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
+                                            String accountType, String creditCheck, String valueScore, String enrollmentStatus, String ssn) {
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));

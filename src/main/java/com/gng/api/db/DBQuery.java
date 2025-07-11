@@ -1775,6 +1775,8 @@ public final class DBQuery {
                 g."UCBCUST_SSN",
                 e."UZBENRO_AGLC_PREM_ID",
                 e."UZBENRO_SCLS_CODE",
+                e."UZBENRO_PREM_TYPE",
+                e."UZBENRO_LANDLORD_TENANT",
                 b."UCBPREM_STREET_NUMBER",
                 b."UCBPREM_PDIR_CODE_PRE",
                 b."UCBPREM_STREET_NAME",
@@ -1785,8 +1787,7 @@ public final class DBQuery {
                 b."UCBPREM_CITY",
                 b."UCBPREM_STAT_CODE_ADDR",
                 b."UCBPREM_ZIPC_CODE",
-                b."UCBPREM_TJUR_CODE",
-                e."UZBENRO_LANDLORD_TENANT"
+                b."UCBPREM_TJUR_CODE"                
             FROM UZBENRO e
             JOIN ucbcust g ON e."UZBENRO_CUST_ID" = g."UCBCUST_CUST_CODE"
             JOIN ucbprem b ON e."UZBENRO_PREM_ID" = b."UCBPREM_CODE"
@@ -1816,6 +1817,7 @@ public final class DBQuery {
                 g."UCBCUST_SSN",
                 e."UZBENRO_AGLC_PREM_ID",
                 e."UZBENRO_SCLS_CODE",
+                e."UZBENRO_PREM_TYPE",
                 b."UCBPREM_STREET_NUMBER",
                 b."UCBPREM_PDIR_CODE_PRE",
                 b."UCBPREM_STREET_NAME",
@@ -1854,6 +1856,7 @@ public final class DBQuery {
                 g."UCBCUST_SSN",
                 e."UZBENRO_AGLC_PREM_ID",
                 e."UZBENRO_SCLS_CODE",
+                e."UZBENRO_PREM_TYPE",
                 b."UCBPREM_STREET_NUMBER",
                 b."UCBPREM_PDIR_CODE_PRE",
                 b."UCBPREM_STREET_NAME",
