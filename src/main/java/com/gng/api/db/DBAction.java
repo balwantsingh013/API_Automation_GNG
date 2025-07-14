@@ -321,10 +321,10 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sspIndicator);
     }
 
-    public List<Map<String, Object>> aglcAccountNumberETypeNoSSPTC114Query() {
+    public Map<String, Object> aglcAccountNumberETypeNoSSPTC114Query() {
         String query = DBQuery.AGLC_ACCOUNT_NUMBER_TC114;
         logQueryInAllure("Last name and First Name ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
 

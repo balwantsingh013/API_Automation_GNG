@@ -744,10 +744,30 @@ public final class DBQuery {
            """;
 
     public static final String AGLC_ACCOUNT_NUMBER_TC114 = """
-            
-            select uzbenro_old_acct_num as aglcAccountNumber FROM  uzbenro 
-            WHERE  uzbenro_old_acct_num is not NULL and uzbenro_old_acct_num <> 0  ;
-            
+            SELECT\s
+                uzbenro_old_acct_num AS aglcAccountNumber
+            FROM\s
+                ucbcust,
+                ucbprem,
+                uzbenro
+            WHERE\s
+                ucbcust_cust_code = uzbenro_cust_code
+                AND ucbprem_code = uzbenro_prem_code
+                AND uzbenro_enro_status IN ('CRDS')
+                AND uzbenro_ssp_ind = 'N'
+                AND uzbenro_cira_ind = 'N'
+                AND MONTHS_BETWEEN(SYSDATE, uzbenro_activity_date) <= 3
+                AND NOT EXISTS (
+                    SELECT 'X'
+                    FROM uabbdbt
+                    WHERE\s
+                        uabbdbt_transfer_hold_ind = 'Y'
+                        AND uabbdbt.uabbdbt_prem_code = uzbenro_prem_code
+                        AND uabbdbt.uabbdbt_cust_code = uzbenro_cust_code
+                )
+                AND uzbenro_old_acct_num IS NOT NULL
+                AND uzbenro_old_acct_num <> 0
+            FETCH FIRST 1 ROWS ONLY
             """;
     public static final String CUSTOMER_DATA_WITH_TYPE_TC115 = """
             SELECT

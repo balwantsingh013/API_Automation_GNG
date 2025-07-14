@@ -458,12 +458,14 @@ Feature: Verify SearchAccounts Api
     And response should have "transactionType" as "TNON"
     And response should have "sspStatusIndicator" as "false"
 
-#  @SearchAccountswithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
-#  Scenario: SearchAccountsApiTurnOn- Verify response code with AGLC Account Number E Type No SSP TC_114
-#    When a request is made to the SearchAccounts Api with AGLC Account Number E Type No SSP TC_114
-#    Then verify response code of "SearchAccounts" Api is 200
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should return numberOfMatches as 0
+  @SearchAccountswithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response code with AGLC Account Number E Type No SSP TC_114
+    When a request is made to the SearchAccounts Api with AGLC Account Number E Type No SSP TC_114
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "ENROLLMENT RECORD"
+    And response should have "enrollmentState" as "DEPOSIT BILLED"
+    And response should have "sspStatusIndicator" as "false"
 
   @SearchAccountsWithCustomerDataETypeSSP @Phase1 @HappyFlow
   Scenario: SearchAccountsApiTurnOn- Verify response code with  Customer Data E Type SSP TC_115

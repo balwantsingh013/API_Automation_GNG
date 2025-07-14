@@ -793,16 +793,14 @@ public class SearchAccountsHelper {
     }
 
     public void setaglcAccountNumberType(SearchAccountsRequest payload) {
-        List<Map<String, Object>> aglcAccNumber = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
-        Map<String, Object> data = aglcAccNumber.get(0);
+        Map<String, Object> data = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
 
-        String aglcAccountNumber = data.get("uzbenro_old_acct_num").toString();
+        String aglcAccountNumber = data.get("aglcAccountNumber").toString();
 
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
         payload.setAglcAccountNumber(aglcAccountNumber);
     }
-
 
     public void setCustomerDataETypeSSP(SearchAccountsRequest payload) {
         Map<String, Object> data = ApplicationContext.get().getDbAction().customerDataWithETypeTC115Query();

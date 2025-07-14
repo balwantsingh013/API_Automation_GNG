@@ -51,7 +51,7 @@ public class BaseSteps {
     }
 
     @And("response should have {string} as {string}")
-    public void responseShouldHaveFieldAs(String field, String value){
+    public void enrollmentStateresponseShouldHaveFieldAs(String field, String value){
         verifyFieldInResponse(field, value);
     }
 
