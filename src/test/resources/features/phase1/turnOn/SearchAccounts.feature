@@ -449,12 +449,14 @@ Feature: Verify SearchAccounts Api
     And response should have "transactionType" as "TNON"
     And response should have "sspStatusIndicator" as "true"
 
-#  @withFirstLastNameZipETypeSSP @Phase1 @HappyFlow
-#  Scenario: SearchAccountsApiTurnOn- Verify response code SSP Based with First Name & Last Name & Zip - E Type  TC112
-#    When a request is made to the SearchAccounts Api with First Name & Last Name & Zip - E Type, SSP TC_112
-#    Then verify response code of "SearchAccounts" Api is 200
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should return numberOfMatches as 1
+  @withFirstLastNameZipETypeSSP @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response code SSP Based with First Name & Last Name & Zip - E Type  TC112
+    When a request is made to the SearchAccounts Api with First Name & Last Name & Zip - E Type, SSP TC_112
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "SSP FALL TURN ON RECORD"
+    And response should have "transactionType" as "TNON"
+    And response should have "sspStatusIndicator" as "false"
 
 #  @SearchAccountswithAGLCAccountNumberETypeNoSSP @Phase1 @HappyFlow
 #  Scenario: SearchAccountsApiTurnOn- Verify response code with AGLC Account Number E Type No SSP TC_114
@@ -463,12 +465,14 @@ Feature: Verify SearchAccounts Api
 #    And response should have ErrorCode 0 and ErrorMessage ""
 #    And response should return numberOfMatches as 0
 
-#  @SearchAccountsWithCustomerDataETypeSSP @Phase1 @HappyFlow
-#  Scenario: SearchAccountsApiTurnOn- Verify response code with  Customer Data E Type SSP TC_115
-#    When a request is made to the SearchAccounts Api with Customer Data E Type SSP TC_115
-#    Then verify response code of "SearchAccounts" Api is 200
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should return numberOfMatches as 0
+  @SearchAccountsWithCustomerDataETypeSSP @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify response code with  Customer Data E Type SSP TC_115
+    When a request is made to the SearchAccounts Api with Customer Data E Type SSP TC_115
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "SSP ACCOUNT INCOMPLETE ENROLLMENT RECORD"
+    And response should have "transactionType" as "TNON"
+    And response should have "sspStatusIndicator" as "true"
 
   @SearchAccountsWithStreetNameAndCityAndStateCodeAndZipCode @Phase1 @HappyFlow @SearchAccountsTurnOn
   Scenario: SearchAccountsApiTurnOn- Verify response when Street Name, City, State Code And Zip Code are passed in Search accounts api TC_116

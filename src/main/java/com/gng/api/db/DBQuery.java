@@ -659,9 +659,77 @@ public final class DBQuery {
             
             """;
     public static final String LAST_NAME_FIRST_NAME_QUERY_TC112 = """
-            SELECT 'SSP FALL TURN ON RECORD' as recordType, ucbcust_cust_code as customerCode, ucbprem_code as premisesCode, ucbcust_first_name as customerFirstName, ucbcust_middle_name as customerMiddleName, ucbcust_last_name as customerLastNameBusiness, uzbenro_credit_check_name as creditCheckBusinessName, uzbenro_scls_code as customerType, ucbcust_ssn_last_four as lastFourSocialSecurityNumber, ucbprem_street_number as premisesStreetNumber, ucbprem_pdir_code_pre as premisesStreetPreDirection, ucbprem_street_name as premisesStreetName, ucbprem_ssfx_code as premisesStreetSuffix, ucbprem_pdir_code_post as premisesStreetPostDirection, ucbprem_utyp_code as premisesUnitType, ucbprem_unit as premisesUnitNumber, ucbprem_city as premisesCity, ucbprem_stat_code_addr as premisesStateCode, ucbprem_zipc_code as premisesZipCode, ucbprem.ucbprem_tjur_code as  premisesCountyCode, spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code,ucbprem_code) as accountStatus, uzbenro_old_acct_num as aglcAccountNumber, uzbenro_enro_status as enrollmentSatus, TO_CHAR(uzbenro_enro_status_date,'YYYYMMDD') as enrollmentStatusDate, UZBENRO_TYPE_CODE as enrollmentType, TO_NUMBER(NULL) as pastDueAmount, TO_NUMBER(NULL) as badDebtAmount, DECODE(uzbenro_price_plan,'PRP','true','false') as prepayPlanIndicator, DECODE(uzbenro_price_plan,'PGB','true','false') as payInAdvanceIndicator, uzbenro_price_plan as pricePlan FROM ucbcust, ucbprem, uzbenro  WHERE  ucbcust_cust_code = uzbenro_cust_code  AND ucbprem_code = uzbenro_prem_code  AND uzbenro_enro_status in ('INCL') AND UZBENRO_SSP_IND ='Y' AND uzbenro_cira_ind = 'N' AND MONTHS_BETWEEN(SYSDATE,uzbenro_activity_date) <= 3  AND NOT EXISTS (SELECT 'X'  FROM uabbdbt  WHERE uabbdbt_transfer_hold_ind='Y'  AND  uabbdbt.uabbdbt_prem_code = uzbenro_prem_code  AND  uabbdbt.uabbdbt_cust_code = uzbenro_cust_code )
-            AND NOT EXISTS (  SELECT 1 FROM ucracct  WHERE ucracct_cust_code = uzbenro_cust_code AND ucracct_prem_code = uzbenro_prem_code)
-            AND EXISTS (  SELECT 1 FROM uzbsspp WHERE uzbsspp_participant_code = uzbenro_cust_code) AND NOT EXISTS (SELECT 1 FROM uzrsspa  WHERE uzrsspa_cust_code = uzbenro_cust_code  AND uzrsspa_prem_code = uzbenro_prem_code)""";
+            SELECT\s
+                'SSP FALL TURN ON RECORD' AS recordType,
+                ucbcust_cust_code AS customerCode,
+                ucbprem_code AS premisesCode,
+                ucbcust_first_name AS customerFirstName,
+                ucbcust_middle_name AS customerMiddleName,
+                ucbcust_last_name AS customerLastNameBusiness,
+                uzbenro_credit_check_name AS creditCheckBusinessName,
+                uzbenro_scls_code AS customerType,
+                ucbcust_ssn_last_four AS lastFourSocialSecurityNumber,
+                ucbprem_street_number AS premisesStreetNumber,
+                ucbprem_pdir_code_pre AS premisesStreetPreDirection,
+                ucbprem_street_name AS premisesStreetName,
+                ucbprem_ssfx_code AS premisesStreetSuffix,
+                ucbprem_pdir_code_post AS premisesStreetPostDirection,
+                ucbprem_utyp_code AS premisesUnitType,
+                ucbprem_unit AS premisesUnitNumber,
+                ucbprem_city AS premisesCity,
+                ucbprem_stat_code_addr AS premisesStateCode,
+                ucbprem_zipc_code AS premisesZipCode,
+                ucbprem.ucbprem_tjur_code AS premisesCountyCode,
+                spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code, ucbprem_code) AS accountStatus,
+                uzbenro_old_acct_num AS aglcAccountNumber,
+                uzbenro_enro_status AS enrollmentStatus,
+                TO_CHAR(uzbenro_enro_status_date,'YYYYMMDD') AS enrollmentStatusDate,
+                uzbenro_type_code AS enrollmentType,
+                TO_NUMBER(NULL) AS pastDueAmount,
+                TO_NUMBER(NULL) AS badDebtAmount,
+                DECODE(uzbenro_price_plan,'PRP','true','false') AS prepayPlanIndicator,
+                DECODE(uzbenro_price_plan,'PGB','true','false') AS payInAdvanceIndicator,
+                uzbenro_price_plan AS pricePlan
+            FROM\s
+                ucbcust,
+                ucbprem,
+                uzbenro
+            WHERE\s
+                ucbcust_cust_code = uzbenro_cust_code
+                AND ucbprem_code = uzbenro_prem_code
+                AND uzbenro_enro_status IN ('INCL')
+                AND uzbenro_ssp_ind = 'Y'
+                AND uzbenro_cira_ind = 'N'
+                AND MONTHS_BETWEEN(SYSDATE, uzbenro_activity_date) <= 3
+                AND NOT EXISTS (
+                    SELECT 'X'\s
+                    FROM uabbdbt\s
+                    WHERE\s
+                        uabbdbt_transfer_hold_ind = 'Y'
+                        AND uabbdbt.uabbdbt_prem_code = uzbenro_prem_code
+                        AND uabbdbt.uabbdbt_cust_code = uzbenro_cust_code
+                )
+                AND NOT EXISTS (
+                    SELECT 1\s
+                    FROM ucracct\s
+                    WHERE\s
+                        ucracct_cust_code = uzbenro_cust_code\s
+                        AND ucracct_prem_code = uzbenro_prem_code
+                )
+                AND EXISTS (
+                    SELECT 1\s
+                    FROM uzbsspp\s
+                    WHERE uzbsspp_participant_code = uzbenro_cust_code
+                )
+                AND NOT EXISTS (
+                    SELECT 1\s
+                    FROM uzrsspa\s
+                    WHERE\s
+                        uzrsspa_cust_code = uzbenro_cust_code\s
+                        AND uzrsspa_prem_code = uzbenro_prem_code
+                )
+                FETCH FIRST 1 ROWS ONLY
+            """;
 
     public static final String ACCOUNT_NUMBER_E_TYPE_NO_SSP_TC110 ="""
             SELECT C.UZBENRO_CUST_CODE,
@@ -682,9 +750,77 @@ public final class DBQuery {
             
             """;
     public static final String CUSTOMER_DATA_WITH_TYPE_TC115 = """
-            
-            SELECT * FROM UCRADDR WHERE UCRADDR_PDIR_CODE_POST IS NOT NULL
-                                                     AND UCRADDR_PDIR_CODE_PRE IS NOT NULL AND UCRADDR_PHONE_EXT IS NOT NULL\s""";
+            SELECT
+                'SSP ACCOUNT INCOMPLETE ENROLLMENT RECORD' AS recordType,
+                ucbcust_cust_code AS customerCode,
+                ucbprem_code AS premisesCode,
+                ucbcust_first_name AS customerFirstName,
+                ucbcust_middle_name AS customerMiddleName,
+                ucbcust_last_name AS customerLastNameBusiness,
+                uzbenro_credit_check_name AS creditCheckBusinessName,
+                uzbenro_scls_code AS customerType,
+                ucbcust_ssn_last_four AS lastFourSocialSecurityNumber,
+                ucbprem_street_number AS premisesStreetNumber,
+                ucbprem_pdir_code_pre AS premisesStreetPreDirection,
+                ucbprem_street_name AS premisesStreetName,
+                ucbprem_ssfx_code AS premisesStreetSuffix,
+                ucbprem_pdir_code_post AS premisesStreetPostDirection,
+                ucbprem_utyp_code AS premisesUnitType,
+                ucbprem_unit AS premisesUnitNumber,
+                ucbprem_city AS premisesCity,
+                ucbprem_stat_code_addr AS premisesStateCode,
+                ucbprem_zipc_code AS premisesZipCode,
+                ucbprem.ucbprem_tjur_code AS premisesCountyCode,
+                spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code, ucbprem_code) AS accountStatus,
+                uzbenro_old_acct_num AS aglcAccountNumber,
+                uzbenro_enro_status AS enrollmentStatus,
+                TO_CHAR(uzbenro_enro_status_date, 'YYYYMMDD') AS enrollmentStatusDate,
+                uzbenro_type_code AS enrollmentType,
+                TO_NUMBER(NULL) AS pastDueAmount,
+                TO_NUMBER(NULL) AS badDebtAmount,
+                DECODE(uzbenro_price_plan, 'PRP', 'true', 'false') AS prepayPlanIndicator,
+                DECODE(uzbenro_price_plan, 'PGB', 'true', 'false') AS payInAdvanceIndicator,
+                uzbenro_price_plan AS pricePlan
+            FROM
+                ucbcust,
+                ucbprem,
+                uzbenro
+            WHERE
+                ucbcust_cust_code = uzbenro_cust_code
+                AND ucbprem_code = uzbenro_prem_code
+                AND uzbenro_enro_status IN ('INCL')
+                AND uzbenro_ssp_ind = 'Y'
+                AND uzbenro_cira_ind = 'N'
+                AND MONTHS_BETWEEN(SYSDATE, uzbenro_activity_date) <= 3
+                AND NOT EXISTS (
+                    SELECT 'X'
+                    FROM uabbdbt
+                    WHERE
+                        uabbdbt_transfer_hold_ind = 'Y'
+                        AND uabbdbt.uabbdbt_prem_code = uzbenro_prem_code
+                        AND uabbdbt.uabbdbt_cust_code = uzbenro_cust_code
+                )
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM ucracct
+                    WHERE
+                        ucracct_cust_code = uzbenro_cust_code
+                        AND ucracct_prem_code = uzbenro_prem_code
+                )
+                AND EXISTS (
+                    SELECT 1
+                    FROM uzbsspp
+                    WHERE uzbsspp_participant_code <> uzbenro_cust_code
+                )
+                AND EXISTS (
+                    SELECT 1
+                    FROM uzrsspa
+                    WHERE
+                        uzrsspa_cust_code = uzbenro_cust_code
+                        AND uzrsspa_prem_code = uzbenro_prem_code
+                )
+                FETCH FIRST 1 ROWS ONLY
+            """;
 
 
     public static final String SSP_INDICATOR_VALUE = """
