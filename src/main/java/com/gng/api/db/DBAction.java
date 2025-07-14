@@ -309,10 +309,10 @@ public class DBAction {
         return jdbcTemplate.update(query);
     }
 
-    public List<Map<String, Object>> lastNameFirstNameTC112Query() {
+    public Map<String, Object> lastNameFirstNameTC112Query() {
         String query = DBQuery.LAST_NAME_FIRST_NAME_QUERY_TC112;
         logQueryInAllure("Last name and First Name ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public Map<String, Object> accountNumberSearchETypeNoSSPDBTC110Query(String sspIndicator) {
@@ -321,10 +321,10 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sspIndicator);
     }
 
-    public List<Map<String, Object>> aglcAccountNumberETypeNoSSPTC114Query() {
+    public Map<String, Object> aglcAccountNumberETypeNoSSPTC114Query() {
         String query = DBQuery.AGLC_ACCOUNT_NUMBER_TC114;
         logQueryInAllure("Last name and First Name ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
 

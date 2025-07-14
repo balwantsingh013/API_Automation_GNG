@@ -780,8 +780,7 @@ public class SearchAccountsHelper {
     }
 
     public void setLastNameFirstNameAndZiPBType(SearchAccountsRequest payload) {
-        List<Map<String, Object>> customerData = ApplicationContext.get().getDbAction().lastNameFirstNameTC112Query();
-        Map<String, Object> data = customerData.get(0);
+        Map<String, Object> data = ApplicationContext.get().getDbAction().lastNameFirstNameTC112Query();
 
         String premisesZipCode = data.get("PREMISESZIPCODE").toString();
         String customerLastName = data.get("CUSTOMERLASTNAMEBUSINESS").toString();
@@ -794,30 +793,36 @@ public class SearchAccountsHelper {
     }
 
     public void setaglcAccountNumberType(SearchAccountsRequest payload) {
-        List<Map<String, Object>> aglcAccNumber = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
-        Map<String, Object> data = aglcAccNumber.get(0);
+        Map<String, Object> data = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
 
-        String aglcAccountNumber = data.get("uzbenro_old_acct_num").toString();
+        String aglcAccountNumber = data.get("aglcAccountNumber").toString();
 
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
         payload.setAglcAccountNumber(aglcAccountNumber);
     }
 
-
     public void setCustomerDataETypeSSP(SearchAccountsRequest payload) {
         Map<String, Object> data = ApplicationContext.get().getDbAction().customerDataWithETypeTC115Query();
 
-
-        String premisesStreetNumber = data.get("UCRADDR_STREET_NUMBER").toString();
-        String premisesStreetPreDirection = data.get("UCRADDR_PDIR_CODE_PRE").toString();
-        String premisesStreetName = data.get("UCRADDR_STREET_NAME").toString();
-        String premisesStreetSuffix = data.get("UCRADDR_SSFX_CODE").toString();
-        String premisesStreetPostDirection = data.get("UCRADDR_PDIR_CODE_POST").toString();
-        String premisesUnitType = data.get("UCRADDR_UNIT").toString();
-        String premisesCity = data.get("UCRADDR_CITY").toString();
-        String premisesStateCode = data.get("UCRADDR_STAT_CODE").toString();
-        String premisesZipCode = data.get("UCRADDR_ZIP").toString();
+        String premisesStreetNumber = data.get("PREMISESSTREETNUMBER").toString();
+        String premisesStreetPreDirection =
+                data.get("PREMISESSTREETPREDIRECTION") != null
+                        ? data.get("PREMISESSTREETPREDIRECTION").toString()
+                        : "";
+        String premisesStreetName = data.get("PREMISESSTREETNAME").toString();
+        String premisesStreetSuffix = data.get("PREMISESSTREETSUFFIX").toString();
+        String premisesStreetPostDirection =
+                data.get("PREMISESSTREETPOSTDIRECTION") != null
+                        ? data.get("PREMISESSTREETPOSTDIRECTION").toString()
+                        : "";
+        String premisesUnitType =
+                data.get("PREMISESUNITTYPE") != null
+                        ? data.get("PREMISESUNITTYPE").toString()
+                        : "";
+        String premisesCity = data.get("PREMISESCITY").toString();
+        String premisesStateCode = data.get("PREMISESSTATECODE").toString();
+        String premisesZipCode = data.get("PREMISESZIPCODE").toString();
 
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
