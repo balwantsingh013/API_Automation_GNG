@@ -202,21 +202,24 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 9
-    And response should have plan with code "MVS" and description "Variable Select"
-    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
-    And response should have plan with code "MI" and description "Market Intro"
-    And response should have plan with code "RGB" and description "Guaranteed Bill"
-    And response should have plan with code "GPP" and description "12-Month Fixed"
-    And response should have plan with code "24M" and description "24-Month Fixed"
-    And response should have plan with code "18M" and description "18-Month Fixed"
-    And response should have plan with code "RF6" and description "6-Month Fixed"
-    And response should have plan with code "TRD" and description "Volume Discount"
+    And the response should contain the following plans:
+      | planCode | planDescription                     |
+      | MVS      | Variable Select                     |
+      | CSV      | MVS with Price Protection Guarantee |
+      | MI       | Market Intro                        |
+      | RGB      | Guaranteed Bill                     |
+      | GPP      | 12-Month Fixed                      |
+      | 24M      | 24-Month Fixed                      |
+      | 18M      | 18-Month Fixed                      |
+      | RF6      | 6-Month Fixed                       |
+      | TRD      | Volume Discount                     |
+
     Examples:
-    |premiseType|accountType|creditCheck|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
-    |ACN        |RS         |NUMR       |12        |400           |599           |666249255|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329|
-    |ACN        |RS         |NUMR       |13        |250           |399           |666165111|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330|
-    |ACN        |RS         |NUMR       |5         |50            |249           |666361164|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331|
-    |ACN        |RS         |ACNL       |30        |9999          |9999          |666440412|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333|
+    |premiseType|accountType|creditCheck              |valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+    |ACN        |RS         |CREDIT_CHECK_YES         |12        |400           |599           |666249255|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329|
+    |ACN        |RS         |CREDIT_CHECK_YES         |13        |250           |399           |666165111|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330|
+    |ACN        |RS         |CREDIT_CHECK_YES         |5         |50            |249           |666361164|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331|
+    |ACN        |RS         |CREDIT_CHECK_ACN_LANDLORD|30        |9999          |9999          |666440412|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333|
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns 1 plan for <testCondition>
@@ -224,11 +227,13 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 1
-    And response should have plan with code "VML" and description "Variable Market Limited"
+    And the response should contain the following plans:
+      | planCode | planDescription                     |
+      | VML      | Variable Market Limited             |
     Examples:
-    |premiseType|accountType|creditCheck|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
-    |ACN        |RS         |NUMR       |20        |0             |49            |661516486|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_332|
-    |ACN        |RS         |NUMR       |40        |40            |9000          |666126333|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_334|
+    |premiseType|accountType|creditCheck     |valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+    |ACN        |RS         |CREDIT_CHECK_YES|20        |0             |49            |661516486|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_332|
+    |ACN        |RS         |CREDIT_CHECK_YES|40        |40            |9000          |666126333|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_334|
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns 6 plans for TC <testCondition>
@@ -236,15 +241,17 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 6
-    And response should have plan with code "RGB" and description "Guaranteed Bill"
-    And response should have plan with code "MI" and description "Market Intro"
-    And response should have plan with code "MVS" and description "Variable Select"
-    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
-    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
-    And response should have plan with code "PRP" and description "Pre-Pay"
+    And the response should contain the following plans:
+      | planCode | planDescription                     |
+      | RGB      | Guaranteed Bill                     |
+      | MI       | Market Intro                        |
+      | MVS      | Variable Select                     |
+      | CSV      | MVS with Price Protection Guarantee |
+      | PGB      | Pre-Pay Guaranteed Bill             |
+      | PRP      | Pre-Pay                             |
     Examples:
-      |premiseType|accountType|creditCheck|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
-      |ACN        |RS         |SKIP       |20        |0             |49            |666325926|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_335|
+      |premiseType|accountType|creditCheck              |valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+      |ACN        |RS         |CREDIT_CHECK_NOT_REQUIRED|20        |0             |49            |666325926|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_335|
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns 12 plans for TC <testCondition>
@@ -252,22 +259,24 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 12
-    And response should have plan with code "MVS" and description "Variable Select"
-    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
-    And response should have plan with code "MI" and description "Market Intro"
-    And response should have plan with code "RGB" and description "Guaranteed Bill"
-    And response should have plan with code "GPP" and description "12-Month Fixed"
-    And response should have plan with code "24M" and description "24-Month Fixed"
-    And response should have plan with code "18M" and description "18-Month Fixed"
-    And response should have plan with code "RF6" and description "6-Month Fixed"
-    And response should have plan with code "TRD" and description "Volume Discount"
-    And response should have plan with code "VML" and description "Variable Market Limited"
-    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
-    And response should have plan with code "PRP" and description "Pre-Pay"
+    And the response should contain the following plans:
+      | planCode | planDescription                     |
+      | MVS      | Variable Select                     |
+      | CSV      | MVS with Price Protection Guarantee |
+      | MI       | Market Intro                        |
+      | RGB      | Guaranteed Bill                     |
+      | GPP      | 12-Month Fixed                      |
+      | 24M      | 24-Month Fixed                      |
+      | 18M      | 18-Month Fixed                      |
+      | RF6      | 6-Month Fixed                       |
+      | TRD      | Volume Discount                     |
+      | VML      | Variable Marked Limited             |
+      | PGB      | Pre-Pay Guaranteed Bill             |
+      | PRP      | Pre-Pay                             |
     Examples:
-      |premiseType|accountType|creditCheck|ssn      |testCondition                        |
-      |NACN       |RS         |SKIP       |666325926|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337 |
-      |NACN       |RS         |OVER       |666441375|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
+      |premiseType|accountType|creditCheck                   |ssn      |testCondition                        |
+      |NACN       |RS         |CREDIT_CHECK_NOT_REQUIRED     |666325926|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337 |
+      |NACN       |RS         |CREDIT_CHECK_MULTIPLE_PREMISES|666441375|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
 
   @GetEligiblePlansAndOffersPositive338e @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns 1 plan for TC 338e
@@ -275,12 +284,14 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 3
-    And response should have plan with code "VML" and description "Variable Market Limited"
-    And response should have plan with code "PGB" and description "Pre-Pay Guaranteed Bill"
-    And response should have plan with code "PRP" and description "Pre-Pay"
+    And the response should contain the following plans:
+      | planCode | planDescription                     |
+      | VML      | Variable Marked Limited             |
+      | PGB      | Pre-Pay Guaranteed Bill             |
+      | PRP      | Pre-Pay                             |
     Examples:
-      |premiseType|accountType|creditCheck|valueScore|enrollmentStatus|ssn      |
-      |NACN       |RS         |NUMBR      |110       |CRDS            |666441375|
+      |premiseType|accountType|creditCheck     |valueScore|enrollmentStatus|ssn      |
+      |NACN       |RS         |CREDIT_CHECK_YES|110       |CRDS            |666441375|
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns 4 plans for <testCondition>
@@ -288,15 +299,15 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 4
-    And response should have plan with code "MVS" and description "Variable Select"
-    And response should have plan with code "CSV" and description "MVS with Price Protection Guarantee"
-    And response should have plan with code "RF6" and description "6-Month Fixed"
-    And response should have plan with code "TRD" and description "Volume Discount"
+    And the response should contain the following plans:
+      | planCode | planDescription                     |
+      | MVS      | Variable Select                     |
+      | CSV      | MVS with Price Protection Guarantee |
+      | RF6      | 6-Month Fixed                       |
+      | TRD      | Volume Discount                     |
     Examples:
-      |premiseType|accountType|creditCheck|valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
-      |ACN        |RS         |NUMR       |20        |0             |49            |666631317|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338|
-
-
+      |premiseType|accountType|creditCheck     |valueScore|creditScoreMin|creditScoreMax|ssn      |testCondition                       |
+      |ACN        |RS         |CREDIT_CHECK_YES|20        |0             |49            |666631317|GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338|
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157

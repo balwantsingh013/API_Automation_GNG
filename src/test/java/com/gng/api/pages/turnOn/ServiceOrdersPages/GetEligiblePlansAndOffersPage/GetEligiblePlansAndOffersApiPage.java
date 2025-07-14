@@ -224,7 +224,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
 
     public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-     String accountType, String creditCheck, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
+     String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -243,7 +243,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
 
     public void setRequestParamsWithEnrollmentStatus(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-                                            String accountType, String creditCheck, String valueScore, String enrollmentStatus, String ssn) {
+                                            String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore, String enrollmentStatus, String ssn) {
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));

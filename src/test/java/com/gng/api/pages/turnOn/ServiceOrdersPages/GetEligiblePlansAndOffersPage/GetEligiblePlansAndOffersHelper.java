@@ -1398,8 +1398,16 @@ public class GetEligiblePlansAndOffersHelper {
 
     }
 
-    public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersRequest payload, String premiseType, String accountType, String creditCheck, String valueScore,
+    public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersRequest payload, String premiseType, String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore,
      String creditMin, String creditMax, String encryptedSSN, String custCode, GetEligiblePlansAndOffersApiLabel testCondition) {
+
+        String creditCheckFilter = switch (creditCheck) {
+            case CREDIT_CHECK_YES -> "NUMR";
+            case CREDIT_CHECK_MULTIPLE_PREMISES -> "OVER";
+            case CREDIT_CHECK_NOT_REQUIRED -> "SKIP";
+            case CREDIT_CHECK_ACN_LANDLORD -> "ACNL";
+            default -> "";
+        };
 
         Boolean ssp = false;
         Map<String, Object> requestParams = null;
@@ -1411,7 +1419,7 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_TC_334:
                 requestParams = ApplicationContext.get().getDbAction()
-                        .getEligiblePlansAndOffersRequestParams(premiseType, accountType, creditCheck, valueScore, creditMin, creditMax, custCode, ssp);
+                        .getEligiblePlansAndOffersRequestParams(premiseType, accountType, creditCheckFilter, valueScore, creditMin, creditMax, custCode, ssp);
 
                 payload.setLoginID("ACNCSR");
                 break;
@@ -1419,16 +1427,16 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338:
                 ssp = true;
                requestParams = ApplicationContext.get().getDbAction()
-                        .getEligiblePlansAndOffersRequestParams(premiseType, accountType, creditCheck, valueScore, creditMin, creditMax, custCode, ssp);
+                        .getEligiblePlansAndOffersRequestParams(premiseType, accountType, creditCheckFilter, valueScore, creditMin, creditMax, custCode, ssp);
                 break;
             case GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337:
                 requestParams = ApplicationContext.get().getDbAction()
-                        .getEligiblePlansAndOffersRequestParams(premiseType, accountType, creditCheck, valueScore, creditMin, creditMax, custCode, ssp);
+                        .getEligiblePlansAndOffersRequestParams(premiseType, accountType, creditCheckFilter, valueScore, creditMin, creditMax, custCode, ssp);
                 break;
                 case GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a:
                     String creditMatch = "MATCH CODE C.";
                   requestParams = ApplicationContext.get().getDbAction()
-                          .getEligiblePlansAndOffersCreditMatchRequestParams(premiseType, accountType, creditCheck, creditMatch, custCode);
+                          .getEligiblePlansAndOffersCreditMatchRequestParams(premiseType, accountType, creditCheckFilter, creditMatch, custCode);
                   break;
             default:
         }
@@ -1436,32 +1444,45 @@ public class GetEligiblePlansAndOffersHelper {
             mapData(requestParams, payload, encryptedSSN);
         }
 
-        if (Objects.equals(creditCheck, "NUMR")){
-            payload.setCreditCheckOption("yes");
-        } else if (Objects.equals(creditCheck, "OVER")){
-            payload.setCreditCheckOption("Mult");
-        } else {
-            payload.setCreditCheckOption("no");
+        switch (creditCheck){
+            case CREDIT_CHECK_YES:
+                payload.setCreditCheckOption("yes");
+                break;
+            case CREDIT_CHECK_MULTIPLE_PREMISES:
+                payload.setCreditCheckOption("Mult");
+                break;
+            default:
+                payload.setCreditCheckOption("no");
         }
         payload.setConfirmCreditCheck(false);
     }
 
-    public void setTestCondition338e(GetEligiblePlansAndOffersRequest payload, String premiseType, String accountType, String creditCheck, String valueScore,
+    public void setTestCondition338e(GetEligiblePlansAndOffersRequest payload, String premiseType, String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore,
                                             String enrollmentStatus, String encryptedSSN, String custCode) {
 
+        String creditCheckFilter = switch (creditCheck) {
+            case CREDIT_CHECK_YES -> "NUMR";
+            case CREDIT_CHECK_MULTIPLE_PREMISES -> "OVER";
+            case CREDIT_CHECK_NOT_REQUIRED -> "SKIP";
+            case CREDIT_CHECK_ACN_LANDLORD -> "ACNL";
+            default -> "";
+        };
         Map<String, Object> requestParams = ApplicationContext.get().getDbAction()
-                .getEligiblePlansAndOffersByEnrollmentAndValueScoreRequestParams(premiseType, accountType, creditCheck, valueScore, enrollmentStatus, custCode);
+                .getEligiblePlansAndOffersByEnrollmentAndValueScoreRequestParams(premiseType, accountType, creditCheckFilter, valueScore, enrollmentStatus, custCode);
 
         if (requestParams != null){
             mapData(requestParams, payload, encryptedSSN);
         }
 
-        if (Objects.equals(creditCheck, "NUMR")){
-            payload.setCreditCheckOption("yes");
-        } else if (Objects.equals(creditCheck, "OVER")){
-            payload.setCreditCheckOption("Mult");
-        } else {
-            payload.setCreditCheckOption("no");
+        switch (creditCheck){
+            case CREDIT_CHECK_YES:
+                payload.setCreditCheckOption("yes");
+                break;
+            case CREDIT_CHECK_MULTIPLE_PREMISES:
+                payload.setCreditCheckOption("Mult");
+                break;
+            default:
+                payload.setCreditCheckOption("no");
         }
         payload.setConfirmCreditCheck(false);
     }
