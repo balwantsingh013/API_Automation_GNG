@@ -81,20 +81,20 @@ public class GetEligiblePlansAndOffersApiSteps {
 
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} premise {string} account type {string} credit check {string} value score {string} min {string} max {string} ssn {string} condition")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api(String premiseType, String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore, String creditMin,
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api(String premiseType, String accountType, String creditCheck, String valueScore, String creditMin,
       String creditMax, String ssn, String testCondition) {
-        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnType(get_eligible_plans_and_offers, premiseType, accountType, creditCheck, valueScore, creditMin, creditMax,
+        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnType(get_eligible_plans_and_offers, premiseType, accountType, GetEligiblePlansAndOffersApiLabel.valueOf(creditCheck), valueScore, creditMin, creditMax,
                 ssn, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} premise {string} account type {string} credit check {string} ssn {string} condition")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Active(String premiseType, String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String ssn, String testCondition) {
-        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnType(get_eligible_plans_and_offers, premiseType, accountType, creditCheck, null, null, null, ssn, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Active(String premiseType, String accountType, String creditCheck, String ssn, String testCondition) {
+        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnType(get_eligible_plans_and_offers, premiseType, accountType, GetEligiblePlansAndOffersApiLabel.valueOf(creditCheck), null, null, null, ssn, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} premise {string} account type {string} credit check {string} value score {string} enrollment status {string} ssn tc 338e")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_ByEnrollmentStatus(String premiseType, String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore, String enrollmentStatus, String ssn) {
-        getEligiblePlansAndOffersApiPage.setRequestParamsWithEnrollmentStatus(get_eligible_plans_and_offers, premiseType, accountType, creditCheck, valueScore, enrollmentStatus, ssn);
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_ByEnrollmentStatus(String premiseType, String accountType, String creditCheck, String valueScore, String enrollmentStatus, String ssn) {
+        getEligiblePlansAndOffersApiPage.setRequestParamsWithEnrollmentStatus(get_eligible_plans_and_offers, premiseType, accountType, GetEligiblePlansAndOffersApiLabel.valueOf(creditCheck), valueScore, enrollmentStatus, ssn);
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string}TC155_157")
