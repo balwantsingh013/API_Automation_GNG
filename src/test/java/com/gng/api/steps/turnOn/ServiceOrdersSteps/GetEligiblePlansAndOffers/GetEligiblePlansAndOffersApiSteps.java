@@ -75,6 +75,11 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithPromotionCodeTC328(get_eligible_plans_and_offers);
     }
 
+    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC_339")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_commercial_credit_check_as_yes_with_no_promotion_code_TC_339() {
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC339(get_eligible_plans_and_offers);
+    }
+
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string}TC155_157")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_TC155_157(String requestID) {
         getEligiblePlansAndOffersApiPage.validateInvalidRequestIDCasesTC155_157(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(requestID));

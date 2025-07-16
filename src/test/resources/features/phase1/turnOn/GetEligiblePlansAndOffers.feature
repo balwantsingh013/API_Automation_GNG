@@ -196,6 +196,23 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | 18M      | 18-Month Fixed                      |
       | RF6      | 6-Month Fixed                       |
 
+  @GetEligiblePlansAndOffersWithCustomerTypeCommercialCreditCheckAsYesWithNoPromotionCodeTC339 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC 339
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC_339
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+#    And response should return numberOfMatches as 8
+#    And the response should contain the following plans:
+#      | planCode | planDescription                     |
+#      | MVS      | Variable Select                     |
+#      | CSV      | MVS with Price Protection Guarantee |
+#      | MI       | Market Intro                        |
+#      | RGB      | Guaranteed Bill                     |
+#      | GPP      | 12-Month Fixed                      |
+#      | 24M      | 24-Month Fixed                      |
+#      | 18M      | 18-Month Fixed                      |
+#      | RF6      | 6-Month Fixed                       |
+
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
     When a request is made to the GetEligiblePlansAndOffers Api with "<requestID>"TC155_157

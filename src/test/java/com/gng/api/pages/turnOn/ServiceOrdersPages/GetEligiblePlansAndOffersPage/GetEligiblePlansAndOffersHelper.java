@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.TestConstant.*;
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -107,6 +108,35 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentSource(FakerDataGenerator.generateUpperCaseString(35));
         }
 
+    }
+
+    public void payloadBasedOnTC339(GetEligiblePlansAndOffersRequest payload){
+        ExcelReader excelReader = null;
+        try {
+            excelReader = new ExcelReader(EXPERIAN_DATA);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<Map<String, String>> allRows = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
+
+            Map<String, String> data = allRows.get(5107);
+
+            //payload.setAglcServiceLocationID(data.getOrDefault("aglcServiceLocationID", ""));
+            String fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+            String streetNumber = fullAddress.split(" ")[0]; // grab the first part
+            payload.setPremisesStreetNumber(streetNumber);
+            String[] parts = fullAddress.split(" ");
+            String streetName = (parts.length >= 2) ? parts[1] : "";
+            payload.setPremisesStreetName(streetName);
+            String streetSuffix = (parts.length >= 3) ? parts[2] : "";
+            payload.setPremisesStreetSuffix(streetSuffix);
+            payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+            payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+            payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+            //payload.setPremisesCountyCode("T132");
+            payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+            payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
     }
 
     public void setCustomerLastNameBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customerLastName) {
