@@ -196,9 +196,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | 18M      | 18-Month Fixed                      |
       | RF6      | 6-Month Fixed                       |
 
-  @GetEligiblePlansAndOffersWithCustomerTypeCommercialCreditCheckAsYesWithNoPromotionCodeTC339 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC 339
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC_339
+  @GetEligiblePlansAndOffersWithCustomerTypeCommercialPositive @Phase1 @HappyFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with customer type commercial for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
 #    And response should return numberOfMatches as 8
@@ -212,6 +212,20 @@ Feature: Verify GetEligiblePlansAndOffers Api
 #      | 24M      | 24-Month Fixed                      |
 #      | 18M      | 18-Month Fixed                      |
 #      | RF6      | 6-Month Fixed                       |
+
+  Examples:
+    |testCondition                                    |
+    #|COMMERCIAL_CREDIT_CHECK_YES_TC_339               |
+    #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340|
+    #|COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341|
+  #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342|
+  |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343|
+
+  @GetEligiblePlansAndOffersWithCustomerTypeCommercialCreditCheckAsYesNewEnrollmentTC340 @Phase1 @HappyFlow
+  Scenario: Verify GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC 339
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial credit check as yes for a new enrollment TC_340
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157

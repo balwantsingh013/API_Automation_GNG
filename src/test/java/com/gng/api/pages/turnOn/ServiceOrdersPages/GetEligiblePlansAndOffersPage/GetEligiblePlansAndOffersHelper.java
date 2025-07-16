@@ -10,6 +10,7 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -110,7 +111,7 @@ public class GetEligiblePlansAndOffersHelper {
 
     }
 
-    public void payloadBasedOnTC339(GetEligiblePlansAndOffersRequest payload){
+    public void payloadBasedOnTC339(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition){
         ExcelReader excelReader = null;
         try {
             excelReader = new ExcelReader(EXPERIAN_DATA);
@@ -119,24 +120,118 @@ public class GetEligiblePlansAndOffersHelper {
         }
 
         List<Map<String, String>> allRows = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
+        Map<String, String> data=null;
+        String fullAddress="";
+        String streetNumber="";
+        String streetName="";
+        String streetSuffix="";
+        String[] parts=null;
 
-            Map<String, String> data = allRows.get(5107);
+        switch(testCondition){
+            case COMMERCIAL_CREDIT_CHECK_YES_TC_339:
+                data = allRows.get(5107);
+                fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                streetNumber = fullAddress.split(" ")[0]; // grab the first part
+                payload.setPremisesStreetNumber(streetNumber);
+                parts = fullAddress.split(" ");
+                streetName = (parts.length >= 2) ? parts[1] : "";
+                payload.setPremisesStreetName(streetName);
+                streetSuffix = (parts.length >= 3) ? parts[2] : "";
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                break;
 
-            //payload.setAglcServiceLocationID(data.getOrDefault("aglcServiceLocationID", ""));
-            String fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
-            String streetNumber = fullAddress.split(" ")[0]; // grab the first part
-            payload.setPremisesStreetNumber(streetNumber);
-            String[] parts = fullAddress.split(" ");
-            String streetName = (parts.length >= 2) ? parts[1] : "";
-            payload.setPremisesStreetName(streetName);
-            String streetSuffix = (parts.length >= 3) ? parts[2] : "";
-            payload.setPremisesStreetSuffix(streetSuffix);
-            payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
-            payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
-            payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
-            //payload.setPremisesCountyCode("T132");
-            payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
-            payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340:
+                data = allRows.get(4399);
+                fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                parts = fullAddress.split("\\s+");
+
+                streetNumber = (parts.length > 0) ? parts[0] : "";
+                payload.setPremisesStreetNumber(streetNumber);
+
+// Assuming suffix and post-direction are always the last two parts:
+                streetSuffix = (parts.length >= 3) ? parts[parts.length - 2] : "";
+                String postDirection = (parts.length >= 4) ? parts[parts.length - 1] : "";
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesStreetPostDirection(postDirection);
+
+// Join the middle parts to form the street name:
+                streetName = "";
+                if (parts.length > 3) {
+                    streetName = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length - 2));
+                }
+                payload.setPremisesStreetName(streetName);
+
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                payload.setEnrollmentSource("FAX");
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341:
+                data = allRows.get(4638);
+                fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                streetNumber = fullAddress.split(" ")[0]; // grab the first part
+                payload.setPremisesStreetNumber(streetNumber);
+                parts = fullAddress.split(" ");
+                streetName = (parts.length >= 2) ? parts[1] : "";
+                payload.setPremisesStreetName(streetName);
+                streetSuffix = (parts.length >= 3) ? parts[2] : "";
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                payload.setEnrollmentSource("WEB");
+                payload.setCreditCheckOption("Skip");
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342:
+                data = allRows.get(1946);
+                fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                streetNumber = fullAddress.split(" ")[0]; // grab the first part
+                payload.setPremisesStreetNumber(streetNumber);
+                parts = fullAddress.split(" ");
+                streetName = (parts.length >= 2) ? parts[1] : "";
+                payload.setPremisesStreetName(streetName);
+                streetSuffix = (parts.length >= 3) ? parts[2] : "";
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343:
+                data = allRows.get(4766);
+                fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                streetNumber = fullAddress.split(" ")[0]; // grab the first part
+                payload.setPremisesStreetNumber(streetNumber);
+                parts = fullAddress.split(" ");
+                streetName = (parts.length >= 2) ? parts[1] : "";
+                payload.setPremisesStreetName(streetName);
+                streetSuffix = (parts.length >= 3) ? parts[2] : "";
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                payload.setEnrollmentSource("FAX");
+                payload.setMarketingPromotionCode("DEALS");
+                break;
+
+        }
+
     }
 
     public void setCustomerLastNameBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customerLastName) {

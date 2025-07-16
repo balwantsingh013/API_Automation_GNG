@@ -192,14 +192,14 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC339(GetEligiblePlansAndOffersApiLabel apiLabel){
+    public void sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC339(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType("TNON");
         payload.setCustomerType("CM");
         payload.setAuthorizedBy("MM");
         payload.setSeasonalSavingsProgramIndicator(false);
-        helper.payloadBasedOnTC339(payload);
+        helper.payloadBasedOnTC339(payload, testCondition);
         payload.setCustomerFirstName(null);
         payload.setCustomerLastName(null);
         payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
