@@ -438,6 +438,28 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentSource("FAX");
                 break;
 
+            case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E:
+                data = allRows.get(5093);
+                fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                parts = fullAddress.split("\\s+");
+
+                streetNumber = (parts.length >= 1) ? parts[0] : "";
+                streetName   = (parts.length >= 2) ? parts[1] : "";
+                streetSuffix = (parts.length >= 3) ? parts[2] : "";
+
+                payload.setPremisesStreetNumber(streetNumber);
+                payload.setPremisesStreetName(streetName);
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+
+                data = allRows.get(4912);
+                payload.setCreditCheckBusinessName(data.get("BUSINESS NAME"));
+                break;
+
         }
     }
 
