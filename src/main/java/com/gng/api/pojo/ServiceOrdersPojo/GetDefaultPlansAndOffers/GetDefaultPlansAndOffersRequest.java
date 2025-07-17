@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class GetDefaultPlansAndOffersRequest {
     private String requestID;
     private String loginID;
+    private String customerType;
     private String transactionType;
     private String enrollmentSource;
     private String marketingPromotionCode;

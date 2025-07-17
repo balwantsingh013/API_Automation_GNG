@@ -106,14 +106,20 @@ public class BaseSteps {
         for (Map<String, String> expected : expectedPlans) {
             String expectedCode = normalize(expected.get("planCode"));
             String expectedDesc = normalize(expected.get("planDescription"));
+            String expectedPromo1Code = normalize(expected.get("promotion1Code"));
+            String expectedPromo1Desc = normalize(expected.get("promotion1Description"));
 
             boolean matchFound = actualPlans.stream().anyMatch(plan -> {
                 String actualCode = normalize(plan.get("planCode"));
                 String actualDesc = normalize(plan.get("planDescription"));
-                return expectedCode.equals(actualCode) && expectedDesc.equals(actualDesc);
+                String actualPromo1Code = normalize(plan.get("promotion1Code"));
+                String actualPromo1Description = normalize(plan.get("promotion1Description"));
+                return expectedCode.equals(actualCode) && expectedDesc.equals(actualDesc)
+                        && expectedPromo1Code.equals(actualPromo1Code) && expectedPromo1Desc.equals(actualPromo1Description);
             });
 
-            assertThat("Plan not found: code=" + expectedCode + ", description=" + expectedDesc, matchFound);
+            assertThat("Plan not found: code=" + expectedCode + ", description=" + expectedDesc + ", promotion 1 code="
+                    + expectedPromo1Desc + ", promotion 1 description=" + expectedPromo1Desc, matchFound);
         }
     }
 

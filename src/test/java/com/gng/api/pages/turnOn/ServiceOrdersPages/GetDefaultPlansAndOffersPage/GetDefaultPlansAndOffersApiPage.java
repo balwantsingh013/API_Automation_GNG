@@ -1,4 +1,4 @@
-package com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffers;
+package com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
@@ -7,8 +7,6 @@ import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffer
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
-import com.gng.api.pojo.TestContext.TestContext;
-
 import static com.gng.api.constants.ApiEndPoint.GET_DEFAULT_PLANS_AND_OFFERS;
 
 public class GetDefaultPlansAndOffersApiPage extends BasePage {
@@ -20,11 +18,12 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         this.helper = new GetDefaultPlansAndOffersHelper(testContext);
     }
 
-    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, String accountType, GetDefaultPlansAndOffersApiLabel promotionCode, GetDefaultPlansAndOffersApiLabel testCondition) {
+    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, String accountType, GetDefaultPlansAndOffersApiLabel promotionCode,
+                                 GetDefaultPlansAndOffersApiLabel enrollmentSource, GetDefaultPlansAndOffersApiLabel testCondition) {
 
         GetDefaultPlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        helper.setRequestParams(payload, accountType, promotionCode, testCondition);
+        helper.setRequestParams(payload, accountType, promotionCode, enrollmentSource, testCondition);
 
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
@@ -32,5 +31,4 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         testContext.setGetDefaultPlansAndOffersResponse(getDefaultPlansAndOffersResponse);
         testContext.setResponse(offersResponse);
     }
-
 }
