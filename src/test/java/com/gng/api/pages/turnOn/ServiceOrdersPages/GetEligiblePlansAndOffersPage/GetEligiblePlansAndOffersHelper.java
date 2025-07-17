@@ -392,6 +392,28 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
                 payload.setEmailAddress(FakerDataGenerator.generateEmail());
                 break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350:
+                         data = allRows.get(4697);
+                 fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                 parts = fullAddress.split("\\s+");
+
+                 streetNumber        = (parts.length >= 1) ? parts[0] : "";
+                 streetName          = (parts.length >= 3) ? parts[1] + " " + parts[2] : "";
+                 streetSuffix        = (parts.length >= 4) ? parts[3] : "";
+                 postDirection       = (parts.length >= 5) ? parts[4] : "";
+
+                payload.setPremisesStreetNumber(streetNumber);
+                payload.setPremisesStreetName(streetName);
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesStreetPostDirection(postDirection);
+
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                break;
         }
     }
 
