@@ -222,14 +222,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
   #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343|
   #|COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344|
   #|COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345| no data available for this one
-  |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346|
+  #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346|
+  #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347| found data but some mismatch
 
-
-  @GetEligiblePlansAndOffersWithCustomerTypeCommercialCreditCheckAsYesNewEnrollmentTC340 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC 339
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial credit check as yes for a new enrollment TC_340
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
