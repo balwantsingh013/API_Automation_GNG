@@ -329,6 +329,38 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
                 payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
                 break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348:
+                data = allRows.get(2508);
+                payload.setMarketingPromotionCode("DEALS");
+                 fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                 parts = fullAddress.split("\\s+");
+
+                 streetNumber        = (parts.length >= 1) ? parts[0] : "";
+                 streetName          = (parts.length >= 2) ? parts[1] : "";
+                 streetSuffix        = (parts.length >= 3) ? parts[2] : "";
+                 postDirection       = (parts.length >= 4 && parts[3].matches("^(N|S|E|W|NE|NW|SE|SW)$")) ? parts[3] : "";
+                String premisesUnitType    = (parts.length >= 5 && !postDirection.isEmpty()) ? parts[4] :
+                        (parts.length >= 4 && postDirection.isEmpty()) ? parts[3] : "";
+                String premisesUnitNumber  = (parts.length >= 6 && !postDirection.isEmpty()) ? parts[5] :
+                        (parts.length >= 5 && postDirection.isEmpty()) ? parts[4] : "";
+
+// Assign to payload
+                payload.setPremisesStreetNumber(streetNumber);
+                payload.setPremisesStreetName(streetName);
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesStreetPostDirection(postDirection);
+                payload.setPremisesUnitType(premisesUnitType);
+                payload.setPremisesUnitNumber(premisesUnitNumber);
+
+
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
         }
     }
 
