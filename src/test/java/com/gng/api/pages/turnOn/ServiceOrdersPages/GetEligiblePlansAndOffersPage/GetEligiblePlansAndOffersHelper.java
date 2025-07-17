@@ -414,6 +414,30 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
                 payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
                 break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B:
+                data = allRows.get(4459);
+                 fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
+                parts = fullAddress.split("\\s+");
+
+                 streetNumber = (parts.length >= 1) ? parts[0] : "";
+                 streetName   = (parts.length >= 3) ? parts[1] + " " + parts[2] : (parts.length >= 2) ? parts[1] : "";
+                 streetSuffix = (parts.length >= 4) ? parts[3] : (parts.length == 3) ? parts[2] : "";
+                 postDirection = (parts.length >= 5) ? parts[4] : "";
+
+                payload.setPremisesStreetNumber(streetNumber);
+                payload.setPremisesStreetName(streetName);
+                payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesStreetPostDirection(postDirection);
+
+                payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+                payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+                payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+                payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+                payload.setEnrollmentSource("FAX");
+                break;
+
         }
     }
 
