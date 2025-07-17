@@ -6,6 +6,10 @@ public enum GetDefaultPlansAndOffersApiLabel {
     get_default_plans_and_offers,
     get_default_plans_and_offers_mandatory,
 
+    //accountType
+    RESIDENTIAL,
+    COMMERCIAL,
+
     //promotionCodes
     DEALS,
     SAVE100,
@@ -30,5 +34,6 @@ public enum GetDefaultPlansAndOffersApiLabel {
     GET_DEFAULT_PLANS_AND_OFFERS_TC_122,
     GET_DEFAULT_PLANS_AND_OFFERS_TC_124,
     GET_DEFAULT_PLANS_AND_OFFERS_TC_126,
+    GET_DEFAULT_PLANS_AND_OFFERS_TC_127,
     GET_DEFAULT_PLANS_AND_OFFERS_TC_154
 }

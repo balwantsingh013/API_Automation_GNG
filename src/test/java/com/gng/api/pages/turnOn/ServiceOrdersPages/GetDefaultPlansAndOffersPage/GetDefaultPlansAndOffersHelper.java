@@ -85,7 +85,9 @@ public class GetDefaultPlansAndOffersHelper {
 
         payload.setCustomerType(accountType);
 
-        setPromotionCode(payload, promotionCode);
+        if (promotionCode != null) {
+            setPromotionCode(payload, promotionCode);
+        }
         setEnrollmentSource(payload, enrollmentSource);
 
         switch (testCondition) {

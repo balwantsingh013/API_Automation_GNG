@@ -1,0 +1,196 @@
+{
+  "GET_DEFAULT_PLANS_AND_OFFERS_TC_122": {
+    "numberOfMatches": 10,
+    "plans": [
+      {
+        "planCode": "MVS",
+        "planDescription": "Variable Select",
+        "promotion1Code": "25 CENTS FOR 12 MONTHS",
+        "promotion1Description": "$0.25 per therm discount for 12 months"
+      },
+      {
+        "planCode": "MI",
+        "planDescription": "Market Intro",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "RGB",
+        "planDescription": "Guaranteed Bill",
+        "promotion1Code": "FIX 5 DOLLARS FOR 12 MONTHS",
+        "promotion1Description": "$5 off total bill for 12 months"
+      },
+      {
+        "planCode": "24M",
+        "planDescription": "24-Month Fixed",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "18M",
+        "planDescription": "18-Month Fixed",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "GPP",
+        "planDescription": "12-Month Fixed",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "RF6",
+        "planDescription": "6-Month Fixed",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "MAP",
+        "planDescription": "Market Advantage",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "PGB",
+        "planDescription": "Pre-Pay Guaranteed Bill",
+        "promotion1Code": "FIX 10 DOLLARS FOR 12 MONTHS",
+        "promotion1Description": "$10 off total bill for 12 months"
+      },
+      {
+        "planCode": "PRP",
+        "planDescription": "Pre-Pay",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      }
+    ]
+  },
+  "GET_DEFAULT_PLANS_AND_OFFERS_TC_124": {
+    "numberOfMatches": 5,
+    "plans": [
+      {
+        "planCode": "CVS",
+        "planDescription": "Commercial Variable Select",
+        "promotion1Code": "COM 25 CENTS FOR 12 MONTHS",
+        "promotion1Description": "$0.25 per therm discount for 12 months"
+      },
+      {
+        "planCode": "CMI",
+        "planDescription": "Commercial Market Intro",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "CGB",
+        "planDescription": "Guaranteed Bill",
+        "promotion1Code": "COM 7DOLLARS AND 50 CENT FOR 12MOS",
+        "promotion1Description": "$7.50 off total bill for 12 months"
+      },
+      {
+        "planCode": "CFM",
+        "planDescription": "Commercial 12-Month Fixed",
+        "promotion1Code": "COM FIX 5 CENTS FOR 12 MONTHS",
+        "promotion1Description": "$0.05 per therm discount for 12 months"
+      },
+      {
+        "planCode": "CF6",
+        "planDescription": "Commercial 6-Month Fixed",
+        "promotion1Code": "COM FIX 4 CENTS FOR 6 MONTHS",
+        "promotion1Description": "$0.04 per therm discount for 6 months"
+      }
+    ]
+  },
+  "GET_DEFAULT_PLANS_AND_OFFERS_TC_126": {
+    "numberOfMatches": 9,
+    "plans": [
+      {
+        "planCode": "RGB",
+        "planDescription": "Guaranteed Bill",
+        "promotion1Code": "FIX 10 DOLLARS FOR 12 MONTHS",
+        "promotion1Description": "$10 off total bill for 12 months"
+      },
+      {
+        "planCode": "GPP",
+        "planDescription": "12-Month Fixed",
+        "promotion1Code": "FIX 10 CENTS FOR 12 MONTHS",
+        "promotion1Description": "$0.10 per therm discount for 12 months"
+      },
+      {
+        "planCode": "24M",
+        "planDescription": "24-Month Fixed",
+        "promotion1Code": "FIX 10 CENTS FOR 24 MONTHS",
+        "promotion1Description": "$0.10 per therm discount for 24 months"
+      },
+      {
+        "planCode": "RF6",
+        "planDescription": "6-Month Fixed",
+        "promotion1Code": "FIX 10 CENTS FOR 6 MONTHS",
+        "promotion1Description": "$0.10 per therm discount for 6 months"
+      },
+      {
+        "planCode": "FIX",
+        "planDescription": "12-Month Fixed 2",
+        "promotion1Code": "",
+        "promotion1Description": ""
+      },
+      {
+        "planCode": "MI",
+        "planDescription": "Market Intro",
+        "promotion1Code": "FIX 10 DOLLARS FOR 12 MONTHS",
+        "promotion1Description": "$10 off total bill for 12 months"
+      },
+      {
+        "planCode": "MVS",
+        "planDescription": "Variable Select",
+        "promotion1Code": "25 CENTS FOR 12 MONTHS",
+        "promotion1Description": "$0.25 per therm discount for 12 months"
+      },
+      {
+        "planCode": "PGB",
+        "planDescription": "Pre-Pay Guaranteed Bill",
+        "promotion1Code": "FIX 10 DOLLARS FOR 12 MONTHS",
+        "promotion1Description": "$10 off total bill for 12 months"
+      },
+      {
+        "planCode": "PRP",
+        "planDescription": "Pre-Pay",
+        "promotion1Code": "15 CENTS FOR 12 MONTHS",
+        "promotion1Description": "$0.15 per therm discount for 12 months"
+      }
+    ]
+  },
+  "GET_DEFAULT_PLANS_AND_OFFERS_TC_127": {
+    "numberOfMatches": 5,
+    "plans": [
+      {
+        "planCode": "CGB",
+        "planDescription": "Guaranteed Bill",
+        "promotion1Code": "COM 8DOLLARS AND 50CENT FOR 12 MOS",
+        "promotion1Description": "$8.50 off total bill for 12 months"
+      },
+      {
+        "planCode": "CFM",
+        "planDescription": "Commercial 12-Month Fixed",
+        "promotion1Code": "CF 8DOLLARS AND 50CENTS FOR 12 MOS",
+        "promotion1Description": "$8.50 off total bill for 12 months"
+      },
+      {
+        "planCode": "CF6",
+        "planDescription": "Commercial 6-Month Fixed",
+        "promotion1Code": "CF 8DOLLARS AND 50CENTS FOR 12 MOS",
+        "promotion1Description": "$8.50 off total bill for 12 months"
+      },
+      {
+        "planCode": "CVS",
+        "planDescription": "Commercial Variable Select",
+        "promotion1Code": "COM 8DOLLARS AND 50CENT FOR 12 MOS",
+        "promotion1Description": "$8.50 off total bill for 12 months"
+      },
+      {
+        "planCode": "CMI",
+        "planDescription": "Commercial Market Intro",
+        "promotion1Code": "COM 8DOLLARS AND 50CENT FOR 12 MOS",
+        "promotion1Description": "$8.50 off total bill for 12 months"
+      }
+    ]
+  }
+}
