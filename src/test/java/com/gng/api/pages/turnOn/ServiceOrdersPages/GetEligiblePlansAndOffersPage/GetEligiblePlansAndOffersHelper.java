@@ -126,6 +126,7 @@ public class GetEligiblePlansAndOffersHelper {
         String streetName="";
         String streetSuffix="";
         String[] parts=null;
+        String addressType="";
 
         switch(testCondition){
             case COMMERCIAL_CREDIT_CHECK_YES_TC_339:
@@ -153,13 +154,11 @@ public class GetEligiblePlansAndOffersHelper {
                 streetNumber = (parts.length > 0) ? parts[0] : "";
                 payload.setPremisesStreetNumber(streetNumber);
 
-// Assuming suffix and post-direction are always the last two parts:
                 streetSuffix = (parts.length >= 3) ? parts[parts.length - 2] : "";
                 String postDirection = (parts.length >= 4) ? parts[parts.length - 1] : "";
                 payload.setPremisesStreetSuffix(streetSuffix);
                 payload.setPremisesStreetPostDirection(postDirection);
 
-// Join the middle parts to form the street name:
                 streetName = "";
                 if (parts.length > 3) {
                     streetName = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length - 2));
@@ -214,22 +213,57 @@ public class GetEligiblePlansAndOffersHelper {
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343:
                 data = allRows.get(4766);
                 fullAddress = data.getOrDefault("BUSINESS STREET ADDRESS", "").trim();
-                streetNumber = fullAddress.split(" ")[0]; // grab the first part
-                payload.setPremisesStreetNumber(streetNumber);
-                parts = fullAddress.split(" ");
+
+                parts = fullAddress.split("\\s+");
+
+                streetNumber = (parts.length >= 1) ? parts[0] : "";
                 streetName = (parts.length >= 2) ? parts[1] : "";
-                payload.setPremisesStreetName(streetName);
                 streetSuffix = (parts.length >= 3) ? parts[2] : "";
+                postDirection = (parts.length >= 4) ? parts[3] : "";
+
+                payload.setPremisesStreetNumber(streetNumber);
+                payload.setPremisesStreetName(streetName);
                 payload.setPremisesStreetSuffix(streetSuffix);
+                payload.setPremisesStreetPostDirection(postDirection);
+
                 payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
                 payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
                 payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
                 payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
                 payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
                 payload.setEnrollmentSource("FAX");
-                payload.setMarketingPromotionCode("DEALS");
-                break;
 
+                fullAddress = data.getOrDefault("BILLING ADDRESS", "").trim();
+
+                parts = fullAddress.split("\\s+");
+
+                addressType = (parts.length >= 1) ? parts[0] : "";
+                streetNumber = (parts.length >= 2) ? parts[1] : "";
+                streetName = (parts.length >= 3) ? parts[2] : "";
+                streetSuffix = (parts.length >= 4) ? parts[3] : "";
+
+                payload.setBillingAddressType(addressType);
+                payload.setPremisesStreetNumber(streetNumber);
+                payload.setPremisesStreetName(streetName);
+                payload.setPremisesStreetSuffix(streetSuffix);
+
+                String phoneDetails = data.getOrDefault("PHONE NUMBER DETAILS", "").trim();
+
+                parts = phoneDetails.split("\\s+");
+
+                String workPhoneType = (parts.length >= 1) ? parts[0] : "";
+                String workPhoneExtension = (parts.length >= 2) ? parts[1] : "";
+                String workPhoneNumber = (parts.length >= 3) ? parts[2] : "";
+
+                payload.setWorkPhoneType(workPhoneType);
+                payload.setWorkPhoneExtension(workPhoneExtension);
+                payload.setWorkPhoneNumber(workPhoneNumber);
+
+                payload.setBillingCity(data.get("BILLING CITY"));
+                payload.setBillingStateCode(data.get("BILLING STATE"));
+                payload.setBillingZipCode(data.get("BILLING ZIP"));
+                payload.setBillingCountyCode(data.get("BILLING COUNTRY CODE"));
+                break;
         }
 
     }
