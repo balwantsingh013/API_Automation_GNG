@@ -219,7 +219,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
     #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340|
     #|COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341|
   #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342|
-  |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343|
+  #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343|
+  |COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344|
+
 
   @GetEligiblePlansAndOffersWithCustomerTypeCommercialCreditCheckAsYesNewEnrollmentTC340 @Phase1 @HappyFlow
   Scenario: Verify GetEligiblePlansAndOffers Api with customer type commercial credit check as yes with no promotion code TC 339
