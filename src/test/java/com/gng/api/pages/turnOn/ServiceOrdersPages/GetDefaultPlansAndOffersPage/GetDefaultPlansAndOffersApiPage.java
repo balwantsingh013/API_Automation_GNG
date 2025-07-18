@@ -18,7 +18,7 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         this.helper = new GetDefaultPlansAndOffersHelper(testContext);
     }
 
-    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, String accountType, GetDefaultPlansAndOffersApiLabel promotionCode,
+    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, GetDefaultPlansAndOffersApiLabel accountType, GetDefaultPlansAndOffersApiLabel promotionCode,
                                  GetDefaultPlansAndOffersApiLabel enrollmentSource, GetDefaultPlansAndOffersApiLabel testCondition) {
 
         GetDefaultPlansAndOffersRequest payload = helper.preparePayload(apiLabel);

@@ -5,6 +5,8 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel;
 
+import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.GET_DEFAULT_PLANS_AND_OFFERS_TC_154;
+
 @Slf4j
 public class GetDefaultPlansAndOffersHelper {
 
@@ -21,6 +23,18 @@ public class GetDefaultPlansAndOffersHelper {
                 : GetDefaultPlansAndOffersApiLabel.get_default_plans_and_offers_mandatory.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, GetDefaultPlansAndOffersRequest.class);
     }
+
+    public void setAccountType(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel accountType){
+        switch (accountType){
+            case RESIDENTIAL:
+                payload.setCustomerType("RS");
+                break;
+            case COMMERCIAL:
+                payload.setCustomerType("CM");
+                break;
+        }
+    }
+
     public void setPromotionCode(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel promotionCode){
         switch (promotionCode){
             case DEALS:
@@ -80,23 +94,26 @@ public class GetDefaultPlansAndOffersHelper {
         }
     }
 
-    public void setRequestParams(GetDefaultPlansAndOffersRequest payload, String accountType, GetDefaultPlansAndOffersApiLabel promotionCode, GetDefaultPlansAndOffersApiLabel enrollmentSource,
+    public void setRequestParams(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel accountType, GetDefaultPlansAndOffersApiLabel promotionCode, GetDefaultPlansAndOffersApiLabel enrollmentSource,
                                  GetDefaultPlansAndOffersApiLabel testCondition) {
 
-        payload.setCustomerType(accountType);
-
+        setAccountType(payload, accountType);
         if (promotionCode != null) {
             setPromotionCode(payload, promotionCode);
         }
         setEnrollmentSource(payload, enrollmentSource);
 
-        switch (testCondition) {
-            case GET_DEFAULT_PLANS_AND_OFFERS_TC_122:
-                break;
-            case GET_DEFAULT_PLANS_AND_OFFERS_TC_154:
-                payload.setLoginID("acncsr");
-                break;
-            default:
+        if (testCondition.equals(GET_DEFAULT_PLANS_AND_OFFERS_TC_154))
+        {
+            payload.setLoginID("acncsr");
         }
+//        switch (testCondition) {
+//            case GET_DEFAULT_PLANS_AND_OFFERS_TC_122:
+//                break;
+//            case GET_DEFAULT_PLANS_AND_OFFERS_TC_154:
+//                payload.setLoginID("acncsr");
+//                break;
+//            default:
+//        }
     }
 }
