@@ -9,6 +9,7 @@ public enum GetDefaultPlansAndOffersApiLabel {
     //accountType
     RESIDENTIAL,
     COMMERCIAL,
+    INVALID,
 
     //promotionCodes
     DEALS,

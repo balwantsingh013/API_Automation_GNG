@@ -32,6 +32,9 @@ public class GetDefaultPlansAndOffersHelper {
             case COMMERCIAL:
                 payload.setCustomerType("CM");
                 break;
+            case INVALID:
+                payload.setCustomerType("IN");
+                break;
         }
     }
 
@@ -42,6 +45,9 @@ public class GetDefaultPlansAndOffersHelper {
                 break;
             case SAVE100:
                 payload.setMarketingPromotionCode("SAVE100");
+                break;
+            case AAA:
+                payload.setMarketingPromotionCode("AAA");
                 break;
         }
     }

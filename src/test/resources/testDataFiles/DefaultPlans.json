@@ -282,8 +282,62 @@
     ]
   },
   "GET_DEFAULT_PLANS_AND_OFFERS_TC_151_3": {
+    "numberOfMatches": 0
   },
-  "GET_DEFAULT_PLANS_AND_OFFERS_TC_152": {
+  "GET_DEFAULT_PLANS_AND_OFFERS_TC_152_1": {
+    "numberOfMatches": 9,
+    "plans": [
+      {
+        "planCode": "24M",
+        "planDescription": "24-Month Fixed",
+        "promotion1Code": "FIX 50 VISA PLUS 15 CENT FOR 24M",
+        "promotion1Description": "$50 Visa Prepaid Reward Card plus $0.15 per therm discount for 24 Months"
+      },
+      {
+        "planCode": "RGB",
+        "planDescription": "Guaranteed Bill",
+        "promotion1Code": "50VISA PLUS 7D AND 50CENT FOR 12M",
+        "promotion1Description": "$50 Visa Prepaid Reward Card plus $7.50 off total bill 12 Months"
+      },
+      {
+        "planCode": "GPP",
+        "planDescription": "12-Month Fixed",
+        "promotion1Code": "FIX 50 VISA PLUS 15 CENT FOR 12M",
+        "promotion1Description": "$50 Visa Prepaid Reward Card plus $0.15 per therm discount for 12 Months"
+      },
+      {
+        "planCode": "18M",
+        "planDescription": "18-Month Fixed",
+        "promotion1Code": "FIX 50 VISA PLUS 15 CENT FOR 18M",
+        "promotion1Description": "$50 Visa Prepaid Reward Card plus $0.15 per therm discount for 18 Months"
+      },
+      {
+        "planCode": "RF6",
+        "planDescription": "6-Month Fixed",
+        "promotion1Code": "FIX 50 VISA PLUS 15 CENT FOR 6M",
+        "promotion1Description": "$50 Visa Prepaid Reward Card plus $0.15 per therm discount for 6 Months"
+      },
+      {
+        "planCode": "MI",
+        "planDescription": "Market Intro",
+        "promotion1Code": "50 VISA REWARD CARD",
+        "promotion1Description": "$50 Visa Reward Card"
+      },
+      {
+        "planCode": "MVS",
+        "planDescription": "Variable Select",
+        "promotion1Code": "50 VISA PLUS 30 CENTS FOR 24 MONTH",
+        "promotion1Description": "$50 Visa Prepaid Reward Card plus $0.30 per therm discount for 24 Months"
+      },
+      {
+        "planCode": "PGB",
+        "planDescription": "Pre-Pay Guaranteed Bill",
+        "promotion1Code": "50 VISA PLUS 5 DOLLARS FOR 12MONTHS",
+        "promotion1Description": "$50 Visa Reward Card plus $5 off total bill for 12 months"
+      }
+    ]
+  },
+  "GET_DEFAULT_PLANS_AND_OFFERS_TC_152_2": {
     "numberOfMatches": 9,
     "plans": [
       {
