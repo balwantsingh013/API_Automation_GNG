@@ -20,12 +20,12 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | COMMERCIAL  |               | MAIL               | GET_DEFAULT_PLANS_AND_OFFERS_TC_124   | 5               |
       | RESIDENTIAL | DEALS         | MAIL               | GET_DEFAULT_PLANS_AND_OFFERS_TC_126   | 9               |
       | COMMERCIAL  | SAVE100       | FAX                | GET_DEFAULT_PLANS_AND_OFFERS_TC_127   | 5               |
-      | RESIDENTIAL | AAA           | FAX                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151   | 9               |
+      | RESIDENTIAL | AAA           | FAX                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_1 | 9               |
       | COMMERCIAL  | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_2 | 5               |
-      | COMMERCIAL  | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_2 | 9               |
-      | RESIDENTIAL |               | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_152   | 9               |
+      | COMMERCIAL  | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_3 | 0               |
+      | RESIDENTIAL |               | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_152_1 | 9               |
       | RESIDENTIAL |               | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_152_2 | 9               |
-      | RESIDENTIAL |               | ALL_CONNECT        | GET_DEFAULT_PLANS_AND_OFFERS_TC_153   | 10              |
+      | RESIDENTIAL |               | ALL_CONNECT        | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_1 | 10              |
       | RESIDENTIAL |               | CIM_BUILDER_TURN_ON| GET_DEFAULT_PLANS_AND_OFFERS_TC_153_2 | 10              |
       | RESIDENTIAL |               | CORRESPONDENCE     | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_3 | 10              |
       | RESIDENTIAL |               | EMAIL              | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_4 | 10              |
