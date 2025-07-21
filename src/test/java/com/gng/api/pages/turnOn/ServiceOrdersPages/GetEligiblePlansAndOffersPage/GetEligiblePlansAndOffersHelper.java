@@ -5,6 +5,7 @@ import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
@@ -17,6 +18,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.gng.api.constants.TestConstant.*;
+import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.CREDIT_CHECK_MULTIPLE_PREMISES;
+import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.CREDIT_CHECK_YES;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -1391,11 +1394,6 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setTenantLandlord(rowData.get("tenantLandlord"));
         payload.setPremisesStreetPostDirection(rowData.get("premisesStreetPostDirection"));
 
-
-
-
-
-
     }
 
     public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersRequest payload, String premiseType, String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore,
@@ -1547,6 +1545,77 @@ public class GetEligiblePlansAndOffersHelper {
         Optional.ofNullable(requestParams.get("UZBENRO_LANDLORD_TENANT"))
                 .ifPresent(value -> payload.setTenantLandlord(value.toString()));
 
+    }
+    public void mapDataFromExcel(CustomerData customerData, GetEligiblePlansAndOffersRequest payload, String encryptedSSN) {
+
+        Optional.ofNullable(customerData.getCustomerType())
+                .ifPresent(payload::setCustomerType);
+
+        Optional.ofNullable(customerData.getCustomerLastName())
+                .ifPresent(payload::setCustomerLastName);
+
+        Optional.ofNullable(customerData.getCustomerMiddleName())
+                .ifPresent(payload::setCustomerMiddleName);
+
+        Optional.ofNullable(customerData.getCustomerFirstName())
+                .ifPresent(payload::setCustomerFirstName);
+
+        Optional.ofNullable(encryptedSSN)
+                .ifPresent(payload::setSocialSecurityNumber);
+
+        Optional.ofNullable(customerData.getAglcServiceLocationID())
+                .ifPresent(payload::setAglcServiceLocationID);
+
+        Optional.ofNullable(customerData.getPremisesStreetNumber())
+                .ifPresent(payload::setPremisesStreetNumber);
+
+        Optional.ofNullable(customerData.getPremisesStreetPreDirection())
+                .ifPresent(payload::setPremisesStreetPreDirection);
+
+        Optional.ofNullable(customerData.getPremisesStreetName())
+                .ifPresent(payload::setPremisesStreetName);
+
+        Optional.ofNullable(customerData.getPremisesStreetSuffix())
+                .ifPresent(payload::setPremisesStreetSuffix);
+
+        Optional.ofNullable(customerData.getPremisesStreetPostDirection())
+                .ifPresent(payload::setPremisesStreetPostDirection);
+
+        Optional.ofNullable(customerData.getPremisesUnitType())
+                .ifPresent(payload::setPremisesUnitType);
+
+        Optional.ofNullable(customerData.getPremisesUnitNumber())
+                .ifPresent(payload::setPremisesUnitNumber);
+
+        Optional.ofNullable(customerData.getPremisesCity())
+                .ifPresent(payload::setPremisesCity);
+
+        Optional.ofNullable(customerData.getPremisesStateCode())
+                .ifPresent(payload::setPremisesStateCode);
+
+        Optional.ofNullable(customerData.getPremisesZipCode())
+                .ifPresent(payload::setPremisesZipCode);
+
+        Optional.ofNullable(customerData.getPremisesCountyCode())
+                .ifPresent(payload::setPremisesCountyCode);
+
+        Optional.ofNullable(customerData.getAcnStatusIndicator())
+                .ifPresent(payload::setAcnStatusIndicator);
+
+        Optional.ofNullable(customerData.getTenantLandlord())
+                .ifPresent(payload::setTenantLandlord);
+
+        Optional.ofNullable(customerData.getCreditCheckOption())
+                .ifPresent(payload::setCreditCheckOption);
+    }
+
+    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, String encryptedSSN, CustomerData customerData,
+                                 GetEligiblePlansAndOffersApiLabel testCondition) {
+
+        if (customerData != null){
+            mapDataFromExcel(customerData, payload, encryptedSSN);
+        }
+        payload.setConfirmCreditCheck(false);
     }
 }
 

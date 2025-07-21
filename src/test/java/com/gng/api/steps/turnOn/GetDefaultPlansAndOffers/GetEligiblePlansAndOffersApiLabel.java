@@ -1,37 +1,10 @@
 package com.gng.api.steps.turnOn.GetDefaultPlansAndOffers;
 
-public enum GetDefaultPlansAndOffersApiLabel {
+public enum GetEligiblePlansAndOffersApiLabel {
 
     //type
     get_default_plans_and_offers,
     get_default_plans_and_offers_mandatory,
-
-    //accountType
-    RESIDENTIAL,
-    COMMERCIAL,
-    INVALID,
-
-    //promotionCodes
-    DEALS,
-    SAVE100,
-    AAA,
-
-
-    //enrollmentSources
-    ALL_CONNECT,
-    CIM_BUILDER_TURN_ON,
-    CORRESPONDENCE,
-    EMAIL,
-    ENERGY_SHOP,
-    FAX,
-    GEORGIA_GAS_SAVINGS,
-    GNG_HUB,
-    MAIL,
-    MOOVE_GURU,
-    ONE_SOURCE,
-    PHONE_CALL,
-    VIV_INT,
-    WEB,
 
     //test conditions
     GET_DEFAULT_PLANS_AND_OFFERS_TC_122,

@@ -1,4 +1,7 @@
 package com.gng.api.steps.turnOn.GetDefaultPlansAndOffers;
+import com.gng.api.constants.CustomerType;
+import com.gng.api.constants.EnrollmentSource;
+import com.gng.api.constants.PromotionCode;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage.GetDefaultPlansAndOffersApiPage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -9,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Then;
 import java.io.InputStream;
 import java.util.List;
-import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.get_default_plans_and_offers;
+import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetEligiblePlansAndOffersApiLabel.get_default_plans_and_offers;
 import static org.testng.AssertJUnit.*;
 
 public class GetDefaultPlansAndOffersApiSteps {
@@ -42,29 +45,29 @@ public class GetDefaultPlansAndOffersApiSteps {
             String enrollmentSource,
             String testCondition) {
 
-        GetDefaultPlansAndOffersApiLabel customerLabel = GetDefaultPlansAndOffersApiLabel.valueOf(customerType);
-        GetDefaultPlansAndOffersApiLabel enrollmentSourceLabel = GetDefaultPlansAndOffersApiLabel.valueOf(enrollmentSource);
-        GetDefaultPlansAndOffersApiLabel conditionLabel = GetDefaultPlansAndOffersApiLabel.valueOf(testCondition);
 
-        GetDefaultPlansAndOffersApiLabel promoLabel = null;
+          EnrollmentSource.valueOf(enrollmentSource);
+        GetEligiblePlansAndOffersApiLabel conditionLabel = GetEligiblePlansAndOffersApiLabel.valueOf(testCondition);
+
+        PromotionCode promo = null;
         if (promotionCode != null && !promotionCode.equalsIgnoreCase("<promotionCode>") && !promotionCode.trim().isEmpty()) {
-            promoLabel = GetDefaultPlansAndOffersApiLabel.valueOf(promotionCode);
+            promo = PromotionCode.valueOf(promotionCode);
         }
 
         getDefaultPlansAndOffersApiPage.setRequestParams(
                 get_default_plans_and_offers,
-                customerLabel,
-                promoLabel,
-                enrollmentSourceLabel,
+                CustomerType.valueOf(customerType),
+                promo,
+                EnrollmentSource.valueOf(enrollmentSource),
                 conditionLabel
         );
     }
 
-    @Then("the response should contain the expected plans for {string}")
-    public void theResponseShouldContainTheExpectedPlansFor(String testCondition) {
+    @Then("the response should contain the expected plans for {string} condition")
+    public void verifyResponsePlans(String testCondition) {
         PlanData expected = expectedPlansMap.get(testCondition);
         assertNotNull("No expected plans found for test condition: " + testCondition, expected);
-        List<GetDefaultPlansAndOffersResponse.Plan> actualPlans = getPlansFromApiResponse();
+        List<GetDefaultPlansAndOffersResponse.Plan> actualPlans =  testContext.getGetDefaultPlansAndOffersResponse().getData().getPlans();
 
         assertEquals("Mismatch in number of plans", expected.numberOfMatches, actualPlans.size());
 

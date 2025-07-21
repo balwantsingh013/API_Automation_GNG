@@ -1,15 +1,28 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.constants.TestConstant;
 import com.gng.api.pages.BasePage;
+import java.io.InputStream;
+import java.util.Dictionary;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.shared.CustomerData;
+import com.gng.api.pojo.shared.PlansAndOffers;
 import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
+import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiSteps;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
@@ -17,10 +30,12 @@ import java.io.IOException;
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
+import static org.testng.AssertJUnit.*;
 
 public class GetEligiblePlansAndOffersApiPage extends BasePage {
-
+    private Map<String, PlansAndOffers.EligiblePlanData> expectedPlansMap;
     private final GetEligiblePlansAndOffersHelper helper;
+    private CustomerData customerData;
     public static String ssn_tc_318 = "666252963";
     public static String ssn_tc_319 = "666495180";
     public static String ssn_tc_320 = "666066117";
@@ -33,9 +48,43 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     public static String ssn_tc_327 = "666435795";
     public static String ssn_tc_328 = "666182004";
 
+
     public GetEligiblePlansAndOffersApiPage(TestContext testContext) {
         super(testContext);
         this.helper = new GetEligiblePlansAndOffersHelper(testContext);
+
+    }
+    public void loadCustomerDataFromExcel(int row) {
+        //customerData for request
+        if (customerData == null) {
+            try {
+                ExcelReader excelReader = new ExcelReader(TestConstant.CUSTOMER_DATA);
+                List<Map<String, String>> testData = excelReader.getSheetData(TestConstant.CUSTOMER_SHEET_NAME);
+                Map<String, String> rowData = testData.get(row);
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                this.customerData = mapper.convertValue(rowData, CustomerData.class);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load customer data", e);
+            }
+        }
+    }
+    public void loadEligiblePlans() {
+        //customerData for request
+        if (expectedPlansMap == null) {
+            try {
+                //api plan results
+                ObjectMapper mapper = new ObjectMapper();
+                InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/EligiblePlans.json");
+                this.expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlansAndOffers.EligiblePlanData.class));
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load customer data", e);
+            }
+        }
     }
 
     public void sendGetEligiblePlansAndOffersRequestWithPromotionCodeAsNull(GetEligiblePlansAndOffersApiLabel apiLabel) {
@@ -592,4 +641,21 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
     }
 
+    public void setRequestParams(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+
+        loadCustomerDataFromExcel(5);
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        String ssn = customerData.getSocialSecurityNumber();
+        String encryptedSSN = AesEncryptionSteps.encryptData(customerData.getSocialSecurityNumber());
+
+        helper.setRequestParams(payload, encryptedSSN, customerData, testCondition);
+
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(offersResponse);
+        customerData = null;
+    }
 }

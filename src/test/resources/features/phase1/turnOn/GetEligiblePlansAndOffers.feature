@@ -196,6 +196,20 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | 18M      | 18-Month Fixed                      |
       | RF6      | 6-Month Fixed                       |
 
+
+  @GetEligiblePlansAndOffersPositiveTest @HappyFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as <numberOfMatches>
+    And the response should contain the expected eligible plans for "<testCondition>" condition
+
+    Examples:
+      | customerType | promotionCode | enrollmentSource  | testCondition                         | numberOfMatches |
+      | RESIDENTIAL  |               | MAIL              | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329  | 9               |
+
+
   @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPi - returns 9 plans for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api with "<premiseType>" premise "<accountType>" account type "<creditCheck>" credit check "<valueScore>" value score "<creditScoreMin>" min "<creditScoreMax>" max "<ssn>" ssn "<testCondition>" condition
