@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
+import static com.gng.api.constants.GlobalEnums.EnrollmentSource.*;
+import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
@@ -258,14 +261,14 @@ public class GetEligiblePlansAndOffersHelper {
                 data = allRows.get(4399);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
-                payload.setEnrollmentSource("FAX");
+                payload.setEnrollmentSource(FAX.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341:
                 data = allRows.get(4638);
                 populateCommonFields(payload, data);
-                payload.setEnrollmentSource("WEB");
-                payload.setCreditCheckOption("Skip");
+                payload.setEnrollmentSource(WEB.getValue());
+                payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342:
@@ -278,7 +281,7 @@ public class GetEligiblePlansAndOffersHelper {
                 data = allRows.get(4766);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
-                payload.setEnrollmentSource("FAX");
+                payload.setEnrollmentSource(FAX.getValue());
 
                 parseBillingAddress(payload, data.getOrDefault("BILLING ADDRESS", ""));
                 parsePhoneDetails(payload, data.getOrDefault("PHONE NUMBER DETAILS", ""));
@@ -293,15 +296,15 @@ public class GetEligiblePlansAndOffersHelper {
                 data = allRows.get(4613);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
-                payload.setEnrollmentSource("GNGHUB");
-                payload.setCreditCheckOption("ServTransfer");
+                payload.setEnrollmentSource(GNGHUB.getValue());
+                payload.setCreditCheckOption(SERVICE_TRANSFER.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346:
                 data = allRows.get(4861);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
-                payload.setCreditCheckOption("No");
+                payload.setCreditCheckOption(NO.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347:
@@ -312,7 +315,7 @@ public class GetEligiblePlansAndOffersHelper {
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348:
                 data = allRows.get(2508);
-                payload.setMarketingPromotionCode("DEALS");
+                payload.setMarketingPromotionCode(DEALS.getValue());
                 parseAddressWithUnit(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
                 payload.setEmailAddress(FakerDataGenerator.generateEmail());
@@ -335,7 +338,7 @@ public class GetEligiblePlansAndOffersHelper {
                 data = allRows.get(4459);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
-                payload.setEnrollmentSource("FAX");
+                payload.setEnrollmentSource(FAX.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E:
