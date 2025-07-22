@@ -123,31 +123,50 @@ public class GetEligiblePlansAndOffersHelper {
         String premisesUnitType = "";
         String premisesUnitNumber = "";
 
-        // Detect suffix and post direction from end
-        if (parts.length >= 3) {
-            streetSuffix = parts[parts.length - 2];
-            postDirection = parts[parts.length - 1];
+        List<String> unitTypes = Arrays.asList("STE", "SUITE", "APT", "UNIT", "FL", "RM");
+        List<String> directions = Arrays.asList("N", "S", "E", "W", "NE", "NW", "SE", "SW");
 
-            // If postDirection is not a known directional code, shift logic
-            if (!postDirection.matches("^(N|S|E|W|NE|NW|SE|SW)$")) {
-                streetSuffix = parts[parts.length - 1];
+        int unitIndex = -1;
+        for (int i = 0; i < parts.length; i++) {
+            if (unitTypes.contains(parts[i].toUpperCase())) {
+                unitIndex = i;
+                break;
+            }
+        }
+
+        int suffixStart = (unitIndex == -1) ? parts.length : unitIndex;
+
+        // Capture directional suffix (e.g., BLVD SE)
+        if (suffixStart >= 3) {
+            streetSuffix = parts[suffixStart - 2];
+            postDirection = parts[suffixStart - 1];
+
+            if (!directions.contains(postDirection.toUpperCase())) {
+                streetSuffix = parts[suffixStart - 1];
                 postDirection = "";
             }
 
-            // Extract street name between number and suffix
-            streetName = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length - (postDirection.isEmpty() ? 1 : 2)));
-        } else if (parts.length == 3) {
+            streetName = String.join(" ", Arrays.copyOfRange(parts, 1, suffixStart - (postDirection.isEmpty() ? 1 : 2)));
+        } else if (suffixStart == 3) {
             streetName = parts[1];
             streetSuffix = parts[2];
-        } else if (parts.length == 2) {
+        } else if (suffixStart == 2) {
             streetName = parts[1];
+        }
+
+        if (unitIndex != -1 && unitIndex + 1 < parts.length) {
+            premisesUnitType = parts[unitIndex];
+            premisesUnitNumber = String.join(" ", Arrays.copyOfRange(parts, unitIndex + 1, parts.length));
         }
 
         payload.setPremisesStreetNumber(streetNumber);
         payload.setPremisesStreetName(streetName);
         payload.setPremisesStreetSuffix(streetSuffix);
         payload.setPremisesStreetPostDirection(postDirection);
+        payload.setPremisesUnitType(premisesUnitType);
+        payload.setPremisesUnitNumber(premisesUnitNumber);
     }
+
 
     private void populateCommonFields(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
         parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));

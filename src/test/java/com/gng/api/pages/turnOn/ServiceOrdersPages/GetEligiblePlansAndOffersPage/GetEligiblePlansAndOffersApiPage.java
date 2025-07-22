@@ -2,6 +2,7 @@ package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPag
 
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.FakerDataGenerator;
@@ -206,6 +207,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
     }
 
     public void validateInvalidRequestIDCasesTC155_157(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {

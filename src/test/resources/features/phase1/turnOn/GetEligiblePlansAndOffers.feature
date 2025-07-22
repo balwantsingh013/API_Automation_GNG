@@ -201,34 +201,24 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should return numberOfMatches as 8
-#    And the response should contain the following plans:
-#      | planCode | planDescription                     |
-#      | MVS      | Variable Select                     |
-#      | CSV      | MVS with Price Protection Guarantee |
-#      | MI       | Market Intro                        |
-#      | RGB      | Guaranteed Bill                     |
-#      | GPP      | 12-Month Fixed                      |
-#      | 24M      | 24-Month Fixed                      |
-#      | 18M      | 18-Month Fixed                      |
-#      | RF6      | 6-Month Fixed                       |
+    And the response should contain the expected plans for "<testCondition>" condition
 
   Examples:
     |testCondition                                    |
     #|COMMERCIAL_CREDIT_CHECK_YES_TC_339               |
     #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340|
     #|COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341|
-  #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342|
+  #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342|  > bug
   #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343|
-  #|COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344|
+  |COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344|
   #|COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345| no data available for this one
   #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346|
   #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347| found data but some mismatch
   #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348|
   #|COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349|
     #|COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350|
-  |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B|
-    |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E|
+  #|COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B|
+    #|COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E|
 
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
