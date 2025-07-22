@@ -199,15 +199,14 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
   @GetEligiblePlansAndOffersPositiveTest @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
-    When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers Api with <excelDataRow> row data "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And response should return numberOfMatches as <numberOfMatches>
     And the response should contain the expected eligible plans for "<testCondition>" condition
 
     Examples:
-      | customerType | promotionCode | enrollmentSource  | testCondition                         | numberOfMatches |
-      | RESIDENTIAL  |               | MAIL              | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329  | 9               |
+      | testCondition                       | excelDataRow |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329| 5            |
 
 
   @GetEligiblePlansAndOffersPositive @HappyFlow

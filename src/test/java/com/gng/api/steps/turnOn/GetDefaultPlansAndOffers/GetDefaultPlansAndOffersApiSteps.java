@@ -5,6 +5,7 @@ import com.gng.api.constants.PromotionCode;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage.GetDefaultPlansAndOffersApiPage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.shared.PlansAndOffers;
 import io.cucumber.java.en.When;
 import java.io.IOException;
 import java.util.*;
@@ -16,7 +17,7 @@ import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetEligiblePlans
 import static org.testng.AssertJUnit.*;
 
 public class GetDefaultPlansAndOffersApiSteps {
-    private final Map<String, PlanData> expectedPlansMap;
+    private Map<String, PlansAndOffers.DefaultPlanData> expectedPlansMap;
     private final TestContext testContext;
     private final GetDefaultPlansAndOffersApiPage getDefaultPlansAndOffersApiPage;
 
@@ -24,18 +25,21 @@ public class GetDefaultPlansAndOffersApiSteps {
         this.testContext = testContext;
         this.getDefaultPlansAndOffersApiPage = getDefaultPlansAndOffersApiPage;
         testContext.setGetDefaultPlansAndOffersApiPage(getDefaultPlansAndOffersApiPage);
-        ObjectMapper mapper = new ObjectMapper();
-        InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/DefaultPlans.json");
-        try {
-            expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlanData.class));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    public static class PlanData {
-        public int numberOfMatches;
-        public List<GetDefaultPlansAndOffersResponse.Plan> plans;
+    public void loadEligiblePlans() {
+        //customerData for request
+        if (expectedPlansMap == null) {
+            try {
+                //api plan results
+                ObjectMapper mapper = new ObjectMapper();
+                InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/DefaultPlans.json");
+                this.expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlansAndOffers.DefaultPlanData.class));
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load plans to validate data", e);
+            }
+        }
     }
 
     @When("a request is made to the GetDefaultPlansAndOffers Api with {string} customer type {string} promotion code {string} enrollment source {string} condition")
@@ -45,8 +49,7 @@ public class GetDefaultPlansAndOffersApiSteps {
             String enrollmentSource,
             String testCondition) {
 
-
-          EnrollmentSource.valueOf(enrollmentSource);
+        EnrollmentSource.valueOf(enrollmentSource);
         GetEligiblePlansAndOffersApiLabel conditionLabel = GetEligiblePlansAndOffersApiLabel.valueOf(testCondition);
 
         PromotionCode promo = null;
@@ -65,13 +68,14 @@ public class GetDefaultPlansAndOffersApiSteps {
 
     @Then("the response should contain the expected plans for {string} condition")
     public void verifyResponsePlans(String testCondition) {
-        PlanData expected = expectedPlansMap.get(testCondition);
+        loadEligiblePlans();
+        PlansAndOffers.DefaultPlanData expected = expectedPlansMap.get(testCondition);
         assertNotNull("No expected plans found for test condition: " + testCondition, expected);
         List<GetDefaultPlansAndOffersResponse.Plan> actualPlans =  testContext.getGetDefaultPlansAndOffersResponse().getData().getPlans();
 
-        assertEquals("Mismatch in number of plans", expected.numberOfMatches, actualPlans.size());
+        assertEquals("Mismatch in number of plans", expected.getNumberOfMatches(), actualPlans.size());
 
-        for (GetDefaultPlansAndOffersResponse.Plan expectedPlan : expected.plans) {
+        for (GetDefaultPlansAndOffersResponse.Plan expectedPlan : expected.getPlans()) {
             boolean found = actualPlans.stream().anyMatch(actual ->
                     expectedPlan.getPlanCode().equals(actual.getPlanCode()) &&
                     expectedPlan.getPlanDescription().equals(actual.getPlanDescription()) &&
@@ -81,10 +85,6 @@ public class GetDefaultPlansAndOffersApiSteps {
             );
             assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
         }
-    }
-
-    private List<GetDefaultPlansAndOffersResponse.Plan> getPlansFromApiResponse() {
-        return testContext.getGetDefaultPlansAndOffersResponse().getData().getPlans();
     }
 }
 

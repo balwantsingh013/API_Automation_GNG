@@ -318,24 +318,24 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.validateTestConditionRSTC11UC50(get_eligible_plans_and_offers);
     }
 
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} condition")
-    public void PositiveEligiblePlansAndOffersApi(String testCondition)
+    @When("a request is made to the GetEligiblePlansAndOffers Api with {int} row data {string} condition")
+    public void PositiveEligiblePlansAndOffersApi(String testCondition, int rowNumber)
     {
-        getEligiblePlansAndOffersApiPage.setRequestParams(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+        getEligiblePlansAndOffersApiPage.setRequestParams(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition), rowNumber);
     }
 
     @Then("the response should contain the expected eligible plans for {string} condition")
     public void verifyResponsePlans(String testCondition) {
-        //getEligiblePlansAndOffersApiPage.verifyResponsePlans(com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
         loadEligiblePlans();
         PlansAndOffers.EligiblePlanData expected = expectedPlansMap.get(testCondition);
         assertNotNull("Expected plan data is null for test condition: " + testCondition, expected);
         assertTrue("Expected number of matches is 0 for test condition: " + testCondition, expected.getNumberOfMatches() > 0);
 
+
         List<GetEligiblePlansAndOffersResponse.Plan> actualPlans = testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans();
         assertEquals("Mismatch in number of plans", expected.getNumberOfMatches(), actualPlans.size());
 
-        for (GetDefaultPlansAndOffersResponse.Plan expectedPlan : expected.getPlans()) {
+        for (GetEligiblePlansAndOffersResponse.Plan expectedPlan : expected.getPlans()) {
             boolean found = actualPlans.stream().anyMatch(actual ->
                     expectedPlan.getPlanCode().equals(actual.getPlanCode()) &&
                             expectedPlan.getPlanDescription().equals(actual.getPlanDescription()) &&

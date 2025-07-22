@@ -641,9 +641,9 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
     }
 
-    public void setRequestParams(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void setRequestParams(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition, int rowNumber) {
 
-        loadCustomerDataFromExcel(5);
+        loadCustomerDataFromExcel(rowNumber);
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         String ssn = customerData.getSocialSecurityNumber();
