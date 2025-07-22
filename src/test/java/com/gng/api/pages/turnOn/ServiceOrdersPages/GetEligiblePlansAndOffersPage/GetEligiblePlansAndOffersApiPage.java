@@ -195,12 +195,12 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC339(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
+    public void sendGetEligiblePlansAndOffersRequestCommercial(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TURN_ON.getValue());
         payload.setCustomerType(COMMERCIAL.getValue());
-        helper.payloadBasedOnTC339(payload, testCondition);
+        helper.payloadBasedOnTCsCommercial(payload, testCondition);
         payload.setCustomerFirstName(null);
         payload.setCustomerLastName(null);
         payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));

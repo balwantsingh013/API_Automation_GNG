@@ -239,7 +239,7 @@ public class GetEligiblePlansAndOffersHelper {
 
 
 
-    public void payloadBasedOnTC339(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void payloadBasedOnTCsCommercial(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         ExcelReader excelReader;
         try {
             excelReader = new ExcelReader(EXPERIAN_DATA);

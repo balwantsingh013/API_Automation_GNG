@@ -3,14 +3,11 @@ package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers;
 
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.io.IOException;
-import java.util.List;
 
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
-import static org.testng.AssertJUnit.*;
 
 public class GetEligiblePlansAndOffersApiSteps {
 
@@ -80,7 +77,7 @@ public class GetEligiblePlansAndOffersApiSteps {
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for {string}")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_commercial_credit_check_as_yes_with_no_promotion_code_TC_339(String testCondition) {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC339(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestCommercial(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string}TC155_157")
