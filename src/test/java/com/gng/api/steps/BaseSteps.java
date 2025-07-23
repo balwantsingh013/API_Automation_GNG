@@ -37,8 +37,6 @@ public class BaseSteps {
         }
     }
 
-    ;
-
     @ParameterType("true|false")
     public Boolean booleanVal(String value) {
         return Boolean.valueOf(value);
