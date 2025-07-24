@@ -2,6 +2,7 @@ package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPag
 
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.FakerDataGenerator;
@@ -9,6 +10,8 @@ import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 import java.io.IOException;
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
+import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 public class GetEligiblePlansAndOffersApiPage extends BasePage {
@@ -190,6 +193,22 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
+    }
+
+    public void sendGetEligiblePlansAndOffersRequestCommercial(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerType(COMMERCIAL.getValue());
+        helper.payloadBasedOnTCsCommercial(payload, testCondition);
+        payload.setCustomerFirstName(null);
+        payload.setCustomerLastName(null);
+        payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
     }
 
     public void validateInvalidRequestIDCasesTC155_157(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {

@@ -24,7 +24,7 @@ public class SearchAccountsHelper {
     public String customerCode;
 
     public static final String USERNAME = "autotester";
-    public static String ssn="Password@1";
+    public static String ssn="666374706";
 
     public SearchAccountsHelper(TestContext testContext) {
         this.testContext = testContext;

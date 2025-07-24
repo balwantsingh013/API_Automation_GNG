@@ -573,9 +573,10 @@ Feature: Verify SearchAccounts Api
     And response should have "sspStatusIndicator" flag as "false"
     And response should have "sspParticipantCode" to "null"
 
-#  @SearchAccountsTurnOnValidSSN @Phase1 @HappyFlow
-#  Scenario: SearchAccountsApiTurnOn- Verify the Search accounts api returns matching enrollment record in SSP when provided with SSN TC113
-#    When a request is made to the SearchAccounts Api TurnOn with a valid SSN
-#    Then verify response code of "SearchAccounts" Api is 200
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should return numberOfMatches as 1
+  @SearchAccountsTurnOnValidSSN @Phase1 @HappyFlow
+  Scenario: SearchAccountsApiTurnOn- Verify the Search accounts api returns matching enrollment record in SSP when provided with SSN TC113
+    When a request is made to the SearchAccounts Api TurnOn with a valid SSN
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "ENROLLMENT RECORD"
+    And response should have "sspStatusIndicator" as "false"

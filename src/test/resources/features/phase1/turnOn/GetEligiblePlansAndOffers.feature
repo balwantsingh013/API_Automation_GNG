@@ -196,6 +196,31 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | 18M      | 18-Month Fixed                      |
       | RF6      | 6-Month Fixed                       |
 
+  @GetEligiblePlansAndOffersWithCustomerTypeCommercialPositive @Phase1 @HappyFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with customer type commercial for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And the response should contain the expected plans for "<testCondition>" condition
+
+  Examples:
+    |testCondition                                              |
+    |COMMERCIAL_CREDIT_CHECK_YES_TC_339                         |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340          |
+    |COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341         |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342          |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343          |
+    |COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344|
+    |COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345         |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346          |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347          |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348          |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349          |
+    |COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350         |
+    |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B        |
+    |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E        |
+
+
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
     When a request is made to the GetEligiblePlansAndOffers Api with "<requestID>"TC155_157
