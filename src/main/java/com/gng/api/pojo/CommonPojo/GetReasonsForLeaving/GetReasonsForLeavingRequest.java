@@ -15,4 +15,5 @@ public class GetReasonsForLeavingRequest {
     private String requestID;
     private String loginID;
     private boolean etcExists;
+    private String transactionType;
 }

@@ -28,6 +28,8 @@ import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 import java.io.IOException;
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
+import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
 import static org.testng.AssertJUnit.*;
@@ -47,7 +49,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     public static String federal_tax_id_326 = "132581802";
     public static String ssn_tc_327 = "666435795";
     public static String ssn_tc_328 = "666182004";
-
 
     public GetEligiblePlansAndOffersApiPage(TestContext testContext) {
         super(testContext);
@@ -246,6 +247,22 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
+    }
+
+    public void sendGetEligiblePlansAndOffersRequestCommercial(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerType(COMMERCIAL.getValue());
+        helper.payloadBasedOnTCsCommercial(payload, testCondition);
+        payload.setCustomerFirstName(null);
+        payload.setCustomerLastName(null);
+        payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
     }
 
     public String GetCustCodeBySSN(String encryptedSSN){

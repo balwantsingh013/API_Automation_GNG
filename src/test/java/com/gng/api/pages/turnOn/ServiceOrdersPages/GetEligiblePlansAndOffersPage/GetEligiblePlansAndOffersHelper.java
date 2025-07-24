@@ -12,14 +12,19 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
+import static com.gng.api.constants.GlobalEnums.EnrollmentSource.*;
+import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.CREDIT_CHECK_MULTIPLE_PREMISES;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.CREDIT_CHECK_YES;
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -112,6 +117,245 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentSource(FakerDataGenerator.generateUpperCaseString(35));
         }
 
+    }
+
+    private void parseAddress(GetEligiblePlansAndOffersRequest payload, String fullAddress) {
+        if (fullAddress == null || fullAddress.isEmpty()) return;
+
+        String[] parts = fullAddress.trim().split("\\s+");
+
+        String streetNumber = (parts.length >= 1) ? parts[0] : "";
+        String streetSuffix = "";
+        String postDirection = "";
+        String streetName = "";
+        String premisesUnitType = "";
+        String premisesUnitNumber = "";
+
+        List<String> unitTypes = Arrays.asList("STE", "SUITE", "APT", "UNIT", "FL", "RM");
+        List<String> directions = Arrays.asList("N", "S", "E", "W", "NE", "NW", "SE", "SW");
+
+        int unitIndex = -1;
+        for (int i = 0; i < parts.length; i++) {
+            if (unitTypes.contains(parts[i].toUpperCase())) {
+                unitIndex = i;
+                break;
+            }
+        }
+
+        int suffixStart = (unitIndex == -1) ? parts.length : unitIndex;
+
+        // Capture directional suffix (e.g., BLVD SE)
+        if (suffixStart >= 3) {
+            streetSuffix = parts[suffixStart - 2];
+            postDirection = parts[suffixStart - 1];
+
+            if (!directions.contains(postDirection.toUpperCase())) {
+                streetSuffix = parts[suffixStart - 1];
+                postDirection = "";
+            }
+
+            streetName = String.join(" ", Arrays.copyOfRange(parts, 1, suffixStart - (postDirection.isEmpty() ? 1 : 2)));
+        } else if (suffixStart == 3) {
+            streetName = parts[1];
+            streetSuffix = parts[2];
+        } else if (suffixStart == 2) {
+            streetName = parts[1];
+        }
+
+        if (unitIndex != -1 && unitIndex + 1 < parts.length) {
+            premisesUnitType = parts[unitIndex];
+            premisesUnitNumber = String.join(" ", Arrays.copyOfRange(parts, unitIndex + 1, parts.length));
+        }
+
+        payload.setPremisesStreetNumber(streetNumber);
+        payload.setPremisesStreetName(streetName);
+        payload.setPremisesStreetSuffix(streetSuffix);
+        payload.setPremisesStreetPostDirection(postDirection);
+        payload.setPremisesUnitType(premisesUnitType);
+        payload.setPremisesUnitNumber(premisesUnitNumber);
+    }
+
+
+    private void populateCommonFields(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
+        parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+
+        payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+        payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+        payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+        payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+        payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+    }
+
+    private void parseBillingAddress(GetEligiblePlansAndOffersRequest payload, String billingAddress) {
+        if (billingAddress == null || billingAddress.isEmpty()) return;
+
+        String[] parts = billingAddress.trim().split("\\s+");
+
+        String addressType   = (parts.length >= 1) ? parts[0] : "";
+        String streetNumber  = (parts.length >= 2) ? parts[1] : "";
+        String streetName    = (parts.length >= 3) ? parts[2] : "";
+        String streetSuffix  = (parts.length >= 4) ? parts[3] : "";
+
+        payload.setBillingAddressType(addressType);
+        payload.setPremisesStreetNumber(streetNumber);
+        payload.setPremisesStreetName(streetName);
+        payload.setPremisesStreetSuffix(streetSuffix);
+    }
+
+    private void parsePhoneDetails(GetEligiblePlansAndOffersRequest payload, String phoneDetails) {
+        if (phoneDetails == null || phoneDetails.isEmpty()) return;
+
+        String[] parts = phoneDetails.trim().split("\\s+");
+
+        String phoneType     = (parts.length >= 1) ? parts[0] : "";
+        String phoneExt      = (parts.length >= 2) ? parts[1] : "";
+        String phoneNumber   = (parts.length >= 3) ? parts[2] : "";
+
+        payload.setWorkPhoneType(phoneType);
+        payload.setWorkPhoneExtension(phoneExt);
+        payload.setWorkPhoneNumber(phoneNumber);
+    }
+
+    private void parseAddressWithUnit(GetEligiblePlansAndOffersRequest payload, String fullAddress) {
+        if (fullAddress == null || fullAddress.isEmpty()) return;
+
+        String[] parts = fullAddress.trim().split("\\s+");
+
+        String streetNumber = (parts.length >= 1) ? parts[0] : "";
+        String streetName = (parts.length >= 2) ? parts[1] : "";
+        String streetSuffix = (parts.length >= 3) ? parts[2] : "";
+
+        String postDirection = (parts.length >= 4 && parts[3].matches("^(N|S|E|W|NE|NW|SE|SW)$")) ? parts[3] : "";
+
+        String premisesUnitType = (parts.length >= 5 && !postDirection.isEmpty()) ? parts[4] :
+                (parts.length >= 4 && postDirection.isEmpty()) ? parts[3] : "";
+
+        String premisesUnitNumber = (parts.length >= 6 && !postDirection.isEmpty()) ? parts[5] :
+                (parts.length >= 5 && postDirection.isEmpty()) ? parts[4] : "";
+
+        payload.setPremisesStreetNumber(streetNumber);
+        payload.setPremisesStreetName(streetName);
+        payload.setPremisesStreetSuffix(streetSuffix);
+        payload.setPremisesStreetPostDirection(postDirection);
+        payload.setPremisesUnitType(premisesUnitType);
+        payload.setPremisesUnitNumber(premisesUnitNumber);
+    }
+
+
+
+
+    public void payloadBasedOnTCsCommercial(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        ExcelReader excelReader;
+        try {
+            excelReader = new ExcelReader(EXPERIAN_DATA);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<Map<String, String>> allRows = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
+        Map<String, String> data = null;
+
+        switch (testCondition) {
+            case COMMERCIAL_CREDIT_CHECK_YES_TC_339:
+                data = allRows.get(5107);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340:
+                data = allRows.get(4399);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(FAX.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341:
+                data = allRows.get(4638);
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(WEB.getValue());
+                payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342:
+                data = allRows.get(1946);
+                populateCommonFields(payload, data);
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343:
+                data = allRows.get(4766);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(FAX.getValue());
+
+                parseBillingAddress(payload, data.getOrDefault("BILLING ADDRESS", ""));
+                parsePhoneDetails(payload, data.getOrDefault("PHONE NUMBER DETAILS", ""));
+
+                payload.setBillingCity(data.get("BILLING CITY"));
+                payload.setBillingStateCode(data.get("BILLING STATE"));
+                payload.setBillingZipCode(data.get("BILLING ZIP"));
+                payload.setBillingCountyCode(data.get("BILLING COUNTRY CODE"));
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344:
+                data = allRows.get(4613);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(GNGHUB.getValue());
+                payload.setCreditCheckOption(SERVICE_TRANSFER.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346:
+                data = allRows.get(4861);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setCreditCheckOption(NO.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347:
+                data = allRows.get(184);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348:
+                data = allRows.get(2508);
+                payload.setMarketingPromotionCode(DEALS.getValue());
+                parseAddressWithUnit(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349:
+                data = allRows.get(4499);
+                parseAddressWithUnit(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350:
+                data = allRows.get(4697);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B:
+                data = allRows.get(4459);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(FAX.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E:
+                data = allRows.get(5093);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+
+                // Set credit check business name from a different row
+                Map<String, String> creditCheckData = allRows.get(4912);
+                payload.setCreditCheckBusinessName(creditCheckData.get("BUSINESS NAME"));
+                break;
+        }
     }
 
     public void setCustomerLastNameBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customerLastName) {

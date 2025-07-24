@@ -1,5 +1,6 @@
 {
   "requestID": "req009122",
   "loginID": "sys",
-  "etcExists": true
+  "etcExists": true,
+  "transactionType": "TOFF"
 }
