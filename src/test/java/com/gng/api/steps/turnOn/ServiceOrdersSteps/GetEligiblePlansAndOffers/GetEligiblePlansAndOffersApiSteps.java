@@ -319,7 +319,7 @@ public class GetEligiblePlansAndOffersApiSteps {
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {int} row data {string} condition")
-    public void PositiveEligiblePlansAndOffersApi(String testCondition, int rowNumber)
+    public void PositiveEligiblePlansAndOffersApi(int rowNumber, String testCondition)
     {
         getEligiblePlansAndOffersApiPage.setRequestParams(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition), rowNumber);
     }

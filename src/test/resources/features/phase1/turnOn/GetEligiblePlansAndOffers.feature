@@ -206,7 +206,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
     Examples:
       | testCondition                       | excelDataRow |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329| 5            |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329| 6            |
 
 
   @GetEligiblePlansAndOffersPositive @HappyFlow

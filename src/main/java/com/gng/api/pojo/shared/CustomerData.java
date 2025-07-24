@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomerData {
+    private String loginID;
     private String customerType;
     private String customerLastName;
     private String customerMiddleName;
@@ -31,4 +32,8 @@ public class CustomerData {
     private String premisesStreetPostDirection;
     private String socialSecurityNumber;
     private String phoneNumber;
+
+    public boolean getConfirmCreditCheck() {
+    return confirmCreditCheck;
+    }
 }
