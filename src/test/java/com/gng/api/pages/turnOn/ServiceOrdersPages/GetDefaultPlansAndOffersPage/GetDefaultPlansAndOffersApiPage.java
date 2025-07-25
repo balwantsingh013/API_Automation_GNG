@@ -1,7 +1,5 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage;
-import com.gng.api.constants.CustomerType;
-import com.gng.api.constants.EnrollmentSource;
-import com.gng.api.constants.PromotionCode;
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
@@ -21,8 +19,8 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         this.helper = new GetDefaultPlansAndOffersHelper(testContext);
     }
 
-    public void setRequestParams(GetEligiblePlansAndOffersApiLabel apiLabel, CustomerType customerType, PromotionCode promotionCode,
-                                 EnrollmentSource enrollmentSource, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void setRequestParams(GetEligiblePlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, GlobalEnums.PromotionCode promotionCode,
+                                 GlobalEnums.EnrollmentSource enrollmentSource, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         GetDefaultPlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));

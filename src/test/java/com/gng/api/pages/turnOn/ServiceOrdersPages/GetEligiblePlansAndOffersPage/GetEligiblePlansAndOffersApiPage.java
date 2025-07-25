@@ -12,16 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
-import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.shared.CustomerData;
-import com.gng.api.pojo.shared.PlansAndOffers;
 import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
-import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiSteps;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
@@ -32,10 +29,8 @@ import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
-import static org.testng.AssertJUnit.*;
 
 public class GetEligiblePlansAndOffersApiPage extends BasePage {
-    private Map<String, PlansAndOffers.EligiblePlanData> expectedPlansMap;
     private final GetEligiblePlansAndOffersHelper helper;
     private CustomerData customerData;
     public static String ssn_tc_318 = "666252963";
@@ -67,20 +62,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
                 mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 this.customerData = mapper.convertValue(rowData, CustomerData.class);
-
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load customer data", e);
-            }
-        }
-    }
-    public void loadEligiblePlans() {
-        //customerData for request
-        if (expectedPlansMap == null) {
-            try {
-                //api plan results
-                ObjectMapper mapper = new ObjectMapper();
-                InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/EligiblePlans.json");
-                this.expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlansAndOffers.EligiblePlanData.class));
 
             } catch (IOException e) {
                 throw new RuntimeException("Failed to load customer data", e);

@@ -1813,6 +1813,7 @@ public class GetEligiblePlansAndOffersHelper {
         Optional.ofNullable(customerData.getTenantLandlord()).ifPresent(payload::setTenantLandlord);
         Optional.ofNullable(customerData.getCreditCheckOption()).ifPresent(payload::setCreditCheckOption);
         Optional.of(customerData.getConfirmCreditCheck()).ifPresent(payload::setConfirmCreditCheck);
+        Optional.of(customerData.getMarketingPromotionCode()).ifPresent(payload::setMarketingPromotionCode);
     }
 
     public void setRequestParams(GetEligiblePlansAndOffersRequest payload, String encryptedSSN, CustomerData customerData,

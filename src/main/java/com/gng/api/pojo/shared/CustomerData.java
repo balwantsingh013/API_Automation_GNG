@@ -32,6 +32,7 @@ public class CustomerData {
     private String premisesStreetPostDirection;
     private String socialSecurityNumber;
     private String phoneNumber;
+    private String marketingPromotionCode;
 
     public boolean getConfirmCreditCheck() {
     return confirmCreditCheck;

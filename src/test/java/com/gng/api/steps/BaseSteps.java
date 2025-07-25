@@ -1,8 +1,10 @@
 package com.gng.api.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.shared.PlansAndOffers;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
@@ -14,6 +16,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,15 +28,21 @@ import static org.hamcrest.Matchers.hasItem;
 @Slf4j
 public class BaseSteps {
     private final TestContext testContext;
-    ObjectMapper mapper = new ObjectMapper();
-    InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/EligiblePlansAndOffers.json");
-    private final Map<String, PlanData> expectedPlansMap;
 
-    {
-        try {
-            expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlanData.class));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private Map<String, PlanData> expectedPlansMap;
+
+    public void loadEligiblePlans() {
+        //customerData for request
+        if (expectedPlansMap == null) {
+            try {
+                //api plan results
+                ObjectMapper mapper = new ObjectMapper();
+                InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/EligiblePlans.json");
+                this.expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlanData.class));
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load plans to validate data", e);
+            }
         }
     }
 
@@ -63,9 +72,10 @@ public class BaseSteps {
 
     @Then("the response should contain the expected plans for {string} condition")
     public void verifyResponsePlans(String testCondition) {
+        loadEligiblePlans();
         PlanData expected = expectedPlansMap.get(testCondition);
         assertNotNull("No expected plans found for test condition: " + testCondition, expected);
-        List<Plans> actualPlans =  testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans();
+        ArrayList<GetEligiblePlansAndOffersResponse.Plan> actualPlans =  testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans();
 
         assertEquals("Mismatch in number of plans", expected.numberOfMatches, actualPlans.size());
 
@@ -141,6 +151,7 @@ public class BaseSteps {
     }
 
     private void validatePlans(List<Map<String, String>> expectedPlans) {
+       loadEligiblePlans();
         Response response = testContext.getResponse();
         List<Map<String, Object>> actualPlans = response.jsonPath().getList("data.plans");
 
@@ -165,6 +176,7 @@ public class BaseSteps {
     }
 
     private void validateReasonForTurnOffAlerts(List<Map<String, String>> expectedAlerts) {
+        loadEligiblePlans();
         Response response = testContext.getResponse();
         List<Map<String, Object>> actualReasons = response.jsonPath().getList("data.turnOffReasons");
 
@@ -196,6 +208,7 @@ public class BaseSteps {
     }
 
     private void validateTurnOffReasons(List<Map<String, String>> expectedReasons) {
+        loadEligiblePlans();
         Response response = testContext.getResponse();
         List<Map<String, Object>> actualReasons = response.jsonPath().getList("data.turnOffReasons");
 

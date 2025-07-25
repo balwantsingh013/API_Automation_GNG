@@ -1,7 +1,5 @@
 package com.gng.api.steps.turnOn.GetDefaultPlansAndOffers;
-import com.gng.api.constants.CustomerType;
-import com.gng.api.constants.EnrollmentSource;
-import com.gng.api.constants.PromotionCode;
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage.GetDefaultPlansAndOffersApiPage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -49,25 +47,24 @@ public class GetDefaultPlansAndOffersApiSteps {
             String enrollmentSource,
             String testCondition) {
 
-        EnrollmentSource.valueOf(enrollmentSource);
+        GlobalEnums.EnrollmentSource.valueOf(enrollmentSource);
         GetEligiblePlansAndOffersApiLabel conditionLabel = GetEligiblePlansAndOffersApiLabel.valueOf(testCondition);
 
-        PromotionCode promo = null;
+        GlobalEnums.PromotionCode promo = null;
         if (promotionCode != null && !promotionCode.equalsIgnoreCase("<promotionCode>") && !promotionCode.trim().isEmpty()) {
-            promo = PromotionCode.valueOf(promotionCode);
+            promo = GlobalEnums.PromotionCode.valueOf(promotionCode);
         }
-
         getDefaultPlansAndOffersApiPage.setRequestParams(
                 get_default_plans_and_offers,
-                CustomerType.valueOf(customerType),
+                GlobalEnums.CustomerType.valueOf(customerType),
                 promo,
-                EnrollmentSource.valueOf(enrollmentSource),
+                GlobalEnums.EnrollmentSource.valueOf(enrollmentSource),
                 conditionLabel
         );
     }
 
-    @Then("the response should contain the expected plans for {string} condition")
-    public void verifyResponsePlans(String testCondition) {
+    @Then("the response should contain the expected default plans for {string} condition")
+    public void verifyDefaultResponsePlans(String testCondition) {
         loadEligiblePlans();
         PlansAndOffers.DefaultPlanData expected = expectedPlansMap.get(testCondition);
         assertNotNull("No expected plans found for test condition: " + testCondition, expected);

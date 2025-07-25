@@ -1,48 +1,20 @@
 package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersApiPage;
-import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
-import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.shared.PlansAndOffers;
-import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiSteps;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
-import static org.testng.AssertJUnit.*;
 
 public class GetEligiblePlansAndOffersApiSteps {
 
     private final TestContext testContext;
     private final GetEligiblePlansAndOffersApiPage getEligiblePlansAndOffersApiPage;
-    private Map<String, PlansAndOffers.EligiblePlanData> expectedPlansMap;
 
     public GetEligiblePlansAndOffersApiSteps(TestContext testContext, GetEligiblePlansAndOffersApiPage getEligiblePlansAndOffersApiPage) {
         this.testContext = testContext;
         this.getEligiblePlansAndOffersApiPage = getEligiblePlansAndOffersApiPage;
         testContext.setGetEligiblePlansAndOffersApiPage(getEligiblePlansAndOffersApiPage);
         testContext.setGetDefaultPlansAndOffersApiPage(getEligiblePlansAndOffersApiPage);
-    }
-
-    public void loadEligiblePlans() {
-        //customerData for request
-        if (expectedPlansMap == null) {
-            try {
-                //api plan results
-                ObjectMapper mapper = new ObjectMapper();
-                InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/EligiblePlans.json");
-                this.expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlansAndOffers.EligiblePlanData.class));
-
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load plans to validate data", e);
-            }
-        }
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39")
@@ -327,27 +299,5 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void PositiveEligiblePlansAndOffersApi(int rowNumber, String testCondition)
     {
         getEligiblePlansAndOffersApiPage.setRequestParams(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition), rowNumber);
-    }
-
-    @Then("the response should contain the expected eligible plans for {string} condition")
-    public void verifyResponsePlans(String testCondition) {
-        loadEligiblePlans();
-        PlansAndOffers.EligiblePlanData expected = expectedPlansMap.get(testCondition);
-        assertNotNull("Expected plan data is null for test condition: " + testCondition, expected);
-        assertTrue("Expected number of matches is 0 for test condition: " + testCondition, expected.getNumberOfMatches() > 0);
-
-
-        List<GetEligiblePlansAndOffersResponse.Plan> actualPlans = testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans();
-        assertEquals("Mismatch in number of plans", expected.getNumberOfMatches(), actualPlans.size());
-
-        for (GetEligiblePlansAndOffersResponse.Plan expectedPlan : expected.getPlans()) {
-            boolean found = actualPlans.stream().anyMatch(actual ->
-                    expectedPlan.getPlanCode().equals(actual.getPlanCode()) &&
-                            expectedPlan.getPlanDescription().equals(actual.getPlanDescription()) &&
-                            expectedPlan.getPromotion1Code().equals(actual.getPromotion1Code()) &&
-                            expectedPlan.getPromotion1Description().equals(actual.getPromotion1Description())
-            );
-            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-        }
     }
 }

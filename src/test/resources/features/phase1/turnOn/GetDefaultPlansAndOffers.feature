@@ -23,21 +23,21 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | COMMERCIAL  | SAVE100       | FAX                | GET_DEFAULT_PLANS_AND_OFFERS_TC_127   | 5               |
       | RESIDENTIAL | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_1 | 9               |
       | COMMERCIAL  | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_2 | 5               |
-      ##| INVALID     | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_3 | 0               |
+      ##| INVALID     | AAA           | WEB               | GET_DEFAULT_PLANS_AND_OFFERS_TC_151_3 | 0               |
       | RESIDENTIAL | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_152_1 | 9               |
       | RESIDENTIAL | AAA           | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_152_2 | 9               |
-      | RESIDENTIAL |               | ALL_CONNECT        | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_1 | 10              |
+      | RESIDENTIAL |               | ALLCONNECT         | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_1 | 10              |
       | RESIDENTIAL |               | CIM_BUILDER_TURN_ON| GET_DEFAULT_PLANS_AND_OFFERS_TC_153_2 | 10              |
       | RESIDENTIAL |               | CORRESPONDENCE     | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_3 | 10              |
       | RESIDENTIAL |               | EMAIL              | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_4 | 10              |
-      | RESIDENTIAL |               | ENERGY_SHOP        | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_5 | 10              |
+      | RESIDENTIAL |               | ENERGYSHOP         | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_5 | 10              |
       | RESIDENTIAL |               | FAX                | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_6 | 10              |
-      | RESIDENTIAL |               | GEORGIA_GAS_SAVINGS| GET_DEFAULT_PLANS_AND_OFFERS_TC_153_7 | 10              |
-      | RESIDENTIAL |               | GNG_HUB            | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_8 | 10              |
+      | RESIDENTIAL |               | GEORGIAGASSAVINGS  | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_7 | 10              |
+      | RESIDENTIAL |               | GNGHUB             | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_8 | 10              |
       | RESIDENTIAL |               | MAIL               | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_9 | 10              |
-      | RESIDENTIAL |               | MOOVE_GURU         | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_10| 10              |
-      | RESIDENTIAL |               | ONE_SOURCE         | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_11| 10              |
-      | RESIDENTIAL |               | PHONE_CALL         | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_12| 10              |
-      | RESIDENTIAL |               | VIV_INT            | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_13| 10              |
+      | RESIDENTIAL |               | MOOVEGURU          | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_10| 10              |
+      | RESIDENTIAL |               | ONESOURCE          | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_11| 10              |
+      | RESIDENTIAL |               | PHONECALL          | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_12| 10              |
+      | RESIDENTIAL |               | VIVINT             | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_13| 10              |
       | RESIDENTIAL |               | WEB                | GET_DEFAULT_PLANS_AND_OFFERS_TC_153_14| 10              |
       | RESIDENTIAL |               | MAIL               | GET_DEFAULT_PLANS_AND_OFFERS_TC_154   | 10              |
