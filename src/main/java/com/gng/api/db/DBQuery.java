@@ -1364,42 +1364,57 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES = """
-            SELECT *
-            FROM (
+            WITH eligible_customers AS (
+                SELECT gtbtrnh_cust_code
+                FROM gtbtrnh
+                GROUP BY gtbtrnh_cust_code
+                HAVING COUNT(*) < 30
+            ),
+            randomized_results AS (
                 SELECT
                     t2.gtbtrnh_cust_code,
                     t2.gtbtrnh_prem_code,
                     t2.gtbtrnh_aglc_acct_nbr,
-                    t3.gtrrndn_serv_ord_num
+                    t3.gtrrndn_serv_ord_num,
+                    DBMS_RANDOM.VALUE AS rand_val
                 FROM gtbtrnh t2
                 JOIN uzbenro t1 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
                 JOIN gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
                 JOIN ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
                 JOIN ucracct t5 ON t5.ucracct_prem_code = t4.ucrserv_prem_code
-                                AND t5.ucracct_cust_code = t2.gtbtrnh_cust_code
+                               AND t5.ucracct_cust_code = t2.gtbtrnh_cust_code
                 WHERE t1.uzbenro_price_plan = ?
                   AND t5.ucracct_status_ind = 'A'
                   AND t4.ucrserv_scls_code = ?
                   AND t3.gtrrndn_serv_ord_num IS NOT NULL
                   AND t2.gtbtrnh_cust_code IN (
-                      SELECT gtbtrnh_cust_code
-                      FROM gtbtrnh
-                      GROUP BY gtbtrnh_cust_code
-                      HAVING COUNT(*) < 30
+                      SELECT gtbtrnh_cust_code FROM eligible_customers
                   )
-                ORDER BY DBMS_RANDOM.VALUE
             )
-            WHERE ROWNUM = 1
+            SELECT
+                gtbtrnh_cust_code,
+                gtbtrnh_prem_code,
+                gtbtrnh_aglc_acct_nbr,
+                gtrrndn_serv_ord_num
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP = """
-            SELECT *
-            FROM (
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 30
+            ),
+            randomized_results AS (
                 SELECT
                     T2.GTBTRNH_CUST_CODE,
                     T2.GTBTRNH_PREM_CODE,
                     T2.GTBTRNH_AGLC_ACCT_NBR,
-                    T3.GTRRNDN_SERV_ORD_NUM
+                    T3.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
                 FROM UZBENRO T1
                 JOIN GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
                                AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
@@ -1419,37 +1434,41 @@ public final class DBQuery {
                   AND T5.UCRACCT_STATUS_IND = 'A'
                   AND T4.UCRSERV_SCLS_CODE IN (?)
                   AND T2.GTBTRNH_CUST_CODE IN (
-                      SELECT GTBTRNH_CUST_CODE
-                      FROM GTBTRNH
-                      GROUP BY GTBTRNH_CUST_CODE
-                      HAVING COUNT(*) < 30
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
                   )
-                ORDER BY DBMS_RANDOM.VALUE
             )
-            WHERE ROWNUM = 1
+            SELECT
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE = """
-            SELECT *
-            FROM (
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 30
+            ),
+            randomized_results AS (
                 SELECT
                     T2.GTBTRNH_CUST_CODE,
                     T2.GTBTRNH_PREM_CODE,
                     T2.GTBTRNH_AGLC_ACCT_NBR,
-                    T3.GTRRNDN_SERV_ORD_NUM
+                    T3.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
                 FROM UZBENRO T1
-                JOIN GTBTRNH T2\s
-                  ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
-                 AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
-                JOIN GTRRNDN T3\s
-                  ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
-                JOIN UCRSERV T4\s
-                  ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
-                JOIN UCRACCT T5\s
-                  ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
-                 AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
-                JOIN GZRCBHT T6\s
-                  ON T6.GZRCBHT_CUST_CODE = T1.UZBENRO_CUST_CODE
+                JOIN GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                              AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+                JOIN GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+                JOIN UCRSERV T4 ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
+                JOIN UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
+                              AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
+                JOIN GZRCBHT T6 ON T6.GZRCBHT_CUST_CODE = T1.UZBENRO_CUST_CODE
                 WHERE T1.UZBENRO_SSP_IND = 'N'
                   AND T6.GZRCBHT_SRAT_CODE = 'CR03'
                   AND T1.UZBENRO_PRICE_PLAN = ?
@@ -1463,24 +1482,33 @@ public final class DBQuery {
                   AND T5.UCRACCT_STATUS_IND = 'A'
                   AND T4.UCRSERV_SCLS_CODE IN (?)
                   AND T2.GTBTRNH_CUST_CODE IN (
-                      SELECT GTBTRNH_CUST_CODE
-                      FROM GTBTRNH
-                      GROUP BY GTBTRNH_CUST_CODE
-                      HAVING COUNT(*) < 30
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
                   )
-                ORDER BY DBMS_RANDOM.VALUE
             )
-            WHERE ROWNUM = 1
+            SELECT
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS = """
-            SELECT *
-            FROM (
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) BETWEEN 5 AND 30
+            ),
+            randomized_results AS (
                 SELECT
                     T2.GTBTRNH_CUST_CODE,
                     T2.GTBTRNH_PREM_CODE,
                     T2.GTBTRNH_AGLC_ACCT_NBR,
-                    T3.GTRRNDN_SERV_ORD_NUM
+                    T3.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
                 FROM UZBENRO T1
                 JOIN GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
                                AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
@@ -1504,14 +1532,17 @@ public final class DBQuery {
                       WHERE BW.GZBRWDS_REWARD_ID = '1'
                   )
                   AND T2.GTBTRNH_CUST_CODE IN (
-                      SELECT GTBTRNH_CUST_CODE
-                      FROM GTBTRNH
-                      GROUP BY GTBTRNH_CUST_CODE
-                      HAVING COUNT(*) < 30
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
                   )
-                ORDER BY DBMS_RANDOM.VALUE
             )
-            WHERE ROWNUM = 1
+            SELECT
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String GET_CUSTOMERCODE_PREM_CODE_ACTIVE_RS_NON_METERED_ACCOUNT = """
@@ -1638,15 +1669,19 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN= """
-            SELECT gtbtrnh_cust_code,
-                   gtbtrnh_prem_code,
-                   gtbtrnh_aglc_acct_nbr,
-                   gtrrndn_serv_ord_num
-            FROM (
-                SELECT t2.gtbtrnh_cust_code,
-                       t2.gtbtrnh_prem_code,
-                       t2.gtbtrnh_aglc_acct_nbr,
-                       t3.gtrrndn_serv_ord_num
+            WITH eligible_customers AS (
+                SELECT gtbtrnh_cust_code
+                FROM gtbtrnh
+                GROUP BY gtbtrnh_cust_code
+                HAVING COUNT(*) < 90
+            ),
+            randomized_results AS (
+                SELECT
+                    t2.gtbtrnh_cust_code,
+                    t2.gtbtrnh_prem_code,
+                    t2.gtbtrnh_aglc_acct_nbr,
+                    t3.gtrrndn_serv_ord_num,
+                    DBMS_RANDOM.VALUE AS rand_val
                 FROM uzbenro t1
                 JOIN gtbtrnh t2 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
                 JOIN gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
@@ -1657,21 +1692,56 @@ public final class DBQuery {
                 WHERE t5.ucracct_status_ind = 'A'
                   AND t4.ucrserv_scls_code = ?
                   AND t3.gtrrndn_serv_ord_num IS NOT NULL
-                  AND t5.ucracct_cycl_code NOT IN ('DEPO')
+                  AND t5.ucracct_cycl_code <> 'DEPO'
                   AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
                   AND t7.ucrscmp_plan_code = ?
                   AND t7.ucrscmp_end_date > SYSDATE
                   AND t7.ucrscmp_start_date < SYSDATE
                   AND t7.ucrscmp_scty_code = 'COMM'
                   AND t2.gtbtrnh_cust_code IN (
-                      SELECT gtbtrnh_cust_code
-                      FROM gtbtrnh
-                      GROUP BY gtbtrnh_cust_code
-                      HAVING COUNT(*) < 30
+                      SELECT gtbtrnh_cust_code FROM eligible_customers
                   )
-                ORDER BY DBMS_RANDOM.VALUE
             )
-            WHERE ROWNUM = 1
+            SELECT
+                gtbtrnh_cust_code,
+                gtbtrnh_prem_code,
+                gtbtrnh_aglc_acct_nbr,
+                gtrrndn_serv_ord_num
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN_TC_230= """
+            WITH filtered_data AS (
+                SELECT
+                    t2.gtbtrnh_cust_code,
+                    t2.gtbtrnh_prem_code,
+                    t2.gtbtrnh_aglc_acct_nbr,
+                    t3.gtrrndn_serv_ord_num
+                FROM
+                    uzbenro t1
+                JOIN gtbtrnh t2 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
+                JOIN gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
+                JOIN ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
+                JOIN ucracct t5 ON t4.ucrserv_prem_code = t5.ucracct_prem_code
+                JOIN ucbcust t6 ON t5.ucracct_cust_code = t6.ucbcust_cust_code
+                JOIN ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
+                WHERE
+                    t5.ucracct_status_ind = 'A'
+                    AND t4.ucrserv_scls_code = ?
+                    AND t3.gtrrndn_serv_ord_num IS NOT NULL
+                    AND t5.ucracct_cycl_code NOT IN ('DEPO')
+                    AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
+                    AND t7.ucrscmp_plan_code = ?
+                    AND t7.ucrscmp_end_date > SYSDATE
+                    AND t7.ucrscmp_start_date < SYSDATE
+                    AND t7.ucrscmp_scty_code = 'COMM'
+            )
+            SELECT *
+            FROM filtered_data
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_ACN_WITHOUT_ETC= """
@@ -1763,13 +1833,19 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_INDEXED_PRICE_PLAN= """
-            SELECT *
-            FROM (
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 30
+            ),
+            randomized_results AS (
                 SELECT
                     GT.GTBTRNH_CUST_CODE,
                     GT.GTBTRNH_PREM_CODE,
                     GT.GTBTRNH_AGLC_ACCT_NBR,
-                    GR.GTRRNDN_SERV_ORD_NUM
+                    GR.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
                 FROM UCRACCT T1
                 JOIN UCRSERV T3
                     ON T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
@@ -1789,14 +1865,17 @@ public final class DBQuery {
                   AND T5.UCRSCMP_START_DATE < SYSDATE
                   AND T5.UCRSCMP_SCTY_CODE = 'COMM'
                   AND GT.GTBTRNH_CUST_CODE IN (
-                      SELECT GTBTRNH_CUST_CODE
-                      FROM GTBTRNH
-                      GROUP BY GTBTRNH_CUST_CODE
-                      HAVING COUNT(*) < 30
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
                   )
-                ORDER BY DBMS_RANDOM.VALUE
             )
-            WHERE ROWNUM = 1
+            SELECT
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE= """
