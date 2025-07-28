@@ -1,18 +1,12 @@
 package com.gng.api.steps.turnOn.GetDefaultPlansAndOffers;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage.GetDefaultPlansAndOffersApiPage;
-import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.shared.PlansAndOffers;
 import io.cucumber.java.en.When;
-import java.io.IOException;
 import java.util.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.java.en.Then;
-import java.io.InputStream;
-import java.util.List;
-import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetEligiblePlansAndOffersApiLabel.get_default_plans_and_offers;
-import static org.testng.AssertJUnit.*;
+
+import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.get_default_plans_and_offers;
 
 public class GetDefaultPlansAndOffersApiSteps {
     private Map<String, PlansAndOffers.DefaultPlanData> expectedPlansMap;
@@ -25,21 +19,6 @@ public class GetDefaultPlansAndOffersApiSteps {
         testContext.setGetDefaultPlansAndOffersApiPage(getDefaultPlansAndOffersApiPage);
     }
 
-    public void loadEligiblePlans() {
-        //customerData for request
-        if (expectedPlansMap == null) {
-            try {
-                //api plan results
-                ObjectMapper mapper = new ObjectMapper();
-                InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/DefaultPlans.json");
-                this.expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlansAndOffers.DefaultPlanData.class));
-
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load plans to validate data", e);
-            }
-        }
-    }
-
     @When("a request is made to the GetDefaultPlansAndOffers Api with {string} customer type {string} promotion code {string} enrollment source {string} condition")
     public void PositiveDefaultPlansAndOffersApi(
             String customerType,
@@ -48,7 +27,7 @@ public class GetDefaultPlansAndOffersApiSteps {
             String testCondition) {
 
         GlobalEnums.EnrollmentSource.valueOf(enrollmentSource);
-        GetEligiblePlansAndOffersApiLabel conditionLabel = GetEligiblePlansAndOffersApiLabel.valueOf(testCondition);
+        GetDefaultPlansAndOffersApiLabel conditionLabel = GetDefaultPlansAndOffersApiLabel.valueOf(testCondition);
 
         GlobalEnums.PromotionCode promo = null;
         if (promotionCode != null && !promotionCode.equalsIgnoreCase("<promotionCode>") && !promotionCode.trim().isEmpty()) {

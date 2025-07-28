@@ -107,7 +107,6 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.validateInvalidEnrollmentStateCasesTC168_182(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(enrollmentState));
     }
 
-
     @When("a request is made to the GetEligiblePlansAndOffers Api with null Authorised Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_null_Authorised_Type( ) {
         getEligiblePlansAndOffersApiPage.validateInvalidTestConditionTC237(get_eligible_plans_and_offers);

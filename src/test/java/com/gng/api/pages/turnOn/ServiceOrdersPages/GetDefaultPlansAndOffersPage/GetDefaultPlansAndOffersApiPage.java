@@ -4,7 +4,7 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetEligiblePlansAndOffersApiLabel;
+import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
@@ -19,8 +19,8 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         this.helper = new GetDefaultPlansAndOffersHelper(testContext);
     }
 
-    public void setRequestParams(GetEligiblePlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, GlobalEnums.PromotionCode promotionCode,
-                                 GlobalEnums.EnrollmentSource enrollmentSource, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, GlobalEnums.PromotionCode promotionCode,
+                                 GlobalEnums.EnrollmentSource enrollmentSource, GetDefaultPlansAndOffersApiLabel testCondition) {
 
         GetDefaultPlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));

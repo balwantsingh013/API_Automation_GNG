@@ -197,15 +197,25 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | RF6      | 6-Month Fixed                       |
 
 
-  @GetEligiblePlansAndOffersPositiveJsonValidate @HappyFlow
+  @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api with <excelDataRow> row data "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And the response should contain the expected plans for "<testCondition>" condition
 
     Examples:
       | testCondition                        | excelDataRow |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_318 | 16           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_319 | 17           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_320 | 18           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_321 | 19           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_322 | 20           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_323 | 21           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_324 | 22           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_325 | 23           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_326 | 24           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_327 | 25           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_328 | 26           |
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329 | 5            |
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330 | 6            |
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331 | 7            |

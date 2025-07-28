@@ -6,6 +6,7 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.shared.CustomerData;
+import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
@@ -1640,13 +1641,12 @@ public class GetEligiblePlansAndOffersHelper {
 
     }
 
-    public void mapDataFromExcel(CustomerData customerData, GetEligiblePlansAndOffersRequest payload, String encryptedSSN) {
+    public void mapDataFromExcel(CustomerData customerData, GetEligiblePlansAndOffersRequest payload) {
         Optional.ofNullable(customerData.getLoginID()).ifPresent(payload::setLoginID);
         Optional.ofNullable(customerData.getCustomerType()).ifPresent(payload::setCustomerType);
         Optional.ofNullable(customerData.getCustomerLastName()).ifPresent(payload::setCustomerLastName);
         Optional.ofNullable(customerData.getCustomerMiddleName()).ifPresent(payload::setCustomerMiddleName);
         Optional.ofNullable(customerData.getCustomerFirstName()).ifPresent(payload::setCustomerFirstName);
-        Optional.ofNullable(encryptedSSN).ifPresent(payload::setSocialSecurityNumber);
         Optional.ofNullable(customerData.getAglcServiceLocationID()).ifPresent(payload::setAglcServiceLocationID);
         Optional.ofNullable(customerData.getPremisesStreetNumber()).ifPresent(payload::setPremisesStreetNumber);
         Optional.ofNullable(customerData.getPremisesStreetPreDirection()).ifPresent(payload::setPremisesStreetPreDirection);
@@ -1664,13 +1664,18 @@ public class GetEligiblePlansAndOffersHelper {
         Optional.ofNullable(customerData.getCreditCheckOption()).ifPresent(payload::setCreditCheckOption);
         Optional.of(customerData.getConfirmCreditCheck()).ifPresent(payload::setConfirmCreditCheck);
         Optional.of(customerData.getMarketingPromotionCode()).ifPresent(payload::setMarketingPromotionCode);
+        Optional.ofNullable(customerData.getSocialSecurityNumber())
+                .ifPresent(ssn -> payload.setSocialSecurityNumber(AesEncryptionSteps.encryptData(ssn)));
+        Optional.ofNullable(customerData.getFederalTaxId())
+                .ifPresent(fedTaxId -> payload.setFederalTaxID(AesEncryptionSteps.encryptData(fedTaxId)));
+
     }
 
-    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, String encryptedSSN, CustomerData customerData,
+    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, CustomerData customerData,
                                  GetEligiblePlansAndOffersApiLabel testCondition) {
 
         if (customerData != null){
-            mapDataFromExcel(customerData, payload, encryptedSSN);
+            mapDataFromExcel(customerData, payload);
         }
     }
 }

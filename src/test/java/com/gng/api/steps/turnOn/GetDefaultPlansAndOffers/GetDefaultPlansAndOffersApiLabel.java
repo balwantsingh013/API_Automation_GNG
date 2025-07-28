@@ -1,6 +1,6 @@
 package com.gng.api.steps.turnOn.GetDefaultPlansAndOffers;
 
-public enum GetEligiblePlansAndOffersApiLabel {
+public enum GetDefaultPlansAndOffersApiLabel {
 
     //type
     get_default_plans_and_offers,

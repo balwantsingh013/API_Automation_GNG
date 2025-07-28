@@ -581,10 +581,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         loadCustomerDataFromExcel(rowNumber);
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        String ssn = customerData.getSocialSecurityNumber();
-        String encryptedSSN = AesEncryptionSteps.encryptData(customerData.getSocialSecurityNumber());
-
-        helper.setRequestParams(payload, encryptedSSN, customerData, testCondition);
+        helper.setRequestParams(payload, customerData, testCondition);
 
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);

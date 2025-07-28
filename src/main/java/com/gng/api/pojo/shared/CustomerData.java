@@ -33,6 +33,7 @@ public class CustomerData {
     private String socialSecurityNumber;
     private String phoneNumber;
     private String marketingPromotionCode;
+    private String federalTaxId;
 
     public boolean getConfirmCreditCheck() {
     return confirmCreditCheck;
