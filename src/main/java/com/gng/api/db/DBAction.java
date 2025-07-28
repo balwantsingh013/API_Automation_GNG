@@ -163,6 +163,12 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC230(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN_TC_230;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account without ETC", query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
+    }
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC216(String pricePlan, String sclsCode) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PLAN_PAST_DUE_BALANCE;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with past due balance", query);
