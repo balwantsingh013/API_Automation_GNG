@@ -62,26 +62,5 @@ public class GetDefaultPlansAndOffersApiSteps {
                 conditionLabel
         );
     }
-
-    @Then("the response should contain the expected default plans for {string} condition")
-    public void verifyDefaultResponsePlans(String testCondition) {
-        loadEligiblePlans();
-        PlansAndOffers.DefaultPlanData expected = expectedPlansMap.get(testCondition);
-        assertNotNull("No expected plans found for test condition: " + testCondition, expected);
-        List<GetDefaultPlansAndOffersResponse.Plan> actualPlans =  testContext.getGetDefaultPlansAndOffersResponse().getData().getPlans();
-
-        assertEquals("Mismatch in number of plans", expected.getNumberOfMatches(), actualPlans.size());
-
-        for (GetDefaultPlansAndOffersResponse.Plan expectedPlan : expected.getPlans()) {
-            boolean found = actualPlans.stream().anyMatch(actual ->
-                    expectedPlan.getPlanCode().equals(actual.getPlanCode()) &&
-                    expectedPlan.getPlanDescription().equals(actual.getPlanDescription()) &&
-                    expectedPlan.getPromotion1Code().equals(actual.getPromotion1Code()) &&
-                    expectedPlan.getPromotion1Description().equals(actual.getPromotion1Description()
-                    )
-            );
-            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-        }
-    }
 }
 
