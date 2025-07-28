@@ -72,23 +72,6 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithPromotionCodeTC328(get_eligible_plans_and_offers);
     }
 
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} premise {string} account type {string} credit check {string} value score {string} min {string} max {string} ssn {string} condition")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api(String premiseType, String accountType, String creditCheck, String valueScore, String creditMin,
-      String creditMax, String ssn, String testCondition) {
-        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnType(get_eligible_plans_and_offers, premiseType, accountType, com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.valueOf(creditCheck), valueScore, creditMin, creditMax,
-                ssn, com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} premise {string} account type {string} credit check {string} ssn {string} condition")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Active(String premiseType, String accountType, String creditCheck, String ssn, String testCondition) {
-        getEligiblePlansAndOffersApiPage.setRequestParamsBasedOnType(get_eligible_plans_and_offers, premiseType, accountType, com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.valueOf(creditCheck), null, null, null, ssn, com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} premise {string} account type {string} credit check {string} value score {string} enrollment status {string} ssn tc 338e")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_ByEnrollmentStatus(String premiseType, String accountType, String creditCheck, String valueScore, String enrollmentStatus, String ssn) {
-        getEligiblePlansAndOffersApiPage.setRequestParamsWithEnrollmentStatus(get_eligible_plans_and_offers, premiseType, accountType, com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.valueOf(creditCheck), valueScore, enrollmentStatus, ssn);
-    }
-
     @When("a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for {string}")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_commercial_credit_check_as_yes_with_no_promotion_code_TC_339(String testCondition) {
         getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestCommercial(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));

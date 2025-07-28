@@ -246,69 +246,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
     }
 
-    public String GetCustCodeBySSN(String encryptedSSN){
-        SearchAccountsRequest searchPayload = BasePage.deserializeJsonToPojo(SearchAccountsApiLabel.search_accounts.toString(),
-                SearchAccountsRequest.class);
-        searchPayload.setRequestID(FakerDataGenerator.generateString(10));
-        searchPayload.setSocialSecurityNumber(encryptedSSN);
-        setRequestSpecification(searchPayload, testContext.getAuthToken());
-
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        SearchAccountsResponse searchAccountsResponse = deserializeResponseToPojo(response, SearchAccountsResponse.class);
-
-        String custCode = "";
-        if (searchAccountsResponse != null && searchAccountsResponse.isSuccess())
-        {
-            custCode = Optional.of(searchAccountsResponse)
-                    .map(SearchAccountsResponse::getData)
-                    .map(SearchAccountsResponse.SearchData::getAccounts)
-                    .filter(accounts -> !accounts.isEmpty())
-                    .map(accounts -> accounts.getFirst().getCustomerCode())
-                    .orElse(null);
-        }
-        return custCode;
-
-    }
-
-    public void setRequestParamsBasedOnType(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-     String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore, String creditMin, String creditMax, String ssn, GetEligiblePlansAndOffersApiLabel testCondition) {
-
-        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        String custCode = "";
-        String encryptedSSN = AesEncryptionSteps.encryptData(ssn);
-        if (ssn != null && !ssn.trim().isEmpty()) {
-           custCode = GetCustCodeBySSN(encryptedSSN);
-        }
-        helper.setRequestParamsBasedOnType(payload, premiseType, accountType, creditCheck, valueScore, creditMin, creditMax, encryptedSSN, custCode, testCondition);
-
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
-        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
-        testContext.setResponse(offersResponse);
-    }
-
-    public void setRequestParamsWithEnrollmentStatus(GetEligiblePlansAndOffersApiLabel apiLabel, String premiseType,
-                                            String accountType, GetEligiblePlansAndOffersApiLabel creditCheck, String valueScore, String enrollmentStatus, String ssn) {
-
-        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        String custCode = "";
-        String encryptedSSN = AesEncryptionSteps.encryptData(ssn);
-        if (ssn != null && !ssn.trim().isEmpty()) {
-            custCode = GetCustCodeBySSN(encryptedSSN);
-        }
-
-        helper.setTestCondition338e(payload, premiseType, accountType, creditCheck, valueScore, enrollmentStatus, encryptedSSN, custCode);
-
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
-        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
-        testContext.setResponse(offersResponse);
-    }
-
     public void validateInvalidRequestIDCasesTC155_157(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnTypeTC155_157(payload, requestID);

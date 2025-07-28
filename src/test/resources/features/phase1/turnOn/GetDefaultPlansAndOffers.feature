@@ -11,7 +11,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as <numberOfMatches>
-    And the response should contain the expected plans for "<testCondition>" condition
+    And the response should contain the expected default plans for "<testCondition>" condition
 
         #?? TC 152_2 transactionType = "MKSW" -> 0 plans i ftd ex., 9 results actually being returned?
         #?? TC 151_3 should it be in the negative flow?
