@@ -50,17 +50,17 @@ public class GlobalEnums {
     @Getter
     public enum EnrollmentSource {
         ALLCONNECT("ALLCONNECT"),
-        CIM_BUILDER_TURN_ON("CMITURNON"),
-        CORRESPONDENCE("CORRSP"),
+        CIM_BUILDER_TURN_ON("CIM BUILDER TURN ON"),
+        CORRESPONDENCE("CORRESPONDENCE"),
         EMAIL("EMAIL"),
         ENERGYSHOP("ENERGYSHOP"),
         FAX("FAX"),
-        GEORGIAGASSAVINGS("GAGASSAVE"),
+        GEORGIAGASSAVINGS("GEORGIAGASSAVINGS"),
         GNGHUB("GNGHUB"),
         MAIL("MAIL"),
         MOOVEGURU("MOOVEGURU"),
         ONESOURCE("ONESOURCE"),
-        PHONECALL("PHONECALL"),
+        PHONECALL("PHONE CALL"),
         VIVINT("VIVINT"),
         WEB("WEB");
 
