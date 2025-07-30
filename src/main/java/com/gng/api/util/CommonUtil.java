@@ -97,5 +97,29 @@ public class CommonUtil {
         }
     }
 
+    public static void normalizeBlankStringsToNull(Object object) {
+        if (object == null) {
+            return;
+        }
+
+        Class<?> clazz = object.getClass();
+        while (clazz != null) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.getType() == String.class) {
+                    field.setAccessible(true);
+                    try {
+                        Object value = field.get(object);
+                        if (value != null && ((String) value).trim().isEmpty()) {
+                            field.set(object, null);
+                        }
+                    } catch (IllegalAccessException e) {
+                        // Optional: log or rethrow depending on your setup
+                        System.err.println("Failed to process field: " + field.getName());
+                    }
+                }
+            }
+            clazz = clazz.getSuperclass(); // Handle inheritance
+        }
+    }
 }
 

@@ -695,49 +695,17 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getEligiblePlansAndOffersCreditMatchRequestParams(String premiseType,
-                                                                      String accountType,
-                                                                      String creditCheck,
-                                                                      String creditMatchCode,
-                                                                      String custCode) {
-        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_CREDIT_MATCH_PARAMS
-                .replace("<premiseType>", premiseType)
-                .replace("<accountType>", accountType)
-                .replace("<creditCheck>", creditCheck)
-                .replace("<creditMatchCode>", creditCheck)
-                .replace("<custCode>", custCode);
-
-        if (creditMatchCode != null && !creditMatchCode.trim().isEmpty()) {
-            query = query.replace("--", "").replace("<creditMatchCode>", creditMatchCode);
-        } else {
-            query = query.replace("AND e.\"UZBENRO_CREDIT_SCORE_TEXT\" = '<creditMatchode>'", "");
-        }
-
-        logQueryInAllure("Get EligiblePlansAndOffersRequestParams", query);
-        return jdbcTemplate.queryForMap(query);
+    public List<Map<String, Object>> getEligiblePlansAndOffersResult(String controlNum) {
+        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_RESULT
+                .replace("<controlNumber>", controlNum);
+        logQueryInAllure("Get EligiblePlansAndOffersResult", query);
+        return jdbcTemplate.queryForList(query);
     }
+    public String getControlNumber() {
+        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_CONTROL_NUMBER;
 
-    public Map<String, Object> getEligiblePlansAndOffersByEnrollmentAndValueScoreRequestParams(String premiseType,
-                                                                                 String accountType,
-                                                                                 String creditCheck,
-                                                                                 String valueScore,
-                                                                                 String enrollmentStatus,
-                                                                                 String custCode) {
-        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_BY_ENROLLMENT_VALUE_SCORE_PARAMS
-                .replace("<premiseType>", premiseType)
-                .replace("<accountType>", accountType)
-                .replace("<creditCheck>", creditCheck)
-                .replace("<enrollmentStatus>", enrollmentStatus)
-                .replace("<custCode>", custCode);
-
-        if (valueScore != null && !valueScore.trim().isEmpty()) {
-            query = query.replace("<valueScore>", valueScore);
-        } else {
-            query = query.replace(" AND g.\"UCBCUST_CURRENT_VALUE_SCORE\" = '<valueScore>'", "");
-        }
-
-        logQueryInAllure("Get EligiblePlansAndOffersRequestParams", query);
-        return jdbcTemplate.queryForMap(query);
+        logQueryInAllure("Get Control Number", query);
+        return jdbcTemplate.queryForObject(query, String.class);
     }
 
     private void logQueryInAllure(String title, String query, Object... params) {

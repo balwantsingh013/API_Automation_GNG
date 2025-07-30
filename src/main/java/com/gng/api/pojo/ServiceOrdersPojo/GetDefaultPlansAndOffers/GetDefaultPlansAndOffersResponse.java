@@ -1,5 +1,7 @@
 package com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers;
 import java.util.List;
+
+import com.gng.api.pojo.shared.PlanType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetDefaultPlansAndOffersResponse {
+
     private DataResult data;
     private boolean success;
     private int errorCode;
@@ -27,7 +30,7 @@ public class GetDefaultPlansAndOffersResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Plan {
+    public static class Plan implements PlanType{
         private String planCode;
         private String planDescription;
         private int sortOrder;
@@ -74,5 +77,21 @@ public class GetDefaultPlansAndOffersResponse {
         private boolean promotion2VisaIndicator;
         private String enrollmentStatus;
         private Double depositAmount;
+        @Override
+        public String getPlanCode() {
+            return planCode;
+        }
+        @Override
+        public String getPlanDescription() {
+            return planDescription;
+        }
+        @Override
+        public String getPromotion1Code() {
+            return promotion1Code;
+        }
+        @Override
+        public String getPromotion1Description() {
+            return promotion1Description;
+        }
     }
 }

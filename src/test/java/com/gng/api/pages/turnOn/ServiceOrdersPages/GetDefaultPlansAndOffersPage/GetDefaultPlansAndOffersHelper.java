@@ -12,9 +12,11 @@ import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansA
 public class GetDefaultPlansAndOffersHelper {
 
     private final TestContext testContext;
+    private final String acnLogin;
 
     public GetDefaultPlansAndOffersHelper(TestContext testContext) {
         this.testContext = testContext;
+        acnLogin = "acncsr";
     }
 
     GetDefaultPlansAndOffersRequest preparePayload(GetDefaultPlansAndOffersApiLabel apiLabel) {
@@ -25,14 +27,16 @@ public class GetDefaultPlansAndOffersHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, GetDefaultPlansAndOffersRequest.class);
     }
 
-    public void setRequestParams(GetDefaultPlansAndOffersRequest payload, GlobalEnums.CustomerType customerType, GlobalEnums.PromotionCode promotionCode, GlobalEnums.EnrollmentSource enrollmentSource,
+    public void setRequestParams(GetDefaultPlansAndOffersRequest payload, GlobalEnums.CustomerType customerType, String promotionCode, GlobalEnums.EnrollmentSource enrollmentSource,
                                  GetDefaultPlansAndOffersApiLabel testCondition) {
-
-        String acnLogin = "acncsr";
         payload.setCustomerType(customerType.getValue());
+        GlobalEnums.PromotionCode parsedPromotionCode = null;
 
-        if (promotionCode != null) {
-            payload.setMarketingPromotionCode(promotionCode.getValue());
+        if (promotionCode != null && !promotionCode.equalsIgnoreCase("<promotionCode>") && !promotionCode.trim().isEmpty()) {
+            parsedPromotionCode = GlobalEnums.PromotionCode.valueOf(promotionCode);
+        }
+        if (parsedPromotionCode != null) {
+            payload.setMarketingPromotionCode(parsedPromotionCode.getValue());
         }
         payload.setEnrollmentSource(enrollmentSource.getValue());
         if (testCondition.equals(GET_DEFAULT_PLANS_AND_OFFERS_TC_154))

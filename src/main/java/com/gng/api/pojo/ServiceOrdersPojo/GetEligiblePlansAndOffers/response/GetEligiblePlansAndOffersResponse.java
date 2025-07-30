@@ -1,5 +1,8 @@
 package com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.gng.api.pojo.shared.PlanType;
+import com.gng.api.util.YesNoBooleanDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +13,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetEligiblePlansAndOffersResponse {
+
 	private DataResult data;
 	private boolean success;
 	private String requestID;
@@ -95,7 +99,7 @@ public class GetEligiblePlansAndOffersResponse {
 	@Data
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class Plan {
+	public static class Plan implements PlanType{
 		private String planCode;
 		private String planDescription;
 		private int sortOrder;
@@ -111,7 +115,8 @@ public class GetEligiblePlansAndOffersResponse {
 		private String marketingTerms;
 		private String offerTerms;
 		private String externalTerms;
-		private boolean restrictedIndicator;
+		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
+		private Boolean restrictedIndicator;
 		private Object prepayPlanIndicator;
 		private Object prepayEstimateAmountDue;
 		private Object prepayEstimatedConsumption;
@@ -123,7 +128,8 @@ public class GetEligiblePlansAndOffersResponse {
 		private Object newPrepayAmount;
 		private Object newPrepayAmountDue;
 		private Object newPrepayMinimumPaymentRequired;
-		private boolean payInAdvanceIndicator;
+		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
+		private Boolean payInAdvanceIndicator;
 		private Object guaranteedBillPlanQuote;
 		private int newPrepayGuaranteedBillAmount;
 		private String guaranteedBillPlanErrorCode;
@@ -132,8 +138,10 @@ public class GetEligiblePlansAndOffersResponse {
 		private String promotion1Description;
 		private String promotion1Terms;
 		private String promotion1MarketingMessage;
-		private boolean promotion1TransferIndicator;
-		private boolean promotion1VisaIndicator;
+		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
+		private Boolean promotion1TransferIndicator;
+		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
+		private Boolean promotion1VisaIndicator;
 		private String promotion2Code;
 		private String promotion2Description;
 		private String promotion2Terms;
@@ -142,5 +150,21 @@ public class GetEligiblePlansAndOffersResponse {
 		private Object promotion2VisaIndicator;
 		private ArrayList<EnrollmentStatus> enrollmentStatus;
 		private Object depositAmount;
+		@Override
+		public String getPlanCode() {
+			return planCode;
+		}
+		@Override
+		public String getPlanDescription() {
+			return planDescription;
+		}
+		@Override
+		public String getPromotion1Code() {
+			return promotion1Code;
+		}
+		@Override
+		public String getPromotion1Description() {
+			return promotion1Description;
+		}
 	}
 }

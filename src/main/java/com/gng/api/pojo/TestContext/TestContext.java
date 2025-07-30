@@ -14,6 +14,8 @@ import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteResponse
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Data
 public class TestContext {
     private Response response;
@@ -57,6 +59,8 @@ public class TestContext {
     @Getter @Setter
     private Object getEligiblePlansAndOffersApiPage;
     private GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse;
+    @Getter @Setter
+    private List<GetEligiblePlansAndOffersResponse.Plan> getValidationEligiblePlansAndOffersPlans;
     @Getter @Setter
     private Object getDefaultPlansAndOffersApiPage;
     private GetDefaultPlansAndOffersResponse getDefaultPlansAndOffersResponse;

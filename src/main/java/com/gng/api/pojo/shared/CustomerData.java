@@ -3,6 +3,8 @@ package com.gng.api.pojo.shared;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class CustomerData {
@@ -34,6 +36,7 @@ public class CustomerData {
     private String phoneNumber;
     private String marketingPromotionCode;
     private String federalTaxId;
+    private List<String> testConditions;
 
     public boolean getConfirmCreditCheck() {
     return confirmCreditCheck;

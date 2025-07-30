@@ -1,9 +1,14 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
@@ -1668,16 +1673,31 @@ public class GetEligiblePlansAndOffersHelper {
                 .ifPresent(ssn -> payload.setSocialSecurityNumber(AesEncryptionSteps.encryptData(ssn)));
         Optional.ofNullable(customerData.getFederalTaxId())
                 .ifPresent(fedTaxId -> payload.setFederalTaxID(AesEncryptionSteps.encryptData(fedTaxId)));
-
     }
 
     public void setRequestParams(GetEligiblePlansAndOffersRequest payload, CustomerData customerData,
                                  GetEligiblePlansAndOffersApiLabel testCondition) {
-
         if (customerData != null){
             mapDataFromExcel(customerData, payload);
         }
     }
+
+    public List<GetEligiblePlansAndOffersResponse.Plan> getValidationEligiblePlansAndOffers() {
+        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
+        Object rawResult = ApplicationContext.get().getDbAction().getEligiblePlansAndOffersResult(controlNum);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        return mapper.convertValue(
+                rawResult,
+                new TypeReference<>() {
+                }
+        );
+    }
+
 }
 
 

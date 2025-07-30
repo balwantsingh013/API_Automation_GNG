@@ -19,8 +19,9 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         this.helper = new GetDefaultPlansAndOffersHelper(testContext);
     }
 
-    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, GlobalEnums.PromotionCode promotionCode,
+    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, String promotionCode,
                                  GlobalEnums.EnrollmentSource enrollmentSource, GetDefaultPlansAndOffersApiLabel testCondition) {
+
 
         GetDefaultPlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
