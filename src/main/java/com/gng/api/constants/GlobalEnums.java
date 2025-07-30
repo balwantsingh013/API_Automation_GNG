@@ -83,4 +83,18 @@ public class GlobalEnums {
             this.value = value;
         }
     }
+
+    @Getter
+    public enum EnrollMentStatus {
+        COMPLETE("CE"),
+        DEPOSIT_PAID("DP"),
+        BAD_DEBT("BD"),
+        PC("PC");
+
+        private final String value;
+
+        EnrollMentStatus(String value) {
+            this.value = value;
+        }
+    }
 }

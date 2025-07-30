@@ -124,3 +124,24 @@ Feature: Verify SaveEnrollment Api
       | SPECIAL_CHARS_BILLING_PLAN | 10000     | The Billing Plan must be a string with a maximum length of 1   |
       | EMPTY_BILLING_PLAN         | 2000      | Invalid Request: Missing conditional parameters-Billing Option |
       | LOWERCASE_BILLING_PLAN     | 10000     | The Billing Plan must be a string with a maximum length of 1   |
+
+  @SaveEnrollmentNewFlowMissingNotesCreditCheckSkip @Phase1 @NegativeFlow
+  Scenario Outline: SaveEnrollment Api -Verify SaveEnrollment Api throws an appropriate error when notes are missing for "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 2000 and ErrorMessage "Invalid Request: Missing conditional parameters-Notes"
+    Examples:
+    |testCondition                                                 |planCode|promotionCode               |
+    |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_CE_TC_498 |RGB     |FIX 5 DOLLARS FOR 12 MONTHS |
+    |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_499 |PGB     |FIX 10 DOLLARS FOR 12 MONTHS|
+    |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500A|PRP     |15 CENTS FOR 12 MONTHS      |
+
+  @SaveEnrollmentNewNotesAdded @Phase1 @HappyFlow
+  Scenario: SaveEnrollment Api -Verify SaveEnrollment Api returns success when notes are added in request TC_500B
+    When a request is made to the GetEligiblePlansAndOffers for a "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B" with "PRP" and "15 CENTS FOR 12 MONTHS"
+    And response should have ErrorCode 0 and ErrorMessage ""

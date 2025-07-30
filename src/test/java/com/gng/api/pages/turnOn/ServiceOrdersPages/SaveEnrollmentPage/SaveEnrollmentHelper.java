@@ -7,6 +7,9 @@ import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollment
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.gng.api.constants.GlobalEnums.EnrollMentStatus.COMPLETE;
+import static com.gng.api.constants.GlobalEnums.EnrollMentStatus.PC;
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 
 @Slf4j
 public class SaveEnrollmentHelper {
@@ -61,6 +64,43 @@ public class SaveEnrollmentHelper {
             default:
                 payload.setCustomerCode(FakerDataGenerator.generateNumber(0, 9));
         }
+    }
+
+    public void setSaveEnrollmentRequestParametersAsPerTestCondition(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
+        int customerCode = Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+        int transactionID = Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+        String aglcAccountNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber();
+        String aglcServiceOrderNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID();
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+        payload.setTransactionID(transactionID);
+        payload.setAglcAccountNumber(aglcAccountNumber);
+        payload.setAglcServiceOrderNumber(aglcServiceOrderNumber);
+        payload.setPlanCode(planCode);
+        payload.setPromotionCode(promotionCode);
+
+        switch(testCondition) {
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_CE_TC_498:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_499:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500A:
+                setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B:
+                setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                payload.setNotes(FakerDataGenerator.generateString(10));
+                break;
+        }
+    }
+
+    public void setEnrollmentStatusPCAndPaymentConfirmationNumber(SaveEnrollmentRequest payload){
+        payload.setEnrollmentStatus(PC.getValue());
+        payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
     }
 
     public void setPremisesCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel premisesCode) {
@@ -209,6 +249,10 @@ public class SaveEnrollmentHelper {
             default:
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(2));
         }
+    }
+
+    public void setMarketerReferenceData(SaveEnrollmentRequest payload, long marketerReferenceData){
+        payload.setMarketerReferenceData(marketerReferenceData);
     }
 
     public void setBillingPlanBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {

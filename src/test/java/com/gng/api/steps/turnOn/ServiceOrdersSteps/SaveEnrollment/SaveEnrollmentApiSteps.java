@@ -69,6 +69,12 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateInvalidBillingPlanCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(billingPlan));
     }
 
+    @When("a request is made to the Save Enrollment API for the {string} with {string} and {string}")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_positive(String testCondition, String planCode, String promotionCode)
+    {
+        saveEnrollmentApiPage.validateSaveEnrollmentPositiveTCs(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition), planCode, promotionCode);
+    }
+
 
 
 }

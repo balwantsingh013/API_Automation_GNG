@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
+import static com.gng.api.constants.GlobalEnums.CustomerType.RESIDENTIAL;
 import static com.gng.api.constants.GlobalEnums.EnrollmentSource.*;
 import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
@@ -1632,19 +1634,37 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setConfirmCreditCheck(Boolean.parseBoolean(rowData.get("confirmCreditCheck")));
         payload.setTenantLandlord(rowData.get("tenantLandlord"));
         payload.setPremisesStreetPostDirection(rowData.get("premisesStreetPostDirection"));
-
-
-
-
-
-
     }
 
+    public void preparePayloadBasedOnTC_EligiblePlansAndSaveEnrollment(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        ExcelReader excelReader = null;
+        try {
+            excelReader = new ExcelReader(CUSTOMER_DATA);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-
-
-
+        List<Map<String, String>> allRows = excelReader.getSheetData(CUSTOMER_SHEET_NAME);
+        Map<String, String> data = allRows.stream()
+                .filter(row -> "Notes".equals(row.get("testCondition")))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No matching row found for testCondition = Notes"));
+                    payload.setTransactionType(TURN_ON.getValue());
+                    payload.setCustomerType(RESIDENTIAL.getValue());
+                    payload.setEnrollmentSource(MAIL.getValue());
+                    payload.setCustomerLastName(data.get("customerLastName"));
+                    payload.setCustomerFirstName(data.get("customerFirstName"));
+                    payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+                    payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+                    payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+                    payload.setPremisesStreetName(data.get("premisesStreetName"));
+                    payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+                    payload.setPremisesCity(data.get("premisesCity"));
+                    payload.setPremisesStateCode(data.get("premisesStateCode"));
+                    payload.setPremisesZipCode(data.get("premisesZipCode"));
+                    payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+                    payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
+                    payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+    }
 }
-
-
-
