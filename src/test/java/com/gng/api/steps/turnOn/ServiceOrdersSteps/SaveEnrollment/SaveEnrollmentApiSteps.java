@@ -75,6 +75,9 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateSaveEnrollmentPositiveTCs(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition), planCode, promotionCode);
     }
 
-
+    @When("a request is made to the Save Enrollment API for completion for {string} with {string} and {string}")
+    public void a_request_is_made_to_save_enrollment_to_complete_prev_saved_enrollment(String testCondition, String planCode, String promotionCode){
+        saveEnrollmentApiPage.validateCEForPreviouslySavedEnrollment(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition), planCode, promotionCode);
+    }
 
 }

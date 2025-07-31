@@ -551,4 +551,14 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(response);
         }
 
+        public void sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
+            GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+            helper.preparePayloadForPreviouslySavedIncompleteEnrollment(payload,testCondition);
+            setRequestSpecification(payload, testContext.getAuthToken());
+            Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+            GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+            testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+            testContext.setResponse(response);
+        }
+
     }

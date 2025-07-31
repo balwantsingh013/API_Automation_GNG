@@ -145,3 +145,53 @@ Feature: Verify SaveEnrollment Api
     And a request is made to get Marketer Reference Data
     And a request is made to the Save Enrollment API for the "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B" with "PRP" and "15 CENTS FOR 12 MONTHS"
     And response should have ErrorCode 0 and ErrorMessage ""
+
+    @SaveEnrollmentEnrollmentStatusCE @Phase1 @HappyFlow
+    Scenario Outline: SaveEnrollment Api -Verify SaveEnrollment Api returns success when notes are added in request <testCondition>
+      When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+      And response should have ErrorCode 0 and ErrorMessage ""
+      And a request is made to get Marketer Reference Data
+      And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+      And response should have ErrorCode 0 and ErrorMessage ""
+
+      Examples:
+        |testCondition                                                 |planCode|promotionCode               |
+        #need to check if TRD can be passed here
+        #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_423       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS |
+        #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DP_TC_425       |CMI     |                            |
+        #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PC_TC_431       |PRP     |                            |
+        #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PC_TC_432       |PGB     |FIX 5 DOLLARS FOR 12 MONTHS  |
+        #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433       |MVS     |25 CENTS FOR 12 MONTHS      |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DR_TC_435       |CFM     |COM FIX 10 CENTS FOR 12 MONTHS|
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_438       |PGB     |FIX 5 DOLLARS FOR 12 MONTHS  |
+    #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_439       |PRP     |                            |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_442       |PGB     |FIX 5 DOLLARS FOR 12 MONTHS  |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443       |PRP     |                            |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RD_TC_446       |CVS     |COM NO CSC FOR 12 MONTHS    |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452       |VML     |                            |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454       |CF6     |COM FIX 10 CENTS FOR 6 MONTHS|
+
+
+  @SaveEnrollmentProviouslySaved @Phase1 @HappyFlow
+  Scenario Outline: SaveEnrollment Api -Verify SaveEnrollment Api returns success for previously saved enrollment for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the Save Enrollment API for completion for "<testCondition>" with "<planCode2>" and "<promotionCode2>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+    Examples:
+      |testCondition                                                         |planCode|promotionCode               |planCode2|promotionCode2          |
+     # |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS |RF6      |FIX 8 CENTS FOR 6 MONTHS|
+     # |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426       |VML     |                            |VML      |                         |
+      #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1       |VML     |                            |VML      |                         |
+#|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427       |PGB     |FIX 5 DOLLARS FOR 12 MONTHS  |PGB     |FIX 5 DOLLARS FOR 12 MONTHS  |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428       |PRP     |                            |PRP      |                        |
+  #|GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS |MI     |   |
+    |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436       |VML     |                            |VML      |                        |

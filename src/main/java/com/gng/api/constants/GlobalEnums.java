@@ -60,7 +60,7 @@ public class GlobalEnums {
         MAIL("MAIL"),
         MOOVEGURU("MOOVEGURU"),
         ONESOURCE("ONESOURCE"),
-        PHONECALL("PHONECALL"),
+        PHONECALL("PHONE CALL"),
         VIVINT("VIVINT"),
         WEB("WEB");
 
@@ -88,8 +88,14 @@ public class GlobalEnums {
     public enum EnrollMentStatus {
         COMPLETE("CE"),
         DEPOSIT_PAID("DP"),
-        BAD_DEBT("BD"),
-        PC("PC");
+        BILL_DEPOSIT("BD"),
+        PAYMENT_COMPLETE("PC"),
+        SAVE_INCOMPLETE("SI"),
+        DEPOSIT_REQUIRED("DR"),
+        PREPAY_REQUIRED("PR"),
+        REFUSED_PREPAY("RP"),
+        REFUSED_DEPOSIT("RD"),
+        SAVE_FOR_FALL_SSP("SF");
 
         private final String value;
 

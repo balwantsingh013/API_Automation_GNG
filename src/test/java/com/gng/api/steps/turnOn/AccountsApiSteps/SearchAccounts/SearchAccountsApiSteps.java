@@ -309,6 +309,12 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validatePartialPaymentTC121a(search_accounts);
     }
 
+    @When("a request is made to the SearchAccountsApi for {string}")
+    public void a_request_to_search_accounts_for_prev_saved_enrollment(String testCondition){
+        searchAccountsApiPage.validateSearchAccountsForPrevSavedEnrollment(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
+    }
+
+
     @When("a request is made to the SearchAccounts Api with Full Payment TC_121b")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Full_Payment_TC_121b() {
         searchAccountsApiPage.validateFullPaymentTC121b(search_accounts);

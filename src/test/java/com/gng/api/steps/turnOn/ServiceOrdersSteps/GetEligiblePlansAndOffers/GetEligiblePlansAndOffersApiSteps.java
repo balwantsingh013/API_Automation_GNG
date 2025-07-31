@@ -286,4 +286,9 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestSSPFalseResidential(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
+    @When("a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment {string}")
+    public void a_request_to_get_eligible_plans_and_offfers_for_incomplete_enrollment(String testCondition){
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
 }
