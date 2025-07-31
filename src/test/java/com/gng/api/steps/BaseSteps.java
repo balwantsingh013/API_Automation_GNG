@@ -32,11 +32,6 @@ public class BaseSteps {
         this.testContext = testContext;
     }
 
-    public static class PlanData {
-        public int numberOfMatches;
-        public List<Plans> plans;
-    }
-
     @Then("verify response code of {string} Api is {int}")
     public void verify_response_code_of_api_is(String apiName, Integer statusCode) {
         verifyResponseCode(apiName, statusCode);

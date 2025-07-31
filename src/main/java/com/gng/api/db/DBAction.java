@@ -1,6 +1,5 @@
 package com.gng.api.db;
 
-import com.github.javafaker.Bool;
 import com.gng.api.report.ExtentReportManager;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
@@ -695,15 +694,14 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public List<Map<String, Object>> getEligiblePlansAndOffersResult(String controlNum) {
-        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_RESULT
+    public List<Map<String, Object>> getValidationPlansAndOffers(String controlNum) {
+        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT
                 .replace("<controlNumber>", controlNum);
-        logQueryInAllure("Get EligiblePlansAndOffersResult", query);
+        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
         return jdbcTemplate.queryForList(query);
     }
     public String getControlNumber() {
-        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_CONTROL_NUMBER;
-
+        String query = DBQuery.GET_CONTROL_NUMBER;
         logQueryInAllure("Get Control Number", query);
         return jdbcTemplate.queryForObject(query, String.class);
     }

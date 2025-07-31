@@ -11,6 +11,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as <numberOfMatches>
+    Then the response should contain the expected default plans
 
     Examples:
       | customerType | promotionCode | enrollmentSource   | testCondition                         | numberOfMatches |

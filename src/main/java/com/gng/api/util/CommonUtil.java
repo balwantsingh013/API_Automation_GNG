@@ -1,5 +1,8 @@
 package com.gng.api.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -119,6 +122,17 @@ public class CommonUtil {
                 }
             }
             clazz = clazz.getSuperclass(); // Handle inheritance
+        }
+    }
+    public static <T> T convertObjectToPojo(Object source, TypeReference<T> typeRef) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        try {
+            return mapper.convertValue(source, typeRef);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Failed to map object: " + e.getMessage(), e);
         }
     }
 }

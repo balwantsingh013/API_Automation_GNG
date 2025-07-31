@@ -13,6 +13,7 @@ import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
+import com.gng.api.util.CommonUtil;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -21,15 +22,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
 import static com.gng.api.constants.GlobalEnums.EnrollmentSource.*;
 import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
 import static com.gng.api.constants.TestConstant.*;
-import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.CREDIT_CHECK_MULTIPLE_PREMISES;
-import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.CREDIT_CHECK_YES;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 @Slf4j
@@ -1684,18 +1682,9 @@ public class GetEligiblePlansAndOffersHelper {
 
     public List<GetEligiblePlansAndOffersResponse.Plan> getValidationEligiblePlansAndOffers() {
         String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
-        Object rawResult = ApplicationContext.get().getDbAction().getEligiblePlansAndOffersResult(controlNum);
+        Object rawResult = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        return mapper.convertValue(
-                rawResult,
-                new TypeReference<>() {
-                }
-        );
+        return CommonUtil.convertObjectToPojo(rawResult, new TypeReference<>() {});
     }
 
 }

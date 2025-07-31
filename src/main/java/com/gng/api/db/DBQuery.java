@@ -2279,12 +2279,12 @@ public final class DBQuery {
             ORDER BY e."UZBENRO_ENRO_STATUS_DATE" DESC
             FETCH FIRST 1 ROWS ONLY
     """;
-    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_CONTROL_NUMBER = """
+    public static final String GET_CONTROL_NUMBER = """
             SELECT UZTCOTT_CONTROL_NUM FROM uztcott\s
             ORDER  BY uztcott_control_num DESC
             FETCH FIRST 1 ROWS ONLY
             """;
-    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_RESULT= """      
+    public static final String GET_VALIDATION_PLANS_AND_OFFERS_RESULT = """      
             SELECT
               t1.uztcott_app_request_code   AS "appRequestCode",
               t1.uztcott_plan_code          AS "planCode",

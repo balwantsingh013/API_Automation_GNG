@@ -1,10 +1,20 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel;
+
+import java.util.List;
 
 import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.GET_DEFAULT_PLANS_AND_OFFERS_TC_154;
 
@@ -44,4 +54,11 @@ public class GetDefaultPlansAndOffersHelper {
             payload.setLoginID(acnLogin);
         }
     }
+    public List<GetDefaultPlansAndOffersResponse.Plan> getValidationDefaultPlansAndOffers() {
+        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
+        Object rawResult = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
+
+        return CommonUtil.convertObjectToPojo(rawResult, new TypeReference<>() {});
+    }
+
 }
