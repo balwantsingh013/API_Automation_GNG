@@ -3,6 +3,7 @@ package com.gng.api.pojo.TestContext;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesResponse;
@@ -64,6 +65,11 @@ public class TestContext {
     @Getter @Setter
     private Object getDefaultPlansAndOffersApiPage;
     private GetDefaultPlansAndOffersResponse getDefaultPlansAndOffersResponse;
+    @Getter @Setter
+    private List<GetDefaultPlansAndOffersResponse.Plan> getValidationDefaultPlansAndOffersPlans;
+    @Getter @Setter
+    private Object getPrepayPlansRequoteApiPage;
+    private GetPrepayPlansRequoteResponse GetPrepayPlansRequoteResponse;
     @Getter @Setter
     private Object getUserRolesApiPage;
     private GetUserRolesResponse getUserRolesResponse;
