@@ -1,11 +1,20 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage;
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
+import com.gng.api.util.CommonUtil;
 import com.gng.api.util.FakerDataGenerator;
+import io.cucumber.datatable.DataTable;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.gng.api.constants.GlobalEnums.EnrollMentStatus.*;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
@@ -14,6 +23,7 @@ import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 public class SaveEnrollmentHelper {
 
     private final TestContext testContext;
+    private static final Set<String> PLACEHOLDERS = Set.of("empty", "n/a", "undefined", "-");
 
     public SaveEnrollmentHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -111,6 +121,56 @@ public class SaveEnrollmentHelper {
 
         }
     }
+    public void databaseValidationPostEnrollment(DataTable dataTable) {
+        Map<String, String> params = dataTable.asMaps(String.class, String.class).get(0); // ✅ Use first row only
+
+        String cycleCode = normalize(params.get("cycleCode"));
+        String reasonCode = normalize(params.get("reasonCode"));
+        String enrollmentStatus = normalize(params.get("enrollmentStatus"));
+        String accountStatusIdicator = normalize(params.get("accountStatusIdicator"));
+        String paymentArrear = normalize(params.get("paymentArrear"));
+        String badDebtExemptIndicator = normalize(params.get("badDebtExemptIndicator"));
+        String NCOAProtectIndicator = normalize(params.get("NCOAProtectIndicator"));
+        String feedbackIndicator = normalize(params.get("feedbackIndicator"));
+        String contactDirection = normalize(params.get("contactDirection"));
+        String referredIndicator = normalize(params.get("referredIndicator"));
+        String OCRCDETStatus = normalize(params.get("OCRCDETStatus"));
+        String OCRCTIMAutomaticIndicator = normalize(params.get("OCRCTIMAutomaticIndicator"));
+        String contactType = normalize(params.get("contactType"));
+
+        String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
+        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+
+        Map<String, Object> enrollmentRecord = ApplicationContext.get()
+                .getDbAction()
+                .validateAllTheTablesAfterEnrollment(
+                        customerCode,
+                        premisesCode,
+                        cycleCode,
+                        reasonCode,
+                        enrollmentStatus,
+                        accountStatusIdicator,
+                        paymentArrear,
+                        badDebtExemptIndicator,
+                        NCOAProtectIndicator,
+                        feedbackIndicator,
+                        contactDirection,
+                        referredIndicator,
+                        OCRCDETStatus,
+                        OCRCTIMAutomaticIndicator,
+                        contactType
+                );
+
+        Assert.assertEquals(enrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
+    }
+
+    private String normalize(String value) {
+        if (value == null) return null;
+
+        String trimmed = value.trim().toLowerCase();
+        return (trimmed.isEmpty() || PLACEHOLDERS.contains(trimmed)) ? null : value.trim();
+    }
+
 
     public void setSaveEnrollmentRequestParametersAsPerTestCondition(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
         payload.setPlanCode(planCode);
@@ -163,11 +223,13 @@ public class SaveEnrollmentHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
                 payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
+                payload.setBillingPlan("");
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_442:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
                 payload.setEnrollmentStatus(REFUSED_PREPAY.getValue());
+                payload.setBillingPlan("");
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
@@ -195,6 +257,7 @@ public class SaveEnrollmentHelper {
     public void setEnrollmentStatusPCAndPaymentConfirmationNumber(SaveEnrollmentRequest payload){
         payload.setEnrollmentStatus(PAYMENT_COMPLETE.getValue());
         payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
+        payload.setBillingPlan("");
     }
 
     public void setPremisesCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel premisesCode) {

@@ -2,7 +2,11 @@ package com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment;
 
 import com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.When;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.*;
 
@@ -80,4 +84,9 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateCEForPreviouslySavedEnrollment(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition), planCode, promotionCode);
     }
 
-}
+    @When("perform database validation with the following parameters:")
+    public void validateDatabaseParameters(DataTable dataTable) {
+        saveEnrollmentApiPage.performDatabaseValidationAfterEnrollment(dataTable);
+        }
+    }
+

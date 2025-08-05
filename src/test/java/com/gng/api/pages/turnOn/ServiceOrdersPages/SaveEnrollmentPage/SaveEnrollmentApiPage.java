@@ -7,6 +7,7 @@ import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
 import com.gng.api.util.FakerDataGenerator;
+import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
@@ -120,6 +121,10 @@ public class SaveEnrollmentApiPage extends BasePage {
         SaveEnrollmentResponse saveEnrollmentResponse = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
         testContext.setSaveEnrollmentResponse(saveEnrollmentResponse);
         testContext.setResponse(response);
+    }
+
+    public void performDatabaseValidationAfterEnrollment(DataTable dataTable){
+        helper.databaseValidationPostEnrollment(dataTable);
     }
 
 
