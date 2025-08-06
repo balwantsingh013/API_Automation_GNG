@@ -1469,6 +1469,7 @@ public final class DBQuery {
             AND tim.OCRCTIM_AUTOMATIC_INDICATOR=?
             AND tim.CDET_OCRCDET_REASON_CODE=?
             AND tim.CDET_OCRCDET_CATEGORY_CODE='ENROLL'
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP = """
