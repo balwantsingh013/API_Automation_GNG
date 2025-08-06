@@ -137,30 +137,57 @@ public class SaveEnrollmentHelper {
         String OCRCDETStatus = normalize(params.get("OCRCDETStatus"));
         String OCRCTIMAutomaticIndicator = normalize(params.get("OCRCTIMAutomaticIndicator"));
         String contactType = normalize(params.get("contactType"));
+        SaveEnrollmentApiLabel testCondition= SaveEnrollmentApiLabel.valueOf(params.get("testCondition"));
 
         String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
         String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+        Map<String, Object> enrollmentRecord= null;
 
-        Map<String, Object> enrollmentRecord = ApplicationContext.get()
-                .getDbAction()
-                .validateAllTheTablesAfterEnrollment(
-                        customerCode,
-                        premisesCode,
-                        cycleCode,
-                        reasonCode,
-                        enrollmentStatus,
-                        accountStatusIdicator,
-                        paymentArrear,
-                        badDebtExemptIndicator,
-                        NCOAProtectIndicator,
-                        feedbackIndicator,
-                        contactDirection,
-                        referredIndicator,
-                        OCRCDETStatus,
-                        OCRCTIMAutomaticIndicator,
-                        contactType
-                );
+        switch (testCondition){
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RD_TC_446:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
+                enrollmentRecord = ApplicationContext.get()
+                        .getDbAction()
+                        .validateAllTheTablesAfterEnrollmentForIncompleteEnrollment(
+                                customerCode,
+                                premisesCode,
+                                enrollmentStatus,
+                                feedbackIndicator,
+                                contactDirection,
+                                reasonCode,
+                                referredIndicator,
+                                OCRCDETStatus,
+                                OCRCTIMAutomaticIndicator,
+                                contactType
+                        );
+                break;
 
+            default:
+                enrollmentRecord = ApplicationContext.get()
+                        .getDbAction()
+                        .validateAllTheTablesAfterEnrollment(
+                                customerCode,
+                                premisesCode,
+                                cycleCode,
+                                reasonCode,
+                                enrollmentStatus,
+                                accountStatusIdicator,
+                                paymentArrear,
+                                badDebtExemptIndicator,
+                                NCOAProtectIndicator,
+                                feedbackIndicator,
+                                contactDirection,
+                                referredIndicator,
+                                OCRCDETStatus,
+                                OCRCTIMAutomaticIndicator,
+                                contactType
+                        );
+                break;
+
+
+        }
         Assert.assertEquals(enrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
     }
 

@@ -1436,6 +1436,41 @@ public final class DBQuery {
             AND tim.CDET_OCRCDET_CATEGORY_CODE='ENROLL'
             """;
 
+    public static final String SELECT_ENROLLMENT_RECORD_DATA_FOR_INCOMPLETE_ENROLLMENT= """
+            SELECT
+            benro.UZBENRO_CUST_CODE
+            FROM UZBENRO benro
+            LEFT JOIN GZRSCFP gzrs
+              ON benro.UZBENRO_CUST_CODE = gzrs.GZRSCFP_CUST_CODE AND benro.UZBENRO_PREM_CODE = gzrs.GZRSCFP_PREM_CODE
+            LEFT JOIN UCRACCT acct
+              ON benro.UZBENRO_CUST_CODE = acct.UCRACCT_CUST_CODE AND benro.UZBENRO_PREM_CODE = acct.UCRACCT_PREM_CODE
+            LEFT JOIN OCBCONT cont
+              ON benro.UZBENRO_CUST_CODE = cont.cust_ucbcust_code AND benro.UZBENRO_PREM_CODE = cont.ocbcont_premises_code
+            LEFT JOIN OCRCDET crc
+              ON benro.UZBENRO_CUST_CODE = crc.OCRCDET_IMPACTED_CUST_CODE AND benro.UZBENRO_PREM_CODE = crc.OCRCDET_IMPACTED_PREM_CODE
+            LEFT JOIN OCRCTIM tim
+              ON cont.ocbcont_contact_code = tim.cont_ocbcont_contact_code
+            WHERE benro.UZBENRO_CUST_CODE = ?
+              AND benro.UZBENRO_PREM_CODE = ?
+            AND benro.UZBENRO_TRANS_CHNL='OMSTNON'
+            AND benro.UZBENRO_ENRO_STATUS=?
+            AND acct.UCRACCT_STATUS_IND IS NULL
+            AND acct.UCRACCT_CYCL_CODE IS NULL
+            AND acct.UCRACCT_PMNT_ARR IS NULL
+            AND acct.UCRACCT_BAD_DEBT_EXEMPT_IND IS NULL
+            AND acct.UCRACCT_NCOA_PROTECT_IND IS NULL
+            AND cont.OCBCONT_FEEDBACK_IND=?
+            AND cont.OCBCONT_CONTACT_DIRECTION=?
+            AND crc.OCRCDET_CATEGORY_CODE='ENROLL'
+            AND crc.OCRCDET_REASON_CODE=?
+            AND crc.OCRCDET_REFERRED_INDICATOR=?
+            AND crc.CTYP_OTVCTYP_CONTACT_TYPE= ?
+            AND crc.OCRCDET_STATUS=?
+            AND tim.OCRCTIM_AUTOMATIC_INDICATOR=?
+            AND tim.CDET_OCRCDET_REASON_CODE=?
+            AND tim.CDET_OCRCDET_CATEGORY_CODE='ENROLL'
+            """;
+
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP = """
             WITH eligible_customers AS (
                 SELECT GTBTRNH_CUST_CODE
