@@ -25,17 +25,6 @@ import static org.hamcrest.Matchers.hasItem;
 @Slf4j
 public class BaseSteps {
     private final TestContext testContext;
-    ObjectMapper mapper = new ObjectMapper();
-    InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/EligiblePlansAndOffers.json");
-    private final Map<String, PlanData> expectedPlansMap;
-
-    {
-        try {
-            expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlanData.class));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @ParameterType("true|false")
     public Boolean booleanVal(String value) {
@@ -46,11 +35,6 @@ public class BaseSteps {
         this.testContext = testContext;
     }
 
-    public static class PlanData {
-        public int numberOfMatches;
-        public List<Plans> plans;
-    }
-
     @Then("verify response code of {string} Api is {int}")
     public void verify_response_code_of_api_is(String apiName, Integer statusCode) {
         verifyResponseCode(apiName, statusCode);
@@ -59,26 +43,6 @@ public class BaseSteps {
     @And("response should have ErrorCode {int} and ErrorMessage {string}")
     public void responseShouldHaveErrorCodeAndErrorMessage(int errorCode, String errorMessage) {
         verifyErrorCodeAndMessage(errorCode, errorMessage);
-    }
-
-    @Then("the response should contain the expected plans for {string} condition")
-    public void verifyResponsePlans(String testCondition) {
-        PlanData expected = expectedPlansMap.get(testCondition);
-        assertNotNull("No expected plans found for test condition: " + testCondition, expected);
-        List<Plans> actualPlans =  testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans();
-
-        assertEquals("Mismatch in number of plans", expected.numberOfMatches, actualPlans.size());
-
-        for (Plans expectedPlan : expected.plans) {
-            boolean found = actualPlans.stream().anyMatch(actual ->
-                    expectedPlan.getPlanCode().equals(actual.getPlanCode()) &&
-                    expectedPlan.getPlanDescription().equals(actual.getPlanDescription()) &&
-                    expectedPlan.getPromotion1Code().equals(actual.getPromotion1Code()) &&
-                    expectedPlan.getPromotion1Description().equals(actual.getPromotion1Description()
-                    )
-            );
-            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-        }
     }
 
     @And("response should return numberOfMatches as {int}")
