@@ -199,18 +199,16 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
     public void sendGetEligiblePlansAndOffersRequestCommercial(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(TURN_ON.getValue());
-        payload.setCustomerType(COMMERCIAL.getValue());
         helper.payloadBasedOnTCsCommercial(payload, testCondition);
-        payload.setCustomerFirstName(null);
-        payload.setCustomerLastName(null);
-        payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+    }
+
+    public void verifyPlansReceivedInResponse(){
+        helper.verifyPlansReceivedInResponseAgainstDatabase();
     }
 
     public void validateInvalidRequestIDCasesTC155_157(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {

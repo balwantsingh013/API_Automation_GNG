@@ -201,6 +201,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    And verify the plans in received in response
 
   Examples:
     |testCondition                                              |

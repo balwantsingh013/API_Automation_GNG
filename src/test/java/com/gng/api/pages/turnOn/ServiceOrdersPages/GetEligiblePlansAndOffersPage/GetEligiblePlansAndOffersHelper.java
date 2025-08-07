@@ -2,13 +2,17 @@ package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPag
 
 
 import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -240,10 +244,12 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setPremisesUnitNumber(premisesUnitNumber);
     }
 
-
-
-
     public void payloadBasedOnTCsCommercial(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        setTheFieldToEmptyForCommercialScenarios(payload);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerType(COMMERCIAL.getValue());
+        payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
         ExcelReader excelReader;
         try {
             excelReader = new ExcelReader(EXPERIAN_DATA);
