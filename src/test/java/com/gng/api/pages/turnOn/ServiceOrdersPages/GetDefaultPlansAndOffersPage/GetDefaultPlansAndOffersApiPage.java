@@ -4,6 +4,7 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.steps.BaseSteps;
 import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
@@ -19,8 +20,8 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         this.helper = new GetDefaultPlansAndOffersHelper(testContext);
     }
 
-    public void setRequestParams(GetDefaultPlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, String promotionCode,
-                                 GlobalEnums.EnrollmentSource enrollmentSource, GetDefaultPlansAndOffersApiLabel testCondition) {
+    public void validatePositiveTestConditionsFromExcelData(GetDefaultPlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, String promotionCode,
+                                                            GlobalEnums.EnrollmentSource enrollmentSource, GetDefaultPlansAndOffersApiLabel testCondition) {
 
 
         GetDefaultPlansAndOffersRequest payload = helper.preparePayload(apiLabel);
@@ -33,5 +34,10 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         testContext.setGetDefaultPlansAndOffersResponse(getDefaultPlansAndOffersResponse);
         testContext.setGetValidationDefaultPlansAndOffersPlans(helper.getValidationDefaultPlansAndOffers());
         testContext.setResponse(offersResponse);
+    }
+
+    public void verifyResponsePlans(){
+        //BaseSteps.verifyResponsePlans(testContext.getGetValidationEligiblePlansAndOffersPlans(), testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans());
+        BaseSteps.verifyResponsePlans(helper.getValidationDefaultPlansAndOffers(), testContext.getGetDefaultPlansAndOffersResponse().getData().getPlans());
     }
 }

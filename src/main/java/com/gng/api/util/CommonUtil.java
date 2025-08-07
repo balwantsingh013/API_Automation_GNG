@@ -4,15 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.pojo.shared.PlanType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 public class CommonUtil {
@@ -124,16 +122,48 @@ public class CommonUtil {
             clazz = clazz.getSuperclass(); // Handle inheritance
         }
     }
-    public static <T> T convertObjectToPojo(Object source, TypeReference<T> typeRef) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        try {
-            return mapper.convertValue(source, typeRef);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Failed to map object: " + e.getMessage(), e);
+
+    public static void mapDataToRequestFromExcel(Object source, Object target) {
+        if (source == null || target == null) {
+            return;
         }
+        Class<?> srcClass = source.getClass();
+        Class<?> tgtClass = target.getClass();
+
+        // walk the class hierarchy for the source (handle superclasses)
+        while (srcClass != null) {
+            for (Field srcField : srcClass.getDeclaredFields()) {
+                try {
+                    srcField.setAccessible(true);
+                    Object value = srcField.get(source);
+                    if (value == null) {
+                        continue;  // don't copy nulls
+                    }
+                    // try to find a field with the same name in the target class hierarchy
+                    Field tgtField = findFieldInHierarchy(tgtClass, srcField.getName());
+                    if (tgtField != null
+                            && tgtField.getType().isAssignableFrom(srcField.getType())) {
+                        tgtField.setAccessible(true);
+                        tgtField.set(target, value);
+                    }
+                } catch (IllegalAccessException ignore) {
+                    // ignore inaccessible fields
+                }
+            }
+            srcClass = srcClass.getSuperclass();
+        }
+    }
+
+    private static Field findFieldInHierarchy(Class<?> clazz, String name) {
+        Class<?> current = clazz;
+        while (current != null) {
+            try {
+                return current.getDeclaredField(name);
+            } catch (NoSuchFieldException e) {
+                current = current.getSuperclass();
+            }
+        }
+        return null;
     }
 }
 

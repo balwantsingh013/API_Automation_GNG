@@ -657,43 +657,6 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public Map<String, Object> getEligiblePlansAndOffersRequestParams(String premiseType,
-                                                                      String accountType,
-                                                                      String creditCheck,
-                                                                      String valueScore,
-                                                                      String creditMin,
-                                                                      String creditMax,
-                                                                      String custCode,
-                                                                      Boolean ssp) {
-        String query = DBQuery.GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_PARAMS
-                .replace("<premiseType>", premiseType)
-                .replace("<accountType>", accountType)
-                .replace("<creditCheck>", creditCheck)
-                .replace("<custCode>", custCode);
-
-        if ((creditMin != null && !creditMin.trim().isEmpty()) && (creditMax != null && !creditMax.trim().isEmpty())) {
-
-            query = query.replace("<creditMin>", creditMin)
-                    .replace("<creditMax>", creditMax);
-        } else {
-            query = query.replace("AND e.\"UZBENRO_CRED_SCORE\" BETWEEN <creditMin> AND <creditMax>", "");
-        }
-
-        if (valueScore != null && !valueScore.trim().isEmpty()) {
-            query = query.replace("<valueScore>", valueScore);
-        } else {
-            query = query.replace(" AND g.\"UCBCUST_CURRENT_VALUE_SCORE\" = '<valueScore>'", "");
-        }
-
-        if (!Boolean.TRUE.equals(ssp)) {
-            query = query.replace("AND e.\"UZBENRO_SSP_IND\" = 'Y'",
-                     "");
-        }
-
-        logQueryInAllure("Get EligiblePlansAndOffersRequestParams", query);
-        return jdbcTemplate.queryForMap(query);
-    }
-
     public List<Map<String, Object>> getValidationPlansAndOffers(String controlNum) {
         String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT
                 .replace("<controlNumber>", controlNum);
@@ -704,6 +667,33 @@ public class DBAction {
         String query = DBQuery.GET_CONTROL_NUMBER;
         logQueryInAllure("Get Control Number", query);
         return jdbcTemplate.queryForObject(query, String.class);
+    }
+
+    public List<Map<String, Object>> getValidationPrepayPlans(String transactionId) {
+        String query = DBQuery.GET_VALIDATION_PREPAY_PLANS_RESULT
+                .replace("<transactionId>", transactionId);
+        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public Map<String, Object> getPrepayQuote(String customerCode) {
+        String query = DBQuery.GET_PRE_PAY_QUOTE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("Get prepay quote", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public int expirePrepayQuote(String customerCode) {
+        String query = DBQuery.UPDATE_PRE_PAY_QUOTE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("expire prepay quote", query);
+        return jdbcTemplate.update(query);
+    }
+
+    public int deleteUrblerxByCustomerCode(String customerCode) {
+        String query = DBQuery.DELETE_URBLEX_BY_CUSTOMER_CODE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("delete urblerx by customer code", query);
+        return jdbcTemplate.update(query);
     }
 
     private void logQueryInAllure(String title, String query, Object... params) {

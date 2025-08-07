@@ -1,11 +1,16 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage;
 
+import com.gng.api.constants.GlobalEnums;
+import com.gng.api.constants.TestConstant;
 import com.gng.api.pages.BasePage;
 
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
+import com.gng.api.util.CommonUtil;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
@@ -16,7 +21,7 @@ import static com.gng.api.constants.ApiEndPoint.SAVE_ENROLLMENT;
 public class SaveEnrollmentApiPage extends BasePage {
 
     private final SaveEnrollmentHelper helper;
-
+    private CustomerData customerData;
     public SaveEnrollmentApiPage(TestContext testContext) {
         super(testContext);
         this.helper = new SaveEnrollmentHelper(testContext);
@@ -98,6 +103,14 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-
-
+    public void savePrepayEnrollmentFromCustomerData(SaveEnrollmentApiLabel apiLabel, GlobalEnums.PlanCode planCode, SaveEnrollmentApiLabel testCondition) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        CustomerData customerData = ExcelReader.loadRowFromExcelToCustomerData(TestConstant.CUSTOMER_DATA, TestConstant.CUSTOMER_SHEET_NAME, testCondition, CustomerData.class);
+        CommonUtil.mapDataToRequestFromExcel(customerData, payload);
+        helper.setPrePayRequestParams(payload, planCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+        testContext.setSaveEnrollmentResponse(deserializeResponseToPojo(response, SaveEnrollmentResponse.class));
+    }
 }

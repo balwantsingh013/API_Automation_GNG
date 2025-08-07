@@ -1,24 +1,19 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.constants.TestConstant;
 import com.gng.api.pages.BasePage;
-
-import java.util.*;
 
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.shared.CustomerData;
+import com.gng.api.steps.BaseSteps;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
 import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
@@ -42,43 +37,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     public GetEligiblePlansAndOffersApiPage(TestContext testContext) {
         super(testContext);
         this.helper = new GetEligiblePlansAndOffersHelper(testContext);
+        this.customerData = new CustomerData();
 
-    }
-    public void loadCustomerDataFromExcel(GetEligiblePlansAndOffersApiLabel testCondition) {
-        //customerData for request
-        if (customerData == null) {
-            try {
-                ExcelReader excelReader = new ExcelReader(TestConstant.CUSTOMER_DATA);
-                List<Map<String, String>> testData = excelReader.getSheetData(TestConstant.CUSTOMER_SHEET_NAME);
-                Map<String, String> rawRowData = testData.stream()
-                        .filter(row -> testCondition.name().equalsIgnoreCase(row.get("testConditions")))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No matching testConditions found for: " + testCondition.name()));
-
-            // Convert to Map<String, Object> and handle testConditions manually
-                Map<String, Object> rowData = new HashMap<>(rawRowData);
-
-            // Handle List<String> field
-                String testConditionsValue = rawRowData.get("testConditions");
-                if (testConditionsValue != null) {
-                    List<String> list = Arrays.stream(testConditionsValue.split(",\\s*"))
-                            .collect(Collectors.toList());
-                    rowData.put("testConditions", list); // This is key: pass the list as an object, not a string
-                }
-
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-                // Now convert with a proper List field
-                this.customerData = mapper.convertValue(rowData, CustomerData.class);
-
-
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load customer data", e);
-            }
-        }
     }
 
     public void sendGetEligiblePlansAndOffersRequestCommercial(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
@@ -426,16 +386,25 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     }
 
     public void validatePositiveTestConditionsFromExcelData(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
-        loadCustomerDataFromExcel(testCondition);
+        customerData = ExcelReader.loadRowFromExcelToCustomerData( TestConstant.CUSTOMER_DATA,TestConstant.CUSTOMER_SHEET_NAME, testCondition, CustomerData.class);
+
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         helper.setRequestParams(payload, customerData, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
-        testContext.setGetValidationEligiblePlansAndOffersPlans(helper.getValidationEligiblePlansAndOffers());
+      //  testContext.setGetValidationEligiblePlansAndOffersPlans(helper.getValidationEligiblePlansAndOffers());
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
         testContext.setResponse(offersResponse);
-        customerData = null;
+    }
+
+    public void verifyResponsePlans(){
+        //BaseSteps.verifyResponsePlans(testContext.getGetValidationEligiblePlansAndOffersPlans(), testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans());
+        BaseSteps.verifyResponsePlans(helper.getValidationEligiblePlansAndOffers(), testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans());
+    }
+
+    public void verifyResponsePlansContainsPrepayPlan(){
+        helper.verifyPrepayPlanReturned();
     }
 }

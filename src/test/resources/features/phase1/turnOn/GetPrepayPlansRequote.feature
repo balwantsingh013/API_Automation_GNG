@@ -1,5 +1,4 @@
-@Feature @GetPrepayPlansRequotePositive
-Feature: GetPrepayPlansRequote – Positive Scenario
+Feature: Verify GetPrepayPlansRequote Api
 
   Background: Generate Authentication Token
     When a request is made to generate authentication token
@@ -8,14 +7,24 @@ Feature: GetPrepayPlansRequote – Positive Scenario
 
   @GetPrepayPlansRequotePositive @HappyFlow
   Scenario Outline: GetPrepayPlansRequote API – returns quotes for <testCondition>
-    Given a valid non‑expired prepay transaction exists for "<testCondition>"
-    When a request is made to the GetPrepayPlansRequote Api with "<testCondition>" condition
-    Then verify response code of "GetPrepayPlansRequote" Api is 200
-    And response should have success true, errorCode 0 and errorMessage null
 
-    When the same request is made again to GetPrepayPlansRequote Api with "<testCondition>" condition
-    Then the response should have success false, errorCode 10003 and errorMessage "Duplicate Request ID"
+    When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then the response should contain the expected plans
+    Then the response plans should contains a prepay plan
+
+    Given a request is made to get Marketer Reference Data
+    When a request is made to the SaveEnrollment Api for prepay with "<planCode>" planCode for "<testCondition>" condition
+    Then verify response code of "SaveEnrollment" Api is 200
+
+    Given a prepay transaction is returned from searchAccounts api for "<testCondition>"
+    When a request is made to the GetPrepayPlansRequote Api with "<pricePlan>" pricePlan for "<testCondition>" condition
+    Then verify response code of "GetPrepayPlansRequote" Api is 200
+    Then the response should contain the expected prepay plans
 
     Examples:
-      | testCondition                         |
-      | GET_PREPAY_PLANS_REQUOTE_TC_456       |
+      | planCode | testCondition                            |
+      | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_456 |
+      | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_471 |
+      | PGB      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_472 |

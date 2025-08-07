@@ -267,4 +267,26 @@ public class BaseSteps {
             assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
         }
     }
+
+    public static <T extends PlanType> void verifyResponsePrepayPlans(List<T> expected, List<T> actual) {
+        expected.forEach(CommonUtil::normalizeBlankStringsToNull);
+        actual.forEach(CommonUtil::normalizeBlankStringsToNull);
+
+        assertEquals("Mismatch in number of plans", expected.size(), actual.size());
+
+        for (T expectedPlan : expected) {
+            boolean found = actual.stream().anyMatch(actualPlan ->
+                    Objects.equals(expectedPlan.getPlanCode(), actualPlan.getPlanCode()) &&
+                            Objects.equals(expectedPlan.getPlanDescription(), actualPlan.getPlanDescription())
+
+            );
+            if (!found) {
+                System.out.println("No match for expectedPlan: " + expectedPlan);
+                actual.forEach(a -> System.out.println("Compared against: " + a));
+            }
+
+            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
+        }
+    }
+
 }

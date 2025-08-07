@@ -117,7 +117,8 @@ public class GetEligiblePlansAndOffersResponse {
 		private String externalTerms;
 		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
 		private Boolean restrictedIndicator;
-		private Object prepayPlanIndicator;
+		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
+		private Boolean prepayPlanIndicator;
 		private Object prepayEstimateAmountDue;
 		private Object prepayEstimatedConsumption;
 		private String prepayCustomerPayByDate;

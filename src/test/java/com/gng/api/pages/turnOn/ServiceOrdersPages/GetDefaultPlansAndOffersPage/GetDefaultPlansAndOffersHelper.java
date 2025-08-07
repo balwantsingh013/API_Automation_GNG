@@ -58,7 +58,18 @@ public class GetDefaultPlansAndOffersHelper {
         String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
         Object rawResult = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
 
-        return CommonUtil.convertObjectToPojo(rawResult, new TypeReference<>() {});
+        return convertObjectToPojo(rawResult, new TypeReference<>() {});
     }
 
+    public static <T> T convertObjectToPojo(Object source, TypeReference<T> typeRef) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        try {
+            return mapper.convertValue(source, typeRef);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Failed to map object: " + e.getMessage(), e);
+        }
+    }
 }

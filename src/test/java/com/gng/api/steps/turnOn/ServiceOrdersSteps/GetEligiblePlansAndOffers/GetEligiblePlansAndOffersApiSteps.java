@@ -5,7 +5,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.io.IOException;
 
-import static com.gng.api.steps.BaseSteps.verifyResponsePlans;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
 
 public class GetEligiblePlansAndOffersApiSteps {
@@ -16,8 +15,6 @@ public class GetEligiblePlansAndOffersApiSteps {
     public GetEligiblePlansAndOffersApiSteps(TestContext testContext, GetEligiblePlansAndOffersApiPage getEligiblePlansAndOffersApiPage) {
         this.testContext = testContext;
         this.getEligiblePlansAndOffersApiPage = getEligiblePlansAndOffersApiPage;
-        testContext.setGetEligiblePlansAndOffersApiPage(getEligiblePlansAndOffersApiPage);
-        testContext.setGetDefaultPlansAndOffersApiPage(getEligiblePlansAndOffersApiPage);
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for {string}")
@@ -228,6 +225,11 @@ public class GetEligiblePlansAndOffersApiSteps {
     }
     @Then("the response should contain the expected plans")
     public void verifyEligibleResponsePlans() {
-       verifyResponsePlans(testContext.getGetValidationEligiblePlansAndOffersPlans(), testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans());
+        getEligiblePlansAndOffersApiPage.verifyResponsePlans();
     }
+    @Then("the response plans should contains a prepay plan")
+    public void verifyEligiblePlansAndOffersContainPlanCode() {
+        getEligiblePlansAndOffersApiPage.verifyResponsePlansContainsPrepayPlan();
+    }
+
 }

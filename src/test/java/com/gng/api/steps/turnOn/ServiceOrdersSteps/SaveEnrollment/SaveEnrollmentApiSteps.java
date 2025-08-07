@@ -1,5 +1,6 @@
 package com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.When;
@@ -69,6 +70,9 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateInvalidBillingPlanCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(billingPlan));
     }
 
-
+    @When("a request is made to the SaveEnrollment Api for prepay with {string} planCode for {string} condition")
+    public void saveEnrollment(String planCode, String testCondition) {
+        saveEnrollmentApiPage.savePrepayEnrollmentFromCustomerData(SaveEnrollmentApiLabel.save_enrollment, GlobalEnums.PlanCode.valueOf(planCode), SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
 
 }

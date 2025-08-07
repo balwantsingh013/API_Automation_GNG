@@ -72,6 +72,16 @@ public class GlobalEnums {
     }
 
     @Getter
+    public enum EnrollmentStatus {
+        PREPAY_REQUIRED("PR");
+        private final String value;
+
+        EnrollmentStatus(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
     public enum PromotionCode {
         DEALS("DEALS"),
         SAVE100("SAVE100"),
@@ -80,6 +90,17 @@ public class GlobalEnums {
         private final String value;
 
         PromotionCode(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum PlanCode {
+        PRP("PRP"),
+        PGB("PGB");
+
+        private final String value;
+        PlanCode(String value) {
             this.value = value;
         }
     }

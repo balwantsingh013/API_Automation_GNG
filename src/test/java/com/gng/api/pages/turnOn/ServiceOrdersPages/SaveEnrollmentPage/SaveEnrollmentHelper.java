@@ -1,11 +1,17 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 
 @Slf4j
@@ -234,4 +240,34 @@ public class SaveEnrollmentHelper {
         }
     }
 
+    public void setPrePayRequestParams(SaveEnrollmentRequest payload, GlobalEnums.PlanCode planCode){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setEnrollmentStatus(GlobalEnums.EnrollmentStatus.PREPAY_REQUIRED.getValue());
+        payload.setTransactionType(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionType());
+        payload.setBillingPlan("");
+
+        payload.setTransactionID(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID()));
+        payload.setCustomerCode(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode()));
+        payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+
+        // Select a plan from the EligiblePlansAndOffers response where the plan is pre-pay
+        var plans = testContext.getGetEligiblePlansAndOffersResponse()
+                .getData()
+                .getPlans();
+        GetEligiblePlansAndOffersResponse.Plan prepayPlan =
+                plans.stream()
+                        //.filter(p -> Boolean.TRUE.equals(p.getPrepayPlanIndicator())
+                        .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue())
+                       )
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No prepay plan found in EligiblePlans response"));
+
+        payload.setPlanCode(prepayPlan.getPlanCode());
+        payload.setPromotionCode(prepayPlan.getPromotion1Code());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate serviceDate = LocalDate.parse(prepayPlan.getPrepayCustomerPayByDate(),formatter);
+        String serviceDateString = serviceDate.minusDays(1).format(formatter);
+        payload.setCustomerRequestedServiceDate(serviceDateString);
+        payload.setMarketerReferenceNumber(String.valueOf(testContext.getMarketerReferenceData()));
+    }
 }

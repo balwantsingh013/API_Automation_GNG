@@ -13,16 +13,12 @@ import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
-import com.gng.api.util.CommonUtil;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
 import static com.gng.api.constants.GlobalEnums.EnrollmentSource.*;
@@ -1675,16 +1671,39 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setRequestParams(GetEligiblePlansAndOffersRequest payload, CustomerData customerData,
                                  GetEligiblePlansAndOffersApiLabel testCondition) {
-        if (customerData != null){
-            mapDataFromExcel(customerData, payload);
-        }
+        mapDataFromExcel(customerData, payload);
     }
 
     public List<GetEligiblePlansAndOffersResponse.Plan> getValidationEligiblePlansAndOffers() {
         String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
         Object rawResult = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
 
-        return CommonUtil.convertObjectToPojo(rawResult, new TypeReference<>() {});
+        return convertObjectToPojo(rawResult, new TypeReference<>() {});
+    }
+
+    public void verifyPrepayPlanReturned() {
+        List<GetEligiblePlansAndOffersResponse.Plan> plans = testContext.getGetEligiblePlansAndOffersResponse()
+                .getData()
+                .getPlans()
+                .stream()
+                .filter(p -> Boolean.TRUE.equals(p.getPrepayPlanIndicator()))
+                .toList();
+
+        plans.stream()
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Prepay plan not found."));
+    }
+
+    public static <T> T convertObjectToPojo(Object source, TypeReference<T> typeRef) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        try {
+            return mapper.convertValue(source, typeRef);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Failed to map object: " + e.getMessage(), e);
+        }
     }
 
 }

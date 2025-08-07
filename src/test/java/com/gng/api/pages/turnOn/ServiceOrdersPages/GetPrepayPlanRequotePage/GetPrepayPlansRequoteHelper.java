@@ -8,14 +8,22 @@ import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.steps.BaseSteps;
+import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetPrepayPlanRequote.GetPrepayPlansRequoteApiLabel;
+import com.gng.api.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -36,86 +44,80 @@ public class GetPrepayPlansRequoteHelper {
 
     public void setRequestParams(GetPrepayPlansRequoteRequest payload,
                                  GetPrepayPlansRequoteApiLabel apiLabel) {
-        // loginID can come from TestConstant or test data
-        //payload.setLoginID(TestConstant.LOGIN_ID);
 
-        // Retrieve the prepay transaction ID from TestContext or DB
-       // String tranId = (String) testContext.get("transactionID");
-      //  payload.setTransactionID(tranId);
+        String tranId = String.valueOf(testContext.getTransactionId());
+        payload.setTransactionID(testContext.getTransactionId());
 
-        // Set transaction type from enum name (e.g., TNON)
-      //  payload.setTransactionType(GlobalEnums.TransactionType.TNON.name());
+         payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
 
-        // Save payload for later use (e.g., duplicate check)
-       // testContext.put("prepayRequestPayload", payload);
     }
 
-//    public GetPrepayPlansRequoteRequest getOriginalPayload() {
-//        // Return the payload saved in context
-//        return (GetPrepayPlansRequoteRequest) testContext.get("prepayRequestPayload");
-//    }
+    public void expirePrepayQuoteIfOpenDateInFuture(SearchAccountsResponse response, String customerCode) {
+        if (response == null || response.getData() == null || response.getData().getAccounts() == null) {
+            throw new IllegalArgumentException("SearchAccountsResponse is null or incomplete");
+        }
 
-    /**
-     * Validate the database for prepay requote results.  For example,
-     * confirm that UZRRCOT has a record for the returned requestID.
-     */
-//    public void validateRequoteInDb(GetPrepayPlansRequoteResponse response) {
-//        // Example logic:
-//        String requestID = response.getRequestID();
-//        boolean recordExists = DBUtil.exists(
-//                "SELECT 1 FROM UZRRCOT WHERE REQUEST_ID = ?", requestID);
-//        assert recordExists : "Requote record missing in UZRRCOT table";
-//    }
-//    private final TestContext testContext;
-//    private final String acnLogin;
-//
-//    public GetPrepayPlansRequoteHelper(TestContext testContext) {
-//        this.testContext = testContext;
-//        acnLogin = "acncsr";
-//    }
-//
-//    GetPrepayPlansRequoteRequest preparePayload(GetPrepayPlansRequoteApiLabel apiLabel) {
-//        log.info("Preparing payload for {}", apiLabel);
-//        String jsonFileName = apiLabel.equals(GetPrepayPlansRequoteApiLabel.get_default_plans_and_offers)
-//                ? GetPrepayPlansRequoteApiLabel.get_default_plans_and_offers.toString()
-//                : GetPrepayPlansRequoteApiLabel.get_default_plans_and_offers_mandatory.toString();
-//        return BasePage.deserializeJsonToPojo(jsonFileName, GetDefaultPlansAndOffersRequest.class);
-//    }
-//
-//    public void setRequestParams(GetDefaultPlansAndOffersRequest payload, GlobalEnums.CustomerType customerType, String promotionCode, GlobalEnums.EnrollmentSource enrollmentSource,
-//                                 GetPrepayPlansRequoteApiLabel testCondition) {
-//        payload.setCustomerType(customerType.getValue());
-//        GlobalEnums.PromotionCode parsedPromotionCode = null;
-//
-//        if (promotionCode != null && !promotionCode.equalsIgnoreCase("<promotionCode>") && !promotionCode.trim().isEmpty()) {
-//            parsedPromotionCode = GlobalEnums.PromotionCode.valueOf(promotionCode);
-//        }
-//        if (parsedPromotionCode != null) {
-//            payload.setMarketingPromotionCode(parsedPromotionCode.getValue());
-//        }
-//        payload.setEnrollmentSource(enrollmentSource.getValue());
-//        if (testCondition.equals(GET_DEFAULT_PLANS_AND_OFFERS_TC_154))
-//        {
-//            payload.setLoginID(acnLogin);
-//        }
-//    }
-//    public List<GetDefaultPlansAndOffersResponse.Plan> getValidationDefaultPlansAndOffers() {
-//        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
-//        Object rawResult = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-//        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-//
-//        try {
-//            return mapper.convertValue(
-//                    rawResult,
-//                    new TypeReference<>() {}
-//            );
-//        } catch (IllegalArgumentException e) {
-//            throw new RuntimeException("Failed to convert rawResult to List<Plan>: " + e.getMessage(), e);
-//        }
-//    }
+        Optional<SearchAccountsResponse.Account> accountOpt = response.getData().getAccounts().stream()
+                .filter(account ->
+                        account.isPrepayPlanIndicator() ||
+                                (account.getPrepayCustomerPayByDate() != null &&
+                                        !account.getPrepayCustomerPayByDate().trim().isEmpty() &&
+                                        Objects.equals(account.getCustomerCode(), customerCode))
+                )
+                .findFirst();
 
+        if (accountOpt.isEmpty()) {
+            throw new IllegalStateException("No account with prepayPlanIndicator=true found");
+        }
+
+        SearchAccountsResponse.Account account = accountOpt.get();
+        Map<String, Object> quote = ApplicationContext.get().getDbAction().getPrepayQuote(account.getCustomerCode());
+
+        if (quote == null || !quote.containsKey("UABOPEN_DUE_DATE")) {
+            System.err.println("Quote not found or missing UABOPEN_DUE_DATE");
+            return;
+        }
+
+        Object dueDateObj = quote.get("UABOPEN_DUE_DATE");
+        if (!(dueDateObj instanceof Date dueDate)) {
+            System.err.println("UABOPEN_DUE_DATE is not a valid Date type: " + dueDateObj);
+            return;
+        }
+
+        LocalDate due = dueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (!due.isAfter(LocalDate.now())) {
+            System.out.println("Quote not expired — due date is not in the future: " + due);
+            return;
+        }
+
+        int result = ApplicationContext.get().getDbAction().expirePrepayQuote(account.getCustomerCode());
+        System.out.println("Quote expired — due date was in the future: " + due + " (result=" + result + ")");
+        int deleteResult = ApplicationContext.get().getDbAction().deleteUrblerxByCustomerCode(account.getCustomerCode());
+        System.out.println("URBLERX record deleted:  (result=" + deleteResult + ")");
+    }
+
+    public List<GetPrepayPlansRequoteResponse.Plan> getValidationPrepayPlans() {
+        String transactionId = testContext.getTransactionId();
+        Object rawResult = ApplicationContext.get().getDbAction().getValidationPrepayPlans(transactionId);
+        List<GetPrepayPlansRequoteResponse.Plan> plans =  convertObjectToPojo(rawResult, new TypeReference<>() {});
+
+        if (plans == null) {
+            throw new IllegalStateException("No plans returned from validation query.");
+        }
+        return plans.stream()
+                .filter(plan -> plan.getPrepayCustomerPayByDate() != null)
+                .collect(Collectors.toList());
+    }
+
+    public static <T> T convertObjectToPojo(Object source, TypeReference<T> typeRef) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        try {
+            return mapper.convertValue(source, typeRef);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Failed to map object: " + e.getMessage(), e);
+        }
+    }
 }

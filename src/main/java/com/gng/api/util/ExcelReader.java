@@ -14,8 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class ExcelReader {
-    private Workbook workbook;
+    private final Workbook workbook;
 
     // Constructor to load the Excel file
     public ExcelReader(String filePath) throws IOException {
@@ -66,6 +72,48 @@ public class ExcelReader {
         if (dataRow == null) return null;
         Cell cell = dataRow.getCell(col);
         return (cell != null) ? cell.toString() : null;
+    }
+
+    public static <E extends Enum<E>, T> T loadRowFromExcelToCustomerData(
+            String excelPath,
+            String sheetName,
+            E testLabel,
+            Class<T> clazz) {
+
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            // Find the first row where the "testConditions" column matches the enum name
+            Map<String, String> rawRow = sheetData.stream()
+                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testConditions")))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found for: " + testLabel.name()));
+
+            // Convert Map<String, String> to Map<String, Object>, handling comma-separated lists
+            Map<String, Object> rowData = new HashMap<>(rawRow);
+            String testConditions = rawRow.get("testConditions");
+            if (testConditions != null) {
+                List<String> conditions = Arrays.stream(testConditions.split(",\\s*"))
+                        .collect(Collectors.toList());
+                rowData.put("testConditions", conditions);
+            }
+
+            // Normalise empty strings to null, if desired
+            CommonUtil.normalizeBlankStringsToNull(rowData);
+
+            // Map to POJO using Jackson, ignoring unknown properties
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+            return mapper.convertValue(rowData, clazz);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
+        }
     }
 
     public void close() throws IOException {

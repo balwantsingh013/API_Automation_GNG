@@ -4,14 +4,17 @@ package com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.INACTIVE_UZBSSPP_STATUS_TC121E_2;
@@ -770,12 +773,12 @@ public class SearchAccountsHelper {
     }
 
     public void validateCustomerCodeAndPremisesCodeInDB(String customerCode, String premisesCode) {
-        Map<String, Object> customerCodeInDatabase= ApplicationContext.get().getDbAction().searchForCustomerCodeAndPremisesCodeInDatabase(customerCode, premisesCode);;
+        Map<String, Object> customerCodeInDatabase= ApplicationContext.get().getDbAction().searchForCustomerCodeAndPremisesCodeInDatabase(customerCode, premisesCode);
         Assert.assertTrue(customerCodeInDatabase.isEmpty());
     }
 
     public void verifyTheCountOfRecordsRetrivedFromDBIsMoreThan30(String customerBusinessName) {
-        Long countOfRecordsBasedOnBusinessName= ApplicationContext.get().getDbAction().searchForCustomerBusinessNameInDatabase(customerBusinessName);;
+        Long countOfRecordsBasedOnBusinessName= ApplicationContext.get().getDbAction().searchForCustomerBusinessNameInDatabase(customerBusinessName);
         Assert.assertTrue(countOfRecordsBasedOnBusinessName>30);
     }
 
@@ -986,6 +989,35 @@ public class SearchAccountsHelper {
     public void setValidSSNTC113(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setSocialSecurityNumber(encryptData(ssn));
+    }
+
+    public void encryptSSNAndFedTaxId(SearchAccountsRequest payload){
+        Optional.ofNullable(payload.getSocialSecurityNumber())
+                .ifPresent(ssn -> payload.setSocialSecurityNumber(encryptData(ssn)));
+        Optional.ofNullable(payload.getFederalTaxID())
+                .ifPresent(fedTaxId -> payload.setFederalTaxID(encryptData((String)fedTaxId)));
+    }
+
+    public void setPrepayPlanTransactionId(SearchAccountsResponse response, String customerCode) {
+        if (response == null || response.getData() == null || response.getData().getAccounts() == null) {
+            throw new IllegalArgumentException("SearchAccountsResponse is null or incomplete");
+        }
+
+        for (SearchAccountsResponse.Account account : response.getData().getAccounts()) {
+            String enrollmentStatus = account.getEnrollmentState(); // or getEnrollmentStatus()
+
+            if (account.isPrepayPlanIndicator() ||
+                    (!account.getPrepayCustomerPayByDate().trim().isEmpty()
+                    && Objects.equals(account.getCustomerCode(), customerCode))) {
+//            if (account.getPrepayCustomerPayByDate() != null
+//                    && !account.getPrepayCustomerPayByDate().trim().isEmpty()
+//                    && Objects.equals(account.getCustomerCode(), customerCode)) {
+
+                System.out.println("Prepay account found: TransactionID = "
+                        + account.getTransactionID() + ", Status = " + enrollmentStatus);
+                testContext.setTransactionId(String.valueOf(account.getTransactionID()));
+            }
+        }
     }
 }
 

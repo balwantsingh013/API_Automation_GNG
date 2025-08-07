@@ -2159,128 +2159,8 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_PARAMS= """   
-            SELECT
-                g."UCBCUST_LAST_NAME",
-                g."UCBCUST_MIDDLE_NAME",
-                g."UCBCUST_FIRST_NAME",
-                g."UCBCUST_SSN",
-                e."UZBENRO_AGLC_PREM_ID",
-                e."UZBENRO_SCLS_CODE",
-                e."UZBENRO_PREM_TYPE",
-                e."UZBENRO_LANDLORD_TENANT",
-                b."UCBPREM_STREET_NUMBER",
-                b."UCBPREM_PDIR_CODE_PRE",
-                b."UCBPREM_STREET_NAME",
-                b."UCBPREM_SSFX_CODE",
-                b."UCBPREM_PDIR_CODE_POST",
-                b."UCBPREM_UTYP_CODE",
-                b."UCBPREM_UNIT",
-                b."UCBPREM_CITY",
-                b."UCBPREM_STAT_CODE_ADDR",
-                b."UCBPREM_ZIPC_CODE",
-                b."UCBPREM_TJUR_CODE"                
-            FROM UZBENRO e
-            JOIN ucbcust g ON e."UZBENRO_CUST_ID" = g."UCBCUST_CUST_CODE"
-            JOIN ucbprem b ON e."UZBENRO_PREM_ID" = b."UCBPREM_CODE"
-            JOIN ucraddr h ON e."UZBENRO_CUST_ID" = h."UCRADDR_CUST_CODE"
-            JOIN ucrchst i ON e."UZBENRO_CUST_ID" = i."UCRCHST_CUST_CODE"
-            WHERE
-                e."UZBENRO_ENRO_STATUS" = 'INCL'
-                AND e."UZBENRO_LANDLORD_TENANT" IS NOT NULL
-                AND e."UZBENRO_AGLC_PREM_ID" IS NOT NULL
-                AND e."UZBENRO_SCLS_CODE" = '<accountType>'
-                AND e."UZBENRO_PREM_TYPE" = '<premiseType>'
-                AND e."UZBENRO_MKT_PROG_CODE" IS NULL
-                AND e."UZBENRO_CRED_SCORE_STATUS" = '<creditCheck>'
-                AND e."UZBENRO_CRED_SCORE" BETWEEN <creditMin> AND <creditMax>
-                AND e."UZBENRO_SSP_IND" = 'Y'
-                AND g."UCBCUST_CURRENT_VALUE_SCORE" = '<valueScore>'
-                AND g."UCBCUST_CUST_CODE" = '<custCode>'
-            ORDER BY e."UZBENRO_ENRO_STATUS_DATE" DESC
-            FETCH FIRST 1 ROWS ONLY
-    """;
-
-    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_CREDIT_MATCH_PARAMS= """   
-            SELECT
-                g."UCBCUST_LAST_NAME",
-                g."UCBCUST_MIDDLE_NAME",
-                g."UCBCUST_FIRST_NAME",
-                g."UCBCUST_SSN",
-                e."UZBENRO_AGLC_PREM_ID",
-                e."UZBENRO_SCLS_CODE",
-                e."UZBENRO_PREM_TYPE",
-                b."UCBPREM_STREET_NUMBER",
-                b."UCBPREM_PDIR_CODE_PRE",
-                b."UCBPREM_STREET_NAME",
-                b."UCBPREM_SSFX_CODE",
-                b."UCBPREM_PDIR_CODE_POST",
-                b."UCBPREM_UTYP_CODE",
-                b."UCBPREM_UNIT",
-                b."UCBPREM_CITY",
-                b."UCBPREM_STAT_CODE_ADDR",
-                b."UCBPREM_ZIPC_CODE",
-                b."UCBPREM_TJUR_CODE",
-                e."UZBENRO_LANDLORD_TENANT"
-            FROM UZBENRO e
-            JOIN ucbcust g ON e."UZBENRO_CUST_ID" = g."UCBCUST_CUST_CODE"
-            JOIN ucbprem b ON e."UZBENRO_PREM_ID" = b."UCBPREM_CODE"
-            JOIN ucraddr h ON e."UZBENRO_CUST_ID" = h."UCRADDR_CUST_CODE"
-            JOIN ucrchst i ON e."UZBENRO_CUST_ID" = i."UCRCHST_CUST_CODE"
-            WHERE
-                e."UZBENRO_ENRO_STATUS" = 'INCL'
-                AND e."UZBENRO_LANDLORD_TENANT" IS NOT NULL
-                AND e."UZBENRO_AGLC_PREM_ID" IS NOT NULL
-                AND e."UZBENRO_SCLS_CODE" = '<accountType>'
-                AND e."UZBENRO_PREM_TYPE" = '<premiseType>'
-                --AND e."UZBENRO_CREDIT_SCORE_TEXT" = '<creditMatchCode>'
-                AND e."UZBENRO_MKT_PROG_CODE" IS NULL
-                AND g."UCBCUST_CUST_CODE" = '<custCode>'
-            ORDER BY e."UZBENRO_ENRO_STATUS_DATE" DESC
-            FETCH FIRST 1 ROWS ONLY
-    """;
-
-    public static final String GET_ELIGIBLE_PLANS_AND_OFFERS_REQUEST_BY_ENROLLMENT_VALUE_SCORE_PARAMS= """   
-            SELECT
-                g."UCBCUST_LAST_NAME",
-                g."UCBCUST_MIDDLE_NAME",
-                g."UCBCUST_FIRST_NAME",
-                g."UCBCUST_SSN",
-                e."UZBENRO_AGLC_PREM_ID",
-                e."UZBENRO_SCLS_CODE",
-                e."UZBENRO_PREM_TYPE",
-                b."UCBPREM_STREET_NUMBER",
-                b."UCBPREM_PDIR_CODE_PRE",
-                b."UCBPREM_STREET_NAME",
-                b."UCBPREM_SSFX_CODE",
-                b."UCBPREM_PDIR_CODE_POST",
-                b."UCBPREM_UTYP_CODE",
-                b."UCBPREM_UNIT",
-                b."UCBPREM_CITY",
-                b."UCBPREM_STAT_CODE_ADDR",
-                b."UCBPREM_ZIPC_CODE",
-                b."UCBPREM_TJUR_CODE",
-                e."UZBENRO_LANDLORD_TENANT"
-            FROM UZBENRO e
-            JOIN ucbcust g ON e."UZBENRO_CUST_ID" = g."UCBCUST_CUST_CODE"
-            JOIN ucbprem b ON e."UZBENRO_PREM_ID" = b."UCBPREM_CODE"
-            JOIN ucraddr h ON e."UZBENRO_CUST_ID" = h."UCRADDR_CUST_CODE"
-            JOIN ucrchst i ON e."UZBENRO_CUST_ID" = i."UCRCHST_CUST_CODE"
-            WHERE
-                e."UZBENRO_ENRO_STATUS" = '<enrollmentStatus>'
-                AND e."UZBENRO_LANDLORD_TENANT" IS NOT NULL
-                AND e."UZBENRO_AGLC_PREM_ID" IS NOT NULL
-                AND e."UZBENRO_SCLS_CODE" = '<accountType>'
-                AND e."UZBENRO_PREM_TYPE" = '<premiseType>'
-                AND e."UZBENRO_CRED_SCORE_STATUS" = '<creditCheck>'
-                AND e."UZBENRO_MKT_PROG_CODE" IS NULL
-                AND g."UCBCUST_CUST_CODE" = '<custCode>'
-                AND g."UCBCUST_CURRENT_VALUE_SCORE" = '<valueScore>'
-            ORDER BY e."UZBENRO_ENRO_STATUS_DATE" DESC
-            FETCH FIRST 1 ROWS ONLY
-    """;
     public static final String GET_CONTROL_NUMBER = """
-            SELECT UZTCOTT_CONTROL_NUM FROM uztcott\s
+            SELECT UZTCOTT_CONTROL_NUM FROM uztcott
             ORDER  BY uztcott_control_num DESC
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -2303,7 +2183,7 @@ public final class DBQuery {
               t1.uztcott_terms              AS "offerTerms",
               t1.uztcott_ext_terms          AS "externalTerms",
               t1.uztcott_restricted_ind     AS "restrictedIndicator",
-              t1.uztcott_pre_pay_ind        AS "prepayIndicator",
+              t1.uztcott_pre_pay_ind        AS "prepayPlanIndicator",
               t1.uztcott_estimated_chg      AS "prepayEstimateAmountDue",
               t1.uztcott_estimated_cons     AS "prepayEstimatedConsumption",
               t1.uztcott_due_date_cust      AS "prepayCustomerPayByDate",
@@ -2377,6 +2257,113 @@ public final class DBQuery {
               t1.uztcott_control_num
             ORDER BY t1.uztcott_sort_order
         """;
+
+    public static final String GET_VALIDATION_PREPAY_PLANS_RESULT = """ 
+           SELECT
+                   t1.UZTCOTT_PLAN_CODE              AS "planCode",
+                   t1.UZTCOTT_PLAN_DESC              AS "planDescription",
+                   t1.UZTCOTT_SORT_ORDER             AS "sortOrder",
+                   t1.UZTCOTT_THERM_PRICE            AS "thermPrice",
+                   t1.UZTCOTT_DURATION               AS "planDuration",
+                   t1.UZTCOTT_SVC_CHARGE             AS "serviceCharge",
+                   t1.UZTCOTT_SIGN_UP_CHARGE         AS "signUpCharge",
+                   t1.UZTCOTT_CAP_AMOUNT             AS "priceCeiling",
+                   t1.UZTCOTT_PROTECT_FEE            AS "priceProtectionFee",
+                   t1.UZTCOTT_CANCEL_FEE             AS "cancelFee",
+                   t1.UZTCOTT_HIGH_CSC               AS "highCustomerServiceCharge",
+                   t1.UZTCOTT_LOW_CSC                AS "lowCustomerServiceCharge",
+                   t1.UZTCOTT_MKTG_TERMS             AS "marketingTerms",
+                   t1.UZTCOTT_TERMS                  AS "offerTerms",
+                   t1.UZTCOTT_EXT_TERMS              AS "externalTerms",
+                   t1.UZTCOTT_RESTRICTED_IND         AS "restrictedIndicator",
+                   t1.UZTCOTT_PRE_PAY_IND            AS "prepayPlanIndicator",
+                   t1.UZTCOTT_ESTIMATED_CHG          AS "prepayEstimateAmountDue",
+                   t1.UZTCOTT_ESTIMATED_CONS         AS "prepayEstimatedConsumption",
+                   t1.UZTCOTT_DUE_DATE_CUST          AS "prepayCustomerPayByDate",
+                   t1.UZTCOTT_DUE_DATE_SYS           AS "prepaySystemPayByDate",
+                   t1.UZTCOTT_PREPAY_REDUCTION_AMT   AS "prepayOneTimeWelcomeCredit",
+                   t1.UZTCOTT_PREPAY_ORIGINAL_AMT    AS "prepayEstimateOriginalAmount",
+                   t1.UZTCOTT_PIA_IND                AS "payInAdvanceIndicator",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_PRMO_CODE END)        AS "promotion1Code",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_PRMO_DESC END)        AS "promotion1Description",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_TERMS END)            AS "promotion1Terms",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_MKTG_MSG END)         AS "promotion1MarketingMessage",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_TRANS_IND END)        AS "promotion1TransferIndicator",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_VISA_IND END)         AS "promotion1VisaIndicator",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_PRMO_CODE END)        AS "promotion2Code",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_PRMO_DESC END)        AS "promotion2Description",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_TERMS END)            AS "promotion2Terms",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_MKTG_MSG END)         AS "promotion2MarketingMessage",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_TRANS_IND END)        AS "promotion2TransferIndicator",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_VISA_IND END)         AS "promotion2VisaIndicator"
+               FROM UZRRCOT rr
+               JOIN UZTCOTT t1 ON rr.UZRRCOT_CONTROL_NUM = t1.UZTCOTT_CONTROL_NUM
+               LEFT JOIN (
+                   SELECT
+                       t2.UZTPRMO_CONTROL_NUM,
+                       t2.UZTPRMO_PLAN_CODE,
+                       t2.UZTPRMO_BUCKET_ID,
+                       t2.UZTPRMO_PRMO_CODE,
+                       t2.UZTPRMO_PRMO_DESC,
+                       t2.UZTPRMO_TERMS,
+                       t2.UZTPRMO_MKTG_MSG,
+                       t2.UZTPRMO_TRANS_IND,
+                       t2.UZTPRMO_VISA_IND,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY t2.UZTPRMO_PLAN_CODE, t2.UZTPRMO_CONTROL_NUM
+                           ORDER BY t2.UZTPRMO_PRMO_SORT_ORDER
+                       ) AS rn
+                   FROM UZTPRMO t2
+               ) p ON t1.UZTCOTT_PLAN_CODE = p.UZTPRMO_PLAN_CODE
+                   AND t1.UZTCOTT_CONTROL_NUM = p.UZTPRMO_CONTROL_NUM
+                   AND t1.UZTCOTT_BUCKET_ID = p.UZTPRMO_BUCKET_ID
+               WHERE rr.UZRRCOT_TRANSACTION_ID = '<transactionId>'
+               	AND t1.UZTCOTT_DUE_DATE_CUST IS NOT null
+               GROUP BY
+                   t1.UZTCOTT_PLAN_CODE,
+                   t1.UZTCOTT_PLAN_DESC,
+                   t1.UZTCOTT_SORT_ORDER,
+                   t1.UZTCOTT_THERM_PRICE,
+                   t1.UZTCOTT_DURATION,
+                   t1.UZTCOTT_SVC_CHARGE,
+                   t1.UZTCOTT_SIGN_UP_CHARGE,
+                   t1.UZTCOTT_CAP_AMOUNT,
+                   t1.UZTCOTT_PROTECT_FEE,
+                   t1.UZTCOTT_CANCEL_FEE,
+                   t1.UZTCOTT_HIGH_CSC,
+                   t1.UZTCOTT_LOW_CSC,
+                   t1.UZTCOTT_MKTG_TERMS,
+                   t1.UZTCOTT_TERMS,
+                   t1.UZTCOTT_EXT_TERMS,
+                   t1.UZTCOTT_RESTRICTED_IND,
+                   t1.UZTCOTT_PRE_PAY_IND,
+                   t1.UZTCOTT_ESTIMATED_CHG,
+                   t1.UZTCOTT_ESTIMATED_CONS,
+                   t1.UZTCOTT_DUE_DATE_CUST,
+                   t1.UZTCOTT_DUE_DATE_SYS,
+                   t1.UZTCOTT_PREPAY_REDUCTION_AMT,
+                   t1.UZTCOTT_PREPAY_ORIGINAL_AMT,
+                   t1.UZTCOTT_PIA_IND
+        """;
+
+    public static final String GET_PRE_PAY_QUOTE = """
+            SELECT * FROM UABOPEN a
+              JOIN uzbenro e ON a."UABOPEN_PREM_CODE" = e."UZBENRO_PREM_CODE"
+            WHERE a."UABOPEN_CUST_CODE" = '<customerCode>'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+    public static final String UPDATE_PRE_PAY_QUOTE = """
+            UPDATE UABOPEN a
+            SET a.UABOPEN_DUE_DATE = SYSDATE - 10
+            WHERE a.UABOPEN_CUST_CODE = '<customerCode>'
+            """;
+
+    public static final String DELETE_URBLEX_BY_CUSTOMER_CODE = """
+            DELETE
+            FROM UBRBLEX a
+            WHERE a.UBRBLEX_CUST_CODE = '<customerCode>'
+            """;
+
     private DBQuery() {
     }
 
