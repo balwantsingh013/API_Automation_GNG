@@ -116,6 +116,11 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(DEPOSIT_REQUIRED.getValue());
                 break;
 
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+                payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
+                payload.setBillingPlan("");
+                break;
+
         }
     }
     public void databaseValidationPostEnrollment(DataTable dataTable) {
@@ -247,6 +252,7 @@ public class SaveEnrollmentHelper {
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_442:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
                 payload.setEnrollmentStatus(REFUSED_PREPAY.getValue());
                 payload.setBillingPlan("");
                 break;

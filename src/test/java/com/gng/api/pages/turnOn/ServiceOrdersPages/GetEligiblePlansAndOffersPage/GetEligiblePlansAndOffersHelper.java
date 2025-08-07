@@ -1680,6 +1680,7 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 break;
 
@@ -1759,6 +1760,7 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
                 customerData = allRowsOfCustomerData.stream()
                         .filter(row -> "PaymentCompletePRPOrPGBEnrollment".equals(row.get("testCondition")))
                         .findFirst()
