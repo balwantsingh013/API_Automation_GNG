@@ -1816,6 +1816,12 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_ACN_WITHOUT_ETC= """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 30
+            )
             SELECT
                 T2.GTBTRNH_CUST_CODE,
                 T2.GTBTRNH_PREM_CODE,
@@ -1836,6 +1842,8 @@ public final class DBQuery {
                 UCBPREM B ON B.UCBPREM_CODE = T5.UCRACCT_PREM_CODE
             JOIN
                 GTRACNU A ON B.UCBPREM_PREM_ID = A.GTRACNU_LDC_PREM_ID
+            JOIN
+                eligible_customers EC ON T2.GTBTRNH_CUST_CODE = EC.GTBTRNH_CUST_CODE
             WHERE
                 B.UCBPREM_LANDLORD_IND IN ('L', 'T')
                 AND A.GTRACNU_STATUS = 'A'
