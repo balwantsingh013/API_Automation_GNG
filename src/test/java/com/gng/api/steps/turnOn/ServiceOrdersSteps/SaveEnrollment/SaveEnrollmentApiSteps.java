@@ -5,9 +5,6 @@ import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.When;
 
-import java.util.List;
-import java.util.Map;
-
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.*;
 
 public class SaveEnrollmentApiSteps {

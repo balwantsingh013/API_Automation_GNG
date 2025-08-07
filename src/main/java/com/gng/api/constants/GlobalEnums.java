@@ -103,4 +103,17 @@ public class GlobalEnums {
             this.value = value;
         }
     }
+
+    @Getter
+    public enum EnrollMentState {
+        UDCS("UDCS"),
+        CRDS("CRDS"),
+        INCL("INCL");
+
+        private final String value;
+
+        EnrollMentState(String value) {
+            this.value = value;
+        }
+    }
 }

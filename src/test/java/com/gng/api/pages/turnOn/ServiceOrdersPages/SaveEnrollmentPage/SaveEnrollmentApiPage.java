@@ -102,8 +102,6 @@ public class SaveEnrollmentApiPage extends BasePage {
     public void validateSaveEnrollmentPositiveTCs(SaveEnrollmentApiLabel apiLabel,SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setSaveEnrollmentRequestParametersAsPerTestCondition(payload, testCondition, planCode, promotionCode);
-        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
-        payload.setRequestID(FakerDataGenerator.generateString(10));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         SaveEnrollmentResponse saveEnrollmentResponse = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
@@ -114,8 +112,6 @@ public class SaveEnrollmentApiPage extends BasePage {
     public void validateCEForPreviouslySavedEnrollment(SaveEnrollmentApiLabel apiLabel,SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setSaveEnrollmentRequestForPreviouslySavedEnrollment(payload, testCondition, planCode, promotionCode);
-        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
-        payload.setRequestID(FakerDataGenerator.generateString(10));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         SaveEnrollmentResponse saveEnrollmentResponse = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);

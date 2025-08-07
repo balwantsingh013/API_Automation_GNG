@@ -543,7 +543,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
 
     }
 
-    public void sendGetEligiblePlansAndOffersRequestSSPFalseResidential(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void sendGetEligiblePlansAndOffersRequest(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.preparePayloadBasedOnTC_EligiblePlansAndSaveEnrollment(payload,testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
