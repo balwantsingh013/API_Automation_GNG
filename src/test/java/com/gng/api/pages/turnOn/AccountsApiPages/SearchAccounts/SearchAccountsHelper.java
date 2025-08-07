@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.INACTIVE_UZBSSPP_STATUS_TC121E_2;
 
@@ -910,6 +911,15 @@ public class SearchAccountsHelper {
         payload.setLoginID(USERNAME);
         payload.setPremisesCode("5198736");
         payload.setCustomerCode("5221058");
+    }
+
+    public void setPayloadForPrevSavedEnrollment(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
+        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
     }
 
     public void setNoPayment(SearchAccountsRequest payload) {

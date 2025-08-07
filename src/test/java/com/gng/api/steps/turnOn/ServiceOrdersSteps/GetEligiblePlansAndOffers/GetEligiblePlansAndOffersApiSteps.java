@@ -1,4 +1,6 @@
 package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers;
+
+
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.Then;
@@ -51,6 +53,7 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_enrollment_state_TC168_182(String enrollmentState) {
         getEligiblePlansAndOffersApiPage.validateInvalidEnrollmentStateCasesTC168_182(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(enrollmentState));
     }
+
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with null Authorised Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_null_Authorised_Type( ) {
@@ -162,6 +165,7 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.validateInitialCreditCheckCustomerCodeCases313_317(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(initialCreditCheckCustomerCode));
     }
 
+
     @When("a request is made to the GetEligiblePlansAndOffers Api with  transaction {string} Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_transaction_type(String transactionType) {
         getEligiblePlansAndOffersApiPage.validateInvalidTransactionTypeCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(transactionType));
@@ -181,6 +185,7 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_last_name(String customerLastName) {
         getEligiblePlansAndOffersApiPage.validateInvalidCustomerLastNameCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(customerLastName));
     }
+
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with tenant {string} Landlord")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_tenant_landlord(String tenantLandlord) {
@@ -218,6 +223,16 @@ public class GetEligiblePlansAndOffersApiSteps {
     @When("a request is made to the GetEligiblePlansAndOffers Api with Residential marketer switch  RSTC11UC50")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Residential_marketer_switch_RSTC11UC50() throws IOException {
         getEligiblePlansAndOffersApiPage.validateTestConditionRSTC11UC50(get_eligible_plans_and_offers);
+    }
+
+    @When("a request is made to the GetEligiblePlansAndOffers for a {string}")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_enrollment_source_phone_call(String testCondition) {
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequest(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment {string}")
+    public void a_request_to_get_eligible_plans_and_offfers_for_incomplete_enrollment(String testCondition){
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} condition")
     public void PositiveEligiblePlansAndOffersApi(String testCondition) {

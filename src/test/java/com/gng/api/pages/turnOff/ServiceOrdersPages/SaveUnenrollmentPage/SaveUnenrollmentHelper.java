@@ -225,8 +225,10 @@ public class SaveUnenrollmentHelper {
                     custPremAGLCServCode = ApplicationContext.get().getDbAction().custCodeParamCodeAGLCAccNoServNoTC226(pricePlan, sclsCode);
             case OTHER_MILITARY_TC209 ->
                     custPremAGLCServCode = ApplicationContext.get().getDbAction().custCodeParamCodeAGLCAccNoServNoTC209(pricePlan, sclsCode);
-            case REAP_REALTOR_INSPECTION_TC210, MOVING_OUTSIDE_AGLC_TC230 ->
+            case REAP_REALTOR_INSPECTION_TC210 ->
                     custPremAGLCServCode = ApplicationContext.get().getDbAction().custCodeParamCodeAGLCAccNoServNoTC210(pricePlan, sclsCode);
+            case MOVING_OUTSIDE_AGLC_TC230 ->
+                    custPremAGLCServCode = ApplicationContext.get().getDbAction().custCodeParamCodeAGLCAccNoServNoTC230(pricePlan, sclsCode);
             case MOVING_NOT_STAYING_WITH_GNG_TC216 ->
                     custPremAGLCServCode = ApplicationContext.get().getDbAction().custCodeParamCodeAGLCAccNoServNoTC216(pricePlan, sclsCode);
             case OTHER_REGULATED_PROVIDER_TC219 ->

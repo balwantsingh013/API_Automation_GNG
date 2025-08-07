@@ -1,18 +1,25 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage;
 
 import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
 import com.gng.api.util.FakerDataGenerator;
+import io.cucumber.datatable.DataTable;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
+import java.util.Map;
+import java.util.Set;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import static com.gng.api.constants.GlobalEnums.EnrollMentStatus.*;
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 
 @Slf4j
 public class SaveEnrollmentHelper {
@@ -67,6 +74,221 @@ public class SaveEnrollmentHelper {
             default:
                 payload.setCustomerCode(FakerDataGenerator.generateNumber(0, 9));
         }
+    }
+
+    public void setValuesBasedOnGetEligiblePlansAndOffersResponse(SaveEnrollmentRequest payload){
+        int customerCode = Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+        int transactionID = Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+        String aglcAccountNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber();
+        String aglcServiceOrderNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID();
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+        payload.setTransactionID(transactionID);
+        payload.setAglcAccountNumber(aglcAccountNumber);
+        payload.setAglcServiceOrderNumber(aglcServiceOrderNumber);
+    }
+
+    public void setSaveEnrollmentRequestForPreviouslySavedEnrollment(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
+        setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPlanCode(planCode);
+        payload.setPromotionCode(promotionCode);
+        setValuesBasedOnGetEligiblePlansAndOffersResponse(payload);
+        switch(testCondition) {
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
+                payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
+                setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                    break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+                payload.setEnrollmentStatus(DEPOSIT_REQUIRED.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+                payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
+                payload.setBillingPlan("");
+                break;
+
+        }
+    }
+    public void databaseValidationPostEnrollment(DataTable dataTable) {
+        Map<String, String> params = dataTable.asMaps(String.class, String.class).get(0); // ✅ Use first row only
+
+        String cycleCode = params.get("cycleCode");
+        String reasonCode = params.get("reasonCode");
+        String enrollmentStatus = params.get("enrollmentStatus");
+        String accountStatusIdicator = params.get("accountStatusIdicator");
+        String paymentArrear = params.get("paymentArrear");
+        String badDebtExemptIndicator = params.get("badDebtExemptIndicator");
+        String NCOAProtectIndicator = params.get("NCOAProtectIndicator");
+        String feedbackIndicator = params.get("feedbackIndicator");
+        String contactDirection = params.get("contactDirection");
+        String referredIndicator = params.get("referredIndicator");
+        String OCRCDETStatus = params.get("OCRCDETStatus");
+        String OCRCTIMAutomaticIndicator = params.get("OCRCTIMAutomaticIndicator");
+        String contactType = params.get("contactType");
+        SaveEnrollmentApiLabel testCondition= SaveEnrollmentApiLabel.valueOf(params.get("testCondition"));
+
+        String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
+        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+        Map<String, Object> enrollmentRecord= null;
+
+        switch (testCondition){
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RD_TC_446:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+                enrollmentRecord = ApplicationContext.get()
+                        .getDbAction()
+                        .validateAllTheTablesAfterEnrollmentForIncompleteEnrollment(
+                                customerCode,
+                                premisesCode,
+                                enrollmentStatus,
+                                feedbackIndicator,
+                                contactDirection,
+                                reasonCode,
+                                referredIndicator,
+                                OCRCDETStatus,
+                                OCRCTIMAutomaticIndicator,
+                                contactType
+                        );
+                break;
+
+            default:
+                enrollmentRecord = ApplicationContext.get()
+                        .getDbAction()
+                        .validateAllTheTablesAfterEnrollment(
+                                customerCode,
+                                premisesCode,
+                                cycleCode,
+                                reasonCode,
+                                enrollmentStatus,
+                                accountStatusIdicator,
+                                paymentArrear,
+                                badDebtExemptIndicator,
+                                NCOAProtectIndicator,
+                                feedbackIndicator,
+                                contactDirection,
+                                referredIndicator,
+                                OCRCDETStatus,
+                                OCRCTIMAutomaticIndicator,
+                                contactType
+                        );
+                break;
+
+
+        }
+        Assert.assertEquals(enrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
+    }
+
+    public void setSaveEnrollmentRequestParametersAsPerTestCondition(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
+        setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPlanCode(planCode);
+        payload.setPromotionCode(promotionCode);
+        setValuesBasedOnGetEligiblePlansAndOffersResponse(payload);
+        switch(testCondition) {
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_CE_TC_498:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_499:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500A:
+                setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B:
+                setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                payload.setNotes(FakerDataGenerator.generateString(10));
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_423:
+                payload.setNotes(FakerDataGenerator.generateString(10));
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DP_TC_425:
+                payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RD_TC_446:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+                payload.setEnrollmentStatus(REFUSED_DEPOSIT.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DR_TC_435:
+                payload.setEnrollmentStatus(DEPOSIT_REQUIRED.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_438:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_439:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
+                payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
+                payload.setBillingPlan("");
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_442:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+                payload.setEnrollmentStatus(REFUSED_PREPAY.getValue());
+                payload.setBillingPlan("");
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
+                payload.setEnrollmentStatus(BILL_DEPOSIT.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
+                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                payload.setNotes(FakerDataGenerator.generateString(10));
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PC_TC_431:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PC_TC_432:
+                setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+        }
+    }
+
+    public void setEnrollmentStatusPCAndPaymentConfirmationNumber(SaveEnrollmentRequest payload){
+        payload.setEnrollmentStatus(PAYMENT_COMPLETE.getValue());
+        payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
+        payload.setBillingPlan("");
     }
 
     public void setPremisesCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel premisesCode) {
@@ -215,6 +437,10 @@ public class SaveEnrollmentHelper {
             default:
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(2));
         }
+    }
+
+    public void setMarketerReferenceData(SaveEnrollmentRequest payload, long marketerReferenceData){
+        payload.setMarketerReferenceData(marketerReferenceData);
     }
 
     public void setBillingPlanBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {

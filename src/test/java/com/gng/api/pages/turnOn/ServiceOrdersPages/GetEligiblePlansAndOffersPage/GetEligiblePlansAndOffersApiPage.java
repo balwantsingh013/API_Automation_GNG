@@ -2,7 +2,6 @@ package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPag
 
 import com.gng.api.constants.TestConstant;
 import com.gng.api.pages.BasePage;
-
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -18,6 +17,9 @@ import java.io.IOException;
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
 import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427;
+import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428;
 
 public class GetEligiblePlansAndOffersApiPage extends BasePage {
     private final GetEligiblePlansAndOffersHelper helper;
@@ -375,6 +377,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
+
     }
 
     public void validateTestConditionRSTC11UC50(GetEligiblePlansAndOffersApiLabel apiLabel) throws IOException {
@@ -383,8 +386,30 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         testContext.setResponse(response);
+
     }
 
+    public void sendGetEligiblePlansAndOffersRequest(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.preparePayloadBasedOnTC_EligiblePlansAndSaveEnrollment(payload,testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(response);
+        }
+
+        public void sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition){
+        if(!testCondition.equals(GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427)&&!testCondition.equals(GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428)) {
+            GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+            helper.preparePayloadForPreviouslySavedIncompleteEnrollment(payload, testCondition);
+            setRequestSpecification(payload, testContext.getAuthToken());
+            Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+            GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+            testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+            testContext.setResponse(response);
+        }
+        }
     public void validatePositiveTestConditionsFromExcelData(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         customerData = ExcelReader.loadRowFromExcelToCustomerData( TestConstant.CUSTOMER_DATA,TestConstant.CUSTOMER_SHEET_NAME, testCondition, CustomerData.class);
 
@@ -394,7 +419,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
-      //  testContext.setGetValidationEligiblePlansAndOffersPlans(helper.getValidationEligiblePlansAndOffers());
+        //  testContext.setGetValidationEligiblePlansAndOffersPlans(helper.getValidationEligiblePlansAndOffers());
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
         testContext.setResponse(offersResponse);
     }
@@ -407,4 +432,5 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     public void verifyResponsePlansContainsPrepayPlan(){
         helper.verifyPrepayPlanReturned();
     }
+
 }

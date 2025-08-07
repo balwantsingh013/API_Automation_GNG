@@ -50,12 +50,12 @@ public class GlobalEnums {
     @Getter
     public enum EnrollmentSource {
         ALLCONNECT("ALLCONNECT"),
-        CIM_BUILDER_TURN_ON("CIM BUILDER TURN ON"),
-        CORRESPONDENCE("CORRESPONDENCE"),
+        CIM_BUILDER_TURN_ON("CMITURNON"),
+        CORRESPONDENCE("CORRSP"),
         EMAIL("EMAIL"),
         ENERGYSHOP("ENERGYSHOP"),
         FAX("FAX"),
-        GEORGIAGASSAVINGS("GEORGIAGASSAVINGS"),
+        GEORGIAGASSAVINGS("GAGASSAVE"),
         GNGHUB("GNGHUB"),
         MAIL("MAIL"),
         MOOVEGURU("MOOVEGURU"),
@@ -72,16 +72,6 @@ public class GlobalEnums {
     }
 
     @Getter
-    public enum EnrollmentStatus {
-        PREPAY_REQUIRED("PR");
-        private final String value;
-
-        EnrollmentStatus(String value) {
-            this.value = value;
-        }
-    }
-
-    @Getter
     public enum PromotionCode {
         DEALS("DEALS"),
         SAVE100("SAVE100"),
@@ -90,6 +80,40 @@ public class GlobalEnums {
         private final String value;
 
         PromotionCode(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum EnrollMentStatus {
+        COMPLETE("CE"),
+        DEPOSIT_PAID("DP"),
+        BILL_DEPOSIT("BD"),
+        PAYMENT_COMPLETE("PC"),
+        SAVE_INCOMPLETE("SI"),
+        DEPOSIT_REQUIRED("DR"),
+        PREPAY_REQUIRED("PR"),
+        REFUSED_PREPAY("RP"),
+        REFUSED_DEPOSIT("RD"),
+        SAVE_FOR_FALL_SSP("SF"),
+        DEPOSIT_BILLED("DB");
+
+        private final String value;
+
+        EnrollMentStatus(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum EnrollMentState {
+        UDCS("UDCS"),
+        CRDS("CRDS"),
+        INCL("INCL");
+
+        private final String value;
+
+        EnrollMentState(String value) {
             this.value = value;
         }
     }
