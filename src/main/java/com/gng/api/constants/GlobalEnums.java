@@ -60,7 +60,7 @@ public class GlobalEnums {
         MAIL("MAIL"),
         MOOVEGURU("MOOVEGURU"),
         ONESOURCE("ONESOURCE"),
-        PHONECALL("PHONECALL"),
+        PHONECALL("PHONE CALL"),
         VIVINT("VIVINT"),
         WEB("WEB");
 
@@ -80,6 +80,40 @@ public class GlobalEnums {
         private final String value;
 
         PromotionCode(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum EnrollMentStatus {
+        COMPLETE("CE"),
+        DEPOSIT_PAID("DP"),
+        BILL_DEPOSIT("BD"),
+        PAYMENT_COMPLETE("PC"),
+        SAVE_INCOMPLETE("SI"),
+        DEPOSIT_REQUIRED("DR"),
+        PREPAY_REQUIRED("PR"),
+        REFUSED_PREPAY("RP"),
+        REFUSED_DEPOSIT("RD"),
+        SAVE_FOR_FALL_SSP("SF"),
+        DEPOSIT_BILLED("DB");
+
+        private final String value;
+
+        EnrollMentStatus(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum EnrollMentState {
+        UDCS("UDCS"),
+        CRDS("CRDS"),
+        INCL("INCL");
+
+        private final String value;
+
+        EnrollMentState(String value) {
             this.value = value;
         }
     }

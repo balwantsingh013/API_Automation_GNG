@@ -281,6 +281,14 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.validateTestConditionRSTC11UC50(get_eligible_plans_and_offers);
     }
 
+    @When("a request is made to the GetEligiblePlansAndOffers for a {string}")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_enrollment_source_phone_call(String testCondition) {
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequest(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    }
 
+    @When("a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment {string}")
+    public void a_request_to_get_eligible_plans_and_offfers_for_incomplete_enrollment(String testCondition){
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    }
 
 }

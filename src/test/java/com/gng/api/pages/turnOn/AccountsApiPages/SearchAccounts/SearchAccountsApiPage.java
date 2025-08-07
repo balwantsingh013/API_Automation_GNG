@@ -3,14 +3,13 @@ package com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts;
 
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
 import static com.gng.api.constants.ApiEndPoint.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class SearchAccountsApiPage extends BasePage {
     private final SearchAccountsHelper helper;
@@ -489,6 +488,16 @@ public class SearchAccountsApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
+    }
+
+    public void validateSearchAccountsForPrevSavedEnrollment(SearchAccountsApiLabel apiLabel,SearchAccountsApiLabel testCondition){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPayloadForPrevSavedEnrollment(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        SearchAccountsResponse searchAccountsResponse= deserializeResponseToPojo(response,SearchAccountsResponse.class);
+        testContext.setResponse(response);
+        testContext.setSearchAccountsResponse(searchAccountsResponse);
     }
 
     public void validateFullPaymentTC121b(SearchAccountsApiLabel apiLabel) {

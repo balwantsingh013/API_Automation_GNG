@@ -7,6 +7,7 @@ import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
 import com.gng.api.util.FakerDataGenerator;
+import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
@@ -96,6 +97,30 @@ public class SaveEnrollmentApiPage extends BasePage {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);
+    }
+
+    public void validateSaveEnrollmentPositiveTCs(SaveEnrollmentApiLabel apiLabel,SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setSaveEnrollmentRequestParametersAsPerTestCondition(payload, testCondition, planCode, promotionCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        SaveEnrollmentResponse saveEnrollmentResponse = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
+        testContext.setSaveEnrollmentResponse(saveEnrollmentResponse);
+        testContext.setResponse(response);
+    }
+
+    public void validateCEForPreviouslySavedEnrollment(SaveEnrollmentApiLabel apiLabel,SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setSaveEnrollmentRequestForPreviouslySavedEnrollment(payload, testCondition, planCode, promotionCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        SaveEnrollmentResponse saveEnrollmentResponse = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
+        testContext.setSaveEnrollmentResponse(saveEnrollmentResponse);
+        testContext.setResponse(response);
+    }
+
+    public void performDatabaseValidationAfterEnrollment(DataTable dataTable){
+        helper.databaseValidationPostEnrollment(dataTable);
     }
 
 

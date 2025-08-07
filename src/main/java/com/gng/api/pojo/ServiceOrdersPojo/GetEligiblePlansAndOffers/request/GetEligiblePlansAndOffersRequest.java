@@ -81,9 +81,4 @@ public class GetEligiblePlansAndOffersRequest{
 	private boolean seasonalSavingsProgramIndicator;
 	private Object billingCity;
 
-	public void setSeasonalSavingsProgramIndicator(Boolean o) {
-
-	}
-
-
 }

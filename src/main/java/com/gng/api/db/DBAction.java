@@ -50,6 +50,43 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> validateAllTheTablesAfterEnrollment(String customerCode,
+                                                                   String premisesCode,
+                                                                   String cycleCode,
+                                                                   String reasonCode,
+                                                                   String enrollmentStatus,
+                                                                   String accountStatusIdicator,
+                                                                   String paymentArrear,
+                                                                   String badDebtExemptIndicator,
+                                                                   String NCOAProtectIndicator,
+                                                                   String feedbackIndicator,
+                                                                   String contactDirection,
+                                                                   String referredIndicator,
+                                                                   String OCRCDETStatus,
+                                                                   String OCRCTIMAutomaticIndicator,
+                                                                   String contactType
+    ){
+        String query = DBQuery.SELECT_ENROLLMENT_RECORD_DATA;
+        logQueryInAllure("Get Customer code for newly enrolled account", query);
+        return jdbcTemplate.queryForMap(query, customerCode, premisesCode,enrollmentStatus, accountStatusIdicator, cycleCode, paymentArrear, badDebtExemptIndicator,NCOAProtectIndicator, feedbackIndicator,contactDirection, reasonCode,referredIndicator,contactType, OCRCDETStatus, OCRCTIMAutomaticIndicator, reasonCode);
+    }
+
+    public Map<String, Object> validateAllTheTablesAfterEnrollmentForIncompleteEnrollment(String customerCode,
+                                                                   String premisesCode,
+                                                                   String enrollmentStatus,
+                                                                   String feedbackIndicator,
+                                                                   String contactDirection,
+                                                                   String reasonCode,
+                                                                   String referredIndicator,
+                                                                   String OCRCDETStatus,
+                                                                   String OCRCTIMAutomaticIndicator,
+                                                                   String contactType
+    ){
+        String query = DBQuery.SELECT_ENROLLMENT_RECORD_DATA_FOR_INCOMPLETE_ENROLLMENT;
+        logQueryInAllure("Get Customer code for newly enrolled account", query);
+        return jdbcTemplate.queryForMap(query, customerCode, premisesCode,enrollmentStatus, feedbackIndicator,contactDirection, reasonCode,referredIndicator,contactType, OCRCDETStatus, OCRCTIMAutomaticIndicator, reasonCode);
+    }
+
     public Map<String, Object> custCodePremCodeNoSSPAccount(String sspIndicator) {
         String query = DBQuery.SELECT_CUST_PREM_CODE_NO_SSP;
         logQueryInAllure("Get Customer code, premises code for account without SSP", query);
