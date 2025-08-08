@@ -84,20 +84,26 @@ public class BaseSteps {
         validatePlans(expectedPlans);
     }
 
-    @And("response should have role with ID {string} and description {string}")
-    public void responseShouldHaveRoleWithIDAndDescription(String roleID, String roleDescription) {
-        verifyRoleDetails(roleID, roleDescription);
+    @And("response should have the following roles")
+    public void responseShouldHaveTheFollowingRoles(DataTable dataTable) {
+        List<Map<String, String>> expectedRoles = dataTable.asMaps(String.class, String.class);
+        verifyRoleDetails(expectedRoles);
     }
 
-    private void verifyRoleDetails(String expectedRoleID, String expectedRoleDescription) {
+    private void verifyRoleDetails(List<Map<String, String>> expectedRoles) {
         Response response = testContext.getResponse();
-        List<Map<String, String>> roles = response.jsonPath().getList("data.roles");
+        List<Map<String, String>> actualRoles = response.jsonPath().getList("data.roles");
 
-        boolean roleFound = roles.stream()
-                .anyMatch(role -> expectedRoleID.equals(role.get("roleID")) &&
-                                  expectedRoleDescription.equals(role.get("roleDescription")));
+        for (Map<String, String> expectedRole : expectedRoles) {
+            String expectedRoleID = expectedRole.get("roleID");
+            String expectedRoleDescription = expectedRole.get("roleDescription");
 
-        assertThat("Expected role with ID and description not found", roleFound);
+            boolean roleFound = actualRoles.stream()
+                    .anyMatch(actualRole -> expectedRoleID.equals(actualRole.get("roleID")) &&
+                                            expectedRoleDescription.equals(actualRole.get("roleDescription")));
+
+            assertThat("Expected role with ID '" + expectedRoleID + "' and description '" + expectedRoleDescription + "' not found", roleFound);
+        }
     }
 
     private void validatePlans(List<Map<String, String>> expectedPlans) {

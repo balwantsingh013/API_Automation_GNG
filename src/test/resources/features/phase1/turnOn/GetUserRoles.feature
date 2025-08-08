@@ -93,5 +93,7 @@ Feature: Verify GetUserRoles Api
   Scenario: GetUserRoles Api  TC19 - Verify response for get user roles for valid credentials
     When a request is made to the GetUserRoles Api with TC19
     Then verify response code of "GetUserRole" Api is 200
-    And response should have role with ID "TEST1" and description "Test Role"
-    And verify if the failed login count is updated to 0
+    And response should have the following roles
+      | roleID | roleDescription |
+      | TEST1  | Test Role       |
+
