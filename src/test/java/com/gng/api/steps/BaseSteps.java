@@ -1,7 +1,6 @@
 package com.gng.api.steps;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -12,11 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.testng.AssertJUnit.*;
@@ -25,17 +20,6 @@ import static org.hamcrest.Matchers.hasItem;
 @Slf4j
 public class BaseSteps {
     private final TestContext testContext;
-    ObjectMapper mapper = new ObjectMapper();
-    InputStream is = getClass().getClassLoader().getResourceAsStream("testDataFiles/EligiblePlansAndOffers.json");
-    private final Map<String, PlanData> expectedPlansMap;
-
-    {
-        try {
-            expectedPlansMap = mapper.readValue(is, mapper.getTypeFactory().constructMapType(Map.class, String.class, PlanData.class));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @ParameterType("true|false")
     public Boolean booleanVal(String value) {
@@ -46,11 +30,6 @@ public class BaseSteps {
         this.testContext = testContext;
     }
 
-    public static class PlanData {
-        public int numberOfMatches;
-        public List<Plans> plans;
-    }
-
     @Then("verify response code of {string} Api is {int}")
     public void verify_response_code_of_api_is(String apiName, Integer statusCode) {
         verifyResponseCode(apiName, statusCode);
@@ -59,26 +38,6 @@ public class BaseSteps {
     @And("response should have ErrorCode {int} and ErrorMessage {string}")
     public void responseShouldHaveErrorCodeAndErrorMessage(int errorCode, String errorMessage) {
         verifyErrorCodeAndMessage(errorCode, errorMessage);
-    }
-
-    @Then("the response should contain the expected plans for {string} condition")
-    public void verifyResponsePlans(String testCondition) {
-        PlanData expected = expectedPlansMap.get(testCondition);
-        assertNotNull("No expected plans found for test condition: " + testCondition, expected);
-        List<Plans> actualPlans =  testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans();
-
-        assertEquals("Mismatch in number of plans", expected.numberOfMatches, actualPlans.size());
-
-        for (Plans expectedPlan : expected.plans) {
-            boolean found = actualPlans.stream().anyMatch(actual ->
-                    expectedPlan.getPlanCode().equals(actual.getPlanCode()) &&
-                    expectedPlan.getPlanDescription().equals(actual.getPlanDescription()) &&
-                    expectedPlan.getPromotion1Code().equals(actual.getPromotion1Code()) &&
-                    expectedPlan.getPromotion1Description().equals(actual.getPromotion1Description()
-                    )
-            );
-            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-        }
     }
 
     @And("response should return numberOfMatches as {int}")
@@ -124,21 +83,47 @@ public class BaseSteps {
         validatePlans(expectedPlans);
     }
 
-    @And("response should have role with ID {string} and description {string}")
-    public void responseShouldHaveRoleWithIDAndDescription(String roleID, String roleDescription) {
-        verifyRoleDetails(roleID, roleDescription);
+    @And("response should have the following roles")
+    public void responseShouldHaveTheFollowingRoles(DataTable dataTable) {
+        List<Map<String, String>> expectedRoles = dataTable.asMaps(String.class, String.class);
+        verifyRoleDetails(expectedRoles);
     }
 
-    private void verifyRoleDetails(String expectedRoleID, String expectedRoleDescription) {
+    private void verifyRoleDetails(List<Map<String, String>> expectedRoles) {
         Response response = testContext.getResponse();
-        List<Map<String, String>> roles = response.jsonPath().getList("data.roles");
+        List<Map<String, String>> actualRoles = response.jsonPath().getList("data.roles");
 
-        boolean roleFound = roles.stream()
-                .anyMatch(role -> expectedRoleID.equals(role.get("roleID")) &&
-                                  expectedRoleDescription.equals(role.get("roleDescription")));
+        // Step 1: Validate each expected role is present in the response
+        for (Map<String, String> expectedRole : expectedRoles) {
+            String expectedRoleID = expectedRole.get("roleID");
+            String expectedRoleDescription = expectedRole.get("roleDescription");
 
-        assertThat("Expected role with ID and description not found", roleFound);
+            boolean roleFound = actualRoles.stream()
+                    .anyMatch(actualRole -> expectedRoleID.equals(actualRole.get("roleID")) &&
+                                            expectedRoleDescription.equals(actualRole.get("roleDescription")));
+
+            assertThat("Expected role with ID '" + expectedRoleID + "' and description '" + expectedRoleDescription + "' not found", roleFound);
+        }
+
+        // Step 2: Validate role IDs match with database
+        List<Map<String, Object>> dbRoleRecords = ApplicationContext.get().getDbAction().getUserRoleIDs("autotester");
+
+        List<String> dbRoleIDs = dbRoleRecords.stream()
+                .map(record -> Objects.toString(record.get("role_id"), "").trim())
+                .filter(roleId -> !roleId.isEmpty())
+                .toList();
+
+        List<String> apiRoleIDs = actualRoles.stream()
+                .map(role -> role.get("roleID"))
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .toList();
+
+        assertThat("Mismatch between role IDs from API and database",
+                new HashSet<>(apiRoleIDs).equals(new HashSet<>(dbRoleIDs)));
     }
+
+
 
     private void validatePlans(List<Map<String, String>> expectedPlans) {
         Response response = testContext.getResponse();

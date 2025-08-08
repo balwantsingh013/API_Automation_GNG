@@ -80,6 +80,11 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestCommercial(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
+    @When("verify the plans in received in response")
+    public void verify_plans_received_in_response(){
+        getEligiblePlansAndOffersApiPage.verifyPlansReceivedInResponse();
+    }
+
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string}TC155_157")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_TC155_157(String requestID) {
         getEligiblePlansAndOffersApiPage.validateInvalidRequestIDCasesTC155_157(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(requestID));

@@ -152,6 +152,26 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> getControlNumber() {
+        String query = DBQuery.GET_CONTROL_NUMBER;
+        logQueryInAllure("Get control number", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public List<Map<String, Object>> getEligiblePlansAndOffersCommercial(String controlNumber) {
+        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT;
+        logQueryInAllure("Get eligible plans and offers", query);
+        return jdbcTemplate.queryForList(query, controlNumber);
+    }
+
+    public List<Map<String, Object>> getUserRoleIDs(String userId) {
+        String query = DBQuery.GET_USER_ROLE_IDS;
+        logQueryInAllure("Get user role IDs", query);
+        return jdbcTemplate.queryForList(query, userId);
+    }
+
+
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC218(String pricePlan) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with active/pending rewards", query);

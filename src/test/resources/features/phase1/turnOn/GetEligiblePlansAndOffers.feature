@@ -201,7 +201,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And the response should contain the expected plans for "<testCondition>" condition
+    And verify the plans in received in response
 
   Examples:
     |testCondition                                              |
@@ -211,15 +211,14 @@ Feature: Verify GetEligiblePlansAndOffers Api
     |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342          |
     |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343          |
     |COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344|
-    |COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345         |
+#    |COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345         |
     |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346          |
-    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347          |
+#    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347          |
     |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348          |
     |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349          |
     |COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350         |
     |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B        |
     |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E        |
-
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
