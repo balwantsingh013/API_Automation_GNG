@@ -164,6 +164,13 @@ public class DBAction {
         return jdbcTemplate.queryForList(query, controlNumber);
     }
 
+    public List<Map<String, Object>> getUserRoleIDs(String userId) {
+        String query = DBQuery.GET_USER_ROLE_IDS;
+        logQueryInAllure("Get user role IDs", query);
+        return jdbcTemplate.queryForList(query, userId);
+    }
+
+
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC218(String pricePlan) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS;

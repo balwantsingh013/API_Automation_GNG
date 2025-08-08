@@ -1524,6 +1524,9 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_USER_ROLE_IDS = """
+            SELECT role_id FROM user_role WHERE user_id = ?
+            """;
     public static final String GET_VALIDATION_PLANS_AND_OFFERS_RESULT = """      
             SELECT
               t1.uztcott_app_request_code   AS "appRequestCode",

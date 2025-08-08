@@ -96,4 +96,6 @@ Feature: Verify GetUserRoles Api
     And response should have the following roles
       | roleID | roleDescription |
       | TEST1  | Test Role       |
+      |ACNCSR  |ACN CSR          |
+      |test    |Testing          |
 

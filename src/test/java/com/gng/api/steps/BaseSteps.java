@@ -1,5 +1,6 @@
 package com.gng.api.steps;
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -10,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.testng.AssertJUnit.*;
@@ -94,6 +93,7 @@ public class BaseSteps {
         Response response = testContext.getResponse();
         List<Map<String, String>> actualRoles = response.jsonPath().getList("data.roles");
 
+        // Step 1: Validate each expected role is present in the response
         for (Map<String, String> expectedRole : expectedRoles) {
             String expectedRoleID = expectedRole.get("roleID");
             String expectedRoleDescription = expectedRole.get("roleDescription");
@@ -104,7 +104,26 @@ public class BaseSteps {
 
             assertThat("Expected role with ID '" + expectedRoleID + "' and description '" + expectedRoleDescription + "' not found", roleFound);
         }
+
+        // Step 2: Validate role IDs match with database
+        List<Map<String, Object>> dbRoleRecords = ApplicationContext.get().getDbAction().getUserRoleIDs("autotester");
+
+        List<String> dbRoleIDs = dbRoleRecords.stream()
+                .map(record -> Objects.toString(record.get("role_id"), "").trim())
+                .filter(roleId -> !roleId.isEmpty())
+                .toList();
+
+        List<String> apiRoleIDs = actualRoles.stream()
+                .map(role -> role.get("roleID"))
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .toList();
+
+        assertThat("Mismatch between role IDs from API and database",
+                new HashSet<>(apiRoleIDs).equals(new HashSet<>(dbRoleIDs)));
     }
+
+
 
     private void validatePlans(List<Map<String, String>> expectedPlans) {
         Response response = testContext.getResponse();
