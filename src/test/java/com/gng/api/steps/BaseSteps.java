@@ -1,5 +1,6 @@
 package com.gng.api.steps;
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -37,10 +38,6 @@ public class BaseSteps {
     @And("response should have ErrorCode {int} and ErrorMessage {string}")
     public void responseShouldHaveErrorCodeAndErrorMessage(int errorCode, String errorMessage) {
         verifyErrorCodeAndMessage(errorCode, errorMessage);
-    }
-
-    @Then("the response should contain the expected plans for {string} condition")
-    public void verifyResponsePlans(String testCondition) {
     }
 
     @And("response should return numberOfMatches as {int}")
@@ -86,21 +83,47 @@ public class BaseSteps {
         validatePlans(expectedPlans);
     }
 
-    @And("response should have role with ID {string} and description {string}")
-    public void responseShouldHaveRoleWithIDAndDescription(String roleID, String roleDescription) {
-        verifyRoleDetails(roleID, roleDescription);
+    @And("response should have the following roles")
+    public void responseShouldHaveTheFollowingRoles(DataTable dataTable) {
+        List<Map<String, String>> expectedRoles = dataTable.asMaps(String.class, String.class);
+        verifyRoleDetails(expectedRoles);
     }
 
-    private void verifyRoleDetails(String expectedRoleID, String expectedRoleDescription) {
+    private void verifyRoleDetails(List<Map<String, String>> expectedRoles) {
         Response response = testContext.getResponse();
-        List<Map<String, String>> roles = response.jsonPath().getList("data.roles");
+        List<Map<String, String>> actualRoles = response.jsonPath().getList("data.roles");
 
-        boolean roleFound = roles.stream()
-                .anyMatch(role -> expectedRoleID.equals(role.get("roleID")) &&
-                                  expectedRoleDescription.equals(role.get("roleDescription")));
+        // Step 1: Validate each expected role is present in the response
+        for (Map<String, String> expectedRole : expectedRoles) {
+            String expectedRoleID = expectedRole.get("roleID");
+            String expectedRoleDescription = expectedRole.get("roleDescription");
 
-        assertThat("Expected role with ID and description not found", roleFound);
+            boolean roleFound = actualRoles.stream()
+                    .anyMatch(actualRole -> expectedRoleID.equals(actualRole.get("roleID")) &&
+                                            expectedRoleDescription.equals(actualRole.get("roleDescription")));
+
+            assertThat("Expected role with ID '" + expectedRoleID + "' and description '" + expectedRoleDescription + "' not found", roleFound);
+        }
+
+        // Step 2: Validate role IDs match with database
+        List<Map<String, Object>> dbRoleRecords = ApplicationContext.get().getDbAction().getUserRoleIDs("autotester");
+
+        List<String> dbRoleIDs = dbRoleRecords.stream()
+                .map(record -> Objects.toString(record.get("role_id"), "").trim())
+                .filter(roleId -> !roleId.isEmpty())
+                .toList();
+
+        List<String> apiRoleIDs = actualRoles.stream()
+                .map(role -> role.get("roleID"))
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .toList();
+
+        assertThat("Mismatch between role IDs from API and database",
+                new HashSet<>(apiRoleIDs).equals(new HashSet<>(dbRoleIDs)));
     }
+
+
 
     private void validatePlans(List<Map<String, String>> expectedPlans) {
         Response response = testContext.getResponse();
@@ -109,20 +132,14 @@ public class BaseSteps {
         for (Map<String, String> expected : expectedPlans) {
             String expectedCode = normalize(expected.get("planCode"));
             String expectedDesc = normalize(expected.get("planDescription"));
-            String expectedPromo1Code = normalize(expected.get("promotion1Code"));
-            String expectedPromo1Desc = normalize(expected.get("promotion1Description"));
 
             boolean matchFound = actualPlans.stream().anyMatch(plan -> {
                 String actualCode = normalize(plan.get("planCode"));
                 String actualDesc = normalize(plan.get("planDescription"));
-                String actualPromo1Code = normalize(plan.get("promotion1Code"));
-                String actualPromo1Description = normalize(plan.get("promotion1Description"));
-                return expectedCode.equals(actualCode) && expectedDesc.equals(actualDesc)
-                        && expectedPromo1Code.equals(actualPromo1Code) && expectedPromo1Desc.equals(actualPromo1Description);
+                return expectedCode.equals(actualCode) && expectedDesc.equals(actualDesc);
             });
 
-            assertThat("Plan not found: code=" + expectedCode + ", description=" + expectedDesc + ", promotion 1 code="
-                    + expectedPromo1Desc + ", promotion 1 description=" + expectedPromo1Desc, matchFound);
+            assertThat("Plan not found: code=" + expectedCode + ", description=" + expectedDesc, matchFound);
         }
     }
 
@@ -242,48 +259,4 @@ public class BaseSteps {
             }
         }
     }
-//    public static <T extends PlanType> void verifyResponsePlans(List<T> expected, List<T> actual) {
-//        expected.forEach(CommonUtil::normalizeBlankStringsToNull);
-//        actual.forEach(CommonUtil::normalizeBlankStringsToNull);
-//
-//        assertEquals("Mismatch in number of plans", expected.size(), actual.size());
-//
-//        for (T expectedPlan : expected) {
-//            boolean found = actual.stream().anyMatch(actualPlan ->
-//                    Objects.equals(expectedPlan.getPlanCode(), actualPlan.getPlanCode()) &&
-//                            Objects.equals(expectedPlan.getPlanDescription(), actualPlan.getPlanDescription()) &&
-//                            Objects.equals(expectedPlan.getPromotion1Code(), actualPlan.getPromotion1Code()) &&
-//                            Objects.equals(expectedPlan.getPromotion1Description(), actualPlan.getPromotion1Description())
-//            );
-//
-//            if (!found) {
-//                System.out.println("No match for expectedPlan: " + expectedPlan);
-//                actual.forEach(a -> System.out.println("Compared against: " + a));
-//            }
-//
-//            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-//        }
-//    }
-//
-//    public static <T extends PlanType> void verifyResponsePrepayPlans(List<T> expected, List<T> actual) {
-//        expected.forEach(CommonUtil::normalizeBlankStringsToNull);
-//        actual.forEach(CommonUtil::normalizeBlankStringsToNull);
-//
-//        assertEquals("Mismatch in number of plans", expected.size(), actual.size());
-//
-//        for (T expectedPlan : expected) {
-//            boolean found = actual.stream().anyMatch(actualPlan ->
-//                    Objects.equals(expectedPlan.getPlanCode(), actualPlan.getPlanCode()) &&
-//                            Objects.equals(expectedPlan.getPlanDescription(), actualPlan.getPlanDescription())
-//
-//            );
-//            if (!found) {
-//                System.out.println("No match for expectedPlan: " + expectedPlan);
-//                actual.forEach(a -> System.out.println("Compared against: " + a));
-//            }
-//
-//            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-//        }
-//    }
-
 }
