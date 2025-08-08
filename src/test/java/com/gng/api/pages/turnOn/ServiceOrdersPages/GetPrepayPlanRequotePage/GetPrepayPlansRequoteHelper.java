@@ -13,6 +13,7 @@ import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -110,7 +111,7 @@ public class GetPrepayPlansRequoteHelper {
         }
     }
 
-    public static void comparePlanFields(Map<String, Object> eligiblePlan, List<GetEligiblePlansAndOffersResponse.Plan> plans, GlobalEnums.PlanCode validationPlanCode)
+    public static void comparePlanFields(Map<String, Object> eligiblePlan, List<Plans> plans, GlobalEnums.PlanCode validationPlanCode)
     {
         String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
         String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
@@ -119,7 +120,7 @@ public class GetPrepayPlansRequoteHelper {
         boolean validationFound = false;
         boolean dbMatchFound = false;
 
-        for (GetEligiblePlansAndOffersResponse.Plan plan : plans) {
+        for (Plans plan : plans) {
             String code = plan.getPlanCode() == null ? null : plan.getPlanCode().trim();
 
             if (validationCode != null && validationCode.equals(code)) {

@@ -1,6 +1,7 @@
 package com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers;
 import java.util.List;
 
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

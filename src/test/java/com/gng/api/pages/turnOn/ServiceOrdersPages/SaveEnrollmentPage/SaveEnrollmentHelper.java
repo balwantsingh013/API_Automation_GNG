@@ -10,6 +10,7 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
@@ -495,7 +496,7 @@ public class SaveEnrollmentHelper {
         var plans = testContext.getGetEligiblePlansAndOffersResponse()
                 .getData()
                 .getPlans();
-        GetEligiblePlansAndOffersResponse.Plan prepayPlan =
+        Plans prepayPlan =
                 plans.stream()
                         //.filter(p -> Boolean.TRUE.equals(p.getPrepayPlanIndicator())
                         .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue())

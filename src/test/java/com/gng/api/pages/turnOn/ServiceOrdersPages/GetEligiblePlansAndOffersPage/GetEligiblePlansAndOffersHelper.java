@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
 import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
@@ -1863,7 +1864,7 @@ public class GetEligiblePlansAndOffersHelper {
         }
         String federalTaxId = data.get("federalTaxId");
         if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
-            payload.setSocialSecurityNumber(encryptData(data.get("federalTaxId")));
+            payload.setFederalTaxID(encryptData(data.get("federalTaxId")));
         }
     }
 
@@ -1880,7 +1881,7 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
     public void verifyPrepayPlanReturned(GlobalEnums.PlanCode planCode) {
-        List<GetEligiblePlansAndOffersResponse.Plan> plans = testContext.getGetEligiblePlansAndOffersResponse()
+        List<Plans> plans = testContext.getGetEligiblePlansAndOffersResponse()
                 .getData()
                 .getPlans()
                 .stream()
@@ -1893,57 +1894,21 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
     public void verifyResidentialPlansReceivedAgainstDatabase() {
-        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
+        Map<String, Object> controlNumberResult = ApplicationContext.get().getDbAction().getControlNumber();
+        String controlNum = controlNumberResult.get("UZTCOTT_CONTROL_NUM").toString();
         List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
         GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
 
         for (Map<String, Object> eligiblePlan : eligiblePlansList) {
-            comparePlanFields(eligiblePlan, response.getData().getPlans());
+            comparePlanFields(eligiblePlan, response);
         }
     }
 
-    public static void comparePlanFields(Map<String, Object> eligiblePlan, List<GetEligiblePlansAndOffersResponse.Plan> plans) {
-        String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
-        String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
-        String dbPromo1Code = normalize(eligiblePlan.get("promotion1Code"));
-        String dbPromo1Desc = normalize(eligiblePlan.get("promotion1Description"));
-
-       // List<Plans> plans = response.getData().getPlans();
-        boolean matchFound = false;
-
-        for (GetEligiblePlansAndOffersResponse.Plan plan : plans) {
-            if (plan.getPlanCode() != null && plan.getPlanCode().trim().equals(dbPlanCode)) {
-                matchFound = true;
-
-                String apiPlanCode = plan.getPlanCode().trim();
-                String apiPlanDescription = normalize(plan.getPlanDescription());
-                String apiPromo1Code = normalize(plan.getPromotion1Code());
-                String apiPromo1Desc = normalize(plan.getPromotion1Description());
-
-                Assert.assertEquals(apiPlanCode, dbPlanCode, "Plan code mismatch");
-                Assert.assertEquals(apiPlanDescription, dbPlanDescription, "Plan description mismatch for planCode: " + dbPlanCode);
-                Assert.assertEquals(apiPromo1Code, dbPromo1Code, "Promotion1 code mismatch for planCode: " + dbPlanCode);
-                Assert.assertEquals(apiPromo1Desc, dbPromo1Desc, "Promotion1 description mismatch for planCode: " + dbPlanCode);
-
-                break;
-            }
-        }
-        Assert.assertTrue(matchFound, "No matching planCode found in API response for: " + dbPlanCode);
-    }
-
-    private static String normalize(Object value) {
-        return value == null ? "" : value.toString().trim();
-    }
-    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
-            String excelPath,
-            String sheetName,
-            E testLabel) {
-
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {
         try {
             ExcelReader reader = new ExcelReader(excelPath);
             List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
 
-            // Find the first row where the "testConditions" column matches the enum name
             return sheetData.stream()
                     .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
                     .findFirst()
@@ -1954,5 +1919,4 @@ public class GetEligiblePlansAndOffersHelper {
             throw new RuntimeException("Failed to load data from Excel", e);
         }
     }
-
 }

@@ -726,11 +726,6 @@ public class DBAction {
         logQueryInAllure("Get ValidationPlansAndOffersResult", query);
         return jdbcTemplate.queryForList(query);
     }
-    public String getControlNumber() {
-        String query = DBQuery.GET_CONTROL_NUMBER;
-        logQueryInAllure("Get Control Number", query);
-        return jdbcTemplate.queryForObject(query, String.class);
-    }
 
     public List<Map<String, Object>> getValidationPrepayPlans(String transactionId) {
         String query = DBQuery.GET_VALIDATION_PREPAY_PLANS_RESULT

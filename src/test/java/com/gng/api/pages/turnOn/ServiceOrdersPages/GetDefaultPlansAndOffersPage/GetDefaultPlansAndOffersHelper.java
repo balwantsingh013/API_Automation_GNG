@@ -52,7 +52,8 @@ public class GetDefaultPlansAndOffersHelper {
     }
 
     public void verifyResidentialDefaultPlansReceivedAgainstDatabase() {
-        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
+        Map<String, Object> controlNumberResult = ApplicationContext.get().getDbAction().getControlNumber();
+        String controlNum = controlNumberResult.get("UZTCOTT_CONTROL_NUM").toString();
         List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
         GetDefaultPlansAndOffersResponse response = testContext.getGetDefaultPlansAndOffersResponse();
 
@@ -66,8 +67,6 @@ public class GetDefaultPlansAndOffersHelper {
         String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
         String dbPromo1Code = normalize(eligiblePlan.get("promotion1Code"));
         String dbPromo1Desc = normalize(eligiblePlan.get("promotion1Description"));
-
-        // List<Plans> plans = response.getData().getPlans();
         boolean matchFound = false;
 
         for (GetDefaultPlansAndOffersResponse.Plan plan : plans) {
@@ -83,7 +82,6 @@ public class GetDefaultPlansAndOffersHelper {
                 Assert.assertEquals(apiPlanDescription, dbPlanDescription, "Plan description mismatch for planCode: " + dbPlanCode);
                 Assert.assertEquals(apiPromo1Code, dbPromo1Code, "Promotion1 code mismatch for planCode: " + dbPlanCode);
                 Assert.assertEquals(apiPromo1Desc, dbPromo1Desc, "Promotion1 description mismatch for planCode: " + dbPlanCode);
-
                 break;
             }
         }
