@@ -8,7 +8,7 @@ Feature: Verify GetPrepayPlansRequote Api
   @GetPrepayPlansRequotePositive @HappyFlow
   Scenario Outline: GetPrepayPlansRequote API – returns quotes for <testCondition>
 
-    When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     Then the response should contain the expected plans
@@ -19,12 +19,12 @@ Feature: Verify GetPrepayPlansRequote Api
     Then verify response code of "SaveEnrollment" Api is 200
 
     Given a prepay transaction is returned from searchAccounts api for "<testCondition>"
-    When a request is made to the GetPrepayPlansRequote Api with "<planCode>" pricePlan for "<testCondition>" condition
+    When a request is made to the GetPrepayPlansRequote Api for "<testCondition>" condition
     Then verify response code of "GetPrepayPlansRequote" Api is 200
-    Then the response should contain the expected prepay plans
+    Then the response should contain the expected prepay plans and "<planCode>" planCode
 
     Examples:
       | planCode | testCondition                            |
       | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_456 |
-     # | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_471 |
-     # | PGB      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_472 |
+      | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_471 |
+      | PGB      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_472 |

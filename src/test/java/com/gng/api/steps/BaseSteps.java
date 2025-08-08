@@ -1,9 +1,6 @@
 package com.gng.api.steps;
 
-import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.shared.PlanType;
-import com.gng.api.util.CommonUtil;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
@@ -245,48 +242,48 @@ public class BaseSteps {
             }
         }
     }
-    public static <T extends PlanType> void verifyResponsePlans(List<T> expected, List<T> actual) {
-        expected.forEach(CommonUtil::normalizeBlankStringsToNull);
-        actual.forEach(CommonUtil::normalizeBlankStringsToNull);
-
-        assertEquals("Mismatch in number of plans", expected.size(), actual.size());
-
-        for (T expectedPlan : expected) {
-            boolean found = actual.stream().anyMatch(actualPlan ->
-                    Objects.equals(expectedPlan.getPlanCode(), actualPlan.getPlanCode()) &&
-                            Objects.equals(expectedPlan.getPlanDescription(), actualPlan.getPlanDescription()) &&
-                            Objects.equals(expectedPlan.getPromotion1Code(), actualPlan.getPromotion1Code()) &&
-                            Objects.equals(expectedPlan.getPromotion1Description(), actualPlan.getPromotion1Description())
-            );
-
-            if (!found) {
-                System.out.println("No match for expectedPlan: " + expectedPlan);
-                actual.forEach(a -> System.out.println("Compared against: " + a));
-            }
-
-            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-        }
-    }
-
-    public static <T extends PlanType> void verifyResponsePrepayPlans(List<T> expected, List<T> actual) {
-        expected.forEach(CommonUtil::normalizeBlankStringsToNull);
-        actual.forEach(CommonUtil::normalizeBlankStringsToNull);
-
-        assertEquals("Mismatch in number of plans", expected.size(), actual.size());
-
-        for (T expectedPlan : expected) {
-            boolean found = actual.stream().anyMatch(actualPlan ->
-                    Objects.equals(expectedPlan.getPlanCode(), actualPlan.getPlanCode()) &&
-                            Objects.equals(expectedPlan.getPlanDescription(), actualPlan.getPlanDescription())
-
-            );
-            if (!found) {
-                System.out.println("No match for expectedPlan: " + expectedPlan);
-                actual.forEach(a -> System.out.println("Compared against: " + a));
-            }
-
-            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
-        }
-    }
+//    public static <T extends PlanType> void verifyResponsePlans(List<T> expected, List<T> actual) {
+//        expected.forEach(CommonUtil::normalizeBlankStringsToNull);
+//        actual.forEach(CommonUtil::normalizeBlankStringsToNull);
+//
+//        assertEquals("Mismatch in number of plans", expected.size(), actual.size());
+//
+//        for (T expectedPlan : expected) {
+//            boolean found = actual.stream().anyMatch(actualPlan ->
+//                    Objects.equals(expectedPlan.getPlanCode(), actualPlan.getPlanCode()) &&
+//                            Objects.equals(expectedPlan.getPlanDescription(), actualPlan.getPlanDescription()) &&
+//                            Objects.equals(expectedPlan.getPromotion1Code(), actualPlan.getPromotion1Code()) &&
+//                            Objects.equals(expectedPlan.getPromotion1Description(), actualPlan.getPromotion1Description())
+//            );
+//
+//            if (!found) {
+//                System.out.println("No match for expectedPlan: " + expectedPlan);
+//                actual.forEach(a -> System.out.println("Compared against: " + a));
+//            }
+//
+//            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
+//        }
+//    }
+//
+//    public static <T extends PlanType> void verifyResponsePrepayPlans(List<T> expected, List<T> actual) {
+//        expected.forEach(CommonUtil::normalizeBlankStringsToNull);
+//        actual.forEach(CommonUtil::normalizeBlankStringsToNull);
+//
+//        assertEquals("Mismatch in number of plans", expected.size(), actual.size());
+//
+//        for (T expectedPlan : expected) {
+//            boolean found = actual.stream().anyMatch(actualPlan ->
+//                    Objects.equals(expectedPlan.getPlanCode(), actualPlan.getPlanCode()) &&
+//                            Objects.equals(expectedPlan.getPlanDescription(), actualPlan.getPlanDescription())
+//
+//            );
+//            if (!found) {
+//                System.out.println("No match for expectedPlan: " + expectedPlan);
+//                actual.forEach(a -> System.out.println("Compared against: " + a));
+//            }
+//
+//            assertTrue("Expected plan not found: " + expectedPlan.getPlanCode(), found);
+//        }
+//    }
 
 }

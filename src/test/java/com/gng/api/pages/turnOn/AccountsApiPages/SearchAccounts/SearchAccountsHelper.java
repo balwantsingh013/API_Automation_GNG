@@ -7,17 +7,20 @@ import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
+import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.INACTIVE_UZBSSPP_STATUS_TC121E_2;
 
@@ -1002,11 +1005,9 @@ public class SearchAccountsHelper {
         payload.setSocialSecurityNumber(encryptData(ssn));
     }
 
-    public void encryptSSNAndFedTaxId(SearchAccountsRequest payload){
-        Optional.ofNullable(payload.getSocialSecurityNumber())
-                .ifPresent(ssn -> payload.setSocialSecurityNumber(encryptData(ssn)));
-        Optional.ofNullable(payload.getFederalTaxID())
-                .ifPresent(fedTaxId -> payload.setFederalTaxID(encryptData((String)fedTaxId)));
+    public void setPrepaySearchRequestParamsFromCustomerFile(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
     }
 
     public void setPrepayPlanTransactionId(SearchAccountsResponse response, String customerCode) {
@@ -1024,6 +1025,50 @@ public class SearchAccountsHelper {
                         + account.getTransactionID() + ", Status = " + enrollmentStatus);
                 testContext.setTransactionId(String.valueOf(account.getTransactionID()));
             }
+        }
+    }
+    public void getCustomerAndPremiseDetails(SearchAccountsRequest payload, Map<String, String> data ){
+        payload.setLoginID(data.get("loginID"));
+        payload.setCustomerLastName(data.get("customerLastName"));
+        payload.setCustomerFirstName(data.get("customerFirstName"));
+        payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+        payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(data.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+        payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+        payload.setPremisesUnitType(data.get("premisesUnitType"));
+        payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+        payload.setPremisesCity(data.get("premisesCity"));
+        payload.setPremisesStateCode(data.get("premisesStateCode"));
+        payload.setPremisesZipCode(data.get("premisesZipCode"));
+
+        String ssn = data.get("SSN");
+        if (ssn != null && !ssn.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+        }
+        String federalTaxId = data.get("federalTaxId");
+        if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("federalTaxId")));
+        }
+    }
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
+            String excelPath,
+            String sheetName,
+            E testLabel) {
+
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            // Find the first row where the "testConditions" column matches the enum name
+            return sheetData.stream()
+                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found for: " + testLabel.name()));
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
         }
     }
 }

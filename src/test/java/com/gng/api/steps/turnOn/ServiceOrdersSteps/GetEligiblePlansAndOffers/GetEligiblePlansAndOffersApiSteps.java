@@ -4,7 +4,6 @@ package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.shared.CustomerData;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.io.IOException;
@@ -14,7 +13,6 @@ import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOff
 public class GetEligiblePlansAndOffersApiSteps {
 
     private final TestContext testContext;
-    private CustomerData customerData;
     private final GetEligiblePlansAndOffersApiPage getEligiblePlansAndOffersApiPage;
 
     public GetEligiblePlansAndOffersApiSteps(TestContext testContext, GetEligiblePlansAndOffersApiPage getEligiblePlansAndOffersApiPage) {
@@ -238,8 +236,12 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(get_eligible_plans_and_offers, valueOf(testCondition));
     }
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} promotionCode for {string} condition")
-    public void PositiveEligiblePlansAndOffersApi(String promotionCode, String testCondition) {
-        getEligiblePlansAndOffersApiPage.validatePositiveTestConditionsFromExcelData(get_eligible_plans_and_offers, GlobalEnums.PromotionCode.valueOf(promotionCode), valueOf(testCondition));
+    public void PositiveEligiblePlansAndOffersWithPromotionCodeApi(String promotionCode, String testCondition) {
+        getEligiblePlansAndOffersApiPage.validatePositiveTestConditionsPromotionCodeFromExcelData(get_eligible_plans_and_offers, GlobalEnums.PromotionCode.valueOf(promotionCode), valueOf(testCondition));
+    }
+    @When("a request is made to the GetEligiblePlansAndOffers Api for {string} condition")
+    public void PositiveEligiblePlansAndOffersApi(String testCondition) {
+        getEligiblePlansAndOffersApiPage.validatePositivePrepayRequoteTestConditionsFromExcelData(get_eligible_plans_and_offers, valueOf(testCondition));
     }
     @Then("the response should contain the expected plans")
     public void verifyEligibleResponsePlans() {

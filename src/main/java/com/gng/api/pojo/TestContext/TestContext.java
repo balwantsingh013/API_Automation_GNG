@@ -61,8 +61,6 @@ public class TestContext {
     private Object getEligiblePlansAndOffersApiPage;
     private GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse;
     @Getter @Setter
-    private List<GetEligiblePlansAndOffersResponse.Plan> getValidationEligiblePlansAndOffersPlans;
-    @Getter @Setter
     private Object getDefaultPlansAndOffersApiPage;
     private GetDefaultPlansAndOffersResponse getDefaultPlansAndOffersResponse;
     @Getter @Setter

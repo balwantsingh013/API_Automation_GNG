@@ -1,22 +1,17 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.shared.CustomerData;
-import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
 
 import java.io.IOException;
 import java.util.*;
@@ -29,6 +24,8 @@ import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -1784,46 +1781,49 @@ public class GetEligiblePlansAndOffersHelper {
 
         }
     }
-    public void mapDataFromExcel(CustomerData customerData, GetEligiblePlansAndOffersRequest payload) {
-        Optional.ofNullable(customerData.getLoginID()).ifPresent(payload::setLoginID);
-        Optional.ofNullable(customerData.getCustomerType()).ifPresent(payload::setCustomerType);
-        Optional.ofNullable(customerData.getCustomerLastName()).ifPresent(payload::setCustomerLastName);
-        Optional.ofNullable(customerData.getCustomerMiddleName()).ifPresent(payload::setCustomerMiddleName);
-        Optional.ofNullable(customerData.getCustomerFirstName()).ifPresent(payload::setCustomerFirstName);
-        Optional.ofNullable(customerData.getAglcServiceLocationID()).ifPresent(payload::setAglcServiceLocationID);
-        Optional.ofNullable(customerData.getPremisesStreetNumber()).ifPresent(payload::setPremisesStreetNumber);
-        Optional.ofNullable(customerData.getPremisesStreetPreDirection()).ifPresent(payload::setPremisesStreetPreDirection);
-        Optional.ofNullable(customerData.getPremisesStreetName()).ifPresent(payload::setPremisesStreetName);
-        Optional.ofNullable(customerData.getPremisesStreetSuffix()).ifPresent(payload::setPremisesStreetSuffix);
-        Optional.ofNullable(customerData.getPremisesStreetPostDirection()).ifPresent(payload::setPremisesStreetPostDirection);
-        Optional.ofNullable(customerData.getPremisesUnitType()).ifPresent(payload::setPremisesUnitType);
-        Optional.ofNullable(customerData.getPremisesUnitNumber()).ifPresent(payload::setPremisesUnitNumber);
-        Optional.ofNullable(customerData.getPremisesCity()).ifPresent(payload::setPremisesCity);
-        Optional.ofNullable(customerData.getPremisesStateCode()).ifPresent(payload::setPremisesStateCode);
-        Optional.ofNullable(customerData.getPremisesZipCode()).ifPresent(payload::setPremisesZipCode);
-        Optional.ofNullable(customerData.getPremisesCountyCode()).ifPresent(payload::setPremisesCountyCode);
-        Optional.ofNullable(customerData.getAcnStatusIndicator()).ifPresent(payload::setAcnStatusIndicator);
-        Optional.ofNullable(customerData.getTenantLandlord()).ifPresent(payload::setTenantLandlord);
-        Optional.ofNullable(customerData.getCreditCheckOption()).ifPresent(payload::setCreditCheckOption);
-        Optional.of(customerData.getConfirmCreditCheck()).ifPresent(payload::setConfirmCreditCheck);
-        Optional.of(customerData.getMarketingPromotionCode()).ifPresent(payload::setMarketingPromotionCode);
-        Optional.ofNullable(customerData.getSocialSecurityNumber())
-                .ifPresent(ssn -> payload.setSocialSecurityNumber(AesEncryptionSteps.encryptData(ssn)));
-        Optional.ofNullable(customerData.getFederalTaxId())
-                .ifPresent(fedTaxId -> payload.setFederalTaxID(AesEncryptionSteps.encryptData(fedTaxId)));
+
+    public void getCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data ){
+        payload.setLoginID(data.get("loginID"));
+        payload.setCustomerType(data.get("customerType"));
+        payload.setCustomerLastName(data.get("customerLastName"));
+        payload.setCustomerFirstName(data.get("customerFirstName"));
+        payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+        payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+        payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(data.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+        payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+        payload.setPremisesUnitType(data.get("premisesUnitType"));
+        payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+        payload.setPremisesCity(data.get("premisesCity"));
+        payload.setPremisesStateCode(data.get("premisesStateCode"));
+        payload.setPremisesZipCode(data.get("premisesZipCode"));
+        payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+        payload.setAcnStatusIndicator(data.get("acnStatusIndicator"));
+        payload.setTenantLandlord(data.get("tenantLandlord"));
+        payload.setCreditCheckOption(data.get("creditCheckOption"));
+        payload.setConfirmCreditCheck(Boolean.parseBoolean(data.get("confirmCreditCheck")));
+
+        String ssn = data.get("SSN");
+        if (ssn != null && !ssn.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+        }
+        String federalTaxId = data.get("federalTaxId");
+        if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("federalTaxId")));
+        }
     }
 
-    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, CustomerData customerData, GlobalEnums.PromotionCode promotionCode,
+    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, GlobalEnums.PromotionCode promotionCode,
                                  GetEligiblePlansAndOffersApiLabel testCondition) {
-        mapDataFromExcel(customerData, payload);
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
         payload.setMarketingPromotionCode(promotionCode.getValue());
     }
 
-    public List<GetEligiblePlansAndOffersResponse.Plan> getValidationEligiblePlansAndOffers() {
-        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
-        Object rawResult = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
-
-        return convertObjectToPojo(rawResult, new TypeReference<>() {});
+    public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
     }
 
     public void verifyPrepayPlanReturned(GlobalEnums.PlanCode planCode) {
@@ -1832,7 +1832,6 @@ public class GetEligiblePlansAndOffersHelper {
                 .getPlans()
                 .stream()
                 .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue()))
-                //.filter(p -> Boolean.TRUE.equals(p.getPrepayPlanIndicator()))
                 .toList();
 
         plans.stream()
@@ -1840,15 +1839,67 @@ public class GetEligiblePlansAndOffersHelper {
                 .orElseThrow(() -> new AssertionError("Prepay plan not found."));
     }
 
-    public static <T> T convertObjectToPojo(Object source, TypeReference<T> typeRef) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        try {
-            return mapper.convertValue(source, typeRef);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Failed to map object: " + e.getMessage(), e);
+    public void verifyResidentialPlansReceivedAgainstDatabase() {
+        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
+        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
+        GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
+
+        for (Map<String, Object> eligiblePlan : eligiblePlansList) {
+            comparePlanFields(eligiblePlan, response.getData().getPlans());
         }
     }
+
+    public static void comparePlanFields(Map<String, Object> eligiblePlan, List<GetEligiblePlansAndOffersResponse.Plan> plans) {
+        String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
+        String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
+        String dbPromo1Code = normalize(eligiblePlan.get("promotion1Code"));
+        String dbPromo1Desc = normalize(eligiblePlan.get("promotion1Description"));
+
+       // List<Plans> plans = response.getData().getPlans();
+        boolean matchFound = false;
+
+        for (GetEligiblePlansAndOffersResponse.Plan plan : plans) {
+            if (plan.getPlanCode() != null && plan.getPlanCode().trim().equals(dbPlanCode)) {
+                matchFound = true;
+
+                String apiPlanCode = plan.getPlanCode().trim();
+                String apiPlanDescription = normalize(plan.getPlanDescription());
+                String apiPromo1Code = normalize(plan.getPromotion1Code());
+                String apiPromo1Desc = normalize(plan.getPromotion1Description());
+
+                Assert.assertEquals(apiPlanCode, dbPlanCode, "Plan code mismatch");
+                Assert.assertEquals(apiPlanDescription, dbPlanDescription, "Plan description mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Code, dbPromo1Code, "Promotion1 code mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Desc, dbPromo1Desc, "Promotion1 description mismatch for planCode: " + dbPlanCode);
+
+                break;
+            }
+        }
+        Assert.assertTrue(matchFound, "No matching planCode found in API response for: " + dbPlanCode);
+    }
+
+    private static String normalize(Object value) {
+        return value == null ? "" : value.toString().trim();
+    }
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
+            String excelPath,
+            String sheetName,
+            E testLabel) {
+
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            // Find the first row where the "testConditions" column matches the enum name
+            return sheetData.stream()
+                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found for: " + testLabel.name()));
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
+        }
+    }
+
 }

@@ -1,20 +1,16 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
-import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel;
+import org.testng.Assert;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.GET_DEFAULT_PLANS_AND_OFFERS_TC_154;
 
@@ -54,22 +50,47 @@ public class GetDefaultPlansAndOffersHelper {
             payload.setLoginID(acnLogin);
         }
     }
-    public List<GetDefaultPlansAndOffersResponse.Plan> getValidationDefaultPlansAndOffers() {
-        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
-        Object rawResult = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
 
-        return convertObjectToPojo(rawResult, new TypeReference<>() {});
+    public void verifyResidentialDefaultPlansReceivedAgainstDatabase() {
+        String controlNum = ApplicationContext.get().getDbAction().getControlNumber();
+        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
+        GetDefaultPlansAndOffersResponse response = testContext.getGetDefaultPlansAndOffersResponse();
+
+        for (Map<String, Object> eligiblePlan : eligiblePlansList) {
+            comparePlanFields(eligiblePlan, response.getData().getPlans());
+        }
     }
 
-    public static <T> T convertObjectToPojo(Object source, TypeReference<T> typeRef) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        try {
-            return mapper.convertValue(source, typeRef);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Failed to map object: " + e.getMessage(), e);
+    public static void comparePlanFields(Map<String, Object> eligiblePlan, List<GetDefaultPlansAndOffersResponse.Plan> plans) {
+        String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
+        String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
+        String dbPromo1Code = normalize(eligiblePlan.get("promotion1Code"));
+        String dbPromo1Desc = normalize(eligiblePlan.get("promotion1Description"));
+
+        // List<Plans> plans = response.getData().getPlans();
+        boolean matchFound = false;
+
+        for (GetDefaultPlansAndOffersResponse.Plan plan : plans) {
+            if (plan.getPlanCode() != null && plan.getPlanCode().trim().equals(dbPlanCode)) {
+                matchFound = true;
+
+                String apiPlanCode = plan.getPlanCode().trim();
+                String apiPlanDescription = normalize(plan.getPlanDescription());
+                String apiPromo1Code = normalize(plan.getPromotion1Code());
+                String apiPromo1Desc = normalize(plan.getPromotion1Description());
+
+                Assert.assertEquals(apiPlanCode, dbPlanCode, "Plan code mismatch");
+                Assert.assertEquals(apiPlanDescription, dbPlanDescription, "Plan description mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Code, dbPromo1Code, "Promotion1 code mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Desc, dbPromo1Desc, "Promotion1 description mismatch for planCode: " + dbPlanCode);
+
+                break;
+            }
         }
+        Assert.assertTrue(matchFound, "No matching planCode found in API response for: " + dbPlanCode);
+    }
+
+    private static String normalize(Object value) {
+        return value == null ? "" : value.toString().trim();
     }
 }

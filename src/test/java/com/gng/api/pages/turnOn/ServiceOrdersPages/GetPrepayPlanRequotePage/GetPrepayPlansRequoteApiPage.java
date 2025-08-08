@@ -1,11 +1,10 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetPrepayPlanRequotePage;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.shared.CustomerData;
-import com.gng.api.steps.BaseSteps;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetPrepayPlanRequote.GetPrepayPlansRequoteApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
@@ -27,7 +26,7 @@ public class GetPrepayPlansRequoteApiPage extends BasePage {
         GetPrepayPlansRequoteRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
 
-        helper.setRequestParams(payload, testCondition);
+        helper.setRequestParams(payload);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_PREPAY_PLANS_REQUOTE, 200);
         GetPrepayPlansRequoteResponse getPrepayPlansRequoteResponse = deserializeResponseToPojo(response, GetPrepayPlansRequoteResponse.class);
@@ -40,7 +39,7 @@ public class GetPrepayPlansRequoteApiPage extends BasePage {
         helper.expirePrepayQuoteIfOpenDateInFuture(testContext.getSearchAccountsResponse(), testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
     }
 
-    public void verifyResponsePlans(){
-        BaseSteps.verifyResponsePrepayPlans(helper.getValidationPrepayPlans(), testContext.getGetPrepayPlansRequoteResponse().getData().getPlans());
+    public void verifyResponsePlans(GlobalEnums.PlanCode planCode){
+        helper.verifyResidentialPrepayPlansReceivedAgainstDatabase(planCode);
     }
 }

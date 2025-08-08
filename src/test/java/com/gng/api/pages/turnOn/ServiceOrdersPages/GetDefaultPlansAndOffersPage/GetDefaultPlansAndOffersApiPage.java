@@ -32,12 +32,11 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
         GetDefaultPlansAndOffersResponse getDefaultPlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetDefaultPlansAndOffersResponse.class);
         testContext.setGetDefaultPlansAndOffersResponse(getDefaultPlansAndOffersResponse);
-        testContext.setGetValidationDefaultPlansAndOffersPlans(helper.getValidationDefaultPlansAndOffers());
+        //testContext.setGetValidationDefaultPlansAndOffersPlans(helper.getValidationDefaultPlansAndOffers());
         testContext.setResponse(offersResponse);
     }
 
     public void verifyResponsePlans(){
-        //BaseSteps.verifyResponsePlans(testContext.getGetValidationEligiblePlansAndOffersPlans(), testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans());
-        BaseSteps.verifyResponsePlans(helper.getValidationDefaultPlansAndOffers(), testContext.getGetDefaultPlansAndOffersResponse().getData().getPlans());
+        helper.verifyResidentialDefaultPlansReceivedAgainstDatabase();
     }
 }

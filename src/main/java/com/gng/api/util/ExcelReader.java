@@ -86,7 +86,7 @@ public class ExcelReader {
 
             // Find the first row where the "testConditions" column matches the enum name
             Map<String, String> rawRow = sheetData.stream()
-                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testConditions")))
+                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException(
                             "No matching testConditions found for: " + testLabel.name()));
@@ -101,7 +101,7 @@ public class ExcelReader {
             }
 
             // Normalise empty strings to null, if desired
-            CommonUtil.normalizeBlankStringsToNull(rowData);
+            //CommonUtil.normalizeBlankStringsToNull(rowData);
 
             // Map to POJO using Jackson, ignoring unknown properties
             ObjectMapper mapper = new ObjectMapper();

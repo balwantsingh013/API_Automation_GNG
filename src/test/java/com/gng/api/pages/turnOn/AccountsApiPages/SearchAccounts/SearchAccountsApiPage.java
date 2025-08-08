@@ -1,15 +1,11 @@
 package com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts;
 
 
-import com.gng.api.constants.TestConstant;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.pojo.shared.CustomerData;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
-import com.gng.api.util.CommonUtil;
-import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
@@ -554,11 +550,9 @@ public class SearchAccountsApiPage extends BasePage {
 
     public void verifyPrepayTransactionIdExists(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
 
-        CustomerData customerData = ExcelReader.loadRowFromExcelToCustomerData(TestConstant.CUSTOMER_DATA, TestConstant.CUSTOMER_SHEET_NAME, testCondition, CustomerData.class);
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        CommonUtil.mapDataToRequestFromExcel(customerData, payload);
-        helper.encryptSSNAndFedTaxId(payload);
+        helper.setPrepaySearchRequestParamsFromCustomerFile(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         SearchAccountsResponse searchAccountsResponse = deserializeResponseToPojo(response, SearchAccountsResponse.class);

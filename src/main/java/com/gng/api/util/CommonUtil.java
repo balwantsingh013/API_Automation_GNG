@@ -1,10 +1,6 @@
 package com.gng.api.util;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gng.api.pojo.shared.PlanType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -59,7 +55,6 @@ public class CommonUtil {
         return LocalDateTime.now().format(formatter);
     }
 
-
     public static String removeFieldFromJson(Object object, String fieldToRemove) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -96,74 +91,6 @@ public class CommonUtil {
             log.error("Failed to remove fields from JSON: {}", e.getMessage(), e);
             return null;
         }
-    }
-
-    public static void normalizeBlankStringsToNull(Object object) {
-        if (object == null) {
-            return;
-        }
-
-        Class<?> clazz = object.getClass();
-        while (clazz != null) {
-            for (Field field : clazz.getDeclaredFields()) {
-                if (field.getType() == String.class) {
-                    field.setAccessible(true);
-                    try {
-                        Object value = field.get(object);
-                        if (value != null && ((String) value).trim().isEmpty()) {
-                            field.set(object, null);
-                        }
-                    } catch (IllegalAccessException e) {
-                        // Optional: log or rethrow depending on your setup
-                        System.err.println("Failed to process field: " + field.getName());
-                    }
-                }
-            }
-            clazz = clazz.getSuperclass(); // Handle inheritance
-        }
-    }
-
-    public static void mapDataToRequestFromExcel(Object source, Object target) {
-        if (source == null || target == null) {
-            return;
-        }
-        Class<?> srcClass = source.getClass();
-        Class<?> tgtClass = target.getClass();
-
-        // walk the class hierarchy for the source (handle superclasses)
-        while (srcClass != null) {
-            for (Field srcField : srcClass.getDeclaredFields()) {
-                try {
-                    srcField.setAccessible(true);
-                    Object value = srcField.get(source);
-                    if (value == null) {
-                        continue;  // don't copy nulls
-                    }
-                    // try to find a field with the same name in the target class hierarchy
-                    Field tgtField = findFieldInHierarchy(tgtClass, srcField.getName());
-                    if (tgtField != null
-                            && tgtField.getType().isAssignableFrom(srcField.getType())) {
-                        tgtField.setAccessible(true);
-                        tgtField.set(target, value);
-                    }
-                } catch (IllegalAccessException ignore) {
-                    // ignore inaccessible fields
-                }
-            }
-            srcClass = srcClass.getSuperclass();
-        }
-    }
-
-    private static Field findFieldInHierarchy(Class<?> clazz, String name) {
-        Class<?> current = clazz;
-        while (current != null) {
-            try {
-                return current.getDeclaredField(name);
-            } catch (NoSuchFieldException e) {
-                current = current.getSuperclass();
-            }
-        }
-        return null;
     }
 }
 

@@ -1,8 +1,5 @@
 package com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.gng.api.pojo.shared.PlanType;
-import com.gng.api.util.YesNoBooleanDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -99,7 +96,7 @@ public class GetEligiblePlansAndOffersResponse {
 	@Data
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class Plan implements PlanType{
+	public static class Plan {
 		private String planCode;
 		private String planDescription;
 		private int sortOrder;
@@ -115,10 +112,8 @@ public class GetEligiblePlansAndOffersResponse {
 		private String marketingTerms;
 		private String offerTerms;
 		private String externalTerms;
-		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
-		private Boolean restrictedIndicator;
-		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
-		private Boolean prepayPlanIndicator;
+		private boolean restrictedIndicator;
+		private boolean prepayPlanIndicator;
 		private Object prepayEstimateAmountDue;
 		private Object prepayEstimatedConsumption;
 		private String prepayCustomerPayByDate;
@@ -129,8 +124,7 @@ public class GetEligiblePlansAndOffersResponse {
 		private Object newPrepayAmount;
 		private Object newPrepayAmountDue;
 		private Object newPrepayMinimumPaymentRequired;
-		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
-		private Boolean payInAdvanceIndicator;
+		private boolean payInAdvanceIndicator;
 		private Object guaranteedBillPlanQuote;
 		private int newPrepayGuaranteedBillAmount;
 		private String guaranteedBillPlanErrorCode;
@@ -139,10 +133,8 @@ public class GetEligiblePlansAndOffersResponse {
 		private String promotion1Description;
 		private String promotion1Terms;
 		private String promotion1MarketingMessage;
-		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
-		private Boolean promotion1TransferIndicator;
-		@JsonDeserialize(using = YesNoBooleanDeserializer.class)
-		private Boolean promotion1VisaIndicator;
+		private boolean promotion1TransferIndicator;
+		private boolean promotion1VisaIndicator;
 		private String promotion2Code;
 		private String promotion2Description;
 		private String promotion2Terms;
@@ -151,21 +143,6 @@ public class GetEligiblePlansAndOffersResponse {
 		private Object promotion2VisaIndicator;
 		private ArrayList<EnrollmentStatus> enrollmentStatus;
 		private Object depositAmount;
-		@Override
-		public String getPlanCode() {
-			return planCode;
-		}
-		@Override
-		public String getPlanDescription() {
-			return planDescription;
-		}
-		@Override
-		public String getPromotion1Code() {
-			return promotion1Code;
-		}
-		@Override
-		public String getPromotion1Description() {
-			return promotion1Description;
-		}
+
 	}
 }
