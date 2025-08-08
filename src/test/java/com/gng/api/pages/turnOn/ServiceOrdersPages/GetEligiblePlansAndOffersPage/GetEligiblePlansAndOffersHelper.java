@@ -244,6 +244,52 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setPremisesUnitNumber(premisesUnitNumber);
     }
 
+    public void verifyPlansReceivedInResponseAgainstDatabase() {
+        Map<String, Object> controlNumber = ApplicationContext.get().getDbAction().getControlNumber();
+        String controlNum = controlNumber.get("UZTCOTT_CONTROL_NUM").toString();
+
+        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getEligiblePlansAndOffersCommercial(controlNum);
+        GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
+
+        for (Map<String, Object> eligiblePlan : eligiblePlansList) {
+            comparePlanFields(eligiblePlan, response);
+        }
+    }
+
+    public static void comparePlanFields(Map<String, Object> eligiblePlan, GetEligiblePlansAndOffersResponse response) {
+        String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
+        String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
+        String dbPromo1Code = normalize(eligiblePlan.get("promotion1Code"));
+        String dbPromo1Desc = normalize(eligiblePlan.get("promotion1Description"));
+
+        List<Plans> plans = response.getData().getPlans();
+        boolean matchFound = false;
+
+        for (Plans plan : plans) {
+            if (plan.getPlanCode() != null && plan.getPlanCode().trim().equals(dbPlanCode)) {
+                matchFound = true;
+
+                String apiPlanCode = plan.getPlanCode().trim();
+                String apiPlanDescription = normalize(plan.getPlanDescription());
+                String apiPromo1Code = normalize(plan.getPromotion1Code());
+                String apiPromo1Desc = normalize(plan.getPromotion1Description());
+
+                Assert.assertEquals(apiPlanCode, dbPlanCode, "Plan code mismatch");
+                Assert.assertEquals(apiPlanDescription, dbPlanDescription, "Plan description mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Code, dbPromo1Code, "Promotion1 code mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Desc, dbPromo1Desc, "Promotion1 description mismatch for planCode: " + dbPlanCode);
+
+                break;
+            }
+        }
+
+        Assert.assertTrue(matchFound, "No matching planCode found in API response for: " + dbPlanCode);
+    }
+
+    private static String normalize(Object value) {
+        return value == null ? "" : value.toString().trim();
+    }
+
     public void payloadBasedOnTCsCommercial(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         setTheFieldToEmptyForCommercialScenarios(payload);
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -282,7 +328,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342:
-                data = allRows.get(1946);
+                data = allRows.get(9612);
                 populateCommonFields(payload, data);
                 payload.setEmailAddress(FakerDataGenerator.generateEmail());
                 break;
@@ -292,10 +338,9 @@ public class GetEligiblePlansAndOffersHelper {
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
                 payload.setEnrollmentSource(FAX.getValue());
-
                 parseBillingAddress(payload, data.getOrDefault("BILLING ADDRESS", ""));
                 parsePhoneDetails(payload, data.getOrDefault("PHONE NUMBER DETAILS", ""));
-
+                payload.setSeasonalSavingsProgramIndicator(true);
                 payload.setBillingCity(data.get("BILLING CITY"));
                 payload.setBillingStateCode(data.get("BILLING STATE"));
                 payload.setBillingZipCode(data.get("BILLING ZIP"));
@@ -317,8 +362,15 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCreditCheckOption(NO.getValue());
                 break;
 
+            case COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345:
+                data = allRows.get(31);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
+                break;
+
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347:
-                data = allRows.get(184);
+                data = allRows.get(1064);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
                 break;
@@ -339,7 +391,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350:
-                data = allRows.get(4697);
+                data = allRows.get(4695);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
                 break;
@@ -355,10 +407,7 @@ public class GetEligiblePlansAndOffersHelper {
                 data = allRows.get(5093);
                 parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 populateCommonFields(payload, data);
-
-                // Set credit check business name from a different row
-                Map<String, String> creditCheckData = allRows.get(4912);
-                payload.setCreditCheckBusinessName(creditCheckData.get("BUSINESS NAME"));
+                payload.setCreditCheckBusinessName(data.get("BUSINESS NAME"));
                 break;
         }
     }
