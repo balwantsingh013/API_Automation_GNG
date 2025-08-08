@@ -1,5 +1,6 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.constants.TestConstant;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
@@ -410,16 +411,16 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
             testContext.setResponse(response);
         }
         }
-    public void validatePositiveTestConditionsFromExcelData(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void validatePositiveTestConditionsFromExcelData(GetEligiblePlansAndOffersApiLabel apiLabel, GlobalEnums.PromotionCode promotionCode, GetEligiblePlansAndOffersApiLabel testCondition) {
         customerData = ExcelReader.loadRowFromExcelToCustomerData( TestConstant.CUSTOMER_DATA,TestConstant.CUSTOMER_SHEET_NAME, testCondition, CustomerData.class);
 
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        helper.setRequestParams(payload, customerData, testCondition);
+        helper.setRequestParams(payload, customerData, promotionCode, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
-        //  testContext.setGetValidationEligiblePlansAndOffersPlans(helper.getValidationEligiblePlansAndOffers());
+          //testContext.setGetValidationEligiblePlansAndOffersPlans(helper.getValidationEligiblePlansAndOffers());
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
         testContext.setResponse(offersResponse);
     }
@@ -429,8 +430,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         BaseSteps.verifyResponsePlans(helper.getValidationEligiblePlansAndOffers(), testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans());
     }
 
-    public void verifyResponsePlansContainsPrepayPlan(){
-        helper.verifyPrepayPlanReturned();
+    public void verifyResponsePlansContainsPrepayPlan(GlobalEnums.PlanCode planCode){
+        helper.verifyPrepayPlanReturned(planCode);
     }
 
 }

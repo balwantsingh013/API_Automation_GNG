@@ -3,6 +3,7 @@ package com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts;
 
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -1013,15 +1014,11 @@ public class SearchAccountsHelper {
             throw new IllegalArgumentException("SearchAccountsResponse is null or incomplete");
         }
 
-        for (SearchAccountsResponse.Account account : response.getData().getAccounts()) {
-            String enrollmentStatus = account.getEnrollmentState(); // or getEnrollmentStatus()
-
+        for (Account account : response.getData().getAccounts()) {
+            String enrollmentStatus = account.getEnrollmentState();
             if (account.isPrepayPlanIndicator() ||
                     (!account.getPrepayCustomerPayByDate().trim().isEmpty()
                     && Objects.equals(account.getCustomerCode(), customerCode))) {
-//            if (account.getPrepayCustomerPayByDate() != null
-//                    && !account.getPrepayCustomerPayByDate().trim().isEmpty()
-//                    && Objects.equals(account.getCustomerCode(), customerCode)) {
 
                 System.out.println("Prepay account found: TransactionID = "
                         + account.getTransactionID() + ", Status = " + enrollmentStatus);

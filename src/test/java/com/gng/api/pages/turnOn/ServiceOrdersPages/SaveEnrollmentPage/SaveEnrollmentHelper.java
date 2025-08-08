@@ -468,7 +468,7 @@ public class SaveEnrollmentHelper {
 
     public void setPrePayRequestParams(SaveEnrollmentRequest payload, GlobalEnums.PlanCode planCode){
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setEnrollmentStatus(GlobalEnums.EnrollmentStatus.PREPAY_REQUIRED.getValue());
+        payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
         payload.setTransactionType(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionType());
         payload.setBillingPlan("");
 

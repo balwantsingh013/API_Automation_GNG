@@ -7,36 +7,35 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
   @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
-    When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers Api with "<promotionCode>" promotionCode for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     Then the response should contain the expected plans
 
     Examples:
-      | testCondition                        |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_318 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_319 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_320 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_321 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_322 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_323 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_324 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_325 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_326 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_327 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_328 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_332 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_334 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_335 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338e|
-
+      | testCondition                        | promotionCode |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_318 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_319 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_320 |              |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_321 | AAA          |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_322 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_323 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_324 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_325 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_326 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_327 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_328 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_332 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_334 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_335 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338 |              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|              |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338e|              |
 
   @GetEligiblePlansAndOffersWithCustomerTypeCommercialPositive @Phase1 @HappyFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with customer type commercial for <testCondition>

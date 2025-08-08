@@ -1813,9 +1813,10 @@ public class GetEligiblePlansAndOffersHelper {
                 .ifPresent(fedTaxId -> payload.setFederalTaxID(AesEncryptionSteps.encryptData(fedTaxId)));
     }
 
-    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, CustomerData customerData,
+    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, CustomerData customerData, GlobalEnums.PromotionCode promotionCode,
                                  GetEligiblePlansAndOffersApiLabel testCondition) {
         mapDataFromExcel(customerData, payload);
+        payload.setMarketingPromotionCode(promotionCode.getValue());
     }
 
     public List<GetEligiblePlansAndOffersResponse.Plan> getValidationEligiblePlansAndOffers() {
@@ -1825,12 +1826,13 @@ public class GetEligiblePlansAndOffersHelper {
         return convertObjectToPojo(rawResult, new TypeReference<>() {});
     }
 
-    public void verifyPrepayPlanReturned() {
+    public void verifyPrepayPlanReturned(GlobalEnums.PlanCode planCode) {
         List<GetEligiblePlansAndOffersResponse.Plan> plans = testContext.getGetEligiblePlansAndOffersResponse()
                 .getData()
                 .getPlans()
                 .stream()
-                .filter(p -> Boolean.TRUE.equals(p.getPrepayPlanIndicator()))
+                .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue()))
+                //.filter(p -> Boolean.TRUE.equals(p.getPrepayPlanIndicator()))
                 .toList();
 
         plans.stream()

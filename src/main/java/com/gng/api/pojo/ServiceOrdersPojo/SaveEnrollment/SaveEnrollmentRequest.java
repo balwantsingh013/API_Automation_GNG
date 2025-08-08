@@ -36,4 +36,5 @@ public class SaveEnrollmentRequest  {
     private Object sspParticipantCode;
     private String currentMarketerCode;
     private Object marketerReferenceData;
+    private String marketerReferenceNumber;
 }

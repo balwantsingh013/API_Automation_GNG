@@ -8,6 +8,7 @@ import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
@@ -57,7 +58,7 @@ public class GetPrepayPlansRequoteHelper {
             throw new IllegalArgumentException("SearchAccountsResponse is null or incomplete");
         }
 
-        Optional<SearchAccountsResponse.Account> accountOpt = response.getData().getAccounts().stream()
+        Optional<Account> accountOpt = response.getData().getAccounts().stream()
                 .filter(account ->
                         account.isPrepayPlanIndicator() ||
                                 (account.getPrepayCustomerPayByDate() != null &&
@@ -70,7 +71,7 @@ public class GetPrepayPlansRequoteHelper {
             throw new IllegalStateException("No account with prepayPlanIndicator=true found");
         }
 
-        SearchAccountsResponse.Account account = accountOpt.get();
+        Account account = accountOpt.get();
         Map<String, Object> quote = ApplicationContext.get().getDbAction().getPrepayQuote(account.getCustomerCode());
 
         if (quote == null || !quote.containsKey("UABOPEN_DUE_DATE")) {

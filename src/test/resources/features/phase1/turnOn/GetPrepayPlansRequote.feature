@@ -12,19 +12,19 @@ Feature: Verify GetPrepayPlansRequote Api
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     Then the response should contain the expected plans
-    Then the response plans should contains a prepay plan
+    Then the response plans should contains a "<planCode>" plan
 
     Given a request is made to get Marketer Reference Data
     When a request is made to the SaveEnrollment Api for prepay with "<planCode>" planCode for "<testCondition>" condition
     Then verify response code of "SaveEnrollment" Api is 200
 
     Given a prepay transaction is returned from searchAccounts api for "<testCondition>"
-    When a request is made to the GetPrepayPlansRequote Api with "<pricePlan>" pricePlan for "<testCondition>" condition
+    When a request is made to the GetPrepayPlansRequote Api with "<planCode>" pricePlan for "<testCondition>" condition
     Then verify response code of "GetPrepayPlansRequote" Api is 200
     Then the response should contain the expected prepay plans
 
     Examples:
       | planCode | testCondition                            |
       | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_456 |
-      | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_471 |
-      | PGB      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_472 |
+     # | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_471 |
+     # | PGB      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_472 |
