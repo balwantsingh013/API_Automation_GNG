@@ -1006,6 +1006,7 @@ public class SearchAccountsHelper {
     }
 
     public void setPrepaySearchRequestParamsFromCustomerFile(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
     }

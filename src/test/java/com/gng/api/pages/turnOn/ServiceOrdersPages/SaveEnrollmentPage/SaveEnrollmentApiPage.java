@@ -125,9 +125,6 @@ public class SaveEnrollmentApiPage extends BasePage {
 
     public void savePrepayEnrollmentFromCustomerData(SaveEnrollmentApiLabel apiLabel, GlobalEnums.PlanCode planCode, SaveEnrollmentApiLabel testCondition) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
-        //CustomerData customerData = ExcelReader.loadRowFromExcelToCustomerData(TestConstant.CUSTOMER_DATA, TestConstant.CUSTOMER_SHEET_NAME, testCondition, CustomerData.class);
-        //CommonUtil.mapDataToRequestFromExcel(customerData, payload);
-
         helper.setPrePayRequestParams(payload, planCode, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);

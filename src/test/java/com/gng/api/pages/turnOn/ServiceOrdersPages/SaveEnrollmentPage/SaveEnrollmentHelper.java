@@ -510,13 +510,9 @@ public class SaveEnrollmentHelper {
         LocalDate serviceDate = LocalDate.parse(prepayPlan.getPrepayCustomerPayByDate(),formatter);
         String serviceDateString = serviceDate.minusDays(1).format(formatter);
         payload.setCustomerRequestedServiceDate(serviceDateString);
-        payload.setMarketerReferenceNumber(String.valueOf(testContext.getMarketerReferenceData()));
+        payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
     }
 
-    public void getCustomerDetails(SaveEnrollmentRequest payload, Map<String, String> data ){
-        payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
-
-    }
     public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
             String excelPath,
             String sheetName,

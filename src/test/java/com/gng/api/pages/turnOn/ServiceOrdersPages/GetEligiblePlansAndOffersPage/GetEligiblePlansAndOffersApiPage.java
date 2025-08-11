@@ -12,24 +12,11 @@ import org.apache.http.client.methods.HttpPost;
 import java.io.IOException;
 
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
-import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
-import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428;
 
 public class GetEligiblePlansAndOffersApiPage extends BasePage {
     private final GetEligiblePlansAndOffersHelper helper;
-    public static String ssn_tc_318 = "666252963";
-    public static String ssn_tc_319 = "666495180";
-    public static String ssn_tc_320 = "666066117";
-    public static String ssn_tc_321 = "666206220";
-    public static String ssn_tc_322 = "666314835";
-    public static String ssn_tc_323 = "666266076";
-    public static String ssn_tc_324 = "666621606";
-    public static String ssn_tc_325 = "666085827";
-    public static String federal_tax_id_326 = "132581802";
-    public static String ssn_tc_327 = "666435795";
-    public static String ssn_tc_328 = "666182004";
 
     public GetEligiblePlansAndOffersApiPage(TestContext testContext) {
         super(testContext);
