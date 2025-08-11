@@ -20,7 +20,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/phase1/turnOn"
+                "src/test/resources/features/phase1/turnOff"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
@@ -80,8 +80,8 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
         // Determine execution mode
         boolean shouldRunParallel = !"none".equalsIgnoreCase(parallelMode) &&
-                !threadCount.equals("1") &&
-                Integer.parseInt(threadCount) > 1;
+                                    !threadCount.equals("1") &&
+                                    Integer.parseInt(threadCount) > 1;
 
         if (shouldRunParallel) {
             configureParallelExecution(parallelMode, threadCount, dataProviderThreadCount, parallelCount);
