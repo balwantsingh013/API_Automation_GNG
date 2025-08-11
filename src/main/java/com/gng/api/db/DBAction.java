@@ -158,12 +158,6 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public List<Map<String, Object>> getEligiblePlansAndOffersCommercial(String controlNumber) {
-        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT;
-        logQueryInAllure("Get eligible plans and offers", query);
-        return jdbcTemplate.queryForList(query, controlNumber);
-    }
-
     public List<Map<String, Object>> getUserRoleIDs(String userId) {
         String query = DBQuery.GET_USER_ROLE_IDS;
         logQueryInAllure("Get user role IDs", query);

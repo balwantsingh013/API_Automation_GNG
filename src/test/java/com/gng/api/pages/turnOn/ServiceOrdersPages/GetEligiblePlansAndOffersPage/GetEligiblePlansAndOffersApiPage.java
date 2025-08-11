@@ -33,10 +33,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
     }
 
-    public void verifyPlansReceivedInResponse(){
-        helper.verifyPlansReceivedInResponseAgainstDatabase();
-    }
-
     public void validateInvalidRequestIDCasesTC155_157(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel requestID) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestIDBasedOnTypeTC155_157(payload, requestID);
