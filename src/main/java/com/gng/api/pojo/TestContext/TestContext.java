@@ -77,8 +77,6 @@ public class TestContext {
     @Getter @Setter
     private Object searchAccountsApiPage;
     private SearchAccountsResponse searchAccountsResponse;
-    @Getter @Setter
-    private String transactionId;
 
     public void storeRequestId(String requestId) {
         this.requestId = requestId;

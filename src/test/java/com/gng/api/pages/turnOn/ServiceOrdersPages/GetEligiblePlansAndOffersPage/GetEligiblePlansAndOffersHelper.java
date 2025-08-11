@@ -1880,19 +1880,6 @@ public class GetEligiblePlansAndOffersHelper {
         getCustomerAndPremiseDetails(payload, customerData);
     }
 
-    public void verifyPrepayPlanReturned(GlobalEnums.PlanCode planCode) {
-        List<Plans> plans = testContext.getGetEligiblePlansAndOffersResponse()
-                .getData()
-                .getPlans()
-                .stream()
-                .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue()))
-                .toList();
-
-        plans.stream()
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Prepay plan not found."));
-    }
-
     public void verifyResidentialPlansReceivedAgainstDatabase() {
         Map<String, Object> controlNumberResult = ApplicationContext.get().getDbAction().getControlNumber();
         String controlNum = controlNumberResult.get("UZTCOTT_CONTROL_NUM").toString();
@@ -1902,6 +1889,20 @@ public class GetEligiblePlansAndOffersHelper {
         for (Map<String, Object> eligiblePlan : eligiblePlansList) {
             comparePlanFields(eligiblePlan, response);
         }
+    }
+
+    public void verifyPlanReturned(GlobalEnums.PlanCode planCode) {
+        List<Plans> plans = testContext.getGetEligiblePlansAndOffersResponse()
+                .getData()
+                .getPlans()
+                .stream()
+                .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue()))
+                .toList();
+
+        plans.stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new AssertionError("Plan not found: " + planCode.getValue()));
     }
 
     public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {

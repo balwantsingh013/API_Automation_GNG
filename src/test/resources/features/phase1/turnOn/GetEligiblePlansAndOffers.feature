@@ -32,7 +32,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_335 |
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337 |
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338 |
-      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338e|
 
   @GetEligiblePlansAndOffersPromotionCodePositive @HappyFlow

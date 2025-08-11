@@ -36,6 +36,7 @@ import static org.testng.AssertJUnit.assertTrue;
 @Slf4j
 public class GetPrepayPlansRequoteHelper {
     private final TestContext testContext;
+    private String transactionId;
 
     public GetPrepayPlansRequoteHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -50,9 +51,25 @@ public class GetPrepayPlansRequoteHelper {
    }
 
     public void setRequestParams(GetPrepayPlansRequoteRequest payload) {
-        payload.setTransactionID(testContext.getTransactionId());
-         payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
 
+        if (testContext.getSearchAccountsResponse() == null || testContext.getSearchAccountsResponse().getData() == null || testContext.getSearchAccountsResponse().getData().getAccounts() == null) {
+            throw new IllegalArgumentException("SearchAccountsResponse is null or incomplete");
+        }
+        for (Account account : testContext.getSearchAccountsResponse().getData().getAccounts()) {
+            String enrollmentStatus = account.getEnrollmentState();
+            if (account.isPrepayPlanIndicator() ||
+                    (!account.getPrepayCustomerPayByDate().trim().isEmpty()
+                            && Objects.equals(account.getCustomerCode(), testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode()))) {
+
+                System.out.println("Prepay account found: TransactionID = "
+                        + account.getTransactionID() + ", Status = " + enrollmentStatus);
+
+                transactionId = String.valueOf(account.getTransactionID());
+                break;
+            }
+        }
+        payload.setTransactionID(transactionId);
+        payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
     }
 
     public void expirePrepayQuoteIfOpenDateInFuture(SearchAccountsResponse response, String customerCode) {
@@ -100,7 +117,6 @@ public class GetPrepayPlansRequoteHelper {
     }
 
     public void verifyResidentialPrepayPlansReceivedAgainstDatabase(GlobalEnums.PlanCode requestPlanCode) {
-        String transactionId = testContext.getTransactionId();
         List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPrepayPlans(transactionId);
         GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
 

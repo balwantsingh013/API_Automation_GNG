@@ -12,8 +12,6 @@ import org.apache.http.client.methods.HttpPost;
 import java.io.IOException;
 
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
-import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
-import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428;
 
@@ -411,7 +409,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
         testContext.setResponse(offersResponse);
     }
-    public void validatePositivePrepayRequoteTestConditionsFromExcelData(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void validatePositiveWithNoPromotionCodeTestConditionsFromExcelData(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         helper.setRequoteRequestParams(payload, testCondition);
@@ -425,8 +423,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     public void verifyResponsePlans(){
         helper.verifyResidentialPlansReceivedAgainstDatabase();
     }
-
-    public void verifyResponsePlansContainsPrepayPlan(GlobalEnums.PlanCode planCode){
-        helper.verifyPrepayPlanReturned(planCode);
+    public void verifyResponsePlansContainsPlan(GlobalEnums.PlanCode planCode){
+        helper.verifyPlanReturned(planCode);
     }
+
 }

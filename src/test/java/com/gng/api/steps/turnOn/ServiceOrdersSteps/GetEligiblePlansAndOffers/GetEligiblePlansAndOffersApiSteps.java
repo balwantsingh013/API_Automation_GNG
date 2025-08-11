@@ -246,16 +246,14 @@ public class GetEligiblePlansAndOffersApiSteps {
     }
     @When("a request is made to the GetEligiblePlansAndOffers Api for {string} condition")
     public void PositiveEligiblePlansAndOffersApi(String testCondition) {
-        getEligiblePlansAndOffersApiPage.validatePositivePrepayRequoteTestConditionsFromExcelData(get_eligible_plans_and_offers, valueOf(testCondition));
+        getEligiblePlansAndOffersApiPage.validatePositiveWithNoPromotionCodeTestConditionsFromExcelData(get_eligible_plans_and_offers, valueOf(testCondition));
     }
     @Then("the response should contain the expected plans")
     public void verifyEligibleResponsePlans() {
         getEligiblePlansAndOffersApiPage.verifyResponsePlans();
     }
-
     @Then("the response plans should contains a {string} plan")
     public void verifyEligiblePlansAndOffersContainPlanCode(String planCode) {
-        getEligiblePlansAndOffersApiPage.verifyResponsePlansContainsPrepayPlan(GlobalEnums.PlanCode.valueOf(planCode));
+        getEligiblePlansAndOffersApiPage.verifyResponsePlansContainsPlan(GlobalEnums.PlanCode.valueOf(planCode));
     }
-
 }

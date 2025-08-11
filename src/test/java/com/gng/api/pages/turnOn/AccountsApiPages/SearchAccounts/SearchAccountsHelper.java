@@ -1010,23 +1010,6 @@ public class SearchAccountsHelper {
         getCustomerAndPremiseDetails(payload, customerData);
     }
 
-    public void setPrepayPlanTransactionId(SearchAccountsResponse response, String customerCode) {
-        if (response == null || response.getData() == null || response.getData().getAccounts() == null) {
-            throw new IllegalArgumentException("SearchAccountsResponse is null or incomplete");
-        }
-
-        for (Account account : response.getData().getAccounts()) {
-            String enrollmentStatus = account.getEnrollmentState();
-            if (account.isPrepayPlanIndicator() ||
-                    (!account.getPrepayCustomerPayByDate().trim().isEmpty()
-                    && Objects.equals(account.getCustomerCode(), customerCode))) {
-
-                System.out.println("Prepay account found: TransactionID = "
-                        + account.getTransactionID() + ", Status = " + enrollmentStatus);
-                testContext.setTransactionId(String.valueOf(account.getTransactionID()));
-            }
-        }
-    }
     public void getCustomerAndPremiseDetails(SearchAccountsRequest payload, Map<String, String> data ){
         payload.setLoginID(data.get("loginID"));
         payload.setCustomerLastName(data.get("customerLastName"));
