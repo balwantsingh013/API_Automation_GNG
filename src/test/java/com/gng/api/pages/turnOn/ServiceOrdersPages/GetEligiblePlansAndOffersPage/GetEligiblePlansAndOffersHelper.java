@@ -1686,7 +1686,7 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerLastName(data.get("customerLastName"));
         payload.setCustomerFirstName(data.get("customerFirstName"));
         payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
-        payload.setAglcServiceLocationID(data.get("aglcServiceLocationId"));
+        payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
         payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
         payload.setPremisesStreetName(data.get("premisesStreetName"));
         payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
@@ -1759,11 +1759,7 @@ public class GetEligiblePlansAndOffersHelper {
 
 
         List<Map<String, String>> allRowsOfCustomerData = excelReaderResidentialCustomerData.getSheetData(CUSTOMER_SHEET_NAME);
-        Map<String, String> customerData = allRowsOfCustomerData.stream()
-                .filter(row -> "Notes".equals(row.get("testCondition")))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No matching row found for testCondition = Notes"));
-
+        Map<String, String> customerData = allRowsOfCustomerData.get(30);
         switch(testCondition) {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_423:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
@@ -1805,10 +1801,7 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
-                customerData = allRowsOfCustomerData.stream()
-                        .filter(row -> "PaymentCompletePRPOrPGBEnrollment".equals(row.get("testCondition")))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No matching row found for testCondition"));
+                customerData = allRowsOfCustomerData.get(31);
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 break;
