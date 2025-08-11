@@ -6,7 +6,6 @@ import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
-import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 
@@ -551,7 +550,6 @@ public class SearchAccountsApiPage extends BasePage {
     public void verifyPrepayTransactionIdExists(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
 
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
         helper.setPrepaySearchRequestParamsFromCustomerFile(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);

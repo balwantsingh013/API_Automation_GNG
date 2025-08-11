@@ -3,6 +3,7 @@ import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
@@ -36,6 +37,7 @@ public class GetDefaultPlansAndOffersHelper {
     public void setRequestParams(GetDefaultPlansAndOffersRequest payload, GlobalEnums.CustomerType customerType, String promotionCode, GlobalEnums.EnrollmentSource enrollmentSource,
                                  GetDefaultPlansAndOffersApiLabel testCondition) {
         payload.setCustomerType(customerType.getValue());
+        payload.setRequestID(FakerDataGenerator.generateString(10));
         GlobalEnums.PromotionCode parsedPromotionCode = null;
 
         if (promotionCode != null && !promotionCode.equalsIgnoreCase("<promotionCode>") && !promotionCode.trim().isEmpty()) {

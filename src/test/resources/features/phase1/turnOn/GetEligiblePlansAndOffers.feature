@@ -5,7 +5,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetEligiblePlansAndOffersPositive @HappyFlow
+  @GetEligiblePlansAndOffersRSPositive @GetEligiblePlansAndOffersPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -47,12 +47,12 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_321 | AAA           |
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_327 | AAA           |
 
-  @GetEligiblePlansAndOffersWithCustomerTypeCommercialPositive @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersCommercialPositive @GetEligiblePlansAndOffersPositive @Phase1 @HappyFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with customer type commercial for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
-    And verify the plans in received in response
+    Then the response should contain the expected plans
 
   Examples:
     |testCondition                                              |

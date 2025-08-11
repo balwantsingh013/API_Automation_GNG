@@ -245,18 +245,6 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setPremisesUnitNumber(premisesUnitNumber);
     }
 
-    public void verifyPlansReceivedInResponseAgainstDatabase() {
-        Map<String, Object> controlNumber = ApplicationContext.get().getDbAction().getControlNumber();
-        String controlNum = controlNumber.get("UZTCOTT_CONTROL_NUM").toString();
-
-        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getEligiblePlansAndOffersCommercial(controlNum);
-        GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
-
-        for (Map<String, Object> eligiblePlan : eligiblePlansList) {
-            comparePlanFields(eligiblePlan, response);
-        }
-    }
-
     public static void comparePlanFields(Map<String, Object> eligiblePlan, GetEligiblePlansAndOffersResponse response) {
         String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
         String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
