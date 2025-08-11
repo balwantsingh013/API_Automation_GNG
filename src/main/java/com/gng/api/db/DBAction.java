@@ -158,12 +158,6 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
-    public List<Map<String, Object>> getEligiblePlansAndOffersCommercial(String controlNumber) {
-        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT;
-        logQueryInAllure("Get eligible plans and offers", query);
-        return jdbcTemplate.queryForList(query, controlNumber);
-    }
-
     public List<Map<String, Object>> getUserRoleIDs(String userId) {
         String query = DBQuery.GET_USER_ROLE_IDS;
         logQueryInAllure("Get user role IDs", query);
@@ -720,9 +714,39 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public List<Map<String, Object>> getValidationPlansAndOffers(String controlNum) {
+        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT
+                .replace("<controlNumber>", controlNum);
+        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
+        return jdbcTemplate.queryForList(query);
+    }
 
+    public List<Map<String, Object>> getValidationPrepayPlans(String transactionId) {
+        String query = DBQuery.GET_VALIDATION_PREPAY_PLANS_RESULT
+                .replace("<transactionId>", transactionId);
+        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public Map<String, Object> getPrepayQuote(String customerCode) {
+        String query = DBQuery.GET_PRE_PAY_QUOTE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("Get prepay quote", query);
+        return jdbcTemplate.queryForMap(query);
+    }
 
+    public int expirePrepayQuote(String customerCode) {
+        String query = DBQuery.UPDATE_PRE_PAY_QUOTE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("expire prepay quote", query);
+        return jdbcTemplate.update(query);
+    }
 
+    public int deleteUrblerxByCustomerCode(String customerCode) {
+        String query = DBQuery.DELETE_URBLEX_BY_CUSTOMER_CODE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("delete urblerx by customer code", query);
+        return jdbcTemplate.update(query);
+    }
 
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string

@@ -547,10 +547,17 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void verifyPrepayTransactionIdExists(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
 
-
-
-
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.setPrepaySearchRequestParamsFromCustomerFile(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
+        SearchAccountsResponse searchAccountsResponse = deserializeResponseToPojo(response, SearchAccountsResponse.class);
+        testContext.setSearchAccountsResponse(searchAccountsResponse);
+       // helper.setPrepayPlanTransactionId(testContext.getSearchAccountsResponse(), testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+        testContext.setResponse(response);
+    }
 }
 
 

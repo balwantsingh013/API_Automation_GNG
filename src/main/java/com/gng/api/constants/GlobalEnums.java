@@ -50,12 +50,12 @@ public class GlobalEnums {
     @Getter
     public enum EnrollmentSource {
         ALLCONNECT("ALLCONNECT"),
-        CIM_BUILDER_TURN_ON("CMITURNON"),
-        CORRESPONDENCE("CORRSP"),
+        CIM_BUILDER_TURN_ON("CIM BUILDER TURN ON"),
+        CORRESPONDENCE("CORRESPONDENCE"),
         EMAIL("EMAIL"),
         ENERGYSHOP("ENERGYSHOP"),
         FAX("FAX"),
-        GEORGIAGASSAVINGS("GAGASSAVE"),
+        GEORGIAGASSAVINGS("GEORGIAGASSAVINGS"),
         GNGHUB("GNGHUB"),
         MAIL("MAIL"),
         MOOVEGURU("MOOVEGURU"),
@@ -75,7 +75,8 @@ public class GlobalEnums {
     public enum PromotionCode {
         DEALS("DEALS"),
         SAVE100("SAVE100"),
-        AAA("AAA");
+        AAA("AAA"),
+        ADVANTAGE("ADVANTAGE");
 
         private final String value;
 
@@ -114,6 +115,17 @@ public class GlobalEnums {
         private final String value;
 
         EnrollMentState(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum PlanCode {
+        PRP("PRP"),
+        PGB("PGB");
+
+        private final String value;
+        PlanCode(String value) {
             this.value = value;
         }
     }

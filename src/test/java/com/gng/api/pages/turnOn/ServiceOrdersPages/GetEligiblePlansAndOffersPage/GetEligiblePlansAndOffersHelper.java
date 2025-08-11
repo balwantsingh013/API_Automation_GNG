@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
 import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
@@ -242,18 +243,6 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setPremisesStreetPostDirection(postDirection);
         payload.setPremisesUnitType(premisesUnitType);
         payload.setPremisesUnitNumber(premisesUnitNumber);
-    }
-
-    public void verifyPlansReceivedInResponseAgainstDatabase() {
-        Map<String, Object> controlNumber = ApplicationContext.get().getDbAction().getControlNumber();
-        String controlNum = controlNumber.get("UZTCOTT_CONTROL_NUM").toString();
-
-        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getEligiblePlansAndOffersCommercial(controlNum);
-        GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
-
-        for (Map<String, Object> eligiblePlan : eligiblePlansList) {
-            comparePlanFields(eligiblePlan, response);
-        }
     }
 
     public static void comparePlanFields(Map<String, Object> eligiblePlan, GetEligiblePlansAndOffersResponse response) {
@@ -1697,7 +1686,7 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerLastName(data.get("customerLastName"));
         payload.setCustomerFirstName(data.get("customerFirstName"));
         payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
-        payload.setAglcServiceLocationID(data.get("aglcServiceLocationId"));
+        payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
         payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
         payload.setPremisesStreetName(data.get("premisesStreetName"));
         payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
@@ -1770,11 +1759,7 @@ public class GetEligiblePlansAndOffersHelper {
 
 
         List<Map<String, String>> allRowsOfCustomerData = excelReaderResidentialCustomerData.getSheetData(CUSTOMER_SHEET_NAME);
-        Map<String, String> customerData = allRowsOfCustomerData.stream()
-                .filter(row -> "Notes".equals(row.get("testCondition")))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No matching row found for testCondition = Notes"));
-
+        Map<String, String> customerData = allRowsOfCustomerData.get(30);
         switch(testCondition) {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_423:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
@@ -1816,10 +1801,7 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
-                customerData = allRowsOfCustomerData.stream()
-                        .filter(row -> "PaymentCompletePRPOrPGBEnrollment".equals(row.get("testCondition")))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No matching row found for testCondition"));
+                customerData = allRowsOfCustomerData.get(31);
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 break;
@@ -1832,6 +1814,91 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentSource(MAIL.getValue());
                 break;
 
+        }
+    }
+
+    public void getCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data ){
+        payload.setLoginID(data.get("loginID"));
+        payload.setCustomerType(data.get("customerType"));
+        payload.setCustomerLastName(data.get("customerLastName"));
+        payload.setCustomerFirstName(data.get("customerFirstName"));
+        payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+        payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+        payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(data.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+        payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+        payload.setPremisesUnitType(data.get("premisesUnitType"));
+        payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+        payload.setPremisesCity(data.get("premisesCity"));
+        payload.setPremisesStateCode(data.get("premisesStateCode"));
+        payload.setPremisesZipCode(data.get("premisesZipCode"));
+        payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+        payload.setAcnStatusIndicator(data.get("acnStatusIndicator"));
+        payload.setTenantLandlord(data.get("tenantLandlord"));
+        payload.setCreditCheckOption(data.get("creditCheckOption"));
+        payload.setConfirmCreditCheck(Boolean.parseBoolean(data.get("confirmCreditCheck")));
+
+        String ssn = data.get("SSN");
+        if (ssn != null && !ssn.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+        }
+        String federalTaxId = data.get("federalTaxId");
+        if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
+            payload.setFederalTaxID(encryptData(data.get("federalTaxId")));
+        }
+    }
+
+    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, GlobalEnums.PromotionCode promotionCode,
+                                 GetEligiblePlansAndOffersApiLabel testCondition) {
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
+        payload.setMarketingPromotionCode(promotionCode.getValue());
+    }
+
+    public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
+    }
+
+    public void verifyResidentialPlansReceivedAgainstDatabase() {
+        Map<String, Object> controlNumberResult = ApplicationContext.get().getDbAction().getControlNumber();
+        String controlNum = controlNumberResult.get("UZTCOTT_CONTROL_NUM").toString();
+        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
+        GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
+
+        for (Map<String, Object> eligiblePlan : eligiblePlansList) {
+            comparePlanFields(eligiblePlan, response);
+        }
+    }
+
+    public void verifyPlanReturned(GlobalEnums.PlanCode planCode) {
+        List<Plans> plans = testContext.getGetEligiblePlansAndOffersResponse()
+                .getData()
+                .getPlans()
+                .stream()
+                .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue()))
+                .toList();
+
+        plans.stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new AssertionError("Plan not found: " + planCode.getValue()));
+    }
+
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            return sheetData.stream()
+                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found for: " + testLabel.name()));
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
         }
     }
 }

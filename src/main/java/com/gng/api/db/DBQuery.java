@@ -1527,99 +1527,6 @@ public final class DBQuery {
     public static final String GET_USER_ROLE_IDS = """
             SELECT role_id FROM user_role WHERE user_id = ?
             """;
-    public static final String GET_VALIDATION_PLANS_AND_OFFERS_RESULT = """      
-            SELECT
-              t1.uztcott_app_request_code   AS "appRequestCode",
-              t1.uztcott_plan_code          AS "planCode",
-              t1.uztcott_plan_desc          AS "planDescription",
-              t1.uztcott_sort_order         AS "sortOrder",
-              t1.uztcott_therm_price        AS "thermPrice",
-              t1.uztcott_duration           AS "planDuration",
-              t1.uztcott_svc_charge         AS "serviceCharge",
-              t1.uztcott_sign_up_charge     AS "signUpCharge",
-              t1.uztcott_cap_amount         AS "priceCeiling",
-              t1.uztcott_protect_fee        AS "priceProtectionFee",
-              t1.uztcott_cancel_fee         AS "cancelFee",
-              t1.uztcott_high_csc           AS "highCustomerServiceCharge",
-              t1.uztcott_low_csc            AS "lowCustomerServiceCharge",
-              t1.uztcott_mktg_terms         AS "marketingTerms",
-              t1.uztcott_terms              AS "offerTerms",
-              t1.uztcott_ext_terms          AS "externalTerms",
-              t1.uztcott_restricted_ind     AS "restrictedIndicator",
-              t1.uztcott_pre_pay_ind        AS "prepayIndicator",
-              t1.uztcott_estimated_chg      AS "prepayEstimateAmountDue",
-              t1.uztcott_estimated_cons     AS "prepayEstimatedConsumption",
-              t1.uztcott_due_date_cust      AS "prepayCustomerPayByDate",
-              t1.uztcott_due_date_sys       AS "prepaySystemPayByDate",
-              t1.uztcott_prepay_reduction_amt AS "prepayOneTimeWelcomeCredit",
-              t1.uztcott_prepay_original_amt  AS "prepayEstimateOriginalAmount",
-              t1.uztcott_pia_ind            AS "payInAdvanceIndicator",
-                  MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_prmo_code END) AS "promotion1Code",
-                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_prmo_desc END) AS "promotion1Description",
-                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_terms END) AS "promotion1Terms",
-                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_mktg_msg END) AS "promotion1MarketingMessage",
-                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_trans_ind END) AS "promotion1TransferIndicator",
-                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_visa_ind END) AS "promotion1VisaIndicator",
-                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_prmo_code END) AS "promotion2Code",
-                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_prmo_desc END) AS "promotion2Description",
-                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_terms END) AS "promotion2Terms",
-                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_mktg_msg END) AS "promotion2MarketingMessage",
-                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_trans_ind END) AS "promotion2TransferIndicator",
-                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_visa_ind END) AS "promotion2VisaIndicator",
-              t1.uztcott_control_num        AS "controlNum"
-            FROM uztcott t1
-            LEFT JOIN (
-              SELECT
-                t2.uztprmo_control_num,
-                t2.uztprmo_plan_code,
-                t2.uztprmo_bucket_id,
-                t2.uztprmo_prmo_code,
-                t2.uztprmo_prmo_desc,
-                t2.uztprmo_terms,
-                t2.uztprmo_mktg_msg,
-                t2.uztprmo_trans_ind,
-                t2.uztprmo_visa_ind,
-                ROW_NUMBER() OVER (
-                  PARTITION BY t2.uztprmo_plan_code, t2.uztprmo_control_num
-                  ORDER BY t2.uztprmo_prmo_sort_order
-                ) AS rn
-              FROM uztprmo t2
-            ) p ON t1.uztcott_plan_code = p.uztprmo_plan_code
-                 AND t1.uztcott_control_num = p.uztprmo_control_num
-                 AND t1.uztcott_bucket_id = p.uztprmo_bucket_id
-            LEFT JOIN odmbckt t3 ON t1.uztcott_bucket_id = t3.bucket_id
-            LEFT JOIN gtbenrl t4 ON t1.uztcott_control_num = t4.gtbenrl_control_num
-            WHERE t1.uztcott_app_request_code = 'OMSENRL'
-              AND t1.uztcott_control_num =?
-            GROUP BY
-              t1.uztcott_app_request_code,
-              t1.uztcott_plan_code,
-              t1.uztcott_plan_desc,
-              t1.uztcott_sort_order,
-              t1.uztcott_therm_price,
-              t1.uztcott_duration,
-              t1.uztcott_svc_charge,
-              t1.uztcott_sign_up_charge,
-              t1.uztcott_cap_amount,
-              t1.uztcott_protect_fee,
-              t1.uztcott_cancel_fee,
-              t1.uztcott_high_csc,
-              t1.uztcott_low_csc,
-              t1.uztcott_mktg_terms,
-              t1.uztcott_terms,
-              t1.uztcott_ext_terms,
-              t1.uztcott_restricted_ind,
-              t1.uztcott_pre_pay_ind,
-              t1.uztcott_estimated_chg,
-              t1.uztcott_estimated_cons,
-              t1.uztcott_due_date_cust,
-              t1.uztcott_due_date_sys,
-              t1.uztcott_prepay_reduction_amt,
-              t1.uztcott_prepay_original_amt,
-              t1.uztcott_pia_ind,
-              t1.uztcott_control_num
-            ORDER BY t1.uztcott_sort_order
-        """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE = """
             WITH eligible_customers AS (
@@ -2443,6 +2350,205 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_VALIDATION_PLANS_AND_OFFERS_RESULT = """      
+            SELECT
+              t1.uztcott_app_request_code   AS "appRequestCode",
+              t1.uztcott_plan_code          AS "planCode",
+              t1.uztcott_plan_desc          AS "planDescription",
+              t1.uztcott_sort_order         AS "sortOrder",
+              t1.uztcott_therm_price        AS "thermPrice",
+              t1.uztcott_duration           AS "planDuration",
+              t1.uztcott_svc_charge         AS "serviceCharge",
+              t1.uztcott_sign_up_charge     AS "signUpCharge",
+              t1.uztcott_cap_amount         AS "priceCeiling",
+              t1.uztcott_protect_fee        AS "priceProtectionFee",
+              t1.uztcott_cancel_fee         AS "cancelFee",
+              t1.uztcott_high_csc           AS "highCustomerServiceCharge",
+              t1.uztcott_low_csc            AS "lowCustomerServiceCharge",
+              t1.uztcott_mktg_terms         AS "marketingTerms",
+              t1.uztcott_terms              AS "offerTerms",
+              t1.uztcott_ext_terms          AS "externalTerms",
+              t1.uztcott_restricted_ind     AS "restrictedIndicator",
+              t1.uztcott_pre_pay_ind        AS "prepayPlanIndicator",
+              t1.uztcott_estimated_chg      AS "prepayEstimateAmountDue",
+              t1.uztcott_estimated_cons     AS "prepayEstimatedConsumption",
+              t1.uztcott_due_date_cust      AS "prepayCustomerPayByDate",
+              t1.uztcott_due_date_sys       AS "prepaySystemPayByDate",
+              t1.uztcott_prepay_reduction_amt AS "prepayOneTimeWelcomeCredit",
+              t1.uztcott_prepay_original_amt  AS "prepayEstimateOriginalAmount",
+              t1.uztcott_pia_ind            AS "payInAdvanceIndicator",
+                  MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_prmo_code END) AS "promotion1Code",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_prmo_desc END) AS "promotion1Description",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_terms END) AS "promotion1Terms",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_mktg_msg END) AS "promotion1MarketingMessage",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_trans_ind END) AS "promotion1TransferIndicator",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_visa_ind END) AS "promotion1VisaIndicator",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_prmo_code END) AS "promotion2Code",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_prmo_desc END) AS "promotion2Description",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_terms END) AS "promotion2Terms",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_mktg_msg END) AS "promotion2MarketingMessage",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_trans_ind END) AS "promotion2TransferIndicator",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_visa_ind END) AS "promotion2VisaIndicator",
+              t1.uztcott_control_num        AS "controlNum"
+            FROM uztcott t1
+            LEFT JOIN (
+              SELECT
+                t2.uztprmo_control_num,
+                t2.uztprmo_plan_code,
+                t2.uztprmo_bucket_id,
+                t2.uztprmo_prmo_code,
+                t2.uztprmo_prmo_desc,
+                t2.uztprmo_terms,
+                t2.uztprmo_mktg_msg,
+                t2.uztprmo_trans_ind,
+                t2.uztprmo_visa_ind,
+                ROW_NUMBER() OVER (
+                  PARTITION BY t2.uztprmo_plan_code, t2.uztprmo_control_num
+                  ORDER BY t2.uztprmo_prmo_sort_order
+                ) AS rn
+              FROM uztprmo t2
+            ) p ON t1.uztcott_plan_code = p.uztprmo_plan_code
+                 AND t1.uztcott_control_num = p.uztprmo_control_num
+                 AND t1.uztcott_bucket_id = p.uztprmo_bucket_id
+            LEFT JOIN odmbckt t3 ON t1.uztcott_bucket_id = t3.bucket_id
+            LEFT JOIN gtbenrl t4 ON t1.uztcott_control_num = t4.gtbenrl_control_num
+            WHERE t1.uztcott_app_request_code = 'OMSENRL'
+              AND t1.uztcott_control_num IN (<controlNumber>)
+            GROUP BY
+              t1.uztcott_app_request_code,
+              t1.uztcott_plan_code,
+              t1.uztcott_plan_desc,
+              t1.uztcott_sort_order,
+              t1.uztcott_therm_price,
+              t1.uztcott_duration,
+              t1.uztcott_svc_charge,
+              t1.uztcott_sign_up_charge,
+              t1.uztcott_cap_amount,
+              t1.uztcott_protect_fee,
+              t1.uztcott_cancel_fee,
+              t1.uztcott_high_csc,
+              t1.uztcott_low_csc,
+              t1.uztcott_mktg_terms,
+              t1.uztcott_terms,
+              t1.uztcott_ext_terms,
+              t1.uztcott_restricted_ind,
+              t1.uztcott_pre_pay_ind,
+              t1.uztcott_estimated_chg,
+              t1.uztcott_estimated_cons,
+              t1.uztcott_due_date_cust,
+              t1.uztcott_due_date_sys,
+              t1.uztcott_prepay_reduction_amt,
+              t1.uztcott_prepay_original_amt,
+              t1.uztcott_pia_ind,
+              t1.uztcott_control_num
+            ORDER BY t1.uztcott_sort_order
+        """;
+
+    public static final String GET_VALIDATION_PREPAY_PLANS_RESULT = """ 
+           SELECT
+                   t1.UZTCOTT_PLAN_CODE              AS "planCode",
+                   t1.UZTCOTT_PLAN_DESC              AS "planDescription",
+                   t1.UZTCOTT_SORT_ORDER             AS "sortOrder",
+                   t1.UZTCOTT_THERM_PRICE            AS "thermPrice",
+                   t1.UZTCOTT_DURATION               AS "planDuration",
+                   t1.UZTCOTT_SVC_CHARGE             AS "serviceCharge",
+                   t1.UZTCOTT_SIGN_UP_CHARGE         AS "signUpCharge",
+                   t1.UZTCOTT_CAP_AMOUNT             AS "priceCeiling",
+                   t1.UZTCOTT_PROTECT_FEE            AS "priceProtectionFee",
+                   t1.UZTCOTT_CANCEL_FEE             AS "cancelFee",
+                   t1.UZTCOTT_HIGH_CSC               AS "highCustomerServiceCharge",
+                   t1.UZTCOTT_LOW_CSC                AS "lowCustomerServiceCharge",
+                   t1.UZTCOTT_MKTG_TERMS             AS "marketingTerms",
+                   t1.UZTCOTT_TERMS                  AS "offerTerms",
+                   t1.UZTCOTT_EXT_TERMS              AS "externalTerms",
+                   t1.UZTCOTT_RESTRICTED_IND         AS "restrictedIndicator",
+                   t1.UZTCOTT_PRE_PAY_IND            AS "prepayPlanIndicator",
+                   t1.UZTCOTT_ESTIMATED_CHG          AS "prepayEstimateAmountDue",
+                   t1.UZTCOTT_ESTIMATED_CONS         AS "prepayEstimatedConsumption",
+                   t1.UZTCOTT_DUE_DATE_CUST          AS "prepayCustomerPayByDate",
+                   t1.UZTCOTT_DUE_DATE_SYS           AS "prepaySystemPayByDate",
+                   t1.UZTCOTT_PREPAY_REDUCTION_AMT   AS "prepayOneTimeWelcomeCredit",
+                   t1.UZTCOTT_PREPAY_ORIGINAL_AMT    AS "prepayEstimateOriginalAmount",
+                   t1.UZTCOTT_PIA_IND                AS "payInAdvanceIndicator",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_PRMO_CODE END)        AS "promotion1Code",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_PRMO_DESC END)        AS "promotion1Description",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_TERMS END)            AS "promotion1Terms",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_MKTG_MSG END)         AS "promotion1MarketingMessage",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_TRANS_IND END)        AS "promotion1TransferIndicator",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_VISA_IND END)         AS "promotion1VisaIndicator",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_PRMO_CODE END)        AS "promotion2Code",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_PRMO_DESC END)        AS "promotion2Description",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_TERMS END)            AS "promotion2Terms",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_MKTG_MSG END)         AS "promotion2MarketingMessage",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_TRANS_IND END)        AS "promotion2TransferIndicator",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_VISA_IND END)         AS "promotion2VisaIndicator"
+               FROM UZRRCOT rr
+               JOIN UZTCOTT t1 ON rr.UZRRCOT_CONTROL_NUM = t1.UZTCOTT_CONTROL_NUM
+               LEFT JOIN (
+                   SELECT
+                       t2.UZTPRMO_CONTROL_NUM,
+                       t2.UZTPRMO_PLAN_CODE,
+                       t2.UZTPRMO_BUCKET_ID,
+                       t2.UZTPRMO_PRMO_CODE,
+                       t2.UZTPRMO_PRMO_DESC,
+                       t2.UZTPRMO_TERMS,
+                       t2.UZTPRMO_MKTG_MSG,
+                       t2.UZTPRMO_TRANS_IND,
+                       t2.UZTPRMO_VISA_IND,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY t2.UZTPRMO_PLAN_CODE, t2.UZTPRMO_CONTROL_NUM
+                           ORDER BY t2.UZTPRMO_PRMO_SORT_ORDER
+                       ) AS rn
+                   FROM UZTPRMO t2
+               ) p ON t1.UZTCOTT_PLAN_CODE = p.UZTPRMO_PLAN_CODE
+                   AND t1.UZTCOTT_CONTROL_NUM = p.UZTPRMO_CONTROL_NUM
+                   AND t1.UZTCOTT_BUCKET_ID = p.UZTPRMO_BUCKET_ID
+               WHERE rr.UZRRCOT_TRANSACTION_ID = '<transactionId>'
+               	AND t1.UZTCOTT_DUE_DATE_CUST IS NOT null
+               GROUP BY
+                   t1.UZTCOTT_PLAN_CODE,
+                   t1.UZTCOTT_PLAN_DESC,
+                   t1.UZTCOTT_SORT_ORDER,
+                   t1.UZTCOTT_THERM_PRICE,
+                   t1.UZTCOTT_DURATION,
+                   t1.UZTCOTT_SVC_CHARGE,
+                   t1.UZTCOTT_SIGN_UP_CHARGE,
+                   t1.UZTCOTT_CAP_AMOUNT,
+                   t1.UZTCOTT_PROTECT_FEE,
+                   t1.UZTCOTT_CANCEL_FEE,
+                   t1.UZTCOTT_HIGH_CSC,
+                   t1.UZTCOTT_LOW_CSC,
+                   t1.UZTCOTT_MKTG_TERMS,
+                   t1.UZTCOTT_TERMS,
+                   t1.UZTCOTT_EXT_TERMS,
+                   t1.UZTCOTT_RESTRICTED_IND,
+                   t1.UZTCOTT_PRE_PAY_IND,
+                   t1.UZTCOTT_ESTIMATED_CHG,
+                   t1.UZTCOTT_ESTIMATED_CONS,
+                   t1.UZTCOTT_DUE_DATE_CUST,
+                   t1.UZTCOTT_DUE_DATE_SYS,
+                   t1.UZTCOTT_PREPAY_REDUCTION_AMT,
+                   t1.UZTCOTT_PREPAY_ORIGINAL_AMT,
+                   t1.UZTCOTT_PIA_IND
+        """;
+
+    public static final String GET_PRE_PAY_QUOTE = """
+            SELECT * FROM UABOPEN a
+              JOIN uzbenro e ON a."UABOPEN_PREM_CODE" = e."UZBENRO_PREM_CODE"
+            WHERE a."UABOPEN_CUST_CODE" = '<customerCode>'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+    public static final String UPDATE_PRE_PAY_QUOTE = """
+            UPDATE UABOPEN a
+            SET a.UABOPEN_DUE_DATE = SYSDATE - 10
+            WHERE a.UABOPEN_CUST_CODE = '<customerCode>'
+            """;
+
+    public static final String DELETE_URBLEX_BY_CUSTOMER_CODE = """
+            DELETE
+            FROM UBRBLEX a
+            WHERE a.UBRBLEX_CUST_CODE = '<customerCode>'
+            """;
 
     private DBQuery() {
     }

@@ -1,5 +1,6 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
 
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
@@ -17,7 +18,6 @@ import static com.gng.api.constants.ApiEndPoint.SAVE_ENROLLMENT;
 public class SaveEnrollmentApiPage extends BasePage {
 
     private final SaveEnrollmentHelper helper;
-
     public SaveEnrollmentApiPage(TestContext testContext) {
         super(testContext);
         this.helper = new SaveEnrollmentHelper(testContext);
@@ -123,6 +123,12 @@ public class SaveEnrollmentApiPage extends BasePage {
         helper.databaseValidationPostEnrollment(dataTable);
     }
 
-
-
+    public void savePrepayEnrollmentFromCustomerData(SaveEnrollmentApiLabel apiLabel, GlobalEnums.PlanCode planCode, SaveEnrollmentApiLabel testCondition) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setPrePayRequestParams(payload, planCode, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        testContext.setResponse(response);
+        testContext.setSaveEnrollmentResponse(deserializeResponseToPojo(response, SaveEnrollmentResponse.class));
+    }
 }

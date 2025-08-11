@@ -2,6 +2,7 @@ package com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts;
 
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts.SearchAccountsApiPage;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 
@@ -345,6 +346,9 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.verifySearchAccountAPIWhenValidSSNIsPassed(search_accounts);
     }
 
-
+    @Given("a prepay transaction is returned from searchAccounts api for {string}")
+    public void validTransactionExists(String testCondition) {
+        searchAccountsApiPage.verifyPrepayTransactionIdExists(SearchAccountsApiLabel.search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
+    }
 
 }

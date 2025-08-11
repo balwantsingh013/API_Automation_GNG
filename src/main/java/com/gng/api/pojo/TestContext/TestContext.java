@@ -1,7 +1,9 @@
 package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
 import com.gng.api.pojo.Users.GetUserRoles.GetUserRolesResponse;
@@ -12,6 +14,8 @@ import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
 import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteResponse;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Data
 public class TestContext {
@@ -56,6 +60,14 @@ public class TestContext {
     @Getter @Setter
     private Object getEligiblePlansAndOffersApiPage;
     private GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse;
+    @Getter @Setter
+    private Object getDefaultPlansAndOffersApiPage;
+    private GetDefaultPlansAndOffersResponse getDefaultPlansAndOffersResponse;
+    @Getter @Setter
+    private List<GetDefaultPlansAndOffersResponse.Plan> getValidationDefaultPlansAndOffersPlans;
+    @Getter @Setter
+    private Object getPrepayPlansRequoteApiPage;
+    private GetPrepayPlansRequoteResponse GetPrepayPlansRequoteResponse;
     @Getter @Setter
     private Object getUserRolesApiPage;
     private GetUserRolesResponse getUserRolesResponse;

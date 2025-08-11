@@ -1,19 +1,39 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.constants.GlobalEnums;
+import com.gng.api.constants.TestConstant;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
-import java.util.Map;
-import java.util.Set;
 
+import java.io.IOException;
+import java.util.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
+
+import static com.gng.api.constants.GlobalEnums.CreditCheckOption.YES;
 import static com.gng.api.constants.GlobalEnums.EnrollMentStatus.*;
+import static com.gng.api.constants.GlobalEnums.EnrollmentSource.PHONECALL;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
+import static com.gng.api.constants.TestConstant.CUSTOMER_DATA;
+import static com.gng.api.constants.TestConstant.CUSTOMER_SHEET_NAME;
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 @Slf4j
 public class SaveEnrollmentHelper {
@@ -459,4 +479,59 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(1));
         }
     }
+
+    public void setPrePayRequestParams(SaveEnrollmentRequest payload, GlobalEnums.PlanCode planCode, SaveEnrollmentApiLabel testCondition){
+
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
+        payload.setTransactionType(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionType());
+        payload.setBillingPlan("");
+        payload.setTransactionID(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID()));
+        payload.setCustomerCode(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode()));
+        payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+
+        // Select a plan from the EligiblePlansAndOffers response where the plan is pre-pay
+        var plans = testContext.getGetEligiblePlansAndOffersResponse()
+                .getData()
+                .getPlans();
+        Plans prepayPlan =
+                plans.stream()
+                        //.filter(p -> Boolean.TRUE.equals(p.getPrepayPlanIndicator())
+                        .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue())
+                       )
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No prepay plan found in EligiblePlans response"));
+
+        payload.setPlanCode(prepayPlan.getPlanCode());
+        payload.setPromotionCode(prepayPlan.getPromotion1Code());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate serviceDate = LocalDate.parse(prepayPlan.getPrepayCustomerPayByDate(),formatter);
+        String serviceDateString = serviceDate.minusDays(1).format(formatter);
+        payload.setCustomerRequestedServiceDate(serviceDateString);
+        payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
+    }
+
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
+            String excelPath,
+            String sheetName,
+            E testLabel) {
+
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            // Find the first row where the "testConditions" column matches the enum name
+            return sheetData.stream()
+                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found for: " + testLabel.name()));
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
+        }
+    }
+
 }

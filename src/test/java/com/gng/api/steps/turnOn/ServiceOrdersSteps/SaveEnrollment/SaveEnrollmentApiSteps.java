@@ -1,5 +1,6 @@
 package com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
@@ -79,6 +80,10 @@ public class SaveEnrollmentApiSteps {
     @When("a request is made to the Save Enrollment API for completion for {string} with {string} and {string}")
     public void a_request_is_made_to_save_enrollment_to_complete_prev_saved_enrollment(String testCondition, String planCode, String promotionCode){
         saveEnrollmentApiPage.validateCEForPreviouslySavedEnrollment(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition), planCode, promotionCode);
+    }
+    @When("a request is made to the SaveEnrollment Api for prepay with {string} planCode for {string} condition")
+    public void saveEnrollment(String planCode, String testCondition) {
+        saveEnrollmentApiPage.savePrepayEnrollmentFromCustomerData(SaveEnrollmentApiLabel.save_enrollment, GlobalEnums.PlanCode.valueOf(planCode), SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
     @When("perform database validation with the following parameters:")
