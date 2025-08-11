@@ -68,7 +68,6 @@ public class ExcelReader {
         return (cell != null) ? cell.toString() : null;
     }
 
-
     public void close() throws IOException {
         workbook.close();
     }
