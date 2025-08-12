@@ -1,4 +1,4 @@
-package com.gng.api.steps.turnOn.GetDefaultPlansAndOffers;
+package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetDefaultPlansAndOffers;
 
 public enum GetDefaultPlansAndOffersApiLabel {
 

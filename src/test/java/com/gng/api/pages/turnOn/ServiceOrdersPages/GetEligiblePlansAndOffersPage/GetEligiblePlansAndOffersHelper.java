@@ -1838,6 +1838,7 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setTenantLandlord(data.get("tenantLandlord"));
         payload.setCreditCheckOption(data.get("creditCheckOption"));
         payload.setConfirmCreditCheck(Boolean.parseBoolean(data.get("confirmCreditCheck")));
+        payload.setSeasonalSavingsProgramIndicator(Boolean.parseBoolean(data.get("SSPStatusIndicator")));
 
         String ssn = data.get("SSN");
         if (ssn != null && !ssn.trim().isEmpty()) {
@@ -1892,13 +1893,17 @@ public class GetEligiblePlansAndOffersHelper {
             List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
 
             return sheetData.stream()
-                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
+                    .filter(row -> {
+                        String condition = row.get("testCondition");
+                        return condition != null && condition.contains(testLabel.name());
+                    })
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException(
-                            "No matching testConditions found for: " + testLabel.name()));
+                            "No matching testCondition containing: " + testLabel.name()));
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to load data from Excel", e);
         }
     }
+
 }

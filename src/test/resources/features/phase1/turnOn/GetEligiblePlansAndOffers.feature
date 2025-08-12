@@ -531,3 +531,25 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api with Residential marketer switch  RSTC11UC50
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
+
+  @GetEligiblePlansAndOffersSSPValidationsNegative @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      |testCondition                                | errorCode | errorMessage                                                                    |
+      |SSP_TRUE_NOT_ALLOWED_FOR_ACN_TC_476          |2100       |WARNING:Seasonal Savings Program Participation is not allowed for ACN premises   |
+
+
+  @GetEligiblePlansAndOffersSSPValidations @HappyFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+    Examples:
+      |testCondition                                |
+      |SSP_FALSE_ALLOWED_FOR_ACN_TC_477             |
+
