@@ -543,7 +543,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       |SSP_TRUE_NOT_ALLOWED_FOR_ACN_TC_476          |2100       |WARNING:Seasonal Savings Program Participation is not allowed for ACN premises   |
 
 
-  @GetEligiblePlansAndOffersSSPValidations @HappyFlow
+  @GetEligiblePlansAndOffersSSPValidationsPositive @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200

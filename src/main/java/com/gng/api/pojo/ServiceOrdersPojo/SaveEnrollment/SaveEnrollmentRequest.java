@@ -16,7 +16,7 @@ public class SaveEnrollmentRequest  {
     private String loginID;
     private int transactionID;
     private String transactionType;
-    private int customerCode;
+    private Object customerCode;
     private String premisesCode;
     private String planCode;
     private String promotionCode;

@@ -110,10 +110,70 @@ public class SaveEnrollmentHelper {
         payload.setPlanCode(planCode);
         payload.setPromotionCode(promotionCode);
         setValuesBasedOnGetEligiblePlansAndOffersResponse(payload);
+        String sspParticipantCode="";
         switch(testCondition) {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setCustomerCode(null);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                //payload.setSspParticipantCode(null);
+                payload.setSeasonalSavingsProgramResult("ENROLLED");
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481:
+                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
+                payload.setCustomerCode(null);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+                case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
+                    payload.setEnrollmentStatus(COMPLETE.getValue());
+                    payload.setSspParticipantCode(null);
+                    payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                    break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483:
+                sspParticipantCode= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getSspParticipantCode();
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setCustomerCode(null);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_487:
+                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
+                payload.setSspParticipantCode(null);
+                payload.setCustomerCode(null);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483_2:
+                sspParticipantCode= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getSspParticipantCode();
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488:
+                sspParticipantCode= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getSspParticipantCode();
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setMarketerReferenceData(null);
+                payload.setCustomerRequestedServiceDate(null);
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
@@ -225,6 +285,21 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 break;
 
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_478:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_480:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481, GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
+                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
+                break;
+
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_499:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500A:
                 setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
@@ -246,9 +321,36 @@ public class SaveEnrollmentHelper {
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DP_TC_425:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_484:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488:
                 payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491:
+                payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_485:
+                payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                payload.setPremisesCode(null);
+                payload.setSspParticipantCode(null);
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486:
+                payload.setSspParticipantCode(null);
+                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_487:
+                String sspParticipantCode= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getSspParticipantCode();
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
@@ -279,10 +381,6 @@ public class SaveEnrollmentHelper {
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
                 payload.setEnrollmentStatus(BILL_DEPOSIT.getValue());
-                break;
-
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
-                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
