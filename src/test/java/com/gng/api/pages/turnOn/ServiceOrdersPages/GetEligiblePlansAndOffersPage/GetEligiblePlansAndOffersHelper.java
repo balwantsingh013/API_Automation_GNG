@@ -1746,6 +1746,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494_2:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 payload.setSspParticipantCode(null);
                 transactionID=testContext.getSaveEnrollmentResponse().getData().getTransactionID();
@@ -1753,8 +1754,16 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setSeasonalSavingsProgramIndicator(true);
                 break;
 
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_492:
+                payload.setSspParticipantCode(null);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482:
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_495:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494:
                 nullifyFields(payload,  "enrollmentState", "transactionID");
                 payload.setSspParticipantCode(sspParticipantCode);
                 payload.setSeasonalSavingsProgramIndicator(true);
@@ -1792,6 +1801,13 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 payload.setCustomerCode(null);
                 payload.setSspParticipantCode(null);
+                break;
+
+            case SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496:
+                payload.setTransactionID(null);
+                payload.setEnrollmentState(null);
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setSeasonalSavingsProgramIndicator(true);
                 break;
 
             default:
@@ -1933,6 +1949,9 @@ public class GetEligiblePlansAndOffersHelper {
     public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
+        if(testCondition.toString().contains("SSP")){
+            payload.setSeasonalSavingsProgramIndicator(true);
+        }
     }
 
     public void verifyResidentialPlansReceivedAgainstDatabase() {
