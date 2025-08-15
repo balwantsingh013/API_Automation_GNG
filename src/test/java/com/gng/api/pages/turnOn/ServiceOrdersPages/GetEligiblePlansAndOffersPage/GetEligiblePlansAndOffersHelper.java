@@ -4,6 +4,7 @@ package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPag
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
@@ -189,6 +190,7 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
         payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
     }
+
 
     private void parseBillingAddress(GetEligiblePlansAndOffersRequest payload, String billingAddress) {
         if (billingAddress == null || billingAddress.isEmpty()) return;
@@ -1732,7 +1734,83 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
                 break;
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
+                payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+ payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
+              payload.setSeasonalSavingsProgramIndicator(true);
+                populateCommonCommercialFieldsFromSearchAccountsResponse(payload, transactionID);
+                break;
+            default:
+                break;
+        }
+    }
+    private void populateCommonCommercialFieldsFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload, int transactionID) {
 
+        Account selectedAccount = testContext.getSearchAccountsResponse()
+                .getData()
+                .getAccounts()
+                .stream()
+                .filter(account -> account.getTransactionID() == transactionID)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Transaction ID not found"));
+
+        payload.setCustomerBusinessName(selectedAccount.getCustomerBusinessName());
+        payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+        payload.setCustomerCode(selectedAccount.getCustomerCode());
+        payload.setPremisesCode(selectedAccount.getPremisesCode());
+        payload.setPremisesCity(selectedAccount.getPremisesCity());
+        payload.setPremisesStateCode(selectedAccount.getPremisesStateCode());
+        payload.setPremisesZipCode(selectedAccount.getPremisesZipCode());
+        payload.setCustomerBusinessName(selectedAccount.getCustomerBusinessName());
+    }
+
+    public void preparePayloadForPreviouslySavedIncompleteEnrollmentByTransactionId (GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition, int transactionID){
+
+        Account selectedAccount = testContext.getSearchAccountsResponse()
+                .getData()
+                .getAccounts()
+                .stream()
+                .filter(account -> account.getTransactionID() == transactionID)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Transaction ID not found"));
+
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerCode(selectedAccount.getCustomerCode());
+        payload.setPremisesCode(selectedAccount.getPremisesCode());
+        payload.setTransactionID(selectedAccount.getTransactionID());
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+       // setTheFieldToEmptyForCommercialScenarios(payload);
+        payload.setCustomerFirstName(selectedAccount.getCustomerFirstName());
+        payload.setCustomerLastName(selectedAccount.getCustomerLastName());
+
+        switch(testCondition){
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                break;
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
+                payload.setSeasonalSavingsProgramIndicator(true);
+
+                break;
             default:
                 break;
         }
@@ -1812,7 +1890,28 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 break;
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+                getCustomerAndPremiseDetails(payload, customerData);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506:
+                //
+               //  customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+                //getCustomerAndPremiseDetails(payload, customerData);
+                //
 
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                populateCommonFields(payload,commercialCustomerData);
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
             default:
                 payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
                 getCustomerDetails(payload, customerData);
@@ -1829,7 +1928,8 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerType(data.get("customerType"));
         payload.setCustomerLastName(data.get("customerLastName"));
         payload.setCustomerFirstName(data.get("customerFirstName"));
-        payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+       // payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+        //payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
         payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
         payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
         payload.setPremisesStreetName(data.get("premisesStreetName"));
