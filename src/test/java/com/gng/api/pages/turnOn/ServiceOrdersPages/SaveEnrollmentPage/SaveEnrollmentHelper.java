@@ -118,7 +118,8 @@ public class SaveEnrollmentHelper {
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
                 payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
                 break;
 
@@ -134,26 +135,13 @@ public class SaveEnrollmentHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502:
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
-                //payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
                 payload.setSeasonalSavingsProgramResult("ENROLLED");
                 payload.setSspParticipantCode(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode()));
-                // payload.setSspParticipantCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
-                //  payload.setPromotionCode("");
-                break;
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
-                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
-                //payload.setSspParticipantCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
-              //  payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
-                //payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
-               // payload.setSeasonalSavingsProgramResult("ENROLLED");
-                //ayload.setSspParticipantCode(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode()));
-                // payload.setSspParticipantCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
-                //  payload.setPromotionCode("");
+
                 break;
         }
-
-
     }
+
     public void databaseValidationPostEnrollment(DataTable dataTable) {
         Map<String, String> params = dataTable.asMaps(String.class, String.class).get(0); // ✅ Use first row only
 

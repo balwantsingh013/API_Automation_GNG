@@ -1894,11 +1894,6 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504,
                  GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506:
-                //
-               //  customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
-                //getCustomerAndPremiseDetails(payload, customerData);
-                //
-
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 populateCommonFields(payload,commercialCustomerData);
@@ -1912,7 +1907,6 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerType(RESIDENTIAL.getValue());
                 payload.setEnrollmentSource(MAIL.getValue());
                 break;
-
         }
     }
 
