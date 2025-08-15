@@ -1921,8 +1921,6 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerType(data.get("customerType"));
         payload.setCustomerLastName(data.get("customerLastName"));
         payload.setCustomerFirstName(data.get("customerFirstName"));
-       // payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
-        //payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
         payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
         payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
         payload.setPremisesStreetName(data.get("premisesStreetName"));
