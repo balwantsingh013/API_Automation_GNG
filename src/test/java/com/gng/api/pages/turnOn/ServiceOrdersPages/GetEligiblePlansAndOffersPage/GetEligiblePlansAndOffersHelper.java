@@ -1728,6 +1728,7 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 break;
 

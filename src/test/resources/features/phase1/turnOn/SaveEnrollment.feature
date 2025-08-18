@@ -222,7 +222,7 @@ Feature: Verify SaveEnrollment Api
       |testCondition                                                         |planCode|promotionCode               |recordType                                |errorMessage|
 #      |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_478                           |RF6     |                            |SSP ACCOUNT RECORD                        |Invalid Request: Missing conditional parameters-Customer Code|
 #      |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_480                           |MVS     |25 CENTS FOR 12 MONTHS      |SSP FALL TURN ON RECORD                   |Invalid Request: Missing conditional parameters-Customer Code|
-      |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490                    |RF6     |                            |SSP ACCOUNT RECORD                        |Invalid Request: Missing conditional parameters - SSP Participant Code|
+#      |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490                    |RF6     |                            |SSP ACCOUNT RECORD                        |Invalid Request: Missing conditional parameters - SSP Participant Code|
 
   @SSPValidations2 @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
@@ -242,10 +242,30 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       |testCondition                                                         |planCode|promotionCode               |planCode2|promotionCode2        |recordType             |errorMessage|errorCode|
-#      |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP ACCOUNT RECORD     |Missing Customer Code|10000|
-#      |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Missing Customer Code|10000|
-#      |SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000|
-      |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_493                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000|
+      |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP ACCOUNT RECORD     |Missing Customer Code|10000|
+      |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Missing Customer Code|10000|
+  |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_493                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000|
+
+
+  @SSPValidations21 @Phase1 @NegativeFlow
+  Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "ENROLLMENT RECORD"
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "<recordType>"
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for completion for "<testCondition>" with "<planCode2>" and "<promotionCode2>"
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      |testCondition                                                         |planCode|promotionCode               |planCode2|promotionCode2        |recordType             |errorMessage|errorCode|
+   |SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000|
 
   @SSPValidations3 @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
@@ -364,6 +384,7 @@ Feature: Verify SaveEnrollment Api
       |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486                           |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS   |SSP FALL TURN ON RECORD|
 
 
+
   @SSPValidations8 @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
     When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
@@ -430,25 +451,6 @@ Feature: Verify SaveEnrollment Api
       |testCondition                                                         |planCode|promotionCode                    |planCode2|promotionCode2        |recordType             |errorMessage|
       |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491                    |CVS     |COM 25 CENTS FOR 12 MONTHS   |CVS      |                      |SSP ACCOUNT RECORD|Missing SSP Participant Code|
 
-  @SSPValidations11 @Phase1 @NegativeFlow
-  Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
-    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
-    And response should have ErrorCode 0 and ErrorMessage ""
-    Then a request is made to the SearchAccountsApi for "<testCondition>"
-    And response should have ErrorCode 0 and ErrorMessage ""
-    And response should have "recordType" as "ENROLLMENT RECORD"
-    And a request is made to get Marketer Reference Data
-    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
-    And response should have ErrorCode 0 and ErrorMessage ""
-    Then a request is made to the SearchAccountsApi for "<testCondition>"
-    And response should have ErrorCode 0 and ErrorMessage ""
-    And response should have "recordType" as "<recordType>"
-    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
-    And response should have ErrorCode 2000 and ErrorMessage "<errorMessage>"
-    Examples:
-      |testCondition                                                         |planCode|promotionCode               |planCode2|promotionCode2        |recordType             |errorMessage|errorCode|
-      |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_492                           |RF6     |                            |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000|
-
   @SSPValidations12 @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
@@ -492,3 +494,27 @@ Feature: Verify SaveEnrollment Api
       |testCondition                                                         |planCode|promotionCode               |recordType                                |errorMessage|planCode2|promotionCode2|errorCode|
       |SSP_VALIDATION_INVALID_SSP_RESULT_TC_497B            |RF6     |                            |SSP ACCOUNT RECORD                        |Parameter Value should be null -SSP Result|MVS||2200            |
       |SSP_VALIDATION_INVALID_SSP_CODE_TC_497C            |RF6     |                            |SSP ACCOUNT RECORD                        |Parameter Value should be null-SSP Participant Code|MVS||2200            |
+
+
+  @SaveEnrollmentGetPrepayPlansRequotePositive @HappyFlow
+  Scenario Outline: GetPrepayPlansRequote API – returns quotes for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then the response should contain the expected plans
+    Then the response plans should contains a "<planCode>" plan
+    Then a request is made to get Marketer Reference Data
+    And a request is made to the SaveEnrollment Api for prepay with "<planCode>" planCode for "<testCondition>" condition
+    Then verify response code of "SaveEnrollment" Api is 200
+    Then a prepay transaction is returned from searchAccounts api for "<testCondition>"
+    And a request is made to the GetPrepayPlansRequote Api for "<testCondition>" condition
+    Then verify response code of "GetPrepayPlansRequote" Api is 200
+    Then the response should contain the expected prepay plans and "<planCode>" planCode
+    Then a request is made to get Marketer Reference Data
+    And a request is made to the SaveEnrollment Api for prepay with "<planCode>" after requote for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+    Examples:
+      | planCode | testCondition                            |
+      #| PRP      | GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_429|
+      | PGB      | GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_430|

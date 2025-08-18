@@ -93,6 +93,43 @@ public class SaveEnrollmentHelper {
         payload.setAglcServiceOrderNumber(aglcServiceOrderNumber);
     }
 
+    public void setValuesBasedOnGetPrepayPlanRequoteResponse(SaveEnrollmentRequest payload){
+        int customerCode = Integer.parseInt(testContext.getGetPrepayPlansRequoteResponse().getData().getCustomerCode());
+        String premisesCode = testContext.getGetPrepayPlansRequoteResponse().getData().getPremisesCode();
+        int transactionID = Integer.parseInt(testContext.getGetPrepayPlansRequoteResponse().getData().getTransactionID());
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+        payload.setTransactionID(transactionID);
+
+    }
+
+    public void setSaveEnrollmentAfterRequote(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition, String planCode){
+        setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setPlanCode(planCode);
+        payload.setPromotionCode("");
+        payload.setSspParticipantCode(null);
+        String aglcAccountNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber();
+        String aglcServiceOrderNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID();
+        payload.setAglcAccountNumber(aglcAccountNumber);
+        payload.setAglcServiceOrderNumber(aglcServiceOrderNumber);
+        payload.setBillingPlan("");
+        setValuesBasedOnGetPrepayPlanRequoteResponse(payload);
+
+        switch(testCondition){
+            case GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_429:
+                payload.setEnrollmentStatus(CANCEL_PREPAY.getValue());
+                break;
+
+            case GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_430:
+                payload.setEnrollmentStatus(PAYMENT_COMPLETE.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(5));
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+        }
+    }
+
     public void setSaveEnrollmentRequestForPreviouslySavedEnrollment(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition, String planCode, String promotionCode){
         setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -128,6 +165,7 @@ public class SaveEnrollmentHelper {
 
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_493:
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_495:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 payload.setSspParticipantCode(null);
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
@@ -302,7 +340,7 @@ public class SaveEnrollmentHelper {
 
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_480:
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481, GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
-            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_492:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_493:
                 payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
                 break;
@@ -595,9 +633,6 @@ public class SaveEnrollmentHelper {
     }
 
     public void setPrePayRequestParams(SaveEnrollmentRequest payload, GlobalEnums.PlanCode planCode, SaveEnrollmentApiLabel testCondition){
-
-        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
-
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
         payload.setTransactionType(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionType());
