@@ -540,7 +540,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
 
   @SSPValidations @HappyFlow @Phase1
-  Scenario : GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for SSP_FALSE_ALLOWED_FOR_ACN_TC_477
+  Scenario: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for SSP_FALSE_ALLOWED_FOR_ACN_TC_477
     When a request is made to the GetEligiblePlansAndOffers Api for "SSP_FALSE_ALLOWED_FOR_ACN_TC_477" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
