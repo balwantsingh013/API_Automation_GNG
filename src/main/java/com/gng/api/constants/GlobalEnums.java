@@ -97,7 +97,8 @@ public class GlobalEnums {
         REFUSED_PREPAY("RP"),
         REFUSED_DEPOSIT("RD"),
         SAVE_FOR_FALL_SSP("SF"),
-        DEPOSIT_BILLED("DB");
+        DEPOSIT_BILLED("DB"),
+        CANCEL_PREPAY("CP");
 
         private final String value;
 

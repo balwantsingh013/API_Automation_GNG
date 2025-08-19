@@ -1,10 +1,10 @@
-package com.gng.api.steps.turnOn.GetDefaultPlansAndOffers;
+package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetDefaultPlansAndOffers;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetDefaultPlansAndOffersPage.GetDefaultPlansAndOffersApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import static com.gng.api.steps.turnOn.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.get_default_plans_and_offers;
+import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.get_default_plans_and_offers;
 
 public class GetDefaultPlansAndOffersApiSteps {
     private final GetDefaultPlansAndOffersApiPage getDefaultPlansAndOffersApiPage;

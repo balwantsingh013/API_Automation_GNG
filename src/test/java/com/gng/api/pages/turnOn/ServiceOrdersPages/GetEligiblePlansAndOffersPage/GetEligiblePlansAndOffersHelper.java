@@ -28,6 +28,7 @@ import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+import static com.gng.api.util.CommonUtil.nullifyFields;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -1711,6 +1712,7 @@ public class GetEligiblePlansAndOffersHelper {
         int customerCode = Integer.parseInt(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
         String premisesCode = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode();
         int transactionID = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getTransactionID();
+        String sspParticipantCode= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getSspParticipantCode();
         payload.setTransactionType(TURN_ON.getValue());
         payload.setCustomerCode(customerCode);
         payload.setPremisesCode(premisesCode);
@@ -1725,12 +1727,79 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 break;
+
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_478:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_480:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482_2:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483_2:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setCustomerCode(null);
+                break;
+
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494_2:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setSspParticipantCode(null);
+                transactionID=testContext.getSaveEnrollmentResponse().getData().getTransactionID();
+                payload.setTransactionID(transactionID);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_492:
+                payload.setSspParticipantCode(null);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_495:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494,
+                 SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496:
+                nullifyFields(payload,  "enrollmentState", "transactionID");
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488:
+                ExcelReader excelReaderCommercialCustomerData = null;
+                try {
+                    excelReaderCommercialCustomerData = new ExcelReader(EXPERIAN_DATA);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                List<Map<String, String>> allRowsOfCommercialCustomerData = excelReaderCommercialCustomerData.getSheetData(EXPERIAN_SHEET_NAME);
+                Map<String, String> commercialCustomerData = allRowsOfCommercialCustomerData.get(5063);
+                nullifyFields(payload,  "enrollmentState", "transactionID");
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setFederalTaxID(encryptData(commercialCustomerData.get("TAX-ID")));
+                payload.setCustomerBusinessName(commercialCustomerData.get("BUSINESS NAME"));
+                nullifyFields(payload,  "enrollmentState", "transactionID");
+                payload.setCreditCheckOption("Yes");
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_484:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488_2:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                nullifyFields(payload,  "premisesCode", "sspParticipantCode");
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                nullifyFields(payload,  "customerCode", "sspParticipantCode");
                 break;
 
             default:
@@ -1778,6 +1847,18 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCreditCheckOption(YES.getValue());
                 populateCommonFields(payload,commercialCustomerData);
                 setTheFieldToEmptyForCommercialScenarios(payload);
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_484:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_485:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_487, SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488,
+                 SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                populateCommonFields(payload,commercialCustomerData);
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setSeasonalSavingsProgramIndicator(true);
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
@@ -1838,6 +1919,7 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setTenantLandlord(data.get("tenantLandlord"));
         payload.setCreditCheckOption(data.get("creditCheckOption"));
         payload.setConfirmCreditCheck(Boolean.parseBoolean(data.get("confirmCreditCheck")));
+        payload.setSeasonalSavingsProgramIndicator(Boolean.parseBoolean(data.get("SSPStatusIndicator")));
 
         String ssn = data.get("SSN");
         if (ssn != null && !ssn.trim().isEmpty()) {
@@ -1859,6 +1941,9 @@ public class GetEligiblePlansAndOffersHelper {
     public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
+        if(testCondition.toString().contains("SSP")&& !(testCondition.toString().equals("SSP_FALSE_ALLOWED_FOR_ACN_TC_477"))){
+            payload.setSeasonalSavingsProgramIndicator(true);
+        }
     }
 
     public void verifyResidentialPlansReceivedAgainstDatabase() {
@@ -1892,13 +1977,17 @@ public class GetEligiblePlansAndOffersHelper {
             List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
 
             return sheetData.stream()
-                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
+                    .filter(row -> {
+                        String condition = row.get("testCondition");
+                        return condition != null && condition.contains(testLabel.name());
+                    })
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException(
-                            "No matching testConditions found for: " + testLabel.name()));
+                            "No matching testCondition containing: " + testLabel.name()));
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to load data from Excel", e);
         }
     }
+
 }
