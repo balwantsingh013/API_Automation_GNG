@@ -153,7 +153,7 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(6));
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
-                //payload.setSspParticipantCode(null);
+                payload.setSspParticipantCode(null);
                 payload.setSeasonalSavingsProgramResult("ENROLLED");
                 break;
 

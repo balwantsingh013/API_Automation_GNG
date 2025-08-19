@@ -1764,7 +1764,8 @@ public class GetEligiblePlansAndOffersHelper {
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482:
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483:
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_495:
-            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494,
+                 SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496:
                 nullifyFields(payload,  "enrollmentState", "transactionID");
                 payload.setSspParticipantCode(sspParticipantCode);
                 payload.setSeasonalSavingsProgramIndicator(true);
@@ -1786,29 +1787,19 @@ public class GetEligiblePlansAndOffersHelper {
                 setTheFieldToEmptyForCommercialScenarios(payload);
                 payload.setFederalTaxID(encryptData(commercialCustomerData.get("TAX-ID")));
                 payload.setCustomerBusinessName(commercialCustomerData.get("BUSINESS NAME"));
-                payload.setTransactionID(null);
-                payload.setEnrollmentState(null);
+                nullifyFields(payload,  "enrollmentState", "transactionID");
                 payload.setCreditCheckOption("Yes");
                 break;
 
             case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_484:
             case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488_2:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
-                payload.setPremisesCode(null);
-                payload.setSspParticipantCode(null);
+                nullifyFields(payload,  "premisesCode", "sspParticipantCode");
                 break;
 
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
-                payload.setCustomerCode(null);
-                payload.setSspParticipantCode(null);
-                break;
-
-            case SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496:
-                payload.setTransactionID(null);
-                payload.setEnrollmentState(null);
-                payload.setSspParticipantCode(sspParticipantCode);
-                payload.setSeasonalSavingsProgramIndicator(true);
+                nullifyFields(payload,  "customerCode", "sspParticipantCode");
                 break;
 
             default:
@@ -1950,7 +1941,7 @@ public class GetEligiblePlansAndOffersHelper {
     public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
-        if(testCondition.toString().contains("SSP")){
+        if(testCondition.toString().contains("SSP")&& !(testCondition.toString().equals("SSP_FALSE_ALLOWED_FOR_ACN_TC_477"))){
             payload.setSeasonalSavingsProgramIndicator(true);
         }
     }
