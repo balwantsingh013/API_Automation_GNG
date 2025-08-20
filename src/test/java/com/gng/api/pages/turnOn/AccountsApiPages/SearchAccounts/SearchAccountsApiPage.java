@@ -555,7 +555,6 @@ public class SearchAccountsApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         SearchAccountsResponse searchAccountsResponse = deserializeResponseToPojo(response, SearchAccountsResponse.class);
         testContext.setSearchAccountsResponse(searchAccountsResponse);
-       // helper.setPrepayPlanTransactionId(testContext.getSearchAccountsResponse(), testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
         testContext.setResponse(response);
     }
 }

@@ -90,5 +90,10 @@ public class SaveEnrollmentApiSteps {
     public void validateDatabaseParameters(DataTable dataTable) {
         saveEnrollmentApiPage.performDatabaseValidationAfterEnrollment(dataTable);
         }
+
+    @When("a request is made to the SaveEnrollment Api for prepay with {string} after requote for {string}")
+    public void a_request_made_to_enrollment_after_requote(String planCode, String testCondition){
+        saveEnrollmentApiPage.validateEnrollmentAfterRequote(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition), planCode);
+    }
     }
 

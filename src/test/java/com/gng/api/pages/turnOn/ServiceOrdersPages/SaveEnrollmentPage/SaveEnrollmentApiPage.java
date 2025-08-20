@@ -119,6 +119,16 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void validateEnrollmentAfterRequote(SaveEnrollmentApiLabel apiLabel,SaveEnrollmentApiLabel testCondition, String planCode){
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setSaveEnrollmentAfterRequote(payload, testCondition, planCode);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        SaveEnrollmentResponse saveEnrollmentResponse = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
+        testContext.setSaveEnrollmentResponse(saveEnrollmentResponse);
+        testContext.setResponse(response);
+    }
+
     public void performDatabaseValidationAfterEnrollment(DataTable dataTable){
         helper.databaseValidationPostEnrollment(dataTable);
     }
