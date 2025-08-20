@@ -1926,7 +1926,7 @@ public final class DBQuery {
                 SELECT GTBTRNH_CUST_CODE
                 FROM GTBTRNH
                 GROUP BY GTBTRNH_CUST_CODE
-                HAVING COUNT(*) < 30
+                HAVING COUNT(*) < 100
             ),
             randomized_results AS (
                 SELECT
@@ -1968,6 +1968,12 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE= """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 100
+            )
             SELECT
                 GT.GTBTRNH_CUST_CODE,
                 GT.GTBTRNH_PREM_CODE,
@@ -1994,6 +2000,7 @@ public final class DBQuery {
                 AND UO.UABOPEN_BALANCE_IND = 'P'
                 AND UO.UABOPEN_BALANCE > 200
                 AND UO.UABOPEN_DUE_DATE < TRUNC(SYSDATE)
+                AND GT.GTBTRNH_CUST_CODE IN (SELECT GTBTRNH_CUST_CODE FROM eligible_customers)
                 AND EXISTS (
                     SELECT 1
                     FROM UCRSCMP SC
@@ -2013,7 +2020,7 @@ public final class DBQuery {
                     WHERE RS.UZRSSPA_CUST_CODE = ZB.UZBENRO_CUST_CODE
                       AND RS.UZRSSPA_PREM_CODE = ZB.UZBENRO_PREM_CODE
                 )
-             FETCH FIRST 1 ROWS ONLY
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_UNAPPLIED_DEPOSIT= """
