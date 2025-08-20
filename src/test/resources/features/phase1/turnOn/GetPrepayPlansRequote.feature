@@ -15,7 +15,7 @@ Feature: Verify GetPrepayPlansRequote Api
     Then the response plans should contains a "<planCode>" plan
 
     Then a request is made to get Marketer Reference Data
-    And a request is made to the SaveEnrollment Api for prepay with "<planCode>" planCode for "<testCondition>" condition
+    And a request is made to the SaveEnrollment Api for with "<planCode>" planCode for "<testCondition>" condition
     Then verify response code of "SaveEnrollment" Api is 200
 
     Then a prepay transaction is returned from searchAccounts api for "<testCondition>"

@@ -251,4 +251,5 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void verifyEligiblePlansAndOffersContainPlanCode(String planCode) {
         getEligiblePlansAndOffersApiPage.verifyResponsePlansContainsPlan(GlobalEnums.PlanCode.valueOf(planCode));
     }
+
 }
