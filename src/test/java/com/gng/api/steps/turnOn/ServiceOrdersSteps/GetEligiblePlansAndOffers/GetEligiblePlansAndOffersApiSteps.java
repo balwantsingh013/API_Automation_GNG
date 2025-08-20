@@ -4,7 +4,6 @@ package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.io.IOException;

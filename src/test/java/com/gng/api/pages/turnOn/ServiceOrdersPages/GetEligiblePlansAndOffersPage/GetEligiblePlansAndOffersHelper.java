@@ -1840,47 +1840,6 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerBusinessName(selectedAccount.getCustomerBusinessName());
     }
 
-    public void preparePayloadForPreviouslySavedIncompleteEnrollmentByTransactionId (GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition, int transactionID){
-
-        Account selectedAccount = testContext.getSearchAccountsResponse()
-                .getData()
-                .getAccounts()
-                .stream()
-                .filter(account -> account.getTransactionID() == transactionID)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Transaction ID not found"));
-
-        payload.setTransactionType(TURN_ON.getValue());
-        payload.setCustomerCode(selectedAccount.getCustomerCode());
-        payload.setPremisesCode(selectedAccount.getPremisesCode());
-        payload.setTransactionID(selectedAccount.getTransactionID());
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-       // setTheFieldToEmptyForCommercialScenarios(payload);
-        payload.setCustomerFirstName(selectedAccount.getCustomerFirstName());
-        payload.setCustomerLastName(selectedAccount.getCustomerLastName());
-
-        switch(testCondition){
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
-                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
-                break;
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
-                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
-                break;
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502,
-                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505,
-                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506,
-                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
-                payload.setSeasonalSavingsProgramIndicator(true);
-
-                break;
-            default:
-                break;
-        }
-    }
 
     public void preparePayloadBasedOnTC_EligiblePlansAndSaveEnrollment(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
