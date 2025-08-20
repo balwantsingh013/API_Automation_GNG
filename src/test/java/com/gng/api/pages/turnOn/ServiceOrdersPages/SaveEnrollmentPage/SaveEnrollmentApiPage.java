@@ -133,9 +133,10 @@ public class SaveEnrollmentApiPage extends BasePage {
         helper.databaseValidationPostEnrollment(dataTable);
     }
 
-    public void savePrepayEnrollmentFromCustomerData(SaveEnrollmentApiLabel apiLabel, GlobalEnums.PlanCode planCode, SaveEnrollmentApiLabel testCondition) {
+    public void validateSaveEnrollmentByPlanCode
+            (SaveEnrollmentApiLabel apiLabel, GlobalEnums.PlanCode planCode, SaveEnrollmentApiLabel testCondition) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
-        helper.setPrePayRequestParams(payload, planCode, testCondition);
+        helper.setRequestParamsByPlanCode(payload, planCode, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);

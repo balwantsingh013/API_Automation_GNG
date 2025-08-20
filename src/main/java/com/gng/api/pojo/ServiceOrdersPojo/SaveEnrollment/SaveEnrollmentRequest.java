@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class SaveEnrollmentRequest  {
     private String requestID;
     private String loginID;
-    private int transactionID;
+    private Integer transactionID;
     private String transactionType;
     private Object customerCode;
     private String premisesCode;
