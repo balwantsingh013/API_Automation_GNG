@@ -817,7 +817,7 @@ public class ExtentReportManager {
         border: 2px solid rgba(255,255,255,0.2) !important;
     }
     
-    :is(.status-500, .status-502, .status-503) { 
+    :is(.status-500, .status-502, .status-503, .status-504) { 
         background: linear-gradient(135deg, #374151, #4b5563) !important; 
         color: white !important; 
         padding: 4px 10px !important; /* Increased padding */
@@ -1664,6 +1664,7 @@ public class ExtentReportManager {
             case 500 -> "Internal Server Error";
             case 502 -> "Bad Gateway";
             case 503 -> "Service Unavailable";
+            case 504 -> "Gateway Timeout";
             default -> "Unknown";
         };
     }

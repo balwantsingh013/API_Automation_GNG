@@ -5,13 +5,8 @@ Feature: Verify SaveEnrollment Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @SaveEnrollmentWithValidData @Phase1 @HappyFlow
-  Scenario: Verify SaveEnrollment Api with valid data
-    When a request is made to the SaveEnrollment Api
-    Then verify response code of "SaveEnrollment" Api is 200
-
   @SaveEnrollmentWithInvalidRequestID @Phase1 @NegativeFlow
-  Scenario Outline: Verify SaveEnrollment Api with invalid requestID "<requestID>"
+  Scenario Outline: SaveEnrollment Api- Verify SaveEnrollment Api with invalid requestID "<requestID>"
     When a request is made to the SaveEnrollment Api with "<requestID>"
     Then verify response code of "SaveEnrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -23,7 +18,7 @@ Feature: Verify SaveEnrollment Api
       | LONG_REQUEST_ID      | 10002     | Invalid Request ID   |
 
   @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
-  Scenario Outline: Verify SaveEnrollment Api with invalid "<customerCODE>" code
+  Scenario Outline: SaveEnrollment Api- Verify SaveEnrollment Api with invalid "<customerCODE>" code
     When a request is made to the SaveEnrollment Api with  customer "<customerCODE>" code
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -36,7 +31,7 @@ Feature: Verify SaveEnrollment Api
 
 
   @SaveEnrollmentInvalidPromotionCODE @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<premisesCODE>" code
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<premisesCODE>" code
     When a request is made to the SaveEnrollment Api with  premises "<premisesCODE>" code
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -49,7 +44,7 @@ Feature: Verify SaveEnrollment Api
       | MIN_LENGTH_PREMISES_CODE    | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
 
   @SaveEnrollmentInvalidTransactionID @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<transactionID>"ID
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<transactionID>"ID
     When a request is made to the SaveEnrollment Api with  transaction "<transactionID>" ID
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -60,7 +55,7 @@ Feature: Verify SaveEnrollment Api
 
 
   @SaveEnrollmentInvalidTransactionType @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<transactionType>"Type
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<transactionType>"Type
     When a request is made to the SaveEnrollment Api with  transaction "<transactionType>" Type
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -72,7 +67,7 @@ Feature: Verify SaveEnrollment Api
       | ALPHANUMERIC_TRANSACTION_TYPE | 1000      | Invalid Request: Invalid Transaction Type                        |
 
   @SaveEnrollmentInvalidPlanCode @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<planCode>"Code
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<planCode>"Code
     When a request is made to the SaveEnrollment Api with  plan "<planCode>" Code
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -85,7 +80,7 @@ Feature: Verify SaveEnrollment Api
       | ALPHANUMERIC_PLAN_CODE  | 2000      | Invalid Request: Invalid Plan Code                        |
 
   @SaveEnrollmentInvalidLoginID @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<loginID>"
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<loginID>"
     When a request is made to the SaveEnrollment Api with login "<loginID>" ID
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -98,9 +93,8 @@ Feature: Verify SaveEnrollment Api
       | ALPHANUMERIC_LOGIN_ID  | 2000      | Invalid Login ID |
       | MAX_LENGTH_LOGIN_ID    | 2000      | Invalid Login ID |
 
-
   @SaveEnrollmentInvalidEnrollmentStatus @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<enrollmentStatus>"
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<enrollmentStatus>"
     When a request is made to the SaveEnrollment Api with enrollment "<enrollmentStatus>" Status
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -114,7 +108,7 @@ Feature: Verify SaveEnrollment Api
       | WHITESPACE_CONTAINS_ENROLLMENT_STATUS | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
 
   @SaveEnrollmentInvalidBillingPlan @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<billingPlan>"
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<billingPlan>"
     When a request is made to the SaveEnrollment Api with billing "<billingPlan>" Plan
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -174,6 +168,7 @@ Feature: Verify SaveEnrollment Api
         |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501       |MVS     |                              |         |INCL      |INCL            | A                   |             |                      |                    |N                |I               |N                |A            |A                        |REQUEST    |
         |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503       |MVS     |                              |         |INCL      |INCL            | A                   |             |                      |                    |N                |I               |N                |A            |A                        |REQUEST    |
         |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504       |CVS     |COM 25 CENTS FOR 12 MONTHS    |         |INCL      |INCL            | A                   |             |                      |                    |N                |I               |N                |A            |A                        |REQUEST    |
+        |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452       |VML     |                              |ENRL     |ENRL1     |UDCS            |N                    |N            |N                     |N                   |N                |I               |N                |A            |A                        |ENROLL     |
 
   @SaveEnrollmentPreviouslySaved @Phase1 @HappyFlow
   Scenario Outline: SaveEnrollment Api -Verify SaveEnrollment Api returns success for previously saved enrollment for <testCondition>
@@ -194,25 +189,26 @@ Feature: Verify SaveEnrollment Api
 
     Examples:
       |testCondition                                                         |planCode|promotionCode                    |planCode2|promotionCode2                  |cycleCode    |reasonCode    |enrollmentStatus    |accountStatusIdicator    |paymentArrear    |badDebtExemptIndicator    |NCOAProtectIndicator    |feedbackIndicator    |contactDirection    |referredIndicator    |OCRCDETStatus    |OCRCTIMAutomaticIndicator    |contactType|
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS      |RF6      |FIX 8 CENTS FOR 6 MONTHS        |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426       |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1     |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427       |PGB     |FIX 10 DOLLARS FOR 12 MONTHS     |PGB      |FIX 10 DOLLARS FOR 12 MONTHS    |PGBP         |PRP-ENROLL    |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428       |PRP     |                                 |PRP      |                                |PRPY         |PRP-ENROLL    |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS      |MI       |                                |             |INCL          |INCL                |                         |                 |                          |                        |N                    |I                   |N                    |A                |A                            |REQUEST    |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436       |VML     |                                 |VML      |                                |DEPO         |CRDS          |CRDS                |A                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST    |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440       |PGB     |FIX 10 DOLLARS FOR 12 MONTHS     |PGB      |FIX 10 DOLLARS FOR 12 MONTHS    |PGBP         |PRP-ENROLL    |PRPY                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502               |MVS     |25 CENTS FOR 12 MONTHS           |RF6      |FIX 8 CENTS FOR 6 MONTHS        | ENRL        | ENRL1        |UDCS                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505               |MVS     |25 CENTS FOR 12 MONTHS           |RF6      |FIX 8 CENTS FOR 6 MONTHS        | ENRL        | ENRL1        |UDCS                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506       |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS | CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS| ENRL        | ENRL1        |UDCS                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507       |MVS     |                                 | MVS     |                                |  ENROLL     | INCL         |INCL                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST    |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437       |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441       |PRP     |                                 |PRP      |                                |PRPY         |PRP-ENROLL    |PRPY                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
-#      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444       |PGB     |FIX 10 DOLLARS FOR 12 MONTHS     |PGB      |FIX 10 DOLLARS FOR 12 MONTHS    |PGBP         |INCL    |INCL                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST     |
- #     |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445       |PRP     |                                 |PRP      |                                |PRPY |INCL    |INCL                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST     |
-      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447       |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS | CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS| ENRL        |INCL    |INCL                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS      |RF6      |FIX 8 CENTS FOR 6 MONTHS        |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426       |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1     |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427       |PGB     |FIX 10 DOLLARS FOR 12 MONTHS     |PGB      |FIX 10 DOLLARS FOR 12 MONTHS    |PGBP         |PRP-ENROLL    |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428       |PRP     |                                 |PRP      |                                |PRPY         |PRP-ENROLL    |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS      |MI       |                                |             |INCL          |INCL                |                         |                 |                          |                        |N                    |I                   |N                    |A                |A                            |REQUEST    |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436       |VML     |                                 |VML      |                                |DEPO         |CRDS          |CRDS                |A                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST    |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440       |PGB     |FIX 10 DOLLARS FOR 12 MONTHS     |PGB      |FIX 10 DOLLARS FOR 12 MONTHS    |PGBP         |PRP-ENROLL    |PRPY                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502               |MVS     |25 CENTS FOR 12 MONTHS           |RF6      |FIX 8 CENTS FOR 6 MONTHS        | ENRL        | ENRL1        |UDCS                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505               |MVS     |25 CENTS FOR 12 MONTHS           |RF6      |FIX 8 CENTS FOR 6 MONTHS        | ENRL        | ENRL1        |UDCS                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506       |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS | CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS| ENRL        | ENRL1        |UDCS                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507       |MVS     |                                 | MVS     |                                |  ENROLL     | INCL         |INCL                | N                       |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST    |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437       |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441       |PRP     |                                 |PRP      |                                |PRPY         |PRP-ENROLL    |PRPY                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444       |PGB     |FIX 10 DOLLARS FOR 12 MONTHS     |PGB      |FIX 10 DOLLARS FOR 12 MONTHS    |PGBP         |INCL          |INCL                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST    |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445       |PRP     |                                 |PRP      |                                |PRPY         |INCL          |INCL                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST    |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447       |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS | CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS| ENRL        |INCL          |INCL                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |REQUEST    |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453       |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
 
-  @SSPValidations @Phase1 @NegativeFlow
+  @SaveEnrollmentSSPValidations @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     And response should have ErrorCode 0 and ErrorMessage ""
@@ -256,7 +252,7 @@ Feature: Verify SaveEnrollment Api
       |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479                           |RF6     |             |MVS      |25 CENTS FOR 12 MONTHS|SSP ACCOUNT RECORD     |Missing Customer Code                                               |10000    |
       |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481                           |RF6     |             |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Missing Customer Code                                               |10000    |
       |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_493                    |RF6     |             |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000     |
-#      |SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492                           |RF6     |             |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000     |
+      |SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492                           |RF6     |             |MVS      |25 CENTS FOR 12 MONTHS|SSP FALL TURN ON RECORD|Invalid Request: Missing conditional parameters-SSP Participant Code|2000     |
 
   @SSPValidations @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
@@ -367,52 +363,52 @@ Feature: Verify SaveEnrollment Api
     Examples:
       |testCondition                                                         |planCode|promotionCode                      |recordType             |planCode2|promotionCode2            |errorMessage                |
       |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_487                           |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS   |SSP FALL TURN ON RECORD|CVS      |COM 25 CENTS FOR 12 MONTHS|Missing Customer Code       |
-#      |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491                    |CVS     |COM 25 CENTS FOR 12 MONTHS         |SSP ACCOUNT RECORD     |CVS      |                          |Missing SSP Participant Code|
+      |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491                    |CVS     |COM 25 CENTS FOR 12 MONTHS         |SSP ACCOUNT RECORD     |CVS      |                          |Missing SSP Participant Code|
 
-#  @SSPValidations @Phase1 @NegativeFlow
-#  Scenario: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488
-#    When a request is made to the GetEligiblePlansAndOffers for a "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should have "recordType" as "ENROLLMENT RECORD"
-#    And a request is made to get Marketer Reference Data
-#    And a request is made to the Save Enrollment API for the "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488" with "CF6" and "COM FIX 5 DOLLARS FOR 6 MONTHS"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should have "recordType" as "SSP ACCOUNT RECORD"
-#    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And a request is made to the Save Enrollment API for completion for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488" with "CVS" and ""
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should have "recordType" as "SSP ACCOUNT INCOMPLETE ENROLLMENT RECORD"
-#    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488_2"
-#    And response should have ErrorCode 2000 and ErrorMessage "Invalid Request: Missing conditional parameters-Premises Code"
+  @SSPValidations @Phase1 @NegativeFlow
+  Scenario: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488
+    When a request is made to the GetEligiblePlansAndOffers for a "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "ENROLLMENT RECORD"
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488" with "CF6" and "COM FIX 5 DOLLARS FOR 6 MONTHS"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "SSP ACCOUNT RECORD"
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the Save Enrollment API for completion for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488" with "CVS" and ""
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "SSP ACCOUNT INCOMPLETE ENROLLMENT RECORD"
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488_2"
+    And response should have ErrorCode 2000 and ErrorMessage "Invalid Request: Missing conditional parameters-Premises Code"
 
-#  @SSPValidations @Phase1 @NegativeFlow
-#  Scenario: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496
-#    When a request is made to the GetEligiblePlansAndOffers Api for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" condition
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should have "recordType" as "ENROLLMENT RECORD"
-#    And a request is made to get Marketer Reference Data
-#    And a request is made to the Save Enrollment API for the "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" with "RF6" and ""
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should have "recordType" as "SSP ACCOUNT RECORD"
-#    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And response should have "recordType" as "SSP ACCOUNT INCOMPLETE ENROLLMENT RECORD"
-#    And a request is made to get Marketer Reference Data
-#    And a request is made to the Save Enrollment API for completion for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" with "MVS" and ""
-#    And response should have ErrorCode 10000 and ErrorMessage "Invalid Request: Missing conditional parameters-Payment Confirmation Number"
+  @SSPValidations @Phase1 @NegativeFlow
+  Scenario: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496
+    When a request is made to the GetEligiblePlansAndOffers Api for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" condition
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "ENROLLMENT RECORD"
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" with "RF6" and ""
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "SSP ACCOUNT RECORD"
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "SSP ACCOUNT INCOMPLETE ENROLLMENT RECORD"
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for completion for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" with "MVS" and ""
+    And response should have ErrorCode 10000 and ErrorMessage "Invalid Request: Missing conditional parameters-Payment Confirmation Number"
 
   @SSPValidations @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
@@ -431,7 +427,7 @@ Feature: Verify SaveEnrollment Api
       |SSP_VALIDATION_INVALID_SSP_CODE_TC_497C        |RF6     |                            |Parameter Value should be null-SSP Participant Code|2200            |
 
 
-  @SaveEnrollmentGetPrepayPlansRequotePositive @HappyFlow
+  @SaveEnrollmentGetPrepayPlansRequotePositive @HappyFlow @Phase1
   Scenario Outline: GetPrepayPlansRequote API – returns quotes for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -456,12 +452,21 @@ Feature: Verify SaveEnrollment Api
       | PRP      | GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_448|
       | PGB      | GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_449|
 
-  Scenario: SaveEnrollment Api -Verify SaveEnrollment API for GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_450
-    When a request is made to the GetEligiblePlansAndOffers Api for "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_450" condition
+    @SaveErollmentPositive @HappyFlow @Phase1
+  Scenario Outline: SaveEnrollment Api -Verify SaveEnrollment API for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     And response should have ErrorCode 0 and ErrorMessage ""
-    Then a request is made to the SearchAccountsApi for "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_450"
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should have "recordType" as "ENROLLMENT RECORD"
     And a request is made to get Marketer Reference Data
-    And a request is made to the Save Enrollment API for the "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_450" with "PRP" and ""
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<pricePlan>" and "<promotionCode>"
     And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for completion for "<testCondition>" with "<pricePlan>" and ""
+    And response should have ErrorCode 0 and ErrorMessage ""
+      Examples:
+      |testCondition                                                      |pricePlan|promotionCode               |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_450    |PRP      |                            |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_451    |PGB      |FIX 10 DOLLARS FOR 12 MONTHS|
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_SSP_TC_455|MVS      |25 CENTS FOR 12 MONTHS      |

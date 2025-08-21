@@ -153,6 +153,18 @@ public class SaveEnrollmentHelper {
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
                 break;
 
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_450:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_451:
+                payload.setEnrollmentStatus(CANCEL_PREPAY.getValue());
+                payload.setBillingPlan("");
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
+                payload.setEnrollmentStatus(BILL_DEPOSIT.getValue());
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479:
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 payload.setCustomerCode(null);
@@ -170,6 +182,11 @@ public class SaveEnrollmentHelper {
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481:
                 payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
                 payload.setCustomerCode(null);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_SSP_TC_455:
+                payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
                 break;
 
@@ -392,6 +409,7 @@ public class SaveEnrollmentHelper {
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_SSP_TC_455:
                 payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
                 break;
 
@@ -446,6 +464,7 @@ public class SaveEnrollmentHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RD_TC_446:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
                 payload.setEnrollmentStatus(REFUSED_DEPOSIT.getValue());
                 break;
 
@@ -457,6 +476,8 @@ public class SaveEnrollmentHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_439:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_450:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_451:
                 payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
                 payload.setBillingPlan("");
                 break;
@@ -495,6 +516,7 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
                 payload.setPromotionCode("");
                 break;
+
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504,
                  GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506,
                  GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
@@ -502,6 +524,7 @@ public class SaveEnrollmentHelper {
                 payload.setAglcServiceOrderNumber(null);
                 payload.setPromotionCode("");
                 break;
+
         }
     }
 

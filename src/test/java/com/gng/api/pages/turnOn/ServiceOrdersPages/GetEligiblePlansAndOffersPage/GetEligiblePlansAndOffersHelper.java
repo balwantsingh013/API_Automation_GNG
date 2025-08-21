@@ -1734,6 +1734,11 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 break;
 
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setAcnStatusIndicator("ACN");
+                break;
+
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 payload.setCustomerType("CM");
@@ -1924,7 +1929,6 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_439:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_442:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
@@ -1939,6 +1943,16 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
+                customerData = allRowsOfCustomerData.get(31);
+                payload.setCreditCheckOption(YES.getValue());
+                getCustomerDetails(payload,customerData);
+                payload.setSeasonalSavingsProgramIndicator(false);
+                payload.setAcnStatusIndicator("ACN");
+                break;
+
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503:
