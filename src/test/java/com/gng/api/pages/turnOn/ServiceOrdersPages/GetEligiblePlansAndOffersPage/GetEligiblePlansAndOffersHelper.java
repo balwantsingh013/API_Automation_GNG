@@ -1728,11 +1728,28 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479:
             case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setAcnStatusIndicator("ACN");
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setCustomerType("CM");
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                String customerBusinessName= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName();
+                payload.setCustomerBusinessName(customerBusinessName);
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
                 break;
 
@@ -1887,7 +1904,10 @@ public class GetEligiblePlansAndOffersHelper {
             case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_485:
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486:
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_487, SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488,
-                 SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491:
+                 SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 populateCommonFields(payload,commercialCustomerData);
@@ -1909,17 +1929,30 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_439:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_442:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445:
                 customerData = allRowsOfCustomerData.get(31);
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
+                customerData = allRowsOfCustomerData.get(31);
+                payload.setCreditCheckOption(YES.getValue());
+                getCustomerDetails(payload,customerData);
+                payload.setSeasonalSavingsProgramIndicator(false);
+                payload.setAcnStatusIndicator("ACN");
+                break;
+
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503:
@@ -1929,14 +1962,7 @@ public class GetEligiblePlansAndOffersHelper {
                 getCustomerAndPremiseDetails(payload, customerData);
                 payload.setSeasonalSavingsProgramIndicator(true);
                 break;
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504,
-                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506:
-                payload.setCustomerType(COMMERCIAL.getValue());
-                payload.setCreditCheckOption(YES.getValue());
-                populateCommonFields(payload,commercialCustomerData);
-                setTheFieldToEmptyForCommercialScenarios(payload);
-                payload.setSeasonalSavingsProgramIndicator(true);
-                break;
+
             default:
                 payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
                 getCustomerDetails(payload, customerData);
