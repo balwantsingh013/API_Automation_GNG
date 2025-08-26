@@ -271,6 +271,7 @@ public class SaveEnrollmentHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
                 payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
                 payload.setBillingPlan("");
+                payload.setRequestID(FakerDataGenerator.generateString(9));
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
@@ -394,7 +395,8 @@ public class SaveEnrollmentHelper {
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481, GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
             case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_493,
-                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501:
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501,
+                 SSP_FALL_TURN_ON_SEARCH_TC_112:
                 payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
                 break;
 

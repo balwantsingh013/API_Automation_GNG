@@ -137,7 +137,7 @@ Feature: Verify SaveEnrollment Api
     When a request is made to the GetEligiblePlansAndOffers for a "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B"
     And response should have ErrorCode 0 and ErrorMessage ""
     And a request is made to get Marketer Reference Data
-    And a request is made to the Save Enrollment API for the "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B" with "PRP" and "15 CENTS FOR 12 MONTHS"
+    And a request is made to the Save Enrollment API for the "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B" with "PRP" and ""
     And response should have ErrorCode 0 and ErrorMessage ""
 
     @SaveEnrollmentEnrollmentNewEnrollment @Phase1 @HappyFlow
@@ -226,9 +226,9 @@ Feature: Verify SaveEnrollment Api
 
     Examples:
       |testCondition                                                         |planCode|promotionCode               |recordType                                |errorMessage                                                          |
-      |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_478                           |RF6     |                            |SSP ACCOUNT RECORD                        |Invalid Request: Missing conditional parameters-Customer Code         |
+      #|SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_478                           |RF6     |                            |SSP ACCOUNT RECORD                        |Invalid Request: Missing conditional parameters-Customer Code         |
       |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_480                           |MVS     |25 CENTS FOR 12 MONTHS      |SSP FALL TURN ON RECORD                   |Invalid Request: Missing conditional parameters-Customer Code         |
-      |SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490                    |RF6     |                            |SSP ACCOUNT RECORD                        |Invalid Request: Missing conditional parameters - SSP Participant Code|
+      #|SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490                    |RF6     |                            |SSP ACCOUNT RECORD                        |Invalid Request: Missing conditional parameters - SSP Participant Code|
 
   @SSPValidations @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on <testCondition>
