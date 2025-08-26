@@ -32,14 +32,19 @@ public class SaveUnenrollmentHelper {
 
     public void setRequestIDBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel requestID) {
         switch (requestID) {
-            case EMPTY_REQUEST_ID:
+            case EMPTY_REQUEST_ID_106:
                 payload.setRequestID("");
                 break;
-            case DUPLICATE_REQUEST_ID:
+
+            case NULL_REQUEST_ID_106_1:
+                payload.setRequestID(null);
+                break;
+
+            case DUPLICATE_REQUEST_ID_108:
                 payload.setRequestID("123");
                 break;
 
-            case LONG_REQUEST_ID:
+            case LONG_REQUEST_ID_107:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
                 break;
         }

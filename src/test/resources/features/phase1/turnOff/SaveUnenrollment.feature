@@ -49,7 +49,8 @@ Feature: Verify SaveUnenrollment Api
 
     Examples:
       | requestID            | errorCode | errorMessage         |
-      | EMPTY_REQUEST_ID     | 10001     | Missing Request ID   |
-      | DUPLICATE_REQUEST_ID | 10003     | Duplicate Request ID |
-      | LONG_REQUEST_ID      | 10002     | Invalid Request ID   |
+      | EMPTY_REQUEST_ID_106     | 10001     | Missing Request ID   |
+      | NULL_REQUEST_ID_106_1     | 10001     | Missing Request ID   |
+      | DUPLICATE_REQUEST_ID_108 | 10003     | Duplicate Request ID |
+      | LONG_REQUEST_ID_107     | 10002     | Invalid Request ID   |
 

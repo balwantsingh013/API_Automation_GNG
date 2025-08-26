@@ -1239,13 +1239,13 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setRequestIDBasedOnTypeTC155_157(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel requestID) {
         switch (requestID) {
-            case NULL_REQUEST_ID:
+            case NULL_REQUEST_ID_TC_156:
                 payload.setRequestID(null);
                 break;
-            case DUPLICATE_REQUEST_ID:
+            case DUPLICATE_REQUEST_ID_TC_155:
                 payload.setRequestID("3BC00A0397B14F29A313280EE0110941");
                 break;
-            case LONG_REQUEST_ID:
+            case LONG_REQUEST_ID_TC_157:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(35));
                 break;
 
@@ -1256,23 +1256,23 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setLoginIDBasedOnTypeTC158_160B(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel loginID) {
         switch (loginID) {
-            case INVALID_LOGIN_ID:
+            case INVALID_LOGIN_ID_TC_160:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("kfletcher123");
                 break;
-            case NULL_LOGIN_ID:
+            case NULL_LOGIN_ID_TC_158:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("");
                 break;
-            case NON_NUMERIC_LOGIN_ID:
+            case NON_NUMERIC_LOGIN_ID_TC_160B:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(9));
                 break;
-            case ALPHANUMERIC_LOGIN_ID:
+            case ALPHANUMERIC_LOGIN_ID_TC_160A:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.generateAlphanumeric(8));
                 break;
-            case MAX_LENGTH_LOGIN_ID:
+            case MAX_LENGTH_LOGIN_ID_TC_159:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.getRandomNumericString(35));
                 break;
@@ -1283,14 +1283,14 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setTransactionIDBasedOnTypeTC161_162(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel transactionID) {
         switch (transactionID) {
-            case NULL_TRANSACTION_ID_INCL_ENROLLMENT_STATE:
+            case NULL_TRANSACTION_ID_INCL_ENROLLMENT_STATE_TC_161:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("INCL");
                 payload.setCustomerCode("5911661");
                 payload.setPremisesCode("5886135");
                 payload.setTransactionID(null);
                 break;
-            case NULL_TRANSACTION_ID_CRDS_ENROLLMENT_STATE:
+            case NULL_TRANSACTION_ID_CRDS_ENROLLMENT_STATE_TC_162:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("CRDS");
                 payload.setCustomerCode("5911662");
@@ -1304,7 +1304,7 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setCustomerCodeBasedOnTypeTC163_164(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customercode) throws IOException {
         switch (customercode) {
-            case NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE:
+            case NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE_TC_163:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 /*ExcelReader excelReader = new ExcelReader(EXPERIAN_DATA);
                 List<Map<String, String>> testData = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
@@ -1315,7 +1315,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setTransactionID("234223459");
                 payload.setCustomerCode(null);
                 break;
-            case NULL_CUSTOMER_CODE_CRDS_ENROLLMENT_STATE:
+            case NULL_CUSTOMER_CODE_CRDS_ENROLLMENT_STATE_TC_164:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("INCL");
                 payload.setPremisesCode("5886136");
@@ -1329,28 +1329,83 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setPremisesCodeBasedOnTypeTC165_167(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel premisesCode) {
         switch (premisesCode) {
-            case NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE:
+            case NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE_TC_165:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("INCL");
                 payload.setTransactionID("234223459");
                 payload.setCustomerCode("5911662");
                 payload.setPremisesCode(null);
                 break;
-            case NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE:
+            case NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE_TC_166:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentState("CRDS");
                 payload.setTransactionID("234223459");
                 payload.setCustomerCode("5911662");
                 payload.setPremisesCode(null);
                 break;
-            case VALID_PREMISES_CODE_NULL_ENROLLMENT_STATE:
+            case VALID_PREMISES_CODE_NULL_ENROLLMENT_STATE_TC_167:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setEnrollmentState("CRDS");
                 payload.setTransactionID("234223459");
                 payload.setCustomerCode("5911662");
                 payload.setPremisesCode("5886135");
                 payload.setEnrollmentState(null);
                 break;
+
+            case ENROLLMENT_STATE_CUST_CODE_PREM_CODE_NULL_TC_168:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionID("234223459");
+                payload.setCustomerCode(null);
+                payload.setPremisesCode(null);
+                payload.setEnrollmentState(null);
+                break;
+
+            case ENROLLMENT_STATE_TRAN_ID_PREM_CODE_NULL_TC_169:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionID(null);
+                payload.setCustomerCode("5911662");
+                payload.setPremisesCode(null);
+                payload.setEnrollmentState(null);
+                break;
+
+            case ENROLLMENT_STATE_TRAN_ID_CUST_CODE_NULL_TC_170:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionID(null);
+                payload.setCustomerCode(null);
+                payload.setPremisesCode("5886135");
+                payload.setEnrollmentState(null);
+                break;
+
+            case ENROLLMENT_STATE_PREM_CODE_NULL_TC_171:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionID("234223459");
+                payload.setCustomerCode("5911662");
+                payload.setPremisesCode(null);
+                payload.setEnrollmentState(null);
+                break;
+
+            case ENROLLMENT_STATE_CUST_CODE_NULL_TC_172:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionID("234223459");
+                payload.setCustomerCode(null);
+                payload.setPremisesCode("5886135");
+                payload.setEnrollmentState(null);
+                break;
+
+            case ENROLLMENT_STATE_TRAN_ID_NULL_TC_173:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionID(null);
+                payload.setCustomerCode("5911662");
+                payload.setPremisesCode("5886135");
+                payload.setEnrollmentState(null);
+                break;
+
+            case INVALID_ENROLLMENT_STATE_TC_174:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionID("234223459");
+                payload.setCustomerCode("5911662");
+                payload.setPremisesCode("5886135");
+                payload.setEnrollmentState("PVER");
+
             default:
                 payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
         }

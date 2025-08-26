@@ -72,72 +72,77 @@ Feature: Verify GetEligiblePlansAndOffers Api
     |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E        |
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
-    When a request is made to the GetEligiblePlansAndOffers Api with "<requestID>"TC155_157
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify GetEligiblePlansAndOffers Api with invalid requestID <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>"TC155_157
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | requestID            | errorCode | errorMessage         |
-      | NULL_REQUEST_ID      | 10001     | Missing Request ID   |
-      | DUPLICATE_REQUEST_ID | 10003     | Duplicate Request ID |
-      | LONG_REQUEST_ID      | 10002     | Invalid Request ID   |
+      | testCondition                   | errorCode | errorMessage     |
+      | NULL_REQUEST_ID_TC_156      | 10001     | Missing Request ID   |
+      | DUPLICATE_REQUEST_ID_TC_155 | 10003     | Duplicate Request ID |
+      | LONG_REQUEST_ID_TC_157      | 10002     | Invalid Request ID   |
 
 
   @GetEligiblePlansAndOffersInvalidLoginIDTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<loginID>"
-    When a request is made to the GetEligiblePlansAndOffers Api with login "<loginID>" ID TC158_160b
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with login "<testCondition>" ID TC158_160b
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | loginID               | errorCode | errorMessage                                              |
-      | INVALID_LOGIN_ID      | 2000      | Invalid Login ID                                          |
-      | NULL_LOGIN_ID         | 10000     | Missing Login ID                                          |
-      | NON_NUMERIC_LOGIN_ID  | 2000      | Invalid Login ID                                          |
-      | ALPHANUMERIC_LOGIN_ID | 2000      | Invalid Login ID                                          |
-      | MAX_LENGTH_LOGIN_ID   | 10000     | The Login ID must be a string with a maximum length of 30 |
+      | testCondition                      | errorCode | errorMessage                                              |
+      | INVALID_LOGIN_ID_TC_160      | 2000      | Invalid Login ID                                          |
+      | NULL_LOGIN_ID_TC_158         | 10000     | Missing Login ID                                          |
+      | NON_NUMERIC_LOGIN_ID_TC_160B | 2000      | Invalid Login ID                                          |
+      | ALPHANUMERIC_LOGIN_ID_TC_160A| 2000      | Invalid Login ID                                          |
+      | MAX_LENGTH_LOGIN_ID_TC_159   | 10000     | The Login ID must be a string with a maximum length of 30 |
 
   @GetEligiblePlansAndOffersInvalidTransactionIDTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<transactionID>"
-    When a request is made to the GetEligiblePlansAndOffers Api with transaction "<transactionID>" ID TC161_162
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with transaction "<testCondition>" ID TC161_162
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | transactionID                             | errorCode | errorMessage                                                   |
-      | NULL_TRANSACTION_ID_INCL_ENROLLMENT_STATE | 2000      | Invalid Request: Missing conditional parameters-Transaction ID |
-      | NULL_TRANSACTION_ID_CRDS_ENROLLMENT_STATE | 2000      | Invalid Request: Missing conditional parameters-Transaction ID |
+      | testCondition                                    | errorCode | errorMessage                                                   |
+      | NULL_TRANSACTION_ID_INCL_ENROLLMENT_STATE_TC_161 | 2000      | Invalid Request: Missing conditional parameters-Transaction ID |
+      | NULL_TRANSACTION_ID_CRDS_ENROLLMENT_STATE_TC_162 | 2000      | Invalid Request: Missing conditional parameters-Transaction ID |
 
   @GetEligiblePlansAndOffersInvalidCustomerCodeTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<customerCode>"
-    When a request is made to the GetEligiblePlansAndOffers Api with customer "<customerCode>" code TC163_164
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with customer "<testCondition>" code TC163_164
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | customerCode                             | errorCode | errorMessage                                                  |
-      | NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE | 2000      | Invalid Request: Missing conditional parameters-Customer Code |
-      | NULL_CUSTOMER_CODE_CRDS_ENROLLMENT_STATE | 2000      | Invalid Request: Missing conditional parameters-Customer Code |
+      | testCondition                             | errorCode | errorMessage                                                  |
+      | NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE_TC_163 | 2000      | Invalid Request: Missing conditional parameters-Customer Code |
+      | NULL_CUSTOMER_CODE_CRDS_ENROLLMENT_STATE_TC_164 | 2000      | Invalid Request: Missing conditional parameters-Customer Code |
 
-  @GetEligiblePlansAndOffersInvalidPremisesCodeTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<premisesCode>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<premisesCode>" code TC165_167
+  @GetEligiblePlansAndOffersInvalidPremisesCodeAndEnrollmentStateTNON @Phase1  @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with premises "<testCondition>" code TC165_167
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | premisesCode                              | errorCode | errorMessage                                                                                                                      |
-      | NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
-      | NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
-      | VALID_PREMISES_CODE_NULL_ENROLLMENT_STATE | 2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+      | testCondition                              | errorCode | errorMessage                                                                                                                      |
+      | NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE_TC_165  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
+      | NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE_TC_166  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
+      | VALID_PREMISES_CODE_NULL_ENROLLMENT_STATE_TC_167 | 2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+    |ENROLLMENT_STATE_CUST_CODE_PREM_CODE_NULL_TC_168  |2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+    |ENROLLMENT_STATE_TRAN_ID_PREM_CODE_NULL_TC_169    |2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+|ENROLLMENT_STATE_TRAN_ID_CUST_CODE_NULL_TC_170    |2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+    |ENROLLMENT_STATE_PREM_CODE_NULL_TC_171            |2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+    |ENROLLMENT_STATE_CUST_CODE_NULL_TC_172            |2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+    |ENROLLMENT_STATE_TRAN_ID_NULL_TC_173              |2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+    |INVALID_ENROLLMENT_STATE_TC_174                   |2000      |Invalid Request: Invalid Enrollment State                                                                                          |
 
-  @GetEligiblePlansAndOffersInvalidEnrollmentStateTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<enrollmentState>"
-    When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<enrollmentState>" state TC168_182
+  @GetEligiblePlansAndOffersInvalidTransactionId @Phase1 @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with premises "<testCondition>" code TC165_167
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | enrollmentState                           | errorCode | errorMessage                                                                                                                      |
-      | NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
-      | NULL_PREMISES_CODE_CRDS_ENROLLMENT_STATE  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
-      | VALID_PREMISES_CODE_NULL_ENROLLMENT_STATE | 2000      | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
+      | testCondition                              | errorCode | errorMessage                                                                                                                      |
+      | NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE_TC_165  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
 
 
   @GetEligiblePlansAndOffersWithInvalidTestConditionTNON @Phase1 @NegativeFlow
