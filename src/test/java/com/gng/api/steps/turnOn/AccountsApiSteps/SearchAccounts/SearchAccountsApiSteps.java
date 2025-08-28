@@ -121,118 +121,19 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateInvalidPremisesCityFormatCasesTC69(search_accounts, SearchAccountsApiLabel.valueOf(premisesCity));
     }
 
-    @When("a request is made to the SearchAccounts Api with {string}TC70")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC70(String premisesStateCode) {
-        searchAccountsApiPage.validateInvalidPremisesStateCodeFormatCasesTC70(search_accounts, SearchAccountsApiLabel.valueOf(premisesStateCode));
+    @When("a request is made to the SearchAccounts Api with {string}TC70 and {string} invalid state code")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC70(String premisesStateCode, String invalidStateCode) {
+        searchAccountsApiPage.validateInvalidPremisesStateCodeFormatCasesTC70(search_accounts, SearchAccountsApiLabel.valueOf(premisesStateCode), invalidStateCode);
     }
 
-    @When("a request is made to the SearchAccounts Api with {string}TC71")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC71(String premisesZipCode) {
-        searchAccountsApiPage.validateInvalidPremisesZipCodeFormatCasesTC71(search_accounts, SearchAccountsApiLabel.valueOf(premisesZipCode));
+    @When("a request is made to the SearchAccounts Api with {string} invalid premises zip code for {string} condition")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC71(String invalidPremisesZipCode, String testCondition) {
+        searchAccountsApiPage.validateInvalidPremisesZipCodeFormatCasesTC71(search_accounts, invalidPremisesZipCode, SearchAccountsApiLabel.valueOf(testCondition));
     }
 
-    //    @When("a request is made to the SearchAccounts Api with {string}TC72")
-//    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC72(String missingSearchField) {
-//        searchAccountsApiPage.validateMissingSearchFieldsCasesTC72(search_accounts, SearchAccountsApiLabelTOff.valueOf(missingSearchField));
-//    }
-    @When("a request is made to the SearchAccounts Api with {string}TC73")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC73(String customerCode) {
-        searchAccountsApiPage.validateInvalidCustomerCodeCasesTC73(search_accounts, SearchAccountsApiLabel.valueOf(customerCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC74")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC74(String premisesCode) {
-        searchAccountsApiPage.validateInvalidPremisesCodeCasesTC74(search_accounts, SearchAccountsApiLabel.valueOf(premisesCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC75")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC75(String customerLastName) {
-        searchAccountsApiPage.validateInvalidCustomerLastNameCasesTC75(search_accounts, SearchAccountsApiLabel.valueOf(customerLastName));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC76")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC76(String premisesZipCode) {
-        searchAccountsApiPage.validateInvalidPremisesZipCodeCasesTC76(search_accounts, SearchAccountsApiLabel.valueOf(premisesZipCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC77")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC77(String federalTaxID) {
-        searchAccountsApiPage.validateInvalidSSNAndFederalTaxIDCasesTC77(search_accounts, SearchAccountsApiLabel.valueOf(federalTaxID));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC78_TC92")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC78_TC92(String premisesStreetName) {
-        searchAccountsApiPage.validateInvalidPremisesStreetNameCasesTC78_TC92(search_accounts, SearchAccountsApiLabel.valueOf(premisesStreetName));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC93")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC93(String premisesCity) {
-        searchAccountsApiPage.validateMissingZipCityAndStateAddressFieldsCasesTC93(search_accounts, SearchAccountsApiLabel.valueOf(premisesCity));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC94")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC94(String premisesZipCode) {
-        searchAccountsApiPage.validateMissingZipStreetNameAndStateAddressFieldsCasesTC94(search_accounts, SearchAccountsApiLabel.valueOf(premisesZipCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC95")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC95(String premisesZipCode) {
-        searchAccountsApiPage.validateMissingZipStreetNameAndCityAddressFieldsCasesTC95(search_accounts, SearchAccountsApiLabel.valueOf(premisesZipCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC96")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC96(String premisesZipCode) {
-        searchAccountsApiPage.validateMissingStreetNameStateAndCityAddressFieldsCasesTC96(search_accounts, SearchAccountsApiLabel.valueOf(premisesZipCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC97")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC97(String premisesStateCode) {
-        searchAccountsApiPage.validateMissingStateAndZipCodeAddressFieldsCasesTC97(search_accounts, SearchAccountsApiLabel.valueOf(premisesStateCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC98")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC98(String premisesStateCode) {
-        searchAccountsApiPage.validateMissingCityAndZipCodeAddressFieldsCasesTC98(search_accounts, SearchAccountsApiLabel.valueOf(premisesStateCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC99")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC99(String premisesStateCode) {
-        searchAccountsApiPage.validateMissingStateAndCityAddressFieldsCasesTC99(search_accounts, SearchAccountsApiLabel.valueOf(premisesStateCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC100")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC100(String premisesZipCode) {
-        searchAccountsApiPage.validateMissingStreetNameAndZipAddressFieldsCasesTC100(search_accounts, SearchAccountsApiLabel.valueOf(premisesZipCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC101")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC101(String premisesStateCode) {
-        searchAccountsApiPage.validateMissingStreetNameAndStateAddressFieldsCasesTC101(search_accounts, SearchAccountsApiLabel.valueOf(premisesStateCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC102")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC102(String premisesCity) {
-        searchAccountsApiPage.validateMissingStreetNameAndCityAddressFieldsCasesTC102(search_accounts, SearchAccountsApiLabel.valueOf(premisesCity));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC103")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC103(String premisesZipCode) {
-        searchAccountsApiPage.validateMissingZipAddressFieldsCasesTC103(search_accounts, SearchAccountsApiLabel.valueOf(premisesZipCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC104")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC104(String premisesCity) {
-        searchAccountsApiPage.validateMissingCityAddressFieldsCasesTC104(search_accounts, SearchAccountsApiLabel.valueOf(premisesCity));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC105")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC105(String premisesStateCode) {
-        searchAccountsApiPage.validateMissingStateCodeAddressFieldsCasesTC105(search_accounts, SearchAccountsApiLabel.valueOf(premisesStateCode));
-    }
-
-    @When("a request is made to the SearchAccounts Api with {string}TC106")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC106(String premisesStreetName) {
-        searchAccountsApiPage.validateMissingStreetNameAddressFieldsCasesTC106(search_accounts, SearchAccountsApiLabel.valueOf(premisesStreetName));
+    @When("a request is made to the SearchAccounts Api with invalid search parameters for {string} condition")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_invalid_search_parameters(String testCondition) {
+        searchAccountsApiPage.validateMissingSearchFieldsCases(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the SearchAccounts Api with customer code {string} and premises code {string} that do not exist in database TC_107")
