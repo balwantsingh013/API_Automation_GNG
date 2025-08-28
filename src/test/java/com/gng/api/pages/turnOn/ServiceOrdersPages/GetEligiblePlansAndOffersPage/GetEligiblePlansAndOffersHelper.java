@@ -49,13 +49,16 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setTransactionTypeBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel transactionType) {
         switch (transactionType) {
+            case NULL_TANSACTION_TYPE_TC_183:
+                payload.setTransactionType(null);
+                break;
             case EMPTY_TRANSACTION_TYPE:
                 payload.setTransactionType("");
                 break;
             case NUMERIC_TRANSACTION_TYPE:
                 payload.setTransactionType(FakerDataGenerator.generateDigits(10));
                 break;
-            case UPPERCASE_TRANSACTION_TYPE:
+            case MAX_LENGTH_VALIDATION_TRANSACTION_TYPE_TC_184:
                 payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(36));
                 break;
             case LOWERCASE_TRANSACTION_TYPE:
@@ -87,9 +90,13 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setCustomerType(FakerDataGenerator.generateAlphanumericWithSpecialChars(3));
                 break;
-            case MAX_LENGTH_CUSTOMER_TYPE:
+            case MAX_LENGTH_CUSTOMER_TYPE_TC_191:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setCustomerType(FakerDataGenerator.getRandomString(5));
+                break;
+            case NULL_CUSTOMER_TYPE_TC_190:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setCustomerType(null);
                 break;
 
             default:
@@ -1794,6 +1801,83 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAcnStatusIndicator("ACN");
                 break;
 
+            case INVALID_TRANSACTION_ID_ENROLLMENT_STATE_INCL_TC_175:
+                payload.setTransactionID(FakerDataGenerator.generateDigits(6));
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176:
+                payload.setTransactionID(FakerDataGenerator.generateDigits(6));
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                break;
+
+            case INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_177:
+            case INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_187:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(8));
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(8));
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                break;
+
+            case INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_179:
+            case INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189:
+                payload.setPremisesCode("9000000");
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_PREMISES_CODE_ENROLLMENT_STATE_CRDS_TC_180:
+                payload.setPremisesCode("9000000");
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                break;
+
+            case INVALID_PREMISES_CODE_LENGTH_ENROLLMENT_STATE_INCL_TC_188:
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A:
+                payload.setPremisesCode(FakerDataGenerator.generateString(8));
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_INCL_TC_181:
+                payload.setCustomerCode(customerCode-1);
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182:
+                payload.setCustomerCode(customerCode-1);
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                break;
+
+            case INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_CUSTOMER_CODE_LESS_THAN_0_ENROLLMENT_STATE_INCL_TC_186A:
+                payload.setCustomerCode(0.5);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B:
+                payload.setCustomerCode("");
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 payload.setCustomerType("CM");
@@ -1940,6 +2024,17 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+            case INVALID_TRANSACTION_ID_ENROLLMENT_STATE_INCL_TC_175:
+            case INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_177:
+            case INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_187:
+            case INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_179:
+            case INVALID_PREMISES_CODE_LENGTH_ENROLLMENT_STATE_INCL_TC_188:
+            case INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_INCL_TC_181:
+            case INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186:
+            case INVALID_CUSTOMER_CODE_LESS_THAN_0_ENROLLMENT_STATE_INCL_TC_186A:
+            case INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B:
+            case INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A:
+            case INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189:
                 payload.setEnrollmentSource(PHONECALL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload, customerData);
@@ -1989,6 +2084,10 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+            case INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176:
+            case INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178:
+            case INVALID_PREMISES_CODE_ENROLLMENT_STATE_CRDS_TC_180:
+            case INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:

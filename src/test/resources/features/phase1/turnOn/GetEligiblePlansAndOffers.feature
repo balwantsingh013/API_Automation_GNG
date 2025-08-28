@@ -137,12 +137,75 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
   @GetEligiblePlansAndOffersInvalidTransactionId @Phase1 @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<testCondition>" code TC165_167
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | testCondition                              | errorCode | errorMessage                                                                                                                      |
-      | NULL_PREMISES_CODE_INCL_ENROLLMENT_STATE_TC_165  | 2000      | Invalid Request: Missing conditional parameters-Premises Code                                                                     |
+      | testCondition                              | errorCode | errorMessage                                   |planCode|promotionCode|
+      | INVALID_TRANSACTION_ID_ENROLLMENT_STATE_INCL_TC_175  | 2000      | Invalid Request: Invalid Transaction ID|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176  | 2000      | Invalid Request: Invalid Transaction ID|VML     |        |
+
+  @GetEligiblePlansAndOffersInvalidCustomerCode @Phase1 @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                       | errorCode | errorMessage                                   |planCode|promotionCode|
+      #| INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_177  | 2000      | Invalid Request: Invalid Customer Code|MVS     |25 CENTS FOR 12 MONTHS        |
+      #| INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178 | 2000      | Invalid Request: Invalid Customer Code|VML     |        |
+      #| INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186  | 10000      | The Customer Code must be an integer with a maximum length of 9|MVS     |25 CENTS FOR 12 MONTHS        |
+      #| INVALID_CUSTOMER_CODE_LESS_THAN_0_ENROLLMENT_STATE_INCL_TC_186A  | 10000      | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 351. |MVS     |25 CENTS FOR 12 MONTHS        |
+      #| INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B  | 10000      | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 350. |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_187  | 2000      | Invalid Request: Invalid Customer Code|MVS     |25 CENTS FOR 12 MONTHS        |
+
+  @GetEligiblePlansAndOffersInvalidPremisesCode @Phase1 @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                       | errorCode | errorMessage                                   |planCode|promotionCode|
+     # | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_179  | 2000      |Invalid Request: Invalid Premises Code|MVS     |25 CENTS FOR 12 MONTHS        |
+      #| INVALID_PREMISES_CODE_ENROLLMENT_STATE_CRDS_TC_180 | 2000      |Invalid Request: Invalid Premises Code|VML     |        |
+      #| INVALID_PREMISES_CODE_LENGTH_ENROLLMENT_STATE_INCL_TC_188  | 10000      |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
+      #| INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A  | 10000      |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189  |  2000      |Invalid Request: Invalid Premises Code|MVS     |25 CENTS FOR 12 MONTHS        |
+
+  @GetEligiblePlansAndOffersInvalidCombinationOfCustPremCode @Phase1 @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                                      | errorCode | errorMessage                                   |planCode|promotionCode|
+      | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_INCL_TC_181      | 2000      |Invalid Request: Invalid Account|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182      | 2000      |Invalid Request: Invalid Account|VML     |        |
+
 
 
   @GetEligiblePlansAndOffersWithInvalidTestConditionTNON @Phase1 @NegativeFlow
@@ -435,29 +498,32 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
 
   @GetEligiblePlansAndOffersInvalidTransactionTypeTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<transactionType>"Type
-    When a request is made to the GetEligiblePlansAndOffers Api with  transaction "<transactionType>" Type
+  Scenario Outline: Verify response code for invalid "<testCondition>"Type
+    When a request is made to the GetEligiblePlansAndOffers Api with  transaction "<testCondition>" Type
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | transactionType                      | errorCode | errorMessage                                                     |
-      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
-      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | UPPERCASE_TRANSACTION_TYPE           | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
-      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | testCondition                      | errorCode | errorMessage                                                     |
+      |NULL_TANSACTION_TYPE_TC_183         |10000     | Missing Transaction Type                                         |
+#      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
+#      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | MAX_LENGTH_VALIDATION_TRANSACTION_TYPE_TC_184           | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+#      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
+#      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+  |INVALID_TRANSACTION_TYPE_TC_185                          |1000       |Invalid Request: Invalid Transaction Type                        |
 
   @GetEligiblePlansAndOffersInvalidCustomerTypeTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify SaveEnrollment Api with invalid "<customerTYPE>" type
-    When a request is made to the GetEligiblePlansAndOffers Api with  customer "<customerTYPE>" Type
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with  customer "<testCondition>" Type
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | customerTYPE             | errorCode | errorMessage                                                   |
-      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
-      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
-      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
-      | MAX_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
+      | testCondition             | errorCode | errorMessage                                                   |
+#      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
+      #| NULL_CUSTOMER_TYPE_TC_190     | 10000     | Invalid or missing Customer Type                              |
+#      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
+#      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
+      | MAX_LENGTH_CUSTOMER_TYPE_TC_191 | 10000     | The Customer Type must be a string with a maximum length of 2 |
 
   @GetEligiblePlansAndOffersInvalidEnrollmentSourcesTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<enrollmentSources>"
