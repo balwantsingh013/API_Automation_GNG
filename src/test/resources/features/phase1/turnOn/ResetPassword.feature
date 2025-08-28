@@ -67,7 +67,7 @@ Feature: Verify ResetPassword Api
       | UNENCRYPTED_NEW_PASSWORD_TC33                              | 10110     | Invalid Login Credentials                                                                                   |
       | ENCRYPTED_NEW_PASSWORD_MORE_THAN_10_CHAR_TC34              | 11117     | New password must be 7 to 10 characters. It must contain a combination of alphabetic and numeric characters |
       | ENCRYPTED_NEW_PASSWORD_LESS_THAN_7_CHAR_TC34A              | 11117     | New password must be 7 to 10 characters. It must contain a combination of alphabetic and numeric characters |
-      #| ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC34B | 11117     | New password must be 7 to 10 characters. It must contain a combination of alphabetic and numeric characters |
+      | ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC34B | 11117     | New password must be 7 to 10 characters. It must contain a combination of alphabetic and numeric characters |
       | OLD_PASSWORD_NEW_PASSWORD_SAME_TC35                        | 10110     | Invalid Login Credentials                                                                                   |
 
   @ResetPasswordOldPasswordMismatchWithDB @Phase1 @DBValidation @NegativeFlow

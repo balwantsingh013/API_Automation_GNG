@@ -52,9 +52,9 @@ Feature: Verify GetUserRoles Api
       | WITHOUT_PASSWORD_FIELD_TC10                            | 10110     | Invalid Login Credentials |
       | NULL_PASSWORD_TC10A                                    | 10110     | Invalid Login Credentials |
       | UNENCRYPTED_PASSWORD_TC11                              | 10110     | Invalid Login Credentials |
-      #| ENCRYPTED_PASSWORD_MORE_THAN_10_CHAR_TC12              | 10110     | Invalid Login Credentials |
-      #| ENCRYPTED_PASSWORD_LESS_THAN_7_CHAR_TC12A              | 10110     | Invalid Login Credentials |
-      #| ENCRYPTED_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC12B | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_PASSWORD_MORE_THAN_10_CHAR_TC12              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_PASSWORD_LESS_THAN_7_CHAR_TC12A              | 10110     | Invalid Login Credentials |
+      | ENCRYPTED_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC12B | 10110     | Invalid Login Credentials |
 
 
   @GetUserRolesInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
@@ -75,11 +75,11 @@ Feature: Verify GetUserRoles Api
     And response should have ErrorCode 2000 and ErrorMessage "The password doesn't match the Login ID. The Login ID has been locked."
 
 
-#  @GetUserRolesExpiredPasswordInDB @Phase1  @NegativeFlow
-#  Scenario: GetUserRoles Api - TC16 - Verify response code for Expired password
-#    When a request is made to the GetUserRoles Api with TC16
-#    Then verify response code of "GetUserRole" Api is 200
-#    And response should have ErrorCode 2010 and ErrorMessage "Expired password"
+  @GetUserRolesExpiredPasswordInDB @Phase1  @NegativeFlow
+  Scenario: GetUserRoles Api - TC16 - Verify response code for Expired password
+    When a request is made to the GetUserRoles Api with TC16
+    Then verify response code of "GetUserRole" Api is 200
+    And response should have ErrorCode 2010 and ErrorMessage "Expired password"
 
 
   @GetUserRolesLockedOutLoginIDInDB @Phase1  @NegativeFlow

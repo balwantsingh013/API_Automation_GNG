@@ -164,11 +164,11 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition                                       | errorCode | errorMessage                                   |planCode|promotionCode|
-      #| INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_177  | 2000      | Invalid Request: Invalid Customer Code|MVS     |25 CENTS FOR 12 MONTHS        |
-      #| INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178 | 2000      | Invalid Request: Invalid Customer Code|VML     |        |
-      #| INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186  | 10000      | The Customer Code must be an integer with a maximum length of 9|MVS     |25 CENTS FOR 12 MONTHS        |
-      #| INVALID_CUSTOMER_CODE_LESS_THAN_0_ENROLLMENT_STATE_INCL_TC_186A  | 10000      | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 351. |MVS     |25 CENTS FOR 12 MONTHS        |
-      #| INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B  | 10000      | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 350. |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_177  | 2000      | Invalid Request: Invalid Customer Code|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178 | 2000      | Invalid Request: Invalid Customer Code|VML     |        |
+      | INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186  | 10000      | The Customer Code must be an integer with a maximum length of 9|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_LESS_THAN_0_ENROLLMENT_STATE_INCL_TC_186A  | 10000      | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 351. |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B  | 10000      | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 350. |MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_187  | 2000      | Invalid Request: Invalid Customer Code|MVS     |25 CENTS FOR 12 MONTHS        |
 
   @GetEligiblePlansAndOffersInvalidPremisesCode @Phase1 @NegativeFlow
@@ -184,10 +184,10 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition                                       | errorCode | errorMessage                                   |planCode|promotionCode|
-     # | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_179  | 2000      |Invalid Request: Invalid Premises Code|MVS     |25 CENTS FOR 12 MONTHS        |
-      #| INVALID_PREMISES_CODE_ENROLLMENT_STATE_CRDS_TC_180 | 2000      |Invalid Request: Invalid Premises Code|VML     |        |
-      #| INVALID_PREMISES_CODE_LENGTH_ENROLLMENT_STATE_INCL_TC_188  | 10000      |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
-      #| INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A  | 10000      |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_179  | 2000      |Invalid Request: Invalid Premises Code|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_PREMISES_CODE_ENROLLMENT_STATE_CRDS_TC_180 | 2000      |Invalid Request: Invalid Premises Code|VML     |        |
+      | INVALID_PREMISES_CODE_LENGTH_ENROLLMENT_STATE_INCL_TC_188  | 10000      |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A  | 10000      |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189  |  2000      |Invalid Request: Invalid Premises Code|MVS     |25 CENTS FOR 12 MONTHS        |
 
   @GetEligiblePlansAndOffersInvalidCombinationOfCustPremCode @Phase1 @NegativeFlow
@@ -223,7 +223,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | referralCode                                    | errorCode | errorMessage                                                                                                                                                 |
       | MAX_REFERRAL_CODE                               | 10000     | The Referral Code must be a string with a maximum length of 9.                                                                                               |
-      #| NONNUMERIC_REFERRAL_CODE                        | 11115      | Invalid Request: Invalid Referral Code                                                                                                                       |
+      | NONNUMERIC_REFERRAL_CODE                        | 11115      | Invalid Request: Invalid Referral Code                                                                                                                       |
       | ALPHANUMERIC_REFERRAL_CODE                      | 2000      | Invalid Request: Invalid Referral Code                                                                                                                       |
       | VALID_REFERRAL_CODE_WITH_MISSING_MARKETING_CODE | 1000      | Invalid Request: Missing Promotion Code -Please ask the customer for a promotion code. If they do not have one, enter the appropriate default promotion code |
 
@@ -351,8 +351,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | SeparateBillingAddress                                                                         | errorCode | errorMessage                                                                                                                     |
-      #| EMPTY_SEPARATE_BILLING_ADDRESS                                                                 | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 32. |
-      #| MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                                            | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 33. |
+      | EMPTY_SEPARATE_BILLING_ADDRESS                                                                 | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 32. |
+      | MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                                            | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 33. |
       | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_PROVIDED                                             | 10000     | The Billing Address Type must be a string with a maximum length of 1.                                                            |
       | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_MISSING                                              | 2000      | Invalid Request: Missing conditional parameters-Billing Address Type                                                             |
       | SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_ADD_TYPE                                         | 2000      | Invalid Request: Invalid Billing Address Type                                                                                    |
@@ -385,16 +385,16 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      #| VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      #| VALID_BILLING_ADDRESS_TYPE_R_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Address Type                                                                  |
-      #| VALID_BILLING_ADDRESS_TYPE_P_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
+      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_ZIP_CODE_MISSING_281c                                     | 2000      | Invalid Request: Invalid Billing Address Type                                                                |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_ZIP_CODE_MISSING_281e                                | 2000      | Invalid Request: Missing conditional parameters-Billing State Code                                     |
       | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_COUNTY_CODE                               | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
       | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_BILLING_RURAL_ROUTE           | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_WITH_BILLING_PO_BOX           | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
-      #| VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE                     | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
+      | VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE                     | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
       | VALID_BILLING_ADDRESS_TYPE_R_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE                     | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
       | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE_WITH_BILLING_PO_BOX | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
 
@@ -443,7 +443,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | HomePhoneType                                         | errorCode | errorMessage                                                     |
       | NULL_HOME_PHONE_TYPE_WITH_VALID_HOME_PHONE_NUMBER_294 | 2000      | Invalid Request: Missing conditional parameters-Home Phone Type  |
       | HOME_PHONE_TYPE_PROVIDED_MAX_1_CHAR_296               | 10000     | The Home Phone Type must be a string with a maximum length of 1. |
-      #| INVALID_HOME_PHONE_TYPE_VALUE_297                     | 2000      | Invalid Request: Invalid Work Phone Type                         |
+      | INVALID_HOME_PHONE_TYPE_VALUE_297                     | 2000      | Invalid Request: Invalid Work Phone Type                         |
 
   @GetEligiblePlansAndOffersInvalidAcnStatusIndicatorTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<AcnStatusIndicator>"
@@ -469,7 +469,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | CustomerPEWCPreferences                                   | errorCode | errorMessage                                                                                                                      |
-      #| CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL | 10000     | The JSON value could not be converted to System.Boolean. Path: $.customerPEWCPreferences  LineNumber: 63  BytePositionInLine: 37. |
+      | CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL | 10000     | The JSON value could not be converted to System.Boolean. Path: $.customerPEWCPreferences  LineNumber: 63  BytePositionInLine: 37. |
       | CUSTOMER_PEWC_PREFRENCES_VALUE_TRUE_WITH_OTHER_PARAM_NULL | 2000      | Invalid Request: Missing conditional parameters-Customer PEWC Preference                                                          |
 
   @GetEligiblePlansAndOffersInvalidCreditCheckOptionTNON @Phase1  @NegativeFlow
@@ -492,9 +492,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | InitialCreditCheckCustomerCode                                    | errorCode | errorMessage                                                                                                                                              |
       | EMPTY_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITH_CREDIT_CHECK_OPTION_315 | 2000      | Invalid Request: Missing conditional parameters-Initial Credit Check Cust Code                                                                            |
       | MAX_LENGTH_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_313                     | 10000     | The Initial Credit Check Customer Code must be an integer with a maximum length of 9                                                                   |
-      #| NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_314                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int32]. Path: $.initialCreditCheckCustomerCode  LineNumber: 65  BytePositionInLine: 47. |
+      | NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_314                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int32]. Path: $.initialCreditCheckCustomerCode  LineNumber: 65  BytePositionInLine: 47. |
       | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_NOT_PRESENT_IN_TABLE_316   | 2000      | Invalid or missing Initial Credit Check Customer Code                                                                                                                  |
-      #| INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317   | 10000      | Unable to locate a credit score within 3 months for the Customer Code provided - 5908691                                                                  |
+      | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317   | 10000      | Unable to locate a credit score within 3 months for the Customer Code provided - 5908691                                                                  |
 
 
   @GetEligiblePlansAndOffersInvalidTransactionTypeTNON @Phase1  @NegativeFlow
@@ -505,11 +505,11 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | testCondition                      | errorCode | errorMessage                                                     |
       |NULL_TANSACTION_TYPE_TC_183         |10000     | Missing Transaction Type                                         |
-#      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
-#      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
+      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
       | MAX_LENGTH_VALIDATION_TRANSACTION_TYPE_TC_184           | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-#      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
-#      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
+      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
   |INVALID_TRANSACTION_TYPE_TC_185                          |1000       |Invalid Request: Invalid Transaction Type                        |
 
   @GetEligiblePlansAndOffersInvalidCustomerTypeTNON @Phase1  @NegativeFlow
@@ -519,10 +519,10 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition             | errorCode | errorMessage                                                   |
-#      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
-      #| NULL_CUSTOMER_TYPE_TC_190     | 10000     | Invalid or missing Customer Type                              |
-#      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
-#      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
+      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
+      | NULL_CUSTOMER_TYPE_TC_190     | 10000     | Invalid or missing Customer Type                              |
+      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
+      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
       | MAX_LENGTH_CUSTOMER_TYPE_TC_191 | 10000     | The Customer Type must be a string with a maximum length of 2 |
 
   @GetEligiblePlansAndOffersInvalidEnrollmentSourcesTNON @Phase1  @NegativeFlow
@@ -560,11 +560,11 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
       | NUMERIC_TENANT_LANDLORD    | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
 
-#  @GetEligiblePlansAndOffersTC25UC53 @Phase1
-#  Scenario: Verify response code Commercial marketer switch  TC_25
-#    When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_25
-#    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-#    And response should have ErrorCode 11116 and ErrorMessage "No match found.  Please see  the list of similar businesses found"
+  @GetEligiblePlansAndOffersTC25UC53 @Phase1
+  Scenario: Verify response code Commercial marketer switch  TC_25
+    When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_25
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 11116 and ErrorMessage "No match found.  Please see  the list of similar businesses found"
 
 
   @GetEligiblePlansAndOffersTC26UC54PositiveMKSW @Phase1 @HappyFlow
