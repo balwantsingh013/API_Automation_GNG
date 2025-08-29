@@ -519,23 +519,53 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition             | errorCode | errorMessage                                                   |
-      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
-      | NULL_CUSTOMER_TYPE_TC_190     | 10000     | Invalid or missing Customer Type                              |
-      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
-      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
-      | MAX_LENGTH_CUSTOMER_TYPE_TC_191 | 10000     | The Customer Type must be a string with a maximum length of 2 |
+#      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
+#      | NULL_CUSTOMER_TYPE_TC_190     | 10000     | Invalid or missing Customer Type                              |
+#      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
+#      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
+#      | MAX_LENGTH_CUSTOMER_TYPE_TC_191 | 10000     | The Customer Type must be a string with a maximum length of 2 |
+    |INVALID_VALUE_CUSTOMER_TYPE_TC_192|1000     | Invalid Request: Invalid Customer Type|
 
   @GetEligiblePlansAndOffersInvalidEnrollmentSourcesTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<enrollmentSources>"
-    When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<enrollmentSources>" Sources
+  Scenario Outline: Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<testCondition>" Sources
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | enrollmentSources             | errorCode | errorMessage                                                        |
-      | EMPTY_ENROLLMENT_SOURCES      | 10000     | Invalid or missing Enrollment Source                                |
-      | NUMERIC_ENROLLMENT_SOURCES    | 1000      | Invalid Request: Invalid Enrollment Source                          |
-      | SPL_CHAR_ENROLLMENT_SOURCES   | 1000      | Invalid Request: Invalid Enrollment Source                          |
-      | MAX_LENGTH_ENROLLMENT_SOURCES | 10000     | The Enrollment Source must be a string with a maximum length of 35. |
+      | testCondition             | errorCode | errorMessage                                                        |
+#      | EMPTY_ENROLLMENT_SOURCES      | 10000     | Invalid or missing Enrollment Source                                |
+#      | NUMERIC_ENROLLMENT_SOURCES    | 1000      | Invalid Request: Invalid Enrollment Source                          |
+#      | SPL_CHAR_ENROLLMENT_SOURCES   | 1000      | Invalid Request: Invalid Enrollment Source                          |
+     # | MAX_LENGTH_ENROLLMENT_SOURCES_TC_194 | 10000     | The Enrollment Source must be a string with a maximum length of 35. |
+   # |NULL_ENROLLMENT_SOURCES_TC_193 | 10000     | Invalid or missing Enrollment Source                                |
+|   INVALID_VALUE_ENROLLMENT_SOURCE_195|1000     | Invalid Request: Invalid Enrollment Source |
+
+
+  @GetEligiblePlansAndOffersInvalidMarketingPromotionCodeTNON @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<testCondition>" Sources
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition             | errorCode | errorMessage                                                        |
+      #|   INVALID_LENGTH_MARKETING_PROMOTION_CODE_196|10000     |The Marketing Promotion Code must be a string with a maximum length of 45.|
+     # |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_197|2100     |Invalid promotion code|
+#|INVALID_MARKETING_PROMOTION_CODE_TC_198|1000     |Invalid Request: Invalid Promotion Code|
+        #|   INVALID_MARKETING_PROMOTION_CODE_FOR_RS_CUST_TYPE_TC_199|2100     |Promotion code is valid for Commercial Customers only|
+  #|INVALID_MARKETING_PROMOTION_CODE_FOR_NEW_CUSTOMERS_TC_200|2100|Promotion code is valid for Existing Customers only|
+    #|EXPIRED_MARKETING_PROMOTION_CODE_TC_201                  |2100|Promotion code is expired                        |
+#|   INVALID_MARKETING_PROMOTION_CODE_FOR_CM_CUST_TYPE_TC_202|2100     |Promotion code is valid for Residential Customers only|
+ |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203|2100     |Promotion code is valid for Web only|
+
+#wip
+  @GetEligiblePlansAndOffersInvalidMarketingPromotionCodeTNON @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<testCondition>" Sources
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition             | errorCode | errorMessage                                                        |
+      |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203|2100     |Promotion code is valid for Web only|
 
   @GetEligiblePlansAndOffersInvalidCustomerLastNameTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CustomerLastName>"

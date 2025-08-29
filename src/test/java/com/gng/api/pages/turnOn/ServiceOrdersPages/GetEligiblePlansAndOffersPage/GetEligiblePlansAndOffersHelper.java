@@ -98,6 +98,10 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setCustomerType(null);
                 break;
+            case INVALID_VALUE_CUSTOMER_TYPE_TC_192:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setCustomerType("AA");
+                break;
 
             default:
                 payload.setCustomerType(FakerDataGenerator.getRandomString(2));
@@ -106,6 +110,10 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void setEnrollmentSourcesBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel enrollmentSources) {
         switch (enrollmentSources) {
+            case NULL_ENROLLMENT_SOURCES_TC_193:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setEnrollmentSource(null);
+                break;
             case SPL_CHAR_ENROLLMENT_SOURCES:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentSource(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
@@ -118,10 +126,70 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentSource(FakerDataGenerator.getRandomNumericString(5));
                 break;
-            case MAX_LENGTH_ENROLLMENT_SOURCES:
+            case MAX_LENGTH_ENROLLMENT_SOURCES_TC_194:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setEnrollmentSource(FakerDataGenerator.getRandomNumericString(38));
+                payload.setEnrollmentSource(FakerDataGenerator.generateString(36));
                 break;
+            case INVALID_VALUE_ENROLLMENT_SOURCE_195:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setEnrollmentSource(FakerDataGenerator.generateUpperCaseString(6));
+                break;
+            case INVALID_LENGTH_MARKETING_PROMOTION_CODE_196:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setMarketingPromotionCode(FakerDataGenerator.generateString(46));
+                break;
+            case INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_197:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setMarketingPromotionCode("AAA");
+                payload.setEnrollmentSource(ALLCONNECT.getValue());
+                break;
+            case INVALID_MARKETING_PROMOTION_CODE_TC_198:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setMarketingPromotionCode(FakerDataGenerator.generateString(10));
+                break;
+            case INVALID_MARKETING_PROMOTION_CODE_FOR_RS_CUST_TYPE_TC_199:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setMarketingPromotionCode("TURNON100");
+                payload.setCustomerType(RESIDENTIAL.getValue());
+                break;
+            case INVALID_MARKETING_PROMOTION_CODE_FOR_NEW_CUSTOMERS_TC_200:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setMarketingPromotionCode("RENEW12");
+                break;
+            case EXPIRED_MARKETING_PROMOTION_CODE_TC_201:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setMarketingPromotionCode("VIPJUL17");
+                break;
+            case INVALID_MARKETING_PROMOTION_CODE_FOR_CM_CUST_TYPE_TC_202:
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setTransactionType(TURN_ON.getValue());
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
+                ExcelReader excelReader;
+                try {
+                    excelReader = new ExcelReader(EXPERIAN_DATA);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                List<Map<String, String>> allRows = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
+                Map<String, String> data = null;
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setCustomerType(COMMERCIAL.getValue());
+                data = allRows.get(4399);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(FAX.getValue());
+                payload.setMarketingPromotionCode("APARTMENT SPECIAL");
+                payload.setAuthorizedBy("AB");
+                break;
+            case INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setMarketingPromotionCode("GREEN125");
+                payload.setEnrollmentSource(MAIL.getValue());
+                break;
+
 
             default:
                 payload.setEnrollmentSource(FakerDataGenerator.generateUpperCaseString(35));
