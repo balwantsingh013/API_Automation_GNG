@@ -40,10 +40,10 @@ public class SaveEnrollmentApiSteps {
     {
         saveEnrollmentApiPage.validateInvalidPremisesCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(premisesCode));
     }
-    @When("a request is made to the SaveEnrollment Api with  transaction {string} ID")
-    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction (String transactionID)
+    @When("a request is made to the SaveEnrollment Api with invalid transactionID for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction (String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidTransactionIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(transactionID));
+        saveEnrollmentApiPage.validateInvalidTransactionIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
     @When("a request is made to the SaveEnrollment Api with  transaction {string} Type")
     public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction_type (String transactionType)

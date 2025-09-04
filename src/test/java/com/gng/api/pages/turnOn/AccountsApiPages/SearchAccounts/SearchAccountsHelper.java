@@ -1,6 +1,7 @@
 package com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts;
 
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
@@ -43,12 +44,12 @@ public class SearchAccountsHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, SearchAccountsRequest.class);
     }
 
-    public void setRequestIDBasedOnTypeTCTC42_TC44(SearchAccountsRequest payload, SearchAccountsApiLabel requestID) {
-        switch (requestID) {
+    public void setRequestIDBasedOnTypeTestCondition(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
+        switch (testCondition) {
             case NULL_REQUEST_ID_TC42:
                 payload.setRequestID(null);
                 payload.setLoginID(USERNAME);
-                payload.setTransactionType("TNON");
+                payload.setTransactionType(TURN_ON.getValue());
                 break;
             case LONG_REQUEST_ID_TC43:
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(35));
@@ -56,7 +57,7 @@ public class SearchAccountsHelper {
                 break;
             case DUPLICATE_REQUEST_ID_TC44:
                 payload.setRequestID("3BC00A0397B14F29A313280EE0110941");
-                payload.setTransactionType("TNON");
+                payload.setTransactionType(TURN_ON.getValue());
                 payload.setLoginID(USERNAME);
                 break;
             default:
@@ -65,25 +66,22 @@ public class SearchAccountsHelper {
     }
 
     public void setLoginIDBasedOnTypeTC45_TC48(SearchAccountsRequest payload, SearchAccountsApiLabel loginID) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (loginID) {
             case NULL_LOGIN_ID_TC45:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("");
-                payload.setTransactionType("TNON");
+                payload.setTransactionType(TURN_ON.getValue());
                 break;
             case ALPHANUMERIC_LOGIN_ID_TC47:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
                 break;
             case MAX_LENGTH_LOGIN_ID_TC46:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.getRandomNumericString(35));
                 break;
             case INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC48:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("dummy");
                 payload.setCustomerLastName("Doe");
-                payload.setTransactionType("TNON");
+                payload.setTransactionType(TURN_ON.getValue());
                 payload.setPremisesZipCode("30214");
                 break;
             default:
@@ -116,14 +114,13 @@ public class SearchAccountsHelper {
     }
 
     public void setTransactionTypeBasedOnTypeTC51_TC52(SearchAccountsRequest payload, SearchAccountsApiLabel transactionType) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (transactionType) {
             case MISSING_TRANSACTION_TYPE_TC51:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(USERNAME);
                 payload.setTransactionType(null);
                 break;
             case INVALID_TRANSACTION_TYPE_TC52:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(USERNAME);
                 payload.setTransactionType("TNOF");
                 break;
@@ -169,36 +166,30 @@ public class SearchAccountsHelper {
     }
 
     public void setSocialSecurityNumberBasedOnTypeTC56_TC57(SearchAccountsRequest payload, SearchAccountsApiLabel socialSecurityNumber) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME);
         switch (socialSecurityNumber) {
             case NOT_ENCRYPTED_SOCIAL_SECURITY_NUMBER_TC56:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(USERNAME);
                 payload.setSocialSecurityNumber(FakerDataGenerator.getRandomNumericString(9));
                 break;
             case ENCRYPTED_SOCIAL_SECURITY_NUMBER_TC57:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(USERNAME);
                 payload.setSocialSecurityNumber(encryptData(FakerDataGenerator.generateAlphanumericWithSpecialChars(9)));
                 break;
-
             default:
                 payload.setSocialSecurityNumber(FakerDataGenerator.generateLowerCaseString(9));
         }
     }
 
     public void setFederalTaxIDBasedOnTypeTC58_TC59(SearchAccountsRequest payload, SearchAccountsApiLabel federalTaxID) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME);
         switch (federalTaxID) {
             case NOT_ENCRYPTED_FEDERAL_TAX_ID_TC58:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(USERNAME);
                 payload.setFederalTaxID(FakerDataGenerator.getRandomNumericString(9));
                 break;
             case ENCRYPTED_FEDERAL_TAX_ID_TC59:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(USERNAME);
                 payload.setFederalTaxID(encryptData(FakerDataGenerator.generateAlphanumericWithSpecialChars(9)));
                 break;
-
             default:
                 payload.setFederalTaxID(FakerDataGenerator.generateLowerCaseString(9));
         }
@@ -330,7 +321,7 @@ public class SearchAccountsHelper {
             case MAX_LENGTH_PREMISES_STATE_CODE_TC70:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(USERNAME);
-                payload.setTransactionType("TNON");
+                payload.setTransactionType(TURN_ON.getValue());
                 payload.setPremisesStateCode(invalidStateCode);
                 break;
             default:
@@ -343,7 +334,7 @@ public class SearchAccountsHelper {
             case MAX_LENGTH_PREMISES_ZIP_CODE_TC71:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(USERNAME);
-                payload.setTransactionType("TNON");
+                payload.setTransactionType(TURN_ON.getValue());
                 payload.setPremisesZipCode(invalidPremiseZipCode);
                 break;
             default:
@@ -355,7 +346,7 @@ public class SearchAccountsHelper {
     public void setMissingSearchFieldsBasedOnType(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
-        payload.setTransactionType("TNON");
+        payload.setTransactionType(TURN_ON.getValue());
         payload.setAglcAccountNumber("");
         payload.setCustomerBusinessName("");
         payload.setCustomerLastName("");

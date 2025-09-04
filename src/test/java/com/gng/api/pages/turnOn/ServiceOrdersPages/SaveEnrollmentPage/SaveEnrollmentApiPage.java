@@ -56,9 +56,9 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateInvalidTransactionIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel transactionID) {
+    public void validateInvalidTransactionIDCases(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
-        helper.setTransactionIDBasedOnType(payload, transactionID);
+        helper.setTransactionIDBasedOnType(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
         testContext.setResponse(response);

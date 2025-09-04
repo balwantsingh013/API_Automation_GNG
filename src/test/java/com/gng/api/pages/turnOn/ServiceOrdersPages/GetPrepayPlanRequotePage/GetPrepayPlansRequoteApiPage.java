@@ -42,4 +42,41 @@ public class GetPrepayPlansRequoteApiPage extends BasePage {
     public void verifyResponsePlans(GlobalEnums.PlanCode planCode){
         helper.verifyResidentialPrepayPlansReceivedAgainstDatabase(planCode);
     }
+
+    public void validateInvalidRequestIDCases(GetPrepayPlansRequoteApiLabel payloadType, GetPrepayPlansRequoteApiLabel testCondition) {
+        GetPrepayPlansRequoteRequest payload = helper.preparePayload(payloadType);
+        helper.setRequestIDBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_PREPAY_PLANS_REQUOTE, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidLoginIDCases(GetPrepayPlansRequoteApiLabel payloadType, GetPrepayPlansRequoteApiLabel testCondition) {
+        GetPrepayPlansRequoteRequest payload = helper.preparePayload(payloadType);
+        helper.setLoginIDBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_PREPAY_PLANS_REQUOTE, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateNegativeTestCases(GetPrepayPlansRequoteApiLabel payloadType, GetPrepayPlansRequoteApiLabel testCondition) {
+        GetPrepayPlansRequoteRequest payload = helper.preparePayload(payloadType);
+        helper.setNegativeRequestParamsBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_PREPAY_PLANS_REQUOTE, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateNegativePrepayPlanRequoteCompleteFlow(GetPrepayPlansRequoteApiLabel payloadType, GetPrepayPlansRequoteApiLabel testCondition) {
+        GetPrepayPlansRequoteRequest payload = helper.preparePayload(payloadType);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+
+        helper.setRequestParams(payload);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_PREPAY_PLANS_REQUOTE, 200);
+        GetPrepayPlansRequoteResponse getPrepayPlansRequoteResponse = deserializeResponseToPojo(response, GetPrepayPlansRequoteResponse.class);
+
+        testContext.setGetPrepayPlansRequoteResponse(getPrepayPlansRequoteResponse);
+        testContext.setResponse(response);
+    }
 }

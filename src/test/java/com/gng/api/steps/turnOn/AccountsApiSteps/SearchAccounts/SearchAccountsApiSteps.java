@@ -21,9 +21,9 @@ public class SearchAccountsApiSteps {
         testContext.setGetAccountInfoApiPage(searchAccountsApiPage);
     }
 
-    @When("a request is made to the SearchAccounts Api with {string}TC42_TC44")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_TC42_TC44(String requestID) {
-        searchAccountsApiPage.validateInvalidRequestIDCasesTC42_TC44(search_accounts, SearchAccountsApiLabel.valueOf(requestID));
+    @When("a request is made to the SearchAccounts Api with {string} condition")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_condition(String testCondition) {
+        searchAccountsApiPage.validateInvalidRequestIDCases(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the SearchAccounts Api with {string}TC45_TC48")

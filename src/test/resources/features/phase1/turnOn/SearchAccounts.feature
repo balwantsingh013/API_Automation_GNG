@@ -6,13 +6,13 @@ Feature: Verify SearchAccounts Api
     And a valid token is received in response
 
   @SearchAccountsWithInvalidRequestID @Phase1 @NegativeFlow
-  Scenario Outline: SearchAccounts Api - Verify SearchAccounts Api with invalid requestID "<requestID>"TC42_TC44
-    When a request is made to the SearchAccounts Api with "<requestID>"TC42_TC44
+  Scenario Outline: SearchAccounts Api - Verify SearchAccounts Api with invalid requestID for "<testCondition>" condition
+    When a request is made to the SearchAccounts Api with "<testCondition>" condition
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | requestID                 | errorCode | errorMessage         |
+      | testCondition                 | errorCode | errorMessage         |
       | NULL_REQUEST_ID_TC42      | 10001     | Missing Request ID   |
       | LONG_REQUEST_ID_TC43      | 10002     | Invalid Request ID   |
       | DUPLICATE_REQUEST_ID_TC44 | 10003     | Duplicate Request ID |
@@ -248,13 +248,13 @@ Feature: Verify SearchAccounts Api
        | PREMISES_STREET_NAME_CITY_PROVIDED_ZIP_STATE_MISSING_TC97                                               | 1001      | Invalid Request: Invalid required search field combination - premisesStateCode required.                                                                                                            |
        | PREMISES_STREET_NAME_STATE_PROVIDED_ZIP_CITY_MISSING_TC98                                               | 1001      | Invalid Request: Invalid required search field combination - premisesCity required.                                                                                                                 |
        | PREMISES_STREET_NAME_ZIP_PROVIDED_STATE_CITY_MISSING_TC99                                               | 1001      | Invalid Request: Invalid required search field combination - premisesCity required.                                                                                                                 |
-       | PREMISES_STATE_CITY_PROVIDED_STREET_NAME_ZIP_MISSING_TC100                                               | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                          |
-       | PREMISES_STATE_CITY_ZIP_PROVIDED_STREET_NAME_STATE_MISSING_TC101                                          | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                         |
-       | PREMISES_STATE_ZIP_PROVIDED_STREET_NAME_CITY_MISSING_TC102                                                | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                         |
-       | PREMISES_STATE_STREET_NAME_CITY_PROVIDED_ZIP_MISSING_TC103                                                | 1001      | Invalid Request: Invalid required search field combination - premisesZipCode required.                                                                                                            |
-       | PREMISES_STATE_STREET_NAME_PROVIDED_CITY_MISSING_TC104                                                   | 1001      | Invalid Request: Invalid required search field combination - premisesCity required.                                                                                                                |
-       | PREMISES_ZIP_STREET_NAME_CITY_PROVIDED_STATE_MISSING_TC105                                                | 1001      | Invalid Request: Invalid required search field combination - premisesStateCode required.                                                                                                          |
-       | PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106                                                | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                         |
+       | PREMISES_STATE_CITY_PROVIDED_STREET_NAME_ZIP_MISSING_TC100                                              | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                          |
+       | PREMISES_STATE_CITY_ZIP_PROVIDED_STREET_NAME_STATE_MISSING_TC101                                        | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                         |
+       | PREMISES_STATE_ZIP_PROVIDED_STREET_NAME_CITY_MISSING_TC102                                              | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                         |
+       | PREMISES_STATE_STREET_NAME_CITY_PROVIDED_ZIP_MISSING_TC103                                              | 1001      | Invalid Request: Invalid required search field combination - premisesZipCode required.                                                                                                            |
+       | PREMISES_STATE_STREET_NAME_PROVIDED_CITY_MISSING_TC104                                                  | 1001      | Invalid Request: Invalid required search field combination - premisesCity required.                                                                                                                |
+       | PREMISES_ZIP_STREET_NAME_CITY_PROVIDED_STATE_MISSING_TC105                                              | 1001      | Invalid Request: Invalid required search field combination - premisesStateCode required.                                                                                                          |
+       | PREMISES_ZIP_STATE_CITY_PROVIDED_STREET_NAME_MISSING_TC106                                              | 1001      | Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                                         |
 
 
   @SearchAccountsCustomerCodeAndPremisesCodeNotInTable @Phase1 @HappyFlow @SearchAccountsTurnOn

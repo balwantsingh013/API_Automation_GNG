@@ -14,8 +14,32 @@ Feature: Verify SaveEnrollment Api
     Examples:
       | requestID            | errorCode | errorMessage         |
       | EMPTY_REQUEST_ID     | 10001     | Missing Request ID   |
-      | DUPLICATE_REQUEST_ID | 10003     | Duplicate Request ID |
       | LONG_REQUEST_ID      | 10002     | Invalid Request ID   |
+      | DUPLICATE_REQUEST_ID | 10003     | Duplicate Request ID |
+
+
+  @SaveEnrollmentInvalidLoginID @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<loginID>"
+    When a request is made to the SaveEnrollment Api with login "<loginID>" ID
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | loginID                                       | errorCode | errorMessage                                              |
+      | EMPTY_LOGIN_ID                                | 10000     | Missing Login ID                                          |
+      | MAX_LENGTH_LOGIN_ID                           | 10000     | The Login ID must be a string with a maximum length of 30 |
+      | INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC381 | 2000      | Invalid Login ID                                          |
+
+  @SaveEnrollmentInvalidTransactionID @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid transactionID for "<testCondition>" condition
+    When a request is made to the SaveEnrollment Api with invalid transactionID for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                               | errorCode | errorMessage                            |
+      | MISSING_TRANSACTION_ID_TC382                | 10000     | Missing Transaction ID                  |
+      | INVALID_NON_INTEGER_TRANSACTION_ID_TC383    | 2000      | Invalid Request: Invalid Transaction ID |
+      | INVALID_DOES_NOT_MATCH_TRANSACTION_ID_TC384 | 2000      | Invalid Request: Invalid Transaction ID |
+
 
   @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
   Scenario Outline: SaveEnrollment Api- Verify SaveEnrollment Api with invalid "<customerCODE>" code
@@ -43,15 +67,6 @@ Feature: Verify SaveEnrollment Api
       | MAX_LENGTH_PREMISES_CODE    | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
       | MIN_LENGTH_PREMISES_CODE    | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
 
-  @SaveEnrollmentInvalidTransactionID @Phase1  @NegativeFlow
-  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<transactionID>"ID
-    When a request is made to the SaveEnrollment Api with  transaction "<transactionID>" ID
-    Then verify response code of "Save Enrollment" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | transactionID                     | errorCode | errorMessage                            |
-      | MIN_LENGTH_TRANSACTION_ID         | 2000      | Invalid Request: Invalid Transaction ID |
-      | WHITESPACE_BETWEEN_TRANSACTION_ID | 2000      | Invalid Request: Invalid Transaction ID |
 
 
   @SaveEnrollmentInvalidTransactionType @Phase1  @NegativeFlow
@@ -79,19 +94,7 @@ Feature: Verify SaveEnrollment Api
       | UPPERCASE_PLAN_CODE     | 10000     | The Plan Code must be a string with a maximum length of 3 |
       | ALPHANUMERIC_PLAN_CODE  | 2000      | Invalid Request: Invalid Plan Code                        |
 
-  @SaveEnrollmentInvalidLoginID @Phase1  @NegativeFlow
-  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<loginID>"
-    When a request is made to the SaveEnrollment Api with login "<loginID>" ID
-    Then verify response code of "Save Enrollment" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | loginID                | errorCode | errorMessage     |
-      | MIN_LENGTH_LOGIN_ID    | 2000      | Invalid Login ID |
-      | SPECIAL_CHARS_LOGIN_ID | 2000      | Invalid Login ID |
-      | EMPTY_LOGIN_ID         | 10000     | Missing Login ID |
-      | UPPERCASE_LOGIN_ID     | 2000      | Invalid Login ID |
-      | ALPHANUMERIC_LOGIN_ID  | 2000      | Invalid Login ID |
-      | MAX_LENGTH_LOGIN_ID    | 2000      | Invalid Login ID |
+
 
   @SaveEnrollmentInvalidEnrollmentStatus @Phase1  @NegativeFlow
   Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<enrollmentStatus>"

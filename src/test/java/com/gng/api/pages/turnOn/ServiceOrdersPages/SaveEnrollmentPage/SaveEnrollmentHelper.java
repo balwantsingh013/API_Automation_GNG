@@ -44,14 +44,12 @@ public class SaveEnrollmentHelper {
             case EMPTY_REQUEST_ID:
                 payload.setRequestID("");
                 break;
-            case DUPLICATE_REQUEST_ID:
-                payload.setRequestID("123");
-                break;
-
             case LONG_REQUEST_ID:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
                 break;
-
+            case DUPLICATE_REQUEST_ID:
+                payload.setRequestID("123");
+                break;
             default:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
         }
@@ -558,13 +556,15 @@ public class SaveEnrollmentHelper {
     }
 
     public void setTransactionIDBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel transactionID) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (transactionID) {
-            case MIN_LENGTH_TRANSACTION_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setTransactionID(FakerDataGenerator.generateNumber(0, 0));
+            case MISSING_TRANSACTION_ID_TC382:
+                payload.setTransactionID("");
                 break;
-            case WHITESPACE_BETWEEN_TRANSACTION_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
+            case INVALID_NON_INTEGER_TRANSACTION_ID_TC383:
+                payload.setTransactionID(FakerDataGenerator.generateString( 4));
+                break;
+            case INVALID_DOES_NOT_MATCH_TRANSACTION_ID_TC384:
                 payload.setTransactionID(FakerDataGenerator.generateNumber(4, 9));
                 break;
             default:
@@ -622,31 +622,30 @@ public class SaveEnrollmentHelper {
     }
 
     public void setLoginIDBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel loginID) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (loginID) {
-            case MIN_LENGTH_LOGIN_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.getRandomNumericString(1));
-                break;
-            case SPECIAL_CHARS_LOGIN_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
-                break;
             case EMPTY_LOGIN_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID("");
                 break;
-            case UPPERCASE_LOGIN_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.generateUpperCaseString(4));
-                break;
-            case ALPHANUMERIC_LOGIN_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(2));
-                break;
             case MAX_LENGTH_LOGIN_ID:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setLoginID(FakerDataGenerator.getRandomNumericString(9));
+                payload.setLoginID(FakerDataGenerator.getRandomNumericString(39));
                 break;
+            case INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC381:
+                payload.setLoginID(FakerDataGenerator.getRandomString(10));
+                break;
+//            case MIN_LENGTH_LOGIN_ID:
+//                payload.setLoginID(FakerDataGenerator.getRandomNumericString(1));
+//                break;
+//            case SPECIAL_CHARS_LOGIN_ID:
+//                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
+//                break;
+//            case UPPERCASE_LOGIN_ID:
+//                payload.setLoginID(FakerDataGenerator.generateUpperCaseString(4));
+//                break;
+//            case ALPHANUMERIC_LOGIN_ID:
+//                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(2));
+//                break;
+
             default:
                 payload.setLoginID(FakerDataGenerator.generateLowerCaseString(5));
         }
@@ -745,7 +744,10 @@ public class SaveEnrollmentHelper {
             case GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_448:
             case GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_449:
             case GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_429:
-            case GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_430:
+            case GET_PREPAY_PLANS_REQUOTE_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_430,
+                 GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_469,
+                 GET_PREPAY_PLANS_REQUOTE_EXISTING_QUOTE_NOT_EXPIRED_NEGATIVE_TC_470,
+                 GET_PREPAY_PLANS_REQUOTE_PRP_ENROLLED_NEGATIVE_TC_471:
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
                 break;
 

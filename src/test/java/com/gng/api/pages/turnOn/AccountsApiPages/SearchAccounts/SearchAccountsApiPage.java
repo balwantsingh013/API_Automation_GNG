@@ -19,9 +19,9 @@ public class SearchAccountsApiPage extends BasePage {
         this.helper = new SearchAccountsHelper(testContext);
     }
 
-    public void validateInvalidRequestIDCasesTC42_TC44(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel requestID) {
+    public void validateInvalidRequestIDCases(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel requestID) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setRequestIDBasedOnTypeTCTC42_TC44(payload, requestID);
+        helper.setRequestIDBasedOnTypeTestCondition(payload, requestID);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
