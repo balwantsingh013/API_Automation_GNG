@@ -1,19 +1,22 @@
-package com.gng.api.pojo.CommonPojo.GetReasonsForLeaving;
+package com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GetReasonsForLeavingRequest {
+
+public class GetDefaultPlansAndOffersRequest {
     private String requestID;
     private String loginID;
-    private boolean etcExists;
+    private String customerType;
     private String transactionType;
+    private String enrollmentSource;
+    private String marketingPromotionCode;
 }

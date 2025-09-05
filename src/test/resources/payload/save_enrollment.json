@@ -1,6 +1,6 @@
 {
   "requestID": "SDJFNJN124342LNLSDF",
-  "loginID": "dkinnaird",
+  "loginID": "autotester",
   "transactionID": "1416",
   "transactionType": "MKSW",
   "customerCode": 5914107,
@@ -11,7 +11,7 @@
   "paymentConfirmationNumber": "",
   "billingPlan": "R",
   "estimatedBudgetAmount": null,
-  "customerRequestedServiceDate": "",
+  "customerRequestedServiceDate": "20251205",
   "seasonalSavingsProgramResult": "",
   "splitConnectionFeeIndicator": false,
   "aglcAccountNumber": "00000000001234567890",

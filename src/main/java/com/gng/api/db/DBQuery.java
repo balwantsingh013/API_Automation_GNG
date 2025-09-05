@@ -659,9 +659,77 @@ public final class DBQuery {
             
             """;
     public static final String LAST_NAME_FIRST_NAME_QUERY_TC112 = """
-            SELECT 'SSP FALL TURN ON RECORD' as recordType, ucbcust_cust_code as customerCode, ucbprem_code as premisesCode, ucbcust_first_name as customerFirstName, ucbcust_middle_name as customerMiddleName, ucbcust_last_name as customerLastNameBusiness, uzbenro_credit_check_name as creditCheckBusinessName, uzbenro_scls_code as customerType, ucbcust_ssn_last_four as lastFourSocialSecurityNumber, ucbprem_street_number as premisesStreetNumber, ucbprem_pdir_code_pre as premisesStreetPreDirection, ucbprem_street_name as premisesStreetName, ucbprem_ssfx_code as premisesStreetSuffix, ucbprem_pdir_code_post as premisesStreetPostDirection, ucbprem_utyp_code as premisesUnitType, ucbprem_unit as premisesUnitNumber, ucbprem_city as premisesCity, ucbprem_stat_code_addr as premisesStateCode, ucbprem_zipc_code as premisesZipCode, ucbprem.ucbprem_tjur_code as  premisesCountyCode, spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code,ucbprem_code) as accountStatus, uzbenro_old_acct_num as aglcAccountNumber, uzbenro_enro_status as enrollmentSatus, TO_CHAR(uzbenro_enro_status_date,'YYYYMMDD') as enrollmentStatusDate, UZBENRO_TYPE_CODE as enrollmentType, TO_NUMBER(NULL) as pastDueAmount, TO_NUMBER(NULL) as badDebtAmount, DECODE(uzbenro_price_plan,'PRP','true','false') as prepayPlanIndicator, DECODE(uzbenro_price_plan,'PGB','true','false') as payInAdvanceIndicator, uzbenro_price_plan as pricePlan FROM ucbcust, ucbprem, uzbenro  WHERE  ucbcust_cust_code = uzbenro_cust_code  AND ucbprem_code = uzbenro_prem_code  AND uzbenro_enro_status in ('INCL') AND UZBENRO_SSP_IND ='Y' AND uzbenro_cira_ind = 'N' AND MONTHS_BETWEEN(SYSDATE,uzbenro_activity_date) <= 3  AND NOT EXISTS (SELECT 'X'  FROM uabbdbt  WHERE uabbdbt_transfer_hold_ind='Y'  AND  uabbdbt.uabbdbt_prem_code = uzbenro_prem_code  AND  uabbdbt.uabbdbt_cust_code = uzbenro_cust_code )
-            AND NOT EXISTS (  SELECT 1 FROM ucracct  WHERE ucracct_cust_code = uzbenro_cust_code AND ucracct_prem_code = uzbenro_prem_code)
-            AND EXISTS (  SELECT 1 FROM uzbsspp WHERE uzbsspp_participant_code = uzbenro_cust_code) AND NOT EXISTS (SELECT 1 FROM uzrsspa  WHERE uzrsspa_cust_code = uzbenro_cust_code  AND uzrsspa_prem_code = uzbenro_prem_code)""";
+            SELECT\s
+                'SSP FALL TURN ON RECORD' AS recordType,
+                ucbcust_cust_code AS customerCode,
+                ucbprem_code AS premisesCode,
+                ucbcust_first_name AS customerFirstName,
+                ucbcust_middle_name AS customerMiddleName,
+                ucbcust_last_name AS customerLastNameBusiness,
+                uzbenro_credit_check_name AS creditCheckBusinessName,
+                uzbenro_scls_code AS customerType,
+                ucbcust_ssn_last_four AS lastFourSocialSecurityNumber,
+                ucbprem_street_number AS premisesStreetNumber,
+                ucbprem_pdir_code_pre AS premisesStreetPreDirection,
+                ucbprem_street_name AS premisesStreetName,
+                ucbprem_ssfx_code AS premisesStreetSuffix,
+                ucbprem_pdir_code_post AS premisesStreetPostDirection,
+                ucbprem_utyp_code AS premisesUnitType,
+                ucbprem_unit AS premisesUnitNumber,
+                ucbprem_city AS premisesCity,
+                ucbprem_stat_code_addr AS premisesStateCode,
+                ucbprem_zipc_code AS premisesZipCode,
+                ucbprem.ucbprem_tjur_code AS premisesCountyCode,
+                spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code, ucbprem_code) AS accountStatus,
+                uzbenro_old_acct_num AS aglcAccountNumber,
+                uzbenro_enro_status AS enrollmentStatus,
+                TO_CHAR(uzbenro_enro_status_date,'YYYYMMDD') AS enrollmentStatusDate,
+                uzbenro_type_code AS enrollmentType,
+                TO_NUMBER(NULL) AS pastDueAmount,
+                TO_NUMBER(NULL) AS badDebtAmount,
+                DECODE(uzbenro_price_plan,'PRP','true','false') AS prepayPlanIndicator,
+                DECODE(uzbenro_price_plan,'PGB','true','false') AS payInAdvanceIndicator,
+                uzbenro_price_plan AS pricePlan
+            FROM\s
+                ucbcust,
+                ucbprem,
+                uzbenro
+            WHERE\s
+                ucbcust_cust_code = uzbenro_cust_code
+                AND ucbprem_code = uzbenro_prem_code
+                AND uzbenro_enro_status IN ('INCL')
+                AND uzbenro_ssp_ind = 'Y'
+                AND uzbenro_cira_ind = 'N'
+                AND MONTHS_BETWEEN(SYSDATE, uzbenro_activity_date) <= 3
+                AND NOT EXISTS (
+                    SELECT 'X'\s
+                    FROM uabbdbt\s
+                    WHERE\s
+                        uabbdbt_transfer_hold_ind = 'Y'
+                        AND uabbdbt.uabbdbt_prem_code = uzbenro_prem_code
+                        AND uabbdbt.uabbdbt_cust_code = uzbenro_cust_code
+                )
+                AND NOT EXISTS (
+                    SELECT 1\s
+                    FROM ucracct\s
+                    WHERE\s
+                        ucracct_cust_code = uzbenro_cust_code\s
+                        AND ucracct_prem_code = uzbenro_prem_code
+                )
+                AND EXISTS (
+                    SELECT 1\s
+                    FROM uzbsspp\s
+                    WHERE uzbsspp_participant_code = uzbenro_cust_code
+                )
+                AND NOT EXISTS (
+                    SELECT 1\s
+                    FROM uzrsspa\s
+                    WHERE\s
+                        uzrsspa_cust_code = uzbenro_cust_code\s
+                        AND uzrsspa_prem_code = uzbenro_prem_code
+                )
+                FETCH FIRST 1 ROWS ONLY
+            """;
 
     public static final String ACCOUNT_NUMBER_E_TYPE_NO_SSP_TC110 ="""
             SELECT C.UZBENRO_CUST_CODE,
@@ -676,15 +744,103 @@ public final class DBQuery {
            """;
 
     public static final String AGLC_ACCOUNT_NUMBER_TC114 = """
-            
-            select uzbenro_old_acct_num as aglcAccountNumber FROM  uzbenro 
-            WHERE  uzbenro_old_acct_num is not NULL and uzbenro_old_acct_num <> 0  ;
-            
+            SELECT\s
+                uzbenro_old_acct_num AS aglcAccountNumber
+            FROM\s
+                ucbcust,
+                ucbprem,
+                uzbenro
+            WHERE\s
+                ucbcust_cust_code = uzbenro_cust_code
+                AND ucbprem_code = uzbenro_prem_code
+                AND uzbenro_enro_status IN ('CRDS')
+                AND uzbenro_ssp_ind = 'N'
+                AND uzbenro_cira_ind = 'N'
+                AND MONTHS_BETWEEN(SYSDATE, uzbenro_activity_date) <= 3
+                AND NOT EXISTS (
+                    SELECT 'X'
+                    FROM uabbdbt
+                    WHERE\s
+                        uabbdbt_transfer_hold_ind = 'Y'
+                        AND uabbdbt.uabbdbt_prem_code = uzbenro_prem_code
+                        AND uabbdbt.uabbdbt_cust_code = uzbenro_cust_code
+                )
+                AND uzbenro_old_acct_num IS NOT NULL
+                AND uzbenro_old_acct_num <> 0
+            FETCH FIRST 1 ROWS ONLY
             """;
     public static final String CUSTOMER_DATA_WITH_TYPE_TC115 = """
-            
-            SELECT * FROM UCRADDR WHERE UCRADDR_PDIR_CODE_POST IS NOT NULL
-                                                     AND UCRADDR_PDIR_CODE_PRE IS NOT NULL AND UCRADDR_PHONE_EXT IS NOT NULL\s""";
+            SELECT
+                'SSP ACCOUNT INCOMPLETE ENROLLMENT RECORD' AS recordType,
+                ucbcust_cust_code AS customerCode,
+                ucbprem_code AS premisesCode,
+                ucbcust_first_name AS customerFirstName,
+                ucbcust_middle_name AS customerMiddleName,
+                ucbcust_last_name AS customerLastNameBusiness,
+                uzbenro_credit_check_name AS creditCheckBusinessName,
+                uzbenro_scls_code AS customerType,
+                ucbcust_ssn_last_four AS lastFourSocialSecurityNumber,
+                ucbprem_street_number AS premisesStreetNumber,
+                ucbprem_pdir_code_pre AS premisesStreetPreDirection,
+                ucbprem_street_name AS premisesStreetName,
+                ucbprem_ssfx_code AS premisesStreetSuffix,
+                ucbprem_pdir_code_post AS premisesStreetPostDirection,
+                ucbprem_utyp_code AS premisesUnitType,
+                ucbprem_unit AS premisesUnitNumber,
+                ucbprem_city AS premisesCity,
+                ucbprem_stat_code_addr AS premisesStateCode,
+                ucbprem_zipc_code AS premisesZipCode,
+                ucbprem.ucbprem_tjur_code AS premisesCountyCode,
+                spk_new_acct_pref_util.f_get_acct_status(ucbcust_cust_code, ucbprem_code) AS accountStatus,
+                uzbenro_old_acct_num AS aglcAccountNumber,
+                uzbenro_enro_status AS enrollmentStatus,
+                TO_CHAR(uzbenro_enro_status_date, 'YYYYMMDD') AS enrollmentStatusDate,
+                uzbenro_type_code AS enrollmentType,
+                TO_NUMBER(NULL) AS pastDueAmount,
+                TO_NUMBER(NULL) AS badDebtAmount,
+                DECODE(uzbenro_price_plan, 'PRP', 'true', 'false') AS prepayPlanIndicator,
+                DECODE(uzbenro_price_plan, 'PGB', 'true', 'false') AS payInAdvanceIndicator,
+                uzbenro_price_plan AS pricePlan
+            FROM
+                ucbcust,
+                ucbprem,
+                uzbenro
+            WHERE
+                ucbcust_cust_code = uzbenro_cust_code
+                AND ucbprem_code = uzbenro_prem_code
+                AND uzbenro_enro_status IN ('INCL')
+                AND uzbenro_ssp_ind = 'Y'
+                AND uzbenro_cira_ind = 'N'
+                AND MONTHS_BETWEEN(SYSDATE, uzbenro_activity_date) <= 3
+                AND NOT EXISTS (
+                    SELECT 'X'
+                    FROM uabbdbt
+                    WHERE
+                        uabbdbt_transfer_hold_ind = 'Y'
+                        AND uabbdbt.uabbdbt_prem_code = uzbenro_prem_code
+                        AND uabbdbt.uabbdbt_cust_code = uzbenro_cust_code
+                )
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM ucracct
+                    WHERE
+                        ucracct_cust_code = uzbenro_cust_code
+                        AND ucracct_prem_code = uzbenro_prem_code
+                )
+                AND EXISTS (
+                    SELECT 1
+                    FROM uzbsspp
+                    WHERE uzbsspp_participant_code <> uzbenro_cust_code
+                )
+                AND EXISTS (
+                    SELECT 1
+                    FROM uzrsspa
+                    WHERE
+                        uzrsspa_cust_code = uzbenro_cust_code
+                        AND uzrsspa_prem_code = uzbenro_prem_code
+                )
+                FETCH FIRST 1 ROWS ONLY
+            """;
 
 
     public static final String SSP_INDICATOR_VALUE = """
@@ -1208,140 +1364,265 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES = """
+            WITH eligible_customers AS (
+                SELECT gtbtrnh_cust_code
+                FROM gtbtrnh
+                GROUP BY gtbtrnh_cust_code
+                HAVING COUNT(*) < 30
+            ),
+            randomized_results AS (
+                SELECT
+                    t2.gtbtrnh_cust_code,
+                    t2.gtbtrnh_prem_code,
+                    t2.gtbtrnh_aglc_acct_nbr,
+                    t3.gtrrndn_serv_ord_num,
+                    DBMS_RANDOM.VALUE AS rand_val
+                FROM gtbtrnh t2
+                JOIN uzbenro t1 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
+                JOIN gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
+                JOIN ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
+                JOIN ucracct t5 ON t5.ucracct_prem_code = t4.ucrserv_prem_code
+                               AND t5.ucracct_cust_code = t2.gtbtrnh_cust_code
+                WHERE t1.uzbenro_price_plan = ?
+                  AND t5.ucracct_status_ind = 'A'
+                  AND t4.ucrserv_scls_code = ?
+                  AND t3.gtrrndn_serv_ord_num IS NOT NULL
+                  AND t2.gtbtrnh_cust_code IN (
+                      SELECT gtbtrnh_cust_code FROM eligible_customers
+                  )
+            )
             SELECT
-                t2.gtbtrnh_cust_code,
-                t2.gtbtrnh_prem_code,
-                t2.gtbtrnh_aglc_acct_nbr,
-                t3.gtrrndn_serv_ord_num
-            FROM
-                uzbenro t1
-            JOIN
-                gtbtrnh t2
-                ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
-            JOIN
-                gtrrndn t3
-                ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
-            JOIN
-                ucrserv t4
-                ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
-            JOIN
-                ucracct t5
-                ON t4.ucrserv_prem_code = t5.ucracct_prem_code
-            WHERE
-                t1.uzbenro_price_plan = ?
-                AND t5.ucracct_status_ind = 'A'
-                AND t4.ucrserv_scls_code = ?
-                AND t3.gtrrndn_serv_ord_num IS NOT NULL
+                gtbtrnh_cust_code,
+                gtbtrnh_prem_code,
+                gtbtrnh_aglc_acct_nbr,
+                gtrrndn_serv_ord_num
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ENROLLMENT_RECORD_DATA= """
+            SELECT\s
+            benro.UZBENRO_CUST_CODE
+            FROM UZBENRO benro
+            LEFT JOIN GZRSCFP gzrs
+              ON benro.UZBENRO_CUST_CODE = gzrs.GZRSCFP_CUST_CODE AND benro.UZBENRO_PREM_CODE = gzrs.GZRSCFP_PREM_CODE
+            LEFT JOIN UCRACCT acct
+              ON benro.UZBENRO_CUST_CODE = acct.UCRACCT_CUST_CODE AND benro.UZBENRO_PREM_CODE = acct.UCRACCT_PREM_CODE
+            LEFT JOIN OCBCONT cont
+              ON benro.UZBENRO_CUST_CODE = cont.cust_ucbcust_code AND benro.UZBENRO_PREM_CODE = cont.ocbcont_premises_code
+            LEFT JOIN OCRCDET crc
+              ON benro.UZBENRO_CUST_CODE = crc.OCRCDET_IMPACTED_CUST_CODE AND benro.UZBENRO_PREM_CODE = crc.OCRCDET_IMPACTED_PREM_CODE
+            LEFT JOIN OCRCTIM tim
+              ON cont.ocbcont_contact_code = tim.cont_ocbcont_contact_code
+            WHERE benro.UZBENRO_CUST_CODE = ?
+              AND benro.UZBENRO_PREM_CODE = ?
+            AND benro.UZBENRO_TRANS_CHNL='OMSTNON'
+            AND benro.UZBENRO_ENRO_STATUS=?
+            AND acct.UCRACCT_STATUS_IND=?
+            AND acct.UCRACCT_CYCL_CODE=?
+            AND acct.UCRACCT_PMNT_ARR=?
+            AND acct.UCRACCT_BAD_DEBT_EXEMPT_IND=?
+            AND acct.UCRACCT_NCOA_PROTECT_IND=?
+            AND cont.OCBCONT_FEEDBACK_IND=?
+            AND cont.OCBCONT_CONTACT_DIRECTION=?
+            AND crc.OCRCDET_CATEGORY_CODE='ENROLL'
+            AND crc.OCRCDET_REASON_CODE=?
+            AND crc.OCRCDET_REFERRED_INDICATOR=?
+            AND crc.CTYP_OTVCTYP_CONTACT_TYPE= ?
+            AND crc.OCRCDET_STATUS=?
+            AND tim.OCRCTIM_AUTOMATIC_INDICATOR=?
+            AND tim.CDET_OCRCDET_REASON_CODE=?
+            AND tim.CDET_OCRCDET_CATEGORY_CODE='ENROLL'
+            """;
+
+    public static final String SELECT_ENROLLMENT_RECORD_DATA_FOR_INCOMPLETE_ENROLLMENT= """
+            SELECT
+            benro.UZBENRO_CUST_CODE
+            FROM UZBENRO benro
+            LEFT JOIN GZRSCFP gzrs
+              ON benro.UZBENRO_CUST_CODE = gzrs.GZRSCFP_CUST_CODE AND benro.UZBENRO_PREM_CODE = gzrs.GZRSCFP_PREM_CODE
+            LEFT JOIN UCRACCT acct
+              ON benro.UZBENRO_CUST_CODE = acct.UCRACCT_CUST_CODE AND benro.UZBENRO_PREM_CODE = acct.UCRACCT_PREM_CODE
+            LEFT JOIN OCBCONT cont
+              ON benro.UZBENRO_CUST_CODE = cont.cust_ucbcust_code AND benro.UZBENRO_PREM_CODE = cont.ocbcont_premises_code
+            LEFT JOIN OCRCDET crc
+              ON benro.UZBENRO_CUST_CODE = crc.OCRCDET_IMPACTED_CUST_CODE AND benro.UZBENRO_PREM_CODE = crc.OCRCDET_IMPACTED_PREM_CODE
+            LEFT JOIN OCRCTIM tim
+              ON cont.ocbcont_contact_code = tim.cont_ocbcont_contact_code
+            WHERE benro.UZBENRO_CUST_CODE = ?
+              AND benro.UZBENRO_PREM_CODE = ?
+            AND benro.UZBENRO_TRANS_CHNL='OMSTNON'
+            AND benro.UZBENRO_ENRO_STATUS=?
+            AND acct.UCRACCT_STATUS_IND IS NULL
+            AND acct.UCRACCT_CYCL_CODE IS NULL
+            AND acct.UCRACCT_PMNT_ARR IS NULL
+            AND acct.UCRACCT_BAD_DEBT_EXEMPT_IND IS NULL
+            AND acct.UCRACCT_NCOA_PROTECT_IND IS NULL
+            AND cont.OCBCONT_FEEDBACK_IND=?
+            AND cont.OCBCONT_CONTACT_DIRECTION=?
+            AND crc.OCRCDET_CATEGORY_CODE='ENROLL'
+            AND crc.OCRCDET_REASON_CODE=?
+            AND crc.OCRCDET_REFERRED_INDICATOR=?
+            AND crc.CTYP_OTVCTYP_CONTACT_TYPE= ?
+            AND crc.OCRCDET_STATUS=?
+            AND tim.OCRCTIM_AUTOMATIC_INDICATOR=?
+            AND tim.CDET_OCRCDET_REASON_CODE=?
+            AND tim.CDET_OCRCDET_CATEGORY_CODE='ENROLL'
             FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP = """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 30
+            ),
+            randomized_results AS (
+                SELECT
+                    T2.GTBTRNH_CUST_CODE,
+                    T2.GTBTRNH_PREM_CODE,
+                    T2.GTBTRNH_AGLC_ACCT_NBR,
+                    T3.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
+                FROM UZBENRO T1
+                JOIN GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                               AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+                JOIN GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+                JOIN UCRSERV T4 ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
+                JOIN UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
+                               AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
+                WHERE T1.UZBENRO_SSP_IND = 'N'
+                  AND T1.UZBENRO_PRICE_PLAN = ?
+                  AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM UZRSSPA R
+                      WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
+                        AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
+                  )
+                  AND T5.UCRACCT_STATUS_IND = 'A'
+                  AND T4.UCRSERV_SCLS_CODE IN (?)
+                  AND T2.GTBTRNH_CUST_CODE IN (
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
+                  )
+            )
             SELECT
-                T2.GTBTRNH_CUST_CODE,
-                T2.GTBTRNH_PREM_CODE,
-                T2.GTBTRNH_AGLC_ACCT_NBR,
-                T3.GTRRNDN_SERV_ORD_NUM
-            FROM
-                UZBENRO T1
-            JOIN
-                GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
-                          AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
-            JOIN
-                GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
-            JOIN
-                UCRSERV T4 ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
-            JOIN
-                UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
-                          AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
-            WHERE
-                T1.UZBENRO_SSP_IND = 'N'
-                AND T1.UZBENRO_PRICE_PLAN=?
-                AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM UZRSSPA R
-                    WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
-                      AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
-                )
-                AND T5.UCRACCT_STATUS_IND = 'A'
-                AND T4.UCRSERV_SCLS_CODE IN (?)
-            ORDER BY
-                T1.UZBENRO_ACTIVITY_DATE DESC
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_CONTROL_NUMBER = """
+            SELECT UZTCOTT_CONTROL_NUM FROM uztcott\s
+            ORDER  BY uztcott_control_num DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_USER_ROLE_IDS = """
+            SELECT role_id FROM user_role WHERE user_id = ?
+            """;
+
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE = """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 30
+            ),
+            randomized_results AS (
+                SELECT
+                    T2.GTBTRNH_CUST_CODE,
+                    T2.GTBTRNH_PREM_CODE,
+                    T2.GTBTRNH_AGLC_ACCT_NBR,
+                    T3.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
+                FROM UZBENRO T1
+                JOIN GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                              AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+                JOIN GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+                JOIN UCRSERV T4 ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
+                JOIN UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
+                              AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
+                JOIN GZRCBHT T6 ON T6.GZRCBHT_CUST_CODE = T1.UZBENRO_CUST_CODE
+                WHERE T1.UZBENRO_SSP_IND = 'N'
+                  AND T6.GZRCBHT_SRAT_CODE = 'CR03'
+                  AND T1.UZBENRO_PRICE_PLAN = ?
+                  AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM UZRSSPA R
+                      WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
+                        AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
+                  )
+                  AND T5.UCRACCT_STATUS_IND = 'A'
+                  AND T4.UCRSERV_SCLS_CODE IN (?)
+                  AND T2.GTBTRNH_CUST_CODE IN (
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
+                  )
+            )
             SELECT
-                T2.GTBTRNH_CUST_CODE,
-                T2.GTBTRNH_PREM_CODE,
-                T2.GTBTRNH_AGLC_ACCT_NBR,
-                T3.GTRRNDN_SERV_ORD_NUM
-            FROM
-                UZBENRO T1
-            JOIN
-                GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
-                         AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
-            JOIN
-                GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
-            JOIN
-                UCRSERV T4 ON T2.GTBTRNH_PREM_CODE = T4.UCRSERV_PREM_CODE
-            JOIN
-                UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
-                         AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
-            JOIN
-            	GZRCBHT T6
-                ON T6.GZRCBHT_CUST_CODE = T1.UZBENRO_CUST_CODE
-            WHERE
-                T1.UZBENRO_SSP_IND = 'N'
-                AND T6.GZRCBHT_SRAT_CODE = 'CR03'
-                AND T1.UZBENRO_PRICE_PLAN = ?
-                AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM UZRSSPA R
-                    WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
-                      AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
-                )
-                AND T5.UCRACCT_STATUS_IND = 'A'
-                AND T4.UCRSERV_SCLS_CODE IN (?)
-            ORDER BY
-                T1.UZBENRO_ACTIVITY_DATE DESC
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
             FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS = """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) BETWEEN 5 AND 30
+            ),
+            randomized_results AS (
+                SELECT
+                    T2.GTBTRNH_CUST_CODE,
+                    T2.GTBTRNH_PREM_CODE,
+                    T2.GTBTRNH_AGLC_ACCT_NBR,
+                    T3.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
+                FROM UZBENRO T1
+                JOIN GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
+                               AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
+                JOIN GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
+                JOIN GZBRWDS T4 ON T1.UZBENRO_CUST_CODE = T4.GZBRWDS_CUST_CODE
+                               AND T1.UZBENRO_PREM_CODE = T4.GZBRWDS_PREM_CODE
+                WHERE T1.UZBENRO_SSP_IND = 'N'
+                  AND T1.UZBENRO_PRICE_PLAN = ?
+                  AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM UZRSSPA R
+                      WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
+                        AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
+                  )
+                  AND EXISTS (
+                      SELECT 1
+                      FROM GZBRWDS BW
+                      JOIN UCRSCMP CMP ON BW.GZBRWDS_CUST_CODE = CMP.UCRSCMP_CUST_CODE
+                                      AND BW.GZBRWDS_PREM_CODE = CMP.UCRSCMP_PREM_CODE
+                      WHERE BW.GZBRWDS_REWARD_ID = '1'
+                  )
+                  AND T2.GTBTRNH_CUST_CODE IN (
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
+                  )
+            )
             SELECT
-                T2.GTBTRNH_CUST_CODE,
-                T2.GTBTRNH_PREM_CODE,
-                T2.GTBTRNH_AGLC_ACCT_NBR,
-                T3.GTRRNDN_SERV_ORD_NUM
-            FROM
-                UZBENRO T1
-            JOIN
-                GTBTRNH T2 ON T1.UZBENRO_CUST_CODE = T2.GTBTRNH_CUST_CODE
-                         AND T1.UZBENRO_PREM_CODE = T2.GTBTRNH_PREM_CODE
-            JOIN
-                GTRRNDN T3 ON T2.GTBTRNH_SEQ_NUM = T3.GTRRNDN_SEQ_NUM
-            JOIN
-                GZBRWDS T4 ON T1.UZBENRO_CUST_CODE = T4.GZBRWDS_CUST_CODE
-                         AND T1.UZBENRO_PREM_CODE = T4.GZBRWDS_PREM_CODE
-            WHERE
-                T1.UZBENRO_SSP_IND = 'N'
-                AND T1.UZBENRO_PRICE_PLAN = ?
-                AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM UZRSSPA R
-                    WHERE R.UZRSSPA_CUST_CODE = T1.UZBENRO_CUST_CODE
-                      AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
-                )
-                AND EXISTS (
-                    SELECT 1
-                    FROM GZBRWDS BW
-                    JOIN UCRSCMP CMP ON BW.GZBRWDS_CUST_CODE = CMP.UCRSCMP_CUST_CODE
-                                    AND BW.GZBRWDS_PREM_CODE = CMP.UCRSCMP_PREM_CODE
-                    WHERE BW.GZBRWDS_REWARD_ID = '1'
-                )
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -1469,41 +1750,88 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN= """
+            WITH eligible_customers AS (
+                SELECT gtbtrnh_cust_code
+                FROM gtbtrnh
+                GROUP BY gtbtrnh_cust_code
+                HAVING COUNT(*) < 90
+            ),
+            randomized_results AS (
+                SELECT
+                    t2.gtbtrnh_cust_code,
+                    t2.gtbtrnh_prem_code,
+                    t2.gtbtrnh_aglc_acct_nbr,
+                    t3.gtrrndn_serv_ord_num,
+                    DBMS_RANDOM.VALUE AS rand_val
+                FROM uzbenro t1
+                JOIN gtbtrnh t2 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
+                JOIN gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
+                JOIN ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
+                JOIN ucracct t5 ON t4.ucrserv_prem_code = t5.ucracct_prem_code
+                JOIN ucbcust t6 ON t5.ucracct_cust_code = t6.ucbcust_cust_code
+                JOIN ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
+                WHERE t5.ucracct_status_ind = 'A'
+                  AND t4.ucrserv_scls_code = ?
+                  AND t3.gtrrndn_serv_ord_num IS NOT NULL
+                  AND t5.ucracct_cycl_code <> 'DEPO'
+                  AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
+                  AND t7.ucrscmp_plan_code = ?
+                  AND t7.ucrscmp_end_date > SYSDATE
+                  AND t7.ucrscmp_start_date < SYSDATE
+                  AND t7.ucrscmp_scty_code = 'COMM'
+                  AND t2.gtbtrnh_cust_code IN (
+                      SELECT gtbtrnh_cust_code FROM eligible_customers
+                  )
+            )
             SELECT
-                t2.gtbtrnh_cust_code,
-                t2.gtbtrnh_prem_code,
-                t2.gtbtrnh_aglc_acct_nbr,
-                t3.gtrrndn_serv_ord_num
-            FROM
-                uzbenro t1
-            JOIN
-                gtbtrnh t2 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
-            JOIN
-                gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
-            JOIN
-                ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
-            JOIN
-                ucracct t5 ON t4.ucrserv_prem_code = t5.ucracct_prem_code
-            JOIN
-                ucbcust t6 ON t5.ucracct_cust_code = t6.ucbcust_cust_code
-            JOIN
-                ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
-            WHERE
-                t5.ucracct_status_ind = 'A'
-                AND t4.ucrserv_scls_code = ?
-                AND t3.gtrrndn_serv_ord_num IS NOT NULL
-                AND t5.ucracct_cycl_code NOT IN ('DEPO')
-                AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
-                AND t7.ucrscmp_plan_code = ?
-                AND t7.ucrscmp_end_date > SYSDATE
-                AND t7.ucrscmp_start_date < SYSDATE
-                AND t7.ucrscmp_scty_code = 'COMM'
-            ORDER BY
-                t5.ucracct_cust_code DESC
+                gtbtrnh_cust_code,
+                gtbtrnh_prem_code,
+                gtbtrnh_aglc_acct_nbr,
+                gtrrndn_serv_ord_num
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN_TC_230= """
+            WITH filtered_data AS (
+                SELECT
+                    t2.gtbtrnh_cust_code,
+                    t2.gtbtrnh_prem_code,
+                    t2.gtbtrnh_aglc_acct_nbr,
+                    t3.gtrrndn_serv_ord_num
+                FROM
+                    uzbenro t1
+                JOIN gtbtrnh t2 ON t1.uzbenro_cust_code = t2.gtbtrnh_cust_code
+                JOIN gtrrndn t3 ON t2.gtbtrnh_seq_num = t3.gtrrndn_seq_num
+                JOIN ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
+                JOIN ucracct t5 ON t4.ucrserv_prem_code = t5.ucracct_prem_code
+                JOIN ucbcust t6 ON t5.ucracct_cust_code = t6.ucbcust_cust_code
+                JOIN ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
+                WHERE
+                    t5.ucracct_status_ind = 'A'
+                    AND t4.ucrserv_scls_code = ?
+                    AND t3.gtrrndn_serv_ord_num IS NOT NULL
+                    AND t5.ucracct_cycl_code NOT IN ('DEPO')
+                    AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
+                    AND t7.ucrscmp_plan_code = ?
+                    AND t7.ucrscmp_end_date > SYSDATE
+                    AND t7.ucrscmp_start_date < SYSDATE
+                    AND t7.ucrscmp_scty_code = 'COMM'
+            )
+            SELECT *
+            FROM filtered_data
+            ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_ACN_WITHOUT_ETC= """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 30
+            )
             SELECT
                 T2.GTBTRNH_CUST_CODE,
                 T2.GTBTRNH_PREM_CODE,
@@ -1524,6 +1852,8 @@ public final class DBQuery {
                 UCBPREM B ON B.UCBPREM_CODE = T5.UCRACCT_PREM_CODE
             JOIN
                 GTRACNU A ON B.UCBPREM_PREM_ID = A.GTRACNU_LDC_PREM_ID
+            JOIN
+                eligible_customers EC ON T2.GTBTRNH_CUST_CODE = EC.GTBTRNH_CUST_CODE
             WHERE
                 B.UCBPREM_LANDLORD_IND IN ('L', 'T')
                 AND A.GTRACNU_STATUS = 'A'
@@ -1592,35 +1922,58 @@ public final class DBQuery {
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_INDEXED_PRICE_PLAN= """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 100
+            ),
+            randomized_results AS (
+                SELECT
+                    GT.GTBTRNH_CUST_CODE,
+                    GT.GTBTRNH_PREM_CODE,
+                    GT.GTBTRNH_AGLC_ACCT_NBR,
+                    GR.GTRRNDN_SERV_ORD_NUM,
+                    DBMS_RANDOM.VALUE AS rand_val
+                FROM UCRACCT T1
+                JOIN UCRSERV T3
+                    ON T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+                   AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+                JOIN UCRSCMP T5
+                    ON T1.UCRACCT_CUST_CODE = T5.UCRSCMP_CUST_CODE
+                   AND T1.UCRACCT_PREM_CODE = T5.UCRSCMP_PREM_CODE
+                JOIN GTBTRNH GT
+                    ON T5.UCRSCMP_CUST_CODE = GT.GTBTRNH_CUST_CODE
+                JOIN GTRRNDN GR
+                    ON GT.GTBTRNH_SEQ_NUM = GR.GTRRNDN_SEQ_NUM
+                WHERE T1.UCRACCT_STATUS_IND = 'A'
+                  AND T1.UCRACCT_CYCL_CODE <> 'DEPO'
+                  AND T3.UCRSERV_SCLS_CODE = ?
+                  AND T5.UCRSCMP_PLAN_CODE = ?
+                  AND T5.UCRSCMP_END_DATE > SYSDATE
+                  AND T5.UCRSCMP_START_DATE < SYSDATE
+                  AND T5.UCRSCMP_SCTY_CODE = 'COMM'
+                  AND GT.GTBTRNH_CUST_CODE IN (
+                      SELECT GTBTRNH_CUST_CODE FROM eligible_customers
+                  )
+            )
             SELECT
-                GT.GTBTRNH_CUST_CODE,
-                GT.GTBTRNH_PREM_CODE,
-                GT.GTBTRNH_AGLC_ACCT_NBR,
-                GR.GTRRNDN_SERV_ORD_NUM
-            FROM
-                UCRACCT T1
-            JOIN UCRSERV T3
-                ON T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
-               AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
-            JOIN UCRSCMP T5
-                ON T1.UCRACCT_CUST_CODE = T5.UCRSCMP_CUST_CODE
-               AND T1.UCRACCT_PREM_CODE = T5.UCRSCMP_PREM_CODE
-               JOIN GTBTRNH GT
-                ON T5.UCRSCMP_CUST_CODE = GT.GTBTRNH_CUST_CODE
-            JOIN GTRRNDN GR
-                ON GT.GTBTRNH_SEQ_NUM = GR.GTRRNDN_SEQ_NUM
-            WHERE
-                T1.UCRACCT_STATUS_IND = 'A'
-                AND T1.UCRACCT_CYCL_CODE <> 'DEPO'
-                AND T3.UCRSERV_SCLS_CODE = ?
-                AND T5.UCRSCMP_PLAN_CODE = ?
-                AND T5.UCRSCMP_END_DATE > SYSDATE
-                AND T5.UCRSCMP_START_DATE < SYSDATE
-                AND T5.UCRSCMP_SCTY_CODE = 'COMM'
-                FETCH FIRST 1 ROWS ONLY
+                GTBTRNH_CUST_CODE,
+                GTBTRNH_PREM_CODE,
+                GTBTRNH_AGLC_ACCT_NBR,
+                GTRRNDN_SERV_ORD_NUM
+            FROM randomized_results
+            ORDER BY rand_val
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE= """
+            WITH eligible_customers AS (
+                SELECT GTBTRNH_CUST_CODE
+                FROM GTBTRNH
+                GROUP BY GTBTRNH_CUST_CODE
+                HAVING COUNT(*) < 100
+            )
             SELECT
                 GT.GTBTRNH_CUST_CODE,
                 GT.GTBTRNH_PREM_CODE,
@@ -1647,6 +2000,7 @@ public final class DBQuery {
                 AND UO.UABOPEN_BALANCE_IND = 'P'
                 AND UO.UABOPEN_BALANCE > 200
                 AND UO.UABOPEN_DUE_DATE < TRUNC(SYSDATE)
+                AND GT.GTBTRNH_CUST_CODE IN (SELECT GTBTRNH_CUST_CODE FROM eligible_customers)
                 AND EXISTS (
                     SELECT 1
                     FROM UCRSCMP SC
@@ -1666,7 +2020,7 @@ public final class DBQuery {
                     WHERE RS.UZRSSPA_CUST_CODE = ZB.UZBENRO_CUST_CODE
                       AND RS.UZRSSPA_PREM_CODE = ZB.UZBENRO_PREM_CODE
                 )
-             FETCH FIRST 1 ROWS ONLY
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_UNAPPLIED_DEPOSIT= """
@@ -2003,6 +2357,205 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_VALIDATION_PLANS_AND_OFFERS_RESULT = """      
+            SELECT
+              t1.uztcott_app_request_code   AS "appRequestCode",
+              t1.uztcott_plan_code          AS "planCode",
+              t1.uztcott_plan_desc          AS "planDescription",
+              t1.uztcott_sort_order         AS "sortOrder",
+              t1.uztcott_therm_price        AS "thermPrice",
+              t1.uztcott_duration           AS "planDuration",
+              t1.uztcott_svc_charge         AS "serviceCharge",
+              t1.uztcott_sign_up_charge     AS "signUpCharge",
+              t1.uztcott_cap_amount         AS "priceCeiling",
+              t1.uztcott_protect_fee        AS "priceProtectionFee",
+              t1.uztcott_cancel_fee         AS "cancelFee",
+              t1.uztcott_high_csc           AS "highCustomerServiceCharge",
+              t1.uztcott_low_csc            AS "lowCustomerServiceCharge",
+              t1.uztcott_mktg_terms         AS "marketingTerms",
+              t1.uztcott_terms              AS "offerTerms",
+              t1.uztcott_ext_terms          AS "externalTerms",
+              t1.uztcott_restricted_ind     AS "restrictedIndicator",
+              t1.uztcott_pre_pay_ind        AS "prepayPlanIndicator",
+              t1.uztcott_estimated_chg      AS "prepayEstimateAmountDue",
+              t1.uztcott_estimated_cons     AS "prepayEstimatedConsumption",
+              t1.uztcott_due_date_cust      AS "prepayCustomerPayByDate",
+              t1.uztcott_due_date_sys       AS "prepaySystemPayByDate",
+              t1.uztcott_prepay_reduction_amt AS "prepayOneTimeWelcomeCredit",
+              t1.uztcott_prepay_original_amt  AS "prepayEstimateOriginalAmount",
+              t1.uztcott_pia_ind            AS "payInAdvanceIndicator",
+                  MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_prmo_code END) AS "promotion1Code",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_prmo_desc END) AS "promotion1Description",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_terms END) AS "promotion1Terms",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_mktg_msg END) AS "promotion1MarketingMessage",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_trans_ind END) AS "promotion1TransferIndicator",
+                          MAX(CASE WHEN p.rn = 1 THEN p.uztprmo_visa_ind END) AS "promotion1VisaIndicator",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_prmo_code END) AS "promotion2Code",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_prmo_desc END) AS "promotion2Description",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_terms END) AS "promotion2Terms",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_mktg_msg END) AS "promotion2MarketingMessage",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_trans_ind END) AS "promotion2TransferIndicator",
+                          MAX(CASE WHEN p.rn = 2 THEN p.uztprmo_visa_ind END) AS "promotion2VisaIndicator",
+              t1.uztcott_control_num        AS "controlNum"
+            FROM uztcott t1
+            LEFT JOIN (
+              SELECT
+                t2.uztprmo_control_num,
+                t2.uztprmo_plan_code,
+                t2.uztprmo_bucket_id,
+                t2.uztprmo_prmo_code,
+                t2.uztprmo_prmo_desc,
+                t2.uztprmo_terms,
+                t2.uztprmo_mktg_msg,
+                t2.uztprmo_trans_ind,
+                t2.uztprmo_visa_ind,
+                ROW_NUMBER() OVER (
+                  PARTITION BY t2.uztprmo_plan_code, t2.uztprmo_control_num
+                  ORDER BY t2.uztprmo_prmo_sort_order
+                ) AS rn
+              FROM uztprmo t2
+            ) p ON t1.uztcott_plan_code = p.uztprmo_plan_code
+                 AND t1.uztcott_control_num = p.uztprmo_control_num
+                 AND t1.uztcott_bucket_id = p.uztprmo_bucket_id
+            LEFT JOIN odmbckt t3 ON t1.uztcott_bucket_id = t3.bucket_id
+            LEFT JOIN gtbenrl t4 ON t1.uztcott_control_num = t4.gtbenrl_control_num
+            WHERE t1.uztcott_app_request_code = 'OMSENRL'
+              AND t1.uztcott_control_num IN (<controlNumber>)
+            GROUP BY
+              t1.uztcott_app_request_code,
+              t1.uztcott_plan_code,
+              t1.uztcott_plan_desc,
+              t1.uztcott_sort_order,
+              t1.uztcott_therm_price,
+              t1.uztcott_duration,
+              t1.uztcott_svc_charge,
+              t1.uztcott_sign_up_charge,
+              t1.uztcott_cap_amount,
+              t1.uztcott_protect_fee,
+              t1.uztcott_cancel_fee,
+              t1.uztcott_high_csc,
+              t1.uztcott_low_csc,
+              t1.uztcott_mktg_terms,
+              t1.uztcott_terms,
+              t1.uztcott_ext_terms,
+              t1.uztcott_restricted_ind,
+              t1.uztcott_pre_pay_ind,
+              t1.uztcott_estimated_chg,
+              t1.uztcott_estimated_cons,
+              t1.uztcott_due_date_cust,
+              t1.uztcott_due_date_sys,
+              t1.uztcott_prepay_reduction_amt,
+              t1.uztcott_prepay_original_amt,
+              t1.uztcott_pia_ind,
+              t1.uztcott_control_num
+            ORDER BY t1.uztcott_sort_order
+        """;
+
+    public static final String GET_VALIDATION_PREPAY_PLANS_RESULT = """ 
+           SELECT
+                   t1.UZTCOTT_PLAN_CODE              AS "planCode",
+                   t1.UZTCOTT_PLAN_DESC              AS "planDescription",
+                   t1.UZTCOTT_SORT_ORDER             AS "sortOrder",
+                   t1.UZTCOTT_THERM_PRICE            AS "thermPrice",
+                   t1.UZTCOTT_DURATION               AS "planDuration",
+                   t1.UZTCOTT_SVC_CHARGE             AS "serviceCharge",
+                   t1.UZTCOTT_SIGN_UP_CHARGE         AS "signUpCharge",
+                   t1.UZTCOTT_CAP_AMOUNT             AS "priceCeiling",
+                   t1.UZTCOTT_PROTECT_FEE            AS "priceProtectionFee",
+                   t1.UZTCOTT_CANCEL_FEE             AS "cancelFee",
+                   t1.UZTCOTT_HIGH_CSC               AS "highCustomerServiceCharge",
+                   t1.UZTCOTT_LOW_CSC                AS "lowCustomerServiceCharge",
+                   t1.UZTCOTT_MKTG_TERMS             AS "marketingTerms",
+                   t1.UZTCOTT_TERMS                  AS "offerTerms",
+                   t1.UZTCOTT_EXT_TERMS              AS "externalTerms",
+                   t1.UZTCOTT_RESTRICTED_IND         AS "restrictedIndicator",
+                   t1.UZTCOTT_PRE_PAY_IND            AS "prepayPlanIndicator",
+                   t1.UZTCOTT_ESTIMATED_CHG          AS "prepayEstimateAmountDue",
+                   t1.UZTCOTT_ESTIMATED_CONS         AS "prepayEstimatedConsumption",
+                   t1.UZTCOTT_DUE_DATE_CUST          AS "prepayCustomerPayByDate",
+                   t1.UZTCOTT_DUE_DATE_SYS           AS "prepaySystemPayByDate",
+                   t1.UZTCOTT_PREPAY_REDUCTION_AMT   AS "prepayOneTimeWelcomeCredit",
+                   t1.UZTCOTT_PREPAY_ORIGINAL_AMT    AS "prepayEstimateOriginalAmount",
+                   t1.UZTCOTT_PIA_IND                AS "payInAdvanceIndicator",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_PRMO_CODE END)        AS "promotion1Code",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_PRMO_DESC END)        AS "promotion1Description",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_TERMS END)            AS "promotion1Terms",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_MKTG_MSG END)         AS "promotion1MarketingMessage",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_TRANS_IND END)        AS "promotion1TransferIndicator",
+                   MAX(CASE WHEN p.rn = 1 THEN p.UZTPRMO_VISA_IND END)         AS "promotion1VisaIndicator",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_PRMO_CODE END)        AS "promotion2Code",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_PRMO_DESC END)        AS "promotion2Description",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_TERMS END)            AS "promotion2Terms",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_MKTG_MSG END)         AS "promotion2MarketingMessage",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_TRANS_IND END)        AS "promotion2TransferIndicator",
+                   MAX(CASE WHEN p.rn = 2 THEN p.UZTPRMO_VISA_IND END)         AS "promotion2VisaIndicator"
+               FROM UZRRCOT rr
+               JOIN UZTCOTT t1 ON rr.UZRRCOT_CONTROL_NUM = t1.UZTCOTT_CONTROL_NUM
+               LEFT JOIN (
+                   SELECT
+                       t2.UZTPRMO_CONTROL_NUM,
+                       t2.UZTPRMO_PLAN_CODE,
+                       t2.UZTPRMO_BUCKET_ID,
+                       t2.UZTPRMO_PRMO_CODE,
+                       t2.UZTPRMO_PRMO_DESC,
+                       t2.UZTPRMO_TERMS,
+                       t2.UZTPRMO_MKTG_MSG,
+                       t2.UZTPRMO_TRANS_IND,
+                       t2.UZTPRMO_VISA_IND,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY t2.UZTPRMO_PLAN_CODE, t2.UZTPRMO_CONTROL_NUM
+                           ORDER BY t2.UZTPRMO_PRMO_SORT_ORDER
+                       ) AS rn
+                   FROM UZTPRMO t2
+               ) p ON t1.UZTCOTT_PLAN_CODE = p.UZTPRMO_PLAN_CODE
+                   AND t1.UZTCOTT_CONTROL_NUM = p.UZTPRMO_CONTROL_NUM
+                   AND t1.UZTCOTT_BUCKET_ID = p.UZTPRMO_BUCKET_ID
+               WHERE rr.UZRRCOT_TRANSACTION_ID = '<transactionId>'
+               	AND t1.UZTCOTT_DUE_DATE_CUST IS NOT null
+               GROUP BY
+                   t1.UZTCOTT_PLAN_CODE,
+                   t1.UZTCOTT_PLAN_DESC,
+                   t1.UZTCOTT_SORT_ORDER,
+                   t1.UZTCOTT_THERM_PRICE,
+                   t1.UZTCOTT_DURATION,
+                   t1.UZTCOTT_SVC_CHARGE,
+                   t1.UZTCOTT_SIGN_UP_CHARGE,
+                   t1.UZTCOTT_CAP_AMOUNT,
+                   t1.UZTCOTT_PROTECT_FEE,
+                   t1.UZTCOTT_CANCEL_FEE,
+                   t1.UZTCOTT_HIGH_CSC,
+                   t1.UZTCOTT_LOW_CSC,
+                   t1.UZTCOTT_MKTG_TERMS,
+                   t1.UZTCOTT_TERMS,
+                   t1.UZTCOTT_EXT_TERMS,
+                   t1.UZTCOTT_RESTRICTED_IND,
+                   t1.UZTCOTT_PRE_PAY_IND,
+                   t1.UZTCOTT_ESTIMATED_CHG,
+                   t1.UZTCOTT_ESTIMATED_CONS,
+                   t1.UZTCOTT_DUE_DATE_CUST,
+                   t1.UZTCOTT_DUE_DATE_SYS,
+                   t1.UZTCOTT_PREPAY_REDUCTION_AMT,
+                   t1.UZTCOTT_PREPAY_ORIGINAL_AMT,
+                   t1.UZTCOTT_PIA_IND
+        """;
+
+    public static final String GET_PRE_PAY_QUOTE = """
+            SELECT * FROM UABOPEN a
+              JOIN uzbenro e ON a."UABOPEN_PREM_CODE" = e."UZBENRO_PREM_CODE"
+            WHERE a."UABOPEN_CUST_CODE" = '<customerCode>'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+    public static final String UPDATE_PRE_PAY_QUOTE = """
+            UPDATE UABOPEN a
+            SET a.UABOPEN_DUE_DATE = SYSDATE - 10
+            WHERE a.UABOPEN_CUST_CODE = '<customerCode>'
+            """;
+
+    public static final String DELETE_URBLEX_BY_CUSTOMER_CODE = """
+            DELETE
+            FROM UBRBLEX a
+            WHERE a.UBRBLEX_CUST_CODE = '<customerCode>'
+            """;
 
     private DBQuery() {
     }

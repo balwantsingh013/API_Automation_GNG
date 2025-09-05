@@ -5,196 +5,71 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesAndPromotionCodeAsNullTC318UC39 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC 318 UC 39
-    When  a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39
+  @GetEligiblePlansAndOffersRSPositive @GetEligiblePlansAndOffersPositive @HappyFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 12
-    And the response should contain the following plans:
-      | planCode | planDescription                   |
-      | MVS      | Variable Select                   |
-      |CSV       |MVS with Price Protection Guarantee|
-      | MI       | Market Intro                      |
-      | RGB      | Guaranteed Bill                   |
-      | GPP      | 12-Month Fixed                    |
-      | 24M      | 24-Month Fixed                    |
-      | 18M      | 18-Month Fixed                    |
-      | RF6      | 6-Month Fixed                     |
-      | TRD      | Volume Discount                   |
-      | PGB      | Pre-Pay Guaranteed Bill           |
-      | PRP      | Pre-Pay                           |
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then the response should contain the expected plans
 
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC319UC44 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 319 UC 44
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_319_UC 44
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 12
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
-      | TRD      | Volume Discount                     |
-      | PGB      | Pre-Pay Guaranteed Bill             |
-      | PRP      | Pre-Pay                             |
+    Examples:
+      | testCondition                        |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_318 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_319 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_320 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_322 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_323 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_324 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_325 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_326 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_328 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_329 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_330 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_331 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_332 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_333 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_334 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_335 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_337 |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338 |
+      #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338e|
 
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithNoPromotionCodeTC320UC46 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 320 UC 46
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes yes with no promotion code  TC_320_UC 46
+  @GetEligiblePlansAndOffersPromotionCodePositive @HappyFlow
+  Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with "<promotionCode>" promotionCode for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 12
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
-      | TRD      | Volume Discount                     |
-      | PGB      | Pre-Pay Guaranteed Bill             |
-      | PRP      | Pre-Pay                             |
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then the response should contain the expected plans
 
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC321UC64 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 321 UC 64
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_321_UC 64
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 10
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
-      | PGB      | Pre-Pay Guaranteed Bill             |
-      | PRP      | Pre-Pay                             |
+    Examples:
+      | testCondition                        | promotionCode |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_321 | AAA           |
+      | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_327 | AAA           |
 
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC322UC45 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 322 UC 45
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_322_UC 45
+  @GetEligiblePlansAndOffersCommercialPositive @GetEligiblePlansAndOffersPositive @Phase1 @HappyFlow
+  Scenario Outline: Verify GetEligiblePlansAndOffers Api with customer type commercial for <testCondition>
+    When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 8
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | TRD      | Volume Discount                     |
-      | PGB      | Pre-Pay Guaranteed Bill             |
-      | PRP      | Pre-Pay                             |
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then the response should contain the expected plans
 
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC323UCNA @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 323 UC NA
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_323_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 12
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
-      | TRD      | Volume Discount                     |
-      | PGB      | Pre-Pay Guaranteed Bill             |
-      | PRP      | Pre-Pay                             |
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC324UCNA @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 324 UC NA
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_324_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 3
-    And the response should contain the following plans:
-      | planCode | planDescription         |
-      | VML      | Variable Market Limited |
-      | PGB      | Pre-Pay Guaranteed Bill |
-      | PRP      | Pre-Pay                 |
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsServiceTransferWithNoPromotionCodeTC325UC55 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code TC 325 UC 55
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code  TC_325_UC 55
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 13
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
-      | TRD      | Volume Discount                     |
-      | PGB      | Pre-Pay Guaranteed Bill             |
-      | PRP      | Pre-Pay                             |
-      | VML      | Variable Market Limited             |
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsCommWithNoPromotionCodeTC326UC56 @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code TC 326 UC 56
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code  TC_326_UC 56
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 12
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
-      | TRD      | Volume Discount                     |
-      | PGB      | Pre-Pay Guaranteed Bill             |
-      | PRP      | Pre-Pay                             |
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC327UC40  @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code TC 327 UC 40
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_327_UC 40
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 8
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
-
-  @GetEligiblePlansAndOffersWithCustomerTypeResidentialCreditCheckAsYesWithPromotionCodeTC328UCNA @Phase1 @HappyFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code TC 328 UC NA
-    When a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should return numberOfMatches as 8
-    And the response should contain the following plans:
-      | planCode | planDescription                     |
-      | MVS      | Variable Select                     |
-      | CSV      | MVS with Price Protection Guarantee |
-      | MI       | Market Intro                        |
-      | RGB      | Guaranteed Bill                     |
-      | GPP      | 12-Month Fixed                      |
-      | 24M      | 24-Month Fixed                      |
-      | 18M      | 18-Month Fixed                      |
-      | RF6      | 6-Month Fixed                       |
+  Examples:
+    |testCondition                                              |
+    |COMMERCIAL_CREDIT_CHECK_YES_TC_339                         |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340          |
+    |COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341         |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342          |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343          |
+    |COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344|
+#    |COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345         |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346          |
+#    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347          |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348          |
+    |COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349          |
+    |COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350         |
+    |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B        |
+    |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E        |
 
   @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid requestID "<requestID>"TC155_157
@@ -656,3 +531,16 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api with Residential marketer switch  RSTC11UC50
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
+
+  @SSPValidations @NegativeFlow @Phase1
+  Scenario: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for SSP_TRUE_NOT_ALLOWED_FOR_ACN_TC_476
+    When a request is made to the GetEligiblePlansAndOffers Api for "SSP_TRUE_NOT_ALLOWED_FOR_ACN_TC_476" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 2100 and ErrorMessage "WARNING:Seasonal Savings Program Participation is not allowed for ACN premises"
+
+
+  @SSPValidations @HappyFlow @Phase1
+  Scenario: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for SSP_FALSE_ALLOWED_FOR_ACN_TC_477
+    When a request is made to the GetEligiblePlansAndOffers Api for "SSP_FALSE_ALLOWED_FOR_ACN_TC_477" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""

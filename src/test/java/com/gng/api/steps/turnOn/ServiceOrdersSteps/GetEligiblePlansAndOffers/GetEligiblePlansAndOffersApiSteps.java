@@ -1,10 +1,11 @@
 package com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers;
 
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
 import java.io.IOException;
 
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
@@ -17,92 +18,41 @@ public class GetEligiblePlansAndOffersApiSteps {
     public GetEligiblePlansAndOffersApiSteps(TestContext testContext, GetEligiblePlansAndOffersApiPage getEligiblePlansAndOffersApiPage) {
         this.testContext = testContext;
         this.getEligiblePlansAndOffersApiPage = getEligiblePlansAndOffersApiPage;
-        testContext.setGetEligiblePlansAndOffersApiPage(getEligiblePlansAndOffersApiPage);
     }
 
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes and promotion code as null TC_318_UC 39")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_and_promotion_code_as_null_TC_318_UC_39() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithPromotionCodeAsNull(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_319_UC 44")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_no_promotion_code_TC_319_UC_44() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCode(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes yes with no promotion code  TC_320_UC 46")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_no_promotion_codeTC_320_UC_46() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC320(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_321_UC 64")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_promotion_code_TC_321_UC_64() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithPromotionCode(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_322_UC 45")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_no_promotion_code_TC_322_UC_45() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC322(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_323_UC NA")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_no_promotion_code_TC_323_UC_NA() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC323(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_324_UC NA")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_no_promotion_code_TC_324_UC_NA() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC324(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Service Transfer with no promotion code  TC_325_UC 55")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_Service_Transfer_with_no_promotion_code_TC_325_UC_55() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC325(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as Comm with no promotion code  TC_326_UC 56")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_Comm_with_no_promotion_code_TC_326_UC_56() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithNoPromotionCodeTC326(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with  promotion code  TC_327_UC 40")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_promotion_code_TC_327_UC_40() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithPromotionCodeTC327(get_eligible_plans_and_offers);
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type residential credit check as yes with no promotion code  TC_328_UC NA")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_credit_check_as_yes_with_no_promotion_code_TC_328_UC_NA() {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestWithPromotionCodeTC328(get_eligible_plans_and_offers);
+    @When("a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for {string}")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_commercial_credit_check_as_yes_with_no_promotion_code_TC_339(String testCondition) {
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequestCommercial(get_eligible_plans_and_offers, valueOf(testCondition));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string}TC155_157")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_TC155_157(String requestID) {
-        getEligiblePlansAndOffersApiPage.validateInvalidRequestIDCasesTC155_157(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(requestID));
+        getEligiblePlansAndOffersApiPage.validateInvalidRequestIDCasesTC155_157(get_eligible_plans_and_offers_mandatory, valueOf(requestID));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with login {string} ID TC158_160b")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_login_ID_TC158_160b(String loginID) {
-        getEligiblePlansAndOffersApiPage.validateInvalidLoginIDCasesTC158_160B(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(loginID));
+        getEligiblePlansAndOffersApiPage.validateInvalidLoginIDCasesTC158_160B(get_eligible_plans_and_offers_mandatory, valueOf(loginID));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with transaction {string} ID TC161_162")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_transaction_ID_TC161_162(String transactionID) {
-        getEligiblePlansAndOffersApiPage.validateInvalidTransactionIDCasesTC161_162(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(transactionID));
+        getEligiblePlansAndOffersApiPage.validateInvalidTransactionIDCasesTC161_162(get_eligible_plans_and_offers_mandatory, valueOf(transactionID));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with customer {string} code TC163_164")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_code_TC163_164(String customerCode) throws IOException {
-        getEligiblePlansAndOffersApiPage.validateInvalidCustomerCodeCasesTC163_164(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(customerCode));
+        getEligiblePlansAndOffersApiPage.validateInvalidCustomerCodeCasesTC163_164(get_eligible_plans_and_offers_mandatory, valueOf(customerCode));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} code TC165_167")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_code_TC165_167(String premisesCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesCodeCasesTC165_167(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(premisesCode));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesCodeCasesTC165_167(get_eligible_plans_and_offers_mandatory, valueOf(premisesCode));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with enrollment {string} state TC168_182")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_enrollment_state_TC168_182(String enrollmentState) {
-        getEligiblePlansAndOffersApiPage.validateInvalidEnrollmentStateCasesTC168_182(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(enrollmentState));
+        getEligiblePlansAndOffersApiPage.validateInvalidEnrollmentStateCasesTC168_182(get_eligible_plans_and_offers_mandatory, valueOf(enrollmentState));
     }
 
 
@@ -113,134 +63,134 @@ public class GetEligiblePlansAndOffersApiSteps {
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} code Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_referral_code_Type(String referralCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidReferralCode(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(referralCode));
+        getEligiblePlansAndOffersApiPage.validateInvalidReferralCode(get_eligible_plans_and_offers, valueOf(referralCode));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string}  Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_Type(String premisesStreetNumber) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetNumberTC242(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesStreetNumber));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetNumberTC242(get_eligible_plans_and_offers, valueOf(premisesStreetNumber));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 243")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_Direction_test_case_243(String premisesStreetPreDirection) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetPreDirectionTC243(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesStreetPreDirection));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetPreDirectionTC243(get_eligible_plans_and_offers, valueOf(premisesStreetPreDirection));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 244_245")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_name_test_case_244_245(String premisesStreetName) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetNameTC244_245(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesStreetName));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetNameTC244_245(get_eligible_plans_and_offers, valueOf(premisesStreetName));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 246_246a")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_suffix_test_case_246_246a(String premisesStreetSuffix) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetSuffixTC246_246a(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesStreetSuffix));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetSuffixTC246_246a(get_eligible_plans_and_offers, valueOf(premisesStreetSuffix));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 247_247a")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_post_Direction_test_case_247_247a(String premisesStreetPostDirection) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetPostDirectionTC247_247a(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesStreetPostDirection));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetPostDirectionTC247_247a(get_eligible_plans_and_offers, valueOf(premisesStreetPostDirection));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 248_248a")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_unit_type_test_case_248_248a(String premisesUnitType) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitTypeTC248_248a(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesUnitType));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitTypeTC248_248a(get_eligible_plans_and_offers, valueOf(premisesUnitType));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 249")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_unit_number_test_case_249(String premisesUnitNumber) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitNumberTC249(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesUnitNumber));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitNumberTC249(get_eligible_plans_and_offers, valueOf(premisesUnitNumber));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 250_251")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_city_test_case_250_251(String premisesCity) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitNumberTC250_251(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesCity));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitNumberTC250_251(get_eligible_plans_and_offers, valueOf(premisesCity));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} Statecode 252_253")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_state_code_252_253(String premisesStateCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStateCodeCases252_253(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesStateCode));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStateCodeCases252_253(get_eligible_plans_and_offers, valueOf(premisesStateCode));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} Zipcode254_255c")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_zip_code_254_255c(String premisesZipCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesZipCodeCases254_255C(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesZipCode));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesZipCodeCases254_255C(get_eligible_plans_and_offers, valueOf(premisesZipCode));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} Countycode256_257")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_county_code_256_257(String premisesCountyCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesCountyCodeCases256_257(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(premisesCountyCode));
+        getEligiblePlansAndOffersApiPage.validateInvalidPremisesCountyCodeCases256_257(get_eligible_plans_and_offers, valueOf(premisesCountyCode));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with separateBilling {string} Address258_283b")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_separateBilling_address_258_283b(String separateBillingAddress) {
-        getEligiblePlansAndOffersApiPage.validateInvalidSeparateBillingAddressCases258_283b(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(separateBillingAddress));
+        getEligiblePlansAndOffersApiPage.validateInvalidSeparateBillingAddressCases258_283b(get_eligible_plans_and_offers, valueOf(separateBillingAddress));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with workPhone {string} Number284_286")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_workPhone_number_284_286(String workPhoneNumber) {
-        getEligiblePlansAndOffersApiPage.validateInvalidWorkPhoneNumberTC284_286(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(workPhoneNumber));
+        getEligiblePlansAndOffersApiPage.validateInvalidWorkPhoneNumberTC284_286(get_eligible_plans_and_offers, valueOf(workPhoneNumber));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with WorkPhone {string} Type287_290")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_workPhone_type_287_290(String workPhoneType) {
-        getEligiblePlansAndOffersApiPage.validateInvalidWorkPhoneTypeTC287_290(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(workPhoneType));
+        getEligiblePlansAndOffersApiPage.validateInvalidWorkPhoneTypeTC287_290(get_eligible_plans_and_offers, valueOf(workPhoneType));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with HomePhone {string} Number291_293")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_homePhone_number_291_293(String homePhoneNumber) {
-        getEligiblePlansAndOffersApiPage.validateInvalidHomePhoneNumberTC291_293(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(homePhoneNumber));
+        getEligiblePlansAndOffersApiPage.validateInvalidHomePhoneNumberTC291_293(get_eligible_plans_and_offers, valueOf(homePhoneNumber));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with HomePhone {string} Type294_297")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_homePhone_type_294_297(String homePhoneType) {
-        getEligiblePlansAndOffersApiPage.validateInvalidHomePhoneTypeTC294_297(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(homePhoneType));
+        getEligiblePlansAndOffersApiPage.validateInvalidHomePhoneTypeTC294_297(get_eligible_plans_and_offers, valueOf(homePhoneType));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with acnStatus {string} IndicatorTC298_307")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_acnStatus_indicator_TC_298_307(String acnStatusIndicator) {
-        getEligiblePlansAndOffersApiPage.validateInvalidAcnStatusIndicatorCasesTC298_307(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(acnStatusIndicator));
+        getEligiblePlansAndOffersApiPage.validateInvalidAcnStatusIndicatorCasesTC298_307(get_eligible_plans_and_offers, valueOf(acnStatusIndicator));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with CustomerPEWC {string} PreferencesTC308_310")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_CustomerPEWC_Preferences_TC_308_310(String customerPEWCPreferences) {
-        getEligiblePlansAndOffersApiPage.validateInvalidCustomerPEWCPreferencesCasesTC308_309(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(customerPEWCPreferences));
+        getEligiblePlansAndOffersApiPage.validateInvalidCustomerPEWCPreferencesCasesTC308_309(get_eligible_plans_and_offers, valueOf(customerPEWCPreferences));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with credit {string} CheckoptionTC310_312")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_credit_check_option_TC_310_312(String creditCheckOption) {
-        getEligiblePlansAndOffersApiPage.validateInvalidCreditCheckOptionCases310_312(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(creditCheckOption));
+        getEligiblePlansAndOffersApiPage.validateInvalidCreditCheckOptionCases310_312(get_eligible_plans_and_offers, valueOf(creditCheckOption));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with InitialCreditCheck {string} CustomerCodeTC313_317")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_Initial_Credit_Check_CustomerCode_TC_313_317(String initialCreditCheckCustomerCode) {
-        getEligiblePlansAndOffersApiPage.validateInitialCreditCheckCustomerCodeCases313_317(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(initialCreditCheckCustomerCode));
+        getEligiblePlansAndOffersApiPage.validateInitialCreditCheckCustomerCodeCases313_317(get_eligible_plans_and_offers, valueOf(initialCreditCheckCustomerCode));
     }
 
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with  transaction {string} Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_transaction_type(String transactionType) {
-        getEligiblePlansAndOffersApiPage.validateInvalidTransactionTypeCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(transactionType));
+        getEligiblePlansAndOffersApiPage.validateInvalidTransactionTypeCases(get_eligible_plans_and_offers_mandatory, valueOf(transactionType));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with  customer {string} Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_with_customer(String customerTYPE) {
-        getEligiblePlansAndOffersApiPage.validateInvalidCustomerTypeCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(customerTYPE));
+        getEligiblePlansAndOffersApiPage.validateInvalidCustomerTypeCases(get_eligible_plans_and_offers_mandatory, valueOf(customerTYPE));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with enrollment {string} Sources")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_enrollment_sources(String enrollmentSources) {
-        getEligiblePlansAndOffersApiPage.validateInvalidEnrollmentSourcesCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(enrollmentSources));
+        getEligiblePlansAndOffersApiPage.validateInvalidEnrollmentSourcesCases(get_eligible_plans_and_offers_mandatory, valueOf(enrollmentSources));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with customer {string} LastName")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_last_name(String customerLastName) {
-        getEligiblePlansAndOffersApiPage.validateInvalidCustomerLastNameCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(customerLastName));
+        getEligiblePlansAndOffersApiPage.validateInvalidCustomerLastNameCases(get_eligible_plans_and_offers_mandatory, valueOf(customerLastName));
     }
 
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with tenant {string} Landlord")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_tenant_landlord(String tenantLandlord) {
-        getEligiblePlansAndOffersApiPage.validateInvalidTenantLandlordCases(get_eligible_plans_and_offers_mandatory, GetEligiblePlansAndOffersApiLabel.valueOf(tenantLandlord));
+        getEligiblePlansAndOffersApiPage.validateInvalidTenantLandlordCases(get_eligible_plans_and_offers_mandatory, valueOf(tenantLandlord));
     }
     @When("a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_25")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Commercial_marketer_switch_TC_25() {
@@ -276,6 +226,30 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.validateTestConditionRSTC11UC50(get_eligible_plans_and_offers);
     }
 
+    @When("a request is made to the GetEligiblePlansAndOffers for a {string}")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_customer_type_residential_enrollment_source_phone_call(String testCondition) {
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersRequest(get_eligible_plans_and_offers, valueOf(testCondition));
+    }
 
+    @When("a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment {string}")
+    public void a_request_to_get_eligible_plans_and_offfers_for_incomplete_enrollment(String testCondition){
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(get_eligible_plans_and_offers, valueOf(testCondition));
+    }
+    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} promotionCode for {string} condition")
+    public void PositiveEligiblePlansAndOffersWithPromotionCodeApi(String promotionCode, String testCondition) {
+        getEligiblePlansAndOffersApiPage.validatePositiveTestConditionsPromotionCodeFromExcelData(get_eligible_plans_and_offers, GlobalEnums.PromotionCode.valueOf(promotionCode), valueOf(testCondition));
+    }
+    @When("a request is made to the GetEligiblePlansAndOffers Api for {string} condition")
+    public void PositiveEligiblePlansAndOffersApi(String testCondition) {
+        getEligiblePlansAndOffersApiPage.validatePositiveWithNoPromotionCodeTestConditionsFromExcelData(get_eligible_plans_and_offers, valueOf(testCondition));
+    }
+    @Then("the response should contain the expected plans")
+    public void verifyEligibleResponsePlans() {
+        getEligiblePlansAndOffersApiPage.verifyResponsePlans();
+    }
+    @Then("the response plans should contains a {string} plan")
+    public void verifyEligiblePlansAndOffersContainPlanCode(String planCode) {
+        getEligiblePlansAndOffersApiPage.verifyResponsePlansContainsPlan(GlobalEnums.PlanCode.valueOf(planCode));
+    }
 
 }

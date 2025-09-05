@@ -3,16 +3,24 @@ package com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts;
 
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
+import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.INACTIVE_UZBSSPP_STATUS_TC121E_2;
 
@@ -24,7 +32,7 @@ public class SearchAccountsHelper {
     public String customerCode;
 
     public static final String USERNAME = "autotester";
-    public static String ssn="Password@1";
+    public static String ssn="666374706";
 
     public SearchAccountsHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -770,18 +778,17 @@ public class SearchAccountsHelper {
     }
 
     public void validateCustomerCodeAndPremisesCodeInDB(String customerCode, String premisesCode) {
-        Map<String, Object> customerCodeInDatabase= ApplicationContext.get().getDbAction().searchForCustomerCodeAndPremisesCodeInDatabase(customerCode, premisesCode);;
+        Map<String, Object> customerCodeInDatabase= ApplicationContext.get().getDbAction().searchForCustomerCodeAndPremisesCodeInDatabase(customerCode, premisesCode);
         Assert.assertTrue(customerCodeInDatabase.isEmpty());
     }
 
     public void verifyTheCountOfRecordsRetrivedFromDBIsMoreThan30(String customerBusinessName) {
-        Long countOfRecordsBasedOnBusinessName= ApplicationContext.get().getDbAction().searchForCustomerBusinessNameInDatabase(customerBusinessName);;
+        Long countOfRecordsBasedOnBusinessName= ApplicationContext.get().getDbAction().searchForCustomerBusinessNameInDatabase(customerBusinessName);
         Assert.assertTrue(countOfRecordsBasedOnBusinessName>30);
     }
 
     public void setLastNameFirstNameAndZiPBType(SearchAccountsRequest payload) {
-        List<Map<String, Object>> customerData = ApplicationContext.get().getDbAction().lastNameFirstNameTC112Query();
-        Map<String, Object> data = customerData.get(0);
+        Map<String, Object> data = ApplicationContext.get().getDbAction().lastNameFirstNameTC112Query();
 
         String premisesZipCode = data.get("PREMISESZIPCODE").toString();
         String customerLastName = data.get("CUSTOMERLASTNAMEBUSINESS").toString();
@@ -794,30 +801,36 @@ public class SearchAccountsHelper {
     }
 
     public void setaglcAccountNumberType(SearchAccountsRequest payload) {
-        List<Map<String, Object>> aglcAccNumber = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
-        Map<String, Object> data = aglcAccNumber.get(0);
+        Map<String, Object> data = ApplicationContext.get().getDbAction().aglcAccountNumberETypeNoSSPTC114Query();
 
-        String aglcAccountNumber = data.get("uzbenro_old_acct_num").toString();
+        String aglcAccountNumber = data.get("aglcAccountNumber").toString();
 
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
         payload.setAglcAccountNumber(aglcAccountNumber);
     }
 
-
     public void setCustomerDataETypeSSP(SearchAccountsRequest payload) {
         Map<String, Object> data = ApplicationContext.get().getDbAction().customerDataWithETypeTC115Query();
 
-
-        String premisesStreetNumber = data.get("UCRADDR_STREET_NUMBER").toString();
-        String premisesStreetPreDirection = data.get("UCRADDR_PDIR_CODE_PRE").toString();
-        String premisesStreetName = data.get("UCRADDR_STREET_NAME").toString();
-        String premisesStreetSuffix = data.get("UCRADDR_SSFX_CODE").toString();
-        String premisesStreetPostDirection = data.get("UCRADDR_PDIR_CODE_POST").toString();
-        String premisesUnitType = data.get("UCRADDR_UNIT").toString();
-        String premisesCity = data.get("UCRADDR_CITY").toString();
-        String premisesStateCode = data.get("UCRADDR_STAT_CODE").toString();
-        String premisesZipCode = data.get("UCRADDR_ZIP").toString();
+        String premisesStreetNumber = data.get("PREMISESSTREETNUMBER").toString();
+        String premisesStreetPreDirection =
+                data.get("PREMISESSTREETPREDIRECTION") != null
+                        ? data.get("PREMISESSTREETPREDIRECTION").toString()
+                        : "";
+        String premisesStreetName = data.get("PREMISESSTREETNAME").toString();
+        String premisesStreetSuffix = data.get("PREMISESSTREETSUFFIX").toString();
+        String premisesStreetPostDirection =
+                data.get("PREMISESSTREETPOSTDIRECTION") != null
+                        ? data.get("PREMISESSTREETPOSTDIRECTION").toString()
+                        : "";
+        String premisesUnitType =
+                data.get("PREMISESUNITTYPE") != null
+                        ? data.get("PREMISESUNITTYPE").toString()
+                        : "";
+        String premisesCity = data.get("PREMISESCITY").toString();
+        String premisesStateCode = data.get("PREMISESSTATECODE").toString();
+        String premisesZipCode = data.get("PREMISESZIPCODE").toString();
 
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
@@ -904,6 +917,15 @@ public class SearchAccountsHelper {
         payload.setCustomerCode("5221058");
     }
 
+    public void setPayloadForPrevSavedEnrollment(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
+        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+    }
+
     public void setNoPayment(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         Map<String, Object> accountNumberData = ApplicationContext.get().getDbAction().getAccountDetails_ForPastDueBalanceAndNoPayment();
@@ -981,6 +1003,57 @@ public class SearchAccountsHelper {
     public void setValidSSNTC113(SearchAccountsRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setSocialSecurityNumber(encryptData(ssn));
+    }
+
+    public void setPrepaySearchRequestParamsFromCustomerFile(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
+    }
+
+    public void getCustomerAndPremiseDetails(SearchAccountsRequest payload, Map<String, String> data ){
+        payload.setLoginID(data.get("loginID"));
+        payload.setCustomerLastName(data.get("customerLastName"));
+        payload.setCustomerFirstName(data.get("customerFirstName"));
+        payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+        payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(data.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+        payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+        payload.setPremisesUnitType(data.get("premisesUnitType"));
+        payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+        payload.setPremisesCity(data.get("premisesCity"));
+        payload.setPremisesStateCode(data.get("premisesStateCode"));
+        payload.setPremisesZipCode(data.get("premisesZipCode"));
+
+        String ssn = data.get("SSN");
+        if (ssn != null && !ssn.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+        }
+        String federalTaxId = data.get("federalTaxId");
+        if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("federalTaxId")));
+        }
+    }
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
+            String excelPath,
+            String sheetName,
+            E testLabel) {
+
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            // Find the first row where the "testConditions" column matches the enum name
+            return sheetData.stream()
+                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found for: " + testLabel.name()));
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
+        }
     }
 }
 

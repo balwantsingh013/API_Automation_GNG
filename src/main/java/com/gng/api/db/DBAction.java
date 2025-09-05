@@ -50,6 +50,43 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> validateAllTheTablesAfterEnrollment(String customerCode,
+                                                                   String premisesCode,
+                                                                   String cycleCode,
+                                                                   String reasonCode,
+                                                                   String enrollmentStatus,
+                                                                   String accountStatusIdicator,
+                                                                   String paymentArrear,
+                                                                   String badDebtExemptIndicator,
+                                                                   String NCOAProtectIndicator,
+                                                                   String feedbackIndicator,
+                                                                   String contactDirection,
+                                                                   String referredIndicator,
+                                                                   String OCRCDETStatus,
+                                                                   String OCRCTIMAutomaticIndicator,
+                                                                   String contactType
+    ){
+        String query = DBQuery.SELECT_ENROLLMENT_RECORD_DATA;
+        logQueryInAllure("Get Customer code for newly enrolled account", query);
+        return jdbcTemplate.queryForMap(query, customerCode, premisesCode,enrollmentStatus, accountStatusIdicator, cycleCode, paymentArrear, badDebtExemptIndicator,NCOAProtectIndicator, feedbackIndicator,contactDirection, reasonCode,referredIndicator,contactType, OCRCDETStatus, OCRCTIMAutomaticIndicator, reasonCode);
+    }
+
+    public Map<String, Object> validateAllTheTablesAfterEnrollmentForIncompleteEnrollment(String customerCode,
+                                                                   String premisesCode,
+                                                                   String enrollmentStatus,
+                                                                   String feedbackIndicator,
+                                                                   String contactDirection,
+                                                                   String reasonCode,
+                                                                   String referredIndicator,
+                                                                   String OCRCDETStatus,
+                                                                   String OCRCTIMAutomaticIndicator,
+                                                                   String contactType
+    ){
+        String query = DBQuery.SELECT_ENROLLMENT_RECORD_DATA_FOR_INCOMPLETE_ENROLLMENT;
+        logQueryInAllure("Get Customer code for newly enrolled account", query);
+        return jdbcTemplate.queryForMap(query, customerCode, premisesCode,enrollmentStatus, feedbackIndicator,contactDirection, reasonCode,referredIndicator,contactType, OCRCDETStatus, OCRCTIMAutomaticIndicator, reasonCode);
+    }
+
     public Map<String, Object> custCodePremCodeNoSSPAccount(String sspIndicator) {
         String query = DBQuery.SELECT_CUST_PREM_CODE_NO_SSP;
         logQueryInAllure("Get Customer code, premises code for account without SSP", query);
@@ -115,6 +152,20 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> getControlNumber() {
+        String query = DBQuery.GET_CONTROL_NUMBER;
+        logQueryInAllure("Get control number", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public List<Map<String, Object>> getUserRoleIDs(String userId) {
+        String query = DBQuery.GET_USER_ROLE_IDS;
+        logQueryInAllure("Get user role IDs", query);
+        return jdbcTemplate.queryForList(query, userId);
+    }
+
+
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC218(String pricePlan) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with active/pending rewards", query);
@@ -159,6 +210,12 @@ public class DBAction {
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC210(String pricePlan, String sclsCode) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account without ETC", query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC230(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN_TC_230;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account without ETC", query);
         return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
@@ -309,10 +366,10 @@ public class DBAction {
         return jdbcTemplate.update(query);
     }
 
-    public List<Map<String, Object>> lastNameFirstNameTC112Query() {
+    public Map<String, Object> lastNameFirstNameTC112Query() {
         String query = DBQuery.LAST_NAME_FIRST_NAME_QUERY_TC112;
         logQueryInAllure("Last name and First Name ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public Map<String, Object> accountNumberSearchETypeNoSSPDBTC110Query(String sspIndicator) {
@@ -321,10 +378,10 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sspIndicator);
     }
 
-    public List<Map<String, Object>> aglcAccountNumberETypeNoSSPTC114Query() {
+    public Map<String, Object> aglcAccountNumberETypeNoSSPTC114Query() {
         String query = DBQuery.AGLC_ACCOUNT_NUMBER_TC114;
         logQueryInAllure("Last name and First Name ", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
 
@@ -657,9 +714,39 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public List<Map<String, Object>> getValidationPlansAndOffers(String controlNum) {
+        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT
+                .replace("<controlNumber>", controlNum);
+        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
+        return jdbcTemplate.queryForList(query);
+    }
 
+    public List<Map<String, Object>> getValidationPrepayPlans(String transactionId) {
+        String query = DBQuery.GET_VALIDATION_PREPAY_PLANS_RESULT
+                .replace("<transactionId>", transactionId);
+        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
+        return jdbcTemplate.queryForList(query);
+    }
+    public Map<String, Object> getPrepayQuote(String customerCode) {
+        String query = DBQuery.GET_PRE_PAY_QUOTE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("Get prepay quote", query);
+        return jdbcTemplate.queryForMap(query);
+    }
 
+    public int expirePrepayQuote(String customerCode) {
+        String query = DBQuery.UPDATE_PRE_PAY_QUOTE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("expire prepay quote", query);
+        return jdbcTemplate.update(query);
+    }
 
+    public int deleteUrblerxByCustomerCode(String customerCode) {
+        String query = DBQuery.DELETE_URBLEX_BY_CUSTOMER_CODE
+                .replace("<customerCode>", customerCode);
+        logQueryInAllure("delete urblerx by customer code", query);
+        return jdbcTemplate.update(query);
+    }
 
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string

@@ -1,5 +1,6 @@
 package com.gng.api.steps;
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -9,9 +10,8 @@ import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.testng.AssertJUnit.*;
@@ -51,7 +51,7 @@ public class BaseSteps {
     }
 
     @And("response should have {string} as {string}")
-    public void responseShouldHaveFieldAs(String field, String value){
+    public void enrollmentStateresponseShouldHaveFieldAs(String field, String value){
         verifyFieldInResponse(field, value);
     }
 
@@ -83,21 +83,47 @@ public class BaseSteps {
         validatePlans(expectedPlans);
     }
 
-    @And("response should have role with ID {string} and description {string}")
-    public void responseShouldHaveRoleWithIDAndDescription(String roleID, String roleDescription) {
-        verifyRoleDetails(roleID, roleDescription);
+    @And("response should have the following roles")
+    public void responseShouldHaveTheFollowingRoles(DataTable dataTable) {
+        List<Map<String, String>> expectedRoles = dataTable.asMaps(String.class, String.class);
+        verifyRoleDetails(expectedRoles);
     }
 
-    private void verifyRoleDetails(String expectedRoleID, String expectedRoleDescription) {
+    private void verifyRoleDetails(List<Map<String, String>> expectedRoles) {
         Response response = testContext.getResponse();
-        List<Map<String, String>> roles = response.jsonPath().getList("data.roles");
+        List<Map<String, String>> actualRoles = response.jsonPath().getList("data.roles");
 
-        boolean roleFound = roles.stream()
-                .anyMatch(role -> expectedRoleID.equals(role.get("roleID")) &&
-                                  expectedRoleDescription.equals(role.get("roleDescription")));
+        // Step 1: Validate each expected role is present in the response
+        for (Map<String, String> expectedRole : expectedRoles) {
+            String expectedRoleID = expectedRole.get("roleID");
+            String expectedRoleDescription = expectedRole.get("roleDescription");
 
-        assertThat("Expected role with ID and description not found", roleFound);
+            boolean roleFound = actualRoles.stream()
+                    .anyMatch(actualRole -> expectedRoleID.equals(actualRole.get("roleID")) &&
+                                            expectedRoleDescription.equals(actualRole.get("roleDescription")));
+
+            assertThat("Expected role with ID '" + expectedRoleID + "' and description '" + expectedRoleDescription + "' not found", roleFound);
+        }
+
+        // Step 2: Validate role IDs match with database
+        List<Map<String, Object>> dbRoleRecords = ApplicationContext.get().getDbAction().getUserRoleIDs("autotester");
+
+        List<String> dbRoleIDs = dbRoleRecords.stream()
+                .map(record -> Objects.toString(record.get("role_id"), "").trim())
+                .filter(roleId -> !roleId.isEmpty())
+                .toList();
+
+        List<String> apiRoleIDs = actualRoles.stream()
+                .map(role -> role.get("roleID"))
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .toList();
+
+        assertThat("Mismatch between role IDs from API and database",
+                new HashSet<>(apiRoleIDs).equals(new HashSet<>(dbRoleIDs)));
     }
+
+
 
     private void validatePlans(List<Map<String, String>> expectedPlans) {
         Response response = testContext.getResponse();

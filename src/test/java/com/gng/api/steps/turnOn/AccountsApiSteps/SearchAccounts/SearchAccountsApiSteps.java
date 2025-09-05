@@ -2,6 +2,7 @@ package com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts;
 
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pages.turnOn.AccountsApiPages.SearchAccounts.SearchAccountsApiPage;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 
@@ -309,6 +310,12 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validatePartialPaymentTC121a(search_accounts);
     }
 
+    @When("a request is made to the SearchAccountsApi for {string}")
+    public void a_request_to_search_accounts_for_prev_saved_enrollment(String testCondition){
+        searchAccountsApiPage.validateSearchAccountsForPrevSavedEnrollment(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
+    }
+
+
     @When("a request is made to the SearchAccounts Api with Full Payment TC_121b")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_with_Full_Payment_TC_121b() {
         searchAccountsApiPage.validateFullPaymentTC121b(search_accounts);
@@ -339,6 +346,9 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.verifySearchAccountAPIWhenValidSSNIsPassed(search_accounts);
     }
 
-
+    @Given("a prepay transaction is returned from searchAccounts api for {string}")
+    public void validTransactionExists(String testCondition) {
+        searchAccountsApiPage.verifyPrepayTransactionIdExists(SearchAccountsApiLabel.search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
+    }
 
 }

@@ -1,19 +1,32 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
-
+import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-
+import org.testng.Assert;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Objects;
+import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
+import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
+import static com.gng.api.constants.GlobalEnums.CustomerType.RESIDENTIAL;
+import static com.gng.api.constants.GlobalEnums.EnrollmentSource.*;
+import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
+import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.constants.TestConstant.*;
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+import static com.gng.api.util.CommonUtil.nullifyFields;
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -107,6 +120,285 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentSource(FakerDataGenerator.generateUpperCaseString(35));
         }
 
+    }
+
+    private void parseAddress(GetEligiblePlansAndOffersRequest payload, String fullAddress) {
+        if (fullAddress == null || fullAddress.isEmpty()) return;
+
+        String[] parts = fullAddress.trim().split("\\s+");
+
+        String streetNumber = (parts.length >= 1) ? parts[0] : "";
+        String streetSuffix = "";
+        String postDirection = "";
+        String streetName = "";
+        String premisesUnitType = "";
+        String premisesUnitNumber = "";
+
+        List<String> unitTypes = Arrays.asList("STE", "SUITE", "APT", "UNIT", "FL", "RM");
+        List<String> directions = Arrays.asList("N", "S", "E", "W", "NE", "NW", "SE", "SW");
+
+        int unitIndex = -1;
+        for (int i = 0; i < parts.length; i++) {
+            if (unitTypes.contains(parts[i].toUpperCase())) {
+                unitIndex = i;
+                break;
+            }
+        }
+
+        int suffixStart = (unitIndex == -1) ? parts.length : unitIndex;
+
+        // Capture directional suffix (e.g., BLVD SE)
+        if (suffixStart >= 3) {
+            streetSuffix = parts[suffixStart - 2];
+            postDirection = parts[suffixStart - 1];
+
+            if (!directions.contains(postDirection.toUpperCase())) {
+                streetSuffix = parts[suffixStart - 1];
+                postDirection = "";
+            }
+
+            streetName = String.join(" ", Arrays.copyOfRange(parts, 1, suffixStart - (postDirection.isEmpty() ? 1 : 2)));
+        } else if (suffixStart == 3) {
+            streetName = parts[1];
+            streetSuffix = parts[2];
+        } else if (suffixStart == 2) {
+            streetName = parts[1];
+        }
+
+        if (unitIndex != -1 && unitIndex + 1 < parts.length) {
+            premisesUnitType = parts[unitIndex];
+            premisesUnitNumber = String.join(" ", Arrays.copyOfRange(parts, unitIndex + 1, parts.length));
+        }
+
+        payload.setPremisesStreetNumber(streetNumber);
+        payload.setPremisesStreetName(streetName);
+        payload.setPremisesStreetSuffix(streetSuffix);
+        payload.setPremisesStreetPostDirection(postDirection);
+        payload.setPremisesUnitType(premisesUnitType);
+        payload.setPremisesUnitNumber(premisesUnitNumber);
+    }
+
+
+    private void populateCommonFields(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
+        parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+
+        payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+        payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+        payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+        payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+        payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+    }
+
+
+    private void parseBillingAddress(GetEligiblePlansAndOffersRequest payload, String billingAddress) {
+        if (billingAddress == null || billingAddress.isEmpty()) return;
+
+        String[] parts = billingAddress.trim().split("\\s+");
+
+        String addressType   = (parts.length >= 1) ? parts[0] : "";
+        String streetNumber  = (parts.length >= 2) ? parts[1] : "";
+        String streetName    = (parts.length >= 3) ? parts[2] : "";
+        String streetSuffix  = (parts.length >= 4) ? parts[3] : "";
+
+        payload.setBillingAddressType(addressType);
+        payload.setPremisesStreetNumber(streetNumber);
+        payload.setPremisesStreetName(streetName);
+        payload.setPremisesStreetSuffix(streetSuffix);
+    }
+
+    private void parsePhoneDetails(GetEligiblePlansAndOffersRequest payload, String phoneDetails) {
+        if (phoneDetails == null || phoneDetails.isEmpty()) return;
+
+        String[] parts = phoneDetails.trim().split("\\s+");
+
+        String phoneType     = (parts.length >= 1) ? parts[0] : "";
+        String phoneExt      = (parts.length >= 2) ? parts[1] : "";
+        String phoneNumber   = (parts.length >= 3) ? parts[2] : "";
+
+        payload.setWorkPhoneType(phoneType);
+        payload.setWorkPhoneExtension(phoneExt);
+        payload.setWorkPhoneNumber(phoneNumber);
+    }
+
+    private void parseAddressWithUnit(GetEligiblePlansAndOffersRequest payload, String fullAddress) {
+        if (fullAddress == null || fullAddress.isEmpty()) return;
+
+        String[] parts = fullAddress.trim().split("\\s+");
+
+        String streetNumber = (parts.length >= 1) ? parts[0] : "";
+        String streetName = (parts.length >= 2) ? parts[1] : "";
+        String streetSuffix = (parts.length >= 3) ? parts[2] : "";
+
+        String postDirection = (parts.length >= 4 && parts[3].matches("^(N|S|E|W|NE|NW|SE|SW)$")) ? parts[3] : "";
+
+        String premisesUnitType = (parts.length >= 5 && !postDirection.isEmpty()) ? parts[4] :
+                (parts.length >= 4 && postDirection.isEmpty()) ? parts[3] : "";
+
+        String premisesUnitNumber = (parts.length >= 6 && !postDirection.isEmpty()) ? parts[5] :
+                (parts.length >= 5 && postDirection.isEmpty()) ? parts[4] : "";
+
+        payload.setPremisesStreetNumber(streetNumber);
+        payload.setPremisesStreetName(streetName);
+        payload.setPremisesStreetSuffix(streetSuffix);
+        payload.setPremisesStreetPostDirection(postDirection);
+        payload.setPremisesUnitType(premisesUnitType);
+        payload.setPremisesUnitNumber(premisesUnitNumber);
+    }
+
+    public static void comparePlanFields(Map<String, Object> eligiblePlan, GetEligiblePlansAndOffersResponse response) {
+        String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
+        String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
+        String dbPromo1Code = normalize(eligiblePlan.get("promotion1Code"));
+        String dbPromo1Desc = normalize(eligiblePlan.get("promotion1Description"));
+
+        List<Plans> plans = response.getData().getPlans();
+        boolean matchFound = false;
+
+        for (Plans plan : plans) {
+            if (plan.getPlanCode() != null && plan.getPlanCode().trim().equals(dbPlanCode)) {
+                matchFound = true;
+
+                String apiPlanCode = plan.getPlanCode().trim();
+                String apiPlanDescription = normalize(plan.getPlanDescription());
+                String apiPromo1Code = normalize(plan.getPromotion1Code());
+                String apiPromo1Desc = normalize(plan.getPromotion1Description());
+
+                Assert.assertEquals(apiPlanCode, dbPlanCode, "Plan code mismatch");
+                Assert.assertEquals(apiPlanDescription, dbPlanDescription, "Plan description mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Code, dbPromo1Code, "Promotion1 code mismatch for planCode: " + dbPlanCode);
+                Assert.assertEquals(apiPromo1Desc, dbPromo1Desc, "Promotion1 description mismatch for planCode: " + dbPlanCode);
+
+                break;
+            }
+        }
+
+        Assert.assertTrue(matchFound, "No matching planCode found in API response for: " + dbPlanCode);
+    }
+
+    private static String normalize(Object value) {
+        return value == null ? "" : value.toString().trim();
+    }
+
+    public void payloadBasedOnTCsCommercial(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        setTheFieldToEmptyForCommercialScenarios(payload);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerType(COMMERCIAL.getValue());
+        payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
+        ExcelReader excelReader;
+        try {
+            excelReader = new ExcelReader(EXPERIAN_DATA);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<Map<String, String>> allRows = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
+        Map<String, String> data = null;
+
+        switch (testCondition) {
+            case COMMERCIAL_CREDIT_CHECK_YES_TC_339:
+                data = allRows.get(5107);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340:
+                data = allRows.get(4399);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(FAX.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341:
+                data = allRows.get(4638);
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(WEB.getValue());
+                payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342:
+                data = allRows.get(9612);
+                populateCommonFields(payload, data);
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343:
+                data = allRows.get(4766);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(FAX.getValue());
+                parseBillingAddress(payload, data.getOrDefault("BILLING ADDRESS", ""));
+                parsePhoneDetails(payload, data.getOrDefault("PHONE NUMBER DETAILS", ""));
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setBillingCity(data.get("BILLING CITY"));
+                payload.setBillingStateCode(data.get("BILLING STATE"));
+                payload.setBillingZipCode(data.get("BILLING ZIP"));
+                payload.setBillingCountyCode(data.get("BILLING COUNTRY CODE"));
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344:
+                data = allRows.get(4613);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(GNGHUB.getValue());
+                payload.setCreditCheckOption(SERVICE_TRANSFER.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346:
+                data = allRows.get(4861);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setCreditCheckOption(NO.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345:
+                data = allRows.get(31);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347:
+                data = allRows.get(1064);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348:
+                data = allRows.get(2508);
+                payload.setMarketingPromotionCode(DEALS.getValue());
+                parseAddressWithUnit(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349:
+                data = allRows.get(4499);
+                parseAddressWithUnit(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350:
+                data = allRows.get(4695);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B:
+                data = allRows.get(4459);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setEnrollmentSource(FAX.getValue());
+                break;
+
+            case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E:
+                data = allRows.get(5093);
+                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                populateCommonFields(payload, data);
+                payload.setCreditCheckBusinessName(data.get("BUSINESS NAME"));
+                break;
+        }
     }
 
     public void setCustomerLastNameBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel customerLastName) {
@@ -1388,19 +1680,386 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setConfirmCreditCheck(Boolean.parseBoolean(rowData.get("confirmCreditCheck")));
         payload.setTenantLandlord(rowData.get("tenantLandlord"));
         payload.setPremisesStreetPostDirection(rowData.get("premisesStreetPostDirection"));
+    }
 
+    public void getCustomerDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data ){
+        payload.setCustomerLastName(data.get("customerLastName"));
+        payload.setCustomerFirstName(data.get("customerFirstName"));
+        payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+        payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+        payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(data.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+        payload.setPremisesCity(data.get("premisesCity"));
+        payload.setPremisesStateCode(data.get("premisesStateCode"));
+        payload.setPremisesZipCode(data.get("premisesZipCode"));
+        payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+        String ssn = data.get("SSN");
+        if (ssn != null && !ssn.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+        }
+    }
 
+    public void setTheFieldToEmptyForCommercialScenarios(GetEligiblePlansAndOffersRequest payload){
+        payload.setSocialSecurityNumber("");
+        payload.setCustomerFirstName("");
+        payload.setCustomerMiddleName("");
+        payload.setCustomerLastName("");
+    }
 
+    public void preparePayloadForPreviouslySavedIncompleteEnrollment(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition){
+        int customerCode = Integer.parseInt(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
+        String premisesCode = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode();
+        int transactionID = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getTransactionID();
+        String sspParticipantCode= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getSspParticipantCode();
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+        payload.setTransactionID(transactionID);
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        setTheFieldToEmptyForCommercialScenarios(payload);
+        payload.setCustomerFirstName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerFirstName());
+        payload.setCustomerLastName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerLastName());
 
+        switch(testCondition){
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_479:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
 
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setAcnStatusIndicator("ACN");
+                break;
 
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setCustomerType("CM");
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                String customerBusinessName= testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName();
+                payload.setCustomerBusinessName(customerBusinessName);
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_478:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_480:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482_2:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483_2:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setCustomerCode(null);
+                break;
+
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494_2:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setSspParticipantCode(null);
+                transactionID=testContext.getSaveEnrollmentResponse().getData().getTransactionID();
+                payload.setTransactionID(transactionID);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_492:
+                payload.setSspParticipantCode(null);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_482:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_495:
+            case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_494,
+                 SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496:
+                nullifyFields(payload,  "enrollmentState", "transactionID");
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488:
+                ExcelReader excelReaderCommercialCustomerData = null;
+                try {
+                    excelReaderCommercialCustomerData = new ExcelReader(EXPERIAN_DATA);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                List<Map<String, String>> allRowsOfCommercialCustomerData = excelReaderCommercialCustomerData.getSheetData(EXPERIAN_SHEET_NAME);
+                Map<String, String> commercialCustomerData = allRowsOfCommercialCustomerData.get(5063);
+                nullifyFields(payload,  "enrollmentState", "transactionID");
+                payload.setSspParticipantCode(sspParticipantCode);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setFederalTaxID(encryptData(commercialCustomerData.get("TAX-ID")));
+                payload.setCustomerBusinessName(commercialCustomerData.get("BUSINESS NAME"));
+                nullifyFields(payload,  "enrollmentState", "transactionID");
+                payload.setCreditCheckOption("Yes");
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_484:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488_2:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                nullifyFields(payload,  "premisesCode", "sspParticipantCode");
+                break;
+
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486:
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                nullifyFields(payload,  "customerCode", "sspParticipantCode");
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
+                payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+ payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
+              payload.setSeasonalSavingsProgramIndicator(true);
+                populateCommonCommercialFieldsFromSearchAccountsResponse(payload, transactionID);
+                break;
+            default:
+                break;
+        }
+    }
+    private void populateCommonCommercialFieldsFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload, int transactionID) {
+
+        Account selectedAccount = testContext.getSearchAccountsResponse()
+                .getData()
+                .getAccounts()
+                .stream()
+                .filter(account -> account.getTransactionID() == transactionID)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Transaction ID not found"));
+
+        payload.setCustomerBusinessName(selectedAccount.getCustomerBusinessName());
+        payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+        payload.setCustomerCode(selectedAccount.getCustomerCode());
+        payload.setPremisesCode(selectedAccount.getPremisesCode());
+        payload.setPremisesCity(selectedAccount.getPremisesCity());
+        payload.setPremisesStateCode(selectedAccount.getPremisesStateCode());
+        payload.setPremisesZipCode(selectedAccount.getPremisesZipCode());
+        payload.setCustomerBusinessName(selectedAccount.getCustomerBusinessName());
     }
 
 
+    public void preparePayloadBasedOnTC_EligiblePlansAndSaveEnrollment(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        ExcelReader excelReaderResidentialCustomerData = null;
+        try {
+            excelReaderResidentialCustomerData = new ExcelReader(CUSTOMER_DATA);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        ExcelReader excelReaderCommercialCustomerData = null;
+        try {
+            excelReaderCommercialCustomerData = new ExcelReader(EXPERIAN_DATA);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<Map<String, String>> allRowsOfCommercialCustomerData = excelReaderCommercialCustomerData.getSheetData(EXPERIAN_SHEET_NAME);
+        Map<String, String> commercialCustomerData = allRowsOfCommercialCustomerData.get(5063);
 
 
+        List<Map<String, String>> allRowsOfCustomerData = excelReaderResidentialCustomerData.getSheetData(CUSTOMER_SHEET_NAME);
+        Map<String, String> customerData = allRowsOfCustomerData.get(30);
+        switch(testCondition) {
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_423:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_434:
+                payload.setEnrollmentSource(PHONECALL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                getCustomerDetails(payload, customerData);
+                payload.setCallerID(FakerDataGenerator.generateDigits(10));
+                break;
 
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DP_TC_425:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DR_TC_435:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RD_TC_446:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                populateCommonFields(payload,commercialCustomerData);
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                break;
+
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_484:
+            case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_485:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486:
+            case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_487, SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488,
+                 SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_491,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                populateCommonFields(payload,commercialCustomerData);
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                populateCommonFields(payload,commercialCustomerData);
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PC_TC_431:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PC_TC_432:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_438:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PR_TC_439:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_442:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RP_TC_443:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_440:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445:
+                customerData = allRowsOfCustomerData.get(31);
+                payload.setCreditCheckOption(YES.getValue());
+                getCustomerDetails(payload,customerData);
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
+                customerData = allRowsOfCustomerData.get(31);
+                payload.setCreditCheckOption(YES.getValue());
+                getCustomerDetails(payload,customerData);
+                payload.setSeasonalSavingsProgramIndicator(false);
+                payload.setAcnStatusIndicator("ACN");
+                break;
+
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505,
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+                getCustomerAndPremiseDetails(payload, customerData);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                break;
+
+            default:
+                payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
+                getCustomerDetails(payload, customerData);
+                payload.setTransactionType(TURN_ON.getValue());
+                payload.setCustomerType(RESIDENTIAL.getValue());
+                payload.setEnrollmentSource(MAIL.getValue());
+                break;
+        }
+    }
+
+    public void getCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data ){
+        payload.setLoginID(data.get("loginID"));
+        payload.setCustomerType(data.get("customerType"));
+        payload.setCustomerLastName(data.get("customerLastName"));
+        payload.setCustomerFirstName(data.get("customerFirstName"));
+        payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+        payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+        payload.setPremisesStreetName(data.get("premisesStreetName"));
+        payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+        payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+        payload.setPremisesUnitType(data.get("premisesUnitType"));
+        payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+        payload.setPremisesCity(data.get("premisesCity"));
+        payload.setPremisesStateCode(data.get("premisesStateCode"));
+        payload.setPremisesZipCode(data.get("premisesZipCode"));
+        payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+        payload.setAcnStatusIndicator(data.get("acnStatusIndicator"));
+        payload.setTenantLandlord(data.get("tenantLandlord"));
+        payload.setCreditCheckOption(data.get("creditCheckOption"));
+        payload.setConfirmCreditCheck(Boolean.parseBoolean(data.get("confirmCreditCheck")));
+        payload.setSeasonalSavingsProgramIndicator(Boolean.parseBoolean(data.get("SSPStatusIndicator")));
+
+        String ssn = data.get("SSN");
+        if (ssn != null && !ssn.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+        }
+        String federalTaxId = data.get("federalTaxId");
+        if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
+            payload.setFederalTaxID(encryptData(data.get("federalTaxId")));
+        }
+    }
+
+    public void setRequestParams(GetEligiblePlansAndOffersRequest payload, GlobalEnums.PromotionCode promotionCode,
+                                 GetEligiblePlansAndOffersApiLabel testCondition) {
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
+        payload.setMarketingPromotionCode(promotionCode.getValue());
+        if(testCondition.toString().contains("SSP")&& !(testCondition.toString().equals("SSP_FALSE_ALLOWED_FOR_ACN_TC_477"))){
+            payload.setSeasonalSavingsProgramIndicator(true);
+        }
+    }
+
+    public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
+    }
+
+    public void verifyResidentialPlansReceivedAgainstDatabase() {
+        Map<String, Object> controlNumberResult = ApplicationContext.get().getDbAction().getControlNumber();
+        String controlNum = controlNumberResult.get("UZTCOTT_CONTROL_NUM").toString();
+        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
+        GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
+
+        for (Map<String, Object> eligiblePlan : eligiblePlansList) {
+            comparePlanFields(eligiblePlan, response);
+        }
+    }
+
+    public void verifyPlanReturned(GlobalEnums.PlanCode planCode) {
+        List<Plans> plans = testContext.getGetEligiblePlansAndOffersResponse()
+                .getData()
+                .getPlans()
+                .stream()
+                .filter(p -> Objects.equals(p.getPlanCode(), planCode.getValue()))
+                .toList();
+
+        plans.stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new AssertionError("Plan not found: " + planCode.getValue()));
+    }
+
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            return sheetData.stream()
+                    .filter(row -> {
+                        String condition = row.get("testCondition");
+                        return condition != null && condition.contains(testLabel.name());
+                    }).findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found containing: " + testLabel.name()));
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
+        }
+    }
 }
-
-
-
