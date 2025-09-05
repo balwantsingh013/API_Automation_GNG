@@ -206,198 +206,6 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_INCL_TC_181      | 2000      |Invalid Request: Invalid Account|MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182      | 2000      |Invalid Request: Invalid Account|VML     |        |
 
-
-
-  @GetEligiblePlansAndOffersWithInvalidTestConditionTNON @Phase1 @NegativeFlow
-  Scenario: Verify GetEligiblePlansAndOffers Api with invalid test condition null Authorised Type
-    When a request is made to the GetEligiblePlansAndOffers Api with null Authorised Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode 2000 and ErrorMessage "Invalid Request: Missing conditional parameters-Authorized By"
-
-
-  @GetEligiblePlansAndOffersWithInvalidReferralCodeTNON @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<referralCode>" code Type
-    When a request is made to the GetEligiblePlansAndOffers Api with "<referralCode>" code Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | referralCode                                    | errorCode | errorMessage                                                                                                                                                 |
-      | MAX_REFERRAL_CODE                               | 10000     | The Referral Code must be a string with a maximum length of 9.                                                                                               |
-      | NONNUMERIC_REFERRAL_CODE                        | 11115      | Invalid Request: Invalid Referral Code                                                                                                                       |
-      | ALPHANUMERIC_REFERRAL_CODE                      | 2000      | Invalid Request: Invalid Referral Code                                                                                                                       |
-      | VALID_REFERRAL_CODE_WITH_MISSING_MARKETING_CODE | 1000      | Invalid Request: Missing Promotion Code -Please ask the customer for a promotion code. If they do not have one, enter the appropriate default promotion code |
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesStreetTypeTNON @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetNumber>"  Type
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetNumber>"  Type
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesStreetNumber       | errorCode | errorMessage                                                             |
-      | MAX_PREMISES_STREET_NUMBER | 10000     | The Premises Street Number must be a string with a maximum length of 12. |
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesStreetPreDirectionTNON  @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetPreDirection>" test cases 243
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetPreDirection>" test cases 243
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesStreetPreDirection                         | errorCode | errorMessage                                                                  |
-      | MAX_PREMISES_STREET_PRE_DIRECTION                  | 10000     | The Premises Street PreDirection must be a string with a maximum length of 2. |
-      | INVALID_PREMISES_STREET_PRE_DIRECTION_EQUAL_TO_TWO | 2000      | Invalid Request: Invalid Premises Street Pre Direction                        |
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesStreetNameTNON  @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetName>" test cases 244
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetName>" test cases 244_245
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesStreetName        | errorCode | errorMessage                                                           |
-      | MAX_PREMISES_STREET_NAME  | 10000     | The Premises Street Name must be a string with a maximum length of 30. |
-      | NULL_PREMISES_STREET_NAME | 10000     | Invalid or missing Premises Street Name                                |
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesStreetSuffixTNON  @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetSuffix>" test cases 246_246a
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetSuffix>" test cases 246_246a
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesStreetSuffix           | errorCode | errorMessage                                                             |
-      | MAX_PREMISES_STREET_SUFFIX     | 10000     | The Premises Street Suffix  must be a string with a maximum length of 6. |
-      | INVALID_PREMISES_STREET_SUFFIX | 2000      | Invalid Request: Invalid Premises Street Suffix                          |
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesStreetPostDirectionTNON  @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesStreetPostDirection>" test cases 247_247a
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesStreetPostDirection>" test cases 247_247a
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesStreetPostDirection                         | errorCode | errorMessage                                                                   |
-      | MAX_PREMISES_STREET_POST_DIRECTION                  | 10000     | The Premises Street PostDirection must be a string with a maximum length of 2. |
-      | INVALID_PREMISES_STREET_POST_DIRECTION_EQUAL_TO_TWO | 2000      | Invalid Request: Invalid Premises Street Post Direction                        |
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesUnitTypeTNON  @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesUnitType>" test cases 248_248a
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesUnitType>" test cases 248_248a
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesUnitType           | errorCode | errorMessage                                                        |
-      | MAX_PREMISES_UNIT_TYPE     | 10000     | The Premises Unit Type must be a string with a maximum length of 6. |
-      | INVALID_PREMISES_UNIT_TYPE | 2000      | Invalid Request: Invalid Premises Unit Type                         |
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesUnitNumberTNON  @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesUnitNumber>" test cases 249
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesUnitNumber>" test cases 249
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesUnitNumber       | errorCode | errorMessage                                                          |
-      | MAX_PREMISES_UNIT_NUMBER | 10000     | The Premises Unit Number must be a string with a maximum length of 6. |
-
-
-  @GetEligiblePlansAndOffersWithInvalidPremisesCityTNON  @Phase1 @NegativeFlow
-  Scenario Outline: Verify GetEligiblePlansAndOffers Api with invalid test condition "<premisesCity>" test cases 250_251
-    When a request is made to the GetEligiblePlansAndOffers Api with "<premisesCity>" test cases 250_251
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesCity       | errorCode | errorMessage                                                    |
-      | MAX_PREMISES_CITY  | 10000     | The Premises City must be a string with a maximum length of 20. |
-      | NULL_PREMISES_CITY | 10000     | Invalid or missing Premises City                                |
-
-  @GetEligiblePlansAndOffersInvalidPremisesStateCodeTNON  @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesStateCode>"252_253
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesStateCode>" Statecode 252_253
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesStateCode                        | errorCode | errorMessage                                                         |
-      | EMPTY_PREMISES_STATE_CODE                | 10000     | The Premises State Code must be a string with a maximum length of 3. |
-      | MAX_LENGTH_PREMISES_STATE_CODE           | 10000     | The Premises State Code must be a string with a maximum length of 3. |
-      | INVALID_PREMISES_STATE_CODE_EQUAL_TO_TWO | 2000      | Invalid Request: Invalid Premises State Code                         |
-
-  @GetEligiblePlansAndOffersInvalidPremisesZipCodeTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesZipCode>"254_255c
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesZipCode>" Zipcode254_255c
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesZipCode                         | errorCode | errorMessage                                                       |
-      | EMPTY_PREMISES_ZIP_CODE                 | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-      | INVALID_PREMISES_ZIP_CODE_RANDOM_STRING | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-      | MAX_LENGTH_PREMISES_ZIP_CODE            | 10000     | The Premises ZipCode must be a string with a maximum length of 10. |
-      | LOWERCASE_PREMISES_ZIP_CODE             | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-      | INVALID_PREMISES_ZIP_FORMAT_CODE        | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-      | NUMERIC_PREMISES_ZIP_CODE               | 2000      | Invalid Request: Invalid Premises Zip Code                         |
-
-
-  @GetEligiblePlansAndOffersInvalidPremisesCountyCodeTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<PremisesCountyCode>"
-    When a request is made to the GetEligiblePlansAndOffers Api with premises "<PremisesCountyCode>" Countycode256_257
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | PremisesCountyCode                | errorCode | errorMessage                                  |
-      | EMPTY_PREMISES_COUNTY_CODE        | 2000      | Invalid Request: Invalid Premises County Code |
-      | MIN_LENGTH_PREMISES_COUNTY_CODE   | 2000      | Invalid Request: Invalid Premises County Code |
-      | ALPHANUMERIC_PREMISES_COUNTY_CODE | 2000      | Invalid Request: Invalid Premises County Code |
-
-
-  @GetEligiblePlansAndOffersInvalidSeparateBillingAddressTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<SeparateBillingAddress>"
-    When a request is made to the GetEligiblePlansAndOffers Api with separateBilling "<SeparateBillingAddress>" Address258_283b
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | SeparateBillingAddress                                                                         | errorCode | errorMessage                                                                                                                     |
-      | EMPTY_SEPARATE_BILLING_ADDRESS                                                                 | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 32. |
-      | MIN_LENGTH_SEPARATE_BILLING_ADDRESS                                                            | 10000     | The JSON value could not be converted to System.Boolean. Path: $.separateBillingAddress  LineNumber: 21  BytePositionInLine: 33. |
-      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_PROVIDED                                             | 10000     | The Billing Address Type must be a string with a maximum length of 1.                                                            |
-      | SEPARATE_BILLING_ADDRESS_BILLING_ADD_TYPE_MISSING                                              | 2000      | Invalid Request: Missing conditional parameters-Billing Address Type                                                             |
-      | SEPARATE_BILLING_ADDRESS_WITH_INVALID_BILLING_ADD_TYPE                                         | 2000      | Invalid Request: Invalid Billing Address Type                                                                                    |
-      | INVALID_SEPARATE_BILLING_ADDRESS_WITH_VALID_BILLING_ADD_TYPE                                   | 10000     | The Billing Street Name must be a string with a maximum length of 30.                                                            |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_PRE_DIRECTION                        | 10000     | The Billing Street PreDirection must be a string with a maximum length of 2.                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_PRE_DIRECTION                           | 2000      | Invalid Request: Invalid Billing Street Pre Direction                                                                            |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_SUFFIX                               | 10000     | The Billing Street Suffix must be a string with a maximum length of 6.                                                           |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_SUFFIX                                  | 2000      | Invalid Request: Invalid Billing Street Suffix                                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_STREET_POST_DIRECTION                       | 10000     | The Billing Street PostDirection must be a string with a maximum length of 2.                                                    |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_STREET_POST_DIRECTION                          | 2000      | Invalid Request: Invalid Billing Street Post Direction                                                                           |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_TYPE                                   | 10000     | The Billing Unit Type must be a string with a maximum length of 6.                                                               |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_INVALID_BILLING_UNIT_TYPE                                      | 2000      | Invalid Request: Invalid Billing Unit Type                                                                                       |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_UNIT_NUMBER                                 | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                             |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE                                 | 10000     | The Billing Rural Route must be a string with a maximum length of 20.                                                            |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_EMPTY_BILLING_RURAL_ROUTE                                      | 2000      | Invalid Request: Missing conditional parameters-Customer PEWC Preference                                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_RURAL_ROUTE_NUMBER                          | 10000     | The Billing Rural Route Number must be a string with a maximum length of 10.                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_RURAL_ROUTE_NUMBER                                | 2000      | Invalid Request: Missing conditional parameters-Billing Rural Route Number                                                                           |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_PO_BOX                                      | 10000     | The Billing PO Box must be a string with a maximum length of 10.                                                                 |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_NULL_BILLING_PO_BOX                                            | 2000      | Invalid Request: Missing conditional parameters-Billing PO Box                                                                                 |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2                               | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2_WITH_BILLING_RURAL_ROUTE      | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
-      | VALID_BILLING_ADDRESS_TYPE_WITH_MAX_LENGTH_BILLING_ADDRESS_LINE2_WITH_BILLING_PO_BOX           | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                         |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_CITY                                      | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_CITY_WITH_BILLING_RURAL_ROUTE             | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_CITY_WITH_BILLING_PO_BOX                  | 10000     | The Billing City must be a string with a maximum length of 20.                                                                   |
-      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_RURAL_ROUTE       | 10000     | The Billing State Code must be a string with a maximum length of 3.                                                              |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_STATE_CODE_WITH_BILLING_PO_BOX            | 10000     | The Billing State Code must be a string with a maximum length of 3.                                                              |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
-      | VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_STATE_CODE_NOT_PRESENT_IN_TABLE              | 2000      | Invalid Request: Invalid Billing State Code                                                                                      |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      | VALID_BILLING_ADDRESS_TYPE_R_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_INVALID_BILLING_ZIP_CODE                                     | 2000      | Invalid Request: Invalid Billing Address Type                                                                  |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MIN_LENGTH_BILLING_ZIP_CODE                                  | 2000      | Invalid Request: Invalid Billing Zip Code                                                                                        |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_ZIP_CODE_MISSING_281c                                     | 2000      | Invalid Request: Invalid Billing Address Type                                                                |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_ZIP_CODE_MISSING_281e                                | 2000      | Invalid Request: Missing conditional parameters-Billing State Code                                     |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_MAX_LENGTH_BILLING_COUNTY_CODE                               | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
-      | VALID_BILLING_ADDRESS_TYPE_R_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_BILLING_RURAL_ROUTE           | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_MAX_LENGTH_BILLING_COUNTY_CODE_WITH_BILLING_PO_BOX           | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                             |
-      | VALID_BILLING_ADDRESS_TYPE_S_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE                     | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_R_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE                     | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
-      | VALID_BILLING_ADDRESS_TYPE_P_WITH_BILLING_COUNTY_CODE_NOT_PRESENT_IN_TABLE_WITH_BILLING_PO_BOX | 2000      | Invalid Request: Invalid Billing County Code                                                                                     |
-
   @GetEligiblePlansAndOffersInvalidWorkPhoneNumberTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<WorkPhoneNumber>"
     When a request is made to the GetEligiblePlansAndOffers Api with workPhone "<WorkPhoneNumber>" Number284_286
@@ -555,26 +363,132 @@ Feature: Verify GetEligiblePlansAndOffers Api
   #|INVALID_MARKETING_PROMOTION_CODE_FOR_NEW_CUSTOMERS_TC_200|2100|Promotion code is valid for Existing Customers only|
     #|EXPIRED_MARKETING_PROMOTION_CODE_TC_201                  |2100|Promotion code is expired                        |
 #|   INVALID_MARKETING_PROMOTION_CODE_FOR_CM_CUST_TYPE_TC_202|2100     |Promotion code is valid for Residential Customers only|
- |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203|2100     |Promotion code is valid for Web only|
+ #|   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203|2100     |Promotion code is valid for Web only|
+#|INVALID_CUSTOMER_BUSINESS_NAME_LENGTH_TC_212|10000|The Customer Business Name must be a string with a maximum length of 60.|
+#|CUSTOMER_BUSINESS_NAME_NULL_TC_213|2000|Invalid Request: Missing conditional parameters-Customer Business Name|
+#|CUSTOMER_BUSINESS_NAME_COMM_CREDIT_CHECK_214|2000|Invalid Request: Missing conditional parameters-Customer Business Name|
+#|CREDIT_CHECK_BUSINESS_NAME_LENGTH_VALIDATION_TC_215|10000|The CreditCheck Business Name must be a string with a maximum length of 60.|
+#    |CUSTOMER_BUSINESS_NAME_NULL_TC_215A                |2000|Invalid Request: Missing conditional parameters-Customer Business Name|
+     # |INVALID_LENGTH_CUSTOMER_LAST_NAME_TC_216|10000     |The Customer Last Name must be a string with a maximum length of 60.|
+#|GENERATION_CODE_LENGTH_VALIDATION_TC_218|10000|The Generation Code must be a string with a maximum length of 3.|
+#|INVALID_GENERATION_CODE_TC_219|2000    |Invalid Request: Invalid Generation Code                             |
+#|CUSTOMER_MIDDLE_NAME_LENGTH_VALIDATION_TC_220|10000|The Customer Middle Name must be a string with a maximum length of 15.|
+#|CUSTOMER_FIRST_NAME_LENGTH_VALIDATION_TC_221|10000|The Customer First Name must be a string with a maximum length of 15.|
+#|CUSTOMER_FIRST_AND_MIDDLE_NAME_INVALID_LENGTH_TC_222|10000|The Customer First Name must be a string with a maximum length of 15.|
+#|SSN_INVALID_LENGTH_TC_223  |2000       |Invalid Request: Invalid SSN                                        |
+#|NON_NUMERIC_SSN_TC_224     |2000       |Invalid Request: Invalid SSN                                        |
+#|FEDERAL_TAX_ID_INVALID_LENGTH_TC_225|10000|Invalid Federal Tax ID                                           |
+ #|NON_NUMERIC_FEDERAL_TAX_ID_TC_226|10000|Invalid Federal Tax ID                                           |
+    #|FEDERAL_TAX_ID_NULL_TC_227 |2000       |Invalid Request: Missing conditional parameters-Federal Tax ID      |
+#|FEDERAL_TAX_ID_MISSING_FOR_CREDIT_CHECK_COMM_TC_228|2000|Invalid Request: Missing conditional parameters-Federal Tax ID|
+#|EMAIL_ADDRESS_LENGTH_VALIDATION_TC_229|10000|The EmailAddress field is not a valid e-mail address.          |
+#|INVALID_EMAIL_FORMAT_TC_230|2000       |Invalid Request: Invalid Email address                              |
+#|AGLC_ACCOUNT_NUMBER_LENGTH_VALIDATION_TC_231|10000|The AGLC Account Number must be a numeric string with a maximum length of 20|
+#|AGLC_ACCOUNT_NUMBER_NON_NUMERIC_TC_232|10000|The AGLC Account Number must be a numeric string with a maximum length of 20|
+#|AGLC_SERVICE_LOCATION_ID_NULL_TC_233|10000|Missing AGLC Service Location ID     |
+  #|AGLC_SERVICE_LOCATION_ID_LENGTH_VALIDATION_TC_234|10000|The field AglcServiceLocationID must have a maximum length of 9.|
+#|NON_NUMERIC_AGLC_SERVICE_LOCATION_ID_TC_235|10000|The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.aglcServiceLocationID [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 474.|
+#|AUTHORIZED_BY_LENGTH_VALIDATION_TC_236|10000|The Authorized By must be a string with a maximum length of 90. |
+#|AUTHORIZED_BY_NULL_TC_237  |2000       |Invalid Request: Missing conditional parameters-Authorized By        |
+#|REFERRAL_CODE_LENGTH_VALIDATION_TC_238|10000|The Referral Code must be a string with a maximum length of 9.  |
+#|REFERRAL_CODE_BEGINNING_WITH_A_LETTER_TC_239|2000|Invalid Request: Invalid Referral Code                     |
+#|REFERRAL_CODE_ALPHANUMERIC_TC_240|2000|Invalid Request: Invalid Referral Code                     |
+#|MARKETING_PROMOTION_CODE_MISSING_TC_241|1000|Invalid Request: Missing Promotion Code -Please ask the customer for a promotion code. If they do not have one, enter the appropriate default promotion code|
+#|PREMISES_STREET_NUMBER_LENGTH_VALIDATION_TC_242|10000|The Premises Street Number must be a string with a maximum length of 12.|
+#|PREMISES_STREET_PRE_DIRECTION_LENGTH_VALIDATION_TC_243|10000|The Premises Street PreDirection must be a string with a maximum length of 2.|
+#|INVALID_PREMISES_STREET_PRE_DIRECTION_TC_243_2|2000|Invalid Request: Invalid Premises Street Pre Direction   |
+#|PREMISES_STREET_NAME_LENGTH_VALIDATION_TC_244|10000|The Premises Street Name must be a string with a maximum length of 30.|
+#|NULL_PREMISES_STREET_NAME_TC_245|10000|Invalid or missing Premises Street Name|
+#|PREMISES_STREET_SUFFIX_LENGTH_VALIDATION_TC_246|10000|The Premises Street Suffix  must be a string with a maximum length of 6.|
+#|INVALID_PREMISES_STREET_SUFFIX_TC_246A|2000|Invalid Request: Invalid Premises Street Suffix                  |
+#|PREMISES_STREET_POST_DIRECTION_LENGTH_VALIDATION_TC_247|10000|The Premises Street PostDirection must be a string with a maximum length of 2.|
+#|INVALID_PREMISES_STREET_POST_DIRECTION_TC_247A|2000|Invalid Request: Invalid Premises Street Post Direction  |
+#|PREMISES_UNIT_TYPE_LENGTH_VALIDATION_TC_248|10000|The Premises Unit Type must be a string with a maximum length of 6.|
+#|INVALID_PREMISES_UNIT_TYPE_TC_248A|2000|Invalid Request: Invalid Premises Unit Type                          |
+#|PREMISES_UNIT_NUMBER_LENGTH_VALIDATION_TC_249|10000|The Premises Unit Number must be a string with a maximum length of 6.|
+#|PREMISES_CITY_LENGTH_VALIDATION_TC_250|10000|The Premises City must be a string with a maximum length of 20.|
+#|PREMISES_CITY_NULL_TC_251  |10000      |Invalid or missing Premises City                                     |
+#|PREMISES_STATE_CODE_LENGTH_VALIDATION_TC_252|10000|The Premises State Code must be a string with a maximum length of 3.|
+#|NULL_PREMISES_STATE_CODE_TC_253|10000  |Invalid or missing Premises State Code                               |
+#    |INVALID_PREMISES_STATE_CODE_TC_253_2|2000|Invalid Request: Invalid Premises State Code                       |
+# | NULL_PREMISES_ZIP_CODE_TC_255|10000   |Invalid or missing Premises Zip Code                                 |
+#  |PREMISES_ZIP_CODE_NOT_A_NUMERIC_VALUE_OF_LENGTH_5_TC_255A|2000|Invalid Request: Invalid Premises Zip Code    |
+#  |PREMISES_ZIP_CODE_LENGTH_VALIDATION_TC_254               |10000|The Premises ZipCode must be a string with a maximum length of 10.|
+#  |INVALID_PREMISES_ZIP_FORMAT_TC_255B                      |2000 |Invalid Request: Invalid Premises Zip Code                        |
+#  |NON_NUMERIC_PREMISES_ZIP_CODE_TC_255_2                   |2000 |Invalid Request: Invalid Premises Zip Code                        |
+#  |INVALID_PREMISES_ZIP_CODE_TC_255C                        |2000 |Invalid Request: Invalid Premises Zip Code                        |
+#|PREMISES_COUNTY_CODE_LENGTH_VALIDATION_TC_256|10000|The Premises County Code must be a string with a maximum length of 5.|
+#    |INVALID_PREMISES_COUNTY_CODE_TC_256A         |2000 |Invalid Request: Invalid Premises County Code                        |
+#    |NULL_PREMISES_COUNTY_CODE_TC_257             |10000|Invalid or missing Premises County Code                               |
+#|INVALID_BOOLEAN_VALUE_SEPARATE_BILLING_ADDRESS_TC_258|10000|The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.separateBillingAddress [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 612.|
+#|EMPTY_SEPARATE_BILLING_ADDRESS_TC_259                |10000|The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.separateBillingAddress [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 611.|
+#|BILLING_ADDRESS_TYPE_LENGTH_VALIDATION_TC_260|10000|The Billing Address Type must be a string with a maximum length of 1.|
+#|NULL_BILLING_ADDRESS_TYPE_TC_261|2000 |Invalid Request: Missing conditional parameters-Billing Address Type|
+#|INVALID_BILLING_ADDRESS_TYPE_TC_262|2000|Invalid Request: Invalid Billing Address Type                       |
+#|BILLING_STREET_NAME_LENGTH_VALIDATION_TC_263| 10000     | The Billing Street Name must be a string with a maximum length of 30.                                                            |
+#|BILLING_STREET_NUMBER_LENGTH_VALIDATION_TC_264|10000|The Billing Street Number must be a string with a maximum length of 12.|
+#|BILLING_STREET_PREDIRECTION_LENGTH_VALIDATION_TC_265|10000|The Billing Street PreDirection must be a string with a maximum length of 2.|
+#|INVALID_BILLING_STREET_PREDIRECTION_TC_266|2000|Invalid Request: Invalid Billing Street Pre Direction          |
+#|BILLING_STREET_SUFFIX_LENGTH_VALIDATION_TC_267|10000|The Billing Street Suffix must be a string with a maximum length of 6.|
+#|INVALID_BILLING_STREET_SUFFIX_TC_268|2000|Invalid Request: Invalid Billing Street Suffix                     |
+#|BILLING_STREET_POST_DIRECTION_LENGTH_VALIDATION_TC_269|10000|The Billing Street PostDirection must be a string with a maximum length of 2.|
+#|INVALID_BILLING_STREET_POST_DIRECTION_TC_270|2000|Invalid Request: Invalid Billing Street Post Direction     |
+#|BILLING_UNIT_TYPE_LENGTH_VALIDATION_TC_271|10000|The Billing Unit Type must be a string with a maximum length of 6.|
+#|INVALID_BILLING_UNIT_TYPE_TC_272|2000  |Invalid Request: Invalid Billing Unit Type                            |
+#|BILLING_UNIT_NUMBER_LENGTH_VALIDATION_TC_273|10000|The Billing Unit Number must be a string with a maximum length of 6.|
+#|BILLING_RURAL_ROUTE_LENGTH_VALIDATION_TC_274|10000|The Billing Rural Route must be a string with a maximum length of 20.|
+#|NULL_BILLING_RURAL_ROUTE_TC_274A|2000|Invalid Request: Invalid Billing Rural Route                         |
+#|BILLING_RURAL_ROUTE_NUMBER_LENGTH_VALIDATION_TC_275|10000|The Billing Rural Route Number must be a string with a maximum length of 10.|
+#|NULL_BILLING_RURAL_ROUTE_NUMBER_TC_275A|2000|Invalid Request: Missing conditional parameters-Billing Rural Route Number|
+#|BILLING_PO_BOX_LENGTH_VALIDATION_TC_276|10000|The Billing PO Box must be a string with a maximum length of 10.|
+#|NULL_BILLING_PO_BOX_TC_276A|2000       |Invalid Request: Invalid Billing PO Box Number                      |
+#|BILLING_ADDRESS_LINE_LENGTH_VALIDATION_TC_277|10000|The Billing Address Line 2 must be a string with a maximum length of 30.|
+      #|BILLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_RURAL_TC_277A|10000|The Billing Address Line 2 must be a string with a maximum length of 30.|
+#|BILLLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_POBOX_TC_277B|10000|The Billing Address Line 2 must be a string with a maximum length of 30.|
+#|BILLING_CITY_LENGTH_VALIDATION_TC_278                    |10000|The Billing City must be a string with a maximum length of 20.          |
+#|BILLING_CITY_LENGTH_VALIDATION_RURAL_TC_278A|10000|The Billing City must be a string with a maximum length of 20.          |
+#|BILLING_CITY_LENGTH_VALIDATION_POBOX_TC_278B|10000|The Billing City must be a string with a maximum length of 20.          |
+#|BILLING_STATE_CODE_LENGTH_VALIDATION_TC_279 |10000|The Billing State Code must be a string with a maximum length of 3.|
+#|Billing_STATE_CODE_LENGTH_VALIDATION_RURAL_TC_279A|10000|The Billing State Code must be a string with a maximum length of 3.|
+#|BILLING_STATE_CODE_LENGTH_VALIDATION_POBOX_TC_279B|10000|The Billing State Code must be a string with a maximum length of 3.|
+#|INVALID_BILLING_STATE_CODE_TC_280                 |2000|Invalid Request: Invalid Billing State Code|
+#|INVALID_BILLING_STATE_CODE_RURAL_TC_280A|2000|Invalid Request: Invalid Billing State Code|
+#|INVALID_BILLING_STATE_CODE_POBOX_TC_280B|2000|Invalid Request: Invalid Billing State Code|
+#|INVALID_BILLING_ZIP_CODE_TC_281_1         |2000|Invalid Request: Invalid Billing Zip Code  |
+      #|INVALID_BILLING_ZIP_CODE_TC_281_2         |2000|Invalid Request: Invalid Billing Zip Code  |
+#|INVALID_BILLING_ZIP_CODE_RURAL_TC_281A_2|2000|Invalid Request: Invalid Billing Zip Code  |
+#|INVALID_BILLING_ZIP_CODE_RURAL_TC_281A_1|2000|Invalid Request: Invalid Billing Zip Code  |
+#|INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_1|2000|Invalid Request: Invalid Billing Zip Code  |
+#      |INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_2|2000|Invalid Request: Invalid Billing Zip Code  |
+#|NULL_BILLING_ZIP_CODE_TC_281C|2000     |Invalid Request: Missing conditional parameters-Billing Zip Code                      |
+      #|NULL_BILLING_ZIP_CODE_RURAL_TC_281D|2000     |Invalid Request: Missing conditional parameters-Billing Zip Code                      |
+#|NULL_BILLING_ZIP_CODE_POBOX_TC_281E|2000     |Invalid Request: Missing conditional parameters-Billing Zip Code                      |
+|BILLING_COUNTY_CODE_LENGTH_VALIDATION_TC_282|10000|The Billing County Code must be a string with a maximum length of 5.|
 
-#wip
-  @GetEligiblePlansAndOffersInvalidMarketingPromotionCodeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCallerIdAndCallerIdNotAvailableOptionCombinationTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<testCondition>" Sources
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition             | errorCode | errorMessage                                                        |
-      |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203|2100     |Promotion code is valid for Web only|
+      #|   INVALID_LENGTH_CALLER_ID_TC_204|10000     |The Caller ID must be a string with a maximum length of 10.|
+     # |   NON_NUMERIC_CALLER_ID_TC_205|2000     |Invalid Request: Invalid Caller ID|
+  #|CALLER_ID_MISSING_TC_206   |2000       |Invalid Request: Missing conditional parameters-Caller ID            |
+#|INVALID_VALUE_FOR_CALLER_ID_NOT_AVAILABLE_TC_207|10000|The JSON value could not be converted to System.Boolean. Path: $.callerIDNotAvailable [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 444.|
+ #|CALLER_ID_NOT_AVAILABLE_TRUE_BUT_VALUE_IS_PROVIDED_TC_208|2000|Invalid Request: Invalid Caller ID Not Available|
+      #|ADDITIONAL_ENROLLMENT_DATA_LENGTH_VALIDATION_TC_209|10000|The Additional Enrollment Data must be a string with a maximum length of 30.|
+#|SSP_INDICATOR_NOT_PROVIDED_TC_210|10000|Seasonal Saving Program Indicator Not Provided|
+|INVALID_SSP_INDICATOR_VALUE_TC_211|10000|The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.seasonalSavingsProgramIndicator [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 711.|
 
   @GetEligiblePlansAndOffersInvalidCustomerLastNameTNON @Phase1  @NegativeFlow
-  Scenario Outline: Verify response code for invalid "<CustomerLastName>"
-    When a request is made to the GetEligiblePlansAndOffers Api with customer "<CustomerLastName>" LastName
+  Scenario Outline: Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api with customer "<testCondition>" LastName
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | CustomerLastName         | errorCode | errorMessage                                                       |
-      | EMPTY_CUSTOMER_LAST_NAME | 2000      | Invalid Request: Missing conditional parameters-Customer Last Name |
+      | testCondition         | errorCode | errorMessage                                                       |
+      | EMPTY_CUSTOMER_LAST_NAME_TC_217 | 2000      | Invalid Request: Missing conditional parameters-Customer Last Name |
 
 
   @GetEligiblePlansAndOffersInvalidTenantLandlordTNON @Phase1  @NegativeFlow

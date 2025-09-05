@@ -56,7 +56,7 @@ public class GetEligiblePlansAndOffersRequest{
 	private Object premisesCode;
 	private Object transactionID;
 	private String premisesCity;
-	private boolean callerIDNotAvailable;
+	private Object callerIDNotAvailable;
 	private Object customerMiddleName;
 	private Object billingStreetSuffix;
 	private Object creditCheckBusinessName;
@@ -78,7 +78,7 @@ public class GetEligiblePlansAndOffersRequest{
 	private String premisesCountyCode;
 	private String premisesStreetSuffix;
 	private Object billingAddressType;
-	private boolean seasonalSavingsProgramIndicator;
+	private Object seasonalSavingsProgramIndicator;
 	private Object billingCity;
 
 }
