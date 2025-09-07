@@ -35,92 +35,229 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | testCondition                               | errorCode | errorMessage                            |
-      | MISSING_TRANSACTION_ID_TC382                | 10000     | Missing Transaction ID                  |
-      | INVALID_NON_INTEGER_TRANSACTION_ID_TC383    | 2000      | Invalid Request: Invalid Transaction ID |
-      | INVALID_DOES_NOT_MATCH_TRANSACTION_ID_TC384 | 2000      | Invalid Request: Invalid Transaction ID |
-
-
-  @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
-  Scenario Outline: SaveEnrollment Api- Verify SaveEnrollment Api with invalid "<customerCODE>" code
-    When a request is made to the SaveEnrollment Api with  customer "<customerCODE>" code
-    Then verify response code of "Save Enrollment" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | customerCODE                | errorCode | errorMessage                                   |
-      | DUPLICATE_CUSTOMER_CODE     | 2000      | Invalid Request: Transaction ID does not exist |
-      | MAX_LENGTH_CUSTOMER_CODE    | 2000      | Invalid Request: Transaction ID does not exist |
-      | UNICODE_CHARS_CUSTOMER_CODE | 2000      | Invalid Request: Transaction ID does not exist |
-      | DUPLICATE_CUSTOMER_CODE     | 2000      | Invalid Request: Transaction ID does not exist |
-
-
-  @SaveEnrollmentInvalidPromotionCODE @Phase1  @NegativeFlow
-  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<premisesCODE>" code
-    When a request is made to the SaveEnrollment Api with  premises "<premisesCODE>" code
-    Then verify response code of "Save Enrollment" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | premisesCODE                | errorCode | errorMessage                                                          |
-      | EMPTY_PREMISES_CODE         | 10000     | Missing Premises Code                                                 |
-      | DUPLICATE_PREMISES_CODE     | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
-      | SPECIAL_CHARS_PREMISES_CODE | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
-      | MAX_LENGTH_PREMISES_CODE    | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
-      | MIN_LENGTH_PREMISES_CODE    | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
-
-
+      | testCondition                               | errorCode | errorMessage                                                                                                                                |
+      | MISSING_TRANSACTION_ID_TC382                | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.transactionID \| LineNumber: 0 \| BytePositionInLine: 67. |
+      | INVALID_NON_INTEGER_TRANSACTION_ID_TC383    | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.transactionID \| LineNumber: 0 \| BytePositionInLine: 71. |
+      | INVALID_DOES_NOT_MATCH_TRANSACTION_ID_TC384 | 2000      | Invalid Request: Transaction ID does not exist                                                                                              |
 
   @SaveEnrollmentInvalidTransactionType @Phase1  @NegativeFlow
-  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<transactionType>"Type
-    When a request is made to the SaveEnrollment Api with  transaction "<transactionType>" Type
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid transaction type for "<testCondition>" condition
+    When a request is made to the SaveEnrollment Api with invalid transaction type for "<testCondition>" condition
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | transactionType               | errorCode | errorMessage                                                     |
-      | EMPTY_TRANSACTION_TYPE        | 10000     | Missing Transaction Type                                         |
-      | NUMERIC_TRANSACTION_TYPE      | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | UPPERCASE_TRANSACTION_TYPE    | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | ALPHANUMERIC_TRANSACTION_TYPE | 1000      | Invalid Request: Invalid Transaction Type                        |
+      | testCondition                             | errorCode | errorMessage                                                     |
+      | INVALID_TRANSACTION_TYPE_EMPTY_TC385      | 10000     | Missing Transaction Type                                         |
+      | INVALID_TRANSACTION_TYPE_MAX_LENGTH_TC386 | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+      | INVALID_TRANSACTION_TYPE_NOT_EXISTS_TC387 | 1000      | Invalid Request: Invalid Transaction Type                        |
+
+  @SaveEnrollmentInvalidCustomerCODE @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify SaveEnrollment Api with invalid customer code for "<testCondition>" condition
+    When a request is made to the SaveEnrollment Api with invalid customer code for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                               | errorCode | errorMessage                                                                                                                                |
+      | INVALID_CUSTOMER_CODE_EMPTY_TC388           | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 112. |
+      | INVALID_CUSTOMER_CODE_MAX_LENGTH_TC389      | 10000     | The Customer Code must be an integer with a maximum length of 9                                                                             |
+      | INVALID_CUSTOMER_CODE_ALPHA_NUM_TC390       | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 121. |
+      | INVALID_CUSTOMER_CODE_DOES_NOT_EXIST_TC390a | 10000     | Invalid Request: Invalid Customer Code                                                                                                      |
+
+  @SaveEnrollmentInvalidPremisesCODE @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code with invalid premises code for "<testCondition>" condition
+    When a request is made to get Marketer Reference Data
+    Then a request is made to the SaveEnrollment Api with an invalid premises code for "<testCondition>" condition
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                        | errorCode | errorMessage                                                          |
+      | INVALID_PREMISES_CODE_EMPTY_TC391                    | 10000     | Missing Premises Code                                                 |
+      | INVALID_PREMISES_CODE_MAX_LENGTH_TC392               | 10000     | The Premises Code must be a numeric string with a maximum length of 7 |
+      | INVALID_PREMISES_CODE_NOT_EXISTS_TC392a              | 2000      | Invalid Request: Invalid Premises Code                                |
+      | INVALID_PREMISES_CODE_CUSTOMER_CODE_NOT_EXISTS_TC393 | 2000     | Invalid Request: Invalid Account                                      |
 
   @SaveEnrollmentInvalidPlanCode @Phase1  @NegativeFlow
-  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<planCode>"Code
-    When a request is made to the SaveEnrollment Api with  plan "<planCode>" Code
+  Scenario Outline: SaveEnrollment Api- Verify response code with invalid planCode for "<testCondition>" condition
+    When a request is made to the SaveEnrollment Api with an invalid planCode for "<testCondition>" condition
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | planCode                | errorCode | errorMessage                                              |
-      | NUMERIC_PLAN_CODE       | 10000     | The Plan Code must be a string with a maximum length of 3 |
-      | SPECIAL_CHARS_PLAN_CODE | 10000     | The Plan Code must be a string with a maximum length of 3 |
-      | EMPTY_PLAN_CODE         | 10000     | Missing Plan Code                                         |
-      | UPPERCASE_PLAN_CODE     | 10000     | The Plan Code must be a string with a maximum length of 3 |
-      | ALPHANUMERIC_PLAN_CODE  | 2000      | Invalid Request: Invalid Plan Code                        |
+      | testCondition                      | errorCode | errorMessage                                              |
+      | INVALID_PLAN_CODE_EMPTY_TC394      | 10000     | Missing Plan Code                                         |
+      | INVALID_PLAN_CODE_MAX_LENGTH_TC395 | 10000     | The Plan Code must be a string with a maximum length of 3 |
+      | INVALID_PLAN_CODE_NOT_EXISTS_TC396 | 2000      | Invalid Request: Invalid Plan Code                        |
 
+  @SaveEnrollmentInvalidPlanCodePrimeStatus @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code with invalid planCode for "<testCondition>" condition
+    When a request is made to get Marketer Reference Data
+    Then a request is made to the SaveEnrollment Api with an invalid planCode for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                      | errorCode | errorMessage                                              |
+      | INVALID_PLAN_CODE_PRIME_STATUS_TC396a | 2000      | Invalid Request: Invalid Plan Code                     |
+
+  @SaveEnrollmentInvalidPromotionCode @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code with invalid promotionCode for "<testCondition>" condition
+    When a request is made to the SaveEnrollment Api with an invalid promotionCode for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                           | errorCode | errorMessage                                                    |
+      | INVALID_PROMOTION_CODE_MAX_LENGTH_TC397 | 10000     | The Promotion Code must be a string with a maximum length of 35 |
+      | INVALID_PROMOTION_CODE_MAX_LENGTH_TC397 | 10000     | The Promotion Code must be a string with a maximum length of 35 |
+
+  @SaveEnrollmentInvalidPromotionCodeWIthEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code with invalid promotionCode for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    When a request is made to the SaveEnrollment Api with an invalid promotionCode for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                         | errorCode | errorMessage                             |
+      | SAVE_ENROLLMENT_INVALID_PROMOTION_CODE_NO_MATCH_TC398 | 2000      | Invalid Request: Invalid Plan Promo code |
 
 
   @SaveEnrollmentInvalidEnrollmentStatus @Phase1  @NegativeFlow
-  Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<enrollmentStatus>"
-    When a request is made to the SaveEnrollment Api with enrollment "<enrollmentStatus>" Status
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid enrollmentStatus for "<testCondition>" condition
+    When a request is made to the SaveEnrollment Api with an invalid enrollmentStatus for "<testCondition>" condition
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | enrollmentStatus                      | errorCode | errorMessage                                                      |
-      | MIN_LENGTH_ENROLLMENT_STATUS          | 2000      | Invalid Request: Invalid Enrollment Status                        |
-      | SPECIAL_CHARS_ENROLLMENT_STATUS       | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
-      | EMPTY_ENROLLMENT_STATUS               | 10000     | Missing Enrollment Status                                         |
-      | LOWERCASE_ENROLLMENT_STATUS           | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
-      | MAX_LENGTH_ENROLLMENT_STATUS          | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
-      | WHITESPACE_CONTAINS_ENROLLMENT_STATUS | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
+      | testCondition                                              | errorCode | errorMessage                                                      |
+      | SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_MAX_LENGTH_TC400 | 10000     | The Enrollment Status must be a string with a maximum length of 2 |
+
+
+  @SaveEnrollmentInvalidEnrollmentStatusWithEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid enrollmentStatus for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    When a request is made to the SaveEnrollment Api with an invalid enrollmentStatus for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                            | errorCode | errorMessage                               |
+      | SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_NO_MATCH_TC401 | 2000      | Invalid Request: Invalid Enrollment Status |
+      | SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_MISSING_CONFIRMATION_TC402 | 2000      | Invalid Request: Missing conditional parameters-Payment Confirmation Number |
+
+  @SaveEnrollmentInvalidPaymentConfirmationNumberWithEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid paymentConfirmation number for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    When a request is made to the SaveEnrollment Api with an invalid paymentConfirmation number for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage                                                                 |
+      | SAVE_ENROLLMENT_INVALID_PAYMENT_CONFIRMATION_NUM_MAX_LENGTH_TC403 | 10000     | The Payment Confirmation Number must be a string with a maximum length of 17 |
 
   @SaveEnrollmentInvalidBillingPlan @Phase1  @NegativeFlow
   Scenario Outline: SaveEnrollment Api- Verify response code for invalid "<billingPlan>"
-    When a request is made to the SaveEnrollment Api with billing "<billingPlan>" Plan
+    When a request is made to the SaveEnrollment Api with an invalid billing plan for "<testCondition>" condition
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | billingPlan                | errorCode | errorMessage                                                   |
-      | MAX_LENGTH_BILLING_PLAN    | 10000     | The Billing Plan must be a string with a maximum length of 1   |
-      | SPECIAL_CHARS_BILLING_PLAN | 10000     | The Billing Plan must be a string with a maximum length of 1   |
-      | EMPTY_BILLING_PLAN         | 2000      | Invalid Request: Missing conditional parameters-Billing Option |
-      | LOWERCASE_BILLING_PLAN     | 10000     | The Billing Plan must be a string with a maximum length of 1   |
+      | testCondition                                         | errorCode | errorMessage                                                  |
+      | SAVE_ENROLLMENT_INVALID_MAX_LENGTH_BILLING_PLAN_TC405 | 10000     | The Billing Plan must be a string with a maximum length of 1  |
+      | LOWERCASE_BILLING_PLAN                                | 10000     | The Billing Plan must be a string with a maximum length of 1  |
+
+  @SaveEnrollmentInvalidBillingPlanWithEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid billingPlan for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    When a request is made to the SaveEnrollment Api with an invalid billing plan for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                                  | errorCode | errorMessage                                                   |
+      | SAVE_ENROLLMENT_INVALID_BILLING_PLAN_EMPTY_TC404               | 2000      | Invalid Request: Missing conditional parameters-Billing Option |
+      | SAVE_ENROLLMENT_INVALID_VALUE_BILLING_PLAN_TC406               | 2000      | Invalid Request: Invalid Billing Option                        |
+      | SAVE_ENROLLMENT_INVALID_BILLING_PLAN_EMPTY_BUDGET_AMOUNT_TC407 | 2000      | Invalid Request: Missing conditional parameters-Budget Amount  |
+
+  @SaveEnrollmentInvalidBillingPlanWithEligiblePlansAndOffersByPlanCode @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid billingPlan for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                            | planCode | promotionCode               | errorCode | errorMessage                                                                                    |
+      | SAVE_ENROLLMENT_INVALID_VALUE_BILLING_PLAN_PREPAY_TC406a | PGB      | FIX 10 DOLLARS FOR 12 MONTHS|  2000     | Invalid Request: Invalid Billing Option -PRP/PGB Customers are not eligible for Budget Billing. |
+
+  @SaveEnrollmentInvalidEstimatedBudgetAmountWithEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid estimatedBudgetAmount for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    When a request is made to the SaveEnrollment Api with an invalid estimated budget amount for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                          | errorCode | errorMessage                                                                                                                                         |
+      | SAVE_ENROLLMENT_INVALID_BUDGET_AMOUNT_MAX_LENGTH_TC408 | 10000     | The Estimated Budget Amount must be an integer with a maximum length of 5                                                                            |
+      | SAVE_ENROLLMENT_INVALID_VALUE_BUDGET_AMOUNT_TC409      | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.estimatedBudgetAmount \| LineNumber: 0 \| BytePositionInLine: 276. |
+
+  @SaveEnrollmentInvalidServiceDateWithEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid service date for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the SaveEnrollment Api with an invalid service date for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                      | errorCode | errorMessage                                                                 |
+      | SAVE_ENROLLMENT_INVALID_SERVICE_DATE_EMPTY_TC410   | 2000      | Invalid Request: Missing conditional parameters-Customer Request Date        |
+      | SAVE_ENROLLMENT_INVALID_SERVICE_DATE_FORMAT_TC411  | 10000     | The Customer Requested Service Date must be a date in the format of yyyyMMdd |
+      | SAVE_ENROLLMENT_INVALID_SERVICE_DATE_FORMAT_TC411a | 10000     | The Customer Requested Service Date must be a date in the format of yyyyMMdd |
+
+  @SaveEnrollmentInvalidParametersWithSearchAccountsAndEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid parameters for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should have "recordType" as "ENROLLMENT RECORD"
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the SaveEnrollment Api with invalid parameters for "<testCondition>" condition
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                     |planCode|promotionCode           | errorCode | errorMessage                                                        |
+      | SAVE_ENROLLMENT_INVALID_SSP_EMPTY_TC412          |MVS     |25 CENTS FOR 12 MONTHS  | 2000      | Invalid Request: Missing conditional parameters-SSP Participant Code |
+      | SAVE_ENROLLMENT_INVALID_SSP_RESULT_VALUE_TC414   |MVS     |25 CENTS FOR 12 MONTHS  | 2000      | Invalid Request: Invalid SSP Result Value                            |
+      | SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_EMPTY_TC415 |MVS     |25 CENTS FOR 12 MONTHS  | 10000     | Missing Split Connection Fee Indicator                              |
+
+  @SaveEnrollmentInvalidParametersWithEligiblePlansAndOffers @Phase1  @NegativeFlow
+  Scenario Outline: SaveEnrollment Api- Verify response code for invalid parameters for "<testCondition>" condition
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the SaveEnrollment Api with invalid parameters for "<testCondition>" condition
+    Then verify response code of "Save Enrollment" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                               | errorCode | errorMessage                                                                                                                                                 |
+      | SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_VALUE_TC416           | 10000     | The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.splitConnectionFeeIndicator \| LineNumber: 0 \| BytePositionInLine: 299. |
+      | SAVE_ENROLLMENT_INVALID_SPLIT_FEE_VALUE_TC417a              | 2000      | Invalid Request: Invalid Split Connection Fee Indicator                                                                                                      |
+      | SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_EMPTY_TC418            | 2000      | Invalid Request: Missing conditional parameters-AGLC Account Number                                                                                          |
+      | SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_MAX_LENGTH_TC419       | 10000     | The AGLC Account Number must be a numeric string with a maximum length of 20                                                                                 |
+      | SAVE_ENROLLMENT_INVALID_AGLC_SERVICE_ORDER_EMPTY_TC420      | 2000      | Invalid Request: Missing conditional parameters-AGLC Service Order Number                                                                                    |
+      | SAVE_ENROLLMENT_INVALID_AGLC_SERVICE_ORDER_MAX_LENGTH_TC421 | 10000     | The AGLC Service Order Number must be a numeric string with a maximum length of 9                                                                            |
+      | SAVE_ENROLLMENT_INVALID_NOTES_MAX_LENGTH_TC422              | 10000     | The Notes must be a string with a maximum length of 600                                                                                                      |
+      | SAVE_ENROLLMENT_INVALID_SSP_PC_MAX_LENGTH_TC422a            | 10000     | The Seasonal Savings Program Participant Code must be an integer with a maximum length of 9                                                                  |
+      | SAVE_ENROLLMENT_INVALID_SSP_PC_VALUE_TC422b                 | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.sspParticipantCode \| LineNumber: 0 \| BytePositionInLine: 396.            |
 
   @SaveEnrollmentNewFlowMissingNotesCreditCheckSkip @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api -Verify SaveEnrollment Api throws an appropriate error when notes are missing for <testCondition>

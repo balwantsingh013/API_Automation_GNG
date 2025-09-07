@@ -55,20 +55,26 @@ public class SaveEnrollmentHelper {
         }
     }
 
-    public void setCustomerCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel customerCODE) {
-        switch (customerCODE) {
-            case DUPLICATE_CUSTOMER_CODE:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setCustomerCode(12356);
+    public void setCustomerCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        Map<String, Object> uzrrcotRecord = ApplicationContext.get()
+                .getDbAction()
+                .getLatestUZRRCOTRecord();
+        payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
+        payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
+        payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+        switch (testCondition) {
+            case INVALID_CUSTOMER_CODE_EMPTY_TC388:
+                payload.setCustomerCode("");
                 break;
-            case MAX_LENGTH_CUSTOMER_CODE:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                int customerCode = FakerDataGenerator.generateNumber(1, 11);
-                payload.setCustomerCode(customerCode);
+            case INVALID_CUSTOMER_CODE_MAX_LENGTH_TC389:
+                payload.setCustomerCode(FakerDataGenerator.generateNumber(1111000000, 1118900000));
                 break;
-            case UNICODE_CHARS_CUSTOMER_CODE:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setCustomerCode(FakerDataGenerator.generateNumber(0, 15));
+            case INVALID_CUSTOMER_CODE_ALPHA_NUM_TC390:
+                payload.setCustomerCode(FakerDataGenerator.generateAlphanumeric( 9));
+                break;
+            case INVALID_CUSTOMER_CODE_DOES_NOT_EXIST_TC390a:
+                payload.setCustomerCode(0);
                 break;
             default:
                 payload.setCustomerCode(FakerDataGenerator.generateNumber(0, 9));
@@ -392,7 +398,12 @@ public class SaveEnrollmentHelper {
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_481, GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
             case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_492:
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_493,
-                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501:
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_501,
+                 SAVE_ENROLLMENT_INVALID_SSP_EMPTY_TC412,
+                 SAVE_ENROLLMENT_INVALID_SSP_RESULT_VALUE_TC414,
+                 SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_EMPTY_TC415,
+                 SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_VALUE_TC416,
+                 SAVE_ENROLLMENT_INVALID_SPLIT_FEE_VALUE_TC417a:
                 payload.setEnrollmentStatus(SAVE_FOR_FALL_SSP.getValue());
                 break;
 
@@ -523,7 +534,12 @@ public class SaveEnrollmentHelper {
                 payload.setAglcServiceOrderNumber(null);
                 payload.setPromotionCode("");
                 break;
-
+            case SAVE_ENROLLMENT_INVALID_VALUE_BILLING_PLAN_PREPAY_TC406a:
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(8));
+                payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
+                payload.setBillingPlan("B");
+                break;
         }
     }
 
@@ -533,22 +549,30 @@ public class SaveEnrollmentHelper {
         payload.setBillingPlan("");
     }
 
-    public void setPremisesCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel premisesCode) {
-        switch (premisesCode) {
-            case EMPTY_PREMISES_CODE:
+    public void setPremisesCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        Map<String, Object> uzrrcotRecord = ApplicationContext.get()
+                .getDbAction()
+                .getLatestUZRRCOTRecord();
+        payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
+        payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
+        payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+        switch (testCondition) {
+            case INVALID_PREMISES_CODE_EMPTY_TC391:
                 payload.setPremisesCode("");
-                break;
-            case DUPLICATE_PREMISES_CODE:
-                payload.setPremisesCode("25 CENTS FOR 12 MONTH");
                 break;
             case SPECIAL_CHARS_PREMISES_CODE:
                 payload.setPremisesCode(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
                 break;
-            case MAX_LENGTH_PREMISES_CODE:
+            case INVALID_PREMISES_CODE_MAX_LENGTH_TC392:
                 payload.setPremisesCode(FakerDataGenerator.generateAlphanumeric(36));
                 break;
-            case MIN_LENGTH_PREMISES_CODE:
-                payload.setPremisesCode(FakerDataGenerator.generateString(2));
+            case INVALID_PREMISES_CODE_NOT_EXISTS_TC392a:
+                payload.setPremisesCode("0");
+                break;
+            case INVALID_PREMISES_CODE_CUSTOMER_CODE_NOT_EXISTS_TC393:
+                payload.setPremisesCode("0");
+                payload.setCustomerCode("0");
                 break;
             default:
                 payload.setPremisesCode(FakerDataGenerator.generateString(10));
@@ -572,45 +596,61 @@ public class SaveEnrollmentHelper {
         }
     }
 
-    public void setTransactionTypeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel transactionType) {
-        switch (transactionType) {
-            case EMPTY_TRANSACTION_TYPE:
+    public void setTransactionTypeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        switch (testCondition) {
+            case INVALID_TRANSACTION_TYPE_EMPTY_TC385:
                 payload.setTransactionType("");
                 break;
-            case NUMERIC_TRANSACTION_TYPE:
-                payload.setTransactionType(FakerDataGenerator.generateDigits(10));
+            case INVALID_TRANSACTION_TYPE_MAX_LENGTH_TC386:
+                payload.setTransactionType(FakerDataGenerator.generateString(10));
                 break;
-            case UPPERCASE_TRANSACTION_TYPE:
-                payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(36));
-                break;
-            case LOWERCASE_TRANSACTION_TYPE:
-                payload.setTransactionType(FakerDataGenerator.generateLowerCaseString(4));
-                break;
-
-            case ALPHANUMERIC_TRANSACTION_TYPE:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setTransactionType(FakerDataGenerator.generateAlphanumeric(2));
+            case INVALID_TRANSACTION_TYPE_NOT_EXISTS_TC387:
+                Map<String, Object> uzrrcotRecord = ApplicationContext.get()
+                        .getDbAction()
+                        .getLatestUZRRCOTRecord();
+                payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
+                payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
+                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+                payload.setTransactionType("TNOF");
                 break;
             default:
                 payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(4));
         }
-
-
     }
 
-    public void setPlanCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel planCode) {
-        switch (planCode) {
-            case NUMERIC_PLAN_CODE:
-                payload.setPlanCode(FakerDataGenerator.generateDigits(7));
-                break;
-            case SPECIAL_CHARS_PLAN_CODE:
-                payload.setPlanCode(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
-                break;
-            case EMPTY_PLAN_CODE:
+    public void setPlanCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        switch (testCondition) {
+            case INVALID_PLAN_CODE_EMPTY_TC394:
                 payload.setPlanCode("");
                 break;
-            case UPPERCASE_PLAN_CODE:
-                payload.setPlanCode(FakerDataGenerator.generateUpperCaseString(4));
+            case INVALID_PLAN_CODE_MAX_LENGTH_TC395:
+                payload.setPlanCode(FakerDataGenerator.generateString(7));
+                break;
+            case INVALID_PLAN_CODE_NOT_EXISTS_TC396:
+                Map<String, Object> uzrrcotRecord = ApplicationContext.get()
+                        .getDbAction()
+                        .getLatestUZRRCOTRecord();
+                payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
+                payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
+                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+                payload.setPlanCode("ZZZ");
+                break;
+            case INVALID_PLAN_CODE_PRIME_STATUS_TC396a:
+//                Map<String, Object> uzrrcotRecord = ApplicationContext.get()
+//                        .getDbAction()
+//                        .getLatestUZRRCOTRecord();
+//                payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
+//                payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
+//                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+                payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
+                payload.setCustomerCode("6098999");
+                payload.setPremisesCode("6072308");
+                payload.setTransactionID("708");
+                payload.setPlanCode("PGB");
+                payload.setEnrollmentStatus(PAYMENT_COMPLETE.getValue());
+                payload.setTransactionType(TURN_ON.getValue());
                 break;
             case ALPHANUMERIC_PLAN_CODE:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -618,6 +658,26 @@ public class SaveEnrollmentHelper {
                 break;
             default:
                 payload.setPlanCode(FakerDataGenerator.generateUpperCaseString(3));
+        }
+    }
+
+    public void setPromotionCodeBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        switch (testCondition) {
+            case INVALID_PROMOTION_CODE_MAX_LENGTH_TC397:
+                payload.setPromotionCode(FakerDataGenerator.generateString(39));
+                break;
+            case SAVE_ENROLLMENT_INVALID_PROMOTION_CODE_NO_MATCH_TC398:
+                payload.setPlanCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPlanCode());
+                payload.setEnrollmentStatus(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getEnrollmentStatus().getFirst().getCode());
+                payload.setPromotionCode("0 CENTS FOR 12 MONTHS");
+                payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+                payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+                payload.setNotes("test");
+                break;
+            default:
+                payload.setPromotionCode(FakerDataGenerator.generateUpperCaseString(3));
         }
     }
 
@@ -633,79 +693,221 @@ public class SaveEnrollmentHelper {
             case INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC381:
                 payload.setLoginID(FakerDataGenerator.getRandomString(10));
                 break;
-//            case MIN_LENGTH_LOGIN_ID:
-//                payload.setLoginID(FakerDataGenerator.getRandomNumericString(1));
-//                break;
-//            case SPECIAL_CHARS_LOGIN_ID:
-//                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
-//                break;
-//            case UPPERCASE_LOGIN_ID:
-//                payload.setLoginID(FakerDataGenerator.generateUpperCaseString(4));
-//                break;
-//            case ALPHANUMERIC_LOGIN_ID:
-//                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(2));
-//                break;
-
             default:
                 payload.setLoginID(FakerDataGenerator.generateLowerCaseString(5));
         }
     }
 
-    public void setEnrollmentStatusBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel enrollmentStatus) {
-        switch (enrollmentStatus) {
-            case MIN_LENGTH_ENROLLMENT_STATUS:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setEnrollmentStatus(FakerDataGenerator.getRandomNumericString(1));
+    public void setEnrollmentStatusBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        switch (testCondition) {
+            case SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_MAX_LENGTH_TC400:
+                payload.setEnrollmentStatus(FakerDataGenerator.getRandomString(10));
                 break;
-            case SPECIAL_CHARS_ENROLLMENT_STATUS:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setEnrollmentStatus(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
+            case SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_NO_MATCH_TC401:
+                payload.setTransactionType(TURN_ON.getValue());
+                payload.setPlanCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPlanCode());
+                payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
+                payload.setPromotionCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPromotion1Code());
+                payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+                payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
                 break;
-            case EMPTY_ENROLLMENT_STATUS:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setEnrollmentStatus("");
+            case SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_MISSING_CONFIRMATION_TC402:
+                payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
+                payload.setTransactionType(TURN_ON.getValue());
+                payload.setPlanCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPlanCode());
+                payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
+                payload.setPromotionCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPromotion1Code());
+                payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+                payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
                 break;
             case LOWERCASE_ENROLLMENT_STATUS:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(4));
                 break;
             case MAX_LENGTH_ENROLLMENT_STATUS:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentStatus(FakerDataGenerator.getRandomNumericString(3));
                 break;
             case WHITESPACE_CONTAINS_ENROLLMENT_STATUS:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setEnrollmentStatus("S I");
                 break;
             default:
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(2));
         }
     }
+    public void setPaymentConfirmationNumberBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setPlanCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPlanCode());
+        payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
+        payload.setPromotionCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPromotion1Code());
+        payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+        payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+        payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+        payload.setPaymentConfirmationNumber(FakerDataGenerator.generateDigits(29));
+    }
 
     public void setMarketerReferenceData(SaveEnrollmentRequest payload, long marketerReferenceData){
         payload.setMarketerReferenceData(marketerReferenceData);
     }
 
+    public void setRequestParamsForBillPlanFromEligiblePlansAndOffers(SaveEnrollmentRequest payload){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate serviceDate = LocalDate.now();
+        String serviceDateString = serviceDate.minusDays(1).format(formatter);
+        payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
+        payload.setTransactionType(TURN_ON.getValue());
+        payload.setPlanCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPlanCode());
+        payload.setEnrollmentStatus(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getEnrollmentStatus().getFirst().getCode());
+        payload.setPromotionCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPromotion1Code());
+        payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+        payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+        payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+        payload.setCustomerRequestedServiceDate(serviceDateString);
+    }
     public void setBillingPlanBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (billingPlan) {
-            case MAX_LENGTH_BILLING_PLAN:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setBillingPlan(FakerDataGenerator.getRandomNumericString(4));
-                break;
-            case SPECIAL_CHARS_BILLING_PLAN:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-                payload.setBillingPlan(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
-                break;
-            case EMPTY_BILLING_PLAN:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
+            case SAVE_ENROLLMENT_INVALID_BILLING_PLAN_EMPTY_TC404:
+                setRequestParamsForBillPlanFromEligiblePlansAndOffers(payload);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(8));
                 payload.setBillingPlan("");
                 break;
+            case SAVE_ENROLLMENT_INVALID_MAX_LENGTH_BILLING_PLAN_TC405:
+                payload.setBillingPlan(FakerDataGenerator.getRandomNumericString(4));
+                break;
+            case SAVE_ENROLLMENT_INVALID_VALUE_BILLING_PLAN_TC406:
+                setRequestParamsForBillPlanFromEligiblePlansAndOffers(payload);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(8));
+                payload.setBillingPlan("Z");
+                break;
+            case SAVE_ENROLLMENT_INVALID_BILLING_PLAN_EMPTY_BUDGET_AMOUNT_TC407:
+                setRequestParamsForBillPlanFromEligiblePlansAndOffers(payload);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(8));
+                payload.setBillingPlan("B");
+                break;
+            case SPECIAL_CHARS_BILLING_PLAN:
+                payload.setBillingPlan(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
+                break;
             case LOWERCASE_BILLING_PLAN:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setBillingPlan(FakerDataGenerator.generateUpperCaseString(4));
                 break;
             default:
                 payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(1));
+        }
+    }
+
+    public void setEstimatedBudgetAmountBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        setRequestParamsForBillPlanFromEligiblePlansAndOffers(payload);
+        payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+        payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(8));
+        payload.setBillingPlan("B");
+        switch (billingPlan) {
+            case SAVE_ENROLLMENT_INVALID_BUDGET_AMOUNT_MAX_LENGTH_TC408:
+                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(9));
+                break;
+            case SAVE_ENROLLMENT_INVALID_VALUE_BUDGET_AMOUNT_TC409:
+                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateAlphanumeric(3));
+                break;
+            default:
+                payload.setEnrollmentStatus(FakerDataGenerator.generateUpperCaseString(1));
+        }
+    }
+
+    public void setServiceDateBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        setRequestParamsForBillPlanFromEligiblePlansAndOffers(payload);
+        payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+        payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(8));
+        switch (billingPlan) {
+            case SAVE_ENROLLMENT_INVALID_SERVICE_DATE_EMPTY_TC410:
+                payload.setCustomerRequestedServiceDate("");
+                break;
+            case SAVE_ENROLLMENT_INVALID_SERVICE_DATE_FORMAT_TC411:
+                payload.setCustomerRequestedServiceDate(FakerDataGenerator.getRandomString(8));
+                break;
+            case SAVE_ENROLLMENT_INVALID_SERVICE_DATE_FORMAT_TC411a:
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
+                LocalDate serviceDate = LocalDate.now();
+                String invaliidServiceDateString = serviceDate.minusDays(1).format(formatter);
+                payload.setCustomerRequestedServiceDate(invaliidServiceDateString);
+                break;
+        }
+    }
+
+    public void setInvalidParametersBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel billingPlan) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        setRequestParamsForBillPlanFromEligiblePlansAndOffers(payload);
+        payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(8));
+        payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(8));
+        switch (billingPlan) {
+            case SAVE_ENROLLMENT_INVALID_SSP_EMPTY_TC412:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                break;
+            case SAVE_ENROLLMENT_INVALID_SSP_RESULT_MAX_LENGTH_TC413:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setSeasonalSavingsProgramResult(FakerDataGenerator.generateString(19));
+                break;
+            case SAVE_ENROLLMENT_INVALID_SSP_RESULT_VALUE_TC414:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setSeasonalSavingsProgramResult("EXC");
+                payload.setPromotionCode("");
+                payload.setSspParticipantCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                break;
+            case SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_EMPTY_TC415,
+                 SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_VALUE_TC416:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setSspParticipantCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                payload.setSplitConnectionFeeIndicator(null);
+                break;
+            case SAVE_ENROLLMENT_INVALID_SPLIT_FEE_VALUE_TC417a:
+                payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
+                payload.setPromotionCode("");
+                payload.setPlanCode("PGB");
+                payload.setSplitConnectionFeeIndicator(true);
+                break;
+            case SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_EMPTY_TC418:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setAglcAccountNumber("");
+                break;
+            case SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_MAX_LENGTH_TC419:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(22));
+                break;
+            case SAVE_ENROLLMENT_INVALID_AGLC_SERVICE_ORDER_EMPTY_TC420:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setAglcServiceOrderNumber("");
+                break;
+            case SAVE_ENROLLMENT_INVALID_AGLC_SERVICE_ORDER_MAX_LENGTH_TC421:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(12));
+                break;
+            case SAVE_ENROLLMENT_INVALID_NOTES_MAX_LENGTH_TC422:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setNotes(FakerDataGenerator.generateDigits(6005));
+                break;
+            case SAVE_ENROLLMENT_INVALID_SSP_PC_MAX_LENGTH_TC422a:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setSspParticipantCode(FakerDataGenerator.generateDigits(15));
+                break;
+            case SAVE_ENROLLMENT_INVALID_SSP_PC_VALUE_TC422b:
+                payload.setEnrollmentStatus(COMPLETE.getValue());
+                payload.setPromotionCode("");
+                payload.setSspParticipantCode(FakerDataGenerator.generateString(3));
+                break;
         }
     }
 
@@ -750,7 +952,6 @@ public class SaveEnrollmentHelper {
                  GET_PREPAY_PLANS_REQUOTE_PRP_ENROLLED_NEGATIVE_TC_471:
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
                 break;
-
             default:
                 payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
         }
