@@ -138,8 +138,8 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | testCondition                                            | errorCode | errorMessage                               |
-      | SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_NO_MATCH_TC401 | 2000      | Invalid Request: Invalid Enrollment Status |
+      | testCondition                                                        | errorCode | errorMessage                               |
+      | SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_NO_MATCH_TC401             | 2000      | Invalid Request: Invalid Enrollment Status |
       | SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_MISSING_CONFIRMATION_TC402 | 2000      | Invalid Request: Missing conditional parameters-Payment Confirmation Number |
 
   @SaveEnrollmentInvalidPaymentConfirmationNumberWithEligiblePlansAndOffers @Phase1  @NegativeFlow
@@ -249,7 +249,7 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition                                               | errorCode | errorMessage                                                                                                                                                 |
-      | SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_VALUE_TC416           | 10000     | The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.splitConnectionFeeIndicator \| LineNumber: 0 \| BytePositionInLine: 299. |
+      | SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_VALUE_TC416           | 10000     | Missing Split Connection Fee Indicator                                                                                                                       |
       | SAVE_ENROLLMENT_INVALID_SPLIT_FEE_VALUE_TC417a              | 2000      | Invalid Request: Invalid Split Connection Fee Indicator                                                                                                      |
       | SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_EMPTY_TC418            | 2000      | Invalid Request: Missing conditional parameters-AGLC Account Number                                                                                          |
       | SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_MAX_LENGTH_TC419       | 10000     | The AGLC Account Number must be a numeric string with a maximum length of 20                                                                                 |

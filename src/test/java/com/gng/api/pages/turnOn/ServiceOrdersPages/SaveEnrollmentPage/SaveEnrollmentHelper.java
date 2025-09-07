@@ -709,9 +709,8 @@ public class SaveEnrollmentHelper {
             case SAVE_ENROLLMENT_INVALID_ENROLLMENT_STATUS_MISSING_CONFIRMATION_TC402:
                 payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
                 payload.setTransactionType(TURN_ON.getValue());
-                payload.setPlanCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPlanCode());
-                payload.setEnrollmentStatus(DEPOSIT_PAID.getValue());
-                payload.setPromotionCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPromotion1Code());
+                payload.setPlanCode(GlobalEnums.PlanCode.PGB.getValue());
+                payload.setEnrollmentStatus(PAYMENT_COMPLETE.getValue());
                 payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
                 payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
                 payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
