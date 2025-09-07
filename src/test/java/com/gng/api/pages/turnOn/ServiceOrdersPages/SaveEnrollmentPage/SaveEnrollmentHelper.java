@@ -443,7 +443,6 @@ public class SaveEnrollmentHelper {
                 break;
 
             case SSP_VALIDATION_INVALID_SSP_CODE_TC_497C:
-                //sspParticipantCode= testContext.getGetEligiblePlansAndOffersResponse().getData().getSspParticipantCode().toString();
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 payload.setSspParticipantCode(FakerDataGenerator.generateDigits(5));
                 payload.setSeasonalSavingsProgramResult("");
@@ -638,12 +637,6 @@ public class SaveEnrollmentHelper {
                 payload.setPlanCode("ZZZ");
                 break;
             case INVALID_PLAN_CODE_PRIME_STATUS_TC396a:
-//                Map<String, Object> uzrrcotRecord = ApplicationContext.get()
-//                        .getDbAction()
-//                        .getLatestUZRRCOTRecord();
-//                payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
-//                payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-//                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
                 payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
                 payload.setCustomerCode("6098999");
                 payload.setPremisesCode("6072308");
