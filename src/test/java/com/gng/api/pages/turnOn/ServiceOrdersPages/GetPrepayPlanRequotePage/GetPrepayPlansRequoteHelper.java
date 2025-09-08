@@ -211,10 +211,9 @@ public class GetPrepayPlansRequoteHelper {
 
     public void setNegativeRequestParamsBasedOnTestCondition(GetPrepayPlansRequoteRequest payload, GetPrepayPlansRequoteApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType("TNON");
+        payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
         switch (testCondition) {
             case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_460:
-                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.getRandomNumericString(35));
                 break;
             case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_461:
