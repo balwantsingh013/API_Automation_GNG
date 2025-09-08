@@ -20,12 +20,12 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/phase1/turnOn/GetEligiblePlansAndOffers.feature"
+                "src/test/resources/features/phase1/turnOff"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        tags = "@NegativeFlow",
+        //tags = "@HappyFlow",
         plugin = {
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
@@ -80,8 +80,8 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
         // Determine execution mode
         boolean shouldRunParallel = !"none".equalsIgnoreCase(parallelMode) &&
-                                    !threadCount.equals("1") &&
-                                    Integer.parseInt(threadCount) > 1;
+                !threadCount.equals("1") &&
+                Integer.parseInt(threadCount) > 1;
 
         if (shouldRunParallel) {
             configureParallelExecution(parallelMode, threadCount, dataProviderThreadCount, parallelCount);
