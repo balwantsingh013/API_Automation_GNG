@@ -237,7 +237,7 @@ public class GetPrepayPlansRequoteHelper {
                 payload.setTransactionType("");
                 break;
             case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_467:
-                payload.setTransactionType("INVALID");
+                payload.setTransactionType(FakerDataGenerator.generateString(6));
                 break;
             case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_468:
                 payload.setTransactionType(GlobalEnums.TransactionType.INVALID.getValue());
