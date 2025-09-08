@@ -277,7 +277,7 @@ Feature: Verify SaveEnrollment Api
     When a request is made to the GetEligiblePlansAndOffers for a "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B"
     And response should have ErrorCode 0 and ErrorMessage ""
     And a request is made to get Marketer Reference Data
-    And a request is made to the Save Enrollment API for the "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B" with "PRP" and "15 CENTS FOR 12 MONTHS"
+    And a request is made to the Save Enrollment API for the "GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B" with "PRP" and ""
     And response should have ErrorCode 0 and ErrorMessage ""
 
     @SaveEnrollmentEnrollmentNewEnrollment @Phase1 @HappyFlow

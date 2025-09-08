@@ -1,5 +1,6 @@
 package com.gng.api.pages.turnOff.ServiceOrdersPages.SaveUnenrollmentPage;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentRequest;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+import static com.gng.api.constants.GlobalEnums.AddressType.*;
 import static com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.SaveUnenrollmentApiLabel.NEW_ADDRESS;
 
 @Slf4j
@@ -32,14 +34,19 @@ public class SaveUnenrollmentHelper {
 
     public void setRequestIDBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel requestID) {
         switch (requestID) {
-            case EMPTY_REQUEST_ID:
+            case EMPTY_REQUEST_ID_106:
                 payload.setRequestID("");
                 break;
-            case DUPLICATE_REQUEST_ID:
-                payload.setRequestID("123");
+
+            case NULL_REQUEST_ID_106_1:
+                payload.setRequestID(null);
                 break;
 
-            case LONG_REQUEST_ID:
+            case DUPLICATE_REQUEST_ID_108:
+                payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
+                break;
+
+            case LONG_REQUEST_ID_107:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
                 break;
         }
@@ -167,7 +174,7 @@ public class SaveUnenrollmentHelper {
 
     public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,SaveUnenrollmentApiLabel forwardingAddressIs, SaveUnenrollmentApiLabel type){
         if(forwardingAddressIs.equals(NEW_ADDRESS)){
-            payload.setForwardingAddressIs("NA");
+            payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
 
             Map<String, Object> addressDetails = ApplicationContext.get().getDbAction().getAddressDetails();
             String city = addressDetails.get("UCRADDR_CITY").toString();
@@ -180,7 +187,7 @@ public class SaveUnenrollmentHelper {
 
             switch(type){
                 case ADDRESS_TYPE_STREET:
-                    payload.setForwardingAddressType("S");
+                    payload.setForwardingAddressType(STREET.getValue());
                     payload.setForwardingAddressStreetNumber(addressDetails.get("UCRADDR_STREET_NUMBER").toString());
                     payload.setForwardingAddressStreetName(addressDetails.get("UCRADDR_STREET_NAME").toString());
                     payload.setForwardingAddressStreetSuffix(addressDetails.get("UCRADDR_SSFX_CODE").toString());
@@ -189,12 +196,12 @@ public class SaveUnenrollmentHelper {
                     break;
 
                 case ADDRESS_TYPE_RURAL:
-                    payload.setForwardingAddressType("R");
+                    payload.setForwardingAddressType(RURAL.getValue());
                     payload.setForwardingAddressRuralRoute(FakerDataGenerator.generateAlphanumeric(3));
                     break;
 
                 case ADDRESS_TYPE_POBOX:
-                    payload.setForwardingAddressType("P");
+                    payload.setForwardingAddressType(POBOX.getValue());
                     payload.setForwardingAddressPOBox(FakerDataGenerator.generateAlphanumeric(2));
                     break;
 

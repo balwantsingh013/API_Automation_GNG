@@ -792,41 +792,126 @@ public class ExtentReportManager {
     .parallel-count { background: linear-gradient(135deg, #059669, #10b981) !important; }
     .core-count { background: linear-gradient(135deg, #0891b2, #06b6d4) !important; }
     
-    /* === STATUS CODE STYLING === */
-    :is(.status-200, .status-201, .status-202, .status-204) { 
+    /* === COMPREHENSIVE STATUS CODE STYLING === */
+    
+    /* 1xx Informational - Light Blue */
+    :is(.status-100, .status-101, .status-102, .status-103) { 
+        background: linear-gradient(135deg, #0ea5e9, #38bdf8) !important; 
+        color: white !important; 
+        padding: 4px 10px !important;
+        border-radius: 14px !important;
+        font-weight: 700 !important;
+        font-size: 9px !important;
+        box-shadow: 0 3px 10px rgba(14, 165, 233, 0.4) !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* 2xx Success - Green (Enhanced your existing ones) */
+    :is(.status-200, .status-201, .status-202, .status-203, .status-204, .status-205, .status-206, .status-207, .status-208, .status-226) { 
         background: linear-gradient(135deg, #059669, #10b981) !important; 
         color: white !important; 
-        padding: 4px 10px !important; /* Increased padding */
-        border-radius: 14px !important; /* Increased from 12px */
+        padding: 4px 10px !important;
+        border-radius: 14px !important;
         font-weight: 700 !important;
-        font-size: 9px !important; /* Increased from 8px */
-        box-shadow: 0 3px 10px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
+        font-size: 9px !important;
+        box-shadow: 0 3px 10px rgba(5, 150, 105, 0.4) !important;
         text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
     }
     
-    :is(.status-400, .status-401, .status-403, .status-404, .status-422) { 
+    /* 3xx Redirection - Orange/Yellow */
+    :is(.status-300, .status-301, .status-302, .status-303, .status-304, .status-305, .status-307, .status-308) { 
+        background: linear-gradient(135deg, #f59e0b, #fbbf24) !important; 
+        color: white !important; 
+        padding: 4px 10px !important;
+        border-radius: 14px !important;
+        font-weight: 700 !important;
+        font-size: 9px !important;
+        box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4) !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* 4xx Client Errors - Red (Enhanced your existing ones) */
+    :is(.status-400, .status-401, .status-402, .status-403, .status-404, .status-405, .status-406, .status-407, .status-408, .status-409, .status-410, .status-411, .status-412, .status-413, .status-414, .status-415, .status-416, .status-417, .status-418, .status-421, .status-422, .status-423, .status-424, .status-425, .status-426, .status-428, .status-429, .status-431, .status-451) { 
         background: linear-gradient(135deg, #dc2626, #ef4444) !important; 
         color: white !important; 
-        padding: 4px 10px !important; /* Increased padding */
-        border-radius: 14px !important; /* Increased from 12px */
+        padding: 4px 10px !important;
+        border-radius: 14px !important;
         font-weight: 700 !important;
-        font-size: 9px !important; /* Increased from 8px */
-        box-shadow: 0 3px 10px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
+        font-size: 9px !important;
+        box-shadow: 0 3px 10px rgba(220, 38, 38, 0.4) !important;
         text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
     }
     
-    :is(.status-500, .status-502, .status-503, .status-504) { 
+    /* 5xx Server Errors - Dark Gray (Enhanced your existing ones) */
+    :is(.status-500, .status-501, .status-502, .status-503, .status-504, .status-505, .status-506, .status-507, .status-508, .status-510, .status-511) { 
         background: linear-gradient(135deg, #374151, #4b5563) !important; 
         color: white !important; 
-        padding: 4px 10px !important; /* Increased padding */
-        border-radius: 14px !important; /* Increased from 12px */
+        padding: 4px 10px !important;
+        border-radius: 14px !important;
         font-weight: 700 !important;
-        font-size: 9px !important; /* Increased from 8px */
-        box-shadow: 0 3px 10px rgba(55, 65, 81, 0.4) !important; /* Enhanced shadow */
+        font-size: 9px !important;
+        box-shadow: 0 3px 10px rgba(55, 65, 81, 0.4) !important;
         text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* Unknown Status Codes - Purple */
+    .status-unknown { 
+        background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important; 
+        color: white !important; 
+        padding: 4px 10px !important;
+        border-radius: 14px !important;
+        font-weight: 700 !important;
+        font-size: 9px !important;
+        box-shadow: 0 3px 10px rgba(124, 58, 237, 0.4) !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        border: 2px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* === PERFORMANCE INDICATOR STYLING === */
+    .excellent-performance { 
+        background: linear-gradient(135deg, #059669, #10b981) !important; 
+        box-shadow: 0 3px 12px rgba(5, 150, 105, 0.5) !important; 
+    }
+    .good-performance { 
+        background: linear-gradient(135deg, #0ea5e9, #38bdf8) !important; 
+        box-shadow: 0 3px 12px rgba(14, 165, 233, 0.5) !important; 
+    }
+    .average-performance { 
+        background: linear-gradient(135deg, #f59e0b, #fbbf24) !important; 
+        box-shadow: 0 3px 12px rgba(245, 158, 11, 0.5) !important; 
+    }
+    .slow-performance { 
+        background: linear-gradient(135deg, #dc2626, #ef4444) !important; 
+        box-shadow: 0 3px 12px rgba(220, 38, 38, 0.5) !important; 
+    }
+    .very-slow-performance { 
+        background: linear-gradient(135deg, #7c2d12, #dc2626) !important; 
+        box-shadow: 0 3px 12px rgba(124, 45, 18, 0.5) !important; 
+    }
+    
+    .content-type-badge {
+        background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
+        color: white !important;
+        padding: 4px 10px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 9px !important;
+        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3) !important;
+    }
+    
+    .response-size-badge {
+        background: linear-gradient(135deg, #0891b2, #06b6d4) !important;
+        color: white !important;
+        padding: 4px 10px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 9px !important;
+        box-shadow: 0 2px 8px rgba(8, 145, 178, 0.3) !important;
     }
     
     /* === TEST STATUS STYLING === */
@@ -1590,6 +1675,7 @@ public class ExtentReportManager {
         return details.toString();
     }
 
+    // ✅ ENHANCED: Complete response details with comprehensive status code validation and performance indicators
     public static String getEnhancedResponseDetails() {
         Response resp = response.get();
         if (resp == null) {
@@ -1601,45 +1687,250 @@ public class ExtentReportManager {
         details.append("<h4>📥 API Response Details</h4>");
         details.append("<div class='collapsible-content'>");
 
-        // Status Code with color coding
+        // Status Code with enhanced color coding
         details.append("<div class='response-detail-item'>");
         details.append("<strong>📊 Status Code:</strong> ");
         details.append(getColorCodedStatus(resp.getStatusCode()));
         details.append("</div>");
 
-        // Response Time
+        // Response Time with performance indicator
         details.append("<div class='response-detail-item'>");
         details.append("<strong>⏱️ Response Time:</strong> ");
-        details.append("<span class='response-time-badge'>").append(resp.getTime()).append(" ms</span>");
+        details.append(getPerformanceIndicator(resp.getTime()));
         details.append("</div>");
 
-        // Expected Status
+        // Expected vs Actual Status Comparison
         String expectedStatus = expectedStatusCode.get();
         if (expectedStatus != null) {
             details.append("<div class='response-detail-item'>");
             details.append("<strong>✅ Expected Status:</strong> ");
             details.append("<span class='status-").append(expectedStatus).append("'>").append(expectedStatus).append("</span>");
+
+            // Add validation result
+            boolean statusMatches = String.valueOf(resp.getStatusCode()).equals(expectedStatus);
+            details.append(" | <strong>Validation:</strong> ");
+            if (statusMatches) {
+                details.append("<span style='color: #059669; font-weight: bold;'>✅ PASSED</span>");
+            } else {
+                details.append("<span style='color: #dc2626; font-weight: bold;'>❌ FAILED</span>");
+            }
             details.append("</div>");
         }
 
-        // Response Headers
-        if (resp.getHeaders() != null) {
+        // Content Type
+        String contentType = resp.getContentType();
+        if (contentType != null) {
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>📄 Content Type:</strong> ");
+            details.append("<span class='content-type-badge'>").append(contentType).append("</span>");
+            details.append("</div>");
+        }
+
+        // Response Size
+        if (resp.getBody() != null) {
+            String bodyString = resp.getBody().asString();
+            int responseSize = bodyString.getBytes().length;
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>📏 Response Size:</strong> ");
+            details.append("<span class='response-size-badge'>").append(formatBytes(responseSize)).append("</span>");
+            details.append("</div>");
+        }
+
+        // Response Headers with better formatting
+        if (resp.getHeaders() != null && resp.getHeaders().size() > 0) {
             details.append("<div class='response-detail-item'>");
             details.append("<strong>📋 Response Headers:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatJson(resp.getHeaders().toString())).append("</div>");
+            details.append("<div class='code-block'>").append(formatHeaders(resp.getHeaders().toString())).append("</div>");
             details.append("</div>");
         }
 
-        // Response Body
+        // Response Body with JSON validation and formatting
         if (resp.getBody() != null) {
             details.append("<div class='response-detail-item'>");
             details.append("<strong>📄 Response Body:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatJson(resp.getBody().asPrettyString())).append("</div>");
+
+            // Try to format as JSON, fallback to plain text
+            String formattedBody = formatResponseBody(resp);
+            details.append("<div class='code-block'>").append(formattedBody).append("</div>");
+            details.append("</div>");
+        }
+
+        // Response Cookies (if any)
+        if (resp.getCookies() != null && !resp.getCookies().isEmpty()) {
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>🍪 Cookies:</strong><br/>");
+            details.append("<div class='code-block'>");
+            resp.getCookies().forEach((name, value) ->
+                    details.append(name).append(" = ").append(value).append("<br/>")
+            );
+            details.append("</div>");
             details.append("</div>");
         }
 
         details.append("</div></div>");
         return details.toString();
+    }
+
+    // ✅ ENHANCED: Comprehensive status code text mapping with all HTTP status codes
+    private static String getStatusText(int statusCode) {
+        return switch (statusCode) {
+            // 1xx Informational responses
+            case 100 -> "Continue";
+            case 101 -> "Switching Protocols";
+            case 102 -> "Processing";
+            case 103 -> "Early Hints";
+
+            // 2xx Success responses
+            case 200 -> "OK";
+            case 201 -> "Created";
+            case 202 -> "Accepted";
+            case 203 -> "Non-Authoritative Information";
+            case 204 -> "No Content";
+            case 205 -> "Reset Content";
+            case 206 -> "Partial Content";
+            case 207 -> "Multi-Status";
+            case 208 -> "Already Reported";
+            case 226 -> "IM Used";
+
+            // 3xx Redirection responses
+            case 300 -> "Multiple Choices";
+            case 301 -> "Moved Permanently";
+            case 302 -> "Found";
+            case 303 -> "See Other";
+            case 304 -> "Not Modified";
+            case 305 -> "Use Proxy";
+            case 307 -> "Temporary Redirect";
+            case 308 -> "Permanent Redirect";
+
+            // 4xx Client error responses
+            case 400 -> "Bad Request";
+            case 401 -> "Unauthorized";
+            case 402 -> "Payment Required";
+            case 403 -> "Forbidden";
+            case 404 -> "Not Found";
+            case 405 -> "Method Not Allowed";
+            case 406 -> "Not Acceptable";
+            case 407 -> "Proxy Authentication Required";
+            case 408 -> "Request Timeout";
+            case 409 -> "Conflict";
+            case 410 -> "Gone";
+            case 411 -> "Length Required";
+            case 412 -> "Precondition Failed";
+            case 413 -> "Payload Too Large";
+            case 414 -> "URI Too Long";
+            case 415 -> "Unsupported Media Type";
+            case 416 -> "Range Not Satisfiable";
+            case 417 -> "Expectation Failed";
+            case 418 -> "I'm a teapot";
+            case 421 -> "Misdirected Request";
+            case 422 -> "Unprocessable Entity";
+            case 423 -> "Locked";
+            case 424 -> "Failed Dependency";
+            case 425 -> "Too Early";
+            case 426 -> "Upgrade Required";
+            case 428 -> "Precondition Required";
+            case 429 -> "Too Many Requests";
+            case 431 -> "Request Header Fields Too Large";
+            case 451 -> "Unavailable For Legal Reasons";
+
+            // 5xx Server error responses
+            case 500 -> "Internal Server Error";
+            case 501 -> "Not Implemented";
+            case 502 -> "Bad Gateway";
+            case 503 -> "Service Unavailable";
+            case 504 -> "Gateway Timeout";
+            case 505 -> "HTTP Version Not Supported";
+            case 506 -> "Variant Also Negotiates";
+            case 507 -> "Insufficient Storage";
+            case 508 -> "Loop Detected";
+            case 510 -> "Not Extended";
+            case 511 -> "Network Authentication Required";
+            default -> "Unknown Status";
+        };
+    }
+
+    // ✅ ENHANCED: Helper methods for enhanced response display
+    private static String getPerformanceIndicator(long responseTime) {
+        String performanceClass;
+        String performanceText;
+
+        if (responseTime < 200) {
+            performanceClass = "excellent-performance";
+            performanceText = "⚡ Excellent";
+        } else if (responseTime < 500) {
+            performanceClass = "good-performance";
+            performanceText = "✅ Good";
+        } else if (responseTime < 1000) {
+            performanceClass = "average-performance";
+            performanceText = "⚠️ Average";
+        } else if (responseTime < 2000) {
+            performanceClass = "slow-performance";
+            performanceText = "🐌 Slow";
+        } else {
+            performanceClass = "very-slow-performance";
+            performanceText = "🚨 Very Slow";
+        }
+
+        return "<span class='response-time-badge " + performanceClass + "'>" +
+                responseTime + " ms (" + performanceText + ")</span>";
+    }
+
+    private static String formatBytes(int bytes) {
+        if (bytes < 1024) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(1024));
+        String pre = "KMGTPE".charAt(exp-1) + "";
+        return String.format("%.1f %sB", bytes / Math.pow(1024, exp), pre);
+    }
+
+    private static String formatHeaders(String headers) {
+        return headers.replace("{", "{\n  ")
+                .replace("}", "\n}")
+                .replace(",", ",\n  ")
+                .replace("=", " = ");
+    }
+
+    private static String formatResponseBody(Response response) {
+        try {
+            String contentType = response.getContentType();
+            String body = response.getBody().asString();
+
+            // Handle JSON responses
+            if (contentType != null && contentType.toLowerCase().contains("json")) {
+                try {
+                    return response.getBody().asPrettyString();
+                } catch (Exception e) {
+                    return body; // Fallback to raw if JSON parsing fails
+                }
+            }
+
+            // Handle XML responses
+            if (contentType != null && contentType.toLowerCase().contains("xml")) {
+                return formatXml(body);
+            }
+
+            // Handle HTML responses (truncate if too long)
+            if (contentType != null && contentType.toLowerCase().contains("html")) {
+                if (body.length() > 1000) {
+                    return body.substring(0, 1000) + "\n... (truncated, full length: " + body.length() + " characters)";
+                }
+            }
+
+            return body;
+        } catch (Exception e) {
+            return "Error formatting response body: " + e.getMessage();
+        }
+    }
+
+    private static String formatXml(String xml) {
+        try {
+            return xml.replace("><", ">\n<")
+                    .replace(">", ">\n")
+                    .replace("<", "\n<")
+                    .replaceAll("\n+", "\n")
+                    .trim();
+        } catch (Exception e) {
+            return xml;
+        }
     }
 
     private static String getColorCodedStatus(int statusCode) {
@@ -1648,25 +1939,14 @@ public class ExtentReportManager {
         return "<span class='" + statusClass + "'>" + statusText + "</span>";
     }
 
-    private static String getStatusText(int statusCode) {
-        return switch (statusCode) {
-            case 200 -> "OK";
-            case 201 -> "Created";
-            case 202 -> "Accepted";
-            case 204 -> "No Content";
-            case 400 -> "Bad Request";
-            case 401 -> "Unauthorized";
-            case 403 -> "Forbidden";
-            case 404 -> "Not Found";
-            case 405 -> "Method Not Allowed";
-            case 409 -> "Conflict";
-            case 422 -> "Unprocessable Entity";
-            case 500 -> "Internal Server Error";
-            case 502 -> "Bad Gateway";
-            case 503 -> "Service Unavailable";
-            case 504 -> "Gateway Timeout";
-            default -> "Unknown";
-        };
+    // ✅ ENHANCED: Status class mapping with comprehensive coverage
+    private static String getStatusClass(int statusCode) {
+        if (statusCode >= 100 && statusCode < 200) return "informational-status";
+        if (statusCode >= 200 && statusCode < 300) return "success-status";
+        if (statusCode >= 300 && statusCode < 400) return "redirect-status";
+        if (statusCode >= 400 && statusCode < 500) return "client-error-status";
+        if (statusCode >= 500) return "server-error-status";
+        return "unknown-status";
     }
 
     private static String formatJson(String json) {
@@ -1892,14 +2172,6 @@ public class ExtentReportManager {
         stats.append("</div>"); // End stats-dashboard
 
         statsTest.info(stats.toString());
-    }
-
-    private static String getStatusClass(int statusCode) {
-        if (statusCode >= 200 && statusCode < 300) return "success-status";
-        if (statusCode >= 300 && statusCode < 400) return "redirect-status";
-        if (statusCode >= 400 && statusCode < 500) return "client-error-status";
-        if (statusCode >= 500) return "server-error-status";
-        return "unknown-status";
     }
 
     public static synchronized void flushReports() {
