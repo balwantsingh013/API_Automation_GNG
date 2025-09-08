@@ -2,6 +2,60 @@ package com.gng.api.constants;
 import lombok.Getter;
 
 public class GlobalEnums {
+    @Getter
+    public enum InvalidValues {
+        DUPLICATE_REQUEST_ID("123"),
+        INVALID_LOGIN_ID("FAKE"),
+        TRANSACTION_TYPE_WITH_WHITESPACE("DF HJ"),
+        INVALID_CUSTOMER_TYPE("AA"),
+        INNVALID_MARKETING_PROMOTION_CODE("AAA"),
+        INVALID_ADDRESS_TYPE("C");
+
+        private final String value;
+
+        InvalidValues(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum MarketingPromotionCodes {
+        PROMOTION_CODE_COMMERCIAL("TURNON100"),
+        PROMOTION_CODE_FOR_EXISTING_CUSTOMER("RENEW12"),
+        EXPIRED_MARKETING_PROMOTION_CODE("VIPJUL17"),
+        PROMOTION_CODE_RESIDENTIAL("APARTMENT SPECIAL");
+
+        private final String value;
+
+        MarketingPromotionCodes(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum AddressType {
+        STREET("S"),
+        RURAL("R"),
+        POBOX("P");
+
+        private final String value;
+
+        AddressType(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum ForwardingAddressType {
+        CURRENT_ADDRESS("CA"),
+        NEW_ADDRESS("NA");
+
+        private final String value;
+
+        ForwardingAddressType(String value) {
+            this.value = value;
+        }
+    }
 
     @Getter
     public enum CustomerType {

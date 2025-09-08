@@ -7,6 +7,9 @@ import com.gng.api.steps.turnOff.Common.GetReasonsForLeaving.GetReasonsForLeavin
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.gng.api.constants.GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID;
+import static com.gng.api.constants.GlobalEnums.InvalidValues.INVALID_LOGIN_ID;
+
 @Slf4j
 public class GetReasonsForLeavingHelper {
 
@@ -30,7 +33,7 @@ public class GetReasonsForLeavingHelper {
     public void setRequestIDsBasedOnTestCodition(GetReasonsForLeavingRequest payload, GetReasonsForLeavingLabel testCondition) {
         switch (testCondition) {
             case TC1_DUPLICATE_REQUEST_ID:
-                payload.setRequestID("123");
+                payload.setRequestID(DUPLICATE_REQUEST_ID.getValue());
                 break;
 
             case TC2_NULL_REQUEST_ID:
@@ -44,6 +47,7 @@ public class GetReasonsForLeavingHelper {
     }
 
     public void setLoginIDsBasedOnTestCodition(GetReasonsForLeavingRequest payload, GetReasonsForLeavingLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
         switch (testCondition) {
             case TC4_1_LOGIN_ID_EMPTY:
                 payload.setLoginID("");
@@ -58,13 +62,11 @@ public class GetReasonsForLeavingHelper {
                 break;
 
             case TC6_LOGIN_ID_INVALID_WITH_SPECIAL_CHARACTERS:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
                 break;
 
             case TC7_LOGIN_ID_INVALID:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setLoginID("FAKE");
+                payload.setLoginID(INVALID_LOGIN_ID.getValue());
                 break;
 
         }
