@@ -9,7 +9,23 @@ public class GlobalEnums {
         TRANSACTION_TYPE_WITH_WHITESPACE("DF HJ"),
         INVALID_CUSTOMER_TYPE("AA"),
         INNVALID_MARKETING_PROMOTION_CODE("AAA"),
-        INVALID_ADDRESS_TYPE("C");
+        INVALID_ADDRESS_TYPE("C"),
+        INVALID_STREET_PREDIRECTION("WN"),
+        INVALID_STREET_SUFFIX("CIRC"),
+        INVALID_STREET_POST_DIRECTION("WS"),
+        INVALID_BILLING_ADDRESS_TYPE("C"),
+        INVALID_BILLING_PRE_DIRECTION("EN"),
+        INVALID_BILLING_UNIT_TYPE("KE"),
+        INVALID_BILLING_STATE_CODE("BEE"),
+        INVALID_PREMISES_COUNTY_CODE("T"),
+        INVALID_ZIP_CODE("31111"),
+        INVALID_PREMISE_STATE_CODE("YU"),
+        INVALID_GENERATION_CODE("AB"),
+        INVALID_CREDIT_CHECK_OPTION("MAYBE"),
+        INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE("1234588"),
+        INVALID_WORK_PHONE_TYPE("C"),
+        INVALID_HOME_PHONE_TYPE("B"),
+        INVALID_TENANT_LANDLORD("P");
 
         private final String value;
 
@@ -23,11 +39,23 @@ public class GlobalEnums {
         PROMOTION_CODE_COMMERCIAL("TURNON100"),
         PROMOTION_CODE_FOR_EXISTING_CUSTOMER("RENEW12"),
         EXPIRED_MARKETING_PROMOTION_CODE("VIPJUL17"),
-        PROMOTION_CODE_RESIDENTIAL("APARTMENT SPECIAL");
+        PROMOTION_CODE_RESIDENTIAL("APARTMENT SPECIAL"),
+        PROMOTION_CODE_GREEN_LIFE("GREEN125");
 
         private final String value;
 
         MarketingPromotionCodes(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum BillingUnitType {
+        KEY("KEY");
+
+        private final String value;
+
+        BillingUnitType(String value) {
             this.value = value;
         }
     }
@@ -53,6 +81,30 @@ public class GlobalEnums {
         private final String value;
 
         ForwardingAddressType(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum TenantOrLandlord {
+        TENANT("T"),
+        LANDLORD("L");
+
+        private final String value;
+
+        TenantOrLandlord(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum ACNorNACN {
+        ACN("ACN"),
+        NACN("NACN");
+
+        private final String value;
+
+        ACNorNACN(String value) {
             this.value = value;
         }
     }
@@ -135,6 +187,30 @@ public class GlobalEnums {
         private final String value;
 
         PromotionCode(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum WorkPhoneType {
+        HOME("home"),
+        BUSINESS("BUSINESS");
+
+        private final String value;
+
+        WorkPhoneType(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum HomePhoneType {
+        MOBILE("M"),
+        LANDLINE("L");
+
+        private final String value;
+
+        HomePhoneType(String value) {
             this.value = value;
         }
     }
