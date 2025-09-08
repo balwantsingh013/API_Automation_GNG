@@ -240,7 +240,7 @@ public class GetPrepayPlansRequoteHelper {
                 payload.setTransactionType("INVALID");
                 break;
             case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_468:
-                payload.setTransactionType("TURN");
+                payload.setTransactionType(GlobalEnums.TransactionType.INVALID.getValue());
                 break;
             case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_469:
                 setRequestParams(payload);
