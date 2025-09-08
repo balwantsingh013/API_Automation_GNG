@@ -20,12 +20,12 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/phase1/turnOn"
+                "src/test/resources/features/phase1/turnOn/GetEligiblePlansAndOffers.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        tags = "@GetEligiblePlansAndOffersInitialCreditCheckCustomerCodeTNON",
+        tags = "@NegativeFlow",
         plugin = {
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"

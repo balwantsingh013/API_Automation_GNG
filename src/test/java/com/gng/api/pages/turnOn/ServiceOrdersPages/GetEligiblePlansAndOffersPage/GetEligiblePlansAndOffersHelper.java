@@ -1144,7 +1144,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setWorkPhoneNumber(FakerDataGenerator.generateAlphanumeric(10));
                 break;
             case NULL_WORK_PHONE_NUMBER_WITH_VALID_WORK_PHONE_TYPE_TC_286:
-                payload.setWorkPhoneType(HOME.getValue());
+                payload.setWorkPhoneType(LANDLINE.getValue());
                 payload.setWorkPhoneNumber(null);
                 break;
             default:
@@ -1155,14 +1155,14 @@ public class GetEligiblePlansAndOffersHelper {
     public void setWorkPhoneTypeBasedOnType287_290(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel workphonetype) {
         payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
         switch (workphonetype) {
-            case NULL_WORK_PHONE_TYPE_WITH_VALID_WORK_PHONE_NUMBER:
+            case NULL_WORK_PHONE_TYPE_WITH_VALID_WORK_PHONE_NUMBER_TC_287:
                 payload.setWorkPhoneType("");
                 payload.setWorkPhoneNumber(FakerDataGenerator.generateDigits(10));
                 break;
-            case MAX_LENGTH_WORK_EXTENSION_TYPE:
+            case MAX_LENGTH_WORK_EXTENSION_TYPE_TC_288:
                 payload.setWorkPhoneExtension(FakerDataGenerator.getRandomNumericString(5));
                 break;
-            case WORK_PHONE_TYPE_PROVIDED_MAX_1_CHAR:
+            case WORK_PHONE_TYPE_PROVIDED_MAX_1_CHAR_TC_289:
                 payload.setWorkPhoneType(BUSINESS.getValue());
                 payload.setWorkPhoneNumber(FakerDataGenerator.generatePhoneNumber());
                 payload.setWorkPhoneExtension(null);
@@ -1454,6 +1454,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerCode("5911662");
                 payload.setPremisesCode("5886135");
                 payload.setEnrollmentState("PVER");
+                break;
 
             default:
                 payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
@@ -1599,7 +1600,7 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerCode(customerCode);
         payload.setPremisesCode(premisesCode);
         payload.setTransactionID(transactionID);
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(7));
         setTheFieldToEmptyForCommercialScenarios(payload);
         payload.setCustomerFirstName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerFirstName());
         payload.setCustomerLastName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerLastName());
