@@ -213,10 +213,43 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | WorkPhoneNumber                                   | errorCode | errorMessage                                                     |
-      | MIN_LENGTH_WORK_PHONE_NUMBER                      | 2000      | Invalid Request: Invalid Work Phone Number                       |
-      | ALPHANUMERIC_WORK_PHONE_NUMBER                    | 2000      | Invalid Request: Invalid Work Phone Number                       |
-      | NULL_WORK_PHONE_NUMBER_WITH_VALID_WORK_PHONE_TYPE | 10000     | The Work Phone Type must be a string with a maximum length of 1. |
+      | MIN_LENGTH_WORK_PHONE_NUMBER_TC_284                      | 2000      | Invalid Request: Invalid Work Phone Number                       |
+      | ALPHANUMERIC_WORK_PHONE_NUMBER_TC_285                    | 2000      | Invalid Request: Invalid Work Phone Number                       |
+      | NULL_WORK_PHONE_NUMBER_WITH_VALID_WORK_PHONE_TYPE_TC_286 | 2000     | Invalid Request: Missing conditional parameters-Work Phone Number|
 
+
+  @GetEligiblePlansAndOffersCommercialNegative @Phase1 @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                   | errorCode | errorMessage                                                     |
+      | NO_MATCHING_DATA_COMMERCIAL_TC_361              | 11116      |No match found. Please see the list of similar businesses found |
+|VALID_DATA_REENTERED_COMMERCIAL_TC_362           |0           |                                                                |
+|CREDIT_CHECK_BUSINESS_BIN_NOT_NULL_TC_262A       |0           |                                                                |
+
+
+  @GetEligiblePlansAndOffersFraudAlertInvalidSSN @Phase1  @NegativeFlow
+  Scenario Outline: Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
+    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                     | errorCode | errorMessage                                                          |
+      #| FRAUD_ALERT_INVALID_SSN_TC_351 | 11114      | Identification Verification Required. Ask customer to mail or fax photo ID, copy of ss card to: Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117|
+#|NO_MATCH_FOUND_IN_EXPERIAN_TC_353|11112      |CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN|
+#|NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354A   |0          |                                                                       |
+#|NO_MATCH_PLAN_CODE_B_CONTINUE_ENROLLMENT_TC_354   |0          |                                                                       |
+#|NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354B  |11114      |Identification Verification Required. Ask customer to mail or fax photo ID, copy of ss card to: Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117|
+#|DECEASED_OR_NON_ISSUED_CUSTOMER_TC_355             |11112      |CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN|
+    #|DECEASED_OR_NON_ISSUED_CONFIRM_CREDIT_CHECK_CUSTOMER_TC_355A|11115|SSN on deceased or non-issued list. Do not inform customer reason for denial, follow scripted Denial statement. DO NOT override denial.|
+      #|NO_MATCH_FOUND_IN_EXPERIAN_TC_356|11112      |CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN|
+#|NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_356A|11114      |Identification Verification Required. Ask customer to mail or fax photo ID, copy of ss card to: Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117|
+#|GET_ELIGIBLE_PLANSA_AND_OFFERS_FROZEN_ACCOUNT_357|11113        |Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.|
+#|ENROLLMENT_DENIED_DUE_TO_NO_PAYMENT_TC_358         |3000       |The customer's enrollment request is denied due to past payment history|
+#|ENROLLMENT_DENIED_AS_CREDIT_CHECK_NOT_AUTHORIZED_TC_360               |3000       |The customer's enrollment request is denied                           |
+|LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B        |2100       |WARNING: This customer does not meet the required credit criteria to participate in the Seasonal Savings Plan|
 
   @GetEligiblePlansAndOffersInvalidWorkPhoneTypeTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<WorkPhoneType>"
@@ -225,10 +258,10 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | WorkPhoneType                                     | errorCode | errorMessage                                                          |
-      | NULL_WORK_PHONE_TYPE_WITH_VALID_WORK_PHONE_NUMBER | 2000      | Invalid Request: Missing conditional parameters-Work Phone Type       |
-      | MAX_LENGTH_WORK_EXTENSION_TYPE                    | 10000     | The Work Phone Extension must be a string with a maximum length of 4. |
-      | WORK_PHONE_TYPE_PROVIDED_MAX_1_CHAR               | 10000     | The Work Phone Type must be a string with a maximum length of 1.      |
-      | INVALID_WORK_PHONE_TYPE_VALUE                     | 2000      | Invalid Request: Invalid Work Phone Type                              |
+      | NULL_WORK_PHONE_TYPE_WITH_VALID_WORK_PHONE_NUMBER_TC_287 | 2000      | Invalid Request: Missing conditional parameters-Work Phone Type       |
+      | MAX_LENGTH_WORK_EXTENSION_TYPE_TC_288                    | 10000     | The Work Phone Extension must be a string with a maximum length of 4. |
+      | WORK_PHONE_TYPE_PROVIDED_MAX_1_CHAR_TC_289               | 10000     | The Work Phone Type must be a string with a maximum length of 1.      |
+      | INVALID_WORK_PHONE_TYPE_VALUE_TC_290                     | 2000      | Invalid Request: Invalid Work Phone Type                              |
 
   @GetEligiblePlansAndOffersInvalidHomePhoneNumberTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<HomePhoneNumber>"
@@ -237,9 +270,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | HomePhoneNumber                                   | errorCode | errorMessage                                                      |
-      | MIN_LENGTH_HOME_PHONE_NUMBER                      | 2000      | Invalid Request: Invalid Home Phone Number                        |
-      | ALPHANUMERIC_HOME_PHONE_NUMBER                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
-      | NULL_HOME_PHONE_NUMBER_WITH_VALID_HOME_PHONE_TYPE | 2000      | Invalid Request: Missing conditional parameters-Home Phone Number |
+      #| HOME_PHONE_NUMBER_NOT_10_DIGIT_TC_291                      | 2000      | Invalid Request: Invalid Home Phone Number                        |
+      #| ALPHANUMERIC_HOME_PHONE_NUMBER_TC_292                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
+      | NULL_HOME_PHONE_NUMBER_WITH_VALID_HOME_PHONE_TYPE_TC_293 | 2000      | Invalid Request: Missing conditional parameters-Home Phone Number |
 
 
   @GetEligiblePlansAndOffersInvalidHomePhoneTypeTNON @Phase1  @NegativeFlow
@@ -251,7 +284,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | HomePhoneType                                         | errorCode | errorMessage                                                     |
       | NULL_HOME_PHONE_TYPE_WITH_VALID_HOME_PHONE_NUMBER_294 | 2000      | Invalid Request: Missing conditional parameters-Home Phone Type  |
       | HOME_PHONE_TYPE_PROVIDED_MAX_1_CHAR_296               | 10000     | The Home Phone Type must be a string with a maximum length of 1. |
-      | INVALID_HOME_PHONE_TYPE_VALUE_297                     | 2000      | Invalid Request: Invalid Work Phone Type                         |
+      | INVALID_HOME_PHONE_TYPE_VALUE_297                     | 2000      | Invalid Request: Invalid Home Phone Type                        |
 
   @GetEligiblePlansAndOffersInvalidAcnStatusIndicatorTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<AcnStatusIndicator>"
@@ -260,15 +293,18 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | AcnStatusIndicator                                                        | errorCode | errorMessage                                                          |
-      | EMPTY_ACN_STATUS_INDICATOR_WITH_TENANT_LANDLORD                           | 10000     | Invalid or missing ACN Status Indicator                           |
-      | INVALID_ACN_STATUS_INDICATOR_VALUE_NOT_PRESENT_IN_TABLE                   | 2000      | Invalid Request: Invalid ACN Status Indicator                         |
-      | MAX_LENGTH_ACN_STATUS_INDICATOR                                           | 10000     | The ACN Status Indicator must be a string with a maximum length of 4. |
-      | VALID_ACN_STATUS_INDICATOR_WITH_MAX_LENGTH_TENANT_LANDLORD                | 10000     | The Tenant/Landlord must be a string with a maximum length of 1.      |
-      | VALID_ACN_STATUS_INDICATOR_WITH_NULL_TENANT_LANDLORD                      | 10000     | Invalid or missing Tenant/Landlord Indicator                          |
-      | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE | 2000      | Invalid Request: Invalid ACN Status for user role                     |
-      | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE | 2000      | Invalid Request: Invalid ACN Status for user role                     |
-      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE  | 10000     | Invalid or missing ACN Status Indicator                               |
-      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE  | 10000     | Invalid or missing ACN Status Indicator                     |
+#      | EMPTY_ACN_STATUS_INDICATOR_WITH_TENANT_LANDLORD                           | 10000     | Invalid or missing ACN Status Indicator                           |
+   #   | INVALID_ACN_STATUS_INDICATOR_VALUE_NOT_PRESENT_IN_TABLE_TC_299                   | 2000      | Invalid Request: Invalid ACN Status Indicator                         |
+#      | MAX_LENGTH_ACN_STATUS_INDICATOR_TC_298                                           | 10000     | The ACN Status Indicator must be a string with a maximum length of 4. |
+      #| VALID_ACN_STATUS_INDICATOR_WITH_MAX_LENGTH_TENANT_LANDLORD_TC_301                | 10000     | The Tenant/Landlord must be a string with a maximum length of 1.      |
+#|INVALID_TENANT_LANDLORD_INDICATOR_TC_302                                   |2000       |Invalid Request: Invalid Tenant/Landlord Indicator                              |
+      #| VALID_ACN_STATUS_INDICATOR_WITH_NULL_TENANT_LANDLORD_TC_303                      | 10000     | Invalid or missing Tenant/Landlord Indicator                          |
+      | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE_TC_304 | 2000      | Invalid Request: Invalid ACN Status for user role                     |
+     | VALID_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE_TC_305 | 2000      | Invalid Request: Invalid ACN Status for user role                     |
+    |NULL_ACN_STATUS_INDICATOR_TC_300A                                                 |10000      |Invalid or missing ACN Status Indicator                                |
+          |NULL_ACN_STATUS_INDICATOR_TC_300B                                                 |10000      |Invalid or missing ACN Status Indicator                                |
+#      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE_TC_306  | 10000     | Invalid or missing ACN Status Indicator                               |
+#      | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE_TC_307  | 10000     | Invalid or missing ACN Status Indicator                     |
 
   @GetEligiblePlansAndOffersInvalidCustomerPEWCPreferencesTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CustomerPEWCPreferences>"
@@ -277,8 +313,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | CustomerPEWCPreferences                                   | errorCode | errorMessage                                                                                                                      |
-      | CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL | 10000     | The JSON value could not be converted to System.Boolean. Path: $.customerPEWCPreferences  LineNumber: 63  BytePositionInLine: 37. |
-      | CUSTOMER_PEWC_PREFRENCES_VALUE_TRUE_WITH_OTHER_PARAM_NULL | 2000      | Invalid Request: Missing conditional parameters-Customer PEWC Preference                                                          |
+      | CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL_TC_308 | 10000     |The JSON value could not be converted to System.Boolean. Path: $.customerPEWCPreferences [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 174.|
+      | CUSTOMER_PEWC_PREFRENCES_VALUE_TRUE_WITH_OTHER_PARAM_NULL_TC_309 | 2000      | Invalid Request: Missing conditional parameters-Customer PEWC Preference                                                          |
 
   @GetEligiblePlansAndOffersInvalidCreditCheckOptionTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<CreditCheckOption>"
@@ -287,9 +323,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | CreditCheckOption              | errorCode | errorMessage                                                          |
-      | EMPTY_CREDIT_CHECK_OPTION      | 10000     | Invalid or missing Credit Check Option                                |
-      | INVALID_CREDIT_CHECK_OPTION    | 2000      | Invalid Request: Invalid Credit Check Option                          |
-      | MAX_LENGTH_CREDIT_CHECK_OPTION | 10000     | The Credit Check Option must be a string with a maximum length of 32. |
+      | EMPTY_CREDIT_CHECK_OPTION_TC_312      | 10000     | Invalid or missing Credit Check Option                                |
+      | INVALID_CREDIT_CHECK_OPTION_TC_311    | 2000      | Invalid Request: Invalid Credit Check Option                          |
+      | MAX_LENGTH_CREDIT_CHECK_OPTION_TC_310 | 10000     | The Credit Check Option must be a string with a maximum length of 32. |
 
   @GetEligiblePlansAndOffersInitialCreditCheckCustomerCodeTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<InitialCreditCheckCustomerCode>"
@@ -300,9 +336,9 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | InitialCreditCheckCustomerCode                                    | errorCode | errorMessage                                                                                                                                              |
       | EMPTY_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITH_CREDIT_CHECK_OPTION_315 | 2000      | Invalid Request: Missing conditional parameters-Initial Credit Check Cust Code                                                                            |
       | MAX_LENGTH_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_313                     | 10000     | The Initial Credit Check Customer Code must be an integer with a maximum length of 9                                                                   |
-      | NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_314                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int32]. Path: $.initialCreditCheckCustomerCode  LineNumber: 65  BytePositionInLine: 47. |
+      | NONNUMERIC_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_314                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.initialCreditCheckCustomerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 304.|
       | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_NOT_PRESENT_IN_TABLE_316   | 2000      | Invalid or missing Initial Credit Check Customer Code                                                                                                                  |
-      | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317   | 10000      | Unable to locate a credit score within 3 months for the Customer Code provided - 5908691                                                                  |
+      | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317   | 2100      | Unable to locate a credit score within 3 months for the Customer Code provided - 5908691                                                                  |
 
 
   @GetEligiblePlansAndOffersInvalidTransactionTypeTNON @Phase1  @NegativeFlow
@@ -313,11 +349,11 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | testCondition                      | errorCode | errorMessage                                                     |
       |NULL_TANSACTION_TYPE_TC_183         |10000     | Missing Transaction Type                                         |
-      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
-      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | MAX_LENGTH_VALIDATION_TRANSACTION_TYPE_TC_184           | 10000     | The Transaction Type must be a string with a maximum length of 4 |
-      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
-      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+#      | EMPTY_TRANSACTION_TYPE               | 10000     | Missing Transaction Type                                         |
+#      | NUMERIC_TRANSACTION_TYPE             | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+#      | MAX_LENGTH_VALIDATION_TRANSACTION_TYPE_TC_184           | 10000     | The Transaction Type must be a string with a maximum length of 4 |
+#      | ALPHANUMERIC_TRANSACTION_TYPE        | 1000      | Invalid Request: Invalid Transaction Type                        |
+#      | WHITESPACE_CONTAINS_TRANSACTION_TYPE | 10000     | The Transaction Type must be a string with a maximum length of 4 |
   |INVALID_TRANSACTION_TYPE_TC_185                          |1000       |Invalid Request: Invalid Transaction Type                        |
 
   @GetEligiblePlansAndOffersInvalidCustomerTypeTNON @Phase1  @NegativeFlow
@@ -328,10 +364,10 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | testCondition             | errorCode | errorMessage                                                   |
 #      | EMPTY_CUSTOMER_TYPE      | 10000     | Invalid or missing Customer Type                              |
-#      | NULL_CUSTOMER_TYPE_TC_190     | 10000     | Invalid or missing Customer Type                              |
+      | NULL_CUSTOMER_TYPE_TC_190     | 10000     | Invalid or missing Customer Type                              |
 #      | MIN_LENGTH_CUSTOMER_TYPE | 10000     | The Customer Type must be a string with a maximum length of 2 |
 #      | SPL_CHAR_CUSTOMER_TYPE   | 10000     | The Customer Type must be a string with a maximum length of 2 |
-#      | MAX_LENGTH_CUSTOMER_TYPE_TC_191 | 10000     | The Customer Type must be a string with a maximum length of 2 |
+      | MAX_LENGTH_CUSTOMER_TYPE_TC_191 | 10000     | The Customer Type must be a string with a maximum length of 2 |
     |INVALID_VALUE_CUSTOMER_TYPE_TC_192|1000     | Invalid Request: Invalid Customer Type|
 
   @GetEligiblePlansAndOffersInvalidEnrollmentSourcesTNON @Phase1  @NegativeFlow
@@ -344,8 +380,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
 #      | EMPTY_ENROLLMENT_SOURCES      | 10000     | Invalid or missing Enrollment Source                                |
 #      | NUMERIC_ENROLLMENT_SOURCES    | 1000      | Invalid Request: Invalid Enrollment Source                          |
 #      | SPL_CHAR_ENROLLMENT_SOURCES   | 1000      | Invalid Request: Invalid Enrollment Source                          |
-     # | MAX_LENGTH_ENROLLMENT_SOURCES_TC_194 | 10000     | The Enrollment Source must be a string with a maximum length of 35. |
-   # |NULL_ENROLLMENT_SOURCES_TC_193 | 10000     | Invalid or missing Enrollment Source                                |
+      | MAX_LENGTH_ENROLLMENT_SOURCES_TC_194 | 10000     | The Enrollment Source must be a string with a maximum length of 35. |
+    |NULL_ENROLLMENT_SOURCES_TC_193 | 10000     | Invalid or missing Enrollment Source                                |
 |   INVALID_VALUE_ENROLLMENT_SOURCE_195|1000     | Invalid Request: Invalid Enrollment Source |
 
 
@@ -356,20 +392,20 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition             | errorCode | errorMessage                                                        |
-      #|   INVALID_LENGTH_MARKETING_PROMOTION_CODE_196|10000     |The Marketing Promotion Code must be a string with a maximum length of 45.|
-     # |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_197|2100     |Invalid promotion code|
+#      |   INVALID_LENGTH_MARKETING_PROMOTION_CODE_196|10000     |The Marketing Promotion Code must be a string with a maximum length of 45.|
+#      |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_197|2100     |Invalid promotion code|
 #|INVALID_MARKETING_PROMOTION_CODE_TC_198|1000     |Invalid Request: Invalid Promotion Code|
-        #|   INVALID_MARKETING_PROMOTION_CODE_FOR_RS_CUST_TYPE_TC_199|2100     |Promotion code is valid for Commercial Customers only|
-  #|INVALID_MARKETING_PROMOTION_CODE_FOR_NEW_CUSTOMERS_TC_200|2100|Promotion code is valid for Existing Customers only|
-    #|EXPIRED_MARKETING_PROMOTION_CODE_TC_201                  |2100|Promotion code is expired                        |
+#        |   INVALID_MARKETING_PROMOTION_CODE_FOR_RS_CUST_TYPE_TC_199|2100     |Promotion code is valid for Commercial Customers only|
+#  |INVALID_MARKETING_PROMOTION_CODE_FOR_NEW_CUSTOMERS_TC_200|2100|Promotion code is valid for Existing Customers only|
+#    |EXPIRED_MARKETING_PROMOTION_CODE_TC_201                  |2100|Promotion code is expired                        |
 #|   INVALID_MARKETING_PROMOTION_CODE_FOR_CM_CUST_TYPE_TC_202|2100     |Promotion code is valid for Residential Customers only|
- #|   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203|2100     |Promotion code is valid for Web only|
+# |   INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203|2100     |Promotion code is valid for Web only|
 #|INVALID_CUSTOMER_BUSINESS_NAME_LENGTH_TC_212|10000|The Customer Business Name must be a string with a maximum length of 60.|
 #|CUSTOMER_BUSINESS_NAME_NULL_TC_213|2000|Invalid Request: Missing conditional parameters-Customer Business Name|
 #|CUSTOMER_BUSINESS_NAME_COMM_CREDIT_CHECK_214|2000|Invalid Request: Missing conditional parameters-Customer Business Name|
 #|CREDIT_CHECK_BUSINESS_NAME_LENGTH_VALIDATION_TC_215|10000|The CreditCheck Business Name must be a string with a maximum length of 60.|
 #    |CUSTOMER_BUSINESS_NAME_NULL_TC_215A                |2000|Invalid Request: Missing conditional parameters-Customer Business Name|
-     # |INVALID_LENGTH_CUSTOMER_LAST_NAME_TC_216|10000     |The Customer Last Name must be a string with a maximum length of 60.|
+#      |INVALID_LENGTH_CUSTOMER_LAST_NAME_TC_216|10000     |The Customer Last Name must be a string with a maximum length of 60.|
 #|GENERATION_CODE_LENGTH_VALIDATION_TC_218|10000|The Generation Code must be a string with a maximum length of 3.|
 #|INVALID_GENERATION_CODE_TC_219|2000    |Invalid Request: Invalid Generation Code                             |
 #|CUSTOMER_MIDDLE_NAME_LENGTH_VALIDATION_TC_220|10000|The Customer Middle Name must be a string with a maximum length of 15.|
@@ -378,15 +414,15 @@ Feature: Verify GetEligiblePlansAndOffers Api
 #|SSN_INVALID_LENGTH_TC_223  |2000       |Invalid Request: Invalid SSN                                        |
 #|NON_NUMERIC_SSN_TC_224     |2000       |Invalid Request: Invalid SSN                                        |
 #|FEDERAL_TAX_ID_INVALID_LENGTH_TC_225|10000|Invalid Federal Tax ID                                           |
- #|NON_NUMERIC_FEDERAL_TAX_ID_TC_226|10000|Invalid Federal Tax ID                                           |
-    #|FEDERAL_TAX_ID_NULL_TC_227 |2000       |Invalid Request: Missing conditional parameters-Federal Tax ID      |
+# |NON_NUMERIC_FEDERAL_TAX_ID_TC_226|10000|Invalid Federal Tax ID                                           |
+#    |FEDERAL_TAX_ID_NULL_TC_227 |2000       |Invalid Request: Missing conditional parameters-Federal Tax ID      |
 #|FEDERAL_TAX_ID_MISSING_FOR_CREDIT_CHECK_COMM_TC_228|2000|Invalid Request: Missing conditional parameters-Federal Tax ID|
 #|EMAIL_ADDRESS_LENGTH_VALIDATION_TC_229|10000|The EmailAddress field is not a valid e-mail address.          |
 #|INVALID_EMAIL_FORMAT_TC_230|2000       |Invalid Request: Invalid Email address                              |
 #|AGLC_ACCOUNT_NUMBER_LENGTH_VALIDATION_TC_231|10000|The AGLC Account Number must be a numeric string with a maximum length of 20|
 #|AGLC_ACCOUNT_NUMBER_NON_NUMERIC_TC_232|10000|The AGLC Account Number must be a numeric string with a maximum length of 20|
 #|AGLC_SERVICE_LOCATION_ID_NULL_TC_233|10000|Missing AGLC Service Location ID     |
-  #|AGLC_SERVICE_LOCATION_ID_LENGTH_VALIDATION_TC_234|10000|The field AglcServiceLocationID must have a maximum length of 9.|
+#  |AGLC_SERVICE_LOCATION_ID_LENGTH_VALIDATION_TC_234|10000|The field AglcServiceLocationID must have a maximum length of 9.|
 #|NON_NUMERIC_AGLC_SERVICE_LOCATION_ID_TC_235|10000|The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.aglcServiceLocationID [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 474.|
 #|AUTHORIZED_BY_LENGTH_VALIDATION_TC_236|10000|The Authorized By must be a string with a maximum length of 90. |
 #|AUTHORIZED_BY_NULL_TC_237  |2000       |Invalid Request: Missing conditional parameters-Authorized By        |
@@ -443,7 +479,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
 #|BILLING_PO_BOX_LENGTH_VALIDATION_TC_276|10000|The Billing PO Box must be a string with a maximum length of 10.|
 #|NULL_BILLING_PO_BOX_TC_276A|2000       |Invalid Request: Invalid Billing PO Box Number                      |
 #|BILLING_ADDRESS_LINE_LENGTH_VALIDATION_TC_277|10000|The Billing Address Line 2 must be a string with a maximum length of 30.|
-      #|BILLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_RURAL_TC_277A|10000|The Billing Address Line 2 must be a string with a maximum length of 30.|
+#      |BILLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_RURAL_TC_277A|10000|The Billing Address Line 2 must be a string with a maximum length of 30.|
 #|BILLLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_POBOX_TC_277B|10000|The Billing Address Line 2 must be a string with a maximum length of 30.|
 #|BILLING_CITY_LENGTH_VALIDATION_TC_278                    |10000|The Billing City must be a string with a maximum length of 20.          |
 #|BILLING_CITY_LENGTH_VALIDATION_RURAL_TC_278A|10000|The Billing City must be a string with a maximum length of 20.          |
@@ -455,15 +491,20 @@ Feature: Verify GetEligiblePlansAndOffers Api
 #|INVALID_BILLING_STATE_CODE_RURAL_TC_280A|2000|Invalid Request: Invalid Billing State Code|
 #|INVALID_BILLING_STATE_CODE_POBOX_TC_280B|2000|Invalid Request: Invalid Billing State Code|
 #|INVALID_BILLING_ZIP_CODE_TC_281_1         |2000|Invalid Request: Invalid Billing Zip Code  |
-      #|INVALID_BILLING_ZIP_CODE_TC_281_2         |2000|Invalid Request: Invalid Billing Zip Code  |
+#      |INVALID_BILLING_ZIP_CODE_TC_281_2         |2000|Invalid Request: Invalid Billing Zip Code  |
 #|INVALID_BILLING_ZIP_CODE_RURAL_TC_281A_2|2000|Invalid Request: Invalid Billing Zip Code  |
 #|INVALID_BILLING_ZIP_CODE_RURAL_TC_281A_1|2000|Invalid Request: Invalid Billing Zip Code  |
 #|INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_1|2000|Invalid Request: Invalid Billing Zip Code  |
 #      |INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_2|2000|Invalid Request: Invalid Billing Zip Code  |
 #|NULL_BILLING_ZIP_CODE_TC_281C|2000     |Invalid Request: Missing conditional parameters-Billing Zip Code                      |
-      #|NULL_BILLING_ZIP_CODE_RURAL_TC_281D|2000     |Invalid Request: Missing conditional parameters-Billing Zip Code                      |
+#      |NULL_BILLING_ZIP_CODE_RURAL_TC_281D|2000     |Invalid Request: Missing conditional parameters-Billing Zip Code                      |
 #|NULL_BILLING_ZIP_CODE_POBOX_TC_281E|2000     |Invalid Request: Missing conditional parameters-Billing Zip Code                      |
-|BILLING_COUNTY_CODE_LENGTH_VALIDATION_TC_282|10000|The Billing County Code must be a string with a maximum length of 5.|
+#|BILLING_COUNTY_CODE_LENGTH_VALIDATION_TC_282|10000|The Billing County Code must be a string with a maximum length of 5.|
+#|BILLING_COUNTY_CODE_RURAL_LENGTH_VALIDATION_TC_282A|10000|The Billing County Code must be a string with a maximum length of 5.|
+#|BILLING_COUNTY_CODE_POBOX_LENGTH_VALIDATION_TC_282B|10000|The Billing County Code must be a string with a maximum length of 5.|
+#|INVALID_BILLING_COUNTY_CODE_TC_283|2000|Invalid Request: Invalid Billing County Code                         |
+#|INVALID_BILLING_COUNTY_CODE_RURAL_TC_283A|2000|Invalid Request: Invalid Billing County Code                         |
+|INVALID_BILLING_POBOX_COUNTY_CODE_TC_283B|2000|Invalid Request: Invalid Billing County Code                         |
 
   @GetEligiblePlansAndOffersInvalidCallerIdAndCallerIdNotAvailableOptionCombinationTNON @Phase1 @NegativeFlow
   Scenario Outline: Verify response code for invalid "<testCondition>"
@@ -472,13 +513,13 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition             | errorCode | errorMessage                                                        |
-      #|   INVALID_LENGTH_CALLER_ID_TC_204|10000     |The Caller ID must be a string with a maximum length of 10.|
-     # |   NON_NUMERIC_CALLER_ID_TC_205|2000     |Invalid Request: Invalid Caller ID|
-  #|CALLER_ID_MISSING_TC_206   |2000       |Invalid Request: Missing conditional parameters-Caller ID            |
-#|INVALID_VALUE_FOR_CALLER_ID_NOT_AVAILABLE_TC_207|10000|The JSON value could not be converted to System.Boolean. Path: $.callerIDNotAvailable [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 444.|
- #|CALLER_ID_NOT_AVAILABLE_TRUE_BUT_VALUE_IS_PROVIDED_TC_208|2000|Invalid Request: Invalid Caller ID Not Available|
-      #|ADDITIONAL_ENROLLMENT_DATA_LENGTH_VALIDATION_TC_209|10000|The Additional Enrollment Data must be a string with a maximum length of 30.|
-#|SSP_INDICATOR_NOT_PROVIDED_TC_210|10000|Seasonal Saving Program Indicator Not Provided|
+      |   INVALID_LENGTH_CALLER_ID_TC_204|10000     |The Caller ID must be a string with a maximum length of 10.|
+      |   NON_NUMERIC_CALLER_ID_TC_205|2000     |Invalid Request: Invalid Caller ID|
+  |CALLER_ID_MISSING_TC_206   |2000       |Invalid Request: Missing conditional parameters-Caller ID            |
+|INVALID_VALUE_FOR_CALLER_ID_NOT_AVAILABLE_TC_207|10000|The JSON value could not be converted to System.Boolean. Path: $.callerIDNotAvailable [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 444.|
+ |CALLER_ID_NOT_AVAILABLE_TRUE_BUT_VALUE_IS_PROVIDED_TC_208|2000|Invalid Request: Invalid Caller ID Not Available|
+      |ADDITIONAL_ENROLLMENT_DATA_LENGTH_VALIDATION_TC_209|10000|The Additional Enrollment Data must be a string with a maximum length of 30.|
+|SSP_INDICATOR_NOT_PROVIDED_TC_210|10000|Seasonal Saving Program Indicator Not Provided|
 |INVALID_SSP_INDICATOR_VALUE_TC_211|10000|The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.seasonalSavingsProgramIndicator [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 711.|
 
   @GetEligiblePlansAndOffersInvalidCustomerLastNameTNON @Phase1  @NegativeFlow
