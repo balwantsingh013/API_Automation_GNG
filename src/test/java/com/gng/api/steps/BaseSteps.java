@@ -219,13 +219,16 @@ public class BaseSteps {
     private void verifyErrorCodeAndMessage(int errorCode, String errorMessage) {
         Response response = testContext.getResponse();
 
+        // Replace placeholder with actual pipe character
+        String normalizedErrorMessage = errorMessage.replace("[PIPE]", "|");
+
         assertThat("Incorrect ErrorCode returned",
                 response.jsonPath().getInt("errorCode"),
                 equalTo(errorCode));
 
         assertThat("Incorrect ErrorMessage returned",
                 response.jsonPath().getString("errorMessage"),
-                equalTo(errorMessage));
+                equalTo(normalizedErrorMessage));
     }
 
     private void verifyNumberOfMatches(int expectedMatches) {

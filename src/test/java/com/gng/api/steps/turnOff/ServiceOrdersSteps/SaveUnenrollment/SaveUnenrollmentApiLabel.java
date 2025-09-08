@@ -6,9 +6,10 @@ public enum SaveUnenrollmentApiLabel {
     save_unenrollment_mandatory,
 
     // Request ID Types
-    EMPTY_REQUEST_ID,
-    DUPLICATE_REQUEST_ID,
-    LONG_REQUEST_ID,
+    EMPTY_REQUEST_ID_106,
+    DUPLICATE_REQUEST_ID_108,
+    LONG_REQUEST_ID_107,
+    NULL_REQUEST_ID_106_1,
 
     //POSITIVE TEST CONDITIONS
     SEASONAL_OR_HEAT_ONLY_TC207,

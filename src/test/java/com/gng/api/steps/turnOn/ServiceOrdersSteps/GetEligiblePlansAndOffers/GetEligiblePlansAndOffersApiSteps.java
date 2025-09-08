@@ -55,75 +55,9 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.validateInvalidEnrollmentStateCasesTC168_182(get_eligible_plans_and_offers_mandatory, valueOf(enrollmentState));
     }
 
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with null Authorised Type")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_null_Authorised_Type( ) {
-        getEligiblePlansAndOffersApiPage.validateInvalidTestConditionTC237(get_eligible_plans_and_offers);
-    }
-
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} code Type")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_referral_code_Type(String referralCode) {
         getEligiblePlansAndOffersApiPage.validateInvalidReferralCode(get_eligible_plans_and_offers, valueOf(referralCode));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string}  Type")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_Type(String premisesStreetNumber) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetNumberTC242(get_eligible_plans_and_offers, valueOf(premisesStreetNumber));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 243")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_Direction_test_case_243(String premisesStreetPreDirection) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetPreDirectionTC243(get_eligible_plans_and_offers, valueOf(premisesStreetPreDirection));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 244_245")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_name_test_case_244_245(String premisesStreetName) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetNameTC244_245(get_eligible_plans_and_offers, valueOf(premisesStreetName));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 246_246a")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_suffix_test_case_246_246a(String premisesStreetSuffix) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetSuffixTC246_246a(get_eligible_plans_and_offers, valueOf(premisesStreetSuffix));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 247_247a")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_street_post_Direction_test_case_247_247a(String premisesStreetPostDirection) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStreetPostDirectionTC247_247a(get_eligible_plans_and_offers, valueOf(premisesStreetPostDirection));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 248_248a")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_unit_type_test_case_248_248a(String premisesUnitType) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitTypeTC248_248a(get_eligible_plans_and_offers, valueOf(premisesUnitType));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 249")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_unit_number_test_case_249(String premisesUnitNumber) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitNumberTC249(get_eligible_plans_and_offers, valueOf(premisesUnitNumber));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with {string} test cases 250_251")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_invalid_premises_city_test_case_250_251(String premisesCity) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesUnitNumberTC250_251(get_eligible_plans_and_offers, valueOf(premisesCity));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} Statecode 252_253")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_state_code_252_253(String premisesStateCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesStateCodeCases252_253(get_eligible_plans_and_offers, valueOf(premisesStateCode));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} Zipcode254_255c")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_zip_code_254_255c(String premisesZipCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesZipCodeCases254_255C(get_eligible_plans_and_offers, valueOf(premisesZipCode));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with premises {string} Countycode256_257")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_premises_county_code_256_257(String premisesCountyCode) {
-        getEligiblePlansAndOffersApiPage.validateInvalidPremisesCountyCodeCases256_257(get_eligible_plans_and_offers, valueOf(premisesCountyCode));
-    }
-
-    @When("a request is made to the GetEligiblePlansAndOffers Api with separateBilling {string} Address258_283b")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_with_separateBilling_address_258_283b(String separateBillingAddress) {
-        getEligiblePlansAndOffersApiPage.validateInvalidSeparateBillingAddressCases258_283b(get_eligible_plans_and_offers, valueOf(separateBillingAddress));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api with workPhone {string} Number284_286")

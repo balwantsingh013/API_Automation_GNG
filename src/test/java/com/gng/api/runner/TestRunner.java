@@ -80,8 +80,8 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
         // Determine execution mode
         boolean shouldRunParallel = !"none".equalsIgnoreCase(parallelMode) &&
-                                    !threadCount.equals("1") &&
-                                    Integer.parseInt(threadCount) > 1;
+                !threadCount.equals("1") &&
+                Integer.parseInt(threadCount) > 1;
 
         if (shouldRunParallel) {
             configureParallelExecution(parallelMode, threadCount, dataProviderThreadCount, parallelCount);

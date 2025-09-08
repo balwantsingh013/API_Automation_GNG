@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class GetReasonsForLeavingRequest {
     private String requestID;
     private String loginID;
-    private boolean etcExists;
+    private Object etcExists;
     private String transactionType;
 }
