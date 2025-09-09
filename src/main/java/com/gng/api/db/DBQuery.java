@@ -2557,6 +2557,12 @@ public final class DBQuery {
             WHERE a.UBRBLEX_CUST_CODE = '<customerCode>'
             """;
 
+    public static final String GET_LATEST_UZRRCOT = """
+             SELECT * FROM UZRRCOT
+             ORDER BY UZRRCOT_ACTIVITY_DATE DESC
+             FETCH FIRST 1 ROWS ONLY
+            """;
+
     private DBQuery() {
     }
 

@@ -128,7 +128,8 @@ public class GlobalEnums {
     public enum TransactionType {
         TURN_ON("TNON"),
         TURN_OFF("TOFF"),
-        MKSW("MKSW");
+        MKSW("MKSW"),
+        INVALID("TURN");
 
         private final String value;
 

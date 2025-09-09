@@ -19,9 +19,9 @@ public class SearchAccountsApiPage extends BasePage {
         this.helper = new SearchAccountsHelper(testContext);
     }
 
-    public void validateInvalidRequestIDCasesTC42_TC44(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel requestID) {
+    public void validateInvalidRequestIDCases(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel requestID) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setRequestIDBasedOnTypeTCTC42_TC44(payload, requestID);
+        helper.setRequestIDBasedOnTypeTestCondition(payload, requestID);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
@@ -179,189 +179,31 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateInvalidPremisesStateCodeFormatCasesTC70(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
+    public void validateInvalidPremisesStateCodeFormatCasesTC70(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode, String invalidStateCode) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setPremisesStateCodeBasedOnTypeTC70(payload, premisesStateCode);
+        helper.setPremisesStateCodeBasedOnTypeTC70(payload, premisesStateCode, invalidStateCode);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
-    public void validateInvalidPremisesZipCodeFormatCasesTC71(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
+    public void validateInvalidPremisesZipCodeFormatCasesTC71(SearchAccountsApiLabel apiLabel, String invalidPremiseZipCode, SearchAccountsApiLabel testCondition) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setPremisesZipCodeBasedOnTypeTC71(payload, premisesZipCode);
+        helper.setPremisesZipCodeBasedOnTypeTC71(payload, invalidPremiseZipCode, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
-    public void validateMissingSearchFieldsCasesTC72(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel missingSearchField) {
+    public void validateMissingSearchFieldsCases(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition) {
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingSearchFieldsBasedOnTypeTC72(payload, missingSearchField);
+        helper.setMissingSearchFieldsBasedOnType(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
         testContext.setResponse(response);
     }
 
-    public void validateInvalidCustomerCodeCasesTC73(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerCodeBasedOnTypeTC73(payload, customerCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
 
-    public void validateInvalidPremisesCodeCasesTC74(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerFirstName) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setPremisesCodeBasedOnTypeTC74(payload, customerFirstName);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateInvalidCustomerLastNameCasesTC75(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel customerLastName) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setCustomerLastNameBasedOnTypeTC75(payload, customerLastName);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateInvalidPremisesZipCodeCasesTC76(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setPremisesZipCodeBasedOnTypeTC76(payload, premisesZipCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateInvalidSSNAndFederalTaxIDCasesTC77(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel federalTaxID) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setSSNAndFederalTaxIDBasedOnTypeTC77(payload, federalTaxID);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateInvalidPremisesStreetNameCasesTC78_TC92(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetName) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setPremisesStreetNameBasedOnTypeTC78_TC92(payload, premisesStreetName);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingZipCityAndStateAddressFieldsCasesTC93(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingZipCityAndStateAddressFieldsBasedOnTypeTC93(payload, premisesCity);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingZipStreetNameAndStateAddressFieldsCasesTC94(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingZipStreetNameAndStateAddressFieldsBasedOnTypeTC94(payload, premisesZipCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingZipStreetNameAndCityAddressFieldsCasesTC95(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingZipStreetNameAndCityAddressFieldsBasedOnTypeTC95(payload, premisesZipCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStreetNameStateAndCityAddressFieldsCasesTC96(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStreetNameStateAndCityAddressFieldsBasedOnTypeTC96(payload, premisesZipCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStateAndZipCodeAddressFieldsCasesTC97(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStateAndZipCodeAddressFieldsBasedOnTypeTC97(payload, premisesStateCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingCityAndZipCodeAddressFieldsCasesTC98(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingCityAndZipCodeAddressFieldsBasedOnTypeTC98(payload, premisesStateCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStateAndCityAddressFieldsCasesTC99(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStateAndCityAddressFieldsBasedOnTypeTC99(payload, premisesStateCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStreetNameAndZipAddressFieldsCasesTC100(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStreetNameAndZipAddressFieldsBasedOnTypeTC100(payload, premisesZipCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStreetNameAndStateAddressFieldsCasesTC101(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStreetNameAndStateAddressFieldsBasedOnTypeTC101(payload, premisesStateCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStreetNameAndCityAddressFieldsCasesTC102(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStreetNameAndCityAddressFieldsBasedOnTypeTC102(payload, premisesCity);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingZipAddressFieldsCasesTC103(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesZipCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingZipAddressFieldsBasedOnTypeTC103(payload, premisesZipCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingCityAddressFieldsCasesTC104(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesCity) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingCityAddressFieldsBasedOnTypeTC104(payload, premisesCity);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStateCodeAddressFieldsCasesTC105(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStateCode) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStateCodeAddressFieldsBasedOnTypeTC105(payload, premisesStateCode);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
-
-    public void validateMissingStreetNameAddressFieldsCasesTC106(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel premisesStreetName) {
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setMissingStreetNameAddressFieldsBasedOnTypeTC106(payload, premisesStreetName);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        testContext.setResponse(response);
-    }
 
     public void validateAccountNumberSearchWithInvalidCustomerCodePremiseCodeTC107(SearchAccountsApiLabel apiLabel, String customerCode, String premisesCode) {
         helper.validateCustomerCodeAndPremisesCodeInDB(customerCode,premisesCode);
