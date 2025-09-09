@@ -734,6 +734,12 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getLatestUZRRCOTRecord() {
+        String query = DBQuery.GET_LATEST_UZRRCOT;
+        logQueryInAllure("Get latest UZRRCOT record", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public int expirePrepayQuote(String customerCode) {
         String query = DBQuery.UPDATE_PRE_PAY_QUOTE
                 .replace("<customerCode>", customerCode);

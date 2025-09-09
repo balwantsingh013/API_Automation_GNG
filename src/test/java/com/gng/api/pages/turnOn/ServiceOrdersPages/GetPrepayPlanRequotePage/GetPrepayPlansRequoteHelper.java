@@ -9,6 +9,7 @@ import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
@@ -18,9 +19,11 @@ import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRe
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.BaseSteps;
+import com.gng.api.steps.turnOn.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetPrepayPlanRequote.GetPrepayPlansRequoteApiLabel;
 import com.gng.api.util.CommonUtil;
+import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
@@ -37,9 +40,11 @@ import static org.testng.AssertJUnit.assertTrue;
 public class GetPrepayPlansRequoteHelper {
     private final TestContext testContext;
     private String transactionId;
+    public static final String USERNAME = "autotester";
 
     public GetPrepayPlansRequoteHelper(TestContext testContext) {
         this.testContext = testContext;
+
     }
 
     GetPrepayPlansRequoteRequest preparePayload(GetPrepayPlansRequoteApiLabel apiLabel) {
@@ -161,4 +166,87 @@ public class GetPrepayPlansRequoteHelper {
         return s == null ? null : s.trim();
     }
 
+    public void setRequestIDBasedOnTestCondition(GetPrepayPlansRequoteRequest payload, GetPrepayPlansRequoteApiLabel testCondition) {
+        payload.setTransactionType("TNON");
+        payload.setLoginID(USERNAME);
+        switch (testCondition) {
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_456:
+                payload.setRequestID("3BC00A0397B14F29A313280EE0110941");
+                //payload.setRequestID(testContext.getRequestId());
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_457:
+                payload.setRequestID(null);
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_458:
+                payload.setRequestID(FakerDataGenerator.getRandomNumericString(35));
+                break;
+            default:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+        }
+    }
+
+    public void setLoginIDBasedOnTestCondition(GetPrepayPlansRequoteRequest payload, GetPrepayPlansRequoteApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType("TNON");
+        switch (testCondition) {
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_459:
+                payload.setLoginID("");
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_460:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID(FakerDataGenerator.getRandomNumericString(35));
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_461:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_462:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID("dummy");
+                break;
+            default:
+                payload.setLoginID(FakerDataGenerator.generateLowerCaseString(10));
+        }
+    }
+
+    public void setNegativeRequestParamsBasedOnTestCondition(GetPrepayPlansRequoteRequest payload, GetPrepayPlansRequoteApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
+        switch (testCondition) {
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_460:
+                payload.setLoginID(FakerDataGenerator.getRandomNumericString(35));
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_461:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_462:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+                payload.setLoginID("dummy");
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_463:
+                payload.setTransactionID(null);
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_464:
+                payload.setTransactionID("");
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_465:
+                payload.setTransactionID("789");
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_466:
+                payload.setTransactionType("");
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_467:
+                payload.setTransactionType(FakerDataGenerator.generateString(6));
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_468:
+                payload.setTransactionType(GlobalEnums.TransactionType.INVALID.getValue());
+                break;
+            case GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_469:
+                setRequestParams(payload);
+                break;
+            default:
+                payload.setLoginID(FakerDataGenerator.generateLowerCaseString(10));
+        }
+    }
 }

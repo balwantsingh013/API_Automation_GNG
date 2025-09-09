@@ -40,6 +40,16 @@ public class BaseSteps {
         verifyErrorCodeAndMessage(errorCode, errorMessage);
     }
 
+    @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid State code {string}")
+    public void responseShouldHaveErrorCodeAndErrorMessageWithInvalidStateCode(int errorCode, String errorMessage, String invalidStateCode) {
+        verifyErrorCodeAndMessage(errorCode, errorMessage + " " + invalidStateCode);
+    }
+
+    @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid premise zip code {string}")
+    public void responseShouldHaveErrorCodeAndErrorMessageWithInvalidPremiseZipCode(int errorCode, String errorMessage, String invalidPremiseZipCode) {
+        verifyErrorCodeAndMessage(errorCode, errorMessage + " " + invalidPremiseZipCode);
+    }
+
     @And("response should return numberOfMatches as {int}")
     public void responseShouldReturnNumberOfMatchesAs(int numberOfMatches) {
         verifyNumberOfMatches(numberOfMatches);

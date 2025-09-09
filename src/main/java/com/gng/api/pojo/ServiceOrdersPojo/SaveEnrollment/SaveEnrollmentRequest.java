@@ -26,7 +26,7 @@ public class SaveEnrollmentRequest  {
     private Object estimatedBudgetAmount;
     private String customerRequestedServiceDate;
     private String seasonalSavingsProgramResult;
-    private boolean splitConnectionFeeIndicator;
+    private Boolean splitConnectionFeeIndicator;
     private String aglcAccountNumber;
     private String aglcServiceOrderNumber;
     private String requestedTurnOnDate;

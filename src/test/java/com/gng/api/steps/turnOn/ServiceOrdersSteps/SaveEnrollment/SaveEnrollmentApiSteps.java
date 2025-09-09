@@ -30,45 +30,74 @@ public class SaveEnrollmentApiSteps {
     {
         saveEnrollmentApiPage.validateInvalidRequestIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(requestID));
     }
-    @When("a request is made to the SaveEnrollment Api with  customer {string} code")
-    public void a_request_is_made_to_the_SaveEnrollment_with_customer(String customerCODE)
+    @When("a request is made to the SaveEnrollment Api with invalid customer code for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_with_customer(String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidCustomerCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(customerCODE));
+        saveEnrollmentApiPage.validateInvalidCustomerCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
-    @When("a request is made to the SaveEnrollment Api with  premises {string} code")
-    public void  a_request_is_made_to_the_SaveEnrollment_with_premises (String premisesCode)
+    @When("a request is made to the SaveEnrollment Api with an invalid premises code for {string} condition")
+    public void  a_request_is_made_to_the_SaveEnrollment_with_premises (String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidPremisesCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(premisesCode));
+        saveEnrollmentApiPage.validateInvalidPremisesCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
-    @When("a request is made to the SaveEnrollment Api with  transaction {string} ID")
-    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction (String transactionID)
+    @When("a request is made to the SaveEnrollment Api with invalid transactionID for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction (String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidTransactionIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(transactionID));
+        saveEnrollmentApiPage.validateInvalidTransactionIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
-    @When("a request is made to the SaveEnrollment Api with  transaction {string} Type")
-    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction_type (String transactionType)
+    @When("a request is made to the SaveEnrollment Api with invalid transaction type for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_transaction_type (String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidTransactionTypeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(transactionType));
+        saveEnrollmentApiPage.validateInvalidTransactionTypeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
-    @When("a request is made to the SaveEnrollment Api with  plan {string} Code")
-    public void a_request_is_made_to_the_SaveEnrollment_Api_with_plan_code (String planCode)
+    @When("a request is made to the SaveEnrollment Api with an invalid planCode for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_plan_code (String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidPlanCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(planCode));
+        saveEnrollmentApiPage.validateInvalidPlanCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
+    @When("a request is made to the SaveEnrollment Api with an invalid promotionCode for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_invalid_promotion_code (String testCondition)
+    {
+        saveEnrollmentApiPage.validateInvalidPromotionCodeCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
     @When("a request is made to the SaveEnrollment Api with login {string} ID")
     public void a_request_is_made_to_the_SaveEnrollment_Api_with_login_ID (String loginID)
     {
         saveEnrollmentApiPage.validateInvalidLoginIDCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(loginID));
     }
-    @When("a request is made to the SaveEnrollment Api with enrollment {string} Status")
-    public void a_request_is_made_to_the_SaveEnrollment_Api_with_enrollment_status (String enrollmentStatus)
+    @When("a request is made to the SaveEnrollment Api with an invalid enrollmentStatus for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_enrollment_status (String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidEnrollmentStatusCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(enrollmentStatus));
+        saveEnrollmentApiPage.validateInvalidEnrollmentStatusCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
-    @When("a request is made to the SaveEnrollment Api with billing {string} Plan")
-    public void a_request_is_made_to_the_SaveEnrollment_Api_with_billing_plan (String billingPlan)
+    @When("a request is made to the SaveEnrollment Api with an invalid paymentConfirmation number for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_invalid_paymentConfirmation_number (String testCondition)
     {
-        saveEnrollmentApiPage.validateInvalidBillingPlanCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(billingPlan));
+        saveEnrollmentApiPage.validateInvalidPaymentConfirmationNumberCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+    @When("a request is made to the SaveEnrollment Api with an invalid billing plan for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_billing_plan (String testCondition)
+    {
+        saveEnrollmentApiPage.validateInvalidBillingPlanCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the SaveEnrollment Api with an invalid estimated budget amount for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_invalid_estimated_budget_amount (String testCondition)
+    {
+        saveEnrollmentApiPage.validateInvalidEstimatedBudgetAmountCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the SaveEnrollment Api with an invalid service date for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_invalid_service_date (String testCondition)
+    {
+        saveEnrollmentApiPage.validateInvalidServiceDateCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the SaveEnrollment Api with invalid parameters for {string} condition")
+    public void a_request_is_made_to_the_SaveEnrollment_Api_with_invalid_parameters (String testCondition)
+    {
+        saveEnrollmentApiPage.validateInvalidParametersCases(save_enrollment_mandatory, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the Save Enrollment API for the {string} with {string} and {string}")

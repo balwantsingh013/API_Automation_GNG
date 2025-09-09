@@ -1956,7 +1956,8 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_437:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444:
-            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445:
+            case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445,
+                 SAVE_ENROLLMENT_INVALID_SPLIT_FEE_VALUE_TC417a:
                 customerData = allRowsOfCustomerData.get(31);
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
@@ -1975,7 +1976,16 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_502:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_503:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_505,
-                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507:
+                 GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_507,
+                 SAVE_ENROLLMENT_INVALID_VALUE_BILLING_PLAN_PREPAY_TC406a,
+                 SAVE_ENROLLMENT_INVALID_SSP_EMPTY_TC412,
+                 SAVE_ENROLLMENT_INVALID_SSP_RESULT_VALUE_TC414,
+                 SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_EMPTY_TC415,
+                 SAVE_ENROLLMENT_INVALID_SSP_SPLIT_FEE_VALUE_TC416,
+                 SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_EMPTY_TC418,
+                 SAVE_ENROLLMENT_INVALID_AGLC_ACCOUNT_MAX_LENGTH_TC419,
+                 SAVE_ENROLLMENT_INVALID_AGLC_SERVICE_ORDER_EMPTY_TC420,
+                 SAVE_ENROLLMENT_INVALID_SSP_PC_VALUE_TC422b:
                 customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 getCustomerAndPremiseDetails(payload, customerData);
                 payload.setSeasonalSavingsProgramIndicator(true);
