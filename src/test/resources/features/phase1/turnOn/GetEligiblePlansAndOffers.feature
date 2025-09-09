@@ -137,7 +137,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
   @GetEligiblePlansAndOffersInvalidTransactionId @Phase1 @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
-    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     And response should have ErrorCode 0 and ErrorMessage ""
     And a request is made to get Marketer Reference Data
     And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
@@ -219,7 +219,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
 
   @GetEligiblePlansAndOffersCommercialNegative @Phase1 @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
-    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:

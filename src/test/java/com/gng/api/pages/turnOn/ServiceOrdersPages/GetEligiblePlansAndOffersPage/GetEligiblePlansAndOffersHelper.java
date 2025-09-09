@@ -118,26 +118,15 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public void setCommercialPayloadForNegativeTCs(GetEligiblePlansAndOffersRequest payload){
+    public void setCommercialPayloadForNegativeTCs(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition){
         setTheFieldToEmptyForCommercialScenarios(payload);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(TURN_ON.getValue());
         payload.setCustomerType(COMMERCIAL.getValue());
         payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
-        ExcelReader excelReader;
-        try {
-            excelReader = new ExcelReader(EXPERIAN_DATA);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        List<Map<String, String>> allRows = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
-        Map<String, String> data = null;
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setCustomerType(COMMERCIAL.getValue());
-        data = allRows.get(4399);
-        parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-        populateCommonFields(payload, data);
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(EXPERIAN_DATA, EXPERIAN_SHEET_NAME, testCondition);
+        parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
+        populateCommonFields(payload, customerData);
     }
     public void setEnrollmentSourcesBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel enrollmentSources) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
@@ -181,21 +170,21 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setMarketingPromotionCode(EXPIRED_MARKETING_PROMOTION_CODE.getValue());
                 break;
             case INVALID_MARKETING_PROMOTION_CODE_FOR_CM_CUST_TYPE_TC_202:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setEnrollmentSource(FAX.getValue());
                 payload.setMarketingPromotionCode(PROMOTION_CODE_RESIDENTIAL.getValue());
                 payload.setAuthorizedBy(FakerDataGenerator.generateUpperCaseString(2));
                 break;
             case FEDERAL_TAX_ID_INVALID_LENGTH_TC_225:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(10));
                 break;
             case NON_NUMERIC_FEDERAL_TAX_ID_TC_226:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setFederalTaxID(FakerDataGenerator.generateString(9));
                 break;
             case FEDERAL_TAX_ID_NULL_TC_227:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setFederalTaxID(null);
                 break;
             case FEDERAL_TAX_ID_MISSING_FOR_CREDIT_CHECK_COMM_TC_228:
@@ -216,15 +205,15 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAglcAccountNumber(FakerDataGenerator.generateString(8));
                 break;
             case INVALID_CUSTOMER_BUSINESS_NAME_LENGTH_TC_212:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setCustomerBusinessName(FakerDataGenerator.generateString(61));
                 break;
             case AUTHORIZED_BY_LENGTH_VALIDATION_TC_236:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setAuthorizedBy(FakerDataGenerator.generateString(91));
                 break;
             case AUTHORIZED_BY_NULL_TC_237:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setAuthorizedBy(null);
                 break;
             case REFERRAL_CODE_LENGTH_VALIDATION_TC_238:
@@ -652,7 +641,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesStateCode(INVALID_PREMISE_STATE_CODE.getValue());
                 break;
             case CUSTOMER_BUSINESS_NAME_NULL_TC_213:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setCustomerBusinessName(null);
                 break;
             case CUSTOMER_BUSINESS_NAME_COMM_CREDIT_CHECK_214:
@@ -677,7 +666,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerFirstName(FakerDataGenerator.generateString(16));
                 break;
             case CUSTOMER_BUSINESS_NAME_NULL_TC_215A:
-                setCommercialPayloadForNegativeTCs(payload);
+                setCommercialPayloadForNegativeTCs(payload, enrollmentSources);
                 payload.setCreditCheckBusinessName(FakerDataGenerator.generateString(15));
                 payload.setCustomerBusinessName(null);
                 break;
@@ -910,118 +899,76 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setTransactionType(TURN_ON.getValue());
         payload.setCustomerType(COMMERCIAL.getValue());
         payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(9));
-        ExcelReader excelReader;
-        try {
-            excelReader = new ExcelReader(EXPERIAN_DATA);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        List<Map<String, String>> allRows = excelReader.getSheetData(EXPERIAN_SHEET_NAME);
-        Map<String, String> data = null;
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(EXPERIAN_DATA, EXPERIAN_SHEET_NAME, testCondition);
+        parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
+        populateCommonFields(payload, customerData);
 
         switch (testCondition) {
-            case COMMERCIAL_CREDIT_CHECK_YES_TC_339:
-                data = allRows.get(5107);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+            case COMMERCIAL_CREDIT_CHECK_YES_TC_339, COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350:
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 break;
 
-            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340:
-                data = allRows.get(4399);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+            case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_340, COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B:
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setEnrollmentSource(FAX.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341:
-                data = allRows.get(4638);
-                populateCommonFields(payload, data);
                 payload.setEnrollmentSource(WEB.getValue());
                 payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342:
-                data = allRows.get(9612);
-                populateCommonFields(payload, data);
                 payload.setEmailAddress(FakerDataGenerator.generateEmail());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_343:
-                data = allRows.get(4766);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setEnrollmentSource(FAX.getValue());
-                parseBillingAddress(payload, data.getOrDefault("BILLING ADDRESS", ""));
-                parsePhoneDetails(payload, data.getOrDefault("PHONE NUMBER DETAILS", ""));
+                parseBillingAddress(payload, customerData.getOrDefault("BILLING ADDRESS", ""));
+                parsePhoneDetails(payload, customerData.getOrDefault("PHONE NUMBER DETAILS", ""));
                 payload.setSeasonalSavingsProgramIndicator(true);
-                payload.setBillingCity(data.get("BILLING CITY"));
-                payload.setBillingStateCode(data.get("BILLING STATE"));
-                payload.setBillingZipCode(data.get("BILLING ZIP"));
-                payload.setBillingCountyCode(data.get("BILLING COUNTRY CODE"));
+                payload.setBillingCity(customerData.get("BILLING CITY"));
+                payload.setBillingStateCode(customerData.get("BILLING STATE"));
+                payload.setBillingZipCode(customerData.get("BILLING ZIP"));
+                payload.setBillingCountyCode(customerData.get("BILLING COUNTRY CODE"));
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_SERV_TRANSFER_NEW_ENROLLMENT_TC_344:
-                data = allRows.get(4613);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setEnrollmentSource(GNGHUB.getValue());
                 payload.setCreditCheckOption(SERVICE_TRANSFER.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_346:
-                data = allRows.get(4861);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setCreditCheckOption(NO.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_MULT_NEW_ENROLLMENT_TC_345:
-                data = allRows.get(31);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_347:
-                data = allRows.get(1064);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_348:
-                data = allRows.get(2508);
                 payload.setMarketingPromotionCode(DEALS.getValue());
-                parseAddressWithUnit(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+                parseAddressWithUnit(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                payload.setPremisesStreetSuffix("");
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349:
-                data = allRows.get(4499);
-                parseAddressWithUnit(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
+                parseAddressWithUnit(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setEmailAddress(FakerDataGenerator.generateEmail());
                 break;
 
-            case COMMERCIAL_CREDIT_CHECK_YES_INCL_ENROLLMENT_TC_350:
-                data = allRows.get(4695);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
-                break;
-
-            case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B:
-                data = allRows.get(4459);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
-                payload.setEnrollmentSource(FAX.getValue());
-                break;
-
             case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E:
-                data = allRows.get(5093);
-                parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
-                populateCommonFields(payload, data);
-                payload.setCreditCheckBusinessName(data.get("BUSINESS NAME"));
+                parseAddress(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
+                payload.setCreditCheckBusinessName(customerData.get("BUSINESS NAME"));
                 break;
         }
     }
@@ -1091,15 +1038,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setInitialCreditCheckCustomerCode(INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE.getValue());
                 break;
             case INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317:
-                ExcelReader excelReaderResidentialCustomerData = null;
-                try {
-                    excelReaderResidentialCustomerData = new ExcelReader(CUSTOMER_DATA);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                List<Map<String, String>> allRowsOfCustomerData = excelReaderResidentialCustomerData.getSheetData(CUSTOMER_SHEET_NAME);
-                Map<String, String> customerData = allRowsOfCustomerData.get(81);
-
+                Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, initialCreditCheckCustomerCode);
                 payload.setCustomerLastName(customerData.get("customerLastName"));
                 payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
                 payload.setGenerationCode(null);
@@ -1750,21 +1689,15 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             case SSP_VALIDATION_PREMISES_CODE_MISSING_TC_488:
-                ExcelReader excelReaderCommercialCustomerData = null;
-                try {
-                    excelReaderCommercialCustomerData = new ExcelReader(EXPERIAN_DATA);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                List<Map<String, String>> allRowsOfCommercialCustomerData = excelReaderCommercialCustomerData.getSheetData(EXPERIAN_SHEET_NAME);
-                Map<String, String> commercialCustomerData = allRowsOfCommercialCustomerData.get(5063);
+                Map<String, String> customerData = loadRowFromExcelToCustomerData(EXPERIAN_DATA, EXPERIAN_SHEET_NAME, testCondition);
+                //Map<String, String> commercialCustomerData = allRowsOfCommercialCustomerData.get(5063);
                 nullifyFields(payload,  "enrollmentState", "transactionID");
                 payload.setSspParticipantCode(sspParticipantCode);
                 payload.setSeasonalSavingsProgramIndicator(true);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 setTheFieldToEmptyForCommercialScenarios(payload);
-                payload.setFederalTaxID(encryptData(commercialCustomerData.get("TAX-ID")));
-                payload.setCustomerBusinessName(commercialCustomerData.get("BUSINESS NAME"));
+                payload.setFederalTaxID(encryptData(customerData.get("TAX-ID")));
+                payload.setCustomerBusinessName(customerData.get("BUSINESS NAME"));
                 nullifyFields(payload,  "enrollmentState", "transactionID");
                 payload.setCreditCheckOption(YES.getValue());
                 break;
@@ -1823,26 +1756,9 @@ public class GetEligiblePlansAndOffersHelper {
 
     public void preparePayloadBasedOnTC_EligiblePlansAndSaveEnrollment(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.getRandomNumericString(6));
-        ExcelReader excelReaderResidentialCustomerData = null;
-        try {
-            excelReaderResidentialCustomerData = new ExcelReader(CUSTOMER_DATA);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Map<String, String> commercialCustomerData = null;
+        Map<String, String> customerData = null;
 
-        ExcelReader excelReaderCommercialCustomerData = null;
-        try {
-            excelReaderCommercialCustomerData = new ExcelReader(EXPERIAN_DATA);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        List<Map<String, String>> allRowsOfCommercialCustomerData = excelReaderCommercialCustomerData.getSheetData(EXPERIAN_SHEET_NAME);
-        Map<String, String> commercialCustomerData = allRowsOfCommercialCustomerData.get(5063);
-
-
-        List<Map<String, String>> allRowsOfCustomerData = excelReaderResidentialCustomerData.getSheetData(CUSTOMER_SHEET_NAME);
-        Map<String, String> customerData = allRowsOfCustomerData.get(30);
         switch(testCondition) {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_CE_TC_423:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_433:
@@ -1859,6 +1775,7 @@ public class GetEligiblePlansAndOffersHelper {
             case INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B:
             case INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A:
             case INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189:
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 payload.setEnrollmentSource(PHONECALL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload, customerData);
@@ -1868,28 +1785,16 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DP_TC_425:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_DR_TC_435:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_RD_TC_446:
+                commercialCustomerData = loadRowFromExcelToCustomerData(EXPERIAN_DATA, EXPERIAN_SHEET_NAME, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 populateCommonFields(payload,commercialCustomerData);
                 setTheFieldToEmptyForCommercialScenarios(payload);
                 break;
 
-            case NO_MATCHING_DATA_COMMERCIAL_TC_361:
+            case NO_MATCHING_DATA_COMMERCIAL_TC_361, VALID_DATA_REENTERED_COMMERCIAL_TC_362:
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 setTheFieldToEmptyForCommercialScenarios(payload);
-                customerData = allRowsOfCustomerData.get(78);
-                payload.setCustomerType(COMMERCIAL.getValue());
-                payload.setCreditCheckOption(YES.getValue());
-                payload.setFederalTaxID(encryptData(customerData.get("federalTaxId")));
-                payload.setPremisesCity(customerData.get("premisesCity"));
-                payload.setPremisesStateCode(customerData.get("premisesStateCode"));
-                payload.setPremisesZipCode(customerData.get("premisesZipCode"));
-                payload.setPremisesCountyCode(customerData.get("premisesCountyCode"));
-                payload.setCustomerBusinessName(customerData.get("customerLastName"));
-                break;
-
-            case VALID_DATA_REENTERED_COMMERCIAL_TC_362:
-                setTheFieldToEmptyForCommercialScenarios(payload);
-                customerData = allRowsOfCustomerData.get(79);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setFederalTaxID(encryptData(customerData.get("federalTaxId")));
@@ -1901,8 +1806,8 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             case CREDIT_CHECK_BUSINESS_BIN_NOT_NULL_TC_262A:
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 setTheFieldToEmptyForCommercialScenarios(payload);
-                customerData = allRowsOfCustomerData.get(80);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setFederalTaxID(encryptData(customerData.get("federalTaxId")));
@@ -1924,6 +1829,7 @@ public class GetEligiblePlansAndOffersHelper {
                  GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SI_TC_504,
                  GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_506,
                  GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_447:
+                commercialCustomerData = loadRowFromExcelToCustomerData(EXPERIAN_DATA, EXPERIAN_SHEET_NAME, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 populateCommonFields(payload,commercialCustomerData);
@@ -1932,6 +1838,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_SF_TC_454:
+                commercialCustomerData = loadRowFromExcelToCustomerData(EXPERIAN_DATA, EXPERIAN_SHEET_NAME, testCondition);
                 payload.setSeasonalSavingsProgramIndicator(true);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
@@ -1959,14 +1866,14 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445:
-                customerData = allRowsOfCustomerData.get(31);
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
-                customerData = allRowsOfCustomerData.get(31);
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 payload.setSeasonalSavingsProgramIndicator(false);
@@ -1985,6 +1892,7 @@ public class GetEligiblePlansAndOffersHelper {
 
             default:
                 payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
+                customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 getCustomerDetails(payload, customerData);
                 payload.setTransactionType(TURN_ON.getValue());
                 payload.setCustomerType(RESIDENTIAL.getValue());
