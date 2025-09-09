@@ -490,6 +490,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case INVALID_BILLING_ZIP_CODE_TC_281_1:
                 payload.setSeparateBillingAddress(true);
+                payload.setBillingStreetName(FakerDataGenerator.generateString(5));
                 payload.setBillingCity(FakerDataGenerator.generateCity());
                 payload.setBillingStateCode(billingAddressState);
                 payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+""+FakerDataGenerator.generateDigits(5));

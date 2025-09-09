@@ -274,7 +274,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | HomePhoneNumber                                          | errorCode | errorMessage                                                      |
-      | HOME_PHONE_NUMBER_NOT_10_DIGIT_TC_291                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
+      | HOME_PHONE_NUMBER_NOT_10_DIGIT_TC_291                    | 10000      | The Home Phone Number must be a string with a maximum length of 10.|
       | ALPHANUMERIC_HOME_PHONE_NUMBER_TC_292                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
       | NULL_HOME_PHONE_NUMBER_WITH_VALID_HOME_PHONE_TYPE_TC_293 | 2000      | Invalid Request: Missing conditional parameters-Home Phone Number |
 
@@ -420,7 +420,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | FEDERAL_TAX_ID_NULL_TC_227                                  | 2000      | Invalid Request: Missing conditional parameters-Federal Tax ID                                                                           |
       | FEDERAL_TAX_ID_MISSING_FOR_CREDIT_CHECK_COMM_TC_228        | 2000      | Invalid Request: Missing conditional parameters-Federal Tax ID                                                                           |
       | EMAIL_ADDRESS_LENGTH_VALIDATION_TC_229                      | 10000     | The EmailAddress field is not a valid e-mail address.                                                                                    |
-      | INVALID_EMAIL_FORMAT_TC_230                                 | 2000      | Invalid Request: Invalid Email address                                                                                                   |
+      | INVALID_EMAIL_FORMAT_TC_230                                 | 10000     | The EmailAddress field is not a valid e-mail address.                                                                                                   |
       | AGLC_ACCOUNT_NUMBER_LENGTH_VALIDATION_TC_231                | 10000     | The AGLC Account Number must be a numeric string with a maximum length of 20                                                            |
       | AGLC_ACCOUNT_NUMBER_NON_NUMERIC_TC_232                      | 10000     | The AGLC Account Number must be a numeric string with a maximum length of 20                                                            |
       | AGLC_SERVICE_LOCATION_ID_NULL_TC_233                        | 10000     | Missing AGLC Service Location ID                                                                                                         |
@@ -475,15 +475,15 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_BILLING_UNIT_TYPE_TC_272                           | 2000      | Invalid Request: Invalid Billing Unit Type                                                                                               |
       | BILLING_UNIT_NUMBER_LENGTH_VALIDATION_TC_273               | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                                    |
       | BILLING_RURAL_ROUTE_LENGTH_VALIDATION_TC_274               | 10000     | The Billing Rural Route must be a string with a maximum length of 20.                                                                   |
-      | NULL_BILLING_RURAL_ROUTE_TC_274A                           | 2000      | Invalid Request: Invalid Billing Rural Route                                                                                             |
+      | NULL_BILLING_RURAL_ROUTE_TC_274A                           | 2000      | Invalid Request: Missing conditional parameters-Billing Rural Route                                                                                            |
       | BILLING_RURAL_ROUTE_NUMBER_LENGTH_VALIDATION_TC_275        | 10000     | The Billing Rural Route Number must be a string with a maximum length of 10.                                                            |
       | NULL_BILLING_RURAL_ROUTE_NUMBER_TC_275A                    | 2000      | Invalid Request: Missing conditional parameters-Billing Rural Route Number                                                              |
       | BILLING_PO_BOX_LENGTH_VALIDATION_TC_276                    | 10000     | The Billing PO Box must be a string with a maximum length of 10.                                                                        |
-      | NULL_BILLING_PO_BOX_TC_276A                                 | 2000      | Invalid Request: Invalid Billing PO Box Number                                                                          |
+      | NULL_BILLING_PO_BOX_TC_276A                                 | 2000     | Invalid Request: Missing conditional parameters-Billing PO Box                                                                         |
       | BILLING_ADDRESS_LINE_LENGTH_VALIDATION_TC_277              | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                |
       | BILLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_RURAL_TC_277A   | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                |
       | BILLLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_POBOX_TC_277B  | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                |
-      | BILLING_CITY_LENGTH_VALIDATION_TC_278                       | 10000     | The Billing City must be a string with a maximum length of 20.                                                          |
+      | BILLING_CITY_LENGTH_VALIDATION_TC_278                       | 10000    | The Billing City must be a string with a maximum length of 20.                                                          |
       | BILLING_CITY_LENGTH_VALIDATION_RURAL_TC_278A               | 10000     | The Billing City must be a string with a maximum length of 20.                                                          |
       | BILLING_CITY_LENGTH_VALIDATION_POBOX_TC_278B               | 10000     | The Billing City must be a string with a maximum length of 20.                                                          |
       | BILLING_STATE_CODE_LENGTH_VALIDATION_TC_279                | 10000     | The Billing State Code must be a string with a maximum length of 3.                                                     |
