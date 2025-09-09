@@ -45,6 +45,7 @@ import static com.gng.api.util.CommonUtil.nullifyFields;
 public class GetEligiblePlansAndOffersHelper {
     String billingAddressState="MH";
     String invalidLoginIdForACN="sys";
+    String validZipCode="30309";
 
     private final TestContext testContext;
 
@@ -407,7 +408,7 @@ public class GetEligiblePlansAndOffersHelper {
             case NULL_BILLING_PO_BOX_TC_276A:
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingAddressType(GlobalEnums.AddressType.POBOX.getValue());
-                payload.setBillingPOBox(null);
+                payload.setBillingPOBox("");
                 break;
             case BILLING_ADDRESS_LINE_LENGTH_VALIDATION_TC_277:
                 payload.setSeparateBillingAddress(true);
@@ -554,7 +555,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingCity(FakerDataGenerator.generateCity());
                 payload.setBillingStateCode(billingAddressState);
-                payload.setBillingZipCode(FakerDataGenerator.generateDigits(5));
+                payload.setBillingZipCode(validZipCode);
                 payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
                 payload.setBillingStreetName(FakerDataGenerator.generateString(5));
                 payload.setBillingCountyCode(FakerDataGenerator.generateAlphanumeric(5));
@@ -592,9 +593,9 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingCity(FakerDataGenerator.generateCity());
                 payload.setBillingStateCode(billingAddressState);
-                payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
+                payload.setBillingAddressType(GlobalEnums.AddressType.POBOX.getValue());
                 payload.setBillingPOBox(FakerDataGenerator.generateDigits(3));
-                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+""+FakerDataGenerator.generateDigits(5));
+                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+"-"+FakerDataGenerator.generateDigits(5));
                 break;
             case INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_2:
                 payload.setSeparateBillingAddress(true);
@@ -619,7 +620,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingRuralRouteNumber(FakerDataGenerator.generateDigits(8));
                 payload.setBillingRuralRoute(FakerDataGenerator.generateString(8));
                 payload.setBillingCity(FakerDataGenerator.generateCity());
-                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+""+FakerDataGenerator.generateDigits(5));
+                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+"-"+FakerDataGenerator.generateDigits(5));
                 payload.setBillingStateCode(billingAddressState);
                 break;
             case PREMISES_COUNTY_CODE_LENGTH_VALIDATION_TC_256:
@@ -696,7 +697,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAglcServiceLocationID(null);
                 break;
             case AGLC_SERVICE_LOCATION_ID_LENGTH_VALIDATION_TC_234:
-                payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(10));
+                payload.setAglcServiceLocationID(FakerDataGenerator.generateDigits(11));
                 break;
             case NON_NUMERIC_AGLC_SERVICE_LOCATION_ID_TC_235:
                 payload.setAglcServiceLocationID(FakerDataGenerator.generateString(9));
@@ -1600,7 +1601,7 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setCustomerCode(customerCode);
         payload.setPremisesCode(premisesCode);
         payload.setTransactionID(transactionID);
-        payload.setRequestID(FakerDataGenerator.getRandomNumericString(7));
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(8));
         setTheFieldToEmptyForCommercialScenarios(payload);
         payload.setCustomerFirstName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerFirstName());
         payload.setCustomerLastName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerLastName());
@@ -1686,7 +1687,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             case INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186:
-                payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(11));
                 payload.setEnrollmentState(INCL.getValue());
                 break;
 

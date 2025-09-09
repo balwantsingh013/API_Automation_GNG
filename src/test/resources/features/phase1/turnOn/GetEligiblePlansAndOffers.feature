@@ -165,10 +165,10 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Examples:
       | testCondition                                                   | errorCode | errorMessage                                                                                                                                        |planCode|promotionCode                 |
       | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_177              | 2000      | Invalid Request: Invalid Customer Code                                                                                                              |MVS     |25 CENTS FOR 12 MONTHS        |
-      #| INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178              | 2000      | Invalid Request: Invalid Customer Code                                                                                                              |VML     |                              |
-      #| INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186       | 10000     | The Customer Code must be an integer with a maximum length of 9                                                                                     |MVS     |25 CENTS FOR 12 MONTHS        |
-      | INVALID_CUSTOMER_CODE_LESS_THAN_0_ENROLLMENT_STATE_INCL_TC_186A | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 352. |MVS     |25 CENTS FOR 12 MONTHS        |
-      | INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B       | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 351. |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178              | 2000      | Invalid Request: Invalid Customer Code                                                                                                              |VML     |                              |
+      | INVALID_LENGTH_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_186       | 10000     | The Customer Code must be an integer with a maximum length of 9                                                                                     |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_LESS_THAN_0_ENROLLMENT_STATE_INCL_TC_186A | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine:      |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B       | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine:      |MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_187              | 2000      | Invalid Request: Invalid Customer Code                                                                                                              |MVS     |25 CENTS FOR 12 MONTHS        |
 
   @GetEligiblePlansAndOffersInvalidPremisesCode @Phase1 @NegativeFlow
@@ -184,27 +184,27 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition                                                   | errorCode | errorMessage                                                        |planCode|promotionCode                 |
-      #| INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_179              | 2000      |Invalid Request: Invalid Premises Code                               |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_179              | 2000      |Invalid Request: Invalid Premises Code                               |MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_PREMISES_CODE_ENROLLMENT_STATE_CRDS_TC_180              | 2000      |Invalid Request: Invalid Premises Code                               |VML     |                              |
       | INVALID_PREMISES_CODE_LENGTH_ENROLLMENT_STATE_INCL_TC_188       | 10000     |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A | 10000     |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
-      #| INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189              |  2000     |Invalid Request: Invalid Premises Code                               |MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189              |  2000     |Invalid Request: Invalid Premises Code                               |MVS     |25 CENTS FOR 12 MONTHS        |
 
-#  @GetEligiblePlansAndOffersInvalidCombinationOfCustPremCode @Phase1 @NegativeFlow
-#  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
-#    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And a request is made to get Marketer Reference Data
-#    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    Then a request is made to the SearchAccountsApi for "<testCondition>"
-#    And response should have ErrorCode 0 and ErrorMessage ""
-#    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
-#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-#    Examples:
-#      | testCondition                                                      | errorCode | errorMessage                   |planCode|promotionCode                 |
-#      | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_INCL_TC_181      | 2000      |Invalid Request: Invalid Account|MVS     |25 CENTS FOR 12 MONTHS        |
-#      | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182      | 2000      |Invalid Request: Invalid Account|VML     |                              |
+  @GetEligiblePlansAndOffersInvalidCombinationOfCustPremCode @Phase1 @NegativeFlow
+  Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
+    When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to get Marketer Reference Data
+    And a request is made to the Save Enrollment API for the "<testCondition>" with "<planCode>" and "<promotionCode>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the SearchAccountsApi for "<testCondition>"
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And a request is made to the GetEligiblePlansAndOffers for previously saved incomplete enrollment "<testCondition>"
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    Examples:
+      | testCondition                                                      | errorCode | errorMessage                   |planCode|promotionCode                 |
+      | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_INCL_TC_181      | 2000      |Invalid Request: Invalid Account|MVS     |25 CENTS FOR 12 MONTHS        |
+      | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182      | 2000      |Invalid Request: Invalid Account|VML     |                              |
 
   @GetEligiblePlansAndOffersInvalidWorkPhoneNumberTNON @Phase1  @NegativeFlow
   Scenario Outline: Verify response code for invalid "<WorkPhoneNumber>"
@@ -247,7 +247,13 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | GET_ELIGIBLE_PLANSA_AND_OFFERS_FROZEN_ACCOUNT_357           | 11113     | Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.                                                          |
       #| ENROLLMENT_DENIED_DUE_TO_NO_PAYMENT_TC_358                  | 3000      | The customer's enrollment request is denied due to past payment history                                                                                                                             |
       #| ENROLLMENT_DENIED_AS_CREDIT_CHECK_NOT_AUTHORIZED_TC_360     | 3000      | The customer's enrollment request is denied                                                                                                                                                         |
-      #| LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B                 | 2100      | WARNING: This customer does not meet the required credit criteria to participate in the Seasonal Savings Plan                                                                                       |
+
+    @GetEligiblePlansAndOffersLowCreditForSSP @Phase1 @NegativeFlow
+    Scenario: GetEligiblePlansAndOffersApi- Verify response code for invalid LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B
+      When a request is made to the GetEligiblePlansAndOffers Api for "LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B" condition
+      Then verify response code of "GetEligiblePlansAndOffers" Api is 200
+      And response should have ErrorCode 0 and ErrorMessage ""
+      And response should have a SSP eligible as "false" and "WARNING: This customer does not meet the required credit criteria to participate in the Seasonal Savings Plan"
 
   @GetEligiblePlansAndOffersInvalidWorkPhoneTypeTNON @Phase1  @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<WorkPhoneType>"
@@ -268,7 +274,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | HomePhoneNumber                                          | errorCode | errorMessage                                                      |
-      #| HOME_PHONE_NUMBER_NOT_10_DIGIT_TC_291                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
+      | HOME_PHONE_NUMBER_NOT_10_DIGIT_TC_291                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
       | ALPHANUMERIC_HOME_PHONE_NUMBER_TC_292                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
       | NULL_HOME_PHONE_NUMBER_WITH_VALID_HOME_PHONE_TYPE_TC_293 | 2000      | Invalid Request: Missing conditional parameters-Home Phone Number |
 
@@ -398,7 +404,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_MARKETING_PROMOTION_CODE_FOR_ENROLLMENT_SOURCE_TC_203 | 2100      | Promotion code is valid for Web only                                                                                                     |
       | INVALID_CUSTOMER_BUSINESS_NAME_LENGTH_TC_212                | 10000     | The Customer Business Name must be a string with a maximum length of 60.                                                                |
       | CUSTOMER_BUSINESS_NAME_NULL_TC_213                          | 2000      | Invalid Request: Missing conditional parameters-Customer Business Name                                                                   |
-      #| CUSTOMER_BUSINESS_NAME_COMM_CREDIT_CHECK_214                | 2000      | Invalid Request: Missing conditional parameters-Customer Business Name                                                                   |
+      | CUSTOMER_BUSINESS_NAME_COMM_CREDIT_CHECK_214                | 2000      | Invalid Request: Missing conditional parameters-Customer Business Name                                                                   |
       | CREDIT_CHECK_BUSINESS_NAME_LENGTH_VALIDATION_TC_215         | 10000     | The CreditCheck Business Name must be a string with a maximum length of 60.                                                             |
       | CUSTOMER_BUSINESS_NAME_NULL_TC_215A                         | 2000      | Invalid Request: Missing conditional parameters-Customer Business Name                                                                   |
       | INVALID_LENGTH_CUSTOMER_LAST_NAME_TC_216                    | 10000     | The Customer Last Name must be a string with a maximum length of 60.                                                                    |
@@ -414,7 +420,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | FEDERAL_TAX_ID_NULL_TC_227                                  | 2000      | Invalid Request: Missing conditional parameters-Federal Tax ID                                                                           |
       | FEDERAL_TAX_ID_MISSING_FOR_CREDIT_CHECK_COMM_TC_228        | 2000      | Invalid Request: Missing conditional parameters-Federal Tax ID                                                                           |
       | EMAIL_ADDRESS_LENGTH_VALIDATION_TC_229                      | 10000     | The EmailAddress field is not a valid e-mail address.                                                                                    |
-      #| INVALID_EMAIL_FORMAT_TC_230                                 | 2000      | Invalid Request: Invalid Email address                                                                                                   |
+      | INVALID_EMAIL_FORMAT_TC_230                                 | 2000      | Invalid Request: Invalid Email address                                                                                                   |
       | AGLC_ACCOUNT_NUMBER_LENGTH_VALIDATION_TC_231                | 10000     | The AGLC Account Number must be a numeric string with a maximum length of 20                                                            |
       | AGLC_ACCOUNT_NUMBER_NON_NUMERIC_TC_232                      | 10000     | The AGLC Account Number must be a numeric string with a maximum length of 20                                                            |
       | AGLC_SERVICE_LOCATION_ID_NULL_TC_233                        | 10000     | Missing AGLC Service Location ID                                                                                                         |
@@ -431,7 +437,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_PREMISES_STREET_PRE_DIRECTION_TC_243_2             | 2000      | Invalid Request: Invalid Premises Street Pre Direction                                                                                  |
       | PREMISES_STREET_NAME_LENGTH_VALIDATION_TC_244              | 10000     | The Premises Street Name must be a string with a maximum length of 30.                                                                  |
       | NULL_PREMISES_STREET_NAME_TC_245                           | 10000     | Invalid or missing Premises Street Name                                                                                                 |
-      #| PREMISES_STREET_SUFFIX_LENGTH_VALIDATION_TC_246            | 10000     | The Premises Street Suffix must be a string with a maximum length of 6.                                                                 |
+      | PREMISES_STREET_SUFFIX_LENGTH_VALIDATION_TC_246            | 10000     | The Premises Street Suffix  must be a string with a maximum length of 6.                                                                 |
       | INVALID_PREMISES_STREET_SUFFIX_TC_246A                     | 2000      | Invalid Request: Invalid Premises Street Suffix                                                                                         |
       | PREMISES_STREET_POST_DIRECTION_LENGTH_VALIDATION_TC_247    | 10000     | The Premises Street PostDirection must be a string with a maximum length of 2.                                                          |
       | INVALID_PREMISES_STREET_POST_DIRECTION_TC_247A             | 2000      | Invalid Request: Invalid Premises Street Post Direction                                                                                 |
@@ -464,16 +470,16 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | BILLING_STREET_SUFFIX_LENGTH_VALIDATION_TC_267             | 10000     | The Billing Street Suffix must be a string with a maximum length of 6.                                                                  |
       | INVALID_BILLING_STREET_SUFFIX_TC_268                       | 2000      | Invalid Request: Invalid Billing Street Suffix                                                                                          |
       | BILLING_STREET_POST_DIRECTION_LENGTH_VALIDATION_TC_269     | 10000     | The Billing Street PostDirection must be a string with a maximum length of 2.                                                           |
-      #| INVALID_BILLING_STREET_POST_DIRECTION_TC_270               | 2000      | Invalid Request: Invalid Billing Street Post Direction                                                                                   |
+      | INVALID_BILLING_STREET_POST_DIRECTION_TC_270               | 2000      | Invalid Request: Invalid Billing Street Post Direction                                                                                   |
       | BILLING_UNIT_TYPE_LENGTH_VALIDATION_TC_271                 | 10000     | The Billing Unit Type must be a string with a maximum length of 6.                                                                      |
       | INVALID_BILLING_UNIT_TYPE_TC_272                           | 2000      | Invalid Request: Invalid Billing Unit Type                                                                                               |
       | BILLING_UNIT_NUMBER_LENGTH_VALIDATION_TC_273               | 10000     | The Billing Unit Number must be a string with a maximum length of 6.                                                                    |
       | BILLING_RURAL_ROUTE_LENGTH_VALIDATION_TC_274               | 10000     | The Billing Rural Route must be a string with a maximum length of 20.                                                                   |
-      #| NULL_BILLING_RURAL_ROUTE_TC_274A                           | 2000      | Invalid Request: Invalid Billing Rural Route                                                                                             |
+      | NULL_BILLING_RURAL_ROUTE_TC_274A                           | 2000      | Invalid Request: Invalid Billing Rural Route                                                                                             |
       | BILLING_RURAL_ROUTE_NUMBER_LENGTH_VALIDATION_TC_275        | 10000     | The Billing Rural Route Number must be a string with a maximum length of 10.                                                            |
       | NULL_BILLING_RURAL_ROUTE_NUMBER_TC_275A                    | 2000      | Invalid Request: Missing conditional parameters-Billing Rural Route Number                                                              |
       | BILLING_PO_BOX_LENGTH_VALIDATION_TC_276                    | 10000     | The Billing PO Box must be a string with a maximum length of 10.                                                                        |
-      #| NULL_BILLING_PO_BOX_TC_276A                                 | 2000      | Invalid Request: Invalid Billing PO Box Number                                                                          |
+      | NULL_BILLING_PO_BOX_TC_276A                                 | 2000      | Invalid Request: Invalid Billing PO Box Number                                                                          |
       | BILLING_ADDRESS_LINE_LENGTH_VALIDATION_TC_277              | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                |
       | BILLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_RURAL_TC_277A   | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                |
       | BILLLING_ADDRESS_LINE_LENGTH_VALIDATION_FOR_POBOX_TC_277B  | 10000     | The Billing Address Line 2 must be a string with a maximum length of 30.                                                |
@@ -486,11 +492,11 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_BILLING_STATE_CODE_TC_280                           | 2000      | Invalid Request: Invalid Billing State Code                                                                             |
       | INVALID_BILLING_STATE_CODE_RURAL_TC_280A                   | 2000      | Invalid Request: Invalid Billing State Code                                                                             |
       | INVALID_BILLING_STATE_CODE_POBOX_TC_280B                   | 2000      | Invalid Request: Invalid Billing State Code                                                                             |
-      #| INVALID_BILLING_ZIP_CODE_TC_281_1                          | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
+      | INVALID_BILLING_ZIP_CODE_TC_281_1                          | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
       | INVALID_BILLING_ZIP_CODE_TC_281_2                          | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
       | INVALID_BILLING_ZIP_CODE_RURAL_TC_281A_2                   | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
-#      | INVALID_BILLING_ZIP_CODE_RURAL_TC_281A_1                   | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
-#      | INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_1                   | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
+      | INVALID_BILLING_ZIP_CODE_RURAL_TC_281A_1                   | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
+      | INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_1                   | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
       | INVALID_BILLING_ZIP_CODE_POBOX_TC_281B_2                   | 2000      | Invalid Request: Invalid Billing Zip Code                                                                               |
       | NULL_BILLING_ZIP_CODE_TC_281C                              | 2000      | Invalid Request: Missing conditional parameters-Billing Zip Code                                                        |
       | NULL_BILLING_ZIP_CODE_RURAL_TC_281D                        | 2000      | Invalid Request: Missing conditional parameters-Billing Zip Code                                                        |
@@ -498,7 +504,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | BILLING_COUNTY_CODE_LENGTH_VALIDATION_TC_282               | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                    |
       | BILLING_COUNTY_CODE_RURAL_LENGTH_VALIDATION_TC_282A        | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                    |
       | BILLING_COUNTY_CODE_POBOX_LENGTH_VALIDATION_TC_282B        | 10000     | The Billing County Code must be a string with a maximum length of 5.                                                    |
-      #| INVALID_BILLING_COUNTY_CODE_TC_283                         | 2000      | Invalid Request: Invalid Billing County Code                                                                            |
+      | INVALID_BILLING_COUNTY_CODE_TC_283                         | 2000      | Invalid Request: Invalid Billing County Code                                                                            |
       | INVALID_BILLING_COUNTY_CODE_RURAL_TC_283A                  | 2000      | Invalid Request: Invalid Billing County Code                                                                            |
       | INVALID_BILLING_POBOX_COUNTY_CODE_TC_283B                  | 2000      | Invalid Request: Invalid Billing County Code                                                                            |
 
