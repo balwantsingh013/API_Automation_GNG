@@ -12,10 +12,10 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | requestID            | errorCode | errorMessage         |
-      | EMPTY_REQUEST_ID     | 10001     | Missing Request ID   |
-      | LONG_REQUEST_ID      | 10002     | Invalid Request ID   |
-      | DUPLICATE_REQUEST_ID | 10003     | Duplicate Request ID |
+      | requestID                                          | errorCode | errorMessage         |
+      | SAVE_ENROLLMENT_INVALID_EMPTY_REQUEST_ID_TC376     | 10001     | Missing Request ID   |
+      | SAVE_ENROLLMENT_INVALID_LONG_REQUEST_ID_TC377      | 10002     | Invalid Request ID   |
+      | SAVE_ENROLLMENT_INVALID_DUPLICATE_REQUEST_ID_TC378 | 10003     | Duplicate Request ID |
 
 
   @SaveEnrollmentInvalidLoginID @Phase1  @NegativeFlow
@@ -24,10 +24,10 @@ Feature: Verify SaveEnrollment Api
     Then verify response code of "Save Enrollment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | loginID                                       | errorCode | errorMessage                                              |
-      | EMPTY_LOGIN_ID                                | 10000     | Missing Login ID                                          |
-      | MAX_LENGTH_LOGIN_ID                           | 10000     | The Login ID must be a string with a maximum length of 30 |
-      | INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC381 | 2000      | Invalid Login ID                                          |
+      | loginID                                           | errorCode | errorMessage                                              |
+      | SAVE_ENROLLMENT_INVALID_EMPTY_LOGIN_ID_TC379      | 10000     | Missing Login ID                                          |
+      | SAVE_ENROLLMENT_INVALID_MAX_LENGTH_LOGIN_ID_TC380 | 10000     | The Login ID must be a string with a maximum length of 30 |
+      | INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC381     | 2000      | Invalid Login ID                                          |
 
   @SaveEnrollmentInvalidTransactionID @Phase1  @NegativeFlow
   Scenario Outline: SaveEnrollment Api- Verify response code for invalid transactionID for "<testCondition>" condition

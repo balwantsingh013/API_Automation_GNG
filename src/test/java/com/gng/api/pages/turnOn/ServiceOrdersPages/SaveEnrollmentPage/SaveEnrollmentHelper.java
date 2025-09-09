@@ -41,13 +41,13 @@ public class SaveEnrollmentHelper {
 
     public void setRequestIDBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel requestID) {
         switch (requestID) {
-            case EMPTY_REQUEST_ID:
+            case SAVE_ENROLLMENT_INVALID_EMPTY_REQUEST_ID_TC376:
                 payload.setRequestID("");
                 break;
-            case LONG_REQUEST_ID:
+            case SAVE_ENROLLMENT_INVALID_LONG_REQUEST_ID_TC377:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
                 break;
-            case DUPLICATE_REQUEST_ID:
+            case SAVE_ENROLLMENT_INVALID_DUPLICATE_REQUEST_ID_TC378:
                 payload.setRequestID("123");
                 break;
             default:
@@ -694,10 +694,10 @@ public class SaveEnrollmentHelper {
     public void setLoginIDBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel loginID) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (loginID) {
-            case EMPTY_LOGIN_ID:
+            case SAVE_ENROLLMENT_INVALID_EMPTY_LOGIN_ID_TC379:
                 payload.setLoginID("");
                 break;
-            case MAX_LENGTH_LOGIN_ID:
+            case SAVE_ENROLLMENT_INVALID_MAX_LENGTH_LOGIN_ID_TC380:
                 payload.setLoginID(FakerDataGenerator.getRandomNumericString(39));
                 break;
             case INVALID_LOGIN_ID_NOT_PRESENT_USER_TABLE_TC381:
