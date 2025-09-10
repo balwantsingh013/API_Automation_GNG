@@ -340,6 +340,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetPostDirection(FakerDataGenerator.generateString(3));
                 break;
             case INVALID_BILLING_STREET_POST_DIRECTION_TC_270:
+                payload.setSeparateBillingAddress(true);
                 payload.setRequestID(FakerDataGenerator.getRandomNumericString(10));
                 payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
                 payload.setBillingStreetNumber(FakerDataGenerator.generateDigits(5));
