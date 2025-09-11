@@ -21,7 +21,6 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
     public void validatePositiveTestConditionsFromExcelData(GetDefaultPlansAndOffersApiLabel apiLabel, GlobalEnums.CustomerType customerType, String promotionCode,
                                                             GlobalEnums.EnrollmentSource enrollmentSource, GetDefaultPlansAndOffersApiLabel testCondition) {
 
-
         GetDefaultPlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestParams(payload, customerType, promotionCode, enrollmentSource, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
@@ -29,6 +28,54 @@ public class GetDefaultPlansAndOffersApiPage extends BasePage {
         GetDefaultPlansAndOffersResponse getDefaultPlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetDefaultPlansAndOffersResponse.class);
         testContext.setGetDefaultPlansAndOffersResponse(getDefaultPlansAndOffersResponse);
         testContext.setResponse(offersResponse);
+    }
+
+    public void validateInvalidRequestIDCases(GetDefaultPlansAndOffersApiLabel payloadType, GetDefaultPlansAndOffersApiLabel testCondition) {
+        GetDefaultPlansAndOffersRequest payload = helper.preparePayload(payloadType);
+        helper.setRequestIDBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidLoginIDCases(GetDefaultPlansAndOffersApiLabel payloadType, GetDefaultPlansAndOffersApiLabel testCondition) {
+        GetDefaultPlansAndOffersRequest payload = helper.preparePayload(payloadType);
+        helper.setLoginIDBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidCustomerTypeCases(GetDefaultPlansAndOffersApiLabel payloadType, GetDefaultPlansAndOffersApiLabel testCondition) {
+        GetDefaultPlansAndOffersRequest payload = helper.preparePayload(payloadType);
+        helper.setCustomerTypeBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidTransactionTypeCases(GetDefaultPlansAndOffersApiLabel payloadType, GetDefaultPlansAndOffersApiLabel testCondition) {
+        GetDefaultPlansAndOffersRequest payload = helper.preparePayload(payloadType);
+        helper.setTransactionTypeBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidEnrollmentSourceCases(GetDefaultPlansAndOffersApiLabel payloadType, GetDefaultPlansAndOffersApiLabel testCondition) {
+        GetDefaultPlansAndOffersRequest payload = helper.preparePayload(payloadType);
+        helper.setEnrollmentSourceBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidPromotionCodeCases(GetDefaultPlansAndOffersApiLabel payloadType, GetDefaultPlansAndOffersApiLabel testCondition) {
+        GetDefaultPlansAndOffersRequest payload = helper.preparePayload(payloadType);
+        helper.setPromotionCodeBasedOnTestCondition(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_DEFAULT_PLANS_AND_OFFERS, 200);
+        testContext.setResponse(response);
     }
 
     public void verifyResponsePlans(){
