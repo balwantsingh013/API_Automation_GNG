@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import static com.gng.api.constants.GlobalEnums.ACNorNACN.ACN;
 import static com.gng.api.constants.GlobalEnums.BillingUnitType.KEY;
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
@@ -36,7 +35,6 @@ import static com.gng.api.constants.GlobalEnums.TenantOrLandlord.LANDLORD;
 import static com.gng.api.constants.GlobalEnums.TenantOrLandlord.TENANT;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.constants.GlobalEnums.WorkPhoneType.BUSINESS;
-import static com.gng.api.constants.GlobalEnums.WorkPhoneType.HOME;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 import static com.gng.api.util.CommonUtil.nullifyFields;
@@ -46,6 +44,7 @@ public class GetEligiblePlansAndOffersHelper {
     String billingAddressState="MH";
     String invalidLoginIdForACN="sys";
     String validZipCode="30309";
+    String premisesUnitType="#";
 
     private final TestContext testContext;
 
@@ -965,6 +964,9 @@ public class GetEligiblePlansAndOffersHelper {
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_349:
                 parseAddressWithUnit(payload, customerData.getOrDefault("BUSINESS STREET ADDRESS", ""));
                 payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                payload.setPremisesStreetSuffix("");
+                payload.setPremisesUnitType(premisesUnitType);
+                payload.setPremisesUnitNumber(FakerDataGenerator.generateDigits(3));
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E:

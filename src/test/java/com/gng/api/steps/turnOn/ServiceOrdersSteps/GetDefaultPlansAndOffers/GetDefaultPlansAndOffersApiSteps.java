@@ -9,7 +9,7 @@ import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetDefaultPlansAndOffe
 public class GetDefaultPlansAndOffersApiSteps {
     private final GetDefaultPlansAndOffersApiPage getDefaultPlansAndOffersApiPage;
 
-    public GetDefaultPlansAndOffersApiSteps(TestContext testContext, GetDefaultPlansAndOffersApiPage getDefaultPlansAndOffersApiPage){
+    public GetDefaultPlansAndOffersApiSteps(TestContext testContext, GetDefaultPlansAndOffersApiPage getDefaultPlansAndOffersApiPage) {
         this.getDefaultPlansAndOffersApiPage = getDefaultPlansAndOffersApiPage;
         testContext.setGetDefaultPlansAndOffersApiPage(getDefaultPlansAndOffersApiPage);
     }
@@ -23,5 +23,36 @@ public class GetDefaultPlansAndOffersApiSteps {
     public void verifyEligibleResponsePlans() {
         getDefaultPlansAndOffersApiPage.verifyResponsePlans();
     }
+
+    @When("a request is made to the GetDefaultPlansAndOffers Api with an invalid requestID for {string}")
+    public void a_request_is_made_to_the_GetDefaultPlansAndOffers_Api_with_invalid_RequestId_condition(String testCondition) {
+        getDefaultPlansAndOffersApiPage.validateInvalidRequestIDCases(get_default_plans_and_offers, GetDefaultPlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the GetDefaultPlansAndOffers Api with an invalid loginId for {string}")
+    public void a_request_is_made_to_the_GetDefaultPlansAndOffers_Api_with_invalid_LoginId_condition(String testCondition) {
+        getDefaultPlansAndOffersApiPage.validateInvalidLoginIDCases(get_default_plans_and_offers, GetDefaultPlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the GetDefaultPlansAndOffers Api with an invalid customerType for {string}")
+    public void a_request_is_made_to_the_GetDefaultPlansAndOffers_Api_with_invalid_customerType_condition(String testCondition) {
+        getDefaultPlansAndOffersApiPage.validateInvalidCustomerTypeCases(get_default_plans_and_offers, GetDefaultPlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the GetDefaultPlansAndOffers Api with an invalid transactionType for {string}")
+    public void a_request_is_made_to_the_GetDefaultPlansAndOffers_Api_with_invalid_transactionType_condition(String testCondition) {
+        getDefaultPlansAndOffersApiPage.validateInvalidTransactionTypeCases(get_default_plans_and_offers, GetDefaultPlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the GetDefaultPlansAndOffers Api with an invalid enrollmentSource for {string}")
+    public void a_request_is_made_to_the_GetDefaultPlansAndOffers_Api_with_invalid_enrollmentSource_condition(String testCondition) {
+        getDefaultPlansAndOffersApiPage.validateInvalidEnrollmentSourceCases(get_default_plans_and_offers, GetDefaultPlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the GetDefaultPlansAndOffers Api with an invalid promotionCode for {string}")
+    public void a_request_is_made_to_the_GetDefaultPlansAndOffers_Api_with_invalid_promotionCode_condition(String testCondition) {
+        getDefaultPlansAndOffersApiPage.validateInvalidPromotionCodeCases(get_default_plans_and_offers, GetDefaultPlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
 }
 
