@@ -25,9 +25,14 @@ public class SaveUnenrollmentApiSteps {
     }
 
     @When("a request is made to the SaveUnenrollment Api with {string}")
-    public void a_request_is_made_to_the_SaveUnenrollment_Api_with(String requestID)
+    public void a_request_is_made_to_the_SaveUnenrollment_Api_with(String testCondition)
     {
-        saveUnenrollmentApiPage.validateInvalidRequestIDCases(save_unenrollment_mandatory, SaveUnenrollmentApiLabel.valueOf(requestID));
+        saveUnenrollmentApiPage.validateInvalidRequestAndLoginIDCases(save_unenrollment_mandatory, SaveUnenrollmentApiLabel.valueOf(testCondition));
+    }
+    @When("a request is made to the SaveUnenrollment Api with invalid parameters for {string} condition")
+    public void a_request_is_made_to_the_SaveUnenrollment_Api_with_invalid_parameters(String testCondition)
+    {
+        saveUnenrollmentApiPage.validateInvalidParametersCases(save_unenrollment_mandatory, SaveUnenrollmentApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the SaveUnenrollment Api for account with {string} plan {string} type with forwardingAddressIs {string} with type {string} and turnoffreason {string} and setEmail {string} with etcExists {string}")

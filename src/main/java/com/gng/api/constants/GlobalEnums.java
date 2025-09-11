@@ -45,11 +45,25 @@ public class GlobalEnums {
     @Getter
     public enum ForwardingAddressType {
         CURRENT_ADDRESS("CA"),
-        NEW_ADDRESS("NA");
+        NEW_ADDRESS("NA"),
+        INVALID("Z");
 
         private final String value;
 
         ForwardingAddressType(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum ForwardingAddressIs {
+        CURRENT_ADDRESS("CA"),
+        NEW_ADDRESS("NA"),
+        INVALID("Z");
+
+        private final String value;
+
+        ForwardingAddressIs(String value) {
             this.value = value;
         }
     }

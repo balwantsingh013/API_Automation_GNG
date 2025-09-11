@@ -19,6 +19,7 @@ import static com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.Save
 public class SaveUnenrollmentHelper {
 
     private final TestContext testContext;
+    public static final String USERNAME = "autotester";
 
     public SaveUnenrollmentHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -32,24 +33,171 @@ public class SaveUnenrollmentHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, SaveUnenrollmentRequest.class);
     }
 
-    public void setRequestIDBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel requestID) {
-        switch (requestID) {
-            case EMPTY_REQUEST_ID_106:
+    public void setRequestAndLoginIDBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
+        switch (testCondition) {
+            case REQUEST_ID_EMPTY_NEGATIVE_TC106:
                 payload.setRequestID("");
                 break;
-
-            case NULL_REQUEST_ID_106_1:
-                payload.setRequestID(null);
-                break;
-
-            case DUPLICATE_REQUEST_ID_108:
-                payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
-                break;
-
-            case LONG_REQUEST_ID_107:
+            case REQUEST_ID_MAX_LENGTH_NEGATIVE_TC107:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
                 break;
+            case REQUEST_ID_DUPLICATE_NEGATIVE_TC108:
+                payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
+                break;
+            case LOGIN_ID_EMPTY_NEGATIVE_TC109:
+                payload.setLoginID("");
+                break;
+            case LOGIN_ID_MAX_LENGTH_NEGATIVE_TC110:
+                payload.setLoginID(FakerDataGenerator.getRandomString(50));
+                break;
+            case LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111:
+                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(6));
+                break;
+            case LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112:
+                payload.setLoginID(FakerDataGenerator.generateString(8));
+                break;
         }
+    }
+    public void setParametersBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setLoginID(USERNAME);
+
+        switch (testCondition) {
+            case TRANSACTION_TYPE_EMPTY_NEGATIVE_TC113:
+               payload.setTransactionType("");
+                break;
+            case TRANSACTION_TYPE_MAX_LENGTH_NEGATIVE_TC114:
+                payload.setTransactionType(FakerDataGenerator.getRandomString(10));
+                break;
+            case TRANSACTION_TYPE_INVALID_NEGATIVE_TC115:
+                payload.setTransactionType(GlobalEnums.TransactionType.INVALID.getValue());
+                break;
+            case CUSTOMER_CODE_EMPTY_NEGATIVE_TC116:
+                payload.setCustomerCode(null);
+                break;
+            case CUSTOMER_CODE_MAX_LENGTH_NEGATIVE_TC117:
+                payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(20));
+                break;
+            case CUSTOMER_CODE_NON_INT_NEGATIVE_TC118:
+                payload.setCustomerCode(FakerDataGenerator.generateString(5));
+                break;
+            case CUSTOMER_CODE_NOT_EXISTS_NEGATIVE_TC119:
+                payload.setCustomerCode(0);
+                break;
+            case PREMISES_CODE_EMPTY_NEGATIVE_TC120:
+                payload.setPremisesCode("");
+                break;
+            case PREMISES_CODE_MAX_LENGTH_NEGATIVE_TC121:
+                payload.setPremisesCode(FakerDataGenerator.getRandomNumericString(15));
+                break;
+            case PREMISES_CODE_NOT_EXISTS_NEGATIVE_TC122:
+                payload.setPremisesCode("0");
+                break;
+            case ACCOUNT_COMBINATION_INVALID_NEGATIVE_TC123:
+                //fetch or mult calls
+                break;
+            case AGLC_ACCOUNT_EMPTY_NEGATIVE_TC124:
+                payload.setAglcAccountNumber("");
+                break;
+            case AGLC_ACCOUNT_MAX_LENGTH_NEGATIVE_TC125:
+                payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(30));
+                break;
+            case FWD_ADDRESS_EMPTY_NEGATIVE_TC129:
+                payload.setForwardingAddressIs("");
+                break;
+            case FWD_ADDRESS_MAX_LENGTH_NEGATIVE_TC130:
+                payload.setForwardingAddressIs(FakerDataGenerator.getRandomString(4));
+                break;
+            case FWD_ADDRESS_INVALID_VALUE_NEGATIVE_TC131:
+                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressIs.INVALID.getValue());
+                break;
+            case FWD_ADDRESS_TYPE_EMPTY_NEGATIVE_TC132:
+                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
+                payload.setForwardingAddressType("");
+                break;
+            case FWD_ADDRESS_TYPE_MAX_LENGTH_NEGATIVE_TC133:
+                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
+                payload.setForwardingAddressType(FakerDataGenerator.getRandomString(5));
+                break;
+            case FWD_ADDRESS_TYPE_INVALID_VALUE_NEGATIVE_TC134:
+                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
+                payload.setForwardingAddressType(GlobalEnums.ForwardingAddressType.INVALID.getValue());
+                break;
+            case FWD_ADD_STR_NUM_MAX_LENGTH_NEGATIVE_TC135:
+                payload.setForwardingAddressStreetNumber(FakerDataGenerator.getRandomString(20));
+                break;
+            case FWD_ADD_STR_PRE_DIR_MAX_LENGTH_NEGATIVE_TC136:
+                payload.setForwardingAddressStreetPreDirection(FakerDataGenerator.getRandomString(5));
+                break;
+            case FWD_ADD_STR_NAME_EMPTY_NEGATIVE_TC137:
+                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
+                payload.setForwardingAddressType(STREET.getValue());
+                payload.setForwardingAddressStreetName("");
+                break;
+            case FWD_ADD_STR_NAME_MAX_LENGTH_NEGATIVE_TC138:
+                payload.setForwardingAddressStreetName(FakerDataGenerator.getRandomString(50));
+                break;
+            case FWD_ADD_STR_SFX_MAX_LENGTH_NEGATIVE_TC139:
+                payload.setForwardingAddressStreetSuffix(FakerDataGenerator.getRandomString(15));
+                break;
+            case FWD_ADD_STR_POST_DIR_MAX_LENGTH_NEGATIVE_TC140:
+                payload.setForwardingAddressStreetPostDirection(FakerDataGenerator.getRandomString(5));
+                break;
+            case FWD_ADD_UNIT_TYPE_MAX_LENGTH_NEGATIVE_TC141:
+                payload.setForwardingAddressUnitType(FakerDataGenerator.getRandomString(10));
+                break;
+            case FWD_ADD_UNIT_NUM_MAX_LENGTH_NEGATIVE_TC142:
+                payload.setForwardingAddressUnitNumber(FakerDataGenerator.getRandomString(15));
+                break;
+            case FWD_ADD_RURAL_ROUTE_MAX_LENGTH_NEGATIVE_TC143:
+                payload.setForwardingAddressRuralRoute(FakerDataGenerator.getRandomString(25));
+                break;
+            case FWD_ADD_PO_BOX_MAX_LENGTH_NEGATIVE_TC144:
+                payload.setForwardingAddressPOBox(FakerDataGenerator.getRandomString(15));
+                break;
+            case FWD_ADD_LINE2_MAX_LENGTH_NEGATIVE_TC145:
+                payload.setForwardingAddressLine2(FakerDataGenerator.getRandomString(50));
+                break;
+            case FWD_ADD_CITY_EMPTY_NEGATIVE_TC146:
+                setNewAddressForwardingAddressRandomParameters(payload);
+                payload.setForwardingAddressCity("");
+                break;
+            case FWD_ADD_CITY_MAX_LENGTH_NEGATIVE_TC147:
+                payload.setForwardingAddressCity(FakerDataGenerator.getRandomString(40));
+                break;
+            case FWD_ADD_STATE_CODE_EMPTY_NEGATIVE_TC148:
+                setNewAddressForwardingAddressRandomParameters(payload);
+                payload.setForwardingAddressStateCode("");
+                break;
+            case FWD_ADD_STATE_CODE_MAX_LENGTH_NEGATIVE_TC149:
+                payload.setForwardingAddressStateCode(FakerDataGenerator.getRandomString(5));
+                break;
+            case FWD_ADD_STATE_CODE_INVALID_NEGATIVE_TC150:
+                setNewAddressForwardingAddressRandomParameters(payload);
+                payload.setForwardingAddressStateCode("ZZ");
+                break;
+            case FWD_ADD_ZIP_CODE_EMPTY_NEGATIVE_TC151:
+                setNewAddressForwardingAddressRandomParameters(payload);
+                payload.setForwardingAddressZipCode("");
+                break;
+            case FWD_ADD_ZIP_CODE_MAX_LENGTH_NEGATIVE_TC152:
+                setNewAddressForwardingAddressRandomParameters(payload);
+                payload.setForwardingAddressZipCode(FakerDataGenerator.getRandomNumericString(12));
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
+    public void setNewAddressForwardingAddressRandomParameters(SaveUnenrollmentRequest payload){
+        payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
+        payload.setForwardingAddressType(STREET.getValue());
+        payload.setForwardingAddressStateCode(FakerDataGenerator.getRandomString(2));
+        payload.setForwardingAddressCity(FakerDataGenerator.generateString(6));
+        payload.setForwardingAddressZipCode(FakerDataGenerator.generateZipCode());
+        payload.setForwardingAddressStreetName(FakerDataGenerator.generateString(5));
     }
 
     public void setTurnOffReasonAndSubReason(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {

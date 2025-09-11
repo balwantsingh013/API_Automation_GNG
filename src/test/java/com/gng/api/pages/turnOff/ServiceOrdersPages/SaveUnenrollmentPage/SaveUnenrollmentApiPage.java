@@ -4,6 +4,7 @@ import com.gng.api.pages.BasePage;
 
 import com.gng.api.pages.turnOff.ServiceOrdersPages.SaveUnenrollmentPage.SaveUnenrollmentHelper;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -26,12 +27,25 @@ public class SaveUnenrollmentApiPage extends BasePage {
         this.helper = new SaveUnenrollmentHelper(testContext);
     }
 
-    public void validateInvalidRequestIDCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
+    public void validateInvalidRequestAndLoginIDCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
-        helper.setRequestIDBasedOnType(payload, requestID);
+        helper.setRequestAndLoginIDBasedOnType(payload, requestID);
         helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
+        SaveUnenrollmentResponse saveUnenrollmentResponse = deserializeResponseToPojo(response, SaveUnenrollmentResponse.class);
+        testContext.setSaveUnenrollmentResponse(saveUnenrollmentResponse);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidParametersCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
+        SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnType(payload, requestID);
+        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
+        SaveUnenrollmentResponse saveUnenrollmentResponse = deserializeResponseToPojo(response, SaveUnenrollmentResponse.class);
+        testContext.setSaveUnenrollmentResponse(saveUnenrollmentResponse);
         testContext.setResponse(response);
     }
 
