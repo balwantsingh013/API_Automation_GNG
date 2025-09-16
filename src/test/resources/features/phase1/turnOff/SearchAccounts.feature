@@ -145,5 +145,82 @@ Feature: Verify SearchAccounts TurnOff Api
 #    And response should have "customerType" as "RS"
 #    And response should have "turnOffAllowed" flag as "true"
 
+  @SearchAccountsTurnOffInvalidRequestId @Phase1 @NegativeFlow
+  Scenario Outline: SearchAccountsApiTOFF - Verify SearchAccounts Api with invalid requestID for "<testCondition>"
+    When a request is made to the SearchAccounts Api with an invalid requestID for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                    | errorCode | errorMessage         |
+      | SEARCH_ACCOUNTS_MISSING_REQUEST_ID_TC_12         | 10001     | Missing Request ID   |
+      | SEARCH_ACCOUNTS_INVALID_REQUEST_ID_LENGTH_TC_13  | 10002     | Invalid Request ID   |
+      | SEARCH_ACCOUNTS_DUPLICATE_REQUEST_ID_TC_14       | 10003     | Duplicate Request ID |
 
 
+  @SearchAccountsTurnOffNegativeInvalidLoginId @Phase1 @NegativeFlow
+  Scenario Outline: SearchAccountsApiTOFF Api - Verify SearchAccounts Api with invalid loginId for "<testCondition>" condition
+    When a request is made to the SearchAccounts Api with an invalid loginId for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                  | errorCode | errorMessage              |
+      | SEARCH_ACCOUNTS_MISSING_LOGIN_ID_TC_15         | 10112     |Invalid or missing Login ID|
+      | SEARCH_ACCOUNTS_INVALID_LOGIN_ID_TC_16         | 10112     |Invalid or missing Login ID|
+      | SEARCH_ACCOUNTS_NON_ALPHANUMERIC_ID_TC_17      | 10112     |Invalid or missing Login ID|
+      |SEARCH_ACCOUNT_LOGIN_ID_NOT_IN_USERS_TABLE_TC_18|2000       |Invalid Login ID           |
+
+  @SearchAccountsTurnOffNegativeInvalidCustomerCode @Phase1 @NegativeFlow
+  Scenario Outline: SearchAccountsApiTOFF Api - Verify SearchAccounts Api with invalid CustomerCode for "<testCondition>" condition
+    When a request is made to the SearchAccounts Api with an invalid field for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                              | errorCode | errorMessage                                                                                                                                                                     |
+      | SEARCH_ACCOUNTS_MISSING_CUSTOMER_CODE_TC_19                |1001       |Invalid Request: Invalid required search field combination - customerCode required.                                                                                               |
+      |SEARCH_ACCOUNTS_MISSING_PREMISES_CODE_TC_20                 |1001       |Invalid Request: Invalid required search field combination - premisesCode required.                                                                                               |
+      |SEARCH_ACCOUNTS_NO_SEARCH_PARAMETERS_ARE_PROVIDED_TC_11     |10116      |At least one of the following is required: GNG Account Number, Business Name, First and Last Name (with Zip Code), Social Security Number, AGLC Account Number or Premise Address.|
+      |INVALID_LENGTH_CUSTOMER_CODE_TC_21                          |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_LENGTH_PREMISES_CODE_TC_22                          |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |MISSING_TRANSACTION_TYPE_TC_23                              |10113      |Invalid or missing Transaction Type                                                                                                                                               |
+      |INVALID_TRANSACTION_TYPE_TC_24                              |10113      |Invalid or missing Transaction Type                                                                                                                                               |
+      |INVALID_TRANSACTION_TYPE_LENGTH_TC_25                       |10113      |Invalid or missing Transaction Type                                                                                                                                               |
+      |INVALID_CUSTOMER_BUSINESS_NAME_LENGTH_TC_26                 |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_LAST_NAME_LENGTH_TC_27                              |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |MISSING_ZIP_CODE_TC_29                                      |1001       |Invalid Request: Invalid required search field combination - premisesZipCode required.                                                                                            |
+      |MISSING_TRANSACTION_TYPE_LAST_NAME_AND_ZIP_GIVEN_TC_30      |10113      |Invalid or missing Transaction Type                                                                                                                                               |
+      |INVALID_FIRST_NAME_LENGTH_TC_31                             |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |UNENCRYPTED_SSN_TC_32                                       |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_SSN_LENGTH_TC_33                                    |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |FEDERAL_TAX_ID_NOT_ALLOWED_TC_34                            |2200       |Parameter Value should be null-Federal Tax ID                                                                                                                                     |
+      |SSN_AND_FEDERAL_TAX_ID_PROVIDED_TC_35                       |2200       |Parameter Value should be null-Federal Tax ID                                                                                                                                     |
+      |INVALID_PARAMETER_PROVIDED_PHONE_NUMBER_TC_36               |2200       |Parameter Value should be null-Phone Number                                                                                                                                       |
+      |INVALID_AGLC_ACCOUNT_NUMBER_LENGTH_TC_37                    |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_AGLC_ACCOUNT_NUMBER_LENGTH_BUSINESS_NAME_GIVEN_TC_38|10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |NON_NUMERIC_AGLC_ACCOUNT_NUMBER_TC_39                       |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_PREMISES_STREET_NUMBER_LENGTH_TC_40                 |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_STREET_PREDIRECTION_LENGTH_TC_41                    |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_PREMISES_STREET_NAME_LENGTH_TC_42                   |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |MISSING_PREMISES_STREET_NAME_TC_43                          |1001       |Invalid Request: Invalid required search field combination - premisesStreetName required.                                                                                         |
+      |INVALID_STREET_SUFFIX_LENGTH_TC_44                          |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_PREMISES_STREET_POST_DIRECTION_LENGTH_TC_45         |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |INVALID_UNIT_TYPE_LENGTH_TC_46                              |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |PREMISES_UNIT_TYPE_MISSING_TC_47                            |1001       |Invalid Request: Invalid required search field combination - premisesUnitType required.                                                                                           |
+      |INVALID_PREMISES_UNIT_NUMBER_FORMAT_TC_48                   |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |MISSING_UNIT_NUMBER_TC_49                                   |1001       |Invalid Request: Invalid required search field combination - premisesUnitNumber required.                                                                                         |
+      |INVALID_PREMISES_CITY_LENGTH_TC_50                          |10115      |Invalid search parameter(s)                                                                                                                                                       |
+      |MISSING_PREMISES_CITY_TC_51                                 |1001       |Invalid Request: Invalid required search field combination - premisesCity required.                                                                                               |
+      |INVALID_STATE_CODE_LENGTH_TC_52                             |10115      |Invalid PremisesStateCode provided                                                                                                                                                |
+      |MISSING_STATE_CODE_TC_53                                    |1001       |Invalid Request: Invalid required search field combination - premisesStateCode required.                                                                                          |
+      |INVALID_ZIP_CODE_LENGTH_TC_54A                              |10115      |Invalid PremisesZipCode provided                                                                                                                                                  |
+      |INVALID_ZIP_CODE_LENGTH_LESS_THAN_5_TC_54B                  |10115      |Invalid PremisesZipCode provided                                                                                                                                                  |
+      |MISSING_ZIP_CODE_TC_55                                      |1001       |Invalid Request: Invalid required search field combination - premisesZipCode required.                                                                                            |
+
+  @InvalidFirstNameAndZipCombination @Phase1 @NegativeFlow
+  Scenario: SearchAccountsApiTOFF Api - Verify SearchAccounts Api with invalid last name and zip for TC_28
+    When a request is made to the SearchAccounts Api with an invalid field for "INVALID_LASTNAME_AND_ZIP_COMBINATION_TC_28"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And response should return numberOfMatches as 0
