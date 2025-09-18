@@ -236,6 +236,7 @@ public class BaseSteps {
         // Normalize expected message
         boolean containsPipe = errorMessage.contains("[PIPE]");
         boolean containsZipCode=errorMessage.contains("Invalid PremisesZipCode");
+        boolean containsStateCode= errorMessage.contains("Invalid PremisesStateCode provided");
         String normalizedExpectedMessage = errorMessage.replace("[PIPE]", "|");
 
         // Validate error code
@@ -244,7 +245,7 @@ public class BaseSteps {
                 equalTo(errorCode));
 
         // Conditional validation based on presence of [PIPE]
-        if (containsPipe||containsZipCode) {
+        if (containsPipe||containsZipCode||containsStateCode) {
             assertThat("ErrorMessage does not contain expected content",
                     actualErrorMessage,
                     containsString(normalizedExpectedMessage));

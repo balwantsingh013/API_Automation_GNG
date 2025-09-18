@@ -5,6 +5,7 @@ import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import static com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel.search_accounts;
+import static com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel.search_accounts_mandatory;
 
 @Slf4j
 public class SearchAccountsApiSteps {
@@ -41,6 +42,21 @@ public class SearchAccountsApiSteps {
     @When("a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For {string}")
     public void a_request_is_made_to_the_SearchAccounts_Api_with_Valid_Address_Details_Parameters_with_TOFF_RS_Active_account(String testCondition) {
         searchAccountsApiPage.validateResponseForValidAddressDetailsTC104_105(search_accounts, SearchAccountsTOffApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the SearchAccounts Api with an invalid requestID for {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_invalid_request_id(String testCondition) {
+        searchAccountsApiPage.validateResponseForInvalidRequestID(search_accounts_mandatory, SearchAccountsTOffApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the SearchAccounts Api with an invalid loginId for {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_invalid_login_id(String testCondition) {
+        searchAccountsApiPage.validateResponseForInvalidLoginID(search_accounts_mandatory, SearchAccountsTOffApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the SearchAccounts Api with an invalid field for {string}")
+    public void a_request_is_made_to_the_SearchAccounts_Api_with_invalid_field(String testCondition) {
+        searchAccountsApiPage.validateResponseForInvalidField(search_accounts_mandatory, SearchAccountsTOffApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the SearchAccounts Api with Valid SSN Parameter with transactionType As TOFF is input For Active RS Account with Past Due Balance")
