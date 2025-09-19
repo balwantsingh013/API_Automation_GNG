@@ -10,6 +10,7 @@ import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReas
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.gng.api.constants.GlobalEnums.AddressType.*;
@@ -58,6 +59,7 @@ public class SaveUnenrollmentHelper {
                 break;
         }
     }
+
     public void setParametersBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setLoginID(USERNAME);
@@ -94,7 +96,9 @@ public class SaveUnenrollmentHelper {
                 payload.setPremisesCode("0");
                 break;
             case ACCOUNT_COMBINATION_INVALID_NEGATIVE_TC123:
-                //fetch or mult calls
+                payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(5));
                 break;
             case AGLC_ACCOUNT_EMPTY_NEGATIVE_TC124:
                 payload.setAglcAccountNumber("");
@@ -159,45 +163,138 @@ public class SaveUnenrollmentHelper {
                 payload.setForwardingAddressLine2(FakerDataGenerator.getRandomString(50));
                 break;
             case FWD_ADD_CITY_EMPTY_NEGATIVE_TC146:
-                setNewAddressForwardingAddressRandomParameters(payload);
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressCity("");
                 break;
             case FWD_ADD_CITY_MAX_LENGTH_NEGATIVE_TC147:
                 payload.setForwardingAddressCity(FakerDataGenerator.getRandomString(40));
                 break;
             case FWD_ADD_STATE_CODE_EMPTY_NEGATIVE_TC148:
-                setNewAddressForwardingAddressRandomParameters(payload);
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressStateCode("");
                 break;
             case FWD_ADD_STATE_CODE_MAX_LENGTH_NEGATIVE_TC149:
                 payload.setForwardingAddressStateCode(FakerDataGenerator.getRandomString(5));
                 break;
             case FWD_ADD_STATE_CODE_INVALID_NEGATIVE_TC150:
-                setNewAddressForwardingAddressRandomParameters(payload);
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressStateCode("ZZ");
                 break;
             case FWD_ADD_ZIP_CODE_EMPTY_NEGATIVE_TC151:
-                setNewAddressForwardingAddressRandomParameters(payload);
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressZipCode("");
                 break;
             case FWD_ADD_ZIP_CODE_MAX_LENGTH_NEGATIVE_TC152:
-                setNewAddressForwardingAddressRandomParameters(payload);
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressZipCode(FakerDataGenerator.getRandomNumericString(12));
+                break;
+            case FWD_ADD_ZIP_CODE_INVALID_NEGATIVE_TC153:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                payload.setForwardingAddressZipCode("40000");
+                break;
+            case FWD_ADD_ZIP_CODE_INVALID_FORMAT_NEGATIVE_TC154:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                payload.setForwardingAddressZipCode(FakerDataGenerator.generateDigits(3) + "-" + FakerDataGenerator.generateDigits(2));
+                break;
+            case TURN_OFF_REASON_EMPTY_NEGATIVE_TC155, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC162:
+                setTurnOffReasonAndSubReason(payload, testCondition);
+                break;
+            case TURN_OFF_REASON_MAX_LENGTH_NEGATIVE_TC156:
+                payload.setTurnOffReason(FakerDataGenerator.getRandomString(200));
+                break;
+            case TURN_OFF_REASON_INVALID_NEGATIVE_TC157:
+                payload.setTurnOffReason(TurnOffReason.INVALID.getReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC164, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC163,
+                 TURN_OFF_SUB_REASON_EMPTY_NEGATIVE_TC158, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC165,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC166, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC167,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC168, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC169,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC178, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC179:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                setTurnOffReasonAndSubReason(payload, testCondition);
+                break;
+            case TURN_OFF_SUB_REASON_MAX_LENGTH_NEGATIVE_TC159:
+                payload.setTurnOffSubReason(FakerDataGenerator.getRandomString(200));
+                break;
+            case TURN_OFF_SUB_REASON_EMPTY_MOVING_NEGATIVE_TC160:
+                setTurnOffReasonAndSubReason(payload, testCondition);
+                break;
+            case TURN_OFF_SUB_REASON_MAX_LENGTH_MOVING_NEGATIVE_TC161:
+                payload.setTurnOffSubReason(FakerDataGenerator.getRandomString(201));
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC170, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC171,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC172, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC173,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC174, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC175,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC176, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC177,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC185, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC186,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC187, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC188,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC189, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC190,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC191:
+                payload.setEtcExists(true);
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                setTurnOffReasonAndSubReason(payload, testCondition);
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC180,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC181,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC182,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC183,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC184:
+                payload.setEtcExists(false);
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                setTurnOffReasonAndSubReason(payload, testCondition);
+                break;
+            case EMAIL_MAX_LENGTH_NEGATIVE_TC192:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                payload.setEmailAddress(FakerDataGenerator.getRandomString(150) + "@" + FakerDataGenerator.getRandomString(4) + "." + FakerDataGenerator.generateString(3));
+                break;
+            case EMAIL_INVALID_FORMAT_NEGATIVE_TC193:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                payload.setEmailAddress(FakerDataGenerator.getRandomString(8) + "." + FakerDataGenerator.getRandomString(3));
+                break;
+            case REQ_TURN_OFF_DATE_EMPTY_NEGATIVE_TC194:
+                payload.setRequestedTurnOffDate("");
+                break;
+            case REQ_TURN_OFF_DATE_INVALID_FORMAT_NEGATIVE_TC195:
+
+                payload.setRequestedTurnOffDate("12-31-2025");
+                break;
+            case AGLC_SVC_ORDER_NUM_EMPTY_NEGATIVE_TC196:
+                payload.setAglcServiceOrderNumber("");
+                break;
+            case AGLC_SVC_ORDER_NUM_MAX_LENGTH_NEGATIVE_TC197:
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomNumericString(20));
+                break;
+            case AGLC_SVC_ORDER_NUM_NON_NUMERIC_NEGATIVE_TC198:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomString(7));
+                break;
+            case ETC_EXISTS_INVALID_NEGATIVE_TC199:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                payload.setEtcExists(FakerDataGenerator.getRandomString(7));
+                break;
+            case ETC_EXISTS_EMPTY_NEGATIVE_TC200:
+                payload.setEtcExists(null);
+                break;
+            case TURN_OFF_SUB_REASON_NOT_NULL_SEASONAL_ETC_TRUE_NEGATIVE_TC201,
+                 TURN_OFF_SUB_REASON_NOT_NULL_REAP_ETC_TRUE_NEGATIVE_TC203,
+                 TURN_OFF_SUB_REASON_NOT_NULL_HOUSEHOLD_CHANGE_ETC_TRUE_NEGATIVE_TC205:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                setTurnOffReasonAndSubReason(payload, testCondition);
+                payload.setEtcExists(true);
+                break;
+
+            case TURN_OFF_SUB_REASON_NOT_NULL_SEASONAL_ETC_FALSE_NEGATIVE_TC202,
+                 TURN_OFF_SUB_REASON_NOT_NULL_REAP_ETC_FALSE_NEGATIVE_TC204,
+                 TURN_OFF_SUB_REASON_NOT_NULL_HOUSEHOLD_CHANGE_ETC_FALSE_NEGATIVE_TC206:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
+                setTurnOffReasonAndSubReason(payload, testCondition);
+                payload.setEtcExists(false);
                 break;
 
             default:
                 break;
         }
 
-    }
-
-    public void setNewAddressForwardingAddressRandomParameters(SaveUnenrollmentRequest payload){
-        payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
-        payload.setForwardingAddressType(STREET.getValue());
-        payload.setForwardingAddressStateCode(FakerDataGenerator.getRandomString(2));
-        payload.setForwardingAddressCity(FakerDataGenerator.generateString(6));
-        payload.setForwardingAddressZipCode(FakerDataGenerator.generateZipCode());
-        payload.setForwardingAddressStreetName(FakerDataGenerator.generateString(5));
     }
 
     public void setTurnOffReasonAndSubReason(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
@@ -209,7 +306,7 @@ public class SaveUnenrollmentHelper {
                 break;
 
             case MOVING_OUTSIDE_AGLC_TC230:
-            case MOVING_OUTSIDE_AGLC_TC208:
+            case MOVING_OUTSIDE_AGLC_TC208, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC175:
                 payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_AGLC.getReason());
                 payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_AGLC.getSubReason());
                 break;
@@ -289,15 +386,167 @@ public class SaveUnenrollmentHelper {
                 payload.setTurnOffReason(TurnOffReason.OTHER_RENOVATION_ELECTRIC_CONVERSION.getReason());
                 payload.setTurnOffSubReason(TurnOffReason.OTHER_RENOVATION_ELECTRIC_CONVERSION.getSubReason());
                 break;
-
             case HOUSEHOLD_ACCOUNT_CHANGE_TC_214:
                 payload.setTurnOffReason(TurnOffReason.HOUSEHOLD_ACCOUNT_CHANGE.getReason());
                 payload.setTurnOffSubReason(TurnOffReason.HOUSEHOLD_ACCOUNT_CHANGE.getSubReason());
                 break;
-
             case MOVING_OUTSIDE_POOL_GROUP_TC_226:
                 payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP.getReason());
                 payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_EMPTY_NEGATIVE_TC158:
+                payload.setTurnOffReason(TurnOffReason.OTHER_REGULATED_PROVIDER.getReason());
+                payload.setTurnOffSubReason("");
+                break;
+            case TURN_OFF_SUB_REASON_MAX_LENGTH_NEGATIVE_TC159:
+                payload.setTurnOffSubReason(FakerDataGenerator.getRandomString(200));
+                break;
+            case TURN_OFF_SUB_REASON_EMPTY_MOVING_NEGATIVE_TC160:
+                payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason("");
+                break;
+            case TURN_OFF_SUB_REASON_MAX_LENGTH_MOVING_NEGATIVE_TC161:
+                payload.setTurnOffSubReason(FakerDataGenerator.getRandomString(201));
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC162:
+                payload.setTurnOffReason(TurnOffReason.MOVING_REGULATED_PROVIDER.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_REGULATED_PROVIDER.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC163:
+                payload.setTurnOffReason(TurnOffReason.MOVING_MILITARY.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_MILITARY.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC164:
+                payload.setTurnOffReason(TurnOffReason.MOVING_RENOVATION_ELECTRIC.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_RENOVATION_ELECTRIC.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC165:
+                payload.setTurnOffReason(TurnOffReason.MOVING_DECEASED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_DECEASED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC166:
+                payload.setTurnOffReason(TurnOffReason.MOVING_FINANCIAL_SITUATION.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_FINANCIAL_SITUATION.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC167:
+                payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_AGLC_TERRITORY_ETC_WAIVED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_AGLC_TERRITORY_ETC_WAIVED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC168:
+                payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP_ETC_WAIVED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP_ETC_WAIVED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC169:
+                payload.setTurnOffReason(TurnOffReason.MOVING_SERVICE_TRANSFER_ETC_WAIVED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_SERVICE_TRANSFER_ETC_WAIVED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC170:
+                payload.setTurnOffReason(TurnOffReason.MOVING_REGULATED_PROVIDER.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_REGULATED_PROVIDER.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC171:
+                payload.setTurnOffReason(TurnOffReason.MOVING_MILITARY.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_MILITARY.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC172:
+                payload.setTurnOffReason(TurnOffReason.MOVING_RENOVATION_ELECTRIC.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_RENOVATION_ELECTRIC.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC173:
+                payload.setTurnOffReason(TurnOffReason.MOVING_DECEASED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_DECEASED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC174:
+                payload.setTurnOffReason(TurnOffReason.MOVING_FINANCIAL_SITUATION.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_FINANCIAL_SITUATION.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC176:
+                payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC177:
+                payload.setTurnOffReason(TurnOffReason.MOVING_SERVICE_TRANSFER.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_SERVICE_TRANSFER.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC178:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_TERRITORY.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_TERRITORY.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC179:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC180:
+                payload.setTurnOffReason(TurnOffReason.OTHER_SERVICE_TRANSFER.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_SERVICE_TRANSFER.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC181:
+                payload.setTurnOffReason(TurnOffReason.OTHER_WITHIN_POOL_NOT_GNG.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_WITHIN_POOL_NOT_GNG.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC182:
+                payload.setTurnOffReason(TurnOffReason.OTHER_REGULATED_PROVIDER_ETC_WAIVED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_REGULATED_PROVIDER_ETC_WAIVED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC183:
+                payload.setTurnOffReason(TurnOffReason.OTHER_MILITARY_ETC_WAIVED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_MILITARY_ETC_WAIVED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC184:
+                payload.setTurnOffReason(TurnOffReason.OTHER_DECEASED_ETC_WAIVED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_DECEASED_ETC_WAIVED.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC185:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_TERRITORY.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_TERRITORY.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC186:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC187:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC188:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC189:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC190:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC191:
+                payload.setTurnOffReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.OTHER_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_NOT_NULL_SEASONAL_ETC_TRUE_NEGATIVE_TC201:
+                payload.setTurnOffReason(TurnOffReason.SEASONAL_OR_HEAT_SERVICE_TRANSFER.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.SEASONAL_OR_HEAT_SERVICE_TRANSFER.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_NOT_NULL_SEASONAL_ETC_FALSE_NEGATIVE_TC202:
+                payload.setTurnOffReason(TurnOffReason.SEASONAL_OR_HEAT_SERVICE_TERRITORY.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.SEASONAL_OR_HEAT_SERVICE_TERRITORY.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_NOT_NULL_REAP_ETC_TRUE_NEGATIVE_TC203:
+                payload.setTurnOffReason(TurnOffReason.REAP_REALTOR_INSPECTION_SERVICE_TRANSFER.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.REAP_REALTOR_INSPECTION_SERVICE_TRANSFER.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_NOT_NULL_REAP_ETC_FALSE_NEGATIVE_TC204:
+                payload.setTurnOffReason(TurnOffReason.REAP_REALTOR_INSPECTION_TERRITORY.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.REAP_REALTOR_INSPECTION_TERRITORY.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_NOT_NULL_HOUSEHOLD_CHANGE_ETC_TRUE_NEGATIVE_TC205:
+                payload.setTurnOffReason(TurnOffReason.HOUSEHOLD_ACCOUNT_SERVICE_TRANSFER.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.HOUSEHOLD_ACCOUNT_SERVICE_TRANSFER.getSubReason());
+                break;
+            case TURN_OFF_SUB_REASON_NOT_NULL_HOUSEHOLD_CHANGE_ETC_FALSE_NEGATIVE_TC206:
+                payload.setTurnOffReason(TurnOffReason.HOUSEHOLD_ACCOUNT_TERRITORY.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.HOUSEHOLD_ACCOUNT_TERRITORY.getSubReason());
                 break;
 
             default:
