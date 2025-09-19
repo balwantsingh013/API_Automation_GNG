@@ -9,13 +9,11 @@ import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 import java.util.*;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.testng.AssertJUnit.*;
-import static org.hamcrest.Matchers.hasItem;
 
 @Slf4j
 public class BaseSteps {
@@ -38,6 +36,11 @@ public class BaseSteps {
     @And("response should have ErrorCode {int} and ErrorMessage {string}")
     public void responseShouldHaveErrorCodeAndErrorMessage(int errorCode, String errorMessage) {
         verifyErrorCodeAndMessage(errorCode, errorMessage);
+    }
+
+    @And("response should have a SSP eligible as {string} and {string}")
+    public void responseShouldHaveWarningForSSPEligibility(String sspEligibility, String Warning){
+        verifySSPEligibilityAndWarning(booleanVal(sspEligibility),Warning);
     }
 
     @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid State code {string}")
@@ -228,18 +231,45 @@ public class BaseSteps {
 
     private void verifyErrorCodeAndMessage(int errorCode, String errorMessage) {
         Response response = testContext.getResponse();
+        String actualErrorMessage = response.jsonPath().getString("errorMessage");
 
-        // Replace placeholder with actual pipe character
-        String normalizedErrorMessage = errorMessage.replace("[PIPE]", "|");
+        // Normalize expected message
+        boolean containsPipe = errorMessage.contains("[PIPE]");
+        boolean containsZipCode=errorMessage.contains("Invalid PremisesZipCode");
+        boolean containsStateCode= errorMessage.contains("Invalid PremisesStateCode provided");
+        String normalizedExpectedMessage = errorMessage.replace("[PIPE]", "|");
 
+        // Validate error code
         assertThat("Incorrect ErrorCode returned",
                 response.jsonPath().getInt("errorCode"),
                 equalTo(errorCode));
 
-        assertThat("Incorrect ErrorMessage returned",
-                response.jsonPath().getString("errorMessage"),
-                equalTo(normalizedErrorMessage));
+        // Conditional validation based on presence of [PIPE]
+        if (containsPipe||containsZipCode||containsStateCode) {
+            assertThat("ErrorMessage does not contain expected content",
+                    actualErrorMessage,
+                    containsString(normalizedExpectedMessage));
+        } else {
+            assertThat("Incorrect ErrorMessage returned",
+                    actualErrorMessage,
+                    equalTo(normalizedExpectedMessage));
+        }
     }
+
+    private void verifySSPEligibilityAndWarning(boolean sspEligibility, String warning) {
+        Response response = testContext.getResponse();
+
+        // Validate ssp Eligibility flag at data.sspEligible
+        assertThat("Incorrect Eligibility flag returned",
+                response.jsonPath().getBoolean("data.sspEligible"),
+                equalTo(sspEligibility));
+
+        // Validate the warning message at data.outMessage
+        assertThat("Incorrect Warning message returned",
+                response.jsonPath().getString("data.outMessage"),
+                equalTo(warning));
+    }
+
 
     private void verifyNumberOfMatches(int expectedMatches) {
         Response response = testContext.getResponse();

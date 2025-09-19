@@ -74,7 +74,7 @@ Feature: Verify GetPrepayPlansRequote Api
       | GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_462 | 2000      | Invalid Login ID                                                                                                                            |
 
   @GetPrepayPlansRequoteNegativeCompleteFlow @NegativeFlow
-  Scenario Outline: GetPrepayPlansRequote API – returns quotes for <testCondition>
+  Scenario Outline: GetPrepayPlansRequote API – does not return quotes for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""

@@ -48,6 +48,24 @@ public class SearchAccountsApiPage extends BasePage {
         executeSearchAccountsRequest(payload);
     }
 
+    public void validateResponseForInvalidRequestID(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.preparePayloadForInvalidRequestId(payload, testCondition);
+        executeSearchAccountsRequest(payload);
+    }
+
+    public void validateResponseForInvalidLoginID(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.preparePayloadForInvalidLoginId(payload, testCondition);
+        executeSearchAccountsRequest(payload);
+    }
+
+    public void validateResponseForInvalidField(SearchAccountsTOffApiLabel apiLabel, SearchAccountsTOffApiLabel testCondition){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.preparePayloadForInvalidField(payload, testCondition);
+        executeSearchAccountsRequest(payload);
+    }
+
     public void validateResponseForValidSSNTC89(SearchAccountsTOffApiLabel apiLabel){
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.getSSNFromDbAndPreparePayloadTC_89(payload);

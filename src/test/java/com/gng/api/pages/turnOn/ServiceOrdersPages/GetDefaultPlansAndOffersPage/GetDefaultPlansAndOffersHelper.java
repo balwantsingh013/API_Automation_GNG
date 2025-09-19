@@ -9,10 +9,11 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersRequest;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel;
 import org.testng.Assert;
-
 import java.util.List;
 import java.util.Map;
-
+import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
+import static com.gng.api.constants.GlobalEnums.CustomerType.RESIDENTIAL;
+import static com.gng.api.constants.GlobalEnums.EnrollmentSource.MAIL;
 import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersApiLabel.GET_DEFAULT_PLANS_AND_OFFERS_TC_154;
 
 @Slf4j
@@ -53,6 +54,160 @@ public class GetDefaultPlansAndOffersHelper {
         }
     }
 
+    public void setRequestIDBasedOnTestCondition(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel testCondition) {
+        payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
+        switch (testCondition) {
+            case GET_DEFAULT_PLANS_AND_OFFERS_MISSING_REQUEST_ID_TC_129:
+                payload.setRequestID(null);
+                break;
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_REQUEST_ID_TC_130:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
+                break;
+            case GET_DEFAULT_PLANS_AND_OFFERS_DUPLICATE_REQUEST_ID_TC_128:
+                payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
+                break;
+            default:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+        }
+    }
+
+    public void setLoginIDBasedOnTestCondition(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel testCondition) {
+        payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        switch (testCondition) {
+            case GET_DEFAULT_PLANS_AND_OFFERS_MISSING_LOGIN_ID_TC_131:
+                payload.setLoginID(null);
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_LOGIN_ID_TC_132:
+                payload.setLoginID(FakerDataGenerator.generateAlphanumeric(31));
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_NON_ALPHANUMERIC_ID_TC_133:
+                payload.setLoginID(FakerDataGenerator.generateString(8));
+                break;
+        }
+    }
+
+
+    public void setCustomerTypeBasedOnTestCondition(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel testCondition) {
+        payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        switch (testCondition) {
+            case GET_DEFAULT_PLANS_AND_OFFERS_MISSING_CUSTOMER_TYPE_ID_TC_134:
+                payload.setCustomerType(null);
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_LENGTH_CUSTOMER_TYPE_TC_135:
+                payload.setCustomerType(FakerDataGenerator.generateUpperCaseString(3));
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_CUSTOMER_TYPE_TC_136:
+                payload.setCustomerType(GlobalEnums.InvalidValues.INVALID_CUSTOMER_TYPE.getValue());
+                break;
+
+        }
+    }
+
+    public void setTransactionTypeBasedOnTestCondition(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        switch (testCondition) {
+            case GET_DEFAULT_PLANS_AND_OFFERS_MISSING_TRANSACTION_TYPE_TC_137:
+                payload.setTransactionType(null);
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_LENGTH_TRANSACTION_TYPE_TC_138:
+                payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(5));
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_TRANSACTION_TYPE_TC_139:
+                payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(4));
+                break;
+
+        }
+    }
+
+        public void setEnrollmentSourceBasedOnTestCondition(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        switch (testCondition) {
+            case GET_DEFAULT_PLANS_AND_OFFERS_MISSING_ENROLLMENT_SOURCE_TC_140:
+                payload.setEnrollmentSource("");
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_LENGTH_ENROLLMENT_SOURCE_TC_141:
+                payload.setEnrollmentSource(FakerDataGenerator.generateUpperCaseString(36));
+                break;
+
+            case GET_DEFAULT_PLANS_AND_OFFERS_INVALID_ENROLLMENT_SOURCE_TC_142:
+                payload.setEnrollmentSource(FakerDataGenerator.generateUpperCaseString(5));
+                break;
+        }
+    }
+
+    public void setPromotionCodeBasedOnTestCondition(GetDefaultPlansAndOffersRequest payload, GetDefaultPlansAndOffersApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        switch (testCondition) {
+            case INVALID_MARKETING_PROMOTION_CODE_TC_143:
+                payload.setMarketingPromotionCode(FakerDataGenerator.generateAlphanumeric(46));
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_ALLCONNECT_TC_144_1:
+                payload.setMarketingPromotionCode(GlobalEnums.PromotionCode.AAA.getValue());
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.ALLCONNECT.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_ENERGYSHOP_TC_144_2:
+                payload.setMarketingPromotionCode(GlobalEnums.PromotionCode.AAA.getValue());
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.ENERGYSHOP.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_GEORGIAGASSAVINGS_TC_144_3:
+                payload.setMarketingPromotionCode(GlobalEnums.PromotionCode.AAA.getValue());
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.GEORGIAGASSAVINGS.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_ONESOURCE_TC_144_4:
+                payload.setMarketingPromotionCode(GlobalEnums.PromotionCode.AAA.getValue());
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.ONESOURCE.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_TC_145:
+                payload.setMarketingPromotionCode(FakerDataGenerator.generateString(4));
+                payload.setEnrollmentSource(MAIL.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_CM_CUSTOMER_TC_146:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setEnrollmentSource(MAIL.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_RESIDENTIAL.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_NEW_CUSTOMER_TC_147:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setEnrollmentSource(MAIL.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_FOR_EXISTING_CUSTOMER.getValue());
+                break;
+
+            case EXPIRED_PROMOTION_CODE_TC_148:
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setEnrollmentSource(MAIL.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.EXPIRED_MARKETING_PROMOTION_CODE.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_RS_CUSTOMER_TC_149:
+                payload.setCustomerType(RESIDENTIAL.getValue());
+                payload.setEnrollmentSource(MAIL.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_COMMERCIAL.getValue());
+                break;
+
+            case INVALID_PROMOTION_CODE_FOR_CHANNEL_SOURCE_TC_150:
+                payload.setCustomerType(RESIDENTIAL.getValue());
+                payload.setEnrollmentSource(MAIL.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_GREEN_LIFE.getValue());
+                break;
+
+        }
+    }
     public void verifyResidentialDefaultPlansReceivedAgainstDatabase() {
         Map<String, Object> controlNumberResult = ApplicationContext.get().getDbAction().getControlNumber();
         String controlNum = controlNumberResult.get("UZTCOTT_CONTROL_NUM").toString();
