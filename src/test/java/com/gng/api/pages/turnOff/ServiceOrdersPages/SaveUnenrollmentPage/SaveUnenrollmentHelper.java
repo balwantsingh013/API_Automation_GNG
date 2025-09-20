@@ -52,9 +52,11 @@ public class SaveUnenrollmentHelper {
                 payload.setLoginID(FakerDataGenerator.getRandomString(50));
                 break;
             case LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.generateAlphanumeric(6));
                 break;
             case LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
                 payload.setLoginID(FakerDataGenerator.generateString(8));
                 break;
         }
@@ -124,7 +126,7 @@ public class SaveUnenrollmentHelper {
                 payload.setForwardingAddressType(FakerDataGenerator.getRandomString(5));
                 break;
             case FWD_ADDRESS_TYPE_INVALID_VALUE_NEGATIVE_TC134:
-                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressType(GlobalEnums.ForwardingAddressType.INVALID.getValue());
                 break;
             case FWD_ADD_STR_NUM_MAX_LENGTH_NEGATIVE_TC135:
@@ -134,8 +136,7 @@ public class SaveUnenrollmentHelper {
                 payload.setForwardingAddressStreetPreDirection(FakerDataGenerator.getRandomString(5));
                 break;
             case FWD_ADD_STR_NAME_EMPTY_NEGATIVE_TC137:
-                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
-                payload.setForwardingAddressType(STREET.getValue());
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressStreetName("");
                 break;
             case FWD_ADD_STR_NAME_MAX_LENGTH_NEGATIVE_TC138:
@@ -196,7 +197,13 @@ public class SaveUnenrollmentHelper {
                 setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 payload.setForwardingAddressZipCode(FakerDataGenerator.generateDigits(3) + "-" + FakerDataGenerator.generateDigits(2));
                 break;
-            case TURN_OFF_REASON_EMPTY_NEGATIVE_TC155, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC162:
+            case TURN_OFF_REASON_EMPTY_NEGATIVE_TC155, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC162,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC164, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC163,
+                 TURN_OFF_SUB_REASON_EMPTY_NEGATIVE_TC158, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC165,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC166, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC167,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC168, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC169,
+                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC178, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC179:
+                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
                 setTurnOffReasonAndSubReason(payload, testCondition);
                 break;
             case TURN_OFF_REASON_MAX_LENGTH_NEGATIVE_TC156:
@@ -204,14 +211,6 @@ public class SaveUnenrollmentHelper {
                 break;
             case TURN_OFF_REASON_INVALID_NEGATIVE_TC157:
                 payload.setTurnOffReason(TurnOffReason.INVALID.getReason());
-                break;
-            case TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC164, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC163,
-                 TURN_OFF_SUB_REASON_EMPTY_NEGATIVE_TC158, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC165,
-                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC166, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC167,
-                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC168, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC169,
-                 TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC178, TURN_OFF_SUB_REASON_INVALID_NO_ETC_TC179:
-                setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
-                setTurnOffReasonAndSubReason(payload, testCondition);
                 break;
             case TURN_OFF_SUB_REASON_MAX_LENGTH_NEGATIVE_TC159:
                 payload.setTurnOffSubReason(FakerDataGenerator.getRandomString(200));
@@ -393,6 +392,10 @@ public class SaveUnenrollmentHelper {
             case MOVING_OUTSIDE_POOL_GROUP_TC_226:
                 payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP.getReason());
                 payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP.getSubReason());
+                break;
+            case TURN_OFF_REASON_EMPTY_NEGATIVE_TC155:
+                payload.setTurnOffReason("");
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_MILITARY.getSubReason());
                 break;
             case TURN_OFF_SUB_REASON_EMPTY_NEGATIVE_TC158:
                 payload.setTurnOffReason(TurnOffReason.OTHER_REGULATED_PROVIDER.getReason());

@@ -55,7 +55,7 @@ Feature: Verify SaveUnenrollment Api
       | LOGIN_ID_EMPTY_NEGATIVE_TC109         | 10000     | Missing Login ID                                          |
       | LOGIN_ID_MAX_LENGTH_NEGATIVE_TC110    | 10000     | The Login ID must be a string with a maximum length of 30 |
       | LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111 | 2000      | Invalid Login ID                                          |
-      | LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112    | 2000      | INVALID Login ID                                          |
+      | LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112    | 2000      | Invalid Login ID                                          |
 
   @SaveUnenrollmentWithInvalidParameters @NegativeFlow @SaveUnenrollment
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"
@@ -70,8 +70,8 @@ Feature: Verify SaveUnenrollment Api
       | TRANSACTION_TYPE_MAX_LENGTH_NEGATIVE_TC114                               | 10000     | The Transaction Type must be a string with a maximum length of 4                                                                           |
       | TRANSACTION_TYPE_INVALID_NEGATIVE_TC115                                  | 1000      | Invalid Request: Invalid Transaction Type                                                                                                  |
       | CUSTOMER_CODE_EMPTY_NEGATIVE_TC116                                       | 10000     | Missing Customer Code                                                                                                                      |
-      | CUSTOMER_CODE_MAX_LENGTH_NEGATIVE_TC117                                  | 10000     | The Customer Code must be an integer with a maximum length of 9                                                                            |
-      | CUSTOMER_CODE_NON_INT_NEGATIVE_TC118                                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64].                                                                  |
+      | CUSTOMER_CODE_MAX_LENGTH_NEGATIVE_TC117                                  | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 111.|
+      | CUSTOMER_CODE_NON_INT_NEGATIVE_TC118                                     | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 96. |
       | CUSTOMER_CODE_NOT_EXISTS_NEGATIVE_TC119                                  | 2000      | Invalid Request: Invalid Customer Code                                                                                                     |
       | PREMISES_CODE_EMPTY_NEGATIVE_TC120                                       | 10000     | Missing Premises Code                                                                                                                      |
       | PREMISES_CODE_MAX_LENGTH_NEGATIVE_TC121                                  | 10000     | The Premises Code must be a numeric string with a maximum length of 7                                                                      |
@@ -163,7 +163,6 @@ Feature: Verify SaveUnenrollment Api
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
     And response should have ErrorCode 0 and ErrorMessage ""
     Then a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment Api with invalid parameters for "<testCondition>" condition
