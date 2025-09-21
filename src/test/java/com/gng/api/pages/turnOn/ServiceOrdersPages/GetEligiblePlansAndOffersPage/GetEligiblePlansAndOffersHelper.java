@@ -37,6 +37,7 @@ import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 import static com.gng.api.constants.GlobalEnums.WorkPhoneType.BUSINESS;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+import static com.gng.api.steps.turnOn.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
 import static com.gng.api.util.CommonUtil.nullifyFields;
 
 @Slf4j
@@ -915,7 +916,7 @@ public class GetEligiblePlansAndOffersHelper {
 
             case COMMERCIAL_CREDIT_CHECK_SKIP_NEW_ENROLLMENT_TC_341:
                 payload.setEnrollmentSource(WEB.getValue());
-                payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
+                payload.setCreditCheckOption(GlobalEnums.CreditCheckOption.CREDIT_CHECK_NOT_REQUIRED.getValue());
                 break;
 
             case COMMERCIAL_CREDIT_CHECK_YES_NEW_ENROLLMENT_TC_342:
@@ -1904,7 +1905,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
 
             default:
-                payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
+                payload.setCreditCheckOption(GlobalEnums.CreditCheckOption.CREDIT_CHECK_NOT_REQUIRED.getValue());
                 customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 getCustomerDetails(payload, customerData);
                 payload.setTransactionType(TURN_ON.getValue());
@@ -1998,28 +1999,25 @@ public class GetEligiblePlansAndOffersHelper {
         String state= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesStateCode();
         Map<String, Object> enrollmentRecord= null;
 
-        switch(testCondition){
-            case NO_MATCH_PLAN_CODE_B_CONTINUE_ENROLLMENT_TC_354,
-                 NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354A,
-                 LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B:
-                 enrollmentRecord= ApplicationContext.get()
-                        .getDbAction()
-                        .validateAllTheTablesAfterGetEligiblePlansRequest(
-                                customerCode,
-                                premisesCode,
-                                firstName,
-                                lastName,
-                                zipCode,
-                                aglcServiceLocationID,
-                                streetNumber,
-                                city,
-                                state
-                        );
-            break;
+        if (testCondition == NO_MATCH_PLAN_CODE_B_CONTINUE_ENROLLMENT_TC_354 ||
+                testCondition == NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354A ||
+                testCondition == LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B) {
 
-            default:
-                break;
+            enrollmentRecord = ApplicationContext.get()
+                    .getDbAction()
+                    .validateAllTheTablesAfterGetEligiblePlansRequest(
+                            customerCode,
+                            premisesCode,
+                            firstName,
+                            lastName,
+                            zipCode,
+                            aglcServiceLocationID,
+                            streetNumber,
+                            city,
+                            state
+                    );
         }
+
         Assert.assertEquals(enrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
     }
 
