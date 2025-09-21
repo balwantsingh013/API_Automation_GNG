@@ -87,6 +87,39 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, customerCode, premisesCode,enrollmentStatus, feedbackIndicator,contactDirection, reasonCode,referredIndicator,contactType, OCRCDETStatus, OCRCTIMAutomaticIndicator, reasonCode);
     }
 
+    public Map<String, Object> validateAllTheTablesAfterGetEligiblePlansRequest(String customerCode,
+                                                                                String premisesCode,
+                                                                                String firstName,
+                                                                                String lastName,
+                                                                                String zipCode,
+                                                                                String aglcServiceLocationID,
+                                                                                String streetNumber,
+                                                                                String city,
+                                                                                String state){
+
+        String query = DBQuery.SELECT_ENROLLMENT_RECORD_DATA_FOR_GETELIGIBLE_PLANS;
+        logQueryInAllure("Get Customer code for newly enrolled account", query);
+        return jdbcTemplate.queryForMap(
+                query,
+                customerCode,
+                premisesCode,
+                firstName,
+                zipCode,
+                lastName,
+                firstName,
+                lastName,
+                aglcServiceLocationID,
+                lastName,
+                city,
+                streetNumber,
+                state,
+                city,
+                streetNumber,
+                state,
+                zipCode
+        );
+    }
+
     public Map<String, Object> custCodePremCodeNoSSPAccount(String sspIndicator) {
         String query = DBQuery.SELECT_CUST_PREM_CODE_NO_SSP;
         logQueryInAllure("Get Customer code, premises code for account without SSP", query);

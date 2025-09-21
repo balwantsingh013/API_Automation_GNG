@@ -228,32 +228,35 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | VALID_DATA_REENTERED_COMMERCIAL_TC_362          | 0         |                                                                  |
       | CREDIT_CHECK_BUSINESS_BIN_NOT_NULL_TC_262A      | 0         |                                                                  |
 
-  @GetEligiblePlansAndOffersFraudAlertInvalidSSN @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersFraudAlertInvalidSSN @Phase1  @NegativeFlow @test
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And performs the database validation for "<testCondition>"
+
     Examples:
       | testCondition                                               | errorCode | errorMessage                                                                                                                                                                                        |
       #| FRAUD_ALERT_INVALID_SSN_TC_351                              | 11114     | Identification Verification Required. Ask customer to mail or fax photo ID, copy of ss card to: Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117 |
-      | NO_MATCH_FOUND_IN_EXPERIAN_TC_353                           | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                 |
+#      | NO_MATCH_FOUND_IN_EXPERIAN_TC_353                           | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                 |
       | NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354A           | 0         |                                                                                                                                                                                                     |
       | NO_MATCH_PLAN_CODE_B_CONTINUE_ENROLLMENT_TC_354             | 0         |                                                                                                                                                                                                     |
       #| NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354B           | 11114     | Identification Verification Required. Ask customer to mail or fax photo ID, copy of ss card to: Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117 |
-      | DECEASED_OR_NON_ISSUED_CUSTOMER_TC_355                      | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                 |
-      | DECEASED_OR_NON_ISSUED_CONFIRM_CREDIT_CHECK_CUSTOMER_TC_355A| 11115     | SSN on deceased or non-issued list. Do not inform customer reason for denial, follow scripted Denial statement. DO NOT override denial.                                                             |
-      | NO_MATCH_FOUND_IN_EXPERIAN_TC_356                           | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                 |
+#      | DECEASED_OR_NON_ISSUED_CUSTOMER_TC_355                      | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                 |
+#      | DECEASED_OR_NON_ISSUED_CONFIRM_CREDIT_CHECK_CUSTOMER_TC_355A| 11115     | SSN on deceased or non-issued list. Do not inform customer reason for denial, follow scripted Denial statement. DO NOT override denial.                                                             |
+#      | NO_MATCH_FOUND_IN_EXPERIAN_TC_356                           | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                 |
       #| NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_356A           | 11114     | Identification Verification Required. Ask customer to mail or fax photo ID, copy of ss card to: Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117 |
-      | GET_ELIGIBLE_PLANSA_AND_OFFERS_FROZEN_ACCOUNT_357           | 11113     | Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.                                                          |
+#      | GET_ELIGIBLE_PLANSA_AND_OFFERS_FROZEN_ACCOUNT_357           | 11113     | Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.                                                          |
       #| ENROLLMENT_DENIED_DUE_TO_NO_PAYMENT_TC_358                  | 3000      | The customer's enrollment request is denied due to past payment history                                                                                                                             |
       #| ENROLLMENT_DENIED_AS_CREDIT_CHECK_NOT_AUTHORIZED_TC_360     | 3000      | The customer's enrollment request is denied                                                                                                                                                         |
 
-    @GetEligiblePlansAndOffersLowCreditForSSP @Phase1 @NegativeFlow
+    @GetEligiblePlansAndOffersLowCreditForSSP @Phase1 @NegativeFlow @test
     Scenario: GetEligiblePlansAndOffersApi- Verify response code for invalid LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B
       When a request is made to the GetEligiblePlansAndOffers Api for "LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B" condition
       Then verify response code of "GetEligiblePlansAndOffers" Api is 200
       And response should have ErrorCode 0 and ErrorMessage ""
       And response should have a SSP eligible as "false" and "WARNING: This customer does not meet the required credit criteria to participate in the Seasonal Savings Plan"
+      And performs the database validation for "LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B"
 
   @GetEligiblePlansAndOffersInvalidWorkPhoneTypeTNON @Phase1  @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<WorkPhoneType>"

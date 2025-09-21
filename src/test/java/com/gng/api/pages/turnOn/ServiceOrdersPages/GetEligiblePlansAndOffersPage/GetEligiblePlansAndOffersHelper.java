@@ -1986,6 +1986,43 @@ public class GetEligiblePlansAndOffersHelper {
                         new AssertionError("Plan not found: " + planCode.getValue()));
     }
 
+    public void validateAllTheEntriesInTablesForEligiblePlansAndOffers(GetEligiblePlansAndOffersApiLabel testCondition){
+        String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
+        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+        String firstName= testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerFirstName();
+        String lastName= testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerLastName();
+        String zipCode= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesZipCode();
+        String aglcServiceLocationID= testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID();
+        String streetNumber= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesStreetNumber();
+        String city= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCity();
+        String state= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesStateCode();
+        Map<String, Object> enrollmentRecord= null;
+
+        switch(testCondition){
+            case NO_MATCH_PLAN_CODE_B_CONTINUE_ENROLLMENT_TC_354,
+                 NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354A,
+                 LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B:
+                 enrollmentRecord= ApplicationContext.get()
+                        .getDbAction()
+                        .validateAllTheTablesAfterGetEligiblePlansRequest(
+                                customerCode,
+                                premisesCode,
+                                firstName,
+                                lastName,
+                                zipCode,
+                                aglcServiceLocationID,
+                                streetNumber,
+                                city,
+                                state
+                        );
+            break;
+
+            default:
+                break;
+        }
+        Assert.assertEquals(enrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
+    }
+
     public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {
         try {
             ExcelReader reader = new ExcelReader(excelPath);
