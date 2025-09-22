@@ -186,4 +186,10 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.verifyResponsePlansContainsPlan(GlobalEnums.PlanCode.valueOf(planCode));
     }
 
+    @Then("performs the database validation for {string}")
+    public void databaseValidation(String testCondition){
+        getEligiblePlansAndOffersApiPage.verifyEntriesIAllTables(valueOf(testCondition));
+    }
+
+
 }
