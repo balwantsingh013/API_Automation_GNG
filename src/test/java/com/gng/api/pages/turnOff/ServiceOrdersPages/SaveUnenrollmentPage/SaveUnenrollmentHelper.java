@@ -10,6 +10,8 @@ import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReas
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +22,6 @@ import static com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.Save
 public class SaveUnenrollmentHelper {
 
     private final TestContext testContext;
-    public static final String USERNAME = "autotester";
 
     public SaveUnenrollmentHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -64,7 +65,6 @@ public class SaveUnenrollmentHelper {
 
     public void setParametersBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setLoginID(USERNAME);
 
         switch (testCondition) {
             case TRANSACTION_TYPE_EMPTY_NEGATIVE_TC113:
@@ -115,7 +115,7 @@ public class SaveUnenrollmentHelper {
                 payload.setForwardingAddressIs(FakerDataGenerator.getRandomString(4));
                 break;
             case FWD_ADDRESS_INVALID_VALUE_NEGATIVE_TC131:
-                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressIs.INVALID.getValue());
+                payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.INVALID.getValue());
                 break;
             case FWD_ADDRESS_TYPE_EMPTY_NEGATIVE_TC132:
                 payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.NEW_ADDRESS.getValue());
@@ -191,7 +191,7 @@ public class SaveUnenrollmentHelper {
                 break;
             case FWD_ADD_ZIP_CODE_INVALID_NEGATIVE_TC153:
                 setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
-                payload.setForwardingAddressZipCode("40000");
+                payload.setForwardingAddressZipCode(String.valueOf(FakerDataGenerator.generateNumber(4000,4999)));
                 break;
             case FWD_ADD_ZIP_CODE_INVALID_FORMAT_NEGATIVE_TC154:
                 setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
@@ -254,9 +254,13 @@ public class SaveUnenrollmentHelper {
                 payload.setRequestedTurnOffDate("");
                 break;
             case REQ_TURN_OFF_DATE_INVALID_FORMAT_NEGATIVE_TC195:
-
-                payload.setRequestedTurnOffDate("12-31-2025");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
+                String invalidFormatedTurnOffDate = LocalDate.now()
+                        .minusDays(30)
+                        .format(formatter);
+                payload.setRequestedTurnOffDate(invalidFormatedTurnOffDate);
                 break;
+
             case AGLC_SVC_ORDER_NUM_EMPTY_NEGATIVE_TC196:
                 payload.setAglcServiceOrderNumber("");
                 break;
@@ -304,8 +308,9 @@ public class SaveUnenrollmentHelper {
                 payload.setTurnOffSubReason(TurnOffReason.SEASONAL_OR_HEAT_ONLY.getSubReason());
                 break;
 
-            case MOVING_OUTSIDE_AGLC_TC230:
-            case MOVING_OUTSIDE_AGLC_TC208, TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC175:
+            case MOVING_OUTSIDE_AGLC_TC230,
+                 MOVING_OUTSIDE_AGLC_TC208,
+                 TURN_OFF_SUB_REASON_INVALID_WITH_ETC_TC175:
                 payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_AGLC.getReason());
                 payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_AGLC.getSubReason());
                 break;
