@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @lombok.Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TurnOffReasonForLeaving {
+public class TransferTurnOffReason {
     private String reasonForTurnOff;
     private String subReasonForTurnOff;
     private String reasonForTurnOffAlert;

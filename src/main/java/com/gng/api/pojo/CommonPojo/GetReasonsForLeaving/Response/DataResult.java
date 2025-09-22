@@ -9,5 +9,5 @@ import java.util.List;
 @NoArgsConstructor
 
 public class DataResult {
-    private List<TurnOffReasonForLeaving> turnOffReasons;
+    private List<TransferTurnOffReason> turnOffReasons;
 }

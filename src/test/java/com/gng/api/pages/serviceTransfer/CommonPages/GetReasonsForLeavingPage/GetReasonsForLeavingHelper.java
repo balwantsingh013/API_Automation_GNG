@@ -2,7 +2,7 @@ package com.gng.api.pages.serviceTransfer.CommonPages.GetReasonsForLeavingPage;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.GetReasonsForLeavingRequest;
-import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.Response.TurnOffReasonForLeaving;
+import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.Response.TransferTurnOffReason;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.serviceTransfer.Common.GetReasonsForLeaving.GetReasonsForLeavingApiLabel;
 import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
@@ -87,7 +87,6 @@ public class GetReasonsForLeavingHelper {
             case ETC_EXISTS_FALSE_RETURNS_NO_RECORDS_POSITIVE_TC88:
                 payload.setEtcExists(Boolean.FALSE);
                 break;
-
             default:
                 break;
         }
@@ -97,7 +96,7 @@ public class GetReasonsForLeavingHelper {
         Assert.assertEquals(testContext.getGetReasonsForLeavingResponse().getErrorCode(), 0, "Expected error code 0");
         Assert.assertEquals(testContext.getGetReasonsForLeavingResponse().getErrorMessage(), "", "Expected empty error message");
 
-        List<TurnOffReasonForLeaving> reasons = testContext.getGetReasonsForLeavingResponse().getData().getTurnOffReasons();
+        List<TransferTurnOffReason> reasons = testContext.getGetReasonsForLeavingResponse().getData().getTurnOffReasons();
         if (expectedTurnOffReasonString == null || expectedTurnOffReasonString.trim().isEmpty()) {
             boolean hasZeroPairOrEmpty = reasons.isEmpty() || reasons.stream()
                     .anyMatch(r -> "0".equals(r.getReasonForTurnOff()) &&
