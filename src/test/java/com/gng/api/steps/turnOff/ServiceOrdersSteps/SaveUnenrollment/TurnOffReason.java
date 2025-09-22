@@ -21,7 +21,6 @@ public enum TurnOffReason {
 
     //Other
     OTHER_FINANCIAL_SITUATION("Other", "Financial Situation"),
-    MOVING_NOT_STAYING_WITH_GNG("Moving", "Within Pool Group but Not Staying with GNG"),
     OTHER_REGULATED_PROVIDER("Other", "Regulated Provider"),
     OTHER_DECEASED("Other", "Deceased"),
     OTHER_OUTSIDE_AGLC_TERRITORY_ETC_WAIVED("Other","Outside AGLC Territory/Outside Georgia – ETC Waived"),
@@ -35,6 +34,7 @@ public enum TurnOffReason {
 
 
     //Moving
+    MOVING_NOT_STAYING_WITH_GNG("Moving", "Within Pool Group but Not Staying with GNG"),
     MOVING_OUTSIDE_AGLC("Moving", "Outside AGLC Territory/Outside Georgia"),
     MOVING_SERVICE_TRANSFER("Moving", "Service Transfer"),
     MOVING_OUTSIDE_POOL_GROUP_ETC_WAIVED("Moving","Outside Pool (Delivery) Group - ETC Waived"),
