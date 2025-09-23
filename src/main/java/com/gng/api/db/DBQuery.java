@@ -1316,6 +1316,47 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ENROLLMENT_RECORD_DATA_FOR_GETELIGIBLE_PLANS= """
+            SELECT
+                BEN.UZBENRO_CUST_CODE
+            FROM UZBENRO BEN
+                LEFT JOIN GZRGBPH GZR
+                    ON BEN.UZBENRO_CUST_CODE = GZR.GZRGBPH_CUST_CODE
+                LEFT JOIN UCBCUST CUS
+                    ON BEN.UZBENRO_CUST_CODE = CUS.UCBCUST_CUST_CODE
+                LEFT JOIN UCBPREM PRE
+                    ON BEN.UZBENRO_PREM_CODE = PRE.UCBPREM_CODE
+                LEFT JOIN UCRADDR ADR
+                    ON BEN.UZBENRO_CUST_CODE = ADR.UCRADDR_CUST_CODE
+                    LEFT JOIN UCRCHST UCR
+                    ON BEN.UZBENRO_CUST_CODE = UCR.UCRCHST_CUST_CODE
+            WHERE BEN.UZBENRO_CUST_CODE= ?
+            AND BEN.UZBENRO_PREM_CODE= ?
+            AND BEN.UZBENRO_ENRO_STATUS='INCL'
+            AND BEN.UZBENRO_SCLS_CODE='RS'
+            AND CUS.UCBCUST_FIRST_NAME= ?
+            AND PRE.UCBPREM_ZIPC_CODE= ?
+            AND UCR.UCRCHST_LAST_NAME= ?
+            AND UCR.UCRCHST_FIRST_NAME= ?
+            AND GZR.GZRGBPH_APP_REQUEST_CODE='OMSENRL'
+            AND GZR.GZRGBPH_RESP_MESSAGE='Successful Quote'
+            AND BEN.UZBENRO_CUST_NAME= ?
+            AND BEN.UZBENRO_PREM_TYPE='NACN'
+            AND BEN.UZBENRO_SOURCE='MAIL'
+            AND BEN.UZBENRO_AGLC_PREM_ID= ?
+            AND BEN.UZBENRO_LANDLORD_TENANT='T'
+            AND CUS.UCBCUST_STATUS_IND='A'
+            AND CUS.UCBCUST_LAST_NAME= ?
+            AND PRE.UCBPREM_CITY= ?
+            AND PRE.UCBPREM_STREET_NUMBER= ?
+            AND PRE.UCBPREM_STAT_CODE_ADDR= ?
+            AND ADR.UCRADDR_CITY= ?
+            AND ADR.UCRADDR_STREET_NUMBER= ?
+            AND ADR.UCRADDR_STAT_CODE= ?
+            AND ADR.UCRADDR_ZIP= ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_LAST_NAME_ZIP_NO_SSP = """
             SELECT   T3.UZBENRO_DSM_LAST_NAME,
                      T4.UCRADDR_ZIP

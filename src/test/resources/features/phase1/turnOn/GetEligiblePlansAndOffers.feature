@@ -233,6 +233,8 @@ Feature: Verify GetEligiblePlansAndOffers Api
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And performs the database validation for "<testCondition>"
+
     Examples:
       | testCondition                                               | errorCode | errorMessage                                                                                                                                                                                        |
       #| FRAUD_ALERT_INVALID_SSN_TC_351                              | 11114     | Identification Verification Required. Ask customer to mail or fax photo ID, copy of ss card to: Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117 |
@@ -254,6 +256,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       Then verify response code of "GetEligiblePlansAndOffers" Api is 200
       And response should have ErrorCode 0 and ErrorMessage ""
       And response should have a SSP eligible as "false" and "WARNING: This customer does not meet the required credit criteria to participate in the Seasonal Savings Plan"
+      And performs the database validation for "LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B"
 
   @GetEligiblePlansAndOffersInvalidWorkPhoneTypeTNON @Phase1  @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<WorkPhoneType>"

@@ -308,4 +308,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         helper.verifyPlanReturned(planCode);
     }
 
+    public void verifyEntriesIAllTables(GetEligiblePlansAndOffersApiLabel testCondition){
+        helper.validateAllTheEntriesInTablesForEligiblePlansAndOffers(testCondition);
+    }
+
 }
