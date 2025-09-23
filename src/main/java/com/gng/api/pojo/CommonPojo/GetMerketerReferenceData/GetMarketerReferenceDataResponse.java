@@ -19,6 +19,6 @@ public class GetMarketerReferenceDataResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Data {
-        private int marketerReferenceData;
+        private long marketerReferenceData;
     }
 }

@@ -39,6 +39,7 @@ public class SaveUnenrollmentRequest {
     private String emailAddress;
     private String requestedTurnOffDate;
     private String aglcServiceOrderNumber;
-    private boolean etcExists;
+    private Object etcExists;
     private Long marketerReferenceData;
+
 }

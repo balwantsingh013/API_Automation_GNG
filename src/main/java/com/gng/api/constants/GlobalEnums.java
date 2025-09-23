@@ -45,7 +45,8 @@ public class GlobalEnums {
     @Getter
     public enum ForwardingAddressType {
         CURRENT_ADDRESS("CA"),
-        NEW_ADDRESS("NA");
+        NEW_ADDRESS("NA"),
+        INVALID("Z");
 
         private final String value;
 
@@ -128,6 +129,7 @@ public class GlobalEnums {
     public enum TransactionType {
         TURN_ON("TNON"),
         TURN_OFF("TOFF"),
+        TRANSFER("TRAN"),
         MKSW("MKSW"),
         INVALID("TURN");
 

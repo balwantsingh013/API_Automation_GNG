@@ -1,37 +1,42 @@
 package com.gng.api.pages.turnOff.ServiceOrdersPages.SaveUnenrollmentPage;
-
 import com.gng.api.pages.BasePage;
-
-import com.gng.api.pages.turnOff.ServiceOrdersPages.SaveUnenrollmentPage.SaveUnenrollmentHelper;
-import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.SaveUnenrollmentApiLabel;
-import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
-import com.gng.api.util.FakerDataGenerator;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
 import static com.gng.api.constants.ApiEndPoint.SAVE_UNENROLLMENT;
-import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
+
 
 public class SaveUnenrollmentApiPage extends BasePage {
 
-
     private final SaveUnenrollmentHelper helper;
-
 
     public SaveUnenrollmentApiPage(TestContext testContext) {
         super(testContext);
         this.helper = new SaveUnenrollmentHelper(testContext);
     }
 
-    public void validateInvalidRequestIDCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
+    public void validateInvalidRequestAndLoginIDCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
-        helper.setRequestIDBasedOnType(payload, requestID);
+        helper.setRequestAndLoginIDBasedOnType(payload, requestID);
         helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
+        SaveUnenrollmentResponse saveUnenrollmentResponse = deserializeResponseToPojo(response, SaveUnenrollmentResponse.class);
+        testContext.setSaveUnenrollmentResponse(saveUnenrollmentResponse);
+        testContext.setResponse(response);
+    }
+
+    public void validateInvalidParametersCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
+        SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnType(payload, requestID);
+        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
+        SaveUnenrollmentResponse saveUnenrollmentResponse = deserializeResponseToPojo(response, SaveUnenrollmentResponse.class);
+        testContext.setSaveUnenrollmentResponse(saveUnenrollmentResponse);
         testContext.setResponse(response);
     }
 

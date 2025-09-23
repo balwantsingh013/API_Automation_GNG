@@ -21,7 +21,7 @@ public class SaveUnenrollmentResponse {
     @NoArgsConstructor
     public static class DataResponse {
         private String accountNumber;
-        private int marketerReferenceData;
+        private long marketerReferenceData;
     }
 }
 

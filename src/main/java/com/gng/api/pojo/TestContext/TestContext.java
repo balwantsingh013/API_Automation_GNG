@@ -1,6 +1,7 @@
 package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
+import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.Response.GetReasonsForLeavingResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
@@ -53,7 +54,7 @@ public class TestContext {
     private SaveEnrollmentResponse getMarketerReferenceDataResponse;
     @Getter @Setter
     private Object getReasonsForLeavingApiPage;
-    private SaveEnrollmentResponse getReasonsForLeavingResponse;
+    private GetReasonsForLeavingResponse getReasonsForLeavingResponse;
     @Getter @Setter
     private Object saveUnenrollmentApiPage;
     private SaveUnenrollmentResponse saveUnenrollmentResponse;
