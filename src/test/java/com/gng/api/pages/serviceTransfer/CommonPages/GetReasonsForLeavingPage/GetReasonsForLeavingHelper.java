@@ -13,7 +13,6 @@ import org.testng.Assert;
 import java.util.List;
 
 import static com.gng.api.steps.serviceTransfer.Common.GetReasonsForLeaving.GetReasonsForLeavingApiLabel.get_reasons_for_leaving;
-import static com.gng.api.steps.serviceTransfer.Common.GetReasonsForLeaving.GetReasonsForLeavingApiLabel.get_reasons_for_leaving_mandatory;
 
 @Slf4j
 public class GetReasonsForLeavingHelper {
@@ -26,9 +25,7 @@ public class GetReasonsForLeavingHelper {
 
     GetReasonsForLeavingRequest preparePayload(GetReasonsForLeavingApiLabel apiLabel) {
         log.info("Preparing payload for {}", apiLabel);
-        String jsonFileName = apiLabel.equals(get_reasons_for_leaving)
-                ? get_reasons_for_leaving.toString()
-                : get_reasons_for_leaving_mandatory.toString();
+        String jsonFileName = get_reasons_for_leaving.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, GetReasonsForLeavingRequest.class);
     }
 

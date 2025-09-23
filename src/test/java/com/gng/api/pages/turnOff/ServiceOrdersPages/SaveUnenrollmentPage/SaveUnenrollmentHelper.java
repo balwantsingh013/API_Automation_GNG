@@ -179,7 +179,7 @@ public class SaveUnenrollmentHelper {
                 break;
             case FWD_ADD_STATE_CODE_INVALID_NEGATIVE_TC150:
                 setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);
-                payload.setForwardingAddressStateCode("ZZ");
+                payload.setForwardingAddressStateCode(GlobalEnums.InvalidValues.INVALID_PREMISE_STATE_CODE.getValue());
                 break;
             case FWD_ADD_ZIP_CODE_EMPTY_NEGATIVE_TC151:
                 setForwardingAddressDetailsBasedOnType(payload, NEW_ADDRESS, SaveUnenrollmentApiLabel.ADDRESS_TYPE_STREET);

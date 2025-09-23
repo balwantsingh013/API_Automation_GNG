@@ -1,17 +1,10 @@
 package com.gng.api.steps.serviceTransfer.Common.GetReasonsForLeaving;
 import com.gng.api.pages.serviceTransfer.CommonPages.GetReasonsForLeavingPage.GetReasonsForLeavingApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.response.Response;
-import org.apache.http.client.methods.HttpPost;
 
-import static com.gng.api.constants.ApiEndPoint.GET_PREPAY_PLANS_REQUOTE;
 import static com.gng.api.steps.serviceTransfer.Common.GetReasonsForLeaving.GetReasonsForLeavingApiLabel.get_reasons_for_leaving;
-import static com.gng.api.steps.serviceTransfer.Common.GetReasonsForLeaving.GetReasonsForLeavingApiLabel.get_reasons_for_leaving_mandatory;
 
 public class GetReasonsForLeavingApiSteps {
 
@@ -28,7 +21,7 @@ public class GetReasonsForLeavingApiSteps {
 
     @When("a request is made to the GetReasonsForLeaving Api with invalid parameters for {string} condition")
     public void a_request_is_made_to_the_GetReasonsForLeaving_Api_with(String testCondition) {
-        getReasonsForLeavingApiPage.validateInvalidRequestParameters(get_reasons_for_leaving_mandatory, GetReasonsForLeavingApiLabel.valueOf(testCondition)
+        getReasonsForLeavingApiPage.validateInvalidRequestParameters(get_reasons_for_leaving, GetReasonsForLeavingApiLabel.valueOf(testCondition)
         );
     }
 
