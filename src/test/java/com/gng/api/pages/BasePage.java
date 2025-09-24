@@ -56,7 +56,7 @@ public abstract class BasePage  {
 
 
     protected Map<String, String> getApiHeaders() {
-        logInfo("Get Api Headers");
+        //logInfo("Get Api Headers");
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", "Bearer " + testContext.getAuthToken());
         return requestHeaders;
@@ -79,7 +79,7 @@ public abstract class BasePage  {
 
 
     public static <T> T deserializeJsonToPojo(String apiName, Class<T> clazz) {
-        logInfo("Deserializing JSON for API: {}"+ apiName);
+        //logInfo("Deserializing JSON for API: {}"+ apiName);
         return deserializeJson(apiName, clazz);
     }
 
@@ -87,7 +87,7 @@ public abstract class BasePage  {
         ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION).build());
         try {
             String path = PATH_PAYLOAD + apiName + "." + JSON;
-            logInfo("Reading JSON file: {}"+ path);
+            //logInfo("Reading JSON file: {}"+ path);
             return mapper.readValue(new File(path), clazz);
         } catch (IOException e) {
             logError("Error deserializing JSON: {}"+ e.getMessage());
@@ -122,7 +122,7 @@ public abstract class BasePage  {
     }
 
     public Response sendRequest(String requestType, String uri, int expectedStatusCode) {
-        logInfo("Sending " + requestType + " request to " + uri);
+        //logInfo("Sending " + requestType + " request to " + uri);
 
         try {
             // Validate the request type (optional)
@@ -143,7 +143,7 @@ public abstract class BasePage  {
             ExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
             response.then().statusCode(expectedStatusCode);
 
-            logInfo(requestType + " request to " + uri + " completed successfully.");
+            //logInfo(requestType + " request to " + uri + " completed successfully.");
             return response;
         } catch (Exception e) {
             log.error("Error during {} request to {}", requestType, uri, e);

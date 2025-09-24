@@ -47,8 +47,8 @@ public class ExtentReportManager {
     private static ExtentReports extent;
     private static ExtentSparkReporter spark;
 
-    private ExtentReportManager() {
-    }
+//    private ExtentReportManager() {
+//    }
 
     public static synchronized void initialiseExtentReport() {
         if (extent == null) {
@@ -1583,9 +1583,9 @@ public class ExtentReportManager {
         StringBuilder successLog = new StringBuilder();
 
         // Thread information
-        successLog.append("<div class='thread-info'>");
-        successLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
-        successLog.append("</div>");
+        //successLog.append("<div class='thread-info'>");
+        //successLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        //successLog.append("</div>");
 
         successLog.append("<div class='info-log'>");
         successLog.append("✅ <strong>Test Passed Successfully</strong>");
@@ -1648,12 +1648,12 @@ public class ExtentReportManager {
         details.append("</div>");
 
         // Headers
-        if (reqSpec.getHeaders() != null && !reqSpec.getHeaders().toString().isEmpty()) {
-            details.append("<div class='request-detail-item'>");
-            details.append("<strong>📋 Headers:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatJson(reqSpec.getHeaders().toString())).append("</div>");
-            details.append("</div>");
-        }
+//        if (reqSpec.getHeaders() != null && !reqSpec.getHeaders().toString().isEmpty()) {
+//            details.append("<div class='request-detail-item'>");
+//            details.append("<strong>📋 Headers:</strong><br/>");
+//            details.append("<div class='code-block'>").append(formatJson(reqSpec.getHeaders().toString())).append("</div>");
+//            details.append("</div>");
+//        }
 
         // Parameters
         if (!reqSpec.getRequestParams().isEmpty()) {

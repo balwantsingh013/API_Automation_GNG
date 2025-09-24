@@ -23,7 +23,7 @@ public class AuthApiSteps {
 
     @When("a request is made to generate authentication token")
     public void requestToGenerateAuthToken() {
-        logInfo("Generating Auth Token...");
+//        logInfo("Generating Auth Token...");
         try {
             ApplicationContext runContext = ApplicationContext.get();
             runContext.setAuthApiPayload();
@@ -63,6 +63,6 @@ public class AuthApiSteps {
     @Then("a valid token is received in response")
     public void validateTokenReceived() {
         assertThat("Authentication token should not be null", testContext.getAuthToken(), notNullValue());
-        logInfo("Token generated successfully: " + testContext.getAuthToken());
+        //logInfo("Token generated successfully: " + testContext.getAuthToken());
     }
 }

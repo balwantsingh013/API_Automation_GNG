@@ -472,7 +472,7 @@ Feature: Verify SaveEnrollment Api
       |SSP_VALIDATION_PREMISES_CODE_MISSING_TC_484                           |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS   |SSP ACCOUNT RECORD     |2000     |Invalid Request: Missing conditional parameters-Premises Code|
       |SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_486                           |CGB     |COM FIX 10 DOLLARS FOR 12 MONTHS   |SSP FALL TURN ON RECORD|2000     |Invalid Request: Missing conditional parameters-Customer Code|
 
-  @SSPValidations @Phase1 @NegativeFlow
+  @SSPValidations12 @Phase1 @NegativeFlow
   Scenario: SaveEnrollment Api SSPValidations -Verify different errors returned due to SSPValidations based on SSP_VALIDATION_PREMISES_CODE_MISSING_TC_485
     When a request is made to the GetEligiblePlansAndOffers for a "SSP_VALIDATION_PREMISES_CODE_MISSING_TC_485"
     And response should have ErrorCode 0 and ErrorMessage ""
