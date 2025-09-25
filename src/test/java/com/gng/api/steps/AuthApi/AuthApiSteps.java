@@ -35,7 +35,7 @@ public class AuthApiSteps {
     }
 
 
-    private Response executeAuthRequest(ApplicationContext runContext) {
+    public Response executeAuthRequest(ApplicationContext runContext) {
         return given()
                 .relaxedHTTPSValidation()
                 .contentType(ContentType.JSON)

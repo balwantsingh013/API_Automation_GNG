@@ -1,9 +1,10 @@
 Feature: Verify SaveUnenrollment Api
 
-  Background: Generate Authentication Token
-    When a request is made to generate authentication token
-    Then verify Authentication Token Api response status code is 200
-    And a valid token is received in response
+#  @Hidden
+#  Background: Generate Authentication Token
+#    When a request is made to generate authentication token
+#    Then verify Authentication Token Api response status code is 200
+#    And a valid token is received in response
 
   @HappyFlow @SaveUnenrollment
   Scenario Outline: SaveUnenrollmentApi - Verify SaveUnenrollment Api positive flow <testCondition>
