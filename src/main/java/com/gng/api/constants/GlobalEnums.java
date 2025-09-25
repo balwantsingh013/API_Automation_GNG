@@ -262,4 +262,16 @@ public class GlobalEnums {
             this.value = value;
         }
     }
+
+    @Getter
+    public enum ScenarioDescriptions{
+        EMPTY_REQUEST_ID_106("Verify that if the 'requestID' parameter is missing in the SaveUnenrollment method request, the web method will return success = false, ErrorCode = 10001, ErrorMessage = 'Missing Request ID' "),
+        LONG_REQUEST_ID_107("Verify that if the provided 'requestID' paramter length is larger than 32 characters in the SaveUnenrollment method request, the web method will return success = false, ErrorCode = 10002, ErrorMessage = ‘Invalid Request ID’"),
+        DUPLICATE_REQUEST_ID_108("Verify that if the provided 'requestID' parameter already exists within Transaction Manager while executing the SaveUnenrollment method request, the web method will return success = false, ErrorCode = 10003, ErrorMessage = ‘Duplicate Request ID’");
+
+        private final String value;
+        ScenarioDescriptions(String value) {
+            this.value = value;
+        }
+    }
 }

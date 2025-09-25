@@ -14,23 +14,20 @@ public class AllureRestAssuredFilter implements Filter {
 
     @Override
     public Response filter(FilterableRequestSpecification requestSpec, FilterableResponseSpecification responseSpec, FilterContext context) {
-        // Capture request details
+        // Capture request details (headers removed)
         String requestBuilder = "Request URI: " + requestSpec.getURI() + "\n" +
                 "Request Method: " + requestSpec.getMethod() + "\n" +
-                "Request Headers: " + requestSpec.getHeaders() + "\n" +
                 "Request Body: " + (requestSpec.getBody() != null ? requestSpec.getBody().toString() : "No Body");
         Allure.addAttachment("Request", new ByteArrayInputStream(requestBuilder.getBytes(StandardCharsets.UTF_8)));
 
         // Proceed with the request
         Response response = context.next(requestSpec, responseSpec);
 
-        // Capture response details
+        // Capture response details (headers removed)
         String responseBuilder = "Response Status Code: " + response.getStatusCode() + "\n" +
-                "Response Headers: " + response.getHeaders() + "\n" +
                 "Response Body: " + response.getBody().asString();
         Allure.addAttachment("Response", new ByteArrayInputStream(responseBuilder.getBytes(StandardCharsets.UTF_8)));
 
         return response;
     }
 }
-

@@ -1,7 +1,9 @@
 package com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.turnOff.ServiceOrdersPages.SaveUnenrollmentPage.SaveUnenrollmentApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.report.ExtentReportManager;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.When;
 
@@ -27,6 +29,7 @@ public class SaveUnenrollmentApiSteps {
     @When("a request is made to the SaveUnenrollment Api with {string}")
     public void a_request_is_made_to_the_SaveUnenrollment_Api_with(String requestID)
     {
+        ExtentReportManager.logTestDescription(GlobalEnums.ScenarioDescriptions.valueOf(requestID).getValue());
         saveUnenrollmentApiPage.validateInvalidRequestIDCases(save_unenrollment_mandatory, SaveUnenrollmentApiLabel.valueOf(requestID));
     }
 

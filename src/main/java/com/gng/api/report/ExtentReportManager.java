@@ -50,6 +50,13 @@ public class ExtentReportManager {
 //    private ExtentReportManager() {
 //    }
 
+    public static void logTestDescription(String description) {
+        ExtentTest currentTest = test.get();
+        if (currentTest != null) {
+            currentTest.info("<b>📝 Test Description:</b> <span style='color:#2E86C1; font-size:14px;'>" + description + "</span>");
+        }
+    }
+
     public static synchronized void initialiseExtentReport() {
         if (extent == null) {
             extent = new ExtentReports();
@@ -1591,9 +1598,9 @@ public class ExtentReportManager {
         successLog.append("✅ <strong>Test Passed Successfully</strong>");
         successLog.append("</div>");
 
-        successLog.append("<div class='response-time-badge'>");
-        successLog.append("⚡ Execution Time: ").append(executionTime).append(" ms");
-        successLog.append("</div><br/>");
+//        successLog.append("<div class='response-time-badge'>");
+//        successLog.append("⚡ Execution Time: ").append(executionTime).append(" ms");
+//        successLog.append("</div><br/>");
 
         if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnPass())) {
             successLog.append(getEnhancedRequestDetails());
@@ -1699,50 +1706,50 @@ public class ExtentReportManager {
         details.append(getPerformanceIndicator(resp.getTime()));
         details.append("</div>");
 
-        // Expected vs Actual Status Comparison
-        String expectedStatus = expectedStatusCode.get();
-        if (expectedStatus != null) {
-            details.append("<div class='response-detail-item'>");
-            details.append("<strong>✅ Expected Status:</strong> ");
-            details.append("<span class='status-").append(expectedStatus).append("'>").append(expectedStatus).append("</span>");
+//        // Expected vs Actual Status Comparison
+//        String expectedStatus = expectedStatusCode.get();
+//        if (expectedStatus != null) {
+//            details.append("<div class='response-detail-item'>");
+//            details.append("<strong>✅ Expected Status:</strong> ");
+//            details.append("<span class='status-").append(expectedStatus).append("'>").append(expectedStatus).append("</span>");
+//
+//            // Add validation result
+//            boolean statusMatches = String.valueOf(resp.getStatusCode()).equals(expectedStatus);
+//            details.append(" | <strong>Validation:</strong> ");
+//            if (statusMatches) {
+//                details.append("<span style='color: #059669; font-weight: bold;'>✅ PASSED</span>");
+//            } else {
+//                details.append("<span style='color: #dc2626; font-weight: bold;'>❌ FAILED</span>");
+//            }
+//            details.append("</div>");
+//        }
+//
+//        // Content Type
+//        String contentType = resp.getContentType();
+//        if (contentType != null) {
+//            details.append("<div class='response-detail-item'>");
+//            details.append("<strong>📄 Content Type:</strong> ");
+//            details.append("<span class='content-type-badge'>").append(contentType).append("</span>");
+//            details.append("</div>");
+//        }
 
-            // Add validation result
-            boolean statusMatches = String.valueOf(resp.getStatusCode()).equals(expectedStatus);
-            details.append(" | <strong>Validation:</strong> ");
-            if (statusMatches) {
-                details.append("<span style='color: #059669; font-weight: bold;'>✅ PASSED</span>");
-            } else {
-                details.append("<span style='color: #dc2626; font-weight: bold;'>❌ FAILED</span>");
-            }
-            details.append("</div>");
-        }
-
-        // Content Type
-        String contentType = resp.getContentType();
-        if (contentType != null) {
-            details.append("<div class='response-detail-item'>");
-            details.append("<strong>📄 Content Type:</strong> ");
-            details.append("<span class='content-type-badge'>").append(contentType).append("</span>");
-            details.append("</div>");
-        }
-
-        // Response Size
-        if (resp.getBody() != null) {
-            String bodyString = resp.getBody().asString();
-            int responseSize = bodyString.getBytes().length;
-            details.append("<div class='response-detail-item'>");
-            details.append("<strong>📏 Response Size:</strong> ");
-            details.append("<span class='response-size-badge'>").append(formatBytes(responseSize)).append("</span>");
-            details.append("</div>");
-        }
+//        // Response Size
+//        if (resp.getBody() != null) {
+//            String bodyString = resp.getBody().asString();
+//            int responseSize = bodyString.getBytes().length;
+//            details.append("<div class='response-detail-item'>");
+//            details.append("<strong>📏 Response Size:</strong> ");
+//            details.append("<span class='response-size-badge'>").append(formatBytes(responseSize)).append("</span>");
+//            details.append("</div>");
+//        }
 
         // Response Headers with better formatting
-        if (resp.getHeaders() != null && resp.getHeaders().size() > 0) {
-            details.append("<div class='response-detail-item'>");
-            details.append("<strong>📋 Response Headers:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatHeaders(resp.getHeaders().toString())).append("</div>");
-            details.append("</div>");
-        }
+//        if (resp.getHeaders() != null && resp.getHeaders().size() > 0) {
+//            details.append("<div class='response-detail-item'>");
+//            details.append("<strong>📋 Response Headers:</strong><br/>");
+//            details.append("<div class='code-block'>").append(formatHeaders(resp.getHeaders().toString())).append("</div>");
+//            details.append("</div>");
+//        }
 
         // Response Body with JSON validation and formatting
         if (resp.getBody() != null) {
