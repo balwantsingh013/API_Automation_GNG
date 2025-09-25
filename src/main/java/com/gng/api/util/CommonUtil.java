@@ -1,6 +1,10 @@
 package com.gng.api.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pojo.TestContext.TestContext;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -11,6 +15,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.gng.api.util.LogUtil.logError;
+import static io.restassured.RestAssured.given;
+
 @Slf4j
 public class CommonUtil {
 
@@ -18,6 +25,47 @@ public class CommonUtil {
     {
 
     }
+
+    public static void silentlyGenerateAuthToken() {
+        try {
+            ApplicationContext runContext = ApplicationContext.get();
+            runContext.setAuthApiPayload();
+            Response response = executeAuthRequest(runContext);
+            storeAuthToken(response);
+        } catch (Exception e) {
+            handleException(e);
+        }
+    }
+
+    public static Response executeAuthRequest(ApplicationContext runContext) {
+        Response response = given()
+                .relaxedHTTPSValidation()
+                .contentType(ContentType.JSON)
+                .baseUri(runContext.getEnvConfig().getBaseUri())
+                .body(runContext.getAuthPayload())
+                .post(runContext.getEnvConfig().getAuthUri())
+                .then().extract().response();
+
+        // Store response in shared TestContext
+        TestContextHolder.get().setResponse(response);
+        return response;
+    }
+
+
+    public static void storeAuthToken(Response response) {
+        TestContext context = TestContextHolder.get();
+        context.setResponse(response);
+        context.setAuthToken(response.jsonPath().getString("token"));
+    }
+
+    public static void handleException(Exception e) {
+        TestContext context = TestContextHolder.get();
+        logError("Error occurred: " + e.getMessage());
+        String responseDetails = context.getResponse() != null ? context.getResponse().prettyPrint() : "No response received";
+        throw new IllegalStateException(e.getMessage() + "\n" + responseDetails, e);
+    }
+
+
 
     public static void nullifyFields(Object object, String... fieldsToNullify) {
         if (object == null || fieldsToNullify == null) {
