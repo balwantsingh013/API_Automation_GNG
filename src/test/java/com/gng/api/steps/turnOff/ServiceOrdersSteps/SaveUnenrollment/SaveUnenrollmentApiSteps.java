@@ -27,11 +27,21 @@ public class SaveUnenrollmentApiSteps {
     }
 
     @When("a request is made to the SaveUnenrollment Api with {string}")
-    public void a_request_is_made_to_the_SaveUnenrollment_Api_with(String requestID)
-    {
-        ExtentReportManager.logTestDescription(GlobalEnums.ScenarioDescriptions.valueOf(requestID).getValue());
-        saveUnenrollmentApiPage.validateInvalidRequestIDCases(save_unenrollment_mandatory, SaveUnenrollmentApiLabel.valueOf(requestID));
+    public void a_request_is_made_to_the_SaveUnenrollment_Api_with(String requestID) {
+        String description = GlobalEnums.ScenarioDescriptions.valueOf(requestID).getValue();
+
+        // Log to Extent report
+        ExtentReportManager.logTestDescription(description);
+
+        // Log to Allure report
+        io.qameta.allure.Allure.parameter("Scenario Description", description);
+
+        saveUnenrollmentApiPage.validateInvalidRequestIDCases(
+                save_unenrollment_mandatory,
+                SaveUnenrollmentApiLabel.valueOf(requestID)
+        );
     }
+
 
     @When("a request is made to the SaveUnenrollment Api for account with {string} plan {string} type with forwardingAddressIs {string} with type {string} and turnoffreason {string} and setEmail {string} with etcExists {string}")
     public void a_request_is_made_to_the_SaveUnenrollment_Api_Active(String pricePlan, String sclsCode, String forwardingAddressIs, String type, String testCondition, String setEmail, String etcExists)
