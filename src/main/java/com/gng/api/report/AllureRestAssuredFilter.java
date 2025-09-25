@@ -14,19 +14,23 @@ public class AllureRestAssuredFilter implements Filter {
 
     @Override
     public Response filter(FilterableRequestSpecification requestSpec, FilterableResponseSpecification responseSpec, FilterContext context) {
-        // Capture request details (headers removed)
-        String requestBuilder = "Request URI: " + requestSpec.getURI() + "\n" +
-                "Request Method: " + requestSpec.getMethod() + "\n" +
-                "Request Body: " + (requestSpec.getBody() != null ? requestSpec.getBody().toString() : "No Body");
-        Allure.addAttachment("Request", new ByteArrayInputStream(requestBuilder.getBytes(StandardCharsets.UTF_8)));
+        // Capture request details (headers removed) only if not auth token
+        if (!requestSpec.getURI().contains("/auth/token")) {
+            String requestBuilder = "Request URI: " + requestSpec.getURI() + "\n" +
+                    "Request Method: " + requestSpec.getMethod() + "\n" +
+                    "Request Body: " + (requestSpec.getBody() != null ? requestSpec.getBody().toString() : "No Body");
+            Allure.addAttachment("Request", new ByteArrayInputStream(requestBuilder.getBytes(StandardCharsets.UTF_8)));
+        }
 
         // Proceed with the request
         Response response = context.next(requestSpec, responseSpec);
 
-        // Capture response details (headers removed)
-        String responseBuilder = "Response Status Code: " + response.getStatusCode() + "\n" +
-                "Response Body: " + response.getBody().asString();
-        Allure.addAttachment("Response", new ByteArrayInputStream(responseBuilder.getBytes(StandardCharsets.UTF_8)));
+        // Capture response details (headers removed) only if not auth token
+        if (!requestSpec.getURI().contains("/auth/token")) {
+            String responseBuilder = "Response Status Code: " + response.getStatusCode() + "\n" +
+                    "Response Body: " + response.getBody().asString();
+            Allure.addAttachment("Response", new ByteArrayInputStream(responseBuilder.getBytes(StandardCharsets.UTF_8)));
+        }
 
         return response;
     }
