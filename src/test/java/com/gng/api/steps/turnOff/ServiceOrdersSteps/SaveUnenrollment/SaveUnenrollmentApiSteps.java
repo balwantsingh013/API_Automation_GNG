@@ -33,8 +33,10 @@ public class SaveUnenrollmentApiSteps {
         // Log to Extent report
         ExtentReportManager.logTestDescription(description);
 
-        // Log to Allure report
-        io.qameta.allure.Allure.label("Scenario Description", description);
+        // Set description in Allure report (above Parameters)
+        io.qameta.allure.Allure.getLifecycle().updateTestCase(testResult -> {
+            testResult.setDescription(description);
+        });
 
         saveUnenrollmentApiPage.validateInvalidRequestIDCases(
                 save_unenrollment_mandatory,
