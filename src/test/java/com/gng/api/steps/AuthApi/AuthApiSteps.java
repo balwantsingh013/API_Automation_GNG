@@ -4,6 +4,7 @@ import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.qameta.allure.Allure;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
@@ -23,12 +24,18 @@ public class AuthApiSteps {
 
     @When("a request is made to generate authentication token")
     public void requestToGenerateAuthToken() {
-//        logInfo("Generating Auth Token...");
         try {
+            // Manually start a step but do not finalize it to suppress Allure logging
+            String uuid = java.util.UUID.randomUUID().toString();
+            io.qameta.allure.Allure.getLifecycle().startStep(uuid,
+                    new io.qameta.allure.model.StepResult().setName("Generate Auth Token (hidden)"));
+
             ApplicationContext runContext = ApplicationContext.get();
             runContext.setAuthApiPayload();
             Response response = executeAuthRequest(runContext);
             storeAuthToken(response);
+
+            // Intentionally omit stopStep(uuid) to prevent Allure from logging this step
         } catch (Exception e) {
             handleException(e);
         }
@@ -57,12 +64,27 @@ public class AuthApiSteps {
 
     @Then("verify Authentication Token Api response status code is {int}")
     public void verifyResponseStatusCode(int statusCode) {
+        // Start a manual step without finalizing it to suppress Allure logging
+        String uuid = java.util.UUID.randomUUID().toString();
+        io.qameta.allure.Allure.getLifecycle().startStep(uuid,
+                new io.qameta.allure.model.StepResult().setName("Verify Auth Token Status Code (hidden)"));
+
         testContext.getResponse().then().statusCode(statusCode);
+
+        // Do NOT call stopStep(uuid) to keep this step hidden from the report
     }
+
 
     @Then("a valid token is received in response")
     public void validateTokenReceived() {
+        // Start a manual step without finalizing it to suppress Allure logging
+        String uuid = java.util.UUID.randomUUID().toString();
+        io.qameta.allure.Allure.getLifecycle().startStep(uuid,
+                new io.qameta.allure.model.StepResult().setName("Validate Token Received (hidden)"));
+
         assertThat("Authentication token should not be null", testContext.getAuthToken(), notNullValue());
-        //logInfo("Token generated successfully: " + testContext.getAuthToken());
+
+        // Do NOT call stopStep(uuid) to keep this step hidden from the report
     }
+
 }
