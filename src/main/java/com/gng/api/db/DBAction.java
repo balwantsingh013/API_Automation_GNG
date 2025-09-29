@@ -39,27 +39,16 @@ public class DBAction {
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC207(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code ", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC211(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and GPP plan", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
-
-//     public List<Map<String, Object>> getValidationPlansAndOffers(String controlNum) {
-//        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT
-//                .replace("<controlNumber>", controlNum);
-//        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
-//        return jdbcTemplate.queryForList(query);
-//    }
 
     public Map<String, Object> validateAllTheTablesAfterEnrollment(String customerCode,
                                                                    String premisesCode,
@@ -191,11 +180,9 @@ public class DBAction {
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC217(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GREENER_LIFE;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and greener life", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
     public Map<String, Object> getControlNumber() {
@@ -213,89 +200,69 @@ public class DBAction {
 
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC218(String pricePlan) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS
-                .replace("<pricePlan>",pricePlan);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACTIVE_PENDING_REWARDS;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with active/pending rewards", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC220(String pricePlan) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_SONP
-                .replace("<pricePlan>",pricePlan);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_SONP;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and SONP", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC212(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACN
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_ACN;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with ETC", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC221(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_UNAPPLIED_DEPOSIT
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_UNAPPLIED_DEPOSIT;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with ETC", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC214(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with past due balance", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC226(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_INDEXED_PRICE_PLAN
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_INDEXED_PRICE_PLAN;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with past due balance", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC209(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_ACN_WITHOUT_ETC
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_ACN_WITHOUT_ETC;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account without ETC", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC210(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account without ETC", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC230(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN_TC_230
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PRICE_PLAN_TC_230;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account without ETC", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC216(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PLAN_PAST_DUE_BALANCE
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PLAN_PAST_DUE_BALANCE;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with past due balance", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query,sclsCode, pricePlan);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC219(String pricePlan, String sclsCode) {
-        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PLAN_ACN_ACTIVE_PENDING_REWARDS
-                .replace("<pricePlan>",pricePlan)
-                .replace("<sclsCode>",sclsCode);
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PLAN_ACN_ACTIVE_PENDING_REWARDS;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account ceiling plan active/pending rewards", query);
-        return jdbcTemplate.queryForMap(query);
+        return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
     public Map<String, Object> cityStateZip() {
