@@ -1424,9 +1424,9 @@ public final class DBQuery {
                 JOIN ucrserv t4 ON t2.gtbtrnh_prem_code = t4.ucrserv_prem_code
                 JOIN ucracct t5 ON t5.ucracct_prem_code = t4.ucrserv_prem_code
                                AND t5.ucracct_cust_code = t2.gtbtrnh_cust_code
-                WHERE t1.uzbenro_price_plan = ?
+                WHERE t1.uzbenro_price_plan IN ('<pricePlan>')
                   AND t5.ucracct_status_ind = 'A'
-                  AND t4.ucrserv_scls_code = ?
+                  AND t4.ucrserv_scls_code IN ('<sclsCode>')
                   AND t3.gtrrndn_serv_ord_num IS NOT NULL
                   AND t2.gtbtrnh_cust_code IN (
                       SELECT gtbtrnh_cust_code FROM eligible_customers
@@ -1535,7 +1535,7 @@ public final class DBQuery {
                 JOIN UCRACCT T5 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
                                AND T5.UCRACCT_CUST_CODE = T1.UZBENRO_CUST_CODE
                 WHERE T1.UZBENRO_SSP_IND = 'N'
-                  AND T1.UZBENRO_PRICE_PLAN = ?
+                  AND T1.UZBENRO_PRICE_PLAN IN ('<pricePlan>')
                   AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
                   AND NOT EXISTS (
                       SELECT 1
@@ -1544,7 +1544,7 @@ public final class DBQuery {
                         AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
                   )
                   AND T5.UCRACCT_STATUS_IND = 'A'
-                  AND T4.UCRSERV_SCLS_CODE IN (?)
+                  AND T4.UCRSERV_SCLS_CODE IN ('<sclsCode>')
                   AND T2.GTBTRNH_CUST_CODE IN (
                       SELECT GTBTRNH_CUST_CODE FROM eligible_customers
                   )
@@ -1593,7 +1593,7 @@ public final class DBQuery {
                 JOIN GZRCBHT T6 ON T6.GZRCBHT_CUST_CODE = T1.UZBENRO_CUST_CODE
                 WHERE T1.UZBENRO_SSP_IND = 'N'
                   AND T6.GZRCBHT_SRAT_CODE = 'CR03'
-                  AND T1.UZBENRO_PRICE_PLAN = ?
+                  AND T1.UZBENRO_PRICE_PLAN IN ('<pricePlan>')
                   AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
                   AND NOT EXISTS (
                       SELECT 1
@@ -1602,7 +1602,7 @@ public final class DBQuery {
                         AND R.UZRSSPA_PREM_CODE = T1.UZBENRO_PREM_CODE
                   )
                   AND T5.UCRACCT_STATUS_IND = 'A'
-                  AND T4.UCRSERV_SCLS_CODE IN (?)
+                  AND T4.UCRSERV_SCLS_CODE IN ('<sclsCode>')
                   AND T2.GTBTRNH_CUST_CODE IN (
                       SELECT GTBTRNH_CUST_CODE FROM eligible_customers
                   )
@@ -1638,7 +1638,7 @@ public final class DBQuery {
                 JOIN GZBRWDS T4 ON T1.UZBENRO_CUST_CODE = T4.GZBRWDS_CUST_CODE
                                AND T1.UZBENRO_PREM_CODE = T4.GZBRWDS_PREM_CODE
                 WHERE T1.UZBENRO_SSP_IND = 'N'
-                  AND T1.UZBENRO_PRICE_PLAN = ?
+                  AND T1.UZBENRO_PRICE_PLAN IN ('<pricePlan>')
                   AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
                   AND NOT EXISTS (
                       SELECT 1
@@ -1727,9 +1727,9 @@ public final class DBQuery {
                 AND A.GTRACNU_STATUS = 'A'
                 AND T5.UCRACCT_STATUS_IND = 'A'
                 AND T3.GTRRNDN_SERV_ORD_NUM IS NOT NULL
-                AND T4.UCRSERV_SCLS_CODE = ?
+                AND T4.UCRSERV_SCLS_CODE IN ('<sclsCode>')
                 AND T5.UCRACCT_CYCL_CODE NOT IN ('DEPO')
-                AND T7.UCRSCMP_PLAN_CODE = ?
+                AND T7.UCRSCMP_PLAN_CODE IN ('<pricePlan>')
                 AND T7.UCRSCMP_END_DATE > SYSDATE
                 AND T7.UCRSCMP_START_DATE < SYSDATE
                 AND T7.UCRSCMP_SCTY_CODE = 'COMM'
@@ -1767,7 +1767,7 @@ public final class DBQuery {
                                        uabopen t8 ON t8.uabopen_cust_code = t5.ucracct_cust_code
                                    WHERE
                                        t5.ucracct_status_ind = 'A'
-                                       AND t4.ucrserv_scls_code = ?
+                                       AND t4.ucrserv_scls_code IN ('<sclsCode>')
                                        AND t3.gtrrndn_serv_ord_num IS NOT NULL
                                        AND t5.ucracct_cycl_code NOT IN ('DEPO')
                                        AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
@@ -1781,7 +1781,7 @@ public final class DBQuery {
                                        AND EXISTS (
                                            SELECT 'X'
                                            FROM ucrscmp t7, ucrserv t4
-                                           WHERE t7.ucrscmp_plan_code = ?
+                                           WHERE t7.ucrscmp_plan_code IN ('<pricePlan>')
                                              AND TRUNC(SYSDATE) BETWEEN t7.ucrscmp_start_date AND t7.ucrscmp_end_date
                                              AND t7.ucrscmp_scty_code = 'COMM'
                                        )
@@ -1812,11 +1812,11 @@ public final class DBQuery {
                 JOIN ucbcust t6 ON t5.ucracct_cust_code = t6.ucbcust_cust_code
                 JOIN ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
                 WHERE t5.ucracct_status_ind = 'A'
-                  AND t4.ucrserv_scls_code = ?
+                  AND t4.ucrserv_scls_code IN ('<sclsCode>')
                   AND t3.gtrrndn_serv_ord_num IS NOT NULL
                   AND t5.ucracct_cycl_code <> 'DEPO'
                   AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
-                  AND t7.ucrscmp_plan_code = ?
+                  AND t7.ucrscmp_plan_code IN ('<pricePlan>')
                   AND t7.ucrscmp_end_date > SYSDATE
                   AND t7.ucrscmp_start_date < SYSDATE
                   AND t7.ucrscmp_scty_code = 'COMM'
@@ -1851,11 +1851,11 @@ public final class DBQuery {
                 JOIN ucrscmp t7 ON t5.ucracct_cust_code = t7.ucrscmp_cust_code
                 WHERE
                     t5.ucracct_status_ind = 'A'
-                    AND t4.ucrserv_scls_code = ?
+                    AND t4.ucrserv_scls_code IN ('<sclsCode>')
                     AND t3.gtrrndn_serv_ord_num IS NOT NULL
                     AND t5.ucracct_cycl_code NOT IN ('DEPO')
                     AND t6.ucbcust_prospect_value_score IN ('100', '101', '102', '103')
-                    AND t7.ucrscmp_plan_code = ?
+                    AND t7.ucrscmp_plan_code IN ('<pricePlan>')
                     AND t7.ucrscmp_end_date > SYSDATE
                     AND t7.ucrscmp_start_date < SYSDATE
                     AND t7.ucrscmp_scty_code = 'COMM'
@@ -1899,8 +1899,8 @@ public final class DBQuery {
                 B.UCBPREM_LANDLORD_IND IN ('L', 'T')
                 AND A.GTRACNU_STATUS = 'A'
                 AND T5.UCRACCT_STATUS_IND = 'A'
-                AND T1.UZBENRO_PRICE_PLAN = ?
-                AND T4.UCRSERV_SCLS_CODE = ?
+                AND T1.UZBENRO_PRICE_PLAN IN ('<pricePlan>')
+                AND T4.UCRSERV_SCLS_CODE IN ('<sclsCode>')
                 AND T3.GTRRNDN_SERV_ORD_NUM IS NOT NULL
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -1926,7 +1926,7 @@ public final class DBQuery {
             WHERE
                 T1.UZBENRO_SSP_IND = 'N'
                 AND T5.UCRACCT_STATUS_IND = 'A'
-                AND T1.UZBENRO_PRICE_PLAN = ?
+                AND T1.UZBENRO_PRICE_PLAN IN ('<pricePlan>')
                 AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
                 AND NOT EXISTS (
                     SELECT 1
@@ -1989,8 +1989,8 @@ public final class DBQuery {
                     ON GT.GTBTRNH_SEQ_NUM = GR.GTRRNDN_SEQ_NUM
                 WHERE T1.UCRACCT_STATUS_IND = 'A'
                   AND T1.UCRACCT_CYCL_CODE <> 'DEPO'
-                  AND T3.UCRSERV_SCLS_CODE = ?
-                  AND T5.UCRSCMP_PLAN_CODE = ?
+                  AND T3.UCRSERV_SCLS_CODE IN ('<sclsCode>')
+                  AND T5.UCRSCMP_PLAN_CODE IN ('<pricePlan>')
                   AND T5.UCRSCMP_END_DATE > SYSDATE
                   AND T5.UCRSCMP_START_DATE < SYSDATE
                   AND T5.UCRSCMP_SCTY_CODE = 'COMM'
@@ -2035,7 +2035,7 @@ public final class DBQuery {
                AND UO.UABOPEN_PREM_CODE = UA.UCRACCT_PREM_CODE
             WHERE
                 GR.GTRRNDN_SERV_ORD_NUM IS NOT NULL
-                AND US.UCRSERV_SCLS_CODE = ?
+                AND US.UCRSERV_SCLS_CODE IN ('<sclsCode>')
                 AND UA.UCRACCT_STATUS_IND = 'A'
                 AND UO.UABOPEN_SRAT_CODE <> 'RDEP'
                 AND UO.UABOPEN_BALANCE_IND = 'P'
@@ -2051,7 +2051,7 @@ public final class DBQuery {
                     WHERE
                         SC.UCRSCMP_CUST_CODE = UA.UCRACCT_CUST_CODE
                         AND SC.UCRSCMP_PREM_CODE = UA.UCRACCT_PREM_CODE
-                        AND SC.UCRSCMP_PLAN_CODE = ?
+                        AND SC.UCRSCMP_PLAN_CODE IN ('<pricePlan>')
                         AND TRUNC(SYSDATE) BETWEEN SC.UCRSCMP_START_DATE AND SC.UCRSCMP_END_DATE
                         AND SC.UCRSCMP_SCTY_CODE = 'COMM'
                 )
@@ -2082,7 +2082,7 @@ public final class DBQuery {
                 ON T4.UCRSERV_PREM_CODE = T5.UCRACCT_PREM_CODE
             WHERE
                  T3.GTRRNDN_SERV_ORD_NUM IS NOT NULL
-                AND T4.UCRSERV_SCLS_CODE = ?
+                AND T4.UCRSERV_SCLS_CODE IN ('<sclsCode>')
                 AND T5.UCRACCT_STATUS_IND = 'A'
                 AND NOT EXISTS (
                     SELECT 1
@@ -2097,7 +2097,7 @@ public final class DBQuery {
                       ON CMP.UCRSCMP_CUST_CODE = C.UCBCUST_CUST_CODE
                     WHERE CMP.UCRSCMP_CUST_CODE = T1.UZBENRO_CUST_CODE
                       AND CMP.UCRSCMP_SCTY_CODE = 'COMM'
-                      AND CMP.UCRSCMP_PLAN_CODE = ?
+                      AND CMP.UCRSCMP_PLAN_CODE IN ('<pricePlan>')
                       AND CMP.UCRSCMP_START_DATE < SYSDATE
                       AND CMP.UCRSCMP_END_DATE > SYSDATE
                       AND C.UCBCUST_PROSPECT_VALUE_SCORE IN ('110', '120')
@@ -2132,8 +2132,8 @@ public final class DBQuery {
                 B.UCBPREM_LANDLORD_IND IN ('L', 'T')
                 AND A.GTRACNU_STATUS = 'A'
                 AND T5.UCRACCT_STATUS_IND = 'A'
-                AND T1.UZBENRO_PRICE_PLAN = ?
-                AND T4.UCRSERV_SCLS_CODE = ?
+                AND T1.UZBENRO_PRICE_PLAN IN ('<pricePlan>')
+                AND T4.UCRSERV_SCLS_CODE IN ('<sclsCode>')
                 AND T3.GTRRNDN_SERV_ORD_NUM IS NOT NULL
                 AND T1.UZBENRO_SSP_IND = 'N'
                             AND F_GET_PLAN_TYPE_IND(T1.UZBENRO_PRICE_PLAN) IN ('G', 'F')
