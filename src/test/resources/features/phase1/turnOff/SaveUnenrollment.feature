@@ -11,6 +11,7 @@ Feature: Verify SaveUnenrollment Api
     When a request is made to the SaveUnenrollment Api for account with "<pricePlan>" plan "<accountType>" type with forwardingAddressIs "<forwardingAddressIs>" with type "<addressType>" and turnoffreason "<testCondition>" and setEmail "<setEmail>" with etcExists "<etcExists>"
     Then verify response code of "SaveUnenrollment" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
+    Then perform database validation
     Examples:
     |pricePlan|accountType|forwardingAddressIs         |addressType              |testCondition                                  |setEmail   |etcExists     |
     |MVS      |RS         |CURRENT_ADDRESS             |ADDRESS_TYPE_NOT_PRESENT |SEASONAL_OR_HEAT_ONLY_TC207                    |false      |false         |

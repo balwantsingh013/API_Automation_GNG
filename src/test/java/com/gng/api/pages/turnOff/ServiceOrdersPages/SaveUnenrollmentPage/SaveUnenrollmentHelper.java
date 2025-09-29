@@ -9,6 +9,7 @@ import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.SaveUnenrol
 import com.gng.api.steps.turnOff.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -569,6 +570,19 @@ public class SaveUnenrollmentHelper {
         }
     }
 
+    public void performDatabaseValidationsPostUnenrollment(){
+
+        String customerCode= testContext.getCustomerCode();
+        Map<String, Object> unEnrollmentRecord= ApplicationContext.get()
+                .getDbAction()
+                .validateAllTheTablesAfterUnenrollment(
+                        customerCode
+                );
+
+        Assert.assertEquals(unEnrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
+
+    }
+
     public void setEtcExists(SaveUnenrollmentRequest payload, Boolean etcExists ){
             payload.setEtcExists(etcExists);
     }
@@ -652,6 +666,7 @@ public class SaveUnenrollmentHelper {
 
         String premisesCode = custPremAGLCServCode.get("GTBTRNH_PREM_CODE").toString();
         String customerCode = custPremAGLCServCode.get("GTBTRNH_CUST_CODE").toString();
+        testContext.setCustomerCode(customerCode);
         String aglcAccountNumber= custPremAGLCServCode.get("GTBTRNH_AGLC_ACCT_NBR").toString();
         String aglcServiceOrderNumber= custPremAGLCServCode.get("GTRRNDN_SERV_ORD_NUM").toString();
 
