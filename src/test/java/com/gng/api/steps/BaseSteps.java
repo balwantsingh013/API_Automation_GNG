@@ -8,6 +8,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.*;
@@ -51,6 +53,16 @@ public class BaseSteps {
     @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid premise zip code {string}")
     public void responseShouldHaveErrorCodeAndErrorMessageWithInvalidPremiseZipCode(int errorCode, String errorMessage, String invalidPremiseZipCode) {
         verifyErrorCodeAndMessage(errorCode, errorMessage + " " + invalidPremiseZipCode);
+    }
+
+    @And("the MarketerReferenceData is of length 12")
+    public void marketerRefDataLengthCheck(){
+        Assert.assertEquals(testContext.getMarketerReferenceData().toString().length(),12);
+    }
+
+    @Then("verify if the newly generated marketer reference data is not matching with the previous one")
+    public void marketerRefDataUniquenessCheck(){
+        Assert.assertNotEquals(testContext.getMarketerReferenceData(),testContext.getResponse().jsonPath().getLong("data.marketerReferenceData"));
     }
 
     @And("response should return numberOfMatches as {int}")
