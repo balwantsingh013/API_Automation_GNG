@@ -12,14 +12,13 @@ Feature: Verify GetMarketerReferenceData Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | testCondition                                   | errorCode | errorMessage                                                     |
-      | DUPLICATE_REQUEST_ID_TC91              | 10003     | Duplicate Request ID                                             |
-      | MISSING_REQUEST_ID_TC89                | 10001     | Missing Request ID                                               |
-      | INVALID_REQUEST_ID_LENGTH_TC90         | 10002     | Invalid Request ID                                               |
-      | MISSING_LOGIN_ID_TC92                | 10000     | Missing Login ID                                                 |
-     | INVALID_LOGIN_ID_NOT_ALPHANUMERIC_TC93 | 2000      | Invalid Login ID                                                 |
-      | INVALID_LOGIN_ID_NOT_FOUND_TC94        | 2000      | Invalid Login ID                                                 |
-
+      | testCondition                         | errorCode | errorMessage           |
+      | DUPLICATE_REQUEST_ID_TC91             | 10003     | Duplicate Request ID   |
+      | MISSING_REQUEST_ID_TC89               | 10001     | Missing Request ID     |
+      | INVALID_REQUEST_ID_LENGTH_TC90        | 10002     | Invalid Request ID     |
+      | MISSING_LOGIN_ID_TC92                 | 10000     | Missing Login ID       |
+      | INVALID_LOGIN_ID_NOT_ALPHANUMERIC_TC93| 2000      | Invalid Login ID       |
+      | INVALID_LOGIN_ID_NOT_FOUND_TC94       | 2000      | Invalid Login ID       |
 
   @GetMarketerReferenceDataValid @Phase1 @HappyFlow
   Scenario: GetMarketerReferenceData Api - Verify positive response for GetMarketerReferenceData

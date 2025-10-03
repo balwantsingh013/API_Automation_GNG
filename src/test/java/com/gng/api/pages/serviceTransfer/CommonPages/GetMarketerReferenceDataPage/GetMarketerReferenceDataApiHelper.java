@@ -53,7 +53,6 @@ public class GetMarketerReferenceDataApiHelper {
                 payload.setLoginID(FakerDataGenerator.generateString(8));
                 break;
         }
-
     }
 
     public void setRequestPayloadForValidTCs(GetMarketerReferenceDataRequest payload){

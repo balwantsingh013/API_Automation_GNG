@@ -41,5 +41,4 @@ public class GetMarketerReferenceDataApiPage extends BasePage {
             testContext.setMarketerReferenceData(response.jsonPath().getLong("data.marketerReferenceData"));
         }
     }
-
 }
