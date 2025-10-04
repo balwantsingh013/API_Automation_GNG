@@ -22,7 +22,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
     public void validateInvalidParametersCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel testCondition) {
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setParametersBasedOnTypeForServiceTransfer(payload, testCondition);
-        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+     //   helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
         SaveUnenrollmentResponse pojo = deserializeResponseToPojo(response, SaveUnenrollmentResponse.class);

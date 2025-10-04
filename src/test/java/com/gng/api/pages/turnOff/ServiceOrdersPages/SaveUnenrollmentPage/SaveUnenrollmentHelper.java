@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.gng.api.constants.GlobalEnums.AddressType.*;
@@ -573,7 +572,7 @@ public class SaveUnenrollmentHelper {
             payload.setEtcExists(etcExists);
     }
 
-    public void setMarketerReferenceData(SaveUnenrollmentRequest payload, long marketerReferenceData){
+    public void setMarketerReferenceData(SaveUnenrollmentRequest payload, String marketerReferenceData){
         payload.setMarketerReferenceData(marketerReferenceData);
     }
 

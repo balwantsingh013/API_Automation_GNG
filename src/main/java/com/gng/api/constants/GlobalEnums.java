@@ -102,7 +102,8 @@ public class GlobalEnums {
         INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE("1234588"),
         INVALID_WORK_PHONE_TYPE("C"),
         INVALID_HOME_PHONE_TYPE("B"),
-        INVALID_TENANT_LANDLORD("P");
+        INVALID_TENANT_LANDLORD("P"),
+        DUPLICATE_MARKETER_REFERENCE_NUMBER("364818484218");
 
         private final String value;
 
@@ -257,7 +258,9 @@ public class GlobalEnums {
     @Getter
     public enum PlanCode {
         PRP("PRP"),
-        PGB("PGB");
+        PGB("PGB"),
+        RGB("RGB"),
+        MVS("MVS");
 
         private final String value;
         PlanCode(String value) {

@@ -772,12 +772,13 @@ public class SearchAccountsHelper {
             ExcelReader reader = new ExcelReader(excelPath);
             List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
 
-            // Find the first row where the "testConditions" column matches the enum name
             return sheetData.stream()
-                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
-                    .findFirst()
+                    .filter(row -> {
+                        String condition = row.get("testCondition");
+                        return condition != null && condition.contains(testLabel.name());
+                    }).findFirst()
                     .orElseThrow(() -> new RuntimeException(
-                            "No matching testConditions found for: " + testLabel.name()));
+                            "No matching testConditions found containing: " + testLabel.name()));
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to load data from Excel", e);

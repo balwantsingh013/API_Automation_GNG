@@ -19,6 +19,7 @@ public class SaveUnenrollmentRequest {
     private Object customerCode;
     private String premisesCode;
     private String aglcAccountNumber;
+    private String customerType;
     private String forwardingAddressIs;
     private String forwardingAddressType;
     private String forwardingAddressStreetNumber;
@@ -40,6 +41,6 @@ public class SaveUnenrollmentRequest {
     private String requestedTurnOffDate;
     private String aglcServiceOrderNumber;
     private Object etcExists;
-    private Long marketerReferenceData;
+    private String marketerReferenceData;
 
 }
