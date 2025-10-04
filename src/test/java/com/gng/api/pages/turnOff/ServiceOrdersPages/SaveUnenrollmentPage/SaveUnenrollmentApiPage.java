@@ -52,4 +52,8 @@ public class SaveUnenrollmentApiPage extends BasePage {
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
         testContext.setResponse(response);
     }
+
+    public void performDatabaseValidations(){
+        helper.performDatabaseValidationsPostUnenrollment();
+    }
 }

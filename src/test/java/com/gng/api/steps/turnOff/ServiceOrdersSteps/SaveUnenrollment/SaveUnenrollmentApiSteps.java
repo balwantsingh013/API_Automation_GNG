@@ -40,4 +40,10 @@ public class SaveUnenrollmentApiSteps {
     {
         saveUnenrollmentApiPage.validateForActiveRAMVS(save_unenrollment, pricePlan, sclsCode, SaveUnenrollmentApiLabel.valueOf(forwardingAddressIs), SaveUnenrollmentApiLabel.valueOf(type), SaveUnenrollmentApiLabel.valueOf(testCondition), booleanValue(setEmail), booleanValue(etcExists));
     }
+
+    @When("perform database validation")
+    public void performDatabaseValidation(){
+        saveUnenrollmentApiPage.performDatabaseValidations();
+    }
+
 }

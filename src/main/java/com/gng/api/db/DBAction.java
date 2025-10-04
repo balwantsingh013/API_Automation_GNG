@@ -92,6 +92,13 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, customerCode, premisesCode,enrollmentStatus, feedbackIndicator,contactDirection, reasonCode,referredIndicator,contactType, OCRCDETStatus, OCRCTIMAutomaticIndicator, reasonCode);
     }
 
+    public Map<String, Object> validateAllTheTablesAfterUnenrollment(String customerCode){
+        String query = DBQuery.SELECT_UNENROLLMENT_ACCOUNT_DETAILS;
+        logQueryInAllure("Get Customer code for newly enrolled account", query);
+        return jdbcTemplate.queryForMap(query, customerCode);
+
+    }
+
     public Map<String, Object> validateAllTheTablesAfterGetEligiblePlansRequest(String customerCode,
                                                                                 String premisesCode,
                                                                                 String firstName,
