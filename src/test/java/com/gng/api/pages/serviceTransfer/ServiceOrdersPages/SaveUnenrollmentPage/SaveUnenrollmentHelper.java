@@ -70,7 +70,7 @@ public class SaveUnenrollmentHelper {
 
             /* Customer Code */
             case CUSTOMER_CODE_EMPTY_NEGATIVE_TC107 -> payload.setCustomerCode(null);
-            case CUSTOMER_CODE_MAX_LENGTH_NEGATIVE_TC108 -> payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(19));
+            case CUSTOMER_CODE_MAX_LENGTH_NEGATIVE_TC108 -> payload.setCustomerCode(FakerDataGenerator.getRandomNumericString(12));
             case CUSTOMER_CODE_NON_INT_NEGATIVE_TC109 -> payload.setCustomerCode(FakerDataGenerator.generateString(5));
             case CUSTOMER_CODE_NOT_EXISTS_NEGATIVE_TC110 -> payload.setCustomerCode(0);
 
