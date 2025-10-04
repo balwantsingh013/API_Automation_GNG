@@ -3,22 +3,18 @@ package com.gng.api.pages.serviceTransfer.ServiceOrdersPages.SaveUnenrollmentPag
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
-
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.SaveUnenrollment.SaveUnenrollmentApiLabel;
-
 import com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import static com.gng.api.constants.GlobalEnums.*;
 import static com.gng.api.constants.GlobalEnums.AddressType.*;
 import static com.gng.api.constants.GlobalEnums.ForwardingAddressType.*;
-
 
 @Slf4j
 public class SaveUnenrollmentHelper {
@@ -104,11 +100,9 @@ public class SaveUnenrollmentHelper {
             case FWD_ADDRESS_TYPE_EMPTY_NEGATIVE_TC121 ->  payload.setForwardingAddressType("");
             case FWD_ADDRESS_TYPE_INVALID_VALUE_NEGATIVE_TC122 ->  payload.setForwardingAddressType(FakerDataGenerator.getRandomString(5));
 
-
             /* Address Fields */
             case FWD_ADD_STR_NUM_MAX_LENGTH_NEGATIVE_TC123 -> payload.setForwardingAddressStreetNumber(FakerDataGenerator.getRandomString(20));
             case FWD_ADD_STR_PRE_DIR_MAX_LENGTH_NEGATIVE_TC124 -> payload.setForwardingAddressStreetPreDirection(FakerDataGenerator.getRandomString(5));
-
             case FWD_ADD_STR_NAME_EMPTY_NEGATIVE_TC125 ->  payload.setForwardingAddressStreetName("");
             case FWD_ADD_STR_NAME_MAX_LENGTH_NEGATIVE_TC126 -> payload.setForwardingAddressStreetName(FakerDataGenerator.getRandomString(50));
             case FWD_ADD_STR_SFX_MAX_LENGTH_NEGATIVE_TC127 -> payload.setForwardingAddressStreetSuffix(FakerDataGenerator.getRandomString(15));
@@ -118,10 +112,8 @@ public class SaveUnenrollmentHelper {
             case FWD_ADD_RURAL_ROUTE_MAX_LENGTH_NEGATIVE_TC131 -> payload.setForwardingAddressRuralRoute(FakerDataGenerator.getRandomString(25));
             case FWD_ADD_PO_BOX_MAX_LENGTH_NEGATIVE_TC132 -> payload.setForwardingAddressPOBox(FakerDataGenerator.getRandomString(15));
             case FWD_ADD_LINE2_MAX_LENGTH_NEGATIVE_TC133 -> payload.setForwardingAddressLine2(FakerDataGenerator.getRandomString(50));
-
             case FWD_ADD_CITY_EMPTY_NEGATIVE_TC134 ->  payload.setForwardingAddressCity("");
             case FWD_ADD_CITY_MAX_LENGTH_NEGATIVE_TC135 -> payload.setForwardingAddressCity(FakerDataGenerator.getRandomString(40));
-
             case FWD_ADD_STATE_CODE_EMPTY_NEGATIVE_TC136 ->  payload.setForwardingAddressStateCode("");
             case FWD_ADD_STATE_CODE_MAX_LENGTH_NEGATIVE_TC137 -> payload.setForwardingAddressStateCode(FakerDataGenerator.getRandomString(5));
             case FWD_ADD_STATE_CODE_INVALID_NEGATIVE_TC138 ->  payload.setForwardingAddressStateCode(InvalidValues.INVALID_PREMISE_STATE_CODE.getValue());
@@ -139,7 +131,6 @@ public class SaveUnenrollmentHelper {
             case TURN_OFF_SUB_REASON_MAX_LENGTH_NEGATIVE_TC147 -> payload.setTurnOffSubReason(FakerDataGenerator.getRandomString(200));
             case TURN_OFF_SUB_REASON_MAX_LENGTH_MOVING_NEGATIVE_TC149 -> payload.setTurnOffSubReason(FakerDataGenerator.getRandomString(201));
 
-
             /* Invalid-for-service-transfer reason/subreason combos */
             case TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC150,
                  TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC151,
@@ -149,7 +140,6 @@ public class SaveUnenrollmentHelper {
                  TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC169,
                  TURN_OFF_SUB_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC154,
                  TURN_OFF_SUB_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC155,
-
                  TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC157,
                  TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC158,
                  TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC159,
@@ -216,7 +206,6 @@ public class SaveUnenrollmentHelper {
         }
     }
 
-
     public void setCustomerCodePremCodeAGLCServiceNo(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
 
         Map<String, Object> row;
@@ -232,7 +221,7 @@ public class SaveUnenrollmentHelper {
                setCustomerInfo(payload, row);
            }
 
-
+            // ==== WITH-ETC (RGB) ====
             case TURN_OFF_REASON_EMPTY_NEGATIVE_TC143,
                  TURN_OFF_REASON_INVALID_NEGATIVE_TC145,
                  TURN_OFF_SUB_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC155,
@@ -290,6 +279,7 @@ public class SaveUnenrollmentHelper {
             default -> {}
         }
     }
+
     private void setCustomerInfo(SaveUnenrollmentRequest payload, Map<String, Object> row) {
         payload.setPremisesCode(row.get("GTBTRNH_PREM_CODE").toString());
         payload.setCustomerCode(row.get("GTBTRNH_CUST_CODE").toString());
@@ -425,47 +415,17 @@ public class SaveUnenrollmentHelper {
         payload.setMarketerReferenceData(marketerReferenceData);
     }
 
-    public void setForwardingAddressDetailsBasedOnType(SaveUnenrollmentRequest payload, GlobalEnums.ForwardingAddressType forwardingAddressType, SaveUnenrollmentApiLabel type) {
-        if (forwardingAddressType.equals(NEW_ADDRESS)) {
-            payload.setForwardingAddressIs(NEW_ADDRESS.getValue());
-
-            Map<String, Object> addr = ApplicationContext.get().getDbAction().getAddressDetails();
-            payload.setForwardingAddressCity(addr.get("UCRADDR_CITY").toString());
-            payload.setForwardingAddressStateCode(addr.get("UCRADDR_STAT_CODE").toString());
-            payload.setForwardingAddressZipCode(addr.get("UCRADDR_ZIP").toString());
-
-            switch (type) {
-                case ADDRESS_TYPE_STREET -> {
-                    payload.setForwardingAddressType(STREET.getValue());
-                    payload.setForwardingAddressStreetNumber(addr.get("UCRADDR_STREET_NUMBER").toString());
-                    payload.setForwardingAddressStreetName(addr.get("UCRADDR_STREET_NAME").toString());
-                    payload.setForwardingAddressStreetSuffix(addr.get("UCRADDR_SSFX_CODE").toString());
-                    payload.setForwardingAddressStreetPostDirection(addr.get("UCRADDR_PDIR_CODE_POST").toString());
-                    payload.setForwardingAddressStreetPreDirection(addr.get("UCRADDR_PDIR_CODE_PRE").toString());
-                }
-                case ADDRESS_TYPE_RURAL -> {
-                    payload.setForwardingAddressType(RURAL.getValue());
-                    payload.setForwardingAddressRuralRoute(FakerDataGenerator.generateAlphanumeric(3));
-                }
-                case ADDRESS_TYPE_POBOX -> {
-                    payload.setForwardingAddressType(AddressType.POBOX.getValue());
-                    payload.setForwardingAddressPOBox(FakerDataGenerator.generateAlphanumeric(2));
-                }
-                default -> {  }
-            }
-        }
-    }
     public void setAddressDetailsBasedOnType(SaveUnenrollmentRequest payload,  SaveUnenrollmentApiLabel testCondition) {
-
             switch (testCondition) {
+                // CA address leave as is
                 case ETC_MISSING_NEGATIVE_TC182,
                      MRD_INVALID_VALUE_NEGATIVE_TC183,
                      MRD_DUPLICATE_NEGATIVE_TC186,
                      MRD_NOT_NUMERIC_NEGATIVE_TC187,
                      TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC173-> {
-
                 }
 
+                //NA new Address
                 default -> {
                     Map<String, Object> addr = ApplicationContext.get().getDbAction().getAddressDetails();
                     payload.setForwardingAddressCity(addr.get("UCRADDR_CITY").toString());
@@ -479,6 +439,5 @@ public class SaveUnenrollmentHelper {
                     payload.setForwardingAddressStreetPostDirection(addr.get("UCRADDR_PDIR_CODE_POST").toString());
                     payload.setForwardingAddressStreetPreDirection(addr.get("UCRADDR_PDIR_CODE_PRE").toString()); }
             }
-
     }
 }
