@@ -21,7 +21,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
     public void validateInvalidRequestAndLoginIDCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setRequestAndLoginIDBasedOnType(payload, requestID);
-        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        helper.setMarketerReferenceData(payload, String.valueOf(testContext.getMarketerReferenceData()));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
         SaveUnenrollmentResponse saveUnenrollmentResponse = deserializeResponseToPojo(response, SaveUnenrollmentResponse.class);
@@ -32,7 +32,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
     public void validateInvalidParametersCases(SaveUnenrollmentApiLabel apiLabel, SaveUnenrollmentApiLabel requestID) {
         SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setParametersBasedOnType(payload, requestID);
-        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        helper.setMarketerReferenceData(payload, String.valueOf(testContext.getMarketerReferenceData()));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
         SaveUnenrollmentResponse saveUnenrollmentResponse = deserializeResponseToPojo(response, SaveUnenrollmentResponse.class);
@@ -47,7 +47,7 @@ public class SaveUnenrollmentApiPage extends BasePage {
         helper.setForwardingAddressDetailsBasedOnType(payload, forwardingAddressIs, type);
         helper.setEmailAddress(payload,setEmail);
         helper.setEtcExists(payload,etcExists);
-        helper.setMarketerReferenceData(payload, testContext.getMarketerReferenceData());
+        helper.setMarketerReferenceData(payload, String.valueOf(testContext.getMarketerReferenceData()));
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
         testContext.setResponse(response);

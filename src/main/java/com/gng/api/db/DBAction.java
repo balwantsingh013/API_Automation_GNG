@@ -49,6 +49,11 @@ public class DBAction {
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and GPP plan", query);
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
+    public Map<String, Object> custCodeParamCodeAGLCAccNo_WitEtcGPP(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and GPP plan", query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
+    }
 
     public Map<String, Object> validateAllTheTablesAfterEnrollment(String customerCode,
                                                                    String premisesCode,
@@ -270,6 +275,12 @@ public class DBAction {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_CEILING_PLAN_ACN_ACTIVE_PENDING_REWARDS;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account ceiling plan active/pending rewards", query);
         return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
+    }
+
+    public Map<String, Object> custCodeParamCodeAGLCAccNoServByPlanCodeCustomerType(String pricePlan, String sclsCode) {
+        String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_ACN_WITHOUT_ETC;
+        logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account without ETC", query);
+        return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
     public Map<String, Object> cityStateZip() {

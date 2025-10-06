@@ -7,18 +7,13 @@ import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Pla
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.turnOn.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
-import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
-
-import java.io.IOException;
 import java.util.*;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import static com.gng.api.constants.GlobalEnums.EnrollMentStatus.*;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
 
@@ -966,25 +961,6 @@ public class SaveEnrollmentHelper {
         }
     }
 
-    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
-            String excelPath,
-            String sheetName,
-            E testLabel) {
 
-        try {
-            ExcelReader reader = new ExcelReader(excelPath);
-            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
-
-            // Find the first row where the "testConditions" column matches the enum name
-            return sheetData.stream()
-                    .filter(row -> testLabel.name().equalsIgnoreCase(row.get("testCondition")))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException(
-                            "No matching testConditions found for: " + testLabel.name()));
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load data from Excel", e);
-        }
-    }
 
 }
