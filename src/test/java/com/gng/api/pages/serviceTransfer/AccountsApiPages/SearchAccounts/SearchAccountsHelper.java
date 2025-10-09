@@ -52,6 +52,15 @@ public class SearchAccountsHelper {
         payload.setPremisesCode("");
     }
 
+    public void setAddressDetails(SearchAccountsRequest payload){
+        payload.setPremisesStreetNumber(premisesStreetNumber);
+        payload.setPremisesStreetName(premisesStreetName);
+        payload.setPremisesCity(premisesCity);
+        payload.setPremisesStateCode(premisesStateCode);
+        payload.setPremisesZipCode(validZipCode);
+
+    }
+
     public void preparePayloadForNegativeTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         setParametersToEmpty(payload);
         payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
@@ -60,156 +69,216 @@ public class SearchAccountsHelper {
         String lastName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_LAST_NAME").toString();
         validZipCode = accountDetailsLastNameZipCode.get("UCRADDR_ZIP").toString();
         switch (testCondition) {
-            case SEARCH_ACCOUNTS_NO_SEARCH_PARAMETERS_PROVIDED_TC_1:
+            case NO_SEARCH_PARAMETERS_PROVIDED_TC_1:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case SEARCH_ACCOUNTS_MISSING_REQUEST_ID_TC_2:
+            case MISSING_REQUEST_ID_TC_2:
                 payload.setRequestID("");
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_REQUEST_ID_LENGTH_TC_3:
+            case INVALID_REQUEST_ID_LENGTH_TC_3:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
                 break;
 
-            case SEARCH_ACCOUNTS_DUPLICATE_REQUEST_ID_TC_4:
+            case DUPLICATE_REQUEST_ID_TC_4:
                 payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
                 break;
 
-            case SEARCH_ACCOUNTS_MISSING_LOGIN_ID_TC_5:
+            case MISSING_LOGIN_ID_TC_5:
                 payload.setLoginID("");
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_LOGIN_ID_LENGTH_TC_6:
+            case INVALID_LOGIN_ID_LENGTH_TC_6:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLoginID(FakerDataGenerator.generateString(31));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_LOGIN_ID_FORMAT_TC_7:
+            case INVALID_LOGIN_ID_FORMAT_TC_7:
                 payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_LOGIN_ID_TC_8:
+            case INVALID_LOGIN_ID_TC_8:
                 payload.setLoginID(FakerDataGenerator.generateString(6));
                 payload.setCustomerLastName(FakerDataGenerator.generateString(5));
                 payload.setPremisesZipCode(validZipCode);
                 break;
 
-            case SEARCH_ACCOUNTS_MISSING_CUSTOMER_CODE_TC_9:
+            case MISSING_CUSTOMER_CODE_TC_9:
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 break;
 
-            case SEARCH_ACCOUNTS_MISSING_PREMISES_CODE_TC_10:
+            case MISSING_PREMISES_CODE_TC_10:
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_CUSTOMER_CODE_LENGTH_TC_11:
+            case INVALID_CUSTOMER_CODE_LENGTH_TC_11:
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_PREMISES_CODE_LENGTH_TC_12:
+            case  INVALID_PREMISES_CODE_LENGTH_TC_12:
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
                 break;
 
-            case SEARCH_ACCOUNTS_MISSING_TRANSACTION_TYPE_TC_13:
+            case MISSING_TRANSACTION_TYPE_TC_13:
                 payload.setTransactionType(null);
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_TRRANSACTION_TYPE_TC_14:
+            case INVALID_TRANSACTION_TYPE_TC_14:
                 payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(4));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_TRANSACTION_TYPR_LENGTH_TC_15:
+            case INVALID_TRANSACTION_TYPE_LENGTH_TC_15:
                 payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(5));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_BUSINESS_NAME_LENGTH_TC_16:
+            case INVALID_BUSINESS_NAME_LENGTH_TC_16:
                 payload.setCustomerBusinessName(FakerDataGenerator.generateString(61));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_CUSTOMER_LAST_NAME_LENGTH_TC_17:
+            case INVALID_CUSTOMER_LAST_NAME_LENGTH_TC_17:
                 payload.setCustomerLastName(FakerDataGenerator.generateString(61));
                 break;
 
-            case SEARCH_ACCOUNTS_MISSING_PREMISES_ZIP_CODE_TC_19:
+            case MISSING_PREMISES_ZIP_CODE_TC_19:
                 payload.setCustomerLastName(FakerDataGenerator.generateString(10));
                 break;
 
-            case SEARCH_ACCOUNTS_MISSING_TRANSACTION_TYPE_TC_20:
+            case MISSING_TRANSACTION_TYPE_TC_20:
                 payload.setCustomerLastName(lastName);
                 payload.setPremisesZipCode(validZipCode);
                 payload.setTransactionType(null);
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_FIRST_NAME_LENGTH_TC_21:
+            case INVALID_FIRST_NAME_LENGTH_TC_21:
                 payload.setCustomerFirstName(FakerDataGenerator.generateString(16));
                 break;
 
-            case SEARCH_ACCOUNTS_UNENCRYPTED_SSN_TC_22:
+            case UNENCRYPTED_SSN_TC_22:
                 payload.setSocialSecurityNumber(socialSecurityNumber);
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_SSN_LENGTH_TC_23:
+            case INVALID_SSN_LENGTH_TC_23:
                 payload.setSocialSecurityNumber(encryptData(FakerDataGenerator.generateDigits(33)));
                 break;
 
-            case SEARCH_ACCOUNTS_TAX_ID_NOT_ALLOWED_TC_24:
+            case TAX_ID_NOT_ALLOWED_TC_24:
                 payload.setCustomerBusinessName(FakerDataGenerator.generateString(10));
                 payload.setFederalTaxID(encryptData(FakerDataGenerator.generateDigits(9)));
                 break;
 
-            case SEARCH_ACCOUNTS_SSN_AND_TAX_ID_PROVIDED_TC_25:
+            case SSN_AND_TAX_ID_PROVIDED_TC_25:
                 payload.setSocialSecurityNumber(encryptData(socialSecurityNumber));
                 payload.setFederalTaxID(encryptData(FakerDataGenerator.generateDigits(9)));
                 break;
 
-            case SEARCH_ACCOUNTS_PHONE_NOT_ALLOWED_TC_26:
+            case PHONE_NOT_ALLOWED_TC_26:
                 payload.setCustomerLastName(lastName);
                 payload.setPremisesZipCode(validZipCode);
                 payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_AGLC_ACCOUNT_NO_LENGTH_TC_27:
+            case INVALID_AGLC_ACCOUNT_NO_LENGTH_TC_27:
                 payload.setCustomerLastName(lastName);
                 payload.setPremisesZipCode(validZipCode);
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(21));
                 break;
 
-            case SEARCH_ACCOUNTS_NON_NUMERIC_AGLC_ACCOUNT_NO_TC_28:
+            case NON_NUMERIC_AGLC_ACCOUNT_NO_TC_28:
                 payload.setCustomerLastName(lastName);
                 payload.setPremisesZipCode(validZipCode);
                 payload.setAglcAccountNumber(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_STREET_NUMBER_LENGTH_TC_29:
-                payload.setPremisesStreetName(premisesStreetName);
-                payload.setPremisesStreetSuffix(premisesStreetSuffix);
-                payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
-                payload.setPremisesCity(premisesCity);
-                payload.setPremisesZipCode(validZipCode);
+            case INVALID_STREET_NUMBER_LENGTH_TC_29:
+                setAddressDetails(payload);
                 payload.setPremisesStreetNumber(FakerDataGenerator.generateDigits(13));
                 break;
 
-            case SEARCH_ACCOUNTS_INVALID_STREET_PRE_DIR_LENGTH_TC_30:
-                payload.setPremisesStreetName(premisesStreetName);
-                payload.setPremisesStreetSuffix(premisesStreetSuffix);
-                payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
-                payload.setPremisesCity(premisesCity);
-                payload.setPremisesZipCode(validZipCode);
-                payload.setPremisesStreetNumber(premisesStreetNumber);
+            case INVALID_STREET_PRE_DIR_LENGTH_TC_30:
+                setAddressDetails(payload);
                 payload.setPremisesStreetPreDirection(FakerDataGenerator.generateString(3));
                 break;
 
 
-            case SEARCH_ACCOUNTS_INVALID_STREET_NAME_LENGTH_TC_31:
+            case INVALID_STREET_NAME_LENGTH_TC_31:
+                setAddressDetails(payload);
                 payload.setPremisesStreetName(FakerDataGenerator.generateString(31));
-                payload.setPremisesStreetSuffix(premisesStreetSuffix);
-                payload.setPremisesStreetPostDirection(premisesStreetPostDirection);
-                payload.setPremisesCity(premisesCity);
-                payload.setPremisesZipCode(validZipCode);
-                payload.setPremisesStreetNumber(premisesStreetNumber);
+                break;
+
+            case MISSING_PREMISES_STREET_NAME_TC_32:
+                setAddressDetails(payload);
+                payload.setPremisesStreetName(null);
+                break;
+
+            case INVALID_STREET_SUFFIX_LENGTH_TC_33:
+                setAddressDetails(payload);
+                payload.setPremisesStreetSuffix(FakerDataGenerator.generateUpperCaseString(7));
+                break;
+
+            case INVALID_PREMISES_STREET_POST_DIRECTION_LENGTH_TC_34:
+                setAddressDetails(payload);
+                payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(3));
+                break;
+
+            case INVALID_UNIT_TYPE_LENGTH_TC_35:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
+                break;
+
+            case PREMISES_UNIT_TYPE_MISSING_TC_36:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(null);
+                payload.setPremisesUnitNumber(FakerDataGenerator.generateDigits(3));
+                break;
+
+            case INVALID_PREMISES_UNIT_NUMBER_FORMAT_TC_37:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(preisesUnitType);
+                payload.setPremisesUnitNumber("1"+FakerDataGenerator.generateDigits(7));
+                break;
+
+            case MISSING_UNIT_NUMBER_TC_38:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(preisesUnitType);
+                payload.setPremisesUnitNumber(null);
+                break;
+
+            case INVALID_PREMISES_CITY_LENGTH_TC_39:
+                setAddressDetails(payload);
+                payload.setPremisesCity(FakerDataGenerator.generateString(21));
+                break;
+
+            case MISSING_PREMISES_CITY_TC_40:
+                setAddressDetails(payload);
+                payload.setPremisesCity(null);
+                break;
+
+            case INVALID_STATE_CODE_LENGTH_TC_41:
+                setAddressDetails(payload);
+                payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(4));
+                break;
+
+            case MISSING_STATE_CODE_TC_42:
+                setAddressDetails(payload);
+                payload.setPremisesStateCode(null);
+                break;
+
+            case INVALID_ZIP_CODE_LENGTH_TC_43:
+                setAddressDetails(payload);
+                payload.setPremisesZipCode(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case INVALID_ZIP_CODE_LENGTH_LESS_THAN_5_TC_44:
+                setAddressDetails(payload);
+                payload.setPremisesZipCode(FakerDataGenerator.generateDigits(4));
+                break;
+
+            case MISSING_ZIP_CODE_TC_45:
+                setAddressDetails(payload);
+                payload.setPremisesZipCode(null);
                 break;
 
             default:
