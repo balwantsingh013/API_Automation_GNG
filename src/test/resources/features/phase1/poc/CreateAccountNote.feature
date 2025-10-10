@@ -5,6 +5,57 @@ Feature: Verify CreateAccountNote Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
+  @CreateBannerNotesWithInvalidParameters @NegativeFlow @Phase1
+  Scenario Outline: Verify CreateBannerNotes with invalid parameters "<testCondition>"
+    When a request is made to the CreateBannerNotes Api with invalid parameters for "<testCondition>" condition
+    Then verify response code of "CreateBannerNotes" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                            | errorCode | errorMessage                          |
+      # Request ID
+      | REQUEST_ID_MISSING_NEGATIVE_TC65                         | 10001     | Missing Request ID                     |
+      | REQUEST_ID_DUPLICATE_NEGATIVE_TC66                       | 10003     | Duplicate Request ID                   |
+     # # Customer Code
+      | CUSTOMER_CODE_NULL_NEGATIVE_TC67                         | 10011     | Missing Customer Code                  |
+      | CUSTOMER_CODE_LENGTH_GT9_NEGATIVE_TC69                   | 10015     | Invalid Customer Code Format           |
+     # # Premises Code
+      | PREMISES_CODE_NULL_NEGATIVE_TC68                         | 10013     | Missing Premises Code                  |
+      | PREMISES_CODE_LENGTH_GT7_NEGATIVE_TC70                   | 10005     | Invalid Premises Code Format           |
+      # Account Combination
+      | ACCOUNT_COMBINATION_INVALID_NEGATIVE_TC71                | 40015     | Invalid Account Number                 |
+      # Note Type / Text / Origin
+      | NOTE_TYPE_CODE_NULL_NEGATIVE_TC72                        | 10027     | Missing Note Type Code                 |
+      | NOTE_TEXT_NULL_NEGATIVE_TC73                             | 10025     | Missing Note Text                      |
+      | ORIGIN_NULL_NEGATIVE_TC74                                | 10029     | Missing Origin                         |
+      # Dates
+      | EXPIRATION_DATE_INVALID_FORMAT_NEGATIVE_TC75             | 10031     |  Invalid Suspense Date Format      |
+      #TC75 should be-> 10031 'Invalid Expiration Date Format'
+      | SUSPENSE_DATE_INVALID_FORMAT_NEGATIVE_TC76               | 10033     | Invalid Suspense Date Format           |
+      # Service Number
+      | SERVICE_NUMBER_NOT_FOUND_FOR_PREMISES_NEGATIVE_TC77      | 40043     | Invalid Service Number                 |
+      | SERVICE_NUMBER_INVALID_FORMAT_NEGATIVE_TC78              | 10045     | Invalid Service Number Format          |
+      # Note Type validation
+      | NOTE_TYPE_INVALID_NEGATIVE_TC79                          | 40045     | Invalid Note Type                      |
+
+  @CreateBannerNotesPositiveFlows @HappyFlow @Phase1
+  Scenario Outline: Verify CreateBannerNotes positive flows for "<testCondition>"
+    When a request is made to the CreateBannerNotes Api with valid parameters "<noteText>" noteText for "<testCondition>" condition
+    Then verify response code of "CreateBannerNotes" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+   # And verify response contains a valid NoteSequenceNumber
+    And verify NoteSequenceNumber match the value in the database
+    And verify banner note is created successfully with "<noteText>" noteText for "<testCondition>" condition
+    #And verify note formatting and content rules for "<testCondition>"
+
+    Examples:
+      | testCondition                         | noteText                                        |
+      | CREATE_NOTE_ACCT_POSITIVE_TC80        | Phone number 1234567890 listed\|~ as Caller ID. |
+      | CREATE_NOTE_PMT_RPT_POSITIVE_TC81     |                                |
+      | CREATE_NOTE_IVR_NPA_POSITIVE_TC82     |                                |
+      | CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 |                                |
+
+
   @CreateAccountNoteApiWithValidData @Phase1 @HappyFlow
   Scenario: Verify CreateAccountNote Api request with valid data
     When a request is made to the CreateAccountNote Api with valid data

@@ -1,0 +1,13 @@
+{
+  "requestID": "9100BD9E4B0645B3B77EEA5FA88290A67",
+  "customerCode": "5914107",
+  "premisesCode": "5888564",
+  "serviceNumber": "1",
+  "noteTypeCode": "ACCT",
+  "noteText": "This is a test",
+  "origin": "IVR",
+  "expirationDate": "20230805",
+  "suspenseDate": "20230705",
+  "userIDRemind": null
+}
+
