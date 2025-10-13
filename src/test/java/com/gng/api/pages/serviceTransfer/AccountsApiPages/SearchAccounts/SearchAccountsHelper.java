@@ -355,6 +355,37 @@ public class SearchAccountsHelper {
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
                 break;
 
+            case CUST_PREM_CODE_ACTIVE_PAST_DUE_REWARDS_TC_62:
+            case CUST_PREM_CODE_ACTIVE_PAST_DUE_TC_61:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDue();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_ACTIVE_UNAPPLIED_DEPOSIT_TC_63:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveUnappliedDepositCSV();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UZBENRO_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_ACTIVE_SONP_PAST_DUE_TC_68:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveDiscount();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_ACTIVE_GREENER_LIFE_SONP_TC_69:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONP();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_SONP_UNAPPLIEDDEPOSIT_TC_70:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("GTBTRNH_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("GTBTRNH_PREM_CODE").toString());
+                break;
+
             default:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
         }

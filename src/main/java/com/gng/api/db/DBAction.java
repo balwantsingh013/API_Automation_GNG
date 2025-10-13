@@ -533,6 +533,18 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeRSActiveUnappliedDepositCSV() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_CSV_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveDiscount() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_CSV_ACTIVE_DISCOUNTS;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getCustPremCodeRSFinalUnappliedDeposit() {
         String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_FINAL_UNAPPLIED_DEPOSIT;
         logQueryInAllure("Get Inactive Customer Details", query);
@@ -542,6 +554,24 @@ public class DBAction {
     public Map<String, Object> getCustPremCodeRSInactivePastDue() {
         String query = DBQuery.GET_CUST_PREM_CODE_FOR_PASTDUEBALANCE_RS_ACCOUNT;
         logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActivePastDue() {
+        String query = DBQuery.GET_ACTIVE_CUST_PREM_CODE_ACTIVE_GREENER_PENDING_REWARDS_PAST_DUE;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONP() {
+        String query = DBQuery.GET_ACTIVE_CUST_PREM_CODE_ACTIVE_GREENER_PENDING_REWARDS_SONP;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONPUnappliedDeposit() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Active Customer Details", query);
         return jdbcTemplate.queryForMap(query);
     }
 

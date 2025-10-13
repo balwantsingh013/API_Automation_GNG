@@ -94,8 +94,14 @@ Feature: Verify SearchAccounts ServiceTransfer Api
 #      |CUST_PREM_CODE_INACTIVE_PAST_DUE_TC_52 |0        |            |1          |I            |false        |0               |0                     |0|
 #      |RS_INACTIVE_BANKRUPCY_TC_53 |0        |            |1          |I            |false        |0               |0                     |0|
 #      |RS_INACTIVE_BAD_DEBT_BALANCE_TC_54|0        |            |1          |I            |true        |0               |0                     |277.22             |
-      #|RS_INACTIVE_BAD_DEBT_BALANCE_TC_55|0        |            |1          |I            |true        |0               |0                     |277.22             |
-    #|CUST_PREM_CODE_NEW_UNAPPLIED_DEPOSIT_TC_57 |0        |            |1          |N            |false        |25               |0|0|
-      #|RS_NEW_BANKRUPCY_TC_58 |0        |            |1          |N            |false        |0               |0                     |0|
-      #|FINAL_NO_SONP_ACTIVE_PENDING_REWARDS_TC_59|0        |            |1          |F            |false        |0               |0                     |0|
-    |CUST_PREM_CODE_FINAL_UNAPPLIED_DEPOSIT_TC_60 |0        |            |1          |N            |false        |25               |0|0|
+#      |RS_INACTIVE_BAD_DEBT_BALANCE_TC_55|0        |            |1          |I            |true        |0               |0                     |277.22             |
+#    |CUST_PREM_CODE_NEW_UNAPPLIED_DEPOSIT_TC_57 |0        |            |1          |N            |false        |25               |0|0|
+#      |RS_NEW_BANKRUPCY_TC_58 |0        |            |1          |N            |false        |0               |0                     |0|
+#      |FINAL_NO_SONP_ACTIVE_PENDING_REWARDS_TC_59|0        |            |1          |F            |false        |0               |0                     |0|
+#    |CUST_PREM_CODE_FINAL_UNAPPLIED_DEPOSIT_TC_60 |0        |            |1          |N            |false        |25               |0|0|
+#     |CUST_PREM_CODE_ACTIVE_PAST_DUE_REWARDS_TC_62 |0        |            |1          |A            |false        |0               |81.28                     |0|
+#      |CUST_PREM_CODE_ACTIVE_PAST_DUE_TC_61 |0        |            |1          |A            |false        |0               |81.28                     |0|
+#    |CUST_PREM_CODE_ACTIVE_UNAPPLIED_DEPOSIT_TC_63 |0        |            |1          |A            |false        |0               |0|0|
+   # |CUST_PREM_CODE_ACTIVE_SONP_PAST_DUE_TC_68 |0        |            |1          |A            |true        |0               |336.98|0|
+    #|CUST_PREM_CODE_ACTIVE_GREENER_LIFE_SONP_TC_69 |0        |            |1          |A            |true        |0               |48.97|0|
+    |CUST_PREM_CODE_SONP_UNAPPLIEDDEPOSIT_TC_70 |0        |            |1          |A            |true        |0               |48.97|0|
