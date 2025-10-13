@@ -63,6 +63,7 @@ public class SearchAccountsHelper {
 
     public void preparePayloadForNegativeTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         setParametersToEmpty(payload);
+        Map<String, Object> validCustomerBusinessDetails=null;
         payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
         Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_LastNameZipCode();
@@ -279,6 +280,79 @@ public class SearchAccountsHelper {
             case MISSING_ZIP_CODE_TC_45:
                 setAddressDetails(payload);
                 payload.setPremisesZipCode(null);
+                break;
+
+            case INVALID_LAST_NAME_ZIP_COMBINATION_TC_18:
+            case INVALID_RS_LAST_NAME_ZIP_COMBINATION_TC_47:
+                payload.setPremisesZipCode(validZipCode);
+                payload.setCustomerLastName(FakerDataGenerator.generateString(5));
+                break;
+
+            case INVALID_CUSTOMER_PREMISES_CODE_COMBINATION_TC_46:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case VALID_LAST_NAME_ZIP_COMBINATION_TC_48:
+                payload.setPremisesZipCode(validZipCode);
+                payload.setCustomerLastName(lastName);
+                break;
+
+            case NO_MATCHING_CUSTOMER_BUSINESS_NAME_TC_49:
+                payload.setCustomerBusinessName(FakerDataGenerator.generateString(6));
+                break;
+
+            case VALID_CUSTOMER_BUSINESS_NAME_TC_50:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveNoETC();
+                payload.setCustomerBusinessName(validCustomerBusinessDetails.get("UCBCUST_LAST_NAME").toString());
+
+            case CUST_PREM_CODE_INACTIVE_UNAPPLIED_DEPOSIT_TC_51:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSInactiveUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_INACTIVE_PAST_DUE_TC_52:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSInactivePastDue();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case RS_INACTIVE_BANKRUPCY_TC_53:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialInactiveBankrupcy();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case RS_INACTIVE_BAD_DEBT_BALANCE_TC_54:
+            case RS_INACTIVE_BAD_DEBT_BALANCE_TC_55:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithBadDebt();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UABOPEN_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UABOPEN_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_NEW_UNAPPLIED_DEPOSIT_TC_57:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSNewUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
+                break;
+
+            case RS_NEW_BANKRUPCY_TC_58:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialNewBankrupcy();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case FINAL_NO_SONP_ACTIVE_PENDING_REWARDS_TC_59:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSFinalPendingRewards();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_FINAL_UNAPPLIED_DEPOSIT_TC_60:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSFinalUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
                 break;
 
             default:

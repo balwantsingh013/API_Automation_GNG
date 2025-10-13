@@ -235,6 +235,12 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
+    public Map<String, Object> custCodePremCode() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_WITH_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Customer code, premises code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC214(String pricePlan, String sclsCode) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with past due balance", query);
@@ -503,9 +509,39 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeRSFinalPendingRewards() {
+        String query = DBQuery.GET_FINAL_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_PENDING_REWARDS;
+        logQueryInAllure("Get final Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getCustPremCodeRSActiveUnappliedDeposit() {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_UNAPPLIED_DEPOSIT;
         logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSInactiveUnappliedDeposit() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_INACTIVE_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSNewUnappliedDeposit() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_NEW_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSFinalUnappliedDeposit() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_FINAL_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSInactivePastDue() {
+        String query = DBQuery.GET_CUST_PREM_CODE_FOR_PASTDUEBALANCE_RS_ACCOUNT;
+        logQueryInAllure("Get Inactive Customer Details", query);
         return jdbcTemplate.queryForMap(query);
     }
 

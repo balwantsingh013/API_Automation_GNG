@@ -58,3 +58,44 @@ Feature: Verify SearchAccounts ServiceTransfer Api
       | INVALID_ZIP_CODE_LENGTH_TC_43                          | 10115     | Invalid PremisesZipCode provided                                                                                                                                                  |
       | INVALID_ZIP_CODE_LENGTH_LESS_THAN_5_TC_44              | 10115     | Invalid PremisesZipCode provided                                                                                                                                                  |
       | MISSING_ZIP_CODE_TC_45                                 | 1001      | Invalid Request: Invalid required search field combination - premisesZipCode required.                                                                                            |
+
+  @SearchAccountsServiceTransfer1 @Phase1 @HappyFlow
+  Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the no results are returned for <testCondition>
+    When a request is made to the SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And response should return numberOfMatches as <noOfRecords>
+
+    Examples:
+    |testCondition                                   |errorCode|errorMessage|noOfRecords|
+#    |INVALID_LAST_NAME_ZIP_COMBINATION_TC_18         |0        |            |0          |
+#    |INVALID_CUSTOMER_PREMISES_CODE_COMBINATION_TC_46|0        |            |0          |
+#    |INVALID_RS_LAST_NAME_ZIP_COMBINATION_TC_47      |0        |            |0          |
+#    |VALID_LAST_NAME_ZIP_COMBINATION_TC_48           |0        |            |30         |
+#    |NO_MATCHING_CUSTOMER_BUSINESS_NAME_TC_49        |0        |            |0          |
+#    |VALID_CUSTOMER_BUSINESS_NAME_TC_50              |0        |            |1          |
+
+
+  @SearchAccountsServiceTransfer2 @Phase1 @HappyFlow
+  Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the no results are returned for <testCondition>
+    When a request is made to the SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And response should return numberOfMatches as <noOfRecords>
+    And response should have "accountStatus" as "<accountStatus>"
+    And response should have "sonpAccount" flag as "<isSONPAccount>"
+    And response should have "unappliedDepositAmount" as "<unappliedDeposit>"
+    And response should have "pastDueAmount" as "<pastDueAmount>"
+    And response should have "badDebtAmount" as "<badDebtAmount>"
+
+    Examples:
+      |testCondition                                   |errorCode|errorMessage|noOfRecords|accountStatus|isSONPAccount|unappliedDeposit|pastDueAmount|badDebtAmount|
+#  |CUST_PREM_CODE_INACTIVE_UNAPPLIED_DEPOSIT_TC_51 |0        |            |1          |I            |false        |25               |0|0|
+#      |CUST_PREM_CODE_INACTIVE_PAST_DUE_TC_52 |0        |            |1          |I            |false        |0               |0                     |0|
+#      |RS_INACTIVE_BANKRUPCY_TC_53 |0        |            |1          |I            |false        |0               |0                     |0|
+#      |RS_INACTIVE_BAD_DEBT_BALANCE_TC_54|0        |            |1          |I            |true        |0               |0                     |277.22             |
+      #|RS_INACTIVE_BAD_DEBT_BALANCE_TC_55|0        |            |1          |I            |true        |0               |0                     |277.22             |
+    #|CUST_PREM_CODE_NEW_UNAPPLIED_DEPOSIT_TC_57 |0        |            |1          |N            |false        |25               |0|0|
+      #|RS_NEW_BANKRUPCY_TC_58 |0        |            |1          |N            |false        |0               |0                     |0|
+      #|FINAL_NO_SONP_ACTIVE_PENDING_REWARDS_TC_59|0        |            |1          |F            |false        |0               |0                     |0|
+    |CUST_PREM_CODE_FINAL_UNAPPLIED_DEPOSIT_TC_60 |0        |            |1          |N            |false        |25               |0|0|
