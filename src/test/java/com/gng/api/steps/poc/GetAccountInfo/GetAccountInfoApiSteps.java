@@ -21,13 +21,10 @@ public class GetAccountInfoApiSteps {
         testContext.setGetAccountInfoApiPage(getAccountInfoApiPage);
     }
 
-
-
     @Then("verify the account information in the response should match the information in the database")
     public void verify_the_account_information_in_the_response_should_match_the_information_in_the_database() {
         getAccountInfoApiPage.verifyAccountInformationWithDatabase();
     }
-
 
     @When("a request is made to the GetAccountInfo Api with invalid parameters for {string} condition")
     public void aRequestIsMadeToTheGetAccountInfoApiWithInvalidParametersForCondition(String testCondition) {

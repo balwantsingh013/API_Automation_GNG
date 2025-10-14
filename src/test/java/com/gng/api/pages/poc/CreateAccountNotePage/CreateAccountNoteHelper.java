@@ -49,15 +49,12 @@ public class CreateAccountNoteHelper {
     public void setParametersBasedOnTypeNegative(CreateAccountNoteRequest payload, CreateAccountNoteApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (testCondition) {
-            /* Request ID */
             case REQUEST_ID_MISSING_NEGATIVE_TC65 -> payload.setRequestID("");
             case REQUEST_ID_DUPLICATE_NEGATIVE_TC66 ->  payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
 
-            /* Customer Code */
             case CUSTOMER_CODE_NULL_NEGATIVE_TC67 -> payload.setCustomerCode("");
             case CUSTOMER_CODE_LENGTH_GT9_NEGATIVE_TC69 -> payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
 
-            /* Premises Code */
             case PREMISES_CODE_NULL_NEGATIVE_TC68 -> payload.setPremisesCode("");
             case PREMISES_CODE_LENGTH_GT7_NEGATIVE_TC70 -> payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
 
