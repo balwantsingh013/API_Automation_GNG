@@ -27,9 +27,9 @@ Feature: Verify GetAccountInfo Api
     Then verify the account information in the response should match the information in the database
     Examples:
       | testCondition                                    |
-      #| ACTIVE_WITH_PA_PAST_DUE_POSITIVE_TC22            |
-      #| INACTIVE_WITH_RECURRING_CC_POSITIVE_TC23         |
-      #| FINAL_WITH_ABD_POSITIVE_TC24                     |
+      | ACTIVE_WITH_PA_PAST_DUE_POSITIVE_TC22            |
+      | INACTIVE_WITH_RECURRING_CC_POSITIVE_TC23         |
+      | FINAL_WITH_ABD_POSITIVE_TC24                     |
       | ACTIVE_DEFAULTED_PA_WITH_BUDGET_POSITIVE_TC25    |
       | INACTIVE_BAD_DEBT_SONP_DISCLETTERS_POSITIVE_TC26 |
       | NEW_NO_BILLS_YET_POSITIVE_TC27                   |
