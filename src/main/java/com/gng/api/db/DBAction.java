@@ -5,8 +5,11 @@ import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameterValue;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Types;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +29,72 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public List<Map<String, Object>> getAccountInformationHappyFlow() {
-        String query = DBQuery.GET_ACCOUNT_INFO_API_SUCCESS_RESPONSE_PARAMETERS;
-        logQueryInAllure("Get Account Information Happy Flow", query);
+    public List<Map<String, Object>> getActiveCustomerOnPaymentArrangementWithBalanceDetails() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_WITH_PAYMENT_ARRANGEMENT_PAST_DUE_BALANCE;
+        logQueryInAllure("Get Active Customer on Payment Arrangement with Balance Details", query);
         return jdbcTemplate.queryForList(query);
+    }
+
+    public List<Map<String, Object>> getCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {
+        String query = DBQuery.GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE;
+        logQueryInAllure("Get  Customer info based on account status and plan type", query);
+        return jdbcTemplate.queryForList(query, accountStatus, planType);
+    }
+
+    public List<Map<String, Object>> getCustomerInformationByStatusAndPlanTypeWithMiddleName(String accountStatus, String planType, boolean onAbd, boolean middleNameNotNull) {
+        String query = DBQuery.GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE_WITH_MIDDLE_NAME;
+        query =   query.replace("<ABD>", "");
+        if (onAbd){
+            query = query.replace("<ABD>", "AND NVL(a.ucracct_draft_acct_status,'N') = 'A'");
+        }
+        else{
+            query =   query.replace("<ABD>", "");
+        }
+        if (middleNameNotNull){
+            query = query.replace("<middleNameNotNull>", "AND c.ucbcust_middle_name IS NOT NULL");
+        }
+        else{
+            query = query.replace("<middleNameNotNull>", "");
+        }
+        logQueryInAllure("Get Customer info based on account status and plan type", query);
+        return jdbcTemplate.queryForList(query, accountStatus, planType);
+    }
+
+    public List<Map<String, Object>> getCustomerInformationByStatusWithBadDebt(String accountStatus, String rateSchedule, String planType, String planCode) {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_WITH_SONP_PAST_DUE_BALANCE_BAD_DEBT;
+        logQueryInAllure("Get  Customer info based on account status with bad debt and disconnect", query);
+        return jdbcTemplate.queryForList(query, accountStatus, rateSchedule, planType, planCode);
+    }
+
+
+    public List<Map<String, Object>> getCustomerInformationDefaultedPaBudget() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BUDGET;
+        logQueryInAllure("Get  Customer info based on account status with defaulted pa active budget plan", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+
+    public List<Map<String, Object>> getCustomerInformationByStatusNoBills(String accountStatus, String rateSchedule, String planType, String planCode) {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_NO_BILLS_YET;
+        logQueryInAllure("Get  Customer info based on account status with bad debt and disconnect", query);
+        return jdbcTemplate.queryForList(query, accountStatus, rateSchedule, planType, planCode);
+    }
+
+    public List<Map<String, Object>> getAccountInformationResponseHappy(String custCode, String accountStatus, String planTypeInd, String rateSchedule) {
+        final String query = DBQuery.GET_ACCOUNT_INFO_RESPONSE_BY_CUSTOMER_CODE_AND_STATUS;
+        final String rs = (rateSchedule == null || rateSchedule.trim().isEmpty())
+                ? null
+                : rateSchedule.trim();
+
+        logQueryInAllure("Get Account Information Happy Flow", query);
+
+        return jdbcTemplate.queryForList(
+                query,
+                new SqlParameterValue(Types.VARCHAR, custCode),
+                new SqlParameterValue(Types.CHAR,    accountStatus),
+                new SqlParameterValue(Types.VARCHAR, rs),
+                new SqlParameterValue(Types.CHAR,    planTypeInd)
+        );
     }
 
     public List<Map<String, Object>> getNoteSequenceNumber(String noteSeqNo) {

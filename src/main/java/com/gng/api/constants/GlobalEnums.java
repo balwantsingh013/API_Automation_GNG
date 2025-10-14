@@ -268,4 +268,29 @@ public class GlobalEnums {
             this.value = value;
         }
     }
+
+    @Getter
+    public enum AccountStatus {
+        ACTIVE("A"),
+        INACTIVE("I"),
+        NOT_ACTIVE_YET("N"),
+        FINAL_ACCOUNT("F");
+
+        private final String value;
+        AccountStatus(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum PlanTypeIndicator {
+        VARIABLE_SELECT("V"),
+        GUARANTEED_BILL("G"),
+        DEFAULTED("F");
+
+        private final String value;
+        PlanTypeIndicator(String value) {
+            this.value = value;
+        }
+    }
 }

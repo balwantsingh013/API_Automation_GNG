@@ -11,8 +11,8 @@ import com.gng.api.util.FakerDataGenerator;
 import io.cucumber.datatable.DataTable;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.gng.api.constants.DBConstant.UCBACCT_CUST_CODE;
-import static com.gng.api.constants.DBConstant.UCBACCT_PREM_CODE;
+import static com.gng.api.constants.DBConstant.*;
+import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
 import static com.gng.api.util.LogUtil.logInfo;
 import static com.gng.api.pages.poc.CreateAccountNotePage.CreateAccountNoteLabels.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -96,6 +96,11 @@ public class CreateAccountNoteHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setUserIDRemind("");
 
+        List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanType
+                (GlobalEnums.AccountStatus.INACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
+
+        payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
+        payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());
         switch (testCondition) {
             case CREATE_NOTE_ACCT_POSITIVE_TC80 -> {
                 payload.setNoteText(noteText);
@@ -104,15 +109,12 @@ public class CreateAccountNoteHelper {
                 payload.setNoteTypeCode("PMTRPT");
                 payload.setUserIDRemind("SYSTEM");
 
-                payload.setNoteText("Payment received 10/01 via IVR|~ Ref: 555001");
+                payload.setNoteText(noteText);
             }
-            case CREATE_NOTE_IVR_NPA_POSITIVE_TC82 -> {
+            case CREATE_NOTE_IVR_NPA_POSITIVE_TC82,
+                 CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 -> {
                 payload.setNoteTypeCode("IVRNPA");
-                payload.setNoteText("IVR NPA/NXX captured 404-555|~ 1212");
-            }
-            case CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 -> {
-                payload.setNoteTypeCode("IVRNPA");
-                payload.setNoteText("IVR NPA/NXX captured 770-555|~ 8989 ext|~ 42");
+                payload.setNoteText(noteText);
             }
             default -> log.warn("No positive mutation implemented for {}", testCondition);
         }
@@ -163,125 +165,5 @@ public void verifyNoteCreatedWithCorrectLines(String noteTextFromExamples, Strin
                 storedRows, hasSize(expectedRows));
     }
 
-    public void setupRequestData(DataTable dataTable) {
-        Map<String, String> data = dataTable.asMap(String.class, String.class);
-        setTestContextData(data);
-    }
 
-    public CreateAccountNoteLabels getApiLabelForParam(String param) {
-        return switch (param) {
-            case "PremisesCode" -> INVALID_PREM_CODE_LENGTH;
-            case "CustomerCode" -> INVALID_CUSTOMER_CODE_LENGTH;
-            default -> throw new IllegalStateException("Invalid param: " + param);
-        };
-    }
-
-    public CreateAccountNoteRequest getApiPayload(CreateAccountNoteLabels apiName, CreateAccountNoteRequest request) {
-        logInfo("Get Api Payload");
-        return switch (apiName) {
-            case HAPPY_FLOW -> buildHappyFlowPayload(request);
-            case MISSING_REQUEST_ID -> buildMissingRequestIdPayload(request);
-            case NULL_CUSTOMER_CODE -> buildNullCustomerCodePayload(request);
-            case NULL_NOTE_TYPE_CODE -> buildNullNoteTypeCodePayload(request);
-            case NULL_NOTE_TEXT -> buildNullNoteTextPayload(request);
-            case NULL_ORIGIN -> buildNullOriginPayload(request);
-            case INVALID_CUSTOMER_CODE_LENGTH -> buildInvalidCustomerCodeLengthPayload(request);
-            case INVALID_PREM_CODE_LENGTH -> buildInvalidPremCodeLengthPayload(request);
-            case INVALID_EXPIRATION_DATE -> buildInvalidExpirationDatePayload(request);
-            case NONEXISTENT_SERVICE_NO_PREM_CODE -> buildNonExistentServiceNumberPayload(request);
-            case INVALID_SERVICE_NO_FORMAT -> buildInvalidServiceNumberFormatPayload(request);
-            case NONEXISTENT_NOTE_TYPE -> buildNonExistentNoteTypePayload(request);
-            case NONEXISTENT_CUST_PREM_CODE -> buildNonExistentCustomerPremCodePayload(request);
-        };
-    }
-
-    private void setTestContextData(Map<String, String> data) {
-        testContext.setServiceNumber(data.get("serviceNumber"));
-        testContext.setNoteTypeCode(data.get("noteTypeCode"));
-        testContext.setNoteText(data.get("noteText"));
-        testContext.setOrigin(data.get("origin"));
-    }
-
-    private CreateAccountNoteRequest buildHappyFlowPayload(CreateAccountNoteRequest request) {
-        request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(testContext.getCustomerCode());
-        request.setPremisesCode(testContext.getPremisesCode());
-        request.setServiceNumber(testContext.getServiceNumber());
-        request.setNoteTypeCode(testContext.getNoteTypeCode());
-        request.setNoteText(testContext.getNoteText());
-        request.setOrigin(testContext.getOrigin());
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildMissingRequestIdPayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        CommonUtil.nullifyFields(request, "requestID");
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildNullCustomerCodePayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setCustomerCode(null);
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildNullNoteTypeCodePayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setNoteTypeCode(null);
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildNullNoteTextPayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setNoteText(null);
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildNullOriginPayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setOrigin(null);
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildInvalidCustomerCodeLengthPayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildInvalidPremCodeLengthPayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildInvalidExpirationDatePayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setExpirationDate(testContext.getExpirationDate());
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildNonExistentServiceNumberPayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setServiceNumber(FakerDataGenerator.getRandomNumericString(4));
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildInvalidServiceNumberFormatPayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setServiceNumber(FakerDataGenerator.getRandomNumericString(5));
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildNonExistentNoteTypePayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setNoteTypeCode(FakerDataGenerator.getRandomString(3));
-        return request;
-    }
-
-    private CreateAccountNoteRequest buildNonExistentCustomerPremCodePayload(CreateAccountNoteRequest request) {
-        buildHappyFlowPayload(request);
-        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(8));
-        return request;
-    }
 }
