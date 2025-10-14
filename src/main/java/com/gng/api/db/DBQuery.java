@@ -35,9 +35,8 @@ public final class DBQuery {
                    )
                    WHERE ROWNUM = 1
             """;
-public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BUDGET = """
-        
-                    WITH flags AS (
+public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BUDGET = """        
+        WITH flags AS (
           SELECT
             a.ucracct_cust_code AS cust_code,
             a.ucracct_prem_code AS prem_code,
