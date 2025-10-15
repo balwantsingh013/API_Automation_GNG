@@ -29,9 +29,9 @@ public class CreateAccountNoteApiSteps {
         createAccountNoteApiPage.validateInvalidParametersCases(create_account_note, CreateAccountNoteApiLabel.valueOf(testCondition));
     }
 
-    @When("a request is made to the CreateBannerNotes Api with valid parameters {string} noteText for {string} condition")
-    public void a_request_is_made_to_CreateBannerNotesApi_With_Valid_Parameters_For_Condition(String noteText, String testCondition) {
-        createAccountNoteApiPage.validatePositiveTestConditions(create_account_note, noteText, CreateAccountNoteApiLabel.valueOf(testCondition));
+    @When("a request is made to the CreateBannerNotes Api with valid parameters {string} noteText {string} noteTypeCode {string} userIDRemind for {string} condition")
+    public void a_request_is_made_to_CreateBannerNotesApi_With_Valid_Parameters_For_Condition(String noteText, String noteTypeCode, String userIDRemind, String testCondition) {
+        createAccountNoteApiPage.validatePositiveTestConditions(create_account_note, noteText, noteTypeCode, userIDRemind, CreateAccountNoteApiLabel.valueOf(testCondition));
 
     }
 

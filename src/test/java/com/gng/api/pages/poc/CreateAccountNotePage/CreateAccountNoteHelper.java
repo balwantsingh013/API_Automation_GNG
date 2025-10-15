@@ -16,8 +16,7 @@ import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
 import static com.gng.api.util.LogUtil.logInfo;
 import static com.gng.api.pages.poc.CreateAccountNotePage.CreateAccountNoteLabels.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -89,7 +88,7 @@ public class CreateAccountNoteHelper {
         }
     }
 
-    public void setParametersBasedOnTypePositive(CreateAccountNoteRequest payload, String noteText, CreateAccountNoteApiLabel testCondition) {
+    public void setParametersBasedOnTypePositive(CreateAccountNoteRequest payload, String noteText, String noteTypeCode, String userIDRemind, CreateAccountNoteApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setUserIDRemind("");
 
@@ -103,14 +102,14 @@ public class CreateAccountNoteHelper {
                 payload.setNoteText(noteText);
             }
             case CREATE_NOTE_PMT_RPT_POSITIVE_TC81 -> {
-                payload.setNoteTypeCode("PMTRPT");
-                payload.setUserIDRemind("SYSTEM");
+                payload.setNoteTypeCode(noteTypeCode);
+                payload.setUserIDRemind(userIDRemind);
 
                 payload.setNoteText(noteText);
             }
             case CREATE_NOTE_IVR_NPA_POSITIVE_TC82,
                  CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 -> {
-                payload.setNoteTypeCode("IVRNPA");
+                payload.setNoteTypeCode(noteTypeCode);
                 payload.setNoteText(noteText);
             }
             default -> log.warn("No positive mutation implemented for {}", testCondition);

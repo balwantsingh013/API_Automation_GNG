@@ -39,9 +39,9 @@ public class CreateAccountNoteApiPage extends BasePage {
         testContext.setPremisesCode(payload.getPremisesCode());
     }
 
-    public void validatePositiveTestConditions(CreateAccountNoteApiLabel apiLabel, String noteText, CreateAccountNoteApiLabel testCondition) {
+    public void validatePositiveTestConditions(CreateAccountNoteApiLabel apiLabel, String noteText, String noteTypeCode, String userIDRemind, CreateAccountNoteApiLabel testCondition) {
         CreateAccountNoteRequest payload = helper.preparePayload(apiLabel);
-        helper.setParametersBasedOnTypePositive(payload, noteText, testCondition);
+        helper.setParametersBasedOnTypePositive(payload, noteText, noteTypeCode, userIDRemind, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, CREATE_ACCOUNT_NOTE, 200);
         CreateAccountNoteResponse pojo = deserializeResponseToPojo(response, CreateAccountNoteResponse.class);

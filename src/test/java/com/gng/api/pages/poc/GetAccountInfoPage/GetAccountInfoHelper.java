@@ -9,14 +9,11 @@ import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoRequest;
 import com.gng.api.steps.poc.GetAccountInfo.GetAccountInfoApiLabel;
-import com.gng.api.util.CommonUtil;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
 import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
@@ -29,8 +26,6 @@ public class GetAccountInfoHelper {
     public GetAccountInfoHelper(TestContext testContext) {
         this.testContext = testContext;
     }
-
-
 
     GetAccountInfoRequest preparePayload(GetAccountInfoApiLabel apiLabel) {
         log.info("Preparing payload for {}", apiLabel);
@@ -169,7 +164,7 @@ public class GetAccountInfoHelper {
 
             case INACTIVE_BAD_DEBT_SONP_DISCLETTERS_POSITIVE_TC26 -> {
                 List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationByStatusWithBadDebt
-                        (GlobalEnums.AccountStatus.INACTIVE.getValue(), "101", GlobalEnums.PlanTypeIndicator.VARIABLE_SELECT.getValue(), GlobalEnums.PlanCode.MVS.getValue());
+                        (GlobalEnums.AccountStatus.INACTIVE.getValue(), "", GlobalEnums.PlanTypeIndicator.VARIABLE_SELECT.getValue(), GlobalEnums.PlanCode.MVS.getValue());
 
                 payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
                 payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());

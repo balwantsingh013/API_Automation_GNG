@@ -32,16 +32,16 @@ Feature: Verify CreateAccountNote Api
 
   @CreateBannerNotesPositiveFlows @HappyFlow @Phase1
   Scenario Outline: Verify CreateBannerNotes positive flows for "<testCondition>"
-    When a request is made to the CreateBannerNotes Api with valid parameters "<noteText>" noteText for "<testCondition>" condition
+    When a request is made to the CreateBannerNotes Api with valid parameters "<noteText>" noteText "<noteTypeCode>" noteTypeCode "<userIDRemind>" userIDRemind for "<testCondition>" condition
     Then verify response code of "CreateBannerNotes" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And verify NoteSequenceNumber match the value in the database
     And verify banner note is created successfully with "<noteText>" noteText for "<testCondition>" condition
 
     Examples:
-      | testCondition                         | noteText                                         |
-      | CREATE_NOTE_ACCT_POSITIVE_TC80        | Phone number 1234567890 listed \|~ as Caller ID. |
-      | CREATE_NOTE_PMT_RPT_POSITIVE_TC81     | Payment received 10/01 via IVR\|~ Ref: 555001    |
-      | CREATE_NOTE_IVR_NPA_POSITIVE_TC82     | IVR NPA/NXX captured 404-555\|~ 1212             |
-      | CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 | IVR NPA/NXX captured 770-555\|~ 8989 ext\|~ 42   |
+      | testCondition                         | noteText                                         | noteTypeCode | userIDRemind |
+      | CREATE_NOTE_ACCT_POSITIVE_TC80        | Phone number 1234567890 listed \|~ as Caller ID. |              |              |
+      | CREATE_NOTE_PMT_RPT_POSITIVE_TC81     | Payment received 10/01 via IVR\|~ Ref: 555001    |   PMTRPT     | SYSTEM       |
+      | CREATE_NOTE_IVR_NPA_POSITIVE_TC82     | IVR NPA/NXX captured 404-555\|~ 1212             |   IVRNPA     |              |
+      | CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 | IVR NPA/NXX captured 770-555\|~ 8989 ext\|~ 42   |              |              |
 
