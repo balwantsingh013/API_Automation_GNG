@@ -6,10 +6,8 @@ import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteResponse
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.AccountsPojo.createAccountNote.CreateAccountNoteRequest;
 import com.gng.api.steps.poc.CreateAccountNote.CreateAccountNoteApiLabel;
-import io.cucumber.datatable.DataTable;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
-
 import java.util.List;
 import java.util.Map;
 
