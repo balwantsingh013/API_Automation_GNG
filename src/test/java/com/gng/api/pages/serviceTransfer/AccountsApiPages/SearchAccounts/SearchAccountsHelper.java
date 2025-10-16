@@ -307,13 +307,13 @@ public class SearchAccountsHelper {
                 payload.setCustomerBusinessName(validCustomerBusinessDetails.get("UCBCUST_LAST_NAME").toString());
                 break;
 
-            case CUST_PREM_CODE_INACTIVE_UNAPPLIED_DEPOSIT_TC_51:
+            case  INACTIVE_UNAPPLIED_DEPOSIT_TC_51:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSInactiveUnappliedDeposit();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_INACTIVE_PAST_DUE_TC_52:
+            case  INACTIVE_PAST_DUE_TC_52:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSInactivePastDue();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
@@ -332,7 +332,7 @@ public class SearchAccountsHelper {
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UABOPEN_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_NEW_UNAPPLIED_DEPOSIT_TC_57:
+            case  NEW_UNAPPLIED_DEPOSIT_TC_57:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSNewUnappliedDeposit();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
@@ -350,43 +350,43 @@ public class SearchAccountsHelper {
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_FINAL_UNAPPLIED_DEPOSIT_TC_60:
+            case  FINAL_UNAPPLIED_DEPOSIT_TC_60:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSFinalUnappliedDeposit();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_PAST_DUE_TC_61:
+            case  ACTIVE_PAST_DUE_TC_61:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDue();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_PAST_DUE_REWARDS_TC_63:
+            case  ACTIVE_PAST_DUE_REWARDS_TC_63:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_UNAPPLIED_DEPOSIT_TC_64:
+            case  ACTIVE_UNAPPLIED_DEPOSIT_TC_64:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveUnappliedDepositCSV();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_SONP_PAST_DUE_TC_68:
+            case  ACTIVE_SONP_PAST_DUE_TC_68:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveDiscount();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_GREENER_LIFE_SONP_TC_69:
+            case  ACTIVE_GREENER_LIFE_SONP_TC_69:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONP();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_SONP_UNAPPLIEDDEPOSIT_TC_70:
+            case  SONP_UNAPPLIEDDEPOSIT_TC_70:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPUnappliedDeposit();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("GTBTRNH_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("GTBTRNH_PREM_CODE").toString());
@@ -440,7 +440,7 @@ public class SearchAccountsHelper {
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_GREENER_LIFE_NO_SONP_TC_62:
+            case  ACTIVE_GREENER_LIFE_NO_SONP_TC_62:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveGreenerLifeNoSONP();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
