@@ -14,7 +14,6 @@ import org.testng.Assert;
 import java.util.Map;
 
 import static com.gng.api.steps.turnOn.UsersApiSteps.ResetPassword.ResetPasswordApiLabel.EXPIRED_PASSWORD_TC_40;
-import static com.gng.api.steps.turnOn.UsersApiSteps.ResetPassword.ResetPasswordApiLabel.INVALID_PASSWORD_TEST_CONDITION;
 import static com.gng.api.util.CommonUtil.removeFieldFromJson;
 import static com.gng.api.util.CommonUtil.removeFieldsFromJson;
 

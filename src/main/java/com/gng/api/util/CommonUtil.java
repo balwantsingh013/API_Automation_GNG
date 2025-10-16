@@ -1,8 +1,11 @@
 package com.gng.api.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
-
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pojo.TestContext.TestContext;
+import io.restassured.response.Response;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +13,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import static io.restassured.RestAssured.given;
+import static com.gng.api.util.LogUtil.logError;
 
 @Slf4j
 public class CommonUtil {
@@ -51,6 +56,46 @@ public class CommonUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HHmmss");
         return LocalDateTime.now().format(formatter);
     }
+
+    public static void silentlyGenerateAuthToken() {
+        try {
+            ApplicationContext runContext = ApplicationContext.get();
+            runContext.setAuthApiPayload();
+            Response response = executeAuthRequest(runContext);
+            storeAuthToken(response);
+        } catch (Exception e) {
+            handleException(e);
+        }
+    }
+
+    public static Response executeAuthRequest(ApplicationContext runContext) {
+        Response response = given()
+                .relaxedHTTPSValidation()
+                .contentType(ContentType.JSON)
+                .baseUri(runContext.getEnvConfig().getBaseUri())
+                .body(runContext.getAuthPayload())
+                .post(runContext.getEnvConfig().getAuthUri())
+                .then().extract().response();
+
+        // Store response in shared TestContext
+        TestContextHolder.get().setResponse(response);
+        return response;
+    }
+
+
+    public static void storeAuthToken(Response response) {
+        TestContext context = TestContextHolder.get();
+        context.setResponse(response);
+        context.setAuthToken(response.jsonPath().getString("token"));
+    }
+
+    public static void handleException(Exception e) {
+        TestContext context = TestContextHolder.get();
+        logError("Error occurred: " + e.getMessage());
+        String responseDetails = context.getResponse() != null ? context.getResponse().prettyPrint() : "No response received";
+        throw new IllegalStateException(e.getMessage() + "\n" + responseDetails, e);
+    }
+
 
     public static String getCurrentDateTimeFormatted() {
         // Format: dd-MM-yyyy HH:mm:ss (e.g., 10-07-2025 15:42:10)

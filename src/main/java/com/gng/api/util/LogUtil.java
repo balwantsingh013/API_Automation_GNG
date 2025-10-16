@@ -6,8 +6,8 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.gng.api.report.ExtentReportManager.logErrorToReport;
-import static com.gng.api.report.ExtentReportManager.logInfoToReport;
+import static com.gng.api.report.SimplifiedExtentReportManager.logErrorToReport;
+import static com.gng.api.report.SimplifiedExtentReportManager.logInfoToReport;
 
 @Slf4j
 public class LogUtil {

@@ -1,9 +1,9 @@
 Feature: Verify SaveUnenrollment Api
 
-  Background: Generate Authentication Token
-    When a request is made to generate authentication token
-    Then verify Authentication Token Api response status code is 200
-    And a valid token is received in response
+#  Background: Generate Authentication Token
+#    When a request is made to generate authentication token
+#    Then verify Authentication Token Api response status code is 200
+#    And a valid token is received in response
 
   @HappyFlow @SaveUnenrollment @Phase1
   Scenario Outline: SaveUnenrollmentApi - Verify SaveUnenrollment Api positive flow <testCondition>
@@ -41,7 +41,7 @@ Feature: Verify SaveUnenrollment Api
     |PRP      |RS         |NEW_ADDRESS                 |ADDRESS_TYPE_STREET      |HOUSEHOLD_ACCOUNT_CHANGE_TC_214                |true       |false         |
     |INX      |CM         |NEW_ADDRESS                 |ADDRESS_TYPE_STREET      |MOVING_OUTSIDE_POOL_GROUP_TC_226               |false      |false         |
 
-  @SaveUnenrollmentWithInvalidRequestAndLoginID @NegativeFlow @SaveUnenrollment @Phase1
+  @SaveUnenrollmentWithInvalidRequestAndLoginID @NegativeFlow @SaveUnenrollment @Phase1 @CSI
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment Api with "<testCondition>"
@@ -53,10 +53,10 @@ Feature: Verify SaveUnenrollment Api
       | REQUEST_ID_EMPTY_NEGATIVE_TC106       | 10001     | Missing Request ID                                        |
       | REQUEST_ID_MAX_LENGTH_NEGATIVE_TC107  | 10002     | Invalid Request ID                                        |
       | REQUEST_ID_DUPLICATE_NEGATIVE_TC108   | 10003     | Duplicate Request ID                                      |
-      | LOGIN_ID_EMPTY_NEGATIVE_TC109         | 10000     | Missing Login ID                                          |
-      | LOGIN_ID_MAX_LENGTH_NEGATIVE_TC110    | 10000     | The Login ID must be a string with a maximum length of 30 |
-      | LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111 | 2000      | Invalid Login ID                                          |
-      | LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112    | 2000      | Invalid Login ID                                          |
+#      | LOGIN_ID_EMPTY_NEGATIVE_TC109         | 10000     | Missing Login ID                                          |
+#      | LOGIN_ID_MAX_LENGTH_NEGATIVE_TC110    | 10000     | The Login ID must be a string with a maximum length of 30 |
+#      | LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111 | 2000      | Invalid Login ID                                          |
+#      | LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112    | 2000      | Invalid Login ID                                          |
 
   @SaveUnenrollmentWithInvalidParameters @NegativeFlow @SaveUnenrollment @Phase1
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"

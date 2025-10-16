@@ -1,6 +1,5 @@
 package com.gng.api.db;
 
-import com.gng.api.report.ExtentReportManager;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -342,12 +341,12 @@ public class DBAction {
     public void rollBackQuery(String user) {
         String query = DBQuery.ROLLBACK_QUERIES;
         String formattedQuery = query.replace("?", "'" + user + "'");
-        ExtentReportManager.logInfoToReport("Executing Rollback Query: {}" + formattedQuery);
+        //ExtentReportManager.logInfoToReport("Executing Rollback Query: {}" + formattedQuery);
         log.info("Executing Rollback Query: {}", formattedQuery);
         logQueryInAllure("Rollback Query", formattedQuery);
         int rowsUpdated = jdbcTemplate.update(query, user);
         log.info("Rollback executed for user: {} | Rows affected: {}", user, rowsUpdated);
-        ExtentReportManager.logInfoToReport("Rollback executed for user: {} | Rows affected: {}" +" " +user +" "+ rowsUpdated);
+        //ExtentReportManager.logInfoToReport("Rollback executed for user: {} | Rows affected: {}" +" " +user +" "+ rowsUpdated);
     }
 
 
