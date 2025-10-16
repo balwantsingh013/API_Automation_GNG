@@ -305,6 +305,7 @@ public class SearchAccountsHelper {
             case VALID_CUSTOMER_BUSINESS_NAME_TC_50:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveNoETC();
                 payload.setCustomerBusinessName(validCustomerBusinessDetails.get("UCBCUST_LAST_NAME").toString());
+                break;
 
             case CUST_PREM_CODE_INACTIVE_UNAPPLIED_DEPOSIT_TC_51:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSInactiveUnappliedDeposit();
@@ -355,17 +356,22 @@ public class SearchAccountsHelper {
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_PAST_DUE_REWARDS_TC_62:
             case CUST_PREM_CODE_ACTIVE_PAST_DUE_TC_61:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDue();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case CUST_PREM_CODE_ACTIVE_UNAPPLIED_DEPOSIT_TC_63:
+            case CUST_PREM_CODE_ACTIVE_PAST_DUE_REWARDS_TC_63:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_ACTIVE_UNAPPLIED_DEPOSIT_TC_64:
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveUnappliedDepositCSV();
-                payload.setCustomerCode(validCustomerBusinessDetails.get("UZBENRO_CUST_CODE").toString());
-                payload.setPremisesCode(validCustomerBusinessDetails.get("UZBENRO_PREM_CODE").toString());
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case CUST_PREM_CODE_ACTIVE_SONP_PAST_DUE_TC_68:
@@ -384,6 +390,60 @@ public class SearchAccountsHelper {
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPUnappliedDeposit();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("GTBTRNH_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("GTBTRNH_PREM_CODE").toString());
+                break;
+
+            case DISCOUNTS_WITH_RESTRICTIONS_TC_65:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeDiscountWithRestrictions();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case TRANSFERABLE_DISCOUNTS_TC_66:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeTransferableDiscount();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case MULTIPLE_DISCOUNTS_TC_67:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeMultipleDiscount();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case ACTIVE_SONP_WITH_REWARDS_TC_71:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPRewards();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("GTBTRNH_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("GTBTRNH_PREM_CODE").toString());
+                break;
+
+            case SONP_DISCOUNT_NO_RESTRICTION_TC_72:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscounts();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case SONP_DISCOUNT_WITH_RESTRICTIONS_TC_73:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscountsRestrictions();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case TRANSFERABLE_DISCOUNTS_SONP_TC_74:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscountsMultiple();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case MULTIPLE_DISCOUNTS_TC_SONP_TC_75:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscountsTransfersble();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case CUST_PREM_CODE_ACTIVE_GREENER_LIFE_NO_SONP_TC_62:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveGreenerLifeNoSONP();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             default:
