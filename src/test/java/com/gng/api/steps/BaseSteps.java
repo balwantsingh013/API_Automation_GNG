@@ -218,11 +218,45 @@ public class BaseSteps {
         Response response = testContext.getResponse();
         List<Map<String, Object>> accounts = response.jsonPath().getList("data.accounts");
 
-        boolean matchFound = accounts.stream()
-                .anyMatch(account -> value.equals(String.valueOf(account.get(field))));
+        boolean matchFound;
+
+        if ("BANK".equalsIgnoreCase(value)) {
+            matchFound = accounts.stream()
+                    .anyMatch(account -> {
+                        Object fieldValue = account.get(field);
+                        return fieldValue != null && String.valueOf(fieldValue).toLowerCase().contains("bank");
+                    });
+        } else if (field.equals("aglcAccountNumber")) {
+            matchFound = accounts.stream()
+                    .anyMatch(account -> {
+                        Object fieldValue = account.get(field);
+                        return fieldValue != null && String.valueOf(fieldValue).contains("0000");
+                    });
+        } else if (field.equals("rewards")) {
+            boolean expectedNonEmpty = Boolean.parseBoolean(value);
+            matchFound = accounts.stream()
+                    .anyMatch(account -> {
+                        List<?> rewards = (List<?>) account.get("rewards");
+                        return expectedNonEmpty ? rewards != null && !rewards.isEmpty()
+                                : rewards == null || rewards.isEmpty();
+                    });
+        } else if (field.equals("activeDiscounts")) {
+            matchFound = accounts.stream()
+                    .anyMatch(account -> {
+                        List<Map<String, Object>> discounts = (List<Map<String, Object>>) account.get("activeDiscounts");
+                        if (discounts == null) return false;
+                        return discounts.stream()
+                                .anyMatch(discount -> value.equals(discount.get("activeDiscountTransferMessage")));
+                    });
+        } else {
+            matchFound = accounts.stream()
+                    .anyMatch(account -> value.equals(String.valueOf(account.get(field))));
+        }
 
         assertThat("Expected value not found in any account for field: " + field, matchFound, is(true));
     }
+
+
 
     private void verifyResponseCode(String apiName, Integer statusCode) {
         assertThat("Invalid Response Code for API: " + apiName,

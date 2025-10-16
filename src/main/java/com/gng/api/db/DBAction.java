@@ -235,6 +235,12 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, sclsCode, pricePlan);
     }
 
+    public Map<String, Object> custCodePremCode() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_WITH_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Customer code, premises code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC214(String pricePlan, String sclsCode) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_PAST_DUE_BALANCE;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for ACN account with past due balance", query);
@@ -503,8 +509,128 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeRSFinalPendingRewards() {
+        String query = DBQuery.GET_FINAL_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_PENDING_REWARDS;
+        logQueryInAllure("Get final Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getCustPremCodeRSActiveUnappliedDeposit() {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSInactiveUnappliedDeposit() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_INACTIVE_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSNewUnappliedDeposit() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_NEW_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveUnappliedDepositCSV() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_CSV_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveDiscount() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_CSV_ACTIVE_DISCOUNTS;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSFinalUnappliedDeposit() {
+        String query = DBQuery.GET_CUSTOMER_AND_PREMISES_CODE_RS_FINAL_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSInactivePastDue() {
+        String query = DBQuery.GET_INACTIVE_ACCOUNT_WITH_PAST_DUE_NO_SONP;
+        logQueryInAllure("Get Inactive Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActivePastDue() {
+        String query = DBQuery.GET_ACTIVE_CUST_PREM_CODE_ACTIVE_GREENER_PENDING_REWARDS_PAST_DUE;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActivePastDueRewards() {
+        String query = DBQuery.GET_ACTIVE_CUST_PREM_CODE_ACTIVEPAST_DUE_FIXED_PRICE;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONP() {
+        String query = DBQuery.GET_ACTIVE_CUST_PREM_CODE_ACTIVE_GREENER_PENDING_REWARDS_SONP;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONPUnappliedDeposit() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_UNAPPLIED_DEPOSIT;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONPRewards() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_SONP_REWARDS;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONPDiscounts() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_SONP_DISCOUNTS;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONPDiscountsRestrictions() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_SONP_DISCOUNTS_RESTRICTIONS;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONPDiscountsMultiple() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_SONP_DISCOUNTS_MULTIPLE;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveSONPDiscountsTransfersble() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_SONP_DISCOUNTS_TRANSFERABLE;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeRSActiveGreenerLifeNoSONP() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_ACTIVE_GREENER_LIFE_NO_SONP;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeDiscountWithRestrictions() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_DISCOUNTS_WITH_RESTRICTIONS;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeTransferableDiscount() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_TRANSFERABLE_DISCOUNTS;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeMultipleDiscount() {
+        String query = DBQuery.SELECT_CUST_PREM_CODE_MULTIPLE_DISCOUNTS;
         logQueryInAllure("Get Active Customer Details", query);
         return jdbcTemplate.queryForMap(query);
     }
