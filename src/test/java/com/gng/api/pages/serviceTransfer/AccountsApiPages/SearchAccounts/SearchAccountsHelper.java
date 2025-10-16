@@ -6,7 +6,6 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.serviceTransfer.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
-import com.gng.api.steps.turnOff.AccountsApiSteps.SearchAccounts.SearchAccountsTOffApiLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +19,7 @@ public class SearchAccountsHelper {
     public String validZipCode="30307";
     public String socialSecurityNumber= "666398181";
     public String premisesStreetNumber="442";
-    public String premisesStreetPreDirection;
     public String premisesStreetName="CLIFTON";
-    public String premisesStreetSuffix;
-    public String premisesStreetPostDirection;
     public String premisesUnitType;
     public String premisesUnitNumber;
     public String premisesCity= "ATLANTA";
