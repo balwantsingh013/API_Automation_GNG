@@ -191,9 +191,9 @@ public class SimplifiedExtentReportManager {
     public static synchronized void initialiseExtentReport() {
         if (extent == null) {
             extent = new ExtentReports();
-            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-" + CommonUtil.getCurrentDateTime() + ".html");
+            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Simplified-" + CommonUtil.getCurrentDateTime() + ".html");
             setConfig();
-            log.info("📊 Extent Report initialized for parallel execution");
+            log.info("📊 Simplified Extent Report initialized");
         }
     }
 

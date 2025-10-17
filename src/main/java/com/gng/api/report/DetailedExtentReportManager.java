@@ -53,9 +53,9 @@ public class DetailedExtentReportManager {
     public static synchronized void initialiseExtentReport() {
         if (extent == null) {
             extent = new ExtentReports();
-            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-" + CommonUtil.getCurrentDateTime() + ".html");
+            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Detailed-" + CommonUtil.getCurrentDateTime() + ".html");
             setConfig();
-            log.info("📊 Extent Report initialized for parallel execution");
+            log.info("📊 Detailed Extent Report initialized for parallel execution");
         }
     }
 

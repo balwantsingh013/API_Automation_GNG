@@ -12,53 +12,86 @@ import org.testng.ITestResult;
  *
  * This will generate TWO reports:
  *   1. GNG-API-Report-Simplified-{datetime}.html
- *   2. GNG-API-Report-{datetime}.html
+ *   2. GNG-API-Report-Detailed-{datetime}.html
  */
 @Slf4j
 public class DualReportManager {
 
     private static boolean isDualMode = false;
+    private static boolean initialized = false;
 
     /**
      * Initialize report managers based on configuration
      */
     public static synchronized void initialize() {
+        if (initialized) {
+            log.warn("⚠️ DualReportManager already initialized, skipping...");
+            return;
+        }
+
         // Read system property (set from TestNG parameter or Maven command)
-        String generateBoth = System.getProperty("generateBothReports", "true");
+        String generateBoth = System.getProperty("generateBothReports", "false");
         isDualMode = "true".equalsIgnoreCase(generateBoth);
 
-        log.info("🔍 Initializing Report Manager...");
+        log.info("═══════════════════════════════════════════════════════════════");
+        log.info("🔍 DUAL REPORT MANAGER INITIALIZATION");
+        log.info("═══════════════════════════════════════════════════════════════");
         log.info("   System Property 'generateBothReports': {}", generateBoth);
         log.info("   Dual Mode Enabled: {}", isDualMode);
+        log.info("   Property Source: {}", System.getProperty("generateBothReports") != null ? "System" : "Default");
 
         if (isDualMode) {
             log.info("╔═══════════════════════════════════════════════════════════════╗");
             log.info("║   DUAL REPORT MODE - Both Simplified & Detailed               ║");
             log.info("╚═══════════════════════════════════════════════════════════════╝");
 
-            SimplifiedExtentReportManager.initialiseExtentReport();
-            log.info("   ✅ Simplified report manager initialized");
+            try {
+                log.info("🔄 Initializing Simplified Report Manager...");
+                SimplifiedExtentReportManager.initialiseExtentReport();
+                log.info("   ✅ Simplified report manager initialized");
+            } catch (Exception e) {
+                log.error("   ❌ Failed to initialize Simplified report: {}", e.getMessage(), e);
+            }
 
-            DetailedExtentReportManager.initialiseExtentReport();
-            log.info("   ✅ Detailed report manager initialized");
+            try {
+                log.info("🔄 Initializing Detailed Report Manager...");
+                DetailedExtentReportManager.initialiseExtentReport();
+                log.info("   ✅ Detailed report manager initialized");
+            } catch (Exception e) {
+                log.error("   ❌ Failed to initialize Detailed report: {}", e.getMessage(), e);
+            }
 
-            log.info("✅ Both reports initialized successfully");
+            log.info("✅ Both report managers initialized successfully");
         } else {
-            log.info("📊 Single Report Mode (Simplified)");
-            SimplifiedExtentReportManager.initialiseExtentReport();
-            log.info("✅ Simplified report initialized");
+            log.info("╔═══════════════════════════════════════════════════════════════╗");
+            log.info("║   SINGLE REPORT MODE - Simplified Only                        ║");
+            log.info("╚═══════════════════════════════════════════════════════════════╝");
+
+            try {
+                SimplifiedExtentReportManager.initialiseExtentReport();
+                log.info("✅ Simplified report initialized");
+            } catch (Exception e) {
+                log.error("❌ Failed to initialize Simplified report: {}", e.getMessage(), e);
+            }
         }
+
+        initialized = true;
+        log.info("═══════════════════════════════════════════════════════════════\n");
     }
 
     /**
      * Create test
      */
     public static void createTest(String scenarioName) {
-        if (isDualMode) {
+        log.debug("Creating test: {} (Dual Mode: {})", scenarioName, isDualMode);
+
+        try {
             SimplifiedExtentReportManager.createTest(scenarioName);
-            DetailedExtentReportManager.createTest(scenarioName);
-        } else {
-            SimplifiedExtentReportManager.createTest(scenarioName);
+            if (isDualMode) {
+                DetailedExtentReportManager.createTest(scenarioName);
+            }
+        } catch (Exception e) {
+            log.error("Error creating test: {}", e.getMessage(), e);
         }
     }
 
@@ -66,11 +99,15 @@ public class DualReportManager {
      * Create test with description
      */
     public static void createTest(String scenarioName, String description) {
-        if (isDualMode) {
+        log.debug("Creating test with description: {} (Dual Mode: {})", scenarioName, isDualMode);
+
+        try {
             SimplifiedExtentReportManager.createTest(scenarioName, description);
-            DetailedExtentReportManager.createTest(scenarioName, description);
-        } else {
-            SimplifiedExtentReportManager.createTest(scenarioName, description);
+            if (isDualMode) {
+                DetailedExtentReportManager.createTest(scenarioName, description);
+            }
+        } catch (Exception e) {
+            log.error("Error creating test with description: {}", e.getMessage(), e);
         }
     }
 
@@ -78,10 +115,11 @@ public class DualReportManager {
      * Log test description
      */
     public static void logTestDescription(String description) {
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.logTestDescription(description);
-        } else {
-            SimplifiedExtentReportManager.logTestDescription(description);
+            // Description only in simplified report
+        } catch (Exception e) {
+            log.error("Error logging test description: {}", e.getMessage(), e);
         }
     }
 
@@ -89,11 +127,13 @@ public class DualReportManager {
      * Log info
      */
     public static void logInfo(String msg) {
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.logInfoToReport(msg);
-            DetailedExtentReportManager.logInfoToReport(msg);
-        } else {
-            SimplifiedExtentReportManager.logInfoToReport(msg);
+            if (isDualMode) {
+                DetailedExtentReportManager.logInfoToReport(msg);
+            }
+        } catch (Exception e) {
+            log.error("Error logging info: {}", e.getMessage(), e);
         }
     }
 
@@ -101,11 +141,13 @@ public class DualReportManager {
      * Log error
      */
     public static void logError(String msg) {
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.logErrorToReport(msg);
-            DetailedExtentReportManager.logErrorToReport(msg);
-        } else {
-            SimplifiedExtentReportManager.logErrorToReport(msg);
+            if (isDualMode) {
+                DetailedExtentReportManager.logErrorToReport(msg);
+            }
+        } catch (Exception e) {
+            log.error("Error logging error: {}", e.getMessage(), e);
         }
     }
 
@@ -113,10 +155,11 @@ public class DualReportManager {
      * Log database query
      */
     public static void logDatabaseQuery(String query, String result, long executionTimeMs) {
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.logDatabaseQuery(query, result, executionTimeMs);
-        } else {
-            SimplifiedExtentReportManager.logDatabaseQuery(query, result, executionTimeMs);
+            // Database queries only in simplified report
+        } catch (Exception e) {
+            log.error("Error logging database query: {}", e.getMessage(), e);
         }
     }
 
@@ -126,11 +169,13 @@ public class DualReportManager {
     public static void addRequestDetails(RequestSpecification reqSpec) {
         if (reqSpec == null) return;
 
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.addRequestDetailsToReport(reqSpec);
-            DetailedExtentReportManager.addRequestDetailsToReport(reqSpec);
-        } else {
-            SimplifiedExtentReportManager.addRequestDetailsToReport(reqSpec);
+            if (isDualMode) {
+                DetailedExtentReportManager.addRequestDetailsToReport(reqSpec);
+            }
+        } catch (Exception e) {
+            log.error("Error adding request details: {}", e.getMessage(), e);
         }
     }
 
@@ -140,11 +185,13 @@ public class DualReportManager {
     public static void addResponseDetails(Response resp, int statusCode) {
         if (resp == null) return;
 
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.addResponseDetailsToReport(resp, statusCode);
-            DetailedExtentReportManager.addResponseDetailsToReport(resp, statusCode);
-        } else {
-            SimplifiedExtentReportManager.addResponseDetailsToReport(resp, statusCode);
+            if (isDualMode) {
+                DetailedExtentReportManager.addResponseDetailsToReport(resp, statusCode);
+            }
+        } catch (Exception e) {
+            log.error("Error adding response details: {}", e.getMessage(), e);
         }
     }
 
@@ -153,10 +200,11 @@ public class DualReportManager {
      */
     public static void logApiCallDetails(RequestSpecification reqSpec, Response resp,
                                          int expectedStatusCode, String endpoint) {
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.logApiCallDetails(reqSpec, resp, expectedStatusCode, endpoint);
-        } else {
-            SimplifiedExtentReportManager.logApiCallDetails(reqSpec, resp, expectedStatusCode, endpoint);
+            // API call details only in simplified report
+        } catch (Exception e) {
+            log.error("Error logging API call details: {}", e.getMessage(), e);
         }
     }
 
@@ -166,11 +214,13 @@ public class DualReportManager {
     public static void generateReport(ITestResult result) {
         if (result == null) return;
 
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.generateReport(result);
-            DetailedExtentReportManager.generateReport(result);
-        } else {
-            SimplifiedExtentReportManager.generateReport(result);
+            if (isDualMode) {
+                DetailedExtentReportManager.generateReport(result);
+            }
+        } catch (Exception e) {
+            log.error("Error generating report: {}", e.getMessage(), e);
         }
     }
 
@@ -178,31 +228,59 @@ public class DualReportManager {
      * Flush reports
      */
     public static void flush() {
+        log.info("\n╔═══════════════════════════════════════════════════════════════╗");
+
         if (isDualMode) {
-            log.info("\n╔═══════════════════════════════════════════════════════════════╗");
             log.info("║         GENERATING DUAL REPORTS                               ║");
             log.info("╚═══════════════════════════════════════════════════════════════╝");
 
-            SimplifiedExtentReportManager.flushReports();
-            DetailedExtentReportManager.flushReports();
+            try {
+                log.info("📄 Flushing Simplified Report...");
+                SimplifiedExtentReportManager.flushReports();
+                log.info("   ✅ Simplified report generated");
+            } catch (Exception e) {
+                log.error("   ❌ Error generating Simplified report: {}", e.getMessage(), e);
+            }
+
+            try {
+                log.info("📄 Flushing Detailed Report...");
+                DetailedExtentReportManager.flushReports();
+                log.info("   ✅ Detailed report generated");
+            } catch (Exception e) {
+                log.error("   ❌ Error generating Detailed report: {}", e.getMessage(), e);
+            }
 
             log.info("✅ Both reports generated!");
-            log.info("📁 Check target/reports for both HTML files");
-            log.info("╚═══════════════════════════════════════════════════════════════╝\n");
+            log.info("📁 Check target/reports/ for:");
+            log.info("   1. GNG-API-Report-Simplified-{datetime}.html");
+            log.info("   2. GNG-API-Report-Detailed-{datetime}.html");
         } else {
-            SimplifiedExtentReportManager.flushReports();
+            log.info("║         GENERATING SINGLE REPORT (Simplified)                 ║");
+            log.info("╚═══════════════════════════════════════════════════════════════╝");
+
+            try {
+                SimplifiedExtentReportManager.flushReports();
+                log.info("✅ Simplified report generated!");
+                log.info("📁 Check target/reports/GNG-API-Report-Simplified-{datetime}.html");
+            } catch (Exception e) {
+                log.error("❌ Error generating Simplified report: {}", e.getMessage(), e);
+            }
         }
+
+        log.info("╚═══════════════════════════════════════════════════════════════╝\n");
     }
 
     /**
      * Clear thread locals
      */
     public static void clearThreadLocals() {
-        if (isDualMode) {
+        try {
             SimplifiedExtentReportManager.clearThreadLocals();
-            DetailedExtentReportManager.clearThreadLocals();
-        } else {
-            SimplifiedExtentReportManager.clearThreadLocals();
+            if (isDualMode) {
+                DetailedExtentReportManager.clearThreadLocals();
+            }
+        } catch (Exception e) {
+            log.error("Error clearing thread locals: {}", e.getMessage(), e);
         }
     }
 }
