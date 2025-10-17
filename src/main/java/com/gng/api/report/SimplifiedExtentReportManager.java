@@ -1952,32 +1952,61 @@ public class SimplifiedExtentReportManager {
         """;
     }
 
-    // ALL EXISTING METHODS REMAIN UNCHANGED - PRESERVING ORIGINAL LOGIC
+    private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
+        StringBuilder successLog = new StringBuilder();
+
+        successLog.append("<div class='info-log'>");
+        successLog.append("✅ <strong>Test Passed Successfully</strong>");
+        successLog.append("</div>");
+
+        // ❌ REMOVED: getAllApiCallsLog() - API calls are already logged during test execution
+
+        logger.pass(successLog.toString());
+    }
+
+    private static void logSkipDetails(ExtentTest logger, long executionTime, String threadName) {
+        StringBuilder skipLog = new StringBuilder();
+
+        // Thread information
+        skipLog.append("<div class='thread-info'>");
+        skipLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        skipLog.append("</div>");
+
+        skipLog.append("<div class='warning-log'>");
+        skipLog.append("⏭️ <strong>Test Skipped</strong>");
+        skipLog.append("</div>");
+
+        // ❌ REMOVED: getAllApiCallsLog() - API calls are already logged during test execution
+
+        logger.skip(skipLog.toString());
+    }
+
+    private static void logFailureDetails(ExtentTest logger, ITestResult result, long executionTime, String threadName) {
+        StringBuilder failureLog = new StringBuilder();
+
+        // Thread information
+        failureLog.append("<div class='thread-info'>");
+        failureLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        failureLog.append("</div>");
+
+        // Error section with professional styling
+        failureLog.append("<div class='error-section'>");
+        failureLog.append("<h3>❌ Test Execution Failed</h3>");
+        failureLog.append("<div class='response-time-badge'>⏱️ Execution Time: ").append(executionTime).append(" ms</div><br/>");
+        failureLog.append("<strong>🚨 Error Details:</strong><br/>");
+        failureLog.append("<div style='background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-top: 15px; backdrop-filter: blur(10px);'>");
+        failureLog.append(result.getThrowable().toString());
+        failureLog.append("</div>");
+        failureLog.append("</div>");
+
+        // ❌ REMOVED: getAllApiCallsLog() - API calls are already logged during test execution
+        // ❌ REMOVED: getAllDatabaseQueriesLog() - Database queries are already logged during test execution
+
+        logger.fail(failureLog.toString());
+    }
     private static void setSystemInfo() {
-//        try {
-//            extent.setSystemInfo("🖥️ System", InetAddress.getLocalHost().getHostName());
-//        } catch (UnknownHostException e) {
-//            throw new RuntimeException(e);
-//        }
-        //extent.setSystemInfo("💻 OS", System.getProperty("os.name") + " " + System.getProperty("os.version"));
-        //extent.setSystemInfo("☕ Java", System.getProperty("java.version"));
         extent.setSystemInfo("🌍 Environment", ApplicationContext.get().getEnvironment());
-        //extent.setSystemInfo("⚙️ Config", ApplicationContext.get().getEnvConfigFile());
         extent.setSystemInfo("🌐 Base URI", ApplicationContext.get().getEnvConfig().getBaseUri());
-        //extent.setSystemInfo("👤 Tester", System.getProperty("user.name"));
-        //extent.setSystemInfo("🕒 Execution Start", getCurrentDateTimeFormatted());
-
-        // Add parallel execution info with enhanced details
-//        String parallelMode = System.getProperty("parallel", "none");
-//        String threadCount = System.getProperty("threadcount", "1");
-//        String parallelCount = System.getProperty("parallelcount", "1");
-//
-//        extent.setSystemInfo("🚀 Parallel Mode", parallelMode);
-//        extent.setSystemInfo("🧵 Thread Count", threadCount);
-//        extent.setSystemInfo("📊 Parallel Count", parallelCount);
-//        extent.setSystemInfo("💾 Available Processors", String.valueOf(Runtime.getRuntime().availableProcessors()));
-//        extent.setSystemInfo("🔧 Max Parallelism", threadCount + " × " + parallelCount + " = " + (Integer.parseInt(threadCount) * Integer.parseInt(parallelCount)));
-
     }
 
     public static synchronized void generateReport(ITestResult result) {
@@ -2004,224 +2033,6 @@ public class SimplifiedExtentReportManager {
         extent.flush();
     }
 
-    private static void logFailureDetails(ExtentTest logger, ITestResult result, long executionTime, String threadName) {
-        StringBuilder failureLog = new StringBuilder();
-
-        // Thread information
-        failureLog.append("<div class='thread-info'>");
-        failureLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
-        failureLog.append("</div>");
-
-        // Error section with professional styling
-        failureLog.append("<div class='error-section'>");
-        failureLog.append("<h3>❌ Test Execution Failed</h3>");
-        failureLog.append("<div class='response-time-badge'>⏱️ Execution Time: ").append(executionTime).append(" ms</div><br/>");
-        failureLog.append("<strong>🚨 Error Details:</strong><br/>");
-        failureLog.append("<div style='background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-top: 15px; backdrop-filter: blur(10px);'>");
-        failureLog.append(result.getThrowable().toString());
-        failureLog.append("</div>");
-        failureLog.append("</div>");
-
-        // Add request and response details if enabled
-        if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnFail())) {
-            failureLog.append(getEnhancedRequestDetails());
-            failureLog.append(getEnhancedResponseDetails());
-        }
-
-        logger.fail(failureLog.toString());
-    }
-
-    private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
-        StringBuilder successLog = new StringBuilder();
-
-        // Thread information
-        //successLog.append("<div class='thread-info'>");
-        //successLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
-        //successLog.append("</div>");
-
-        successLog.append("<div class='info-log'>");
-        successLog.append("✅ <strong>Test Passed Successfully</strong>");
-        successLog.append("</div>");
-
-//        successLog.append("<div class='response-time-badge'>");
-//        successLog.append("⚡ Execution Time: ").append(executionTime).append(" ms");
-//        successLog.append("</div><br/>");
-
-//        if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnPass())) {
-//            successLog.append(getEnhancedRequestDetails());
-//            successLog.append(getEnhancedResponseDetails());
-//        }
-
-        // Track response time and status codes
-        Response resp = response.get();
-        if (resp != null) {
-            String statusCode = String.valueOf(resp.getStatusCode());
-            statusCodeCounts.merge(statusCode, 1, Integer::sum);
-        }
-
-        logger.pass(successLog.toString());
-    }
-
-    private static void logSkipDetails(ExtentTest logger, long executionTime, String threadName) {
-        StringBuilder skipLog = new StringBuilder();
-
-        // Thread information
-        skipLog.append("<div class='thread-info'>");
-        skipLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
-        skipLog.append("</div>");
-
-        skipLog.append("<div class='warning-log'>");
-        skipLog.append("⏭️ <strong>Test Skipped</strong>");
-        skipLog.append("</div>");
-
-        skipLog.append("<div class='response-time-badge'>");
-        skipLog.append("⏱️ Time: ").append(executionTime).append(" ms");
-        skipLog.append("</div><br/>");
-
-        skipLog.append(getEnhancedRequestDetails());
-
-        logger.skip(skipLog.toString());
-    }
-
-    public static String getEnhancedRequestDetails() {
-        QueryableRequestSpecification reqSpec = qReqSpec.get();
-        if (reqSpec == null) {
-            return "<div class='info-log'>ℹ️ No API Request - Database Validation Only</div>";
-        }
-
-        StringBuilder details = new StringBuilder();
-        details.append("<div class='api-request-section'>");
-        details.append("<h4>📤 API Request Details</h4>");
-        details.append("<div class='collapsible-content'>");
-
-        // Base URI
-        details.append("<div class='request-detail-item'>");
-        details.append("<strong>🌐 Base URI:</strong> ").append(reqSpec.getBaseUri());
-        details.append("</div>");
-
-        // Headers
-//        if (reqSpec.getHeaders() != null && !reqSpec.getHeaders().toString().isEmpty()) {
-//            details.append("<div class='request-detail-item'>");
-//            details.append("<strong>📋 Headers:</strong><br/>");
-//            details.append("<div class='code-block'>").append(formatJson(reqSpec.getHeaders().toString())).append("</div>");
-//            details.append("</div>");
-//        }
-
-        // Parameters
-        if (!reqSpec.getRequestParams().isEmpty()) {
-            details.append("<div class='request-detail-item'>");
-            details.append("<strong>🔧 Parameters:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatJson(reqSpec.getRequestParams().toString())).append("</div>");
-            details.append("</div>");
-        }
-
-        // Request Body
-        if (reqSpec.getBody() != null) {
-            details.append("<div class='request-detail-item'>");
-            details.append("<strong>📝 Request Body:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatJson(reqSpec.getBody().toString())).append("</div>");
-            details.append("</div>");
-        }
-
-        details.append("</div></div>");
-        return details.toString();
-    }
-
-    // ✅ ENHANCED: Complete response details with comprehensive status code validation and performance indicators
-    public static String getEnhancedResponseDetails() {
-        Response resp = response.get();
-        if (resp == null) {
-            return "<div class='info-log'>ℹ️ No API Response - Database Validation Only</div>";
-        }
-
-        StringBuilder details = new StringBuilder();
-        details.append("<div class='api-response-section'>");
-        details.append("<h4>📥 API Response Details</h4>");
-        details.append("<div class='collapsible-content'>");
-
-        // Status Code with enhanced color coding
-        details.append("<div class='response-detail-item'>");
-        details.append("<strong>📊 Status Code:</strong> ");
-        details.append(getColorCodedStatus(resp.getStatusCode()));
-        details.append("</div>");
-
-        // Response Time with performance indicator
-        details.append("<div class='response-detail-item'>");
-        details.append("<strong>⏱️ Response Time:</strong> ");
-        details.append(getPerformanceIndicator(resp.getTime()));
-        details.append("</div>");
-
-//        // Expected vs Actual Status Comparison
-//        String expectedStatus = expectedStatusCode.get();
-//        if (expectedStatus != null) {
-//            details.append("<div class='response-detail-item'>");
-//            details.append("<strong>✅ Expected Status:</strong> ");
-//            details.append("<span class='status-").append(expectedStatus).append("'>").append(expectedStatus).append("</span>");
-//
-//            // Add validation result
-//            boolean statusMatches = String.valueOf(resp.getStatusCode()).equals(expectedStatus);
-//            details.append(" | <strong>Validation:</strong> ");
-//            if (statusMatches) {
-//                details.append("<span style='color: #059669; font-weight: bold;'>✅ PASSED</span>");
-//            } else {
-//                details.append("<span style='color: #dc2626; font-weight: bold;'>❌ FAILED</span>");
-//            }
-//            details.append("</div>");
-//        }
-//
-//        // Content Type
-//        String contentType = resp.getContentType();
-//        if (contentType != null) {
-//            details.append("<div class='response-detail-item'>");
-//            details.append("<strong>📄 Content Type:</strong> ");
-//            details.append("<span class='content-type-badge'>").append(contentType).append("</span>");
-//            details.append("</div>");
-//        }
-
-//        // Response Size
-//        if (resp.getBody() != null) {
-//            String bodyString = resp.getBody().asString();
-//            int responseSize = bodyString.getBytes().length;
-//            details.append("<div class='response-detail-item'>");
-//            details.append("<strong>📏 Response Size:</strong> ");
-//            details.append("<span class='response-size-badge'>").append(formatBytes(responseSize)).append("</span>");
-//            details.append("</div>");
-//        }
-
-        // Response Headers with better formatting
-//        if (resp.getHeaders() != null && resp.getHeaders().size() > 0) {
-//            details.append("<div class='response-detail-item'>");
-//            details.append("<strong>📋 Response Headers:</strong><br/>");
-//            details.append("<div class='code-block'>").append(formatHeaders(resp.getHeaders().toString())).append("</div>");
-//            details.append("</div>");
-//        }
-
-        // Response Body with JSON validation and formatting
-        if (resp.getBody() != null) {
-            details.append("<div class='response-detail-item'>");
-            details.append("<strong>📄 Response Body:</strong><br/>");
-
-            // Try to format as JSON, fallback to plain text
-            String formattedBody = formatResponseBody(resp);
-            details.append("<div class='code-block'>").append(formattedBody).append("</div>");
-            details.append("</div>");
-        }
-
-        // Response Cookies (if any)
-        if (resp.getCookies() != null && !resp.getCookies().isEmpty()) {
-            details.append("<div class='response-detail-item'>");
-            details.append("<strong>🍪 Cookies:</strong><br/>");
-            details.append("<div class='code-block'>");
-            resp.getCookies().forEach((name, value) ->
-                    details.append(name).append(" = ").append(value).append("<br/>")
-            );
-            details.append("</div>");
-            details.append("</div>");
-        }
-
-        details.append("</div></div>");
-        return details.toString();
-    }
 
     // ✅ ENHANCED: Comprehensive status code text mapping with all HTTP status codes
     private static String getStatusText(int statusCode) {
@@ -2578,50 +2389,7 @@ public class SimplifiedExtentReportManager {
             stats.append("</div>"); // End card-body
             stats.append("</div>"); // End status-code-stats card
         }
-
-        // Enhanced Performance Summary Card with Parallel Count
-//        stats.append("<div class='stats-card performance-stats'>");
-//        stats.append("<div class='card-header'>");
-//        stats.append("<h3 class='card-title'>⚡ Performance Summary</h3>");
-//        stats.append("</div>");
-//        stats.append("<div class='card-body'>");
-//
-//        // Calculate test efficiency
-//        String parallelMode = System.getProperty("parallel", "none");
-//        String threadCount = System.getProperty("threadcount", "1");
-//        String parallelCount = System.getProperty("parallelcount", "1");
-//
-//        stats.append("<div class='performance-row'>");
-//        stats.append("<div class='perf-label'>🚀 Execution Mode</div>");
-//        stats.append("<div class='perf-value execution-mode'>").append(parallelMode.toUpperCase()).append("</div>");
-//        stats.append("</div>");
-//
-//        stats.append("<div class='performance-row'>");
-//        stats.append("<div class='perf-label'>🧵 Thread Count</div>");
-//        stats.append("<div class='perf-value thread-count'>").append(threadCount).append("</div>");
-//        stats.append("</div>");
-//
-//        stats.append("<div class='performance-row'>");
-//        stats.append("<div class='perf-label'>📊 Parallel Count</div>");
-//        stats.append("<div class='perf-value parallel-count'>").append(parallelCount).append("</div>");
-//        stats.append("</div>");
-//
-//        stats.append("<div class='performance-row'>");
-//        stats.append("<div class='perf-label'>💻 Available Cores</div>");
-//        stats.append("<div class='perf-value core-count'>").append(Runtime.getRuntime().availableProcessors()).append("</div>");
-//        stats.append("</div>");
-//
-//        // Add max parallelism calculation
-//        int maxParallelism = Integer.parseInt(threadCount) * Integer.parseInt(parallelCount);
-//        stats.append("<div class='performance-row'>");
-//        stats.append("<div class='perf-label'>🔧 Max Parallelism</div>");
-//        stats.append("<div class='perf-value execution-mode'>").append(threadCount).append(" × ").append(parallelCount).append(" = ").append(maxParallelism).append("</div>");
-//        stats.append("</div>");
-//
-//        stats.append("</div>"); // End card-body
-//        stats.append("</div>"); // End performance-stats card
-
-        stats.append("</div>"); // End stats-dashboard
+       stats.append("</div>"); // End stats-dashboard
 
         statsTest.info(stats.toString());
     }
@@ -2650,30 +2418,23 @@ public class SimplifiedExtentReportManager {
         if (reqSpec != null) {
             QueryableRequestSpecification queryable = SpecificationQuerier.query(reqSpec);
             qReqSpec.set(queryable);
+            // ✅ Just store, don't log yet
         }
     }
 
     public static void addResponseDetailsToReport(Response resp, int statusCode) {
         response.set(resp);
         expectedStatusCode.set(String.valueOf(statusCode));
+
+        // ✅ Log ONLY ONCE when both request and response are available
+        QueryableRequestSpecification reqSpec = qReqSpec.get();
+        if (reqSpec != null && resp != null) {
+            String endpoint = reqSpec.getURI() != null ? reqSpec.getURI().toString() : "Unknown Endpoint";
+            logApiDetailsOnce(endpoint, reqSpec, resp, statusCode);
+        }
     }
 
-    private static void cleanupThreadLocals() {
-        qReqSpec.remove();
-        response.remove();
-        expectedStatusCode.remove();
-        testStartTime.remove();
-        databaseQueries.remove(); // Add this line
-    }
-
-    public static void clearThreadLocals() {
-        test.remove();
-        extentLogger.remove();
-        cleanupThreadLocals();
-    }
-
-    // New method to log each API call immediately
-    public static void logApiCallDetails(RequestSpecification reqSpec, Response resp, int expectedStatusCode, String endpoint) {
+    private static void logApiDetailsOnce(String endpoint, QueryableRequestSpecification reqSpec, Response resp, int statusCode) {
         ExtentTest logger = extentLogger.get();
         if (logger == null) {
             log.warn("No active test logger found");
@@ -2682,86 +2443,67 @@ public class SimplifiedExtentReportManager {
 
         StringBuilder apiLog = new StringBuilder();
 
-        // Add endpoint info
+        // Endpoint header
         apiLog.append("<div class='info-log'>");
-        apiLog.append("🌐 <strong>API Endpoint:</strong> ").append(endpoint);
+        apiLog.append("🌐 <strong>BaseURI:</strong> ").append(endpoint);
         apiLog.append("</div>");
 
-        // Get queryable request spec
-        QueryableRequestSpecification queryable = SpecificationQuerier.query(reqSpec);
+        // REQUEST SECTION
+        apiLog.append("<div class='api-request-section'>");
+        apiLog.append("<h4>📤 Request</h4>");
 
-        // Log request details
-        apiLog.append(getEnhancedRequestDetailsFromSpec(queryable));
+        if (reqSpec.getBody() != null) {
+            apiLog.append("<div class='request-detail-item'>");
+            apiLog.append("<strong>📦 Request Body:</strong><br/>");
+            apiLog.append("<div class='code-block'>");
+            apiLog.append(formatJson(reqSpec.getBody().toString()));
+            apiLog.append("</div>");
+            apiLog.append("</div>");
+        }
 
-        // Log response details
-        apiLog.append(getEnhancedResponseDetailsFromResp(resp, expectedStatusCode));
+        apiLog.append("</div>");
 
+        // RESPONSE SECTION
+        apiLog.append("<div class='api-response-section'>");
+        apiLog.append("<h4>📥 Response</h4>");
+
+        // Status Code
+        apiLog.append("<div class='response-detail-item'>");
+        apiLog.append("<strong>Status Code:</strong> ");
+        apiLog.append(getColorCodedStatus(resp.getStatusCode()));
+        apiLog.append("</div>");
+
+        // Response Body
+        String responseBody = resp.getBody().asString();
+        if (!responseBody.isEmpty()) {
+            apiLog.append("<div class='response-detail-item'>");
+            apiLog.append("<strong>📦 Response Body:</strong><br/>");
+            apiLog.append("<div class='code-block'>");
+            apiLog.append(formatResponseBody(resp));
+            apiLog.append("</div>");
+            apiLog.append("</div>");
+        }
+
+        apiLog.append("</div>");
+
+        // ✅ Track for statistics only (not for summary display)
+        statusCodeCounts.merge(String.valueOf(resp.getStatusCode()), 1, Integer::sum);
+
+        // ✅ Log once
         logger.info(apiLog.toString());
     }
 
-    // Helper method - create version that doesn't use ThreadLocal
-    private static String getEnhancedRequestDetailsFromSpec(QueryableRequestSpecification reqSpec) {
-        if (reqSpec == null) {
-            return "<div class='info-log'>ℹ️ No API Request</div>";
-        }
-
-        StringBuilder details = new StringBuilder();
-        details.append("<div class='api-request-section'>");
-        details.append("<h4>📤 API Request Details</h4>");
-        details.append("<div class='collapsible-content'>");
-
-//        details.append("<div class='request-detail-item'>");
-//        details.append("<strong>🌐 Base URI:</strong> ").append(reqSpec.getBaseUri());
-//        details.append("</div>");
-
-        if (!reqSpec.getRequestParams().isEmpty()) {
-            details.append("<div class='request-detail-item'>");
-            details.append("<strong>🔧 Parameters:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatJson(reqSpec.getRequestParams().toString())).append("</div>");
-            details.append("</div>");
-        }
-
-        if (reqSpec.getBody() != null) {
-            details.append("<div class='request-detail-item'>");
-            details.append("<strong>📝 Request Body:</strong><br/>");
-            details.append("<div class='code-block'>").append(formatJson(reqSpec.getBody().toString())).append("</div>");
-            details.append("</div>");
-        }
-
-        details.append("</div></div>");
-        return details.toString();
+    private static void cleanupThreadLocals() {
+        qReqSpec.remove();
+        response.remove();
+        expectedStatusCode.remove();
+        testStartTime.remove();
+        databaseQueries.remove();
     }
 
-    // Helper method - create version that doesn't use ThreadLocal
-    private static String getEnhancedResponseDetailsFromResp(Response resp, int expectedStatusCode) {
-        if (resp == null) {
-            return "<div class='info-log'>ℹ️ No API Response</div>";
-        }
-
-        StringBuilder details = new StringBuilder();
-        details.append("<div class='api-response-section'>");
-        details.append("<h4>📥 API Response Details</h4>");
-        details.append("<div class='collapsible-content'>");
-
-        details.append("<div class='response-detail-item'>");
-        details.append("<strong>📊 Status Code:</strong> ");
-        details.append(getColorCodedStatus(resp.getStatusCode()));
-        details.append("</div>");
-
-//        details.append("<div class='response-detail-item'>");
-//        details.append("<strong>⏱️ Response Time:</strong> ");
-//        details.append(getPerformanceIndicator(resp.getTime()));
-//        details.append("</div>");
-
-        if (resp.getBody() != null) {
-            details.append("<div class='response-detail-item'>");
-            details.append("<strong>📄 Response Body:</strong><br/>");
-            String formattedBody = formatResponseBody(resp);
-            details.append("<div class='code-block'>").append(formattedBody).append("</div>");
-            details.append("</div>");
-        }
-
-        details.append("</div></div>");
-        return details.toString();
+    public static void clearThreadLocals() {
+        test.remove();
+        extentLogger.remove();
+        cleanupThreadLocals();
     }
 }

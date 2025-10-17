@@ -80,9 +80,20 @@ public class DualReportManager {
     }
 
     /**
+     * Ensure initialization before any operation
+     */
+    private static void ensureInitialized() {
+        if (!initialized) {
+            log.warn("⚠️ DualReportManager not initialized, initializing now...");
+            initialize();
+        }
+    }
+
+    /**
      * Create test
      */
     public static void createTest(String scenarioName) {
+        ensureInitialized();
         log.debug("Creating test: {} (Dual Mode: {})", scenarioName, isDualMode);
 
         try {
@@ -99,6 +110,7 @@ public class DualReportManager {
      * Create test with description
      */
     public static void createTest(String scenarioName, String description) {
+        ensureInitialized();
         log.debug("Creating test with description: {} (Dual Mode: {})", scenarioName, isDualMode);
 
         try {
@@ -115,9 +127,9 @@ public class DualReportManager {
      * Log test description
      */
     public static void logTestDescription(String description) {
+        ensureInitialized();
         try {
             SimplifiedExtentReportManager.logTestDescription(description);
-            // Description only in simplified report
         } catch (Exception e) {
             log.error("Error logging test description: {}", e.getMessage(), e);
         }
@@ -127,6 +139,7 @@ public class DualReportManager {
      * Log info
      */
     public static void logInfo(String msg) {
+        ensureInitialized();
         try {
             SimplifiedExtentReportManager.logInfoToReport(msg);
             if (isDualMode) {
@@ -141,6 +154,7 @@ public class DualReportManager {
      * Log error
      */
     public static void logError(String msg) {
+        ensureInitialized();
         try {
             SimplifiedExtentReportManager.logErrorToReport(msg);
             if (isDualMode) {
@@ -152,14 +166,27 @@ public class DualReportManager {
     }
 
     /**
-     * Log database query
+     * Log database query (3 parameters - success case)
      */
     public static void logDatabaseQuery(String query, String result, long executionTimeMs) {
+        ensureInitialized();
         try {
             SimplifiedExtentReportManager.logDatabaseQuery(query, result, executionTimeMs);
-            // Database queries only in simplified report
         } catch (Exception e) {
             log.error("Error logging database query: {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Log database query (5 parameters - with success/error details)
+     */
+    public static void logDatabaseQuery(String query, String result, long executionTimeMs,
+                                        boolean isSuccess, String errorMessage) {
+        ensureInitialized();
+        try {
+            SimplifiedExtentReportManager.logDatabaseQuery(query, result, executionTimeMs, isSuccess, errorMessage);
+        } catch (Exception e) {
+            log.error("Error logging database query with error details: {}", e.getMessage(), e);
         }
     }
 
@@ -167,6 +194,7 @@ public class DualReportManager {
      * Add request details
      */
     public static void addRequestDetails(RequestSpecification reqSpec) {
+        ensureInitialized();
         if (reqSpec == null) return;
 
         try {
@@ -183,6 +211,7 @@ public class DualReportManager {
      * Add response details
      */
     public static void addResponseDetails(Response resp, int statusCode) {
+        ensureInitialized();
         if (resp == null) return;
 
         try {
@@ -197,12 +226,24 @@ public class DualReportManager {
 
     /**
      * Log API call details immediately
+     * NOTE: This method exists for backward compatibility but actual logging
+     * is handled automatically by addRequestDetails and addResponseDetails
      */
     public static void logApiCallDetails(RequestSpecification reqSpec, Response resp,
                                          int expectedStatusCode, String endpoint) {
+        ensureInitialized();
         try {
-            SimplifiedExtentReportManager.logApiCallDetails(reqSpec, resp, expectedStatusCode, endpoint);
-            // API call details only in simplified report
+            // The actual logging is already handled in addResponseDetails
+            // This method is kept for backward compatibility
+            log.debug("API call details for endpoint: {}", endpoint);
+
+            // Ensure both request and response are logged
+            if (reqSpec != null) {
+                addRequestDetails(reqSpec);
+            }
+            if (resp != null) {
+                addResponseDetails(resp, expectedStatusCode);
+            }
         } catch (Exception e) {
             log.error("Error logging API call details: {}", e.getMessage(), e);
         }
@@ -212,6 +253,7 @@ public class DualReportManager {
      * Generate report based on test result
      */
     public static void generateReport(ITestResult result) {
+        ensureInitialized();
         if (result == null) return;
 
         try {
@@ -228,6 +270,7 @@ public class DualReportManager {
      * Flush reports
      */
     public static void flush() {
+        ensureInitialized();
         log.info("\n╔═══════════════════════════════════════════════════════════════╗");
 
         if (isDualMode) {
@@ -282,5 +325,19 @@ public class DualReportManager {
         } catch (Exception e) {
             log.error("Error clearing thread locals: {}", e.getMessage(), e);
         }
+    }
+
+    /**
+     * Check if dual mode is enabled
+     */
+    public static boolean isDualMode() {
+        return isDualMode;
+    }
+
+    /**
+     * Check if initialized
+     */
+    public static boolean isInitialized() {
+        return initialized;
     }
 }

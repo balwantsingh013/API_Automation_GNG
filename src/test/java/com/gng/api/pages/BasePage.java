@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.report.DetailedExtentReportManager;
+import com.gng.api.report.ExtentReportManager;
 import com.gng.api.report.SimplifiedExtentReportManager;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -139,7 +140,7 @@ public abstract class BasePage {
                     .response();
 
             // Add response details to report AFTER receiving response
-            SimplifiedExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
+            ExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
             DetailedExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
 
             // Validate status code
