@@ -1,6 +1,8 @@
 package com.gng.api.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.constants.GlobalEnums;
+import com.gng.api.report.SimplifiedExtentReportManager;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import com.gng.api.context.ApplicationContext;
@@ -121,6 +123,26 @@ public class CommonUtil {
             return null;
         }
     }
+
+    public static void logTestDescriptionToReports(String testCondition) {
+        try {
+            String description = GlobalEnums.ScenarioDescriptions.valueOf(testCondition).getValue();
+
+            // Log to Simplified Extent Report
+            SimplifiedExtentReportManager.logTestDescription(description);
+
+            // Set description in Allure report
+            io.qameta.allure.Allure.getLifecycle().updateTestCase(testResult -> {
+                testResult.setDescription(description);
+            });
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid testCondition '{}' for ScenarioDescriptions enum", testCondition);
+        } catch (Exception e) {
+            log.error("Failed to log scenario description: {}", e.getMessage(), e);
+        }
+    }
+
 
     public static String removeFieldsFromJson(Object object, String fieldsToRemove) {
         try {
