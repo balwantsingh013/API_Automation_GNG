@@ -177,6 +177,11 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void PositiveEligiblePlansAndOffersApi(String testCondition) {
         getEligiblePlansAndOffersApiPage.validatePositiveWithNoPromotionCodeTestConditionsFromExcelData(get_eligible_plans_and_offers, valueOf(testCondition));
     }
+
+    @When("a request is made to the GetEligiblePlansAndOffers Api from SearchAccounts response for {string} condition")
+    public void SendEligiblePlansAndOffersFromSearchAccountsResponse(String testCondition) {
+        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersForTransferFromSearchAccountsResponse(get_eligible_plans_and_offers, valueOf(testCondition));
+    }
     @Then("the response should contain the expected plans")
     public void verifyEligibleResponsePlans() {
         getEligiblePlansAndOffersApiPage.verifyResponsePlans();

@@ -16,8 +16,8 @@ Feature: Verify CreateAccountNote Api
       | REQUEST_ID_MISSING_NEGATIVE_TC65                         | 10001     | Missing Request ID                     |
       | REQUEST_ID_DUPLICATE_NEGATIVE_TC66                       | 10003     | Duplicate Request ID                   |
       | CUSTOMER_CODE_NULL_NEGATIVE_TC67                         | 10011     | Missing Customer Code                  |
-      | CUSTOMER_CODE_LENGTH_GT9_NEGATIVE_TC69                   | 10015     | Invalid Customer Code Format           |
       | PREMISES_CODE_NULL_NEGATIVE_TC68                         | 10013     | Missing Premises Code                  |
+      | CUSTOMER_CODE_LENGTH_GT9_NEGATIVE_TC69                   | 10015     | Invalid Customer Code Format           |
       | PREMISES_CODE_LENGTH_GT7_NEGATIVE_TC70                   | 10005     | Invalid Premises Code Format           |
       | ACCOUNT_COMBINATION_INVALID_NEGATIVE_TC71                | 40015     | Invalid Account Number                 |
       | NOTE_TYPE_CODE_NULL_NEGATIVE_TC72                        | 10027     | Missing Note Type Code                 |

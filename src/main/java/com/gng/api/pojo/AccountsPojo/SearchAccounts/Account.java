@@ -1,11 +1,16 @@
 package com.gng.api.pojo.AccountsPojo.SearchAccounts;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -74,7 +79,6 @@ public class Account {
     private String prepayCustomerPayByDate;
     private String prepaySystemPayByDate;
     private String aglcAccountNumber;
-    private String rewards;
     private BigDecimal earlyTerminationCharge;
     private String aglcDeliveryPoolGroup;
     private String greenerLife;
@@ -91,5 +95,15 @@ public class Account {
     private String currentPricePlanCode;
     private String currentPricePlanDescription;
     private BigDecimal pricePerTherm;
-    private String activeDiscounts;
+    //private String activeDiscounts;
+    //private List<Reward> rewards;
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<String> rewards = new ArrayList<>();
+
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    private List<ActiveDiscount> activeDiscounts = new ArrayList<>();
+
 }

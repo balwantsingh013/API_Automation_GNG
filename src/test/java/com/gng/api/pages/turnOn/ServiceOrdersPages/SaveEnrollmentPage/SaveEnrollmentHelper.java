@@ -57,7 +57,7 @@ public class SaveEnrollmentHelper {
                 .getLatestUZRRCOTRecord();
         payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
         payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-        payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+        payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID").toString());
         switch (testCondition) {
             case INVALID_CUSTOMER_CODE_EMPTY_TC388:
                 payload.setCustomerCode("");
@@ -79,7 +79,7 @@ public class SaveEnrollmentHelper {
     public void setValuesBasedOnGetEligiblePlansAndOffersResponse(SaveEnrollmentRequest payload){
         int customerCode = Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
         String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
-        int transactionID = Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
+        String transactionID = testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID();
         String aglcAccountNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber();
         String aglcServiceOrderNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID();
         payload.setTransactionType(TURN_ON.getValue());
@@ -93,7 +93,7 @@ public class SaveEnrollmentHelper {
     public void setValuesBasedOnGetPrepayPlanRequoteResponse(SaveEnrollmentRequest payload){
         int customerCode = Integer.parseInt(testContext.getGetPrepayPlansRequoteResponse().getData().getCustomerCode());
         String premisesCode = testContext.getGetPrepayPlansRequoteResponse().getData().getPremisesCode();
-        int transactionID = Integer.parseInt(testContext.getGetPrepayPlansRequoteResponse().getData().getTransactionID());
+        String transactionID = testContext.getGetPrepayPlansRequoteResponse().getData().getTransactionID();
         payload.setTransactionType(TURN_ON.getValue());
         payload.setCustomerCode(customerCode);
         payload.setPremisesCode(premisesCode);
@@ -551,6 +551,9 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
                 payload.setBillingPlan("B");
                 break;
+            case ST_SE_INVALID_ES_PAYMENT_CONFIRMATION_REQUIRED_TC235:
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
         }
     }
 
@@ -567,7 +570,7 @@ public class SaveEnrollmentHelper {
                 .getLatestUZRRCOTRecord();
         payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
         payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-        payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+        payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID").toString());
         switch (testCondition) {
             case INVALID_PREMISES_CODE_EMPTY_TC391:
                 payload.setPremisesCode("");
@@ -600,10 +603,10 @@ public class SaveEnrollmentHelper {
                 payload.setTransactionID(FakerDataGenerator.generateString( 4));
                 break;
             case INVALID_DOES_NOT_MATCH_TRANSACTION_ID_TC384:
-                payload.setTransactionID(FakerDataGenerator.generateNumber(4, 9));
+                payload.setTransactionID(String.valueOf(FakerDataGenerator.generateNumber(4, 9)));
                 break;
             default:
-                payload.setTransactionID(FakerDataGenerator.generateNumber(0, 10));
+                payload.setTransactionID(String.valueOf(FakerDataGenerator.generateNumber(0, 10)));
         }
     }
 
@@ -622,7 +625,7 @@ public class SaveEnrollmentHelper {
                         .getLatestUZRRCOTRecord();
                 payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
                 payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID").toString());
                 payload.setTransactionType("TNOF");
                 break;
             default:
@@ -645,7 +648,7 @@ public class SaveEnrollmentHelper {
                         .getLatestUZRRCOTRecord();
                 payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
                 payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID").toString());
                 payload.setPlanCode("ZZZ");
                 break;
             case INVALID_PLAN_CODE_PRIME_STATUS_TC396a:
@@ -920,7 +923,7 @@ public class SaveEnrollmentHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionType());
         payload.setBillingPlan("");
-        payload.setTransactionID(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID()));
+        payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
         payload.setCustomerCode(Integer.parseInt(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode()));
         payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
 

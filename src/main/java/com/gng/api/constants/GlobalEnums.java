@@ -103,8 +103,9 @@ public class GlobalEnums {
         INVALID_WORK_PHONE_TYPE("C"),
         INVALID_HOME_PHONE_TYPE("B"),
         INVALID_TENANT_LANDLORD("P"),
-        DUPLICATE_MARKETER_REFERENCE_NUMBER("364818484218j"),
-        INVALID_ACCOUNT_NOTE("BOGUS");
+        DUPLICATE_MARKETER_REFERENCE_NUMBER("175481815862"),
+        INVALID_ACCOUNT_NOTE("BOGUS"),
+        INVALID_TRANSACTION_TYPE("TOBO");
 
         private final String value;
 
@@ -261,7 +262,8 @@ public class GlobalEnums {
         PRP("PRP"),
         PGB("PGB"),
         RGB("RGB"),
-        MVS("MVS");
+        MVS("MVS"),
+        GPP("GPP");
 
         private final String value;
         PlanCode(String value) {
@@ -290,6 +292,26 @@ public class GlobalEnums {
 
         private final String value;
         PlanTypeIndicator(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum SeasonSavingsProgramResult {
+        ENROLLED("ENROLLED");
+
+        private final String value;
+        SeasonSavingsProgramResult(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum CurrentMarketerCode {
+        FIRE("FIRE");
+
+        private final String value;
+        CurrentMarketerCode(String value) {
             this.value = value;
         }
     }

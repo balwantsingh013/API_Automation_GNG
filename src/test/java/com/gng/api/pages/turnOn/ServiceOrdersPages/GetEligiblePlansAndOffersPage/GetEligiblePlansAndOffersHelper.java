@@ -289,7 +289,7 @@ public class GetEligiblePlansAndOffersHelper {
             case EMPTY_SEPARATE_BILLING_ADDRESS_TC_259:
                 payload.setSeparateBillingAddress("");
                 break;
-            case BILLING_ADDRESS_TYPE_LENGTH_VALIDATION_TC_260: ;
+            case BILLING_ADDRESS_TYPE_LENGTH_VALIDATION_TC_260:
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingAddressType(FakerDataGenerator.generateString(2));
                 break;
@@ -419,7 +419,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingAddressLine2(FakerDataGenerator.generateString(31));
                 break;
             case BILLING_CITY_LENGTH_VALIDATION_TC_278:
-                payload.setSeparateBillingAddress(true);;
+                payload.setSeparateBillingAddress(true);
                 payload.setBillingCity(FakerDataGenerator.generateString(21));
                 payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
                 break;
@@ -483,7 +483,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetName(FakerDataGenerator.generateString(5));
                 payload.setBillingCity(FakerDataGenerator.generateCity());
                 payload.setBillingStateCode(billingAddressState);
-                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+""+FakerDataGenerator.generateDigits(5));
+                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+FakerDataGenerator.generateDigits(5));
                 payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
                 break;
             case NULL_BILLING_ZIP_CODE_TC_281C:
@@ -1203,11 +1203,11 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case NULL_ACN_STATUS_INDICATOR_TC_300A:
                 payload.setAcnStatusIndicator(null);
-                payload.setTenantLandlord(LANDLORD.getValue());;
+                payload.setTenantLandlord(LANDLORD.getValue());
                 break;
             case NULL_ACN_STATUS_INDICATOR_TC_300B:
                 payload.setAcnStatusIndicator(null);
-                payload.setTenantLandlord(TENANT.getValue());;
+                payload.setTenantLandlord(TENANT.getValue());
                 break;
             case NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE_TC_307:
                 payload.setLoginID(invalidLoginIdForACN);
@@ -1957,9 +1957,91 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void setRequestParamsWithoutPromotionCode(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
+    }
+
+    public void setRequestParamsForTransferFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+
+        clearNewCustomerRequestFields(payload);
+
+        payload.setPremisesStreetName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetName());
+        payload.setPremisesStreetSuffix(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetSuffix());
+        payload.setPremisesStreetNumber(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetNumber());
+        payload.setPremisesCity(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCity());
+        payload.setPremisesZipCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesZipCode());
+        payload.setPremisesStateCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStateCode());
+        payload.setPremisesCountyCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCountyCode());
+
+        var acct = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst();
+        String aglcAcct = acct.getAglcAccountNumber();
+        String last9    = aglcAcct.substring(Math.max(0, aglcAcct.length() - 9));
+        payload.setAglcServiceLocationID(last9);
+
+        payload.setCreditCheckOption(SERVICE_TRANSFER.getValue());
+        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+        payload.setCustomerCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
+        payload.setPremisesCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode());
+
+        payload.setServiceTransferOfferRemainder(false);
+        payload.setServiceTransferReward(false);
+
+        switch (testCondition){
+            case ST_SE_INVALID_ENROLLMENT_STATUS_VALUE_TC234,
+                 ST_SE_INVALID_ES_PAYMENT_CONFIRMATION_REQUIRED_TC235,
+                 ST_SE_INVALID_PAYMENT_CONFIRMATION_TC236,
+                 ST_SE_INVALID_SSP_PARTICIPANT_CODE_VALUE_TC237,
+                 ST_SE_SSP_PARTICIPANT_CODE_NOT_REQUIRED_TC238,
+                 ST_SE_MISSING_MARKETER_REFERENCE_CE_TRAN_TC239,
+                 ST_SE_DUPLICATE_MARKETER_REFERENCE_DATA_TC240,
+                 ST_SE_MARKETER_REFERENCE_DATA_INVALID_TYPE_TC242,
+                 ST_SE_MARKETER_REFERENCE_DATA_TOO_LONG_TC243,
+                 ST_SE_MARKETER_REFERENCE_DATA_TOO_SHORT_TC244,
+                 ST_SE_CURRENT_MARKETER_CODE_PROVIDED_TC245,
+                 ST_SE_REQUESTED_TURN_ON_DATE_PROVIDED_TC246,
+                 ST_SE_SERVICE_TRANSFER_REWARD_BOOLEAN_ONLY_TC247,
+                 ST_SE_CURRENT_PRICE_PLAN_FIXED_BOOLEAN_ONLY_TC248,
+                 ST_SE_CURRENT_PRICE_PLAN_CEILING_BOOLEAN_ONLY_TC249 ->  payload.setServiceTransferCurrentPricePlan(false);
+
+            case
+                 ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250 ->  payload.setServiceTransferCurrentPricePlan(true);
+            default -> {}
+        }
+    }
+    public void clearNewCustomerRequestFields(GetEligiblePlansAndOffersRequest payload){
+
+        payload.setSocialSecurityNumber(null);
+        payload.setConfirmCreditCheck(null);
+        payload.setAglcServiceLocationID(null);
+        payload.setPremisesStreetNumber(null);
+        payload.setPremisesStreetPreDirection(null);
+        payload.setPremisesStreetName(null);
+        payload.setPremisesStreetSuffix(null);
+        payload.setPremisesStreetPostDirection(null);
+        payload.setPremisesUnitType(null);
+        payload.setPremisesUnitNumber(null);
+        payload.setPremisesCity(null);
+        payload.setPremisesStateCode(null);
+        payload.setPremisesZipCode(null);
+        payload.setPremisesCountyCode(null);
+        payload.setBillingStreetNumber(null);
+        payload.setBillingStreetPreDirection(null);
+        payload.setBillingStreetName(null);
+        payload.setBillingStreetSuffix(null);
+        payload.setBillingStreetPostDirection(null);
+        payload.setBillingUnitType(null);
+        payload.setBillingUnitNumber(null);
+        payload.setBillingAddressLine2(null);
+        payload.setBillingCity(null);
+        payload.setBillingStateCode(null);
+        payload.setBillingZipCode(null);
+        payload.setBillingCountyCode(null);
+        payload.setMarketingPromotionCode(null);
+        payload.setReferralCode(null);
+        payload.setEmailAddress(null);
+        payload.setHomePhoneNumber(null);
+        payload.setWorkPhoneNumber(null);
     }
 
     public void verifyResidentialPlansReceivedAgainstDatabase() {

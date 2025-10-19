@@ -222,6 +222,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
              ORDER BY DBMS_RANDOM.VALUE
              FETCH FIRST 1 ROWS ONLY
             """;
+
     public static final String GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE_WITH_MIDDLE_NAME = """            
              SELECT
                  a.ucracct_cust_code,
@@ -245,6 +246,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
              ORDER BY DBMS_RANDOM.VALUE
              FETCH FIRST 1 ROWS ONLY
             """;
+
     public static final String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SONP_NON_MASTER = """
                 SELECT
                     T1.UCRSCMP_CUST_CODE,
@@ -271,6 +273,23 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                   )
                 ORDER BY T1.UCRSCMP_CUST_CODE DESC
                 FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACTIVE_CUSTOMER_WITH_SERVICE_TRANSFER_ENROLLMENT = """
+            SELECT
+              a.ucracct_cust_code,
+                 a.ucracct_prem_code,
+                 a.ucracct_status_ind,
+                 z. UZBENRO_TYPE_CODE    AS typeCode,
+                 z.UZBENRO_ENRO_STATUS  AS status,
+                 z.UZBENRO_ACTIVITY_DATE
+             FROM ucracct a
+             JOIN uzbenro z  ON z.uzbenro_prem_code = a.ucracct_prem_code
+            WHERE z.UZBENRO_TYPE_CODE = 'SETM'
+            AND z.UZBENRO_ENRO_STATUS = 'INCL'
+            
+            ORDER BY z.UZBENRO_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROW ONLY
             """;
 
     public static final String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_PENDING_REWARDS= """

@@ -35,6 +35,12 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
+    public List<Map<String, Object>> getActiveCustomerWithServiceTransferEnrollment() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_WITH_SERVICE_TRANSFER_ENROLLMENT;
+        logQueryInAllure("Get Active Customer with Service Transfer Enrollment Details", query);
+        return jdbcTemplate.queryForList(query);
+    }
+
     public List<Map<String, Object>> getCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {
         String query = DBQuery.GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE;
         logQueryInAllure("Get  Customer info based on account status and plan type", query);
@@ -271,9 +277,7 @@ public class DBAction {
     public List<Map<String, Object>> getUserRoleIDs(String userId) {
         String query = DBQuery.GET_USER_ROLE_IDS;
         logQueryInAllure("Get user role IDs", query);
-        return jdbcTemplate.queryForList(query, userId);
-    }
-
+        return jdbcTemplate.queryForList(query, userId);   }
 
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC218(String pricePlan) {
