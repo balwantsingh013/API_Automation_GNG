@@ -222,6 +222,29 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
              ORDER BY DBMS_RANDOM.VALUE
              FETCH FIRST 1 ROWS ONLY
             """;
+    public static final String GET_TENANT_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE = """            
+             SELECT
+                 a.ucracct_cust_code,
+                 a.ucracct_prem_code,
+                 a.ucracct_status_ind,
+                 s.ucrserv_num,
+                 s.ucrserv_rate_schedule,
+                 c.ucbcust_first_name,
+                 c.ucbcust_middle_name,
+                 c.ucbcust_last_name,
+                 c.ucbcust_ssn_last_four
+             FROM ucracct a
+             JOIN ucrserv s   ON s.ucrserv_prem_code = a.ucracct_prem_code AND s.ucrserv_num = 1
+             JOIN ucbcust c   ON c.ucbcust_cust_code = a.ucracct_cust_code
+             JOIN ucbprem p   ON p.ucbprem_code      = a.ucracct_prem_code
+             JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
+             WHERE a.ucracct_status_ind = ?
+               AND z.UZBENRO_PRICE_PLAN  = ?
+               AND p.ucbprem_landlord_ind NOT IN ('L')
+            AND  z.uzbenro_enro_status IN ('INCL','ENRO')
+            ORDER BY z.uzbenro_activity_date Desc
+            FETCH FIRST 1 ROWS ONLY
+            """;
 
     public static final String GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE_WITH_MIDDLE_NAME = """            
              SELECT
@@ -781,29 +804,29 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 (SELECT MAX(ucrcrhs_occurance_date) FROM ucrcrhs
                   WHERE ucrcrhs_cust_code = a.ucracct_cust_code AND ucrcrhs_prem_code = a.ucracct_prem_code
                     AND ucrcrhs_ccat_code = 'PREC' AND ucrcrhs_occurance_date <= TRUNC(SYSDATE))   AS "lastPreCollDate"
-              FROM   cust_prem cp
-              JOIN   ucracct a   ON a.ucracct_cust_code = cp.cust_code
+              FROM cust_prem cp
+              JOIN ucracct a   ON a.ucracct_cust_code = cp.cust_code
                                 AND a.ucracct_prem_code = cp.prem_code
-              JOIN   ucbcust c   ON c.ucbcust_cust_code = a.ucracct_cust_code
-              JOIN   ucbprem p   ON p.ucbprem_code      = a.ucracct_prem_code
-              JOIN   ucraddr adr ON adr.ucraddr_cust_code = c.ucbcust_cust_code
+              JOIN ucbcust c   ON c.ucbcust_cust_code = a.ucracct_cust_code
+              JOIN ucbprem p   ON p.ucbprem_code      = a.ucracct_prem_code
+              JOIN ucraddr adr ON adr.ucraddr_cust_code = c.ucbcust_cust_code
                                 AND adr.ucraddr_status_ind = 'A'
-              LEFT   JOIN ucrserv vs  ON vs.ucrserv_prem_code = a.ucracct_prem_code
+              LEFT JOIN ucrserv vs  ON vs.ucrserv_prem_code = a.ucracct_prem_code
                                      AND vs.ucrserv_num       = 1
-              LEFT   JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
-              LEFT   JOIN uzvplan vp  ON vp.uzvplan_code     = z.uzbenro_price_plan
-              LEFT   JOIN bill_last  bl ON bl.cust_code = a.ucracct_cust_code
+              LEFT JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
+              LEFT JOIN uzvplan vp  ON vp.uzvplan_code     = z.uzbenro_price_plan
+              LEFT JOIN bill_last  bl ON bl.cust_code = a.ucracct_cust_code
                                        AND bl.prem_code = a.ucracct_prem_code
                                        AND bl.rn = 1
-              LEFT   JOIN pay_last   py ON py.cust_code = a.ucracct_cust_code
+              LEFT JOIN pay_last   py ON py.cust_code = a.ucracct_cust_code
                                        AND py.prem_code = a.ucracct_prem_code
                                        AND py.rn = 1
-              LEFT   JOIN letter_last lt ON lt.cust_code = a.ucracct_cust_code
+              LEFT JOIN letter_last lt ON lt.cust_code = a.ucracct_cust_code
                                         AND lt.prem_code = a.ucracct_prem_code
                                         AND lt.rn = 1
-              LEFT   JOIN past_due   pd ON pd.cust_code = a.ucracct_cust_code
+              LEFT JOIN past_due   pd ON pd.cust_code = a.ucracct_cust_code
                                        AND pd.prem_code = a.ucracct_prem_code
-              LEFT   JOIN flags      fl ON fl.cust_code = a.ucracct_cust_code
+              LEFT JOIN flags      fl ON fl.cust_code = a.ucracct_cust_code
                                        AND fl.prem_code = a.ucracct_prem_code
               WHERE
                 ( NULLIF((SELECT rate_sched FROM params),'') IS NULL

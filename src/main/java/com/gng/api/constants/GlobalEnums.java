@@ -105,7 +105,9 @@ public class GlobalEnums {
         INVALID_TENANT_LANDLORD("P"),
         DUPLICATE_MARKETER_REFERENCE_NUMBER("175481815862"),
         INVALID_ACCOUNT_NOTE("BOGUS"),
-        INVALID_TRANSACTION_TYPE("TOBO");
+        INVALID_TRANSACTION_TYPE("TOBO"),
+        INVALID_CUSTOMER_CODE("0"),
+        INVALID_PREMISES_CODE("0");
 
         private final String value;
 

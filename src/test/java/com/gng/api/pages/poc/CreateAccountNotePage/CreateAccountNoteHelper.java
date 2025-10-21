@@ -92,11 +92,11 @@ public class CreateAccountNoteHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setUserIDRemind("");
 
-        List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanType
+        Map<String, Object> row = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanType
                 (GlobalEnums.AccountStatus.INACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
 
-        payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
-        payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());
+        payload.setCustomerCode(row.get(UCRACCT_CUST_CODE).toString());
+        payload.setPremisesCode(row.get(UCRACCT_PREM_CODE).toString());
         switch (testCondition) {
             case CREATE_NOTE_ACCT_POSITIVE_TC80 -> {
                 payload.setNoteText(noteText);

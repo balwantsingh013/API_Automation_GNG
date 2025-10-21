@@ -41,10 +41,16 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public List<Map<String, Object>> getCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {
+    public Map<String, Object> getCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {
         String query = DBQuery.GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE;
-        logQueryInAllure("Get  Customer info based on account status and plan type", query);
-        return jdbcTemplate.queryForList(query, accountStatus, planType);
+        logQueryInAllure("Get Customer info based on account status and plan type", query);
+        return jdbcTemplate.queryForMap(query, accountStatus, planType);
+    }
+
+    public Map<String, Object> getTenantCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {
+        String query = DBQuery.GET_TENANT_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE;
+        logQueryInAllure("Get Tenant Customer info based on account status and plan type", query);
+        return jdbcTemplate.queryForMap(query, accountStatus, planType);
     }
 
     public List<Map<String, Object>> getCustomerInformationByStatusAndPlanTypeWithMiddleName(String accountStatus, String planType, boolean onAbd, boolean middleNameNotNull) {

@@ -140,11 +140,11 @@ public class GetAccountInfoHelper {
             }
 
             case INACTIVE_WITH_RECURRING_CC_POSITIVE_TC23 -> {
-                List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanType
+                Map<String, Object> row = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanType
                         (GlobalEnums.AccountStatus.INACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
 
-                payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
-                payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());
+                payload.setCustomerCode(row.get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(row.get(UCRACCT_PREM_CODE).toString());
             }
 
             case FINAL_WITH_ABD_POSITIVE_TC24 -> {

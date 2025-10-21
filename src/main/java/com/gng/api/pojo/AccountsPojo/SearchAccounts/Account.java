@@ -96,11 +96,9 @@ public class Account {
     private String currentPricePlanDescription;
     private BigDecimal pricePerTherm;
     //private String activeDiscounts;
-    //private List<Reward> rewards;
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<String> rewards = new ArrayList<>();
-
+    private List<Reward> rewards = new ArrayList<>();
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
