@@ -768,8 +768,7 @@ public class SearchAccountsHelper {
                 break;
 
             case  ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198,
-                    ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220:
-
+                  ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220:
                 customerData = ApplicationContext.get().getDbAction()
                         .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.PGB.getValue());
                 setCustomerInfo(payload, customerData);

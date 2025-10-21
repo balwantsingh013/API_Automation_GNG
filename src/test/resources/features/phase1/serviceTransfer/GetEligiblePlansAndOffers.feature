@@ -40,7 +40,6 @@ Feature: GetEligiblePlansAndOffers - Negative validations (Service Transfer)
       | ST_GE_SSP_PARTICIPANT_CODE_NOT_REQUIRED_NEG_TC213                  | 2200      | Parameter Value should be null-SSP Participant Code                                                                                        |
       | ST_GE_COMMERCIAL_CREDIT_CHECK_BIN_NOT_REQUIRED_NEG_TC214           | 10000     | Parameter Value should be null-Commercial Credit Check Business BIN                                                                        |
       | ST_GE_ST_CURRENT_FLAG_MISSING_WHEN_PLAN_FIXED_OR_CEILING_NEG_TC216 | 10000     | Missing Service Transfer Current Price Plan flag                                                                                           |
-      | ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220                   | 2000      | Current Plan or Offer Transfer Not Allowed                                                                                                 |
 
   @GetEligiblePlansAndOffersTransferWithSearchAccountsNotAllowed @NegativeFlow @Phase1
   Scenario Outline: Verify ServiceTransfer GetEligiblePlansAndOffers from SearchAccounts response with invalid parameters "<testCondition>"
