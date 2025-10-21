@@ -1,0 +1,449 @@
+package com.gng.api.pages.serviceTransfer.AccountsApiPages.SearchAccounts;
+
+import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
+import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.steps.serviceTransfer.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
+import com.gng.api.util.FakerDataGenerator;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+
+@Slf4j
+public class SearchAccountsHelper {
+    private final TestContext testContext;
+    public String validZipCode="30307";
+    public String socialSecurityNumber= "666398181";
+    public String premisesStreetNumber="442";
+    public String premisesStreetName="CLIFTON";
+    public String premisesUnitType;
+    public String premisesUnitNumber;
+    public String premisesCity= "ATLANTA";
+    public String premisesStateCode="GA";
+    public String premisesZipCode;
+    public String preisesUnitType="#";
+
+    public SearchAccountsHelper(TestContext testContext) {
+        this.testContext = testContext;
+    }
+
+    SearchAccountsRequest preparePayload(SearchAccountsApiLabel apiLabel) {
+        log.info("Preparing payload for {}", apiLabel);
+        String jsonFileName = apiLabel.equals(SearchAccountsApiLabel.search_accounts)
+                ? SearchAccountsApiLabel.search_accounts.toString()
+                : SearchAccountsApiLabel.search_accounts_mandatory.toString();
+        return BasePage.deserializeJsonToPojo(jsonFileName, SearchAccountsRequest.class);
+    }
+
+    public void setParametersToEmpty(SearchAccountsRequest payload){
+        payload.setCustomerCode("");
+        payload.setCustomerLastName("");
+        payload.setCustomerFirstName("");
+        payload.setPremisesZipCode("");
+        payload.setCustomerBusinessName("");
+        payload.setPremisesCode("");
+    }
+
+    public void setAddressDetails(SearchAccountsRequest payload){
+        payload.setPremisesStreetNumber(premisesStreetNumber);
+        payload.setPremisesStreetName(premisesStreetName);
+        payload.setPremisesCity(premisesCity);
+        payload.setPremisesStateCode(premisesStateCode);
+        payload.setPremisesZipCode(validZipCode);
+
+    }
+
+    public void preparePayloadForNegativeTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
+        setParametersToEmpty(payload);
+        Map<String, Object> validCustomerBusinessDetails=null;
+        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_LastNameZipCode();
+        String lastName=accountDetailsLastNameZipCode.get("UZBENRO_DSM_LAST_NAME").toString();
+        validZipCode = accountDetailsLastNameZipCode.get("UCRADDR_ZIP").toString();
+        switch (testCondition) {
+            case NO_SEARCH_PARAMETERS_PROVIDED_TC_1:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                break;
+
+            case MISSING_REQUEST_ID_TC_2:
+                payload.setRequestID("");
+                break;
+
+            case INVALID_REQUEST_ID_LENGTH_TC_3:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
+                break;
+
+            case DUPLICATE_REQUEST_ID_TC_4:
+                payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
+                break;
+
+            case MISSING_LOGIN_ID_TC_5:
+                payload.setLoginID("");
+                break;
+
+            case INVALID_LOGIN_ID_LENGTH_TC_6:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setLoginID(FakerDataGenerator.generateString(31));
+                break;
+
+            case INVALID_LOGIN_ID_FORMAT_TC_7:
+                payload.setLoginID(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
+                break;
+
+            case INVALID_LOGIN_ID_TC_8:
+                payload.setLoginID(FakerDataGenerator.generateString(6));
+                payload.setCustomerLastName(FakerDataGenerator.generateString(5));
+                payload.setPremisesZipCode(validZipCode);
+                break;
+
+            case MISSING_CUSTOMER_CODE_TC_9:
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case MISSING_PREMISES_CODE_TC_10:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case INVALID_CUSTOMER_CODE_LENGTH_TC_11:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case  INVALID_PREMISES_CODE_LENGTH_TC_12:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
+                break;
+
+            case MISSING_TRANSACTION_TYPE_TC_13:
+                payload.setTransactionType(null);
+                break;
+
+            case INVALID_TRANSACTION_TYPE_TC_14:
+                payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(4));
+                break;
+
+            case INVALID_TRANSACTION_TYPE_LENGTH_TC_15:
+                payload.setTransactionType(FakerDataGenerator.generateUpperCaseString(5));
+                break;
+
+            case INVALID_BUSINESS_NAME_LENGTH_TC_16:
+                payload.setCustomerBusinessName(FakerDataGenerator.generateString(61));
+                break;
+
+            case INVALID_CUSTOMER_LAST_NAME_LENGTH_TC_17:
+                payload.setCustomerLastName(FakerDataGenerator.generateString(61));
+                break;
+
+            case MISSING_PREMISES_ZIP_CODE_TC_19:
+                payload.setCustomerLastName(FakerDataGenerator.generateString(10));
+                break;
+
+            case MISSING_TRANSACTION_TYPE_TC_20:
+                payload.setCustomerLastName(lastName);
+                payload.setPremisesZipCode(validZipCode);
+                payload.setTransactionType(null);
+                break;
+
+            case INVALID_FIRST_NAME_LENGTH_TC_21:
+                payload.setCustomerFirstName(FakerDataGenerator.generateString(16));
+                break;
+
+            case UNENCRYPTED_SSN_TC_22:
+                payload.setSocialSecurityNumber(socialSecurityNumber);
+                break;
+
+            case INVALID_SSN_LENGTH_TC_23:
+                payload.setSocialSecurityNumber(encryptData(FakerDataGenerator.generateDigits(33)));
+                break;
+
+            case TAX_ID_NOT_ALLOWED_TC_24:
+                payload.setCustomerBusinessName(FakerDataGenerator.generateString(10));
+                payload.setFederalTaxID(encryptData(FakerDataGenerator.generateDigits(9)));
+                break;
+
+            case SSN_AND_TAX_ID_PROVIDED_TC_25:
+                payload.setSocialSecurityNumber(encryptData(socialSecurityNumber));
+                payload.setFederalTaxID(encryptData(FakerDataGenerator.generateDigits(9)));
+                break;
+
+            case PHONE_NOT_ALLOWED_TC_26:
+                payload.setCustomerLastName(lastName);
+                payload.setPremisesZipCode(validZipCode);
+                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
+                break;
+
+            case INVALID_AGLC_ACCOUNT_NO_LENGTH_TC_27:
+                payload.setCustomerLastName(lastName);
+                payload.setPremisesZipCode(validZipCode);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(21));
+                break;
+
+            case NON_NUMERIC_AGLC_ACCOUNT_NO_TC_28:
+                payload.setCustomerLastName(lastName);
+                payload.setPremisesZipCode(validZipCode);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateAlphanumericWithSpecialChars(10));
+                break;
+
+            case INVALID_STREET_NUMBER_LENGTH_TC_29:
+                setAddressDetails(payload);
+                payload.setPremisesStreetNumber(FakerDataGenerator.generateDigits(13));
+                break;
+
+            case INVALID_STREET_PRE_DIR_LENGTH_TC_30:
+                setAddressDetails(payload);
+                payload.setPremisesStreetPreDirection(FakerDataGenerator.generateString(3));
+                break;
+
+
+            case INVALID_STREET_NAME_LENGTH_TC_31:
+                setAddressDetails(payload);
+                payload.setPremisesStreetName(FakerDataGenerator.generateString(31));
+                break;
+
+            case MISSING_PREMISES_STREET_NAME_TC_32:
+                setAddressDetails(payload);
+                payload.setPremisesStreetName(null);
+                break;
+
+            case INVALID_STREET_SUFFIX_LENGTH_TC_33:
+                setAddressDetails(payload);
+                payload.setPremisesStreetSuffix(FakerDataGenerator.generateUpperCaseString(7));
+                break;
+
+            case INVALID_PREMISES_STREET_POST_DIRECTION_LENGTH_TC_34:
+                setAddressDetails(payload);
+                payload.setPremisesStreetPostDirection(FakerDataGenerator.generateUpperCaseString(3));
+                break;
+
+            case INVALID_UNIT_TYPE_LENGTH_TC_35:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(FakerDataGenerator.generateAlphanumericWithSpecialChars(7));
+                break;
+
+            case PREMISES_UNIT_TYPE_MISSING_TC_36:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(null);
+                payload.setPremisesUnitNumber(FakerDataGenerator.generateDigits(3));
+                break;
+
+            case INVALID_PREMISES_UNIT_NUMBER_FORMAT_TC_37:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(preisesUnitType);
+                payload.setPremisesUnitNumber("1"+FakerDataGenerator.generateDigits(7));
+                break;
+
+            case MISSING_UNIT_NUMBER_TC_38:
+                setAddressDetails(payload);
+                payload.setPremisesUnitType(preisesUnitType);
+                payload.setPremisesUnitNumber(null);
+                break;
+
+            case INVALID_PREMISES_CITY_LENGTH_TC_39:
+                setAddressDetails(payload);
+                payload.setPremisesCity(FakerDataGenerator.generateString(21));
+                break;
+
+            case MISSING_PREMISES_CITY_TC_40:
+                setAddressDetails(payload);
+                payload.setPremisesCity(null);
+                break;
+
+            case INVALID_STATE_CODE_LENGTH_TC_41:
+                setAddressDetails(payload);
+                payload.setPremisesStateCode(FakerDataGenerator.generateUpperCaseString(4));
+                break;
+
+            case MISSING_STATE_CODE_TC_42:
+                setAddressDetails(payload);
+                payload.setPremisesStateCode(null);
+                break;
+
+            case INVALID_ZIP_CODE_LENGTH_TC_43:
+                setAddressDetails(payload);
+                payload.setPremisesZipCode(FakerDataGenerator.generateDigits(7));
+                break;
+
+            case INVALID_ZIP_CODE_LENGTH_LESS_THAN_5_TC_44:
+                setAddressDetails(payload);
+                payload.setPremisesZipCode(FakerDataGenerator.generateDigits(4));
+                break;
+
+            case MISSING_ZIP_CODE_TC_45:
+                setAddressDetails(payload);
+                payload.setPremisesZipCode(null);
+                break;
+
+            case INVALID_LAST_NAME_ZIP_COMBINATION_TC_18:
+            case INVALID_RS_LAST_NAME_ZIP_COMBINATION_TC_47:
+                payload.setPremisesZipCode(validZipCode);
+                payload.setCustomerLastName(FakerDataGenerator.generateString(5));
+                break;
+
+            case INVALID_CUSTOMER_PREMISES_CODE_COMBINATION_TC_46:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case VALID_LAST_NAME_ZIP_COMBINATION_TC_48:
+                payload.setPremisesZipCode(validZipCode);
+                payload.setCustomerLastName(lastName);
+                break;
+
+            case NO_MATCHING_CUSTOMER_BUSINESS_NAME_TC_49:
+                payload.setCustomerBusinessName(FakerDataGenerator.generateString(6));
+                break;
+
+            case VALID_CUSTOMER_BUSINESS_NAME_TC_50:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustomerBusinessNameCMActiveNoETC();
+                payload.setCustomerBusinessName(validCustomerBusinessDetails.get("UCBCUST_LAST_NAME").toString());
+                break;
+
+            case  INACTIVE_UNAPPLIED_DEPOSIT_TC_51:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSInactiveUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
+                break;
+
+            case  INACTIVE_PAST_DUE_TC_52:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSInactivePastDue();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case RS_INACTIVE_BANKRUPCY_TC_53:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialInactiveBankrupcy();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case RS_INACTIVE_BAD_DEBT_BALANCE_TC_54:
+            case RS_INACTIVE_BAD_DEBT_BALANCE_TC_55:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeInactiveAccWithBadDebt();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UABOPEN_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UABOPEN_PREM_CODE").toString());
+                break;
+
+            case  NEW_UNAPPLIED_DEPOSIT_TC_57:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSNewUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
+                break;
+
+            case RS_NEW_BANKRUPCY_TC_58:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialNewBankrupcy();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case FINAL_NO_SONP_ACTIVE_PENDING_REWARDS_TC_59:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSFinalPendingRewards();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case  FINAL_UNAPPLIED_DEPOSIT_TC_60:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSFinalUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
+                break;
+
+            case  ACTIVE_PAST_DUE_TC_61:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDue();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case  ACTIVE_PAST_DUE_REWARDS_TC_63:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case  ACTIVE_UNAPPLIED_DEPOSIT_TC_64:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveUnappliedDepositCSV();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case  ACTIVE_SONP_PAST_DUE_TC_68:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveDiscount();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRSCMP_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRSCMP_PREM_CODE").toString());
+                break;
+
+            case  ACTIVE_GREENER_LIFE_SONP_TC_69:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONP();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case  SONP_UNAPPLIEDDEPOSIT_TC_70:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPUnappliedDeposit();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("GTBTRNH_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("GTBTRNH_PREM_CODE").toString());
+                break;
+
+            case DISCOUNTS_WITH_RESTRICTIONS_TC_65:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeDiscountWithRestrictions();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case TRANSFERABLE_DISCOUNTS_TC_66:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeTransferableDiscount();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case MULTIPLE_DISCOUNTS_TC_67:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeMultipleDiscount();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case ACTIVE_SONP_WITH_REWARDS_TC_71:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPRewards();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("GTBTRNH_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("GTBTRNH_PREM_CODE").toString());
+                break;
+
+            case SONP_DISCOUNT_NO_RESTRICTION_TC_72:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscounts();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case SONP_DISCOUNT_WITH_RESTRICTIONS_TC_73:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscountsRestrictions();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case TRANSFERABLE_DISCOUNTS_SONP_TC_74:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscountsMultiple();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case MULTIPLE_DISCOUNTS_TC_SONP_TC_75:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveSONPDiscountsTransfersble();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case  ACTIVE_GREENER_LIFE_NO_SONP_TC_62:
+                validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveGreenerLifeNoSONP();
+                payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            default:
+                payload.setRequestID(FakerDataGenerator.generateString(10));
+        }
+    }
+}
