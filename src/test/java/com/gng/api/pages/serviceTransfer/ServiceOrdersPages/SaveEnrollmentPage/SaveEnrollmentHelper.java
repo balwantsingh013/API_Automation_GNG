@@ -1,17 +1,9 @@
 package com.gng.api.pages.serviceTransfer.ServiceOrdersPages.SaveEnrollmentPage;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
-import com.gng.api.pojo.AccountsPojo.SearchAccounts.Account;
-import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.DataResult;
-import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
-import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
@@ -21,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 public class SaveEnrollmentHelper {
@@ -38,17 +29,13 @@ public class SaveEnrollmentHelper {
                 ? SaveEnrollmentApiLabel.save_enrollment.toString()
                 : null;
 
-        SaveEnrollmentRequest payload = BasePage.deserializeJsonToPojo(jsonFileName, SaveEnrollmentRequest.class);
-        //every one?
-
-        return payload;
+        return BasePage.deserializeJsonToPojo(jsonFileName, SaveEnrollmentRequest.class);
     }
 
     public void setSupportingDefaultParameters(SaveEnrollmentRequest payload){
         payload.setRequestID(FakerDataGenerator.generateString(12));
         payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
 
-        // ?
         payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
         payload.setPromotionCode("");
 
@@ -169,7 +156,6 @@ public class SaveEnrollmentHelper {
         payload.setTransactionID(testContext.getGetEligiblePlansAndOffersResponse().getData().getTransactionID());
         payload.setAglcAccountNumber(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getAglcAccountNumber());
         payload.setPlanCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPlanCode());
-
     }
 
     public void setPremisesCodeAndTransactionIdBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
@@ -189,7 +175,6 @@ public class SaveEnrollmentHelper {
                  ST_SE_CURRENT_MARKETER_CODE_PROVIDED_TC245,
                  ST_SE_REQUESTED_TURN_ON_DATE_PROVIDED_TC246,
                  ST_SE_SERVICE_TRANSFER_REWARD_BOOLEAN_ONLY_TC247,
-                // ST_SE_CURRENT_PRICE_PLAN_FIXED_BOOLEAN_ONLY_TC248,
                  ST_SE_CURRENT_PRICE_PLAN_CEILING_BOOLEAN_ONLY_TC249,
                  ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250 ->
                     setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
@@ -205,14 +190,24 @@ public class SaveEnrollmentHelper {
         }
     }
 
-    public void setParametersBasedOnTypePositive(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+    public void setParametersBasedOnTypeExternal(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(12));
 
         switch (testCondition) {
-
+                case ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198
+                     -> {
+                    setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                    payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
+                    payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                    payload.setServiceTransferReward(false);
+                    payload.setServiceTransferOfferRemainder(false);
+                    payload.setPlanCode(GlobalEnums.PlanCode.GPP.getValue());
+                    payload.setServiceTransferCurrentPricePlan(false);
+                    payload.setPaymentConfirmationNumber(null);
+                    payload.setPromotionCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst().getPromotion1Code());
+                    payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                }
             default -> { }
         }
-
     }
-
 }

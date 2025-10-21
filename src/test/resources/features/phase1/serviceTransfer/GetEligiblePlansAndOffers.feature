@@ -56,3 +56,15 @@ Feature: GetEligiblePlansAndOffers - Negative validations (Service Transfer)
       | ST_GE_ST_CURRENT_TRUE_NOT_TRAN_NEG_TC217                    | 2000      | Plan or Offer Transfer Only Applicable to TRAN   |
       | ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220            | 2000      | Current Plan or Offer Transfer Not Allowed       |
 
+
+  @GetEligiblePlansAndOffersTransferWithSearchAccounts_1 @NegativeFlow @Phase1
+  Scenario Outline: Verify ServiceTransfer GetEligiblePlansAndOffers from SearchAccounts response with invalid parameters "<testCondition>"
+    When a request is made to the SearchAccounts Api ServiceTransfer with transactionType for "<testCondition>" condition
+    And response should have ErrorCode 0 and ErrorMessage ""
+    Then a request is made to the GetEligiblePlansAndOffers Api from SearchAccounts response for external cases for "<testCondition>" condition
+    And verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                               | errorCode | errorMessage                                     |
+      | ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198           | 2200      | enrollmentState: Parameter Value should be null  |

@@ -169,19 +169,17 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void a_request_to_get_eligible_plans_and_offfers_for_incomplete_enrollment(String testCondition){
         getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersPrevSavedIncompleteEnrollment(get_eligible_plans_and_offers, valueOf(testCondition));
     }
+
     @When("a request is made to the GetEligiblePlansAndOffers Api with {string} promotionCode for {string} condition")
     public void PositiveEligiblePlansAndOffersWithPromotionCodeApi(String promotionCode, String testCondition) {
         getEligiblePlansAndOffersApiPage.validatePositiveTestConditionsPromotionCodeFromExcelData(get_eligible_plans_and_offers, GlobalEnums.PromotionCode.valueOf(promotionCode), valueOf(testCondition));
     }
+
     @When("a request is made to the GetEligiblePlansAndOffers Api for {string} condition")
     public void PositiveEligiblePlansAndOffersApi(String testCondition) {
         getEligiblePlansAndOffersApiPage.validatePositiveWithNoPromotionCodeTestConditionsFromExcelData(get_eligible_plans_and_offers, valueOf(testCondition));
     }
 
-    @When("a request is made to the GetEligiblePlansAndOffers Api from SearchAccounts response for {string} condition")
-    public void SendEligiblePlansAndOffersFromSearchAccountsResponse(String testCondition) {
-        getEligiblePlansAndOffersApiPage.sendGetEligiblePlansAndOffersForTransferFromSearchAccountsResponse(get_eligible_plans_and_offers, valueOf(testCondition));
-    }
     @Then("the response should contain the expected plans")
     public void verifyEligibleResponsePlans() {
         getEligiblePlansAndOffersApiPage.verifyResponsePlans();
@@ -195,6 +193,4 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void databaseValidation(String testCondition){
         getEligiblePlansAndOffersApiPage.verifyEntriesIAllTables(valueOf(testCondition));
     }
-
-
 }

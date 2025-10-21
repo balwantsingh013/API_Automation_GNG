@@ -1,7 +1,6 @@
 package com.gng.api.pages.serviceTransfer.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
 import com.gng.api.pages.BasePage;
-import com.gng.api.pages.serviceTransfer.ServiceOrdersPages.GetEligiblePlansAndOffersPage.GetEligiblePlansAndOffersHelper;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -19,7 +18,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         this.helper = new GetEligiblePlansAndOffersHelper(testContext);
     }
 
-
     public void seedDataNegativeTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setParametersSeedingDataBasedOnTypeNegative(payload, testCondition);
@@ -28,7 +26,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
         testContext.setResponse(response);
-
     }
 
     public void validateNegativeTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
@@ -39,6 +36,15 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
         testContext.setResponse(response);
+    }
 
+    public void sendGetEligiblePlansAndOffersForExternalCasesFromSearchAccountsResponse(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnTypeForExternalCasesNegative(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(offersResponse);
     }
 }

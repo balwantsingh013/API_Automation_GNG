@@ -6,21 +6,16 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
-import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
-import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
-import static com.gng.api.constants.GlobalEnums.CreditCheckOption.MULTIPLE_PREMISES_OWNER;
+
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.SERVICE_TRANSFER;
-import static com.gng.api.constants.TestConstant.CUSTOMER_DATA;
-import static com.gng.api.constants.TestConstant.CUSTOMER_SHEET_NAME;
-import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+
 
 @Slf4j
 public class GetEligiblePlansAndOffersHelper {
@@ -40,7 +35,7 @@ public class GetEligiblePlansAndOffersHelper {
 
 
 
-    public void setSupportingDefaultParameters(GetEligiblePlansAndOffersRequest payload) {
+    public void setSupportingDefaultParameters(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         payload.setRequestID(FakerDataGenerator.generateString(12));
         payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
         payload.setReferralCode(null);
@@ -54,106 +49,28 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setServiceTransferOfferRemainder(false);
         payload.setServiceTransferReward(null);
 
-        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-
-        Map<String, Object> uzrrcotRecord = ApplicationContext.get()
-                .getDbAction()
-                .getLatestUZRRCOTRecord();
-
-        payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
-        payload.setPremisesCode(uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-    }
-
-    public void clearNewCustomerRequestFields(GetEligiblePlansAndOffersRequest payload){
-        payload.setSocialSecurityNumber(null);
-        payload.setConfirmCreditCheck(null);
-        payload.setAglcServiceLocationID(null);
-        payload.setPremisesStreetNumber(null);
-        payload.setPremisesStreetPreDirection(null);
-        payload.setPremisesStreetName(null);
-        payload.setPremisesStreetSuffix(null);
-        payload.setPremisesStreetPostDirection(null);
-        payload.setPremisesUnitType(null);
-        payload.setPremisesUnitNumber(null);
-        payload.setPremisesCity(null);
-        payload.setPremisesStateCode(null);
-        payload.setPremisesZipCode(null);
-        payload.setPremisesCountyCode(null);
-        payload.setBillingStreetNumber(null);
-        payload.setBillingStreetPreDirection(null);
-        payload.setBillingStreetName(null);
-        payload.setBillingStreetSuffix(null);
-        payload.setBillingStreetPostDirection(null);
-        payload.setBillingUnitType(null);
-        payload.setBillingUnitNumber(null);
-        payload.setBillingAddressLine2(null);
-        payload.setBillingCity(null);
-        payload.setBillingStateCode(null);
-        payload.setBillingZipCode(null);
-        payload.setBillingCountyCode(null);
-        payload.setMarketingPromotionCode(null);
-        payload.setReferralCode(null);
-        payload.setEmailAddress(null);
-        payload.setHomePhoneNumber(null);
-        payload.setWorkPhoneNumber(null);
-    }
-
-    public void setRequestParamsForTransferFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
-        payload.setPremisesStreetName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetName());
-        payload.setPremisesStreetSuffix(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetSuffix());
-        payload.setPremisesStreetNumber(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetNumber());
-        payload.setPremisesCity(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCity());
-        payload.setPremisesZipCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesZipCode());
-        payload.setPremisesStateCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStateCode());
-
-        String countyCode = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCountyCode();
-        String first4 = countyCode.substring(0, 4);
-        payload.setPremisesCountyCode(first4);
-
-        var acct = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst();
-        String aglcAcct = acct.getAglcAccountNumber();
-
-        payload.setAglcAccountNumber(aglcAcct);
-        String last9 = aglcAcct.substring(Math.max(0, aglcAcct.length() - 9));
-        payload.setAglcServiceLocationID(last9);
-
-        payload.setCreditCheckOption(SERVICE_TRANSFER.getValue());
-        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-        payload.setCustomerCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
-        payload.setPremisesCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode());
-
-    }
-
-    public void setParametersSeedingDataBasedOnTypeNegative(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
-
-        switch (testCondition) {
-
+        switch (testCondition){
             case ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198,
                  ST_GE_ST_CURRENT_TRUE_NOT_TRAN_NEG_TC217,
                  ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220 -> {
-                clearNewCustomerRequestFields(payload);
-                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-                payload.setServiceTransferReward(null);
-                payload.setServiceTransferOfferRemainder(false);
-                payload.setServiceTransferCurrentPricePlan(false);
-                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
-
+                    setNamesFromSearchAccountsResponse(payload);
+                    clearNewCustomerRequestFields(payload);
+                    setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
             }
-            case
-                 ST_GE_ST_CURRENT_TRUE_PLAN_NOT_FIXED_OR_CEILING_NEG_TC215A -> {
-                clearNewCustomerRequestFields(payload);
-                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-                payload.setServiceTransferReward(null);
-                payload.setServiceTransferOfferRemainder(false);
-                payload.setServiceTransferCurrentPricePlan(false);
+            case ST_GE_ST_CURRENT_TRUE_PLAN_NOT_FIXED_OR_CEILING_NEG_TC215A -> {
+                    clearNewCustomerRequestFields(payload);
+                    setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
             }
-            default ->  {}
+            default -> {
+                    Map<String, Object> uzrrcotRecord = ApplicationContext.get().getDbAction().getLatestUZRRCOTRecord();
+                    payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
+                    payload.setPremisesCode(uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
+            }
         }
     }
 
     public void setParametersBasedOnTypeNegative(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
+        setSupportingDefaultParameters(payload, testCondition);
 
         switch (testCondition) {
             case ST_GE_MISSING_REQUEST_ID_NEG_TC188 -> payload.setRequestID(null);
@@ -170,18 +87,9 @@ public class GetEligiblePlansAndOffersHelper {
             case ST_GE_INVALID_TRANSACTION_TYPE_VALUE_NEG_TC197 -> payload.setTransactionType(GlobalEnums.InvalidValues.INVALID_TRANSACTION_TYPE.getValue());
 
             case ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198 -> {
-                setNamesFromSearchAccountsResponse(payload);
-                clearNewCustomerRequestFields(payload);
-                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-                //clearCustomerPremisesTransaction(payload);
-
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
-
                 payload.setTransactionID(null);
                 payload.setServiceTransferReward(null);
-//                payload.setServiceTransferOfferRemainder(true);
-//                payload.setServiceTransferCurrentPricePlan(true);
-
             }
 
             case ST_GE_MISSING_CUSTOMER_CODE_NEG_TC199 -> payload.setCustomerCode(null);
@@ -231,21 +139,92 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setServiceTransferCurrentPricePlan(null);
             }
             case ST_GE_ST_CURRENT_TRUE_NOT_TRAN_NEG_TC217 -> {
-                setNamesFromSearchAccountsResponse(payload);
-                clearNewCustomerRequestFields(payload);
-                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
                 clearCustomerPremisesTransaction(payload);
                 payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
                 payload.setServiceTransferCurrentPricePlan(Boolean.TRUE);
             }
-            case ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220 -> {
-                setNamesFromSearchAccountsResponse(payload);
-                clearNewCustomerRequestFields(payload);
-                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-                payload.setServiceTransferOfferRemainder(Boolean.TRUE);
-            }
+            case ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220 ->   payload.setServiceTransferOfferRemainder(Boolean.TRUE);
+
             default -> { }
         }
+    }
+
+    public void setParametersBasedOnTypeForExternalCasesNegative(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.getRandomNumericString(12));
+        switch (testCondition) {
+            case ST_SE_INVALID_ENROLLMENT_STATUS_VALUE_TC234,
+                 ST_SE_INVALID_ES_PAYMENT_CONFIRMATION_REQUIRED_TC235,
+                 ST_SE_INVALID_PAYMENT_CONFIRMATION_TC236,
+                 ST_SE_INVALID_SSP_PARTICIPANT_CODE_VALUE_TC237,
+                 ST_SE_SSP_PARTICIPANT_CODE_NOT_REQUIRED_TC238,
+                 ST_SE_MISSING_MARKETER_REFERENCE_CE_TRAN_TC239,
+                 ST_SE_DUPLICATE_MARKETER_REFERENCE_DATA_TC240,
+                 ST_SE_MARKETER_REFERENCE_DATA_INVALID_TYPE_TC242,
+                 ST_SE_MARKETER_REFERENCE_DATA_TOO_LONG_TC243,
+                 ST_SE_MARKETER_REFERENCE_DATA_TOO_SHORT_TC244,
+                 ST_SE_CURRENT_MARKETER_CODE_PROVIDED_TC245,
+                 ST_SE_REQUESTED_TURN_ON_DATE_PROVIDED_TC246,
+                 ST_SE_SERVICE_TRANSFER_REWARD_BOOLEAN_ONLY_TC247,
+                 ST_SE_CURRENT_PRICE_PLAN_FIXED_BOOLEAN_ONLY_TC248,
+                 ST_SE_CURRENT_PRICE_PLAN_CEILING_BOOLEAN_ONLY_TC249,
+                 ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+            }
+            case ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+            }
+
+            default -> { }
+        }
+    }
+
+    public void setParametersSeedingDataBasedOnTypeNegative(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+
+        switch (testCondition) {
+            case ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+            }
+            default ->  {}
+        }
+    }
+
+    public void setRequestParamsForTransferFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        payload.setPremisesStreetName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetName());
+        payload.setPremisesStreetSuffix(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetSuffix());
+        payload.setPremisesStreetNumber(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetNumber());
+        payload.setPremisesCity(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCity());
+        payload.setPremisesZipCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesZipCode());
+        payload.setPremisesStateCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStateCode());
+
+        String countyCode = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCountyCode();
+        String first4 = countyCode.substring(0, 4);
+        payload.setPremisesCountyCode(first4);
+
+        var acct = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst();
+        String aglcAcct = acct.getAglcAccountNumber();
+
+        payload.setAglcAccountNumber(aglcAcct);
+        String last9 = aglcAcct.substring(Math.max(0, aglcAcct.length() - 9));
+        payload.setAglcServiceLocationID(last9);
+
+        payload.setCreditCheckOption(SERVICE_TRANSFER.getValue());
+        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+        payload.setCustomerCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
+        payload.setPremisesCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode());
+
     }
 
     public void setNamesFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload){
@@ -259,4 +238,39 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setPremisesCode(null);
         payload.setTransactionID(null);
     }
+
+    public void clearNewCustomerRequestFields(GetEligiblePlansAndOffersRequest payload){
+        payload.setSocialSecurityNumber(null);
+        payload.setConfirmCreditCheck(null);
+        payload.setAglcServiceLocationID(null);
+        payload.setPremisesStreetNumber(null);
+        payload.setPremisesStreetPreDirection(null);
+        payload.setPremisesStreetName(null);
+        payload.setPremisesStreetSuffix(null);
+        payload.setPremisesStreetPostDirection(null);
+        payload.setPremisesUnitType(null);
+        payload.setPremisesUnitNumber(null);
+        payload.setPremisesCity(null);
+        payload.setPremisesStateCode(null);
+        payload.setPremisesZipCode(null);
+        payload.setPremisesCountyCode(null);
+        payload.setBillingStreetNumber(null);
+        payload.setBillingStreetPreDirection(null);
+        payload.setBillingStreetName(null);
+        payload.setBillingStreetSuffix(null);
+        payload.setBillingStreetPostDirection(null);
+        payload.setBillingUnitType(null);
+        payload.setBillingUnitNumber(null);
+        payload.setBillingAddressLine2(null);
+        payload.setBillingCity(null);
+        payload.setBillingStateCode(null);
+        payload.setBillingZipCode(null);
+        payload.setBillingCountyCode(null);
+        payload.setMarketingPromotionCode(null);
+        payload.setReferralCode(null);
+        payload.setEmailAddress(null);
+        payload.setHomePhoneNumber(null);
+        payload.setWorkPhoneNumber(null);
+    }
+
 }

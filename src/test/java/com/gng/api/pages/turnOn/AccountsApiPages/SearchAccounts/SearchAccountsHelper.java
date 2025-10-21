@@ -750,11 +750,17 @@ public class SearchAccountsHelper {
                  ST_SE_REQUESTED_TURN_ON_DATE_PROVIDED_TC246,
                  ST_SE_SERVICE_TRANSFER_REWARD_BOOLEAN_ONLY_TC247,
                  ST_SE_CURRENT_PRICE_PLAN_FIXED_BOOLEAN_ONLY_TC248,
-                 ST_SE_CURRENT_PRICE_PLAN_CEILING_BOOLEAN_ONLY_TC249,
-                 ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250:
+                 ST_SE_CURRENT_PRICE_PLAN_CEILING_BOOLEAN_ONLY_TC249:
+
                 List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerWithServiceTransferEnrollment();
                 payload.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
                 payload.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                break;
+            case ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250:
+                customerData = ApplicationContext.get().getDbAction()
+                        .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.MVS.getValue());
+                setCustomerInfo(payload, customerData);
                 payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
                 break;
 

@@ -301,17 +301,6 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         testContext.setResponse(offersResponse);
     }
 
-    public void sendGetEligiblePlansAndOffersForTransferFromSearchAccountsResponse(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
-        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        helper.setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);
-        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
-        testContext.setResponse(offersResponse);
-    }
-
     public void verifyResponsePlans(){
         helper.verifyResidentialPlansReceivedAgainstDatabase();
     }

@@ -1,6 +1,5 @@
 package com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.SaveEnrollment;
 import com.gng.api.pojo.TestContext.TestContext;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import com.gng.api.pages.serviceTransfer.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApiPage;
@@ -23,13 +22,9 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateInvalidParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
-    @When("a request is made to the SaveEnrollment Api with valid parameters for {string} condition")
+    @When("a request is made to the SaveEnrollment Api for serviceTransfer for external calls with valid parameters for {string} condition")
     public void sendValidRequest(String testCondition) {
-        saveEnrollmentApiPage.validatePositiveConditions(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
+        saveEnrollmentApiPage.validateExternalConditions(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
-//    @Then("verify SaveEnrollment response against expected results")
-//    public void verifyResponse() {
-//        saveEnrollmentApiPage.verifySaveEnrollmentResults();
-//    }
 }
