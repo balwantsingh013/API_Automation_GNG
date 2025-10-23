@@ -185,7 +185,7 @@ public class SaveEnrollmentHelper {
                         .getLatestUZRRCOTRecord();
                 payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
                 payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID").toString());
+                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
             }
         }
     }
