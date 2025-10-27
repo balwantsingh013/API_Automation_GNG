@@ -1,6 +1,6 @@
 package com.gng.api.db;
 
-import com.gng.api.report.ExtentReportManager;
+import com.gng.api.report.SimplifiedExtentReportManager;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -417,12 +417,12 @@ public class DBAction {
     public void rollBackQuery(String user) {
         String query = DBQuery.ROLLBACK_QUERIES;
         String formattedQuery = query.replace("?", "'" + user + "'");
-        ExtentReportManager.logInfoToReport("Executing Rollback Query: {}" + formattedQuery);
+        //ExtentReportManager.logInfoToReport("Executing Rollback Query: {}" + formattedQuery);
         log.info("Executing Rollback Query: {}", formattedQuery);
         logQueryInAllure("Rollback Query", formattedQuery);
         int rowsUpdated = jdbcTemplate.update(query, user);
         log.info("Rollback executed for user: {} | Rows affected: {}", user, rowsUpdated);
-        ExtentReportManager.logInfoToReport("Rollback executed for user: {} | Rows affected: {}" +" " +user +" "+ rowsUpdated);
+        //ExtentReportManager.logInfoToReport("Rollback executed for user: {} | Rows affected: {}" +" " +user +" "+ rowsUpdated);
     }
 
 
@@ -967,10 +967,46 @@ public class DBAction {
     }
 
     public List<Map<String, Object>> getValidationPlansAndOffers(String controlNum) {
-        String query = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT
-                .replace("<controlNumber>", controlNum);
-        logQueryInAllure("Get ValidationPlansAndOffersResult", query);
-        return jdbcTemplate.queryForList(query);
+        long startTime = System.currentTimeMillis();
+        String template = DBQuery.GET_VALIDATION_PLANS_AND_OFFERS_RESULT;
+
+        // Build the final SQL with the actual controlNum value, properly quoted or NULL
+        String expandedSql = template.replace(
+                "<controlNumber>",
+                controlNum == null
+                        ? "NULL"
+                        : "'" + controlNum.replace("'", "''") + "'"
+        );
+
+        List<Map<String, Object>> result;
+        try {
+            // Execute the query
+            result = jdbcTemplate.queryForList(expandedSql);
+
+            // Calculate execution time
+            long elapsed = System.currentTimeMillis() - startTime;
+
+            // Log SQL, results, and timing in ExtentReports
+            SimplifiedExtentReportManager.logDatabaseQuery(
+                    expandedSql,
+                    result.toString(),
+                    elapsed
+            );
+        } catch (Exception e) {
+            long elapsed = System.currentTimeMillis() - startTime;
+
+            // Log SQL, error, and timing in ExtentReports
+            SimplifiedExtentReportManager.logDatabaseQuery(
+                    expandedSql,
+                    null,
+                    elapsed,
+                    false,
+                    e.getMessage()
+            );
+            throw e;
+        }
+
+        return result;
     }
 
     public List<Map<String, Object>> getValidationPrepayPlans(String transactionId) {

@@ -6,8 +6,11 @@ import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.report.DetailedExtentReportManager;
 import com.gng.api.report.ExtentReportManager;
+import com.gng.api.report.SimplifiedExtentReportManager;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.*;
 
@@ -27,7 +30,7 @@ import static com.gng.api.util.LogUtil.logInfo;
 import static io.restassured.RestAssured.given;
 
 @Slf4j
-public abstract class BasePage  {
+public abstract class BasePage {
     protected final TestContext testContext;
 
     protected BasePage(TestContext testContext) {
@@ -54,9 +57,7 @@ public abstract class BasePage  {
                 .oauth2(token);
     }
 
-
     protected Map<String, String> getApiHeaders() {
-        logInfo("Get Api Headers");
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", "Bearer " + testContext.getAuthToken());
         return requestHeaders;
@@ -76,10 +77,7 @@ public abstract class BasePage  {
         }
     }
 
-
-
     public static <T> T deserializeJsonToPojo(String apiName, Class<T> clazz) {
-        logInfo("Deserializing JSON for API: {}"+ apiName);
         return deserializeJson(apiName, clazz);
     }
 
@@ -87,10 +85,8 @@ public abstract class BasePage  {
         ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION).build());
         try {
             String path = PATH_PAYLOAD + apiName + "." + JSON;
-            logInfo("Reading JSON file: {}"+ path);
             return mapper.readValue(new File(path), clazz);
         } catch (IOException e) {
-            logError("Error deserializing JSON: {}"+ e.getMessage());
             throw new RuntimeException("Failed to deserialize JSON file: " + apiName, e);
         }
     }
@@ -130,6 +126,10 @@ public abstract class BasePage  {
                 throw new IllegalArgumentException("Invalid HTTP method: " + requestType);
             }
 
+            // Add request details to report BEFORE making request
+            SimplifiedExtentReportManager.addRequestDetailsToReport(getRequestSpec());
+            DetailedExtentReportManager.addRequestDetailsToReport(getRequestSpec());
+
             // Make the request
             Response response = given()
                     .when()
@@ -139,8 +139,11 @@ public abstract class BasePage  {
                     .extract()
                     .response();
 
-            // Log and validate the response
+            // Add response details to report AFTER receiving response
             ExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
+            DetailedExtentReportManager.addResponseDetailsToReport(response, expectedStatusCode);
+
+            // Validate status code
             response.then().statusCode(expectedStatusCode);
 
             logInfo(requestType + " request to " + uri + " completed successfully.");
@@ -165,4 +168,3 @@ public abstract class BasePage  {
         };
     }
 }
-

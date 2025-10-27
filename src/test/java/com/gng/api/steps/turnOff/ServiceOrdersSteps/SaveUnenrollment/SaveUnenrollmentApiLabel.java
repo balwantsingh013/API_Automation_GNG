@@ -6,9 +6,9 @@ public enum SaveUnenrollmentApiLabel {
     save_unenrollment_mandatory,
 
     // Request ID Types
-    REQUEST_ID_EMPTY_NEGATIVE_TC106,
-    REQUEST_ID_MAX_LENGTH_NEGATIVE_TC107,
-    REQUEST_ID_DUPLICATE_NEGATIVE_TC108,
+    Missing_request_id_TC_106,
+    Invalid_length_of_request_id_TC_107,
+    Duplicate_request_id_TC_108,
 
     // Login ID types
     LOGIN_ID_EMPTY_NEGATIVE_TC109,

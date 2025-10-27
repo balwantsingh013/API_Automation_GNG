@@ -37,13 +37,13 @@ public class SaveUnenrollmentHelper {
 
     public void setRequestAndLoginIDBasedOnType(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
         switch (testCondition) {
-            case REQUEST_ID_EMPTY_NEGATIVE_TC106:
+            case Missing_request_id_TC_106:
                 payload.setRequestID("");
                 break;
-            case REQUEST_ID_MAX_LENGTH_NEGATIVE_TC107:
+            case Invalid_length_of_request_id_TC_107:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(200));
                 break;
-            case REQUEST_ID_DUPLICATE_NEGATIVE_TC108:
+            case Duplicate_request_id_TC_108:
                 payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
                 break;
             case LOGIN_ID_EMPTY_NEGATIVE_TC109:
