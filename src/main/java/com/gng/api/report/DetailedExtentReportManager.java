@@ -12,10 +12,12 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.SpecificationQuerier;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
+import java.util.HashSet;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -1552,87 +1554,9 @@ public class DetailedExtentReportManager {
         extent.flush();
     }
 
-    private static void logFailureDetails(ExtentTest logger, ITestResult result, long executionTime, String threadName) {
-        StringBuilder failureLog = new StringBuilder();
 
-        // Thread information
-        failureLog.append("<div class='thread-info'>");
-        failureLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
-        failureLog.append("</div>");
-
-        // Error section with professional styling
-        failureLog.append("<div class='error-section'>");
-        failureLog.append("<h3>❌ Test Execution Failed</h3>");
-        failureLog.append("<div class='response-time-badge'>⏱️ Execution Time: ").append(executionTime).append(" ms</div><br/>");
-        failureLog.append("<strong>🚨 Error Details:</strong><br/>");
-        failureLog.append("<div style='background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-top: 15px; backdrop-filter: blur(10px);'>");
-        failureLog.append(result.getThrowable().toString());
-        failureLog.append("</div>");
-        failureLog.append("</div>");
-
-        // Add request and response details if enabled
-        if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnFail())) {
-            failureLog.append(getEnhancedRequestDetails());
-            failureLog.append(getEnhancedResponseDetails());
-        }
-
-        logger.fail(failureLog.toString());
-    }
-
-    private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
-        StringBuilder successLog = new StringBuilder();
-
-        // Thread information
-        successLog.append("<div class='thread-info'>");
-        successLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
-        successLog.append("</div>");
-
-        successLog.append("<div class='info-log'>");
-        successLog.append("✅ <strong>Test Passed Successfully</strong>");
-        successLog.append("</div>");
-
-        successLog.append("<div class='response-time-badge'>");
-        successLog.append("⚡ Execution Time: ").append(executionTime).append(" ms");
-        successLog.append("</div><br/>");
-
-        if (Boolean.TRUE.equals(ApplicationContext.get().getEnvConfig().getEnableLogsOnPass())) {
-            successLog.append(getEnhancedRequestDetails());
-            successLog.append(getEnhancedResponseDetails());
-        }
-
-        // Track response time and status codes
-        Response resp = response.get();
-        if (resp != null) {
-            String statusCode = String.valueOf(resp.getStatusCode());
-            statusCodeCounts.merge(statusCode, 1, Integer::sum);
-        }
-
-        logger.pass(successLog.toString());
-    }
-
-    private static void logSkipDetails(ExtentTest logger, long executionTime, String threadName) {
-        StringBuilder skipLog = new StringBuilder();
-
-        // Thread information
-        skipLog.append("<div class='thread-info'>");
-        skipLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
-        skipLog.append("</div>");
-
-        skipLog.append("<div class='warning-log'>");
-        skipLog.append("⏭️ <strong>Test Skipped</strong>");
-        skipLog.append("</div>");
-
-        skipLog.append("<div class='response-time-badge'>");
-        skipLog.append("⏱️ Time: ").append(executionTime).append(" ms");
-        skipLog.append("</div><br/>");
-
-        skipLog.append(getEnhancedRequestDetails());
-
-        logger.skip(skipLog.toString());
-    }
-
-    public static String getEnhancedRequestDetails() {
-        QueryableRequestSpecification reqSpec = qReqSpec.get();
+    // ✅ NEW: Extract request details from QueryableRequestSpecification
+    private static String getEnhancedRequestDetailsFromSpec(QueryableRequestSpecification reqSpec) {
         if (reqSpec == null) {
             return "<div class='info-log'>ℹ️ No API Request - Database Validation Only</div>";
         }
@@ -1646,6 +1570,153 @@ public class DetailedExtentReportManager {
         details.append("<div class='request-detail-item'>");
         details.append("<strong>🌐 Base URI:</strong> ").append(reqSpec.getBaseUri());
         details.append("</div>");
+
+        // Headers
+        if (reqSpec.getHeaders() != null && !reqSpec.getHeaders().toString().isEmpty()) {
+            details.append("<div class='request-detail-item'>");
+            details.append("<strong>📋 Headers:</strong><br/>");
+            details.append("<div class='code-block'>").append(formatJson(reqSpec.getHeaders().toString())).append("</div>");
+            details.append("</div>");
+        }
+
+        // Parameters
+        if (!reqSpec.getRequestParams().isEmpty()) {
+            details.append("<div class='request-detail-item'>");
+            details.append("<strong>🔧 Parameters:</strong><br/>");
+            details.append("<div class='code-block'>").append(formatJson(reqSpec.getRequestParams().toString())).append("</div>");
+            details.append("</div>");
+        }
+
+        // Request Body
+        if (reqSpec.getBody() != null) {
+            details.append("<div class='request-detail-item'>");
+            details.append("<strong>📝 Request Body:</strong><br/>");
+            details.append("<div class='code-block'>").append(formatJson(reqSpec.getBody().toString())).append("</div>");
+            details.append("</div>");
+        }
+
+        details.append("</div></div>");
+        return details.toString();
+    }
+
+    // ✅ NEW: Extract response details from Response object
+    private static String getEnhancedResponseDetailsFromResp(Response resp, int expectedStatus) {
+        if (resp == null) {
+            return "<div class='info-log'>ℹ️ No API Response - Database Validation Only</div>";
+        }
+
+        StringBuilder details = new StringBuilder();
+        details.append("<div class='api-response-section'>");
+        details.append("<h4>📥 API Response Details</h4>");
+        details.append("<div class='collapsible-content'>");
+
+        // Status Code with enhanced color coding
+        details.append("<div class='response-detail-item'>");
+        details.append("<strong>📊 Status Code:</strong> ");
+        details.append(getColorCodedStatus(resp.getStatusCode()));
+        details.append("</div>");
+
+        // Response Time with performance indicator
+        details.append("<div class='response-detail-item'>");
+        details.append("<strong>⏱️ Response Time:</strong> ");
+        details.append(getPerformanceIndicator(resp.getTime()));
+        details.append("</div>");
+
+        // Expected vs Actual Status Comparison
+        if (expectedStatus > 0) {
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>✅ Expected Status:</strong> ");
+            details.append("<span class='status-").append(expectedStatus).append("'>").append(expectedStatus).append("</span>");
+
+            // Add validation result
+            boolean statusMatches = resp.getStatusCode() == expectedStatus;
+            details.append(" | <strong>Validation:</strong> ");
+            if (statusMatches) {
+                details.append("<span style='color: #059669; font-weight: bold;'>✅ PASSED</span>");
+            } else {
+                details.append("<span style='color: #dc2626; font-weight: bold;'>❌ FAILED</span>");
+            }
+            details.append("</div>");
+        }
+
+        // Content Type
+        String contentType = resp.getContentType();
+        if (contentType != null) {
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>📄 Content Type:</strong> ");
+            details.append("<span class='content-type-badge'>").append(contentType).append("</span>");
+            details.append("</div>");
+        }
+
+        // Response Size
+        if (resp.getBody() != null) {
+            String bodyString = resp.getBody().asString();
+            int responseSize = bodyString.getBytes().length;
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>📏 Response Size:</strong> ");
+            details.append("<span class='response-size-badge'>").append(formatBytes(responseSize)).append("</span>");
+            details.append("</div>");
+        }
+
+        // Response Headers with better formatting
+        if (resp.getHeaders() != null && resp.getHeaders().size() > 0) {
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>📋 Response Headers:</strong><br/>");
+            details.append("<div class='code-block'>").append(formatHeaders(resp.getHeaders().toString())).append("</div>");
+            details.append("</div>");
+        }
+
+        // Response Body with JSON validation and formatting
+        if (resp.getBody() != null) {
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>📄 Response Body:</strong><br/>");
+
+            // Try to format as JSON, fallback to plain text
+            String formattedBody = formatResponseBody(resp);
+            details.append("<div class='code-block'>").append(formattedBody).append("</div>");
+            details.append("</div>");
+        }
+
+        // Response Cookies (if any)
+        if (resp.getCookies() != null && !resp.getCookies().isEmpty()) {
+            details.append("<div class='response-detail-item'>");
+            details.append("<strong>🍪 Cookies:</strong><br/>");
+            details.append("<div class='code-block'>");
+            resp.getCookies().forEach((name, value) ->
+                    details.append(name).append(" = ").append(value).append("<br/>")
+            );
+            details.append("</div>");
+            details.append("</div>");
+        }
+
+        details.append("</div></div>");
+        return details.toString();
+    }
+
+    // ✅ MODIFIED: Update addResponseDetailsToReport to log immediately
+    public static void addResponseDetailsToReport(Response resp, int statusCode) {
+        response.set(resp);
+        expectedStatusCode.set(String.valueOf(statusCode));
+
+        // ✅ Log IMMEDIATELY when both request and response are available
+        QueryableRequestSpecification reqSpec = qReqSpec.get();
+        if (reqSpec != null && resp != null) {
+            String endpoint = reqSpec.getURI() != null ? reqSpec.getURI().toString() : "Unknown Endpoint";
+            logApiDetailsOnce(endpoint, reqSpec, resp, statusCode);
+        }
+    }
+
+    public static String getEnhancedRequestDetails() {
+        QueryableRequestSpecification reqSpec = qReqSpec.get();
+        if (reqSpec == null) {
+            return "<div class='info-log'>ℹ️ No API Request - Database Validation Only</div>";
+        }
+
+        StringBuilder details = new StringBuilder();
+        details.append("<div class='api-request-section'>");
+        details.append("<h4>📤 API Request Details</h4>");
+        details.append("<div class='collapsible-content'>");
+
 
         // Headers
         if (reqSpec.getHeaders() != null && !reqSpec.getHeaders().toString().isEmpty()) {
@@ -2174,6 +2245,127 @@ public class DetailedExtentReportManager {
         statsTest.info(stats.toString());
     }
 
+    // ✅ FIXED: Remove duplicate API logging
+
+    // Replace the logFailureDetails method with this:
+    private static void logFailureDetails(ExtentTest logger, ITestResult result, long executionTime, String threadName) {
+        StringBuilder failureLog = new StringBuilder();
+
+        // Thread information
+        failureLog.append("<div class='thread-info'>");
+        failureLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        failureLog.append("</div>");
+
+        // Error section with professional styling
+        failureLog.append("<div class='error-section'>");
+        failureLog.append("<h3>❌ Test Execution Failed</h3>");
+        failureLog.append("<div class='response-time-badge'>⏱️ Execution Time: ").append(executionTime).append(" ms</div><br/>");
+        failureLog.append("<strong>🚨 Error Details:</strong><br/>");
+        failureLog.append("<div style='background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-top: 15px; backdrop-filter: blur(10px);'>");
+        failureLog.append(result.getThrowable().toString());
+        failureLog.append("</div>");
+        failureLog.append("</div>");
+
+        // ✅ FIXED: NO API details added here - already logged during execution
+        logger.fail(failureLog.toString());
+    }
+
+    // Replace the logSuccessDetails method with this:
+    private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
+        StringBuilder successLog = new StringBuilder();
+
+        // Thread information
+        successLog.append("<div class='thread-info'>");
+        successLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        successLog.append("</div>");
+
+        successLog.append("<div class='info-log'>");
+        successLog.append("✅ <strong>Test Passed Successfully</strong>");
+        successLog.append("</div>");
+
+        successLog.append("<div class='response-time-badge'>");
+        successLog.append("⚡ Execution Time: ").append(executionTime).append(" ms");
+        successLog.append("</div>");
+
+        // ✅ FIXED: NO API details added here - already logged during execution
+        logger.pass(successLog.toString());
+    }
+
+    // Replace the logSkipDetails method with this:
+    private static void logSkipDetails(ExtentTest logger, long executionTime, String threadName) {
+        StringBuilder skipLog = new StringBuilder();
+
+        // Thread information
+        skipLog.append("<div class='thread-info'>");
+        skipLog.append("🧵 Thread: ").append(threadName).append(" | ID: ").append(Thread.currentThread().getId());
+        skipLog.append("</div>");
+
+        skipLog.append("<div class='warning-log'>");
+        skipLog.append("⏭️ <strong>Test Skipped</strong>");
+        skipLog.append("</div>");
+
+        skipLog.append("<div class='response-time-badge'>");
+        skipLog.append("⏱️ Time: ").append(executionTime).append(" ms");
+        skipLog.append("</div>");
+
+        // ✅ FIXED: NO API details added here - already logged during execution
+        logger.skip(skipLog.toString());
+    }
+
+    // ✅ BETTER APPROACH: Track actual Response objects to prevent logging same response twice
+    private static final ThreadLocal<Set<Integer>> loggedResponseIdentities = ThreadLocal.withInitial(HashSet::new);
+
+    // Update logApiDetailsOnce to track Response object identity:
+    private static void logApiDetailsOnce(String endpoint, QueryableRequestSpecification reqSpec, Response resp, int statusCode) {
+        ExtentTest logger = extentLogger.get();
+        if (logger == null) {
+            log.warn("No active test logger found");
+            return;
+        }
+
+        // ✅ Use Response object's identity hash - each Response object is unique
+        int responseIdentity = System.identityHashCode(resp);
+
+        // ✅ Check if THIS SPECIFIC Response object was already logged
+        if (loggedResponseIdentities.get().contains(responseIdentity)) {
+            log.debug("This specific Response object already logged, skipping duplicate");
+            return;
+        }
+
+        StringBuilder apiLog = new StringBuilder();
+
+        // Endpoint header
+        apiLog.append("<div class='info-log'>");
+        apiLog.append("🌐 <strong>BaseURI:</strong> ").append(endpoint);
+        apiLog.append("</div>");
+
+        // REQUEST SECTION
+        apiLog.append(getEnhancedRequestDetailsFromSpec(reqSpec));
+
+        // RESPONSE SECTION
+        apiLog.append(getEnhancedResponseDetailsFromResp(resp, statusCode));
+
+        // ✅ Track for statistics
+        statusCodeCounts.merge(String.valueOf(resp.getStatusCode()), 1, Integer::sum);
+
+        // ✅ Log immediately
+        logger.info(apiLog.toString());
+
+        // ✅ Mark THIS Response object as logged
+        loggedResponseIdentities.get().add(responseIdentity);
+
+        log.debug("Logged API call with Response identity: {}", responseIdentity);
+    }
+
+    // Update cleanupThreadLocals to reset the logged responses set:
+    private static void cleanupThreadLocals() {
+        qReqSpec.remove();
+        response.remove();
+        expectedStatusCode.remove();
+        testStartTime.remove();
+        loggedResponseIdentities.remove(); // ✅ Clear the logged response identities
+    }
+
     public static synchronized void flushReports() {
         log.info("📊 Publishing Professional Extent Reports with Timeline Fix");
 
@@ -2201,17 +2393,6 @@ public class DetailedExtentReportManager {
         }
     }
 
-    public static void addResponseDetailsToReport(Response resp, int statusCode) {
-        response.set(resp);
-        expectedStatusCode.set(String.valueOf(statusCode));
-    }
-
-    private static void cleanupThreadLocals() {
-        qReqSpec.remove();
-        response.remove();
-        expectedStatusCode.remove();
-        testStartTime.remove();
-    }
 
     public static void clearThreadLocals() {
         test.remove();
