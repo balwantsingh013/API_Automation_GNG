@@ -20,7 +20,7 @@ public class GetAccountInfoResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Data {
-        private BigDecimal customerCode;
+        private String customerCode;
         private String premisesCode;
         private String custFirstName;
         private String custMiddleName;
@@ -49,16 +49,16 @@ public class GetAccountInfoResponse {
         private String billingCity;
         private String billingState;
         private String billingZip;
-        private int billedBalance;
-        private int pastDueAmount;
+        private String billedBalance;
+        private String pastDueAmount;
         private String pastDueDate;
         private String billPrintDate;
-        private int billEndAmount;
+        private String billEndAmount;
         private String billDueDate;
-        private int lastPaymentAmount;
+        private String lastPaymentAmount;
         private String lastPaymentDate;
         private String discLetterDate;
-        private int discLetterAmount;
+        private String discLetterAmount;
         private String activePAInd;
         private String recurringCCInd;
         private String bankDraftInd;

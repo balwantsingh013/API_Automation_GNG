@@ -1,18 +1,25 @@
 package com.gng.api.pages.poc.GetAccountInfoPage;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.AccountsPojo.getAccountInfo.GetAccountInfoRequest;
-import com.gng.api.util.CommonUtil;
+import com.gng.api.steps.poc.GetAccountInfo.GetAccountInfoApiLabel;
 import com.gng.api.util.FakerDataGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
-
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-import static com.gng.api.pages.poc.GetAccountInfoPage.GetAccountInfoLabels.*;
+import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
+import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
 import static com.gng.api.util.LogUtil.logInfo;
 
+@Slf4j
 public class GetAccountInfoHelper {
     private final TestContext testContext;
 
@@ -20,106 +27,159 @@ public class GetAccountInfoHelper {
         this.testContext = testContext;
     }
 
-    public GetAccountInfoRequest createAndConfigureRequest(GetAccountInfoLabels apiLabel) {
-        GetAccountInfoRequest request = new GetAccountInfoRequest();
-        return getApiPayload(apiLabel, request);
+    GetAccountInfoRequest preparePayload(GetAccountInfoApiLabel apiLabel) {
+        log.info("Preparing payload for {}", apiLabel);
+        String jsonFileName = apiLabel.equals(GetAccountInfoApiLabel.get_account_info)
+                ? GetAccountInfoApiLabel.get_account_info.toString()
+                : null;
+        return BasePage.deserializeJsonToPojo(jsonFileName, GetAccountInfoRequest.class);
     }
 
-    public GetAccountInfoLabels getMissingParamApiLabel(String missingParam) {
-        return switch (missingParam) {
-            case "RequestID" -> MISSING_REQUEST_ID;
-            case "PremisesCode" -> MISSING_PREM_CODE;
-            case "CustomerCode" -> MISSING_CUSTOMER_CODE;
-            default -> throw new IllegalStateException("Invalid missing param: " + missingParam);
-        };
-    }
-
-    public GetAccountInfoLabels getInvalidLengthApiLabel(String param) {
-        return switch (param) {
-            case "PremCode" -> INVALID_PREM_CODE_LENGTH;
-            case "CustomerCode" -> INVALID_CUSTOMER_CODE_LENGTH;
-            default -> throw new IllegalStateException("Invalid param: " + param);
-        };
-    }
-
-    public void verifyAccountInformationWithDatabase(Map<String, Object> accountInformationDB, Map<String, Object> responseMap) {
-        List<String> keysDB = accountInformationDB.keySet().stream().toList();
-        SoftAssertions softAssert = new SoftAssertions();
-
-        for (String key : keysDB) {
-            Object dbValue = accountInformationDB.get(key);
-            Object responseValue = responseMap.get(key);
-
-            String dbStringValue = String.valueOf(dbValue);
-            String responseStringValue = String.valueOf(responseValue);
-            logInfo("Expected: {}, Actual: {} "+ "DB Value: " +dbValue +" Response Value: "+ responseValue);
-            softAssert.assertThat(responseStringValue)
-                    .as("Field: " + key)
-                    .isEqualTo(dbStringValue);
+    public void verifyAccountInformationWithDatabase() {
+        GetAccountInfoResponse response = testContext.getGetAccountInfoResponse();
+        String status = response.getData().getAccountStatus();
+        String currentPlanType = response.getData().getCurrentPlanType();
+        String rateSchedule = response.getData().getRateSchedule();
+        List<Map<String, Object>> accountInformationDB = ApplicationContext.get().getDbAction()
+                .getAccountInformationResponseHappy(response.getData().getCustomerCode(), status, currentPlanType, rateSchedule);
+        if (accountInformationDB.isEmpty()) {
+            throw new AssertionError("Validation query returned 0 rows for customer " + response.getData().getCustomerCode());
         }
 
+        Map<String, Object> row = accountInformationDB.getFirst();
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> responseMap = mapper.convertValue(response.getData(), new TypeReference<Map<String, Object>>() {});
+
+        logInfo("Database Values: {}"+ row);
+        logInfo("Response Values: {}"+ responseMap);
+
+        SoftAssertions softAssert = new SoftAssertions();
+
+        for (String key : row.keySet()) {
+            Object dbValue = row.get(key);
+            Object responseValue = responseMap.get(key);
+
+            String dbComparable = toComparableString(dbValue);
+            String respComparable = toComparableString(responseValue);
+
+            log.warn("Field: {} | DB: {} | API: {}", key, dbValue, responseValue);
+
+            softAssert.assertThat(respComparable)
+                    .as("Field: " + key)
+                    .isEqualTo(dbComparable);
+        }
         softAssert.assertAll();
     }
 
-
-    public GetAccountInfoRequest getApiPayload(GetAccountInfoLabels apiName, GetAccountInfoRequest request) {
-        logInfo("Get Api Payload");
-        return switch (apiName) {
-            case HAPPY_FLOW -> buildHappyFlowPayload(request);
-            case MISSING_REQUEST_ID -> buildMissingRequestIdPayload(request);
-            case MISSING_PREM_CODE -> buildMissingPremCodePayload(request);
-            case MISSING_CUSTOMER_CODE -> buildMissingCustomerCodePayload(request);
-            case INVALID_CUSTOMER_CODE_LENGTH -> buildInvalidCustomerCodeLengthPayload(request);
-            case INVALID_PREM_CODE_LENGTH -> buildInvalidPremCodeLengthPayload(request);
-            case NONEXISTENT_CUST_PREM_CODE -> buildNonExistentCombinationPayload(request);
-        };
+    private static String toComparableString(Object value) {
+        switch (value) {
+            case null -> {
+                return "";
+            }
+            case CharSequence cs -> {
+                String s = cs.toString().trim();
+                return s.isEmpty() ? "" : s;
+            }
+            case java.util.Date d -> {
+                return new java.text.SimpleDateFormat("yyyyMMdd").format(d);
+            }
+            case java.time.LocalDate ld -> {
+                return ld.toString();
+            }
+            case java.time.LocalDateTime ldt -> {
+                return ldt.toLocalDate().toString();
+            }
+            case java.math.BigDecimal bd -> {
+                return bd.stripTrailingZeros().toPlainString();
+            }
+            case java.math.BigInteger bi -> {
+                return bi.toString();
+            }
+            case Number n -> {
+                try {
+                    java.math.BigDecimal bd = new java.math.BigDecimal(n.toString());
+                    return bd.stripTrailingZeros().toPlainString();
+                } catch (NumberFormatException e) {
+                    return String.valueOf(n);
+                }
+            }
+            default -> {
+            }
+        }
+        return String.valueOf(value);
     }
 
-    private GetAccountInfoRequest buildHappyFlowPayload(GetAccountInfoRequest request) {
-        request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(testContext.getCustomerCode());
-        request.setPremisesCode(testContext.getPremisesCode());
-        return request;
+    public void setParametersBasedOnTypeNegative(GetAccountInfoRequest payload, GetAccountInfoApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(12));
+
+        switch (testCondition) {
+            case MISSING_REQUEST_ID_NEGATIVE_TC15 -> payload.setRequestID(null);
+            case DUPLICATE_REQUEST_ID_NEGATIVE_TC16 ->  payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
+            case MISSING_CUSTOMER_CODE_NEGATIVE_TC17 ->  payload.setCustomerCode(null);
+            case INVALID_CUSTOMER_CODE_LENGTH_NEGATIVE_TC19 -> payload.setCustomerCode(FakerDataGenerator.generateDigits(11));
+            case MISSING_PREMISES_CODE_NEGATIVE_TC18 -> payload.setPremisesCode(null);
+            case INVALID_PREMISES_CODE_LENGTH_NEGATIVE_TC20 -> payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
+            case INVALID_ACCOUNT_COMBINATION_NEGATIVE_TC21 -> {
+                List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerOnPaymentArrangementWithBalanceDetails();
+                payload.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
+            }
+            default -> log.warn("No negative test case implemented for {}", testCondition);
+        }
     }
 
-    private GetAccountInfoRequest buildMissingRequestIdPayload(GetAccountInfoRequest request) {
-        buildHappyFlowPayload(request);
-        CommonUtil.nullifyFields(request, "requestID");
-        return request;
+    public void setParametersBasedOnTypePositive(GetAccountInfoRequest payload, GetAccountInfoApiLabel testCondition) {
+        payload.setRequestID(FakerDataGenerator.generateString(12));
+
+        switch (testCondition) {
+
+            case ACTIVE_WITH_PA_PAST_DUE_POSITIVE_TC22 -> {
+                List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerOnPaymentArrangementWithBalanceDetails();
+
+                payload.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
+            }
+
+            case INACTIVE_WITH_RECURRING_CC_POSITIVE_TC23 -> {
+                Map<String, Object> row = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanType
+                        (GlobalEnums.AccountStatus.INACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
+
+                payload.setCustomerCode(row.get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(row.get(UCRACCT_PREM_CODE).toString());
+            }
+
+            case FINAL_WITH_ABD_POSITIVE_TC24 -> {
+                List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanTypeWithMiddleName
+                        (GlobalEnums.AccountStatus.FINAL_ACCOUNT.getValue(), GlobalEnums.PlanCode.MVS.getValue(), true, true);
+
+                payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());
+            }
+
+            case ACTIVE_DEFAULTED_PA_WITH_BUDGET_POSITIVE_TC25 -> {
+                List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationDefaultedPaBudget();
+
+                payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());
+            }
+
+            case INACTIVE_BAD_DEBT_SONP_DISCLETTERS_POSITIVE_TC26 -> {
+                List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationByStatusWithBadDebt
+                        (GlobalEnums.AccountStatus.INACTIVE.getValue(), "", GlobalEnums.PlanTypeIndicator.VARIABLE_SELECT.getValue(), GlobalEnums.PlanCode.MVS.getValue());
+
+                payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());
+            }
+
+            case NEW_NO_BILLS_YET_POSITIVE_TC27 -> {
+                List<Map<String, Object>> rows = ApplicationContext.get().getDbAction().getCustomerInformationByStatusNoBills
+                        (GlobalEnums.AccountStatus.NOT_ACTIVE_YET.getValue(), "", GlobalEnums.PlanTypeIndicator.GUARANTEED_BILL.getValue(), GlobalEnums.PlanCode.RGB.getValue());
+
+                payload.setCustomerCode(rows.getFirst().get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(rows.getFirst().get(UCRACCT_PREM_CODE).toString());
+            }
+
+            default -> log.warn("No positive mutation implemented for {}", testCondition);
+        }
     }
 
-    private GetAccountInfoRequest buildMissingPremCodePayload(GetAccountInfoRequest request) {
-        request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(testContext.getCustomerCode());
-        CommonUtil.nullifyFields(request, "premisesCode");
-        return request;
-    }
-
-    private GetAccountInfoRequest buildMissingCustomerCodePayload(GetAccountInfoRequest request) {
-        request.setRequestID(UUID.randomUUID().toString());
-        CommonUtil.nullifyFields(request, "customerCode");
-        request.setPremisesCode(testContext.getPremisesCode());
-        return request;
-    }
-
-    private GetAccountInfoRequest buildInvalidCustomerCodeLengthPayload(GetAccountInfoRequest request) {
-        request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(10));
-        request.setPremisesCode(testContext.getPremisesCode());
-        return request;
-    }
-
-    private GetAccountInfoRequest buildInvalidPremCodeLengthPayload(GetAccountInfoRequest request) {
-        request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(testContext.getCustomerCode());
-        request.setPremisesCode(FakerDataGenerator.getRandomNumericString(8));
-        return request;
-    }
-
-    private GetAccountInfoRequest buildNonExistentCombinationPayload(GetAccountInfoRequest request) {
-        request.setRequestID(UUID.randomUUID().toString());
-        request.setCustomerCode(FakerDataGenerator.getRandomNumericString(8));
-        request.setPremisesCode(testContext.getPremisesCode());
-        return request;
-    }
 }

@@ -18,6 +18,258 @@ public final class DBQuery {
                 WHERE ROWNUM = 1
             """;
 
+    public static final String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_WITH_PAYMENT_ARRANGEMENT_PAST_DUE_BALANCE = """            
+              SELECT *
+                   FROM (
+                       SELECT a."UCRACCT_CUST_CODE", a."UCRACCT_PREM_CODE", c.UCRSERV_NUM, u."UABOPEN_BALANCE"
+                       FROM ucracct a
+                       JOIN ucbprem b ON a."UCRACCT_PREM_CODE" = b.ucbprem_code
+                       JOIN ucrserv c ON a."UCRACCT_PREM_CODE" = c.ucrserv_prem_code
+                       JOIN UABOPEN u ON a."UCRACCT_PREM_CODE" = u.UABOPEN_PREM_CODE
+                       WHERE a.ucracct_status_ind = 'A'
+                         AND a.ucracct_cycl_code BETWEEN '01' AND '21'
+                         AND c.ucrserv_num = 1
+                         AND c.ucrserv_status_ind = 'A'
+                         AND u.uabopen_balance > 0
+                       ORDER BY a."UCRACCT_CUST_CODE" DESC
+                   )
+                   WHERE ROWNUM = 1
+            """;
+public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BUDGET = """        
+        WITH flags AS (
+          SELECT
+            a.ucracct_cust_code AS cust_code,
+            a.ucracct_prem_code AS prem_code,
+            CASE WHEN EXISTS (
+                   SELECT 1
+                     FROM uabpyar
+                    WHERE uabpyar_cust_code = a.ucracct_cust_code
+                      AND uabpyar_prem_code = a.ucracct_prem_code
+                      AND uabpyar_status    = 'A'
+                 ) THEN 'Y' ELSE 'N' END AS activePAInd,
+            CASE WHEN NVL(a.ucracct_draft_acct_status,' ') = 'A'
+                 THEN 'Y' ELSE 'N' END AS bankDraftInd,
+            CASE WHEN EXISTS (
+                   SELECT 1
+                     FROM uabbudg
+                    WHERE uabbudg_cust_code  = a.ucracct_cust_code
+                      AND uabbudg_prem_code  = a.ucracct_prem_code
+                      AND uabbudg_status_ind = 'A'
+                 ) THEN 'Y' ELSE 'N' END AS activeBudgetInd
+          FROM ucracct a
+        
+        )
+        SELECT
+          a.ucracct_cust_code,
+          a.ucracct_prem_code,
+          a.ucracct_status_ind AS "accountStatus",
+          f.activePAInd        AS "activePAInd",
+          f.bankDraftInd       AS "bankDraftInd",
+          f.activeBudgetInd    AS "activeBudgetInd",
+          (SELECT MAX(ucrcrhs_occurance_date)
+             FROM ucrcrhs
+            WHERE ucrcrhs_cust_code = a.ucracct_cust_code
+              AND ucrcrhs_prem_code = a.ucracct_prem_code
+              AND ucrcrhs_ccat_code = 'MPAY') AS "lastDefaultPADate"
+        FROM ucracct a
+        JOIN flags f
+          ON f.cust_code = a.ucracct_cust_code
+         AND f.prem_code = a.ucracct_prem_code
+        WHERE a.ucracct_status_ind = 'A'
+          AND f.activeBudgetInd    = 'Y'
+          AND f.activePAInd        = 'N'
+          AND f.bankDraftInd       = 'N'
+          AND EXISTS (
+                SELECT 1
+                  FROM ucrcrhs h
+                 WHERE h.ucrcrhs_cust_code = a.ucracct_cust_code
+                   AND h.ucrcrhs_prem_code = a.ucracct_prem_code
+                   AND h.ucrcrhs_ccat_code = 'MPAY'
+              )
+         ORDER BY a.ucracct_cust_code DESC
+              FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_CUSTOMER_AND_PREMISES_CODE_WITH_SONP_PAST_DUE_BALANCE_BAD_DEBT = """    
+              WITH params AS (
+                    SELECT
+                      ?        AS st,
+                      ?        AS rate_sched,
+                      ?        AS plan_ind,
+                      ?        AS plan_code
+                    FROM dual
+                  )
+                  SELECT
+                    a.ucracct_cust_code,
+                    a.ucracct_prem_code,
+                    a.ucracct_status_ind,
+                    s.ucrserv_num,
+                    s.ucrserv_rate_schedule,
+                    c.ucbcust_first_name,
+                    c.ucbcust_middle_name,
+                    c.ucbcust_last_name,
+                    c.ucbcust_ssn_last_four
+                  FROM ucracct a
+                  JOIN params p       ON 1=1
+                  JOIN ucrserv s      ON s.ucrserv_prem_code = a.ucracct_prem_code AND s.ucrserv_num = 1
+                  JOIN ucbcust c      ON c.ucbcust_cust_code = a.ucracct_cust_code
+                  JOIN ucbprem pr     ON pr.ucbprem_code      = a.ucracct_prem_code
+                  LEFT JOIN uzbenro z ON z.uzbenro_prem_code  = a.ucracct_prem_code
+                  LEFT JOIN uzvplan v ON v.uzvplan_code       = z.uzbenro_price_plan
+                  WHERE a.ucracct_status_ind = p.st
+                    AND (p.rate_sched IS NULL OR s.ucrserv_rate_schedule = p.rate_sched)
+                    AND (p.plan_ind   IS NULL OR v.uzvplan_pltp_ind      = p.plan_ind)
+                    AND (p.plan_code   IS NULL OR v.uzvplan_code      = p.plan_code)
+                    AND (
+                          EXISTS (
+                            SELECT 1
+                            FROM uabopen bo
+                            WHERE bo.uabopen_cust_code = a.ucracct_cust_code
+                              AND bo.uabopen_prem_code = a.ucracct_prem_code
+                              AND NVL(bo.uabopen_bd_balance,0) > 0
+                              AND (bo.uabopen_bad_debt_status_code IS NULL
+                                   OR bo.uabopen_bad_debt_status_code NOT IN ('G','H','N'))
+                          )
+                          OR EXISTS (
+                            SELECT 1
+                            FROM uabbdbt bd
+                            WHERE bd.uabbdbt_cust_code = a.ucracct_cust_code
+                              AND bd.uabbdbt_prem_code = a.ucracct_prem_code
+                          )
+                        )
+                    AND EXISTS (
+                          SELECT 1
+                          FROM ucrcrhs h
+                          WHERE h.ucrcrhs_cust_code = a.ucracct_cust_code
+                            AND h.ucrcrhs_prem_code = a.ucracct_prem_code
+                            AND h.ucrcrhs_ccat_code = 'SONP'
+                            AND h.ucrcrhs_occurance_date <= TRUNC(SYSDATE)
+                        )
+                    AND EXISTS (
+                          SELECT 1
+                          FROM usrletd l
+                          WHERE l.usrletd_actual_cust_code = a.ucracct_cust_code
+                            AND l.usrletd_prem_code        = a.ucracct_prem_code
+                            AND l.usrletd_letr_code        = 'DISCONNECT'
+                            AND l.usrletd_printed_ind      = 'Y'
+                        )
+                  FETCH FIRST 1 ROWS ONLY            
+            """;
+
+
+    public static final String GET_CUSTOMER_AND_PREMISES_CODE_NO_BILLS_YET = """    
+            WITH params AS (
+              SELECT
+                ? AS st,
+                ? AS rate_sched,
+                ? AS plan_ind,
+                ? AS plan_code
+              FROM dual
+            )
+            SELECT
+              a.ucracct_cust_code,
+              a.ucracct_prem_code,
+              a.ucracct_status_ind,
+              s.ucrserv_num,
+              s.ucrserv_rate_schedule,
+              c.ucbcust_first_name,
+              c.ucbcust_middle_name,
+              c.ucbcust_last_name,
+              c.ucbcust_ssn_last_four
+            FROM ucracct a
+            JOIN params p         ON 1 = 1
+            JOIN ucbcust c        ON c.ucbcust_cust_code = a.ucracct_cust_code
+            JOIN ucbprem pr       ON pr.ucbprem_code      = a.ucracct_prem_code
+            LEFT JOIN ucrserv s   ON s.ucrserv_cust_code  = a.ucracct_cust_code
+                                 AND s.ucrserv_prem_code  = a.ucracct_prem_code
+                                 AND s.ucrserv_num        = 1
+            LEFT JOIN uzbenro z   ON z.uzbenro_cust_code  = a.ucracct_cust_code
+                                 AND z.uzbenro_prem_code  = a.ucracct_prem_code
+            LEFT JOIN uzvplan v   ON v.uzvplan_code       = z.uzbenro_price_plan
+            WHERE (p.st IS NULL OR a.ucracct_status_ind = p.st)
+              AND (NULLIF(p.rate_sched,'') IS NULL OR s.ucrserv_rate_schedule = p.rate_sched)
+              AND (p.plan_ind   IS NULL OR v.uzvplan_pltp_ind = p.plan_ind)
+              AND (p.plan_code  IS NULL OR v.uzvplan_code     = p.plan_code)
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM ubbbhst b
+                    WHERE b.ubbbhst_cust_code = a.ucracct_cust_code
+                      AND b.ubbbhst_prem_code = a.ucracct_prem_code
+                  )
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 1 ROWS ONLY
+            
+            """;
+
+    public static final String GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE = """            
+             SELECT
+                 a.ucracct_cust_code,
+                 a.ucracct_prem_code,
+                 a.ucracct_status_ind,
+                 s.ucrserv_num,
+                 s.ucrserv_rate_schedule,
+                 c.ucbcust_first_name,
+                 c.ucbcust_middle_name,
+                 c.ucbcust_last_name,
+                 c.ucbcust_ssn_last_four
+             FROM ucracct a
+             JOIN ucrserv s   ON s.ucrserv_prem_code = a.ucracct_prem_code AND s.ucrserv_num = 1
+             JOIN ucbcust c   ON c.ucbcust_cust_code = a.ucracct_cust_code
+             JOIN ucbprem p   ON p.ucbprem_code      = a.ucracct_prem_code
+             JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
+             WHERE a.ucracct_status_ind = ?
+               AND z.UZBENRO_PRICE_PLAN  = ?
+             ORDER BY DBMS_RANDOM.VALUE
+             FETCH FIRST 1 ROWS ONLY
+            """;
+    public static final String GET_TENANT_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE = """            
+             SELECT
+                 a.ucracct_cust_code,
+                 a.ucracct_prem_code,
+                 a.ucracct_status_ind,
+                 s.ucrserv_num,
+                 s.ucrserv_rate_schedule,
+                 c.ucbcust_first_name,
+                 c.ucbcust_middle_name,
+                 c.ucbcust_last_name,
+                 c.ucbcust_ssn_last_four
+             FROM ucracct a
+             JOIN ucrserv s   ON s.ucrserv_prem_code = a.ucracct_prem_code AND s.ucrserv_num = 1
+             JOIN ucbcust c   ON c.ucbcust_cust_code = a.ucracct_cust_code
+             JOIN ucbprem p   ON p.ucbprem_code      = a.ucracct_prem_code
+             JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
+             WHERE a.ucracct_status_ind = ?
+               AND z.UZBENRO_PRICE_PLAN  = ?
+               AND p.ucbprem_landlord_ind NOT IN ('L')
+            AND  z.uzbenro_enro_status IN ('INCL','ENRO')
+            ORDER BY z.uzbenro_activity_date Desc
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE_WITH_MIDDLE_NAME = """            
+             SELECT
+                 a.ucracct_cust_code,
+                 a.ucracct_prem_code,
+                 a.ucracct_status_ind,
+                 s.ucrserv_num,
+                 s.ucrserv_rate_schedule,
+                 c.ucbcust_first_name,
+                 c.ucbcust_middle_name,
+                 c.ucbcust_last_name,
+                 c.ucbcust_ssn_last_four
+             FROM ucracct a
+             JOIN ucrserv s   ON s.ucrserv_prem_code = a.ucracct_prem_code AND s.ucrserv_num = 1
+             JOIN ucbcust c   ON c.ucbcust_cust_code = a.ucracct_cust_code
+             JOIN ucbprem p   ON p.ucbprem_code      = a.ucracct_prem_code
+             JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
+             WHERE a.ucracct_status_ind = ?
+             AND z.UZBENRO_PRICE_PLAN   = ?
+             <ABD>
+             <middleNameNotNull>
+             ORDER BY DBMS_RANDOM.VALUE
+             FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SONP_NON_MASTER = """
                 SELECT
                     T1.UCRSCMP_CUST_CODE,
@@ -44,6 +296,23 @@ public final class DBQuery {
                   )
                 ORDER BY T1.UCRSCMP_CUST_CODE DESC
                 FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACTIVE_CUSTOMER_WITH_SERVICE_TRANSFER_ENROLLMENT = """
+            SELECT
+              a.ucracct_cust_code,
+                 a.ucracct_prem_code,
+                 a.ucracct_status_ind,
+                 z. UZBENRO_TYPE_CODE    AS typeCode,
+                 z.UZBENRO_ENRO_STATUS  AS status,
+                 z.UZBENRO_ACTIVITY_DATE
+             FROM ucracct a
+             JOIN uzbenro z  ON z.uzbenro_prem_code = a.ucracct_prem_code
+            WHERE z.UZBENRO_TYPE_CODE = 'SETM'
+            AND z.UZBENRO_ENRO_STATUS = 'INCL'
+            
+            ORDER BY z.UZBENRO_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROW ONLY
             """;
 
     public static final String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE_PENDING_REWARDS= """
@@ -668,181 +937,183 @@ public final class DBQuery {
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String GET_ACCOUNT_INFO_API_SUCCESS_RESPONSE_PARAMETERS = "WITH CustPremCode AS (\n" +
-            "    SELECT *\n" +
-            "    FROM (\n" +
-            "        SELECT a.\"UCRACCT_CUST_CODE\" AS custCode, a.\"UCRACCT_PREM_CODE\" AS premCode\n" +
-            "        FROM ucracct a\n" +
-            "        JOIN ucbprem b ON a.\"UCRACCT_PREM_CODE\" = b.ucbprem_code\n" +
-            "        JOIN ucrserv c ON a.\"UCRACCT_PREM_CODE\" = c.ucrserv_prem_code\n" +
-            "        WHERE a.ucracct_status_ind = 'A'\n" +
-            "          AND a.ucracct_cycl_code BETWEEN '01' AND '21'\n" +
-            "          AND c.ucrserv_num = 1\n" +
-            "          AND c.ucrserv_status_ind = 'A'\n" +
-            "        ORDER BY a.\"UCRACCT_CUST_CODE\" DESC\n" +
-            "    )\n" +
-            "    WHERE ROWNUM = 1\n" +
-            ")\n" +
-            "--GetAccountInfo\n" +
-            "SELECT \n" +
-            "    ucracct_cust_code AS \"customerCode\", \n" +
-            "    ucracct_prem_code AS \"premisesCode\", \n" +
-            "    ucbcust_first_name AS \"custFirstName\", \n" +
-            "    ucbcust_middle_name as \"custMiddleName\", \n" +
-            "    ucbcust_last_name AS \"custLastNameBus\",\n" +
-            "    spk_new_acct_pref_util.f_get_acct_status(ucracct_cust_code, ucracct_prem_code) AS \"accountStatus\",\n" +
-            "    (SELECT ucrserv_rate_schedule \n" +
-            "     FROM ucrserv v \n" +
-            "     WHERE v.ucrserv_prem_code = ucbprem.ucbprem_code) AS \"rateSchedule\", \n" +
-            "    ucbcust_ssn_last_four AS \"lastFourSSN\",\n" +
-            "    --Premises Address\n" +
-            "    ucbprem_street_number AS \"premStreetNum\", \n" +
-            "    ucbprem_pdir_code_pre AS \"premStreetPreDir\",\n" +
-            "    ucbprem_street_name AS \"premStreetName\", \n" +
-            "    ucbprem_ssfx_code AS \"premStreetSuffix\", \n" +
-            "    ucbprem_pdir_code_post AS \"premStreetPostDir\", \n" +
-            "    ucbprem_utyp_code AS \"premUnitType\", \n" +
-            "    ucbprem_unit AS \"premUnitNum\", \n" +
-            "    ucbprem_city AS \"premCity\", \n" +
-            "    ucbprem_stat_code_addr AS \"premState\",\n" +
-            "    ucbprem_zipc_code AS \"premZip\", \n" +
-            "    --Service Address\n" +
-            "    ucraddr_street_number AS \"billingStreetNum\", \n" +
-            "    ucraddr_pdir_code_pre AS \"billingStreetPreDir\", \n" +
-            "    ucraddr_street_name AS \"billingStreetName\",\n" +
-            "    ucraddr_ssfx_code AS \"billingStreetSuffix\", \n" +
-            "    ucraddr_pdir_code_post AS \"billingStreetPostDir\", \n" +
-            "    ucraddr_utyp_code AS \"billingUnitType\",\n" +
-            "    ucraddr_unit AS \"billingUnitNum\", \n" +
-            "    ucraddr_city AS \"billingCity\", \n" +
-            "    ucraddr_stat_code AS \"billingState\", \n" +
-            "    ucraddr_zip AS \"billingZip\",\n" +
-            "    --Balances\n" +
-            "    f_calcarbalance(ucracct_cust_code, ucracct_prem_code) AS \"billedBalance\",\n" +
-            "    NVL((SELECT SUM(uabopen_balance) \n" +
-            "         FROM uabopen \n" +
-            "         WHERE uabopen_cust_code = ucracct_cust_code\n" +
-            "         AND uabopen_prem_code = ucracct_prem_code \n" +
-            "         AND uabopen_due_date < TRUNC(SYSDATE)),0) AS \"pastDueAmount\",\n" +
-            "    (SELECT MAX(uabopen_due_date) \n" +
-            "     FROM uabopen \n" +
-            "     WHERE uabopen_cust_code = ucracct_cust_code\n" +
-            "     AND uabopen_prem_code = ucracct_prem_code \n" +
-            "     AND uabopen_due_date < TRUNC(SYSDATE) \n" +
-            "     AND (SELECT SUM(uabopen_balance)\n" +
-            "          FROM uabopen \n" +
-            "          WHERE uabopen_cust_code = ucracct_cust_code \n" +
-            "          AND uabopen_prem_code = ucracct_prem_code\n" +
-            "          AND uabopen_due_date < TRUNC(SYSDATE)) > 0) AS \"pastDueDate\",\n" +
-            "    -- Bill Info\n" +
-            "    (SELECT ubbbhst_printed_date \n" +
-            "     FROM ubbbhst \n" +
-            "     WHERE ubbbhst_cust_code = ucracct_cust_code\n" +
-            "     AND ubbbhst_prem_code = ucracct_prem_code \n" +
-            "     AND ubbbhst_cancel_ind IS NULL \n" +
-            "     AND ubbbhst_tran_num = (SELECT MAX(ubbbhst_tran_num)\n" +
-            "                             FROM ubbbhst \n" +
-            "                             WHERE ubbbhst_cust_code = ucracct_cust_code \n" +
-            "                             AND ubbbhst_prem_code = ucracct_prem_code\n" +
-            "                             AND ubbbhst_cancel_ind IS NULL)) AS \"billPrintDate\",\n" +
-            "    NVL((SELECT ubbbhst_ending_bal \n" +
-            "         FROM ubbbhst\n" +
-            "         WHERE ubbbhst_cust_code = ucracct_cust_code \n" +
-            "         AND ubbbhst_prem_code = ucracct_prem_code \n" +
-            "         AND ubbbhst_cancel_ind IS NULL\n" +
-            "         AND ubbbhst_tran_num = (SELECT MAX(ubbbhst_tran_num) \n" +
-            "                                 FROM ubbbhst \n" +
-            "                                 WHERE ubbbhst_cust_code = ucracct_cust_code \n" +
-            "                                 AND ubbbhst_prem_code = ucracct_prem_code \n" +
-            "                                 AND ubbbhst_cancel_ind IS NULL)),0) AS \"billEndAmount\",\n" +
-            "    (SELECT MAX(uabopen_due_date) \n" +
-            "     FROM uabopen \n" +
-            "     WHERE uabopen_bhst_tran_num = (SELECT MAX(ubbbhst_tran_num)\n" +
-            "                                    FROM ubbbhst \n" +
-            "                                    WHERE ubbbhst_cust_code = ucracct_cust_code \n" +
-            "                                    AND ubbbhst_prem_code = ucracct_prem_code \n" +
-            "                                    AND ubbbhst_cancel_ind IS NULL)) AS \"billDueDate\",\n" +
-            "    -- Payment info\n" +
-            "    NVL((SELECT uabpymt_amount \n" +
-            "         FROM uabpymt \n" +
-            "         WHERE uabpymt_cust_code = ucracct_cust_code \n" +
-            "         AND uabpymt_prem_code = ucracct_prem_code\n" +
-            "         ORDER BY uabpymt_pymt_date DESC \n" +
-            "         FETCH FIRST 1 ROWS ONLY),0) AS \"lastPaymentAmount\",\n" +
-            "    (SELECT MAX(uabpymt_pymt_date) \n" +
-            "     FROM uabpymt \n" +
-            "     WHERE uabpymt_cust_code = ucracct_cust_code \n" +
-            "     AND uabpymt_prem_code = ucracct_prem_code) AS \"lastPaymentDate\",\n" +
-            "    -- Letter info\n" +
-            "    (SELECT usrletd_date_1 \n" +
-            "     FROM usrletd \n" +
-            "     WHERE usrletd_letr_code IN ('DISCONNECT', 'PNS_PREPAID1', 'PNS_PREPAID2')\n" +
-            "     AND usrletd_printed_ind = 'Y' \n" +
-            "     AND usrletd_actual_cust_code = ucracct_cust_code \n" +
-            "     AND usrletd_prem_code = ucracct_prem_code\n" +
-            "     ORDER BY usrletd_date_1 DESC \n" +
-            "     FETCH FIRST 1 ROW ONLY) AS \"discLetterDate\", \n" +
-            "    NVL((SELECT usrletd_amount_1 \n" +
-            "         FROM usrletd \n" +
-            "         WHERE usrletd_letr_code IN ('DISCONNECT', 'PNS_PREPAID1', 'PNS_PREPAID2')\n" +
-            "         AND usrletd_printed_ind = 'Y' \n" +
-            "         AND usrletd_actual_cust_code = ucracct_cust_code \n" +
-            "         AND usrletd_prem_code = ucracct_prem_code\n" +
-            "         ORDER BY usrletd_date_1 DESC \n" +
-            "         FETCH FIRST 1 ROW ONLY),0) AS \"discLetterAmount\",\n" +
-            "    CASE WHEN EXISTS (SELECT DISTINCT 1 \n" +
-            "                      FROM uabpyar \n" +
-            "                      WHERE uabpyar_cust_code = ucracct_cust_code\n" +
-            "                      AND uabpyar_prem_code = ucracct_prem_code \n" +
-            "                      AND uabpyar_status = 'A') THEN 'Y' ELSE 'N' END AS \"activePAInd\",\n" +
-            "    (SELECT  F_DOES_WU_CREDIT_CARD_EXIST(ucracct_cust_code, ucracct_prem_code) \n" +
-            "     FROM dual) AS \"recurringCCInd\",\n" +
-            "    CASE WHEN (NVL(ucracct_draft_acct_status, ' ')) = 'A' THEN 'Y' ELSE 'N' END  AS \"bankDraftInd\",\n" +
-            "    CASE WHEN EXISTS (SELECT DISTINCT 1 \n" +
-            "                      FROM uabbudg \n" +
-            "                      WHERE uabbudg_cust_code = ucracct_cust_code\n" +
-            "                      AND uabbudg_prem_code = ucracct_prem_code \n" +
-            "                      AND uabbudg_status_ind = 'A')  THEN 'Y' ELSE 'N' END AS \"activeBudgetInd\",\n" +
-            "    CASE WHEN EXISTS (SELECT DISTINCT 1  \n" +
-            "                      FROM uabbdbt \n" +
-            "                      WHERE uabbdbt_cust_code = ucracct_cust_code\n" +
-            "                      AND uabbdbt_prem_code = ucracct_prem_code) THEN 'Y' ELSE 'N' END AS \"badDebtInd\",\n" +
-            "    f_does_active_home_sol_exist(4623528,'4630846') AS \"activeWarrantyInd\",\n" +
-            "    (SELECT MAX(ucrcrhs_occurance_date) \n" +
-            "     FROM ucrcrhs \n" +
-            "     WHERE ucrcrhs_cust_code = ucracct_cust_code\n" +
-            "     AND ucrcrhs_prem_code = ucracct_prem_code \n" +
-            "     AND ucrcrhs_ccat_code = 'MPAY' \n" +
-            "     AND ucrcrhs_occurance_date <= TRUNC(SYSDATE)) AS \"lastDefaultPADate\",\n" +
-            "    (SELECT MAX(ucrcrhs_occurance_date) \n" +
-            "     FROM ucrcrhs \n" +
-            "     WHERE ucrcrhs_cust_code = ucracct_cust_code\n" +
-            "     AND ucrcrhs_prem_code = ucracct_prem_code \n" +
-            "     AND ucrcrhs_ccat_code = 'SONP' \n" +
-            "     AND ucrcrhs_occurance_date <= TRUNC(SYSDATE))  AS \"lastSONPDate\",\n" +
-            "    (SELECT MAX(ucrcrhs_occurance_date) \n" +
-            "     FROM ucrcrhs \n" +
-            "     WHERE ucrcrhs_cust_code = ucracct_cust_code\n" +
-            "     AND ucrcrhs_prem_code = ucracct_prem_code \n" +
-            "     AND ucrcrhs_ccat_code = 'PREC' \n" +
-            "     AND ucrcrhs_occurance_date <= TRUNC(SYSDATE)) AS \"lastPreCollDate\"\n" +
-            "FROM \n" +
-            "    ucracct, \n" +
-            "    ucbcust, \n" +
-            "    ucbprem, \n" +
-            "    ucraddr, \n" +
-            "    CustPremCode\n" +
-            "WHERE \n" +
-            "    ucracct.ucracct_cust_code = CustPremCode.custCode\n" +
-            "    AND ucracct.ucracct_prem_code = CustPremCode.premCode\n" +
-            "    AND ucbprem.ucbprem_code = ucracct.ucracct_prem_code\n" +
-            "    AND ucbcust.ucbcust_cust_code = ucracct.ucracct_cust_code\n" +
-            "    AND ucraddr.ucraddr_cust_code = ucbcust.ucbcust_cust_code \n" +
-            "    AND ucraddr.ucraddr_status_ind = 'A'\n" +
-            "ORDER BY \n" +
-            "    ucracct.ucracct_status_ind ASC, \n" +
-            "    ucracct.ucracct_established_date DESC, \n" +
-            "    ucracct.ucracct_cust_code ASC\n";
+    public static final String GET_ACCOUNT_INFO_RESPONSE_BY_CUSTOMER_CODE_AND_STATUS = """
+            WITH params AS (
+              SELECT
+                CAST(? AS VARCHAR2(20))  AS cust_code,
+                CAST(? AS CHAR(1))       AS st,
+                CAST(? AS VARCHAR2(30))  AS rate_sched,
+                CAST(? AS CHAR(1))       AS plan_ind
+              FROM dual
+            ),
+              cust_prem AS (
+                SELECT a.ucracct_cust_code AS cust_code,
+                       a.ucracct_prem_code AS prem_code
+                FROM   ucracct a
+                JOIN   params p ON p.cust_code = a.ucracct_cust_code
+                WHERE  a.ucracct_status_ind = p.st
+              ),
+              bill_last AS (
+                SELECT ubbbhst_cust_code AS cust_code,
+                       ubbbhst_prem_code AS prem_code,
+                       ubbbhst_printed_date AS bill_print_date,
+                       ubbbhst_ending_bal   AS bill_end_amount,
+                       ubbbhst_tran_num,
+                       ROW_NUMBER() OVER (
+                         PARTITION BY ubbbhst_cust_code, ubbbhst_prem_code
+                         ORDER BY ubbbhst_tran_num DESC
+                       ) AS rn
+                FROM   ubbbhst
+                WHERE  ubbbhst_cancel_ind IS NULL
+              ),
+              pay_last AS (
+                SELECT uabpymt_cust_code AS cust_code,
+                       uabpymt_prem_code AS prem_code,
+                       uabpymt_pymt_date AS last_payment_date,
+                       uabpymt_amount    AS last_payment_amount,
+                       ROW_NUMBER() OVER (
+                         PARTITION BY uabpymt_cust_code, uabpymt_prem_code
+                         ORDER BY uabpymt_pymt_date DESC
+                       ) AS rn
+                FROM   uabpymt
+              ),
+              letter_last AS (
+                SELECT usrletd_actual_cust_code AS cust_code,
+                       usrletd_prem_code        AS prem_code,
+                       usrletd_date_1           AS disc_letter_date,
+                       usrletd_amount_1         AS disc_letter_amount,
+                       ROW_NUMBER() OVER (
+                         PARTITION BY usrletd_actual_cust_code, usrletd_prem_code
+                         ORDER BY usrletd_date_1 DESC
+                       ) AS rn
+                FROM   usrletd
+                WHERE  usrletd_letr_code IN ('DISCONNECT','PNS_PREPAID1','PNS_PREPAID2')
+                  AND  usrletd_printed_ind = 'Y'
+              ),
+              past_due AS (
+                SELECT uabopen_cust_code AS cust_code,
+                       uabopen_prem_code AS prem_code,
+                       SUM(uabopen_balance) AS past_due_amount,
+                       MAX(uabopen_due_date) AS raw_due_date
+                FROM   uabopen
+                WHERE  uabopen_due_date < TRUNC(SYSDATE)
+                GROUP  BY uabopen_cust_code, uabopen_prem_code
+              ),
+              flags AS (
+                SELECT a.ucracct_cust_code AS cust_code,
+                       a.ucracct_prem_code AS prem_code,
+                       CASE WHEN EXISTS (
+                              SELECT 1 FROM uabpyar
+                               WHERE uabpyar_cust_code = a.ucracct_cust_code
+                                 AND uabpyar_prem_code = a.ucracct_prem_code
+                                 AND uabpyar_status    = (SELECT st FROM params)
+                            ) THEN 'Y' ELSE 'N' END AS active_pa_ind,
+                       CASE WHEN NVL(a.ucracct_draft_acct_status,' ') = (SELECT st FROM params)
+                            THEN 'Y' ELSE 'N' END AS bank_draft_ind,
+                       CASE WHEN EXISTS (
+                              SELECT 1 FROM uabbudg
+                               WHERE uabbudg_cust_code  = a.ucracct_cust_code
+                                 AND uabbudg_prem_code  = a.ucracct_prem_code
+                                 AND uabbudg_status_ind = (SELECT st FROM params)
+                            ) THEN 'Y' ELSE 'N' END AS active_budget_ind,
+                       CASE WHEN EXISTS (
+                              SELECT 1 FROM uabbdbt
+                               WHERE uabbdbt_cust_code = a.ucracct_cust_code
+                                 AND uabbdbt_prem_code = a.ucracct_prem_code
+                            ) THEN 'Y' ELSE 'N' END AS bad_debt_ind,
+                       (SELECT F_DOES_WU_CREDIT_CARD_EXIST(a.ucracct_cust_code, a.ucracct_prem_code)
+                          FROM dual) AS recurring_cc_ind
+                FROM   ucracct a
+              )
+              SELECT
+                a.ucracct_cust_code                                           AS "customerCode",
+                a.ucracct_prem_code                                           AS "premisesCode",
+                c.ucbcust_first_name                                          AS "custFirstName",
+                c.ucbcust_middle_name                                         AS "custMiddleName",
+                c.ucbcust_last_name                                           AS "custLastNameBus",
+                spk_new_acct_pref_util.f_get_acct_status(a.ucracct_cust_code, a.ucracct_prem_code) AS "accountStatus",
+                vs.ucrserv_rate_schedule                                      AS "rateSchedule",
+                c.ucbcust_ssn_last_four                                       AS "lastFourSSN",
+                p.ucbprem_street_number                                       AS "premStreetNum",
+                p.ucbprem_pdir_code_pre                                       AS "premStreetPreDir",
+                p.ucbprem_street_name                                         AS "premStreetName",
+                p.ucbprem_ssfx_code                                           AS "premStreetSuffix",
+                p.ucbprem_pdir_code_post                                      AS "premStreetPostDir",
+                p.ucbprem_utyp_code                                           AS "premUnitType",
+                p.ucbprem_unit                                                AS "premUnitNum",
+                p.ucbprem_city                                                AS "premCity",
+                p.ucbprem_stat_code_addr                                      AS "premState",
+                p.ucbprem_zipc_code                                           AS "premZip",
+                adr.ucraddr_street_number                                     AS "billingStreetNum",
+                adr.ucraddr_pdir_code_pre                                     AS "billingStreetPreDir",
+                adr.ucraddr_street_name                                       AS "billingStreetName",
+                adr.ucraddr_ssfx_code                                         AS "billingStreetSuffix",
+                adr.ucraddr_pdir_code_post                                    AS "billingStreetPostDir",
+                adr.ucraddr_utyp_code                                         AS "billingUnitType",
+                adr.ucraddr_unit                                              AS "billingUnitNum",
+                adr.ucraddr_city                                              AS "billingCity",
+                adr.ucraddr_stat_code                                         AS "billingState",
+                adr.ucraddr_zip                                               AS "billingZip",
+                CAST(f_calcarbalance(a.ucracct_cust_code, a.ucracct_prem_code) AS NUMBER(18,2)) AS "billedBalance",
+                CAST(NVL(pd.past_due_amount, 0) AS NUMBER(18,2))                                  AS "pastDueAmount",
+                CASE WHEN NVL(pd.past_due_amount,0) > 0 THEN pd.raw_due_date ELSE NULL END        AS "pastDueDate",
+                bl.bill_print_date                                                                AS "billPrintDate",
+                CAST(NVL(bl.bill_end_amount, 0) AS NUMBER(18,2))                                   AS "billEndAmount",
+                (SELECT MAX(uabopen_due_date)
+                   FROM uabopen
+                  WHERE uabopen_bhst_tran_num = bl.ubbbhst_tran_num)                               AS "billDueDate",
+                CAST(NVL(py.last_payment_amount, 0) AS NUMBER(18,2))                               AS "lastPaymentAmount",
+                py.last_payment_date                                                               AS "lastPaymentDate",
+                lt.disc_letter_date                                                                AS "discLetterDate",
+                CAST(NVL(lt.disc_letter_amount, 0) AS NUMBER(18,2))                                AS "discLetterAmount",
+                fl.active_pa_ind                                                                   AS "activePAInd",
+                fl.recurring_cc_ind                                                                AS "recurringCCInd",
+                fl.bank_draft_ind                                                                  AS "bankDraftInd",
+                fl.active_budget_ind                                                               AS "activeBudgetInd",
+                fl.bad_debt_ind                                                                    AS "badDebtInd",
+                f_does_active_home_sol_exist(a.ucracct_cust_code, a.ucracct_prem_code)             AS "activeWarrantyInd",
+                (SELECT MAX(ucrcrhs_occurance_date) FROM ucrcrhs
+                  WHERE ucrcrhs_cust_code = a.ucracct_cust_code AND ucrcrhs_prem_code = a.ucracct_prem_code
+                    AND ucrcrhs_ccat_code = 'MPAY' AND ucrcrhs_occurance_date <= TRUNC(SYSDATE))   AS "lastDefaultPADate",
+                (SELECT MAX(ucrcrhs_occurance_date) FROM ucrcrhs
+                  WHERE ucrcrhs_cust_code = a.ucracct_cust_code AND ucrcrhs_prem_code = a.ucracct_prem_code
+                    AND ucrcrhs_ccat_code = 'SONP' AND ucrcrhs_occurance_date <= TRUNC(SYSDATE))   AS "lastSONPDate",
+                (SELECT MAX(ucrcrhs_occurance_date) FROM ucrcrhs
+                  WHERE ucrcrhs_cust_code = a.ucracct_cust_code AND ucrcrhs_prem_code = a.ucracct_prem_code
+                    AND ucrcrhs_ccat_code = 'PREC' AND ucrcrhs_occurance_date <= TRUNC(SYSDATE))   AS "lastPreCollDate"
+              FROM cust_prem cp
+              JOIN ucracct a   ON a.ucracct_cust_code = cp.cust_code
+                                AND a.ucracct_prem_code = cp.prem_code
+              JOIN ucbcust c   ON c.ucbcust_cust_code = a.ucracct_cust_code
+              JOIN ucbprem p   ON p.ucbprem_code      = a.ucracct_prem_code
+              JOIN ucraddr adr ON adr.ucraddr_cust_code = c.ucbcust_cust_code
+                                AND adr.ucraddr_status_ind = 'A'
+              LEFT JOIN ucrserv vs  ON vs.ucrserv_prem_code = a.ucracct_prem_code
+                                     AND vs.ucrserv_num       = 1
+              LEFT JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
+              LEFT JOIN uzvplan vp  ON vp.uzvplan_code     = z.uzbenro_price_plan
+              LEFT JOIN bill_last  bl ON bl.cust_code = a.ucracct_cust_code
+                                       AND bl.prem_code = a.ucracct_prem_code
+                                       AND bl.rn = 1
+              LEFT JOIN pay_last   py ON py.cust_code = a.ucracct_cust_code
+                                       AND py.prem_code = a.ucracct_prem_code
+                                       AND py.rn = 1
+              LEFT JOIN letter_last lt ON lt.cust_code = a.ucracct_cust_code
+                                        AND lt.prem_code = a.ucracct_prem_code
+                                        AND lt.rn = 1
+              LEFT JOIN past_due   pd ON pd.cust_code = a.ucracct_cust_code
+                                       AND pd.prem_code = a.ucracct_prem_code
+              LEFT JOIN flags      fl ON fl.cust_code = a.ucracct_cust_code
+                                       AND fl.prem_code = a.ucracct_prem_code
+              WHERE
+                ( NULLIF((SELECT rate_sched FROM params),'') IS NULL
+                  OR vs.ucrserv_rate_schedule = (SELECT rate_sched FROM params) )
+              AND
+                ( (SELECT plan_ind FROM params) IS NULL
+                  OR vp.uzvplan_pltp_ind = (SELECT plan_ind FROM params) )
+              ORDER BY a.ucracct_status_ind, a.ucracct_established_date DESC, a.ucracct_cust_code
+            """;
+
     public static final String SELECT_NOTE_SEQUENCE_NUMBER = """
             SELECT UCBNOTE_SEQ_NUMBER, UCBNOTE_CUST_CODE, UCBNOTE_PREM_CODE
             FROM UCBNOTE WHERE UCBNOTE_SEQ_NUMBER = ?

@@ -551,6 +551,9 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(PREPAY_REQUIRED.getValue());
                 payload.setBillingPlan("B");
                 break;
+            case ST_SE_INVALID_ES_PAYMENT_CONFIRMATION_REQUIRED_TC235:
+                payload.setEnrollmentStatus(SAVE_INCOMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
         }
     }
 

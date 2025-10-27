@@ -293,7 +293,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     public void validatePositiveWithNoPromotionCodeTestConditionsFromExcelData(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         payload.setRequestID(FakerDataGenerator.generateString(10));
-        helper.setRequoteRequestParams(payload, testCondition);
+        helper.setRequestParamsWithoutPromotionCode(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response offersResponse = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(offersResponse, GetEligiblePlansAndOffersResponse.class);

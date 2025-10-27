@@ -289,7 +289,7 @@ public class GetEligiblePlansAndOffersHelper {
             case EMPTY_SEPARATE_BILLING_ADDRESS_TC_259:
                 payload.setSeparateBillingAddress("");
                 break;
-            case BILLING_ADDRESS_TYPE_LENGTH_VALIDATION_TC_260: ;
+            case BILLING_ADDRESS_TYPE_LENGTH_VALIDATION_TC_260:
                 payload.setSeparateBillingAddress(true);
                 payload.setBillingAddressType(FakerDataGenerator.generateString(2));
                 break;
@@ -419,7 +419,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingAddressLine2(FakerDataGenerator.generateString(31));
                 break;
             case BILLING_CITY_LENGTH_VALIDATION_TC_278:
-                payload.setSeparateBillingAddress(true);;
+                payload.setSeparateBillingAddress(true);
                 payload.setBillingCity(FakerDataGenerator.generateString(21));
                 payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
                 break;
@@ -483,7 +483,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetName(FakerDataGenerator.generateString(5));
                 payload.setBillingCity(FakerDataGenerator.generateCity());
                 payload.setBillingStateCode(billingAddressState);
-                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+""+FakerDataGenerator.generateDigits(5));
+                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+FakerDataGenerator.generateDigits(5));
                 payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
                 break;
             case NULL_BILLING_ZIP_CODE_TC_281C:
@@ -1203,11 +1203,11 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case NULL_ACN_STATUS_INDICATOR_TC_300A:
                 payload.setAcnStatusIndicator(null);
-                payload.setTenantLandlord(LANDLORD.getValue());;
+                payload.setTenantLandlord(LANDLORD.getValue());
                 break;
             case NULL_ACN_STATUS_INDICATOR_TC_300B:
                 payload.setAcnStatusIndicator(null);
-                payload.setTenantLandlord(TENANT.getValue());;
+                payload.setTenantLandlord(TENANT.getValue());
                 break;
             case NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE_TC_307:
                 payload.setLoginID(invalidLoginIdForACN);
@@ -1957,7 +1957,7 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public void setRequoteRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void setRequestParamsWithoutPromotionCode(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
     }
