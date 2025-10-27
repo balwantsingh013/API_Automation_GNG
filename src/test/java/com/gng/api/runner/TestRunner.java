@@ -3,7 +3,7 @@ package com.gng.api.runner;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.util.LogUtil;
 import com.gng.api.report.AllureRestAssuredFilter;
-import com.gng.api.report.ExtentReportManager;
+import com.gng.api.report.DualReportManager;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 import io.cucumber.testng.PickleWrapper;
@@ -25,7 +25,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        //tags = "@HappyFlow",
+        //tags = "@CSI",
         plugin = {
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
@@ -42,28 +42,95 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     @BeforeSuite(alwaysRun = true)
-    public void beforeSuite() {
-        log.info("*** Test Suite Setup ***");
+    @Parameters({"generateBothReports"})
+    public void beforeSuite(@Optional("false") String generateBothReports) {
+        log.info("╔═══════════════════════════════════════════════════════════════╗");
+        log.info("║           GNG API TEST SUITE - INITIALIZATION                 ║");
+        log.info("╚═══════════════════════════════════════════════════════════════╝");
 
-        // ✅ SINGLE METHOD TO HANDLE ALL PARALLEL CONFIGURATION
+        // CRITICAL: Set system property FIRST, before any initialization
+//        log.info("🔍 TestNG Parameter 'generateBothReports': {}", generateBothReports);
+//        if ("true".equalsIgnoreCase(generateBothReports)) {
+        System.setProperty("generateBothReports", "true");
+        log.info("✅ System property set: generateBothReports=true");
+//        } else {
+//            log.info("ℹ️ Single report mode (Simplified only)");
+//        }
+
+        // Configure parallel/sequential execution mode
         configureCompleteExecutionMode();
 
         // Log final configuration
         logParallelExecutionConfig();
+
+        // Log report configuration (this will now show correct dual mode status)
+        logReportConfiguration();
 
         // Initialize components
         RestAssured.filters(new AllureRestAssuredFilter());
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
         ApplicationContext.get().loadEnvConfig();
         LogUtil.configureLogging();
-        ExtentReportManager.initialiseExtentReport();
 
-        log.info("*** Test Suite Setup Complete ***");
+        // ✅ Initialize reports - this reads the system property we just set
+        DualReportManager.initialize();
+
+        log.info("✅ Test Suite Setup Complete");
+        log.info("═══════════════════════════════════════════════════════════════\n");
+    }
+
+    @AfterSuite(alwaysRun = true)
+    public void afterSuite() {
+        log.info("\n╔═══════════════════════════════════════════════════════════════╗");
+        log.info("║           GNG API TEST SUITE - TEARDOWN                       ║");
+        log.info("╚═══════════════════════════════════════════════════════════════╝");
+
+        log.info("🔄 Database Connection AutoClosed by JDBCTemplate");
+
+        // Clear thread locals
+        DualReportManager.clearThreadLocals();
+
+        // ✅ Flush reports (both or single based on configuration)
+        DualReportManager.flush();
+
+        testNGCucumberRunner.finish();
+
+        log.info("✅ Test Suite Teardown Complete");
+        log.info("═══════════════════════════════════════════════════════════════\n");
+    }
+
+    @BeforeMethod(alwaysRun = true)
+    public void beforeMethod(Method method, Object[] testData) {
+        setRequestSpec();
+
+        // Extract scenario name safely
+        String scenarioName = extractScenarioNameSafely(method, testData);
+
+        // Log thread information for monitoring
+        logThreadInfo(scenarioName);
+
+        // ✅ Create test using DualReportManager
+        DualReportManager.createTest(scenarioName);
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void afterMethod(ITestResult result) {
+        try {
+            // ✅ Add request and response details to reports using DualReportManager
+            if (getRequestSpec() != null) {
+                DualReportManager.addRequestDetails(getRequestSpec());
+            }
+            DualReportManager.generateReport(result);
+        } catch (Exception e) {
+            log.error("Error in afterMethod: {}", e.getMessage(), e);
+        } finally {
+            removeRequestSpec();
+        }
     }
 
     /**
-     * ✅ COMPLETE EXECUTION MODE CONFIGURATION - HANDLES EVERYTHING
-     * This single method manages all parallel/sequential configuration
+     * Complete execution mode configuration
+     * Handles all parallel/sequential configuration
      */
     private void configureCompleteExecutionMode() {
         // Read runtime properties
@@ -91,7 +158,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     /**
-     * ✅ CONFIGURE PARALLEL EXECUTION - ALL PROPERTIES SET CONSISTENTLY
+     * Configure parallel execution - all properties set consistently
      */
     private void configureParallelExecution(String parallelMode, String threadCount,
                                             String dataProviderThreadCount, String parallelCount) {
@@ -128,7 +195,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     /**
-     * ✅ CONFIGURE SEQUENTIAL EXECUTION - FORCE ALL PARALLEL SETTINGS OFF
+     * Configure sequential execution - force all parallel settings off
      */
     private void configureSequentialExecution() {
         log.info("🔄 Configuring SEQUENTIAL execution...");
@@ -156,45 +223,15 @@ public class TestRunner extends AbstractTestNGCucumberTests {
         log.info("✅ SEQUENTIAL execution configured");
     }
 
-    @AfterSuite(alwaysRun = true)
-    public void afterSuite() {
-        log.info("*** Test Suite Teardown ***");
-        log.info("Database Connection AutoClosed by JDBCTemplate");
-        ExtentReportManager.clearThreadLocals();
-        ExtentReportManager.flushReports();
-        testNGCucumberRunner.finish();
-        log.info("*** Test Suite Teardown Complete ***");
-    }
-
-    @BeforeMethod(alwaysRun = true)
-    public void beforeMethod(Method method, Object[] testData) {
-        setRequestSpec();
-
-        // Extract scenario name safely
-        String scenarioName = extractScenarioNameSafely(method, testData);
-
-        // Log thread information for monitoring
-        logThreadInfo(scenarioName);
-
-        // Create test with clean name
-        ExtentReportManager.createTest(scenarioName);
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void afterMethod(ITestResult result) {
-        ExtentReportManager.addRequestDetailsToReport(getRequestSpec());
-        ExtentReportManager.generateReport(result);
-        removeRequestSpec();
-    }
-
     /**
-     * ✅ ENHANCED: Extract scenario name with timeline safety - PRESERVES EXISTING LOGIC
+     * Extract scenario name with timeline safety
      */
     private String extractScenarioNameSafely(Method method, Object[] testData) {
         String scenarioName = "";
 
         // Extract scenario name from Cucumber PickleWrapper
-        if (testData != null && testData.length > 0 && testData[0] instanceof PickleWrapper pickle) {
+        if (testData != null && testData.length > 0 && testData[0] instanceof PickleWrapper) {
+            PickleWrapper pickle = (PickleWrapper) testData[0];
             scenarioName = pickle.getPickle().getName();
         }
 
@@ -208,7 +245,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     /**
-     * ✅ CLEAN NAME FOR TIMELINE DISPLAY - MINIMAL CHANGES
+     * Clean name for timeline display
      */
     private String cleanNameForTimeline(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -234,7 +271,44 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     }
 
     /**
-     * ✅ ENHANCED LOGGING - SHOWS COMPLETE EXECUTION CONFIGURATION
+     * Log report configuration
+     */
+    private void logReportConfiguration() {
+        String generateBoth = System.getProperty("generateBothReports", "true");
+        boolean isDualMode = "true".equalsIgnoreCase(generateBoth);
+
+        log.info("╔═══════════════════════════════════════════════════════════════╗");
+        log.info("║               REPORT CONFIGURATION                            ║");
+        log.info("╚═══════════════════════════════════════════════════════════════╝");
+        log.info("🔍 System Property: generateBothReports = {}", generateBoth);
+        log.info("🔍 Dual Mode Status: {}", isDualMode);
+
+        if (isDualMode) {
+            log.info("📊 Report Mode: DUAL MODE - Generating BOTH reports");
+            log.info("📄 Will generate:");
+            log.info("   1. GNG-API-Report-Simplified-{datetime}.html");
+            log.info("   2. GNG-API-Report-{datetime}.html");
+            log.info("");
+            log.info("🎯 Simplified Report:");
+            log.info("   ✓ Clean UI, hidden timestamps");
+            log.info("   ✓ Test descriptions, DB queries");
+            log.info("   ✓ Keyboard navigation");
+            log.info("");
+            log.info("🎯 Detailed Report:");
+            log.info("   ✓ Full system info");
+            log.info("   ✓ Thread details, statistics");
+            log.info("   ✓ Status codes, performance");
+        } else {
+            log.info("📊 Report Mode: SINGLE MODE (Simplified)");
+            log.info("📄 File: GNG-API-Report-Simplified-{datetime}.html");
+            log.info("🎯 Features: Clean UI, Keyboard nav");
+        }
+
+        log.info("╚═══════════════════════════════════════════════════════════════╝");
+    }
+
+    /**
+     * Enhanced logging - shows complete execution configuration
      */
     private void logParallelExecutionConfig() {
         String parallelMode = System.getProperty("parallel", "none");
@@ -242,9 +316,9 @@ public class TestRunner extends AbstractTestNGCucumberTests {
         String parallelCount = System.getProperty("parallelcount", "1");
         String dataProviderThreadCount = System.getProperty("dataproviderthreadcount", "1");
 
-        log.info("═══════════════════════════════════════════════════════════════");
-        log.info("               FINAL EXECUTION CONFIGURATION");
-        log.info("═══════════════════════════════════════════════════════════════");
+        log.info("╔═══════════════════════════════════════════════════════════════╗");
+        log.info("║         FINAL EXECUTION CONFIGURATION                        ║");
+        log.info("╚═══════════════════════════════════════════════════════════════╝");
         log.info("🔧 Parallel Mode: {}", parallelMode);
         log.info("🧵 Thread Count: {}", threadCount);
         log.info("📊 Parallel Count: {}", parallelCount);
@@ -253,24 +327,24 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
         if ("none".equalsIgnoreCase(parallelMode) || "1".equals(threadCount)) {
             log.info("🔄 Execution Mode: SEQUENTIAL");
-            log.info("📝 All tests will run one after another");
+            log.info("📝 All tests run one after another");
         } else {
             log.info("🚀 Execution Mode: PARALLEL");
-            log.info("⚡ Expected Performance Improvement: {}x",
+            log.info("⚡ Expected Improvement: {}x",
                     Math.min(Integer.parseInt(threadCount), Runtime.getRuntime().availableProcessors()));
             log.info("🎯 Max Concurrent Tests: {}",
                     Integer.parseInt(threadCount) * Integer.parseInt(dataProviderThreadCount));
         }
-        log.info("═══════════════════════════════════════════════════════════════");
+        log.info("╚═══════════════════════════════════════════════════════════════╝");
     }
 
     /**
-     * ✅ THREAD MONITORING - LOGS THREAD INFORMATION FOR EACH TEST
+     * Thread monitoring - logs thread information for each test
      */
     private void logThreadInfo(String scenarioName) {
         String threadName = Thread.currentThread().getName();
         long threadId = Thread.currentThread().getId();
 
-        log.debug("🧵 [Thread-{}] [{}] Executing scenario: {}", threadId, threadName, scenarioName);
+        log.debug("🧵 [Thread-{}] [{}] Executing: {}", threadId, threadName, scenarioName);
     }
 }
