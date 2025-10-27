@@ -88,8 +88,7 @@ public class SaveUnenrollmentHelper {
             case FWD_ADDRESS_MAX_LENGTH_NEGATIVE_TC118 -> payload.setForwardingAddressIs(FakerDataGenerator.getRandomString(4));
             case FWD_ADDRESS_INVALID_VALUE_NEGATIVE_TC119 -> payload.setForwardingAddressIs(GlobalEnums.ForwardingAddressType.INVALID.getValue());
 
-            case FWD_ADDRESS_TYPE_INVALID_NEGATIVE_TC120 -> payload.setForwardingAddressType("");
-            case FWD_ADDRESS_TYPE_EMPTY_NEGATIVE_TC121 ->  payload.setForwardingAddressType("");
+            case FWD_ADDRESS_TYPE_INVALID_NEGATIVE_TC120, FWD_ADDRESS_TYPE_EMPTY_NEGATIVE_TC121 -> payload.setForwardingAddressType("");
             case FWD_ADDRESS_TYPE_INVALID_VALUE_NEGATIVE_TC122 ->  payload.setForwardingAddressType(FakerDataGenerator.getRandomString(5));
 
             case FWD_ADD_STR_NUM_MAX_LENGTH_NEGATIVE_TC123 -> payload.setForwardingAddressStreetNumber(FakerDataGenerator.getRandomString(20));

@@ -5,41 +5,31 @@ Feature: Verify GetAccountInfo Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetAccountInfoWithValidData @Phase1 @HappyFlow
-  Scenario: Verify GetAccountInfo Api with valid data
-    When a request is made to the GetAccountInfo Api
+  @GetAccountInfoWithInvalidParameters @NegativeFlow @Phase1
+  Scenario Outline: Verify GetAccountInfo with invalid parameters "<testCondition>"
+    When a request is made to the GetAccountInfo Api with invalid parameters for "<testCondition>" condition
     Then verify response code of "GetAccountInfo" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                   | errorCode | errorMessage                     |
+      | MISSING_REQUEST_ID_NEGATIVE_TC15                | 10001     | Missing Request ID               |
+      | DUPLICATE_REQUEST_ID_NEGATIVE_TC16              | 10003     | Duplicate Request ID             |
+      | MISSING_CUSTOMER_CODE_NEGATIVE_TC17             | 10011     | Missing Customer Code            |
+      | MISSING_PREMISES_CODE_NEGATIVE_TC18             | 10013     | Missing Premises Code            |
+      | INVALID_CUSTOMER_CODE_LENGTH_NEGATIVE_TC19      | 10015     | Invalid Customer Code Format     |
+      | INVALID_PREMISES_CODE_LENGTH_NEGATIVE_TC20      | 10005     | Invalid Premises Code Format     |
+      | INVALID_ACCOUNT_COMBINATION_NEGATIVE_TC21       | 40015     | Invalid Account Number           |
+
+  @GetAccountInfoPositiveFlows @HappyFlow @Phase1
+  Scenario Outline: Verify GetAccountInfo positive flows for "<testCondition>"
+    When a request is made to the GetAccountInfo Api with valid parameters for "<testCondition>" condition
     Then verify the account information in the response should match the information in the database
-
-  @GetAccountInfoMissingParam @Phase1
-  Scenario Outline: Verify GetAccountInfo Api request with missing "<param>"
-    When a request is made to the GetAccountInfo Api with missing param "<param>"
-    Then verify response code of "GetAccountInfo" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
-      | param        | errorCode | errorMessage          |
-      | RequestID    | 10001     | Missing Request ID    |
-      | PremisesCode | 10013     | Missing Premises Code |
-      | CustomerCode | 10011     | Missing Customer Code |
-
-  @GetAccountInfoInvalidParamLength @Phase1
-  Scenario Outline: Verify GetAccountInfo Api request with Invalid "<param>" Length
-    When a request is made to the GetAccountInfo Api with invalid param "<param>" length
-    Then verify response code of "GetAccountInfo" Api is 200
-    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    Examples:
-      | param        | errorCode | errorMessage                 |
-      | PremCode     | 10005     | Invalid Premises Code Format |
-      | CustomerCode | 10015     | Invalid Customer Code Format |
-
-  @GetAccountInfoDuplicateRequestID @Phase1
-  Scenario: Verify GetAccountInfo Api request with Duplicate requestID
-    When a request is made to the GetAccountInfo Api with duplicate requestID
-    Then verify response code of "GetAccountInfo" Api is 200
-    And response should have ErrorCode 10003 and ErrorMessage 'Duplicate Request ID'
-
-  @GetAccountInfoNonExistentCustPremCode @Phase1
-  Scenario: Verify GetAccountInfo Api request with non-existent combination of custCode and premCode
-    When a request is made to the GetAccountInfo Api with non-existent combination of custCode and premCode
-    Then verify response code of "GetAccountInfo" Api is 200
-    And response should have ErrorCode 40015 and ErrorMessage 'Invalid Account Number'
+      | testCondition                                    |
+      | ACTIVE_WITH_PA_PAST_DUE_POSITIVE_TC22            |
+      | INACTIVE_WITH_RECURRING_CC_POSITIVE_TC23         |
+      | FINAL_WITH_ABD_POSITIVE_TC24                     |
+      | ACTIVE_DEFAULTED_PA_WITH_BUDGET_POSITIVE_TC25    |
+      | INACTIVE_BAD_DEBT_SONP_DISCLETTERS_POSITIVE_TC26 |
+      | NEW_NO_BILLS_YET_POSITIVE_TC27                   |

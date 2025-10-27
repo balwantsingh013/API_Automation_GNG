@@ -52,7 +52,7 @@ public class GetEligiblePlansAndOffersRequest{
 	private Object billingStreetPreDirection;
 	private Object sspParticipantCode;
 	private Object customerCode;
-	private boolean confirmCreditCheck;
+	private Boolean confirmCreditCheck;
 	private Object premisesCode;
 	private Object transactionID;
 	private String premisesCity;
@@ -80,5 +80,7 @@ public class GetEligiblePlansAndOffersRequest{
 	private Object billingAddressType;
 	private Object seasonalSavingsProgramIndicator;
 	private Object billingCity;
-
+    private Boolean serviceTransferReward;
+    private Boolean serviceTransferCurrentPricePlan;
+    private Boolean serviceTransferOfferRemainder;
 }
