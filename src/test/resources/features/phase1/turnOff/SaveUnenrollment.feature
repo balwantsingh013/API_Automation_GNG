@@ -50,13 +50,13 @@ Feature: Verify SaveUnenrollment Api
 
     Examples:
       | testCondition                         | errorCode | errorMessage                                              |
-      | Missing_request_id_TC_106       | 10001     | Missing Request ID                                        |
-      | Invalid_length_of_request_id_TC_107  | 10002     | Invalid Request ID                                        |
-      | Duplicate_request_id_TC_108   | 10003     | Duplicate Request ID                                      |
-#      | LOGIN_ID_EMPTY_NEGATIVE_TC109         | 10000     | Missing Login ID                                          |
-#      | LOGIN_ID_MAX_LENGTH_NEGATIVE_TC110    | 10000     | The Login ID must be a string with a maximum length of 30 |
-#      | LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111 | 2000      | Invalid Login ID                                          |
-#      | LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112    | 2000      | Invalid Login ID                                          |
+      | Missing_request_id_TC_106             | 10001     | Missing Request ID                                        |
+      | Invalid_length_of_request_id_TC_107   | 10002     | Invalid Request ID                                        |
+      | Duplicate_request_id_TC_108           | 10003     | Duplicate Request ID                                      |
+      | LOGIN_ID_EMPTY_NEGATIVE_TC109         | 10000     | Missing Login ID                                          |
+      | LOGIN_ID_MAX_LENGTH_NEGATIVE_TC110    | 10000     | The Login ID must be a string with a maximum length of 30 |
+      | LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111 | 2000      | Invalid Login ID                                          |
+      | LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112    | 2000      | Invalid Login ID                                          |
 
   @SaveUnenrollmentWithInvalidParameters @NegativeFlow @SaveUnenrollment @Phase1
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"
