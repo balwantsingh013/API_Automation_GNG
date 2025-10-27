@@ -303,11 +303,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               a.ucracct_cust_code,
                  a.ucracct_prem_code,
                  a.ucracct_status_ind,
-                 z. UZBENRO_TYPE_CODE    AS typeCode,
+                 c.ucbcust_first_name,
+                 c.ucbcust_last_name,
+                 b.UCBPREM_ZIPC_CODE,
+                 z.UZBENRO_TYPE_CODE  AS typeCode,
                  z.UZBENRO_ENRO_STATUS  AS status,
                  z.UZBENRO_ACTIVITY_DATE
              FROM ucracct a
              JOIN uzbenro z  ON z.uzbenro_prem_code = a.ucracct_prem_code
+             JOIN ucbcust c  ON c.ucbcust_cust_code = a.ucracct_cust_code
+             JOIN ucbprem b ON a.UCRACCT_PREM_CODE = b.UCBPREM_CODE
             WHERE z.UZBENRO_TYPE_CODE = 'SETM'
             AND z.UZBENRO_ENRO_STATUS = 'INCL'
             

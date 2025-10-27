@@ -731,62 +731,6 @@ public class SearchAccountsHelper {
         payload.setSocialSecurityNumber(encryptData(ssn));
     }
 
-    public void setExternalCasesParameters(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
-        Map<String, Object> customerData;
-        payload.setLoginID(USERNAME);
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        switch (testCondition) {
-            case ST_SE_INVALID_ENROLLMENT_STATUS_VALUE_TC234,
-                 ST_SE_INVALID_ES_PAYMENT_CONFIRMATION_REQUIRED_TC235,
-                 ST_SE_INVALID_PAYMENT_CONFIRMATION_TC236,
-                 ST_SE_INVALID_SSP_PARTICIPANT_CODE_VALUE_TC237,
-                 ST_SE_SSP_PARTICIPANT_CODE_NOT_REQUIRED_TC238,
-                 ST_SE_MISSING_MARKETER_REFERENCE_CE_TRAN_TC239,
-                 ST_SE_DUPLICATE_MARKETER_REFERENCE_DATA_TC240,
-                 ST_SE_MARKETER_REFERENCE_DATA_INVALID_TYPE_TC242,
-                 ST_SE_MARKETER_REFERENCE_DATA_TOO_LONG_TC243,
-                 ST_SE_MARKETER_REFERENCE_DATA_TOO_SHORT_TC244,
-                 ST_SE_CURRENT_MARKETER_CODE_PROVIDED_TC245,
-                 ST_SE_REQUESTED_TURN_ON_DATE_PROVIDED_TC246,
-                 ST_SE_SERVICE_TRANSFER_REWARD_BOOLEAN_ONLY_TC247,
-                 ST_SE_CURRENT_PRICE_PLAN_FIXED_BOOLEAN_ONLY_TC248,
-                 ST_SE_CURRENT_PRICE_PLAN_CEILING_BOOLEAN_ONLY_TC249:
-
-                List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerWithServiceTransferEnrollment();
-                payload.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
-                payload.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
-                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-                break;
-            case ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250:
-                customerData = ApplicationContext.get().getDbAction()
-                        .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.MVS.getValue());
-                setCustomerInfo(payload, customerData);
-                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-                break;
-
-            case
-                 ST_GE_ST_CURRENT_TRUE_PLAN_NOT_FIXED_OR_CEILING_NEG_TC215A,
-                 ST_GE_ST_CURRENT_TRUE_NOT_TRAN_NEG_TC217:
-                customerData = ApplicationContext.get().getDbAction()
-                        .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
-                setCustomerInfo(payload, customerData);
-                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-                break;
-
-            case  ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198,
-                  ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220:
-                customerData = ApplicationContext.get().getDbAction()
-                        .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.PGB.getValue());
-                setCustomerInfo(payload, customerData);
-                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-                break;
-        }
-    }
-    private void setCustomerInfo(SearchAccountsRequest payload, Map<String, Object> row) {
-        payload.setPremisesCode(row.get("UCRACCT_PREM_CODE").toString());
-        payload.setCustomerCode(row.get("UCRACCT_CUST_CODE").toString());
-    }
-
     public void setPrepaySearchRequestParamsFromCustomerFile(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
         payload.setRequestID(FakerDataGenerator.generateString(10));
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);

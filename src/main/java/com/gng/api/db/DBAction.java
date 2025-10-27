@@ -35,10 +35,10 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public List<Map<String, Object>> getActiveCustomerWithServiceTransferEnrollment() {
+    public Map<String, Object> getActiveCustomerWithServiceTransferEnrollment() {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_WITH_SERVICE_TRANSFER_ENROLLMENT;
         logQueryInAllure("Get Active Customer with Service Transfer Enrollment Details", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public Map<String, Object> getCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {

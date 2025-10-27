@@ -136,7 +136,8 @@ public class GlobalEnums {
         TURN_OFF("TOFF"),
         TRANSFER("TRAN"),
         MKSW("MKSW"),
-        INVALID("TURN");
+        INVALID("TURN"),
+        METER_SET("SETM");
 
         private final String value;
 
