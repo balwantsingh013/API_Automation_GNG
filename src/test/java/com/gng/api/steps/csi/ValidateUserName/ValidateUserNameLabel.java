@@ -3,6 +3,7 @@ package com.gng.api.steps.csi.ValidateUserName;
 public enum ValidateUserNameLabel {
 
     validate_username,
+    validate_username_mandatory,
 
     Missing_request_id_TC_1,
     Length_of_request_id_larger_than_32_TC_2,
