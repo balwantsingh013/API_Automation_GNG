@@ -37,7 +37,7 @@ public class ValidateUserNameApiHelper {
                 break;
 
             case Invalid_request_id_format_TC_3:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
+                payload.setRequestID(FakerDataGenerator.generateAlphanumericWithSpecialChars(3));
                 break;
 
             case Duplicate_request_id_TC_4:
