@@ -20,12 +20,12 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/phase1/turnOff"
+                "src/test/resources/features/csi"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        tags = "@SaveUnenrollment1",
+        tags = "@CSI",
         plugin = {
                 "pretty",
                 "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting

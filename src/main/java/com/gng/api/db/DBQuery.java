@@ -1952,6 +1952,29 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                    )
             """;
 
+    public static final String SELECT_USER_NAME= """
+            select user_name from users
+            where user_name=?
+            """;
+
+    public static final String SELECT_ACTIVE_USER_NAME= """
+            SELECT user_name
+            FROM users
+            WHERE active = 1
+            AND user_name REGEXP '^[a-zA-Z0-9]+$'
+            ORDER BY user_name DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_INACTIVE_USER_NAME= """
+            SELECT user_name
+            FROM users
+            WHERE active = 0
+            AND user_name REGEXP '^[a-zA-Z0-9]+$'
+            ORDER BY user_name DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_CUST_PREM_AGLC_SERVICE_CODES = """
             WITH eligible_customers AS (
                 SELECT gtbtrnh_cust_code

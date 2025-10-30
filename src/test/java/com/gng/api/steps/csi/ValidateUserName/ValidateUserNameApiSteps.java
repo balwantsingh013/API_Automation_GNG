@@ -31,6 +31,7 @@ public class ValidateUserNameApiSteps {
 
     @When("a request is made to validateUsername Api for {string}")
     public void a_request_is_made_to_the_validateUsername_Api_with_invalid_values(String testCondition) {
+        CommonUtil.logTestDescriptionToReports(testCondition);
         validateUserNamePage.validateResponseForNegativeTestConditions(validate_username, ValidateUserNameLabel.valueOf(testCondition));
     }
 
