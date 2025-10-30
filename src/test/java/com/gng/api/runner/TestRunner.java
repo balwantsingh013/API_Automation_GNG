@@ -25,12 +25,14 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        //tags = "@CSI",
+        tags = "@SaveUnenrollment1",
         plugin = {
                 "pretty",
+                "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         }
 )
+
 @Slf4j
 public class TestRunner extends AbstractTestNGCucumberTests {
     private TestNGCucumberRunner testNGCucumberRunner;

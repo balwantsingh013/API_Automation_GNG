@@ -3,9 +3,21 @@ aesBaseUri: "https://encryption-uat2.gng.vertexna.net"
 authUri: "/Authentication/GetToken"
 vendorId: "36763663.vistio.uat2testing"
 vendorSecret: "iohR@s5u(/yudfs&6"
-driverClassName: "oracle.jdbc.OracleDriver"
-serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGVBAN"
-userName: "AUTOTESTGNG"
-password: "vrt202406002"
+
+defaultDatabase: "oracle"  # 👈 Controls what "default" means
+
+databases:
+  oracle:
+    driverClassName: "oracle.jdbc.OracleDriver"
+    serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGVBAN"
+    userName: "AUTOTESTGNG"
+    password: "vrt202406002"
+
+  mariadb:
+    driverClassName: "org.mariadb.jdbc.Driver"
+    serverName: ""
+    userName: "AUTOTESTGNG"
+    password: ""
+
 enableLogsOnPass: true
 enableLogsOnFail: true
