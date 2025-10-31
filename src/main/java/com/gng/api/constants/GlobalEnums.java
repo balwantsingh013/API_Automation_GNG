@@ -160,9 +160,9 @@ public class GlobalEnums {
         Length_of_username_smaller_than_5_TC_5("Verify that if the provided 'username' parameter length is smaller than 5 characters in the ValidateUsername request, the web method will return success = false, ErrorCode = 10351, ErrorMessage = ‘Invalid Username Length’"),
         Length_of_username_greater_than_15_TC_6("Verify that if the provided 'username' parameter length is larger than 15 characters in the ValidateUsername request, the web method will return success = false, ErrorCode = 10351, ErrorMessage = ‘Invalid Username Length’"),
         Username_not_alphanumeric_TC_7("Verify that if the provided 'username' parameter is not alphanumeric in the ValidateUsername request, the web method will return success = false, ErrorCode = 10353, ErrorMessage = ‘Invalid Username Format’"),
-        Username_does_not_exist_TC_8("Verify that in the ValidateUsername method the provided 'username' does not exist in MariaDb, the web method will return success = true, ErrorCode = 0, and usernameStatus = 'AVAILABLE'"),
-        Active_username_exists_TC_9("Verify that in the ValidateUsername request the provided 'username' does exist in MariaDb and is 'Active', the web method will return success = true, ErrorCode = 0, and usernameStatus = 'ACTIVE'"),
-        Inactive_username_exists_TC_10("Verify that in the ValidateUsername request the provided 'username' does exist in MariaDb and is 'Inactive', the web method will return success = true, ErrorCode = 0, and usernameStatus = 'INACTIVE'");
+        Username_does_not_exist_in_mariadb_TC_8("Verify that in the ValidateUsername method the provided 'username' does not exist in MariaDb, the web method will return success = true, ErrorCode = 0, and usernameStatus = 'AVAILABLE'"),
+        Active_username_exists_in_mariadb_TC_9("Verify that in the ValidateUsername request the provided 'username' does exist in MariaDb and is 'Active', the web method will return success = true, ErrorCode = 0, and usernameStatus = 'ACTIVE'"),
+        Inactive_username_exists_in_mariadb_TC_10("Verify that in the ValidateUsername request the provided 'username' does exist in MariaDb and is 'Inactive', the web method will return success = true, ErrorCode = 0, and usernameStatus = 'INACTIVE'");
 
         private final String value;
 
