@@ -176,6 +176,26 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getActiveUsernameFromOtherTable() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_USER_NAME_2;
+
+        logQueryInAllure("get active username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getInactiveUsername() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_INACTIVE_USER_NAME;

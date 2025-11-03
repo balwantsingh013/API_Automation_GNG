@@ -27,4 +27,5 @@ Feature: Verify ValidateUserName Api
       | testCondition                               | errorCode | errorMessage | status    |
       | Username_does_not_exist_in_mariadb_TC_8     | 0         |              | AVAILABLE |
       | Active_username_exists_in_mariadb_TC_9      | 0         |              | ACTIVE    |
+      | Active_username_exists_in_mariadb_TC_9_2    | 0         |              | ACTIVE    |
       | Inactive_username_exists_in_mariadb_TC_10   | 0         |              | INACTIVE  |

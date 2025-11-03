@@ -79,6 +79,12 @@ public class ValidateUserNameApiHelper {
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
+            case Active_username_exists_in_mariadb_TC_9_2:
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername(userNames.get("user_name").toString());
+                break;
+
             case Inactive_username_exists_in_mariadb_TC_10:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUsername();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));

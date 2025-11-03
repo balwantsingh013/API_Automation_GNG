@@ -14,5 +14,6 @@ public enum ValidateUserNameLabel {
     Username_not_alphanumeric_TC_7,
     Username_does_not_exist_in_mariadb_TC_8,
     Active_username_exists_in_mariadb_TC_9,
+    Active_username_exists_in_mariadb_TC_9_2,
     Inactive_username_exists_in_mariadb_TC_10
 }

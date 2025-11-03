@@ -1961,9 +1961,25 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT user_name
             FROM users
             WHERE active = 1
+            AND deleted = 0
+            AND domain_id = 2
             AND user_name REGEXP '^[a-zA-Z0-9]+$'
             ORDER BY user_name DESC
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_USER_NAME_2= """
+            SELECT user_name
+                        FROM users
+                        WHERE active = 1
+                          AND user_name REGEXP '^[a-zA-Z0-9]+$'
+                          AND user_name IN (
+                              SELECT user_name
+                              FROM custadv_pending_registrations
+                              WHERE LENGTH(user_name) < 15
+                          )
+                        ORDER BY user_name DESC
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_INACTIVE_USER_NAME= """
