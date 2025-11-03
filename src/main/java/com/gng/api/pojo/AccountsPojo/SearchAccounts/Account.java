@@ -79,6 +79,7 @@ public class Account {
     private String prepayCustomerPayByDate;
     private String prepaySystemPayByDate;
     private String aglcAccountNumber;
+    private String aglcServiceLocationID;
     private BigDecimal earlyTerminationCharge;
     private String aglcDeliveryPoolGroup;
     private String greenerLife;
