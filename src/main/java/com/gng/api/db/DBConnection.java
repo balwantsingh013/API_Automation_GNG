@@ -14,22 +14,42 @@ public class DBConnection {
         return new DBConnection();
     }
 
+    /**
+     * Backward-compatible default connection using envConfig.defaultDatabase
+     */
     public DBAction createDatabaseConnection(EnvConfig envConfig) {
-        log.info("Create Database Connection");
-        DataSource dataSource = getDataSource(envConfig);
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return createDatabaseConnection(envConfig, "default");
+    }
 
-        // Set log level to DEBUG for JdbcTemplate
+    /**
+     * Create connection using a specific key (e.g., "oracle", "mariadb")
+     */
+    public DBAction createDatabaseConnection(EnvConfig envConfig, String connectionKey) {
+        log.info("Create Database Connection for: {}", connectionKey);
+        DataSource dataSource = getDataSource(envConfig, connectionKey);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.setResultsMapCaseInsensitive(true);
         return new DBAction(jdbcTemplate);
     }
 
-    private DriverManagerDataSource getDataSource(EnvConfig envConfig) {
+    /**
+     * Resolve the correct database config based on connectionKey
+     */
+    private DriverManagerDataSource getDataSource(EnvConfig envConfig, String connectionKey) {
+        String key = connectionKey.equals("default") ? envConfig.getDefaultDatabase() : connectionKey;
+        EnvConfig.DatabaseConfig dbConfig = envConfig.getDatabases().get(key);
+
+        if (dbConfig == null) {
+            throw new IllegalArgumentException("No database configuration found for key: " + key);
+        }
+
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(envConfig.getServerName());
-        dataSource.setUsername(envConfig.getUserName());
-        dataSource.setPassword(envConfig.getPassword());
-        dataSource.setDriverClassName(envConfig.getDriverClassName());
+        dataSource.setUrl(dbConfig.getServerName());
+        dataSource.setUsername(dbConfig.getUserName());
+        dataSource.setPassword(dbConfig.getPassword());
+        dataSource.setDriverClassName(dbConfig.getDriverClassName());
+
+        log.debug("DataSource configured with driver: {}", dbConfig.getDriverClassName());
         return dataSource;
     }
 }

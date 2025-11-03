@@ -44,6 +44,11 @@ public class BaseSteps {
         verifySSPEligibilityAndWarning(booleanVal(sspEligibility),Warning);
     }
 
+    @And("the response should have the username status as {string}")
+    public void verifyUsernameStatus(String status){
+        validateUsernameStatus(status);
+    }
+
     @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid State code {string}")
     public void responseShouldHaveErrorCodeAndErrorMessageWithInvalidStateCode(int errorCode, String errorMessage, String invalidStateCode) {
         verifyErrorCodeAndMessage(errorCode, errorMessage + " " + invalidStateCode);
@@ -102,6 +107,16 @@ public class BaseSteps {
         List<Map<String, String>> expectedRoles = dataTable.asMaps(String.class, String.class);
         verifyRoleDetails(expectedRoles);
     }
+
+    private void validateUsernameStatus(String expectedStatus) {
+        Response response = testContext.getResponse();
+
+        // Validate usernameStatus at data.usernameStatus
+        assertThat("Incorrect usernameStatus returned",
+                response.jsonPath().getString("data.usernameStatus"),
+                equalTo(expectedStatus));
+    }
+
 
     private void verifyRoleDetails(List<Map<String, String>> expectedRoles) {
         Response response = testContext.getResponse();
