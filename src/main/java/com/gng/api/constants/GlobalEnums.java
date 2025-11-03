@@ -147,17 +147,31 @@ public class GlobalEnums {
     }
 
     @Getter
-    public enum ScenarioDescriptions{
+    public enum ScenarioDescriptions {
         Missing_request_id_TC_106("Verify that if the 'requestID' parameter is missing in the SaveUnenrollment method request, the web method will return success = false, ErrorCode = 10001, ErrorMessage = 'Missing Request ID' "),
         Invalid_length_of_request_id_TC_107("Verify that if the provided 'requestID' paramter length is larger than 32 characters in the SaveUnenrollment method request, the web method will return success = false, ErrorCode = 10002, ErrorMessage = ‘Invalid Request ID’"),
         Duplicate_request_id_TC_108("Verify that if the provided 'requestID' parameter already exists within Transaction Manager while executing the SaveUnenrollment method request, the web method will return success = false, ErrorCode = 10003, ErrorMessage = ‘Duplicate Request ID’"),
         TC_423("Verify that the SaveEnrollment method returns a successful response (success = true) and completes the residential new Turn On enrollment by updating the enrollment status to 'UDCS' and saving the provided information in the relevant Banner tables [per technical design] when the input includes valid values for all the mandatory details, such as transactionID returned from the getEligiblePlansAndOffers; transactionType = TNON; corresponding customerCode and premisesCode; planCode is not VML/PRP/PBG; promotionCode is not null; enrollmentStatus = CE (Complete Enrollment); paymentConfirmationNumber is null; billingPlan = 'R' (Regular); estimatedBudgetAmount is null; customerRequestedServiceDate = <YYYYMMDD>; seasonalSavingsProgramResult is null; splitConnectionFeeIndicator = true; aglcAccountNumber is not null; aglcServiceOrderNumber is not null; notes is not null."),
-        GET_DEFAULT_PLANS_AND_OFFERS_TC_122("Verify the GetDefaultPlansAndOffers method for a residential turn-on (no Promotion Code) returns applicable price plans/details and associated offers/details.");
+        GET_DEFAULT_PLANS_AND_OFFERS_TC_122("Verify the GetDefaultPlansAndOffers method for a residential turn-on (no Promotion Code) returns applicable price plans/details and associated offers/details."),
+
+        Missing_request_id_TC_1("Verify that if the 'requestID' parameter is missing in the ValidateUsername request, the web method will return success = false, ErrorCode = 10001, ErrorMessage = ‘Missing Request ID’"),
+        Length_of_request_id_larger_than_32_TC_2("Verify that if the provided 'requestID' parameter length is larger than 32 characters in the ValidateUsername request, the web method will return success = false, ErrorCode = 10002, ErrorMessage = ‘Invalid Request ID’"),
+        Duplicate_request_id_TC_3("Verify that if the provided 'requestID' parameter already exists within Transaction Manager while executing the ValidateUsername request, the web method will return success = false, ErrorCode = 10003, ErrorMessage = ‘Duplicate Request ID’"),
+        Missing_username_TC_4("Verify that if the 'username' parameter is missing in the ValidateUsername request, the web method will return success = false, ErrorCode = 10349, ErrorMessage = ‘Missing Username’"),
+        Length_of_username_smaller_than_5_TC_5("Verify that if the provided 'username' parameter length is smaller than 5 characters in the ValidateUsername request, the web method will return success = false, ErrorCode = 10351, ErrorMessage = ‘Invalid Username Length’"),
+        Length_of_username_greater_than_15_TC_6("Verify that if the provided 'username' parameter length is larger than 15 characters in the ValidateUsername request, the web method will return success = false, ErrorCode = 10351, ErrorMessage = ‘Invalid Username Length’"),
+        Username_not_alphanumeric_TC_7("Verify that if the provided 'username' parameter is not alphanumeric in the ValidateUsername request, the web method will return success = false, ErrorCode = 10353, ErrorMessage = ‘Invalid Username Format’"),
+        Username_does_not_exist_in_mariadb_TC_8("Verify that in the ValidateUsername method the provided 'username' does not exist in MariaDb, the web method will return success = true, ErrorCode = 0, and usernameStatus = 'AVAILABLE'"),
+        Active_username_exists_in_mariadb_TC_9("Verify that in the ValidateUsername request the provided 'username' does exist in MariaDb and is 'Active', the web method will return success = true, ErrorCode = 0, and usernameStatus = 'ACTIVE'"),
+        Inactive_username_exists_in_mariadb_TC_10("Verify that in the ValidateUsername request the provided 'username' does exist in MariaDb and is 'Inactive', the web method will return success = true, ErrorCode = 0, and usernameStatus = 'INACTIVE'");
+
         private final String value;
+
         ScenarioDescriptions(String value) {
             this.value = value;
         }
     }
+
 
     @Getter
     public enum CreditCheckOption {

@@ -7,15 +7,15 @@ import com.gng.api.db.DBConnection;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.methods.*;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.gng.api.constants.TestConstant.PATH_CONFIG;
 
@@ -30,7 +30,9 @@ public class ApplicationContext {
 
     private AuthPayload authPayload;
     private EnvConfig envConfig;
-    private DBAction dbAction;
+
+    // 🔄 Support multiple DB connections
+    private final Map<String, DBAction> dbActions = new HashMap<>();
 
     public ApplicationContext() {
         loadEnvConfig();
@@ -66,16 +68,29 @@ public class ApplicationContext {
         authPayload.setVendorSecret(envConfig.getVendorSecret());
     }
 
+    /**
+     * ✅ Backward-compatible default DB connection
+     */
     public DBAction getDbAction() {
-        if (dbAction == null) {
-            dbAction = DBConnection.dbConnection().createDatabaseConnection(envConfig);
+        return getDbAction("default");
+    }
+
+    /**
+     * ✅ Get DB connection by key (e.g., "oracle", "mariadb")
+     */
+    public DBAction getDbAction(String connectionKey) {
+        if (!dbActions.containsKey(connectionKey)) {
+            DBAction dbAction = DBConnection.dbConnection().createDatabaseConnection(envConfig, connectionKey);
+            dbActions.put(connectionKey, dbAction);
         }
-        return dbAction;
+        return dbActions.get(connectionKey);
     }
 
     public static void setRequestSpec() {
         log.info("Setting Request Specification");
-        requestSpecification.set(RestAssured.given().baseUri(ApplicationContext.get().getEnvConfig().getBaseUri()).contentType(ContentType.JSON));
+        requestSpecification.set(RestAssured.given()
+                .baseUri(ApplicationContext.get().getEnvConfig().getBaseUri())
+                .contentType(ContentType.JSON));
     }
 
     public static RequestSpecification getRequestSpec() {
@@ -91,5 +106,4 @@ public class ApplicationContext {
     public static void removeRequestSpec() {
         requestSpecification.remove();
     }
-
-    }
+}

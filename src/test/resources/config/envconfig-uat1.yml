@@ -2,9 +2,21 @@ baseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
 authUri: "/Authentication/GetToken"
 vendorId: "vertex.auto.apitest.gng.com"
 vendorSecret: "HAXxeK86Q7omh4rCPeuX"
-driverClassName: "oracle.jdbc.OracleDriver"
-serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
-userName: "AUTOTESTGNG"
-password: "vrt202406002"
+
+defaultDatabase: "oracle"  # 👈 Controls what "default" means
+
+databases:
+  oracle:
+    driverClassName: "oracle.jdbc.OracleDriver"
+    serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
+    userName: "AUTOTESTGNG"
+    password: "vrt202406002"
+
+  mariadb:
+    driverClassName: "org.mariadb.jdbc.Driver"
+    serverName: "jdbc:mariadb://10.209.34.6:3308/billvantage_gng_uat1"
+    userName: "AUTOTESTGNG"
+    password: "V3rTeX@dm!N#432"
+
 enableLogsOnPass: true
 enableLogsOnFail: true

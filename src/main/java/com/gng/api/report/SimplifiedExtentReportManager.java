@@ -100,12 +100,6 @@ public class SimplifiedExtentReportManager {
         log.append("<div class='code-block'>").append(formatSqlQuery(dbQuery.query)).append("</div>");
         log.append("</div>");
 
-        // Execution Time
-        log.append("<div class='response-detail-item'>");
-        log.append("<strong>⏱️ Execution Time:</strong> ");
-        log.append(getPerformanceIndicator(dbQuery.executionTime));
-        log.append("</div>");
-
         // Result or Error
         if (dbQuery.isSuccess) {
             log.append("<div class='response-detail-item'>");
@@ -191,7 +185,7 @@ public class SimplifiedExtentReportManager {
     public static synchronized void initialiseExtentReport() {
         if (extent == null) {
             extent = new ExtentReports();
-            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Simplified-" + CommonUtil.getCurrentDateTime() + ".html");
+            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Client-" + CommonUtil.getCurrentDateTime() + ".html");
             setConfig();
             log.info("📊 Simplified Extent Report initialized");
         }

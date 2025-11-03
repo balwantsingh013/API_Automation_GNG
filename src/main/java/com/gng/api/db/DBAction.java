@@ -121,6 +121,102 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query, pricePlan, sclsCode);
     }
 
+    public Map<String, Object> getUsername(String userName) {
+        long startTime = System.currentTimeMillis();
+        String queryTemplate = DBQuery.SELECT_USER_NAME;
+
+        // Replace ? with quoted and escaped userName for logging
+        String loggedQuery = queryTemplate.replaceFirst("\\?", "'" + userName.replace("'", "''") + "'");
+
+        logQueryInAllure("get username", loggedQuery);
+
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(queryTemplate, userName);
+
+            long elapsed = System.currentTimeMillis() - startTime;
+
+            SimplifiedExtentReportManager.logDatabaseQuery(
+                    loggedQuery,
+                    result.toString(),
+                    elapsed
+            );
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+            long elapsed = System.currentTimeMillis() - startTime;
+
+            SimplifiedExtentReportManager.logDatabaseQuery(
+                    loggedQuery,
+                    null,
+                    elapsed
+            );
+            return Collections.emptyMap();
+        }
+
+        return result;
+    }
+
+
+    public Map<String, Object> getActiveUsername() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_USER_NAME;
+
+        logQueryInAllure("get active username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getActiveUsernameFromOtherTable() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_USER_NAME_2;
+
+        logQueryInAllure("get active username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getInactiveUsername() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_INACTIVE_USER_NAME;
+
+        logQueryInAllure("get inactive username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC211(String pricePlan, String sclsCode) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES_ACC_WITH_ETC_GPP;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code for account with ETC and GPP plan", query);
