@@ -18,6 +18,7 @@ public class SearchAccountsRequest{
 	private Object premisesStateCode;
 	private Object federalTaxID;
 	private Object aglcAccountNumber;
+    private Object aglcServiceLocationID;
 	private String socialSecurityNumber;
 	private Object customerCode;
 	private Object premisesUnitType;

@@ -1,0 +1,13 @@
+package com.gng.api.steps.meterSet.ServiceOrdersSteps.SaveEnrollment;
+
+public enum SaveEnrollmentApiLabel {
+    save_enrollment,
+
+    //External
+    MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022,
+    MS_GE_RS_INCL_TIER_5_TC_023,
+    MS_RS_MULTIPLE_PREM_TC_024,
+    MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025
+
+
+}

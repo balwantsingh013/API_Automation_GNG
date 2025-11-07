@@ -24,4 +24,15 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validatePositiveCases(search_accounts_mandatory, SearchAccountsApiLabel.valueOf(testCondition));
 
     }
+
+    @When("a request is made to the MeterSet SearchAccounts Api for external cases for {string} condition")
+    public void aRequestIsMadeToTheMeterSetSearchAccountsApiForExternalCases(String testCondition) {
+        searchAccountsApiPage.validateExternalCases(search_accounts_mandatory, SearchAccountsApiLabel.valueOf(testCondition));
+
+    }
+    @When("a request is made to the MeterSet SearchAccounts Api from GetEligiblePlansAndOffers API for external cases for {string} condition")
+    public void aRequestIsMadeToTheMeterSetSearchAccountsApiFromGetEligibleForExternalCases(String testCondition) {
+        searchAccountsApiPage.searchFromGetEligibleExternalCases(search_accounts_mandatory, SearchAccountsApiLabel.valueOf(testCondition));
+
+    }
 }

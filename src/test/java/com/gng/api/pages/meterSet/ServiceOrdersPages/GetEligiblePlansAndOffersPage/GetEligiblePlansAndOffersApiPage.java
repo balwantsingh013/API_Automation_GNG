@@ -1,5 +1,6 @@
 package com.gng.api.pages.meterSet.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.request.GetEligiblePlansAndOffersRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
@@ -7,6 +8,8 @@ import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.meterSet.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel;
 import io.restassured.response.Response;
 import org.apache.http.client.methods.HttpPost;
+
+import java.util.ArrayList;
 
 import static com.gng.api.constants.ApiEndPoint.GET_ELIGIBLE_PLANS_AND_OFFERS;
 
@@ -18,13 +21,58 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         this.helper = new GetEligiblePlansAndOffersHelper(testContext);
     }
 
-    public void validateNegativeTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void seedNegativeTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-        helper.setParametersBasedOnTypeNegative(payload, testCondition);
+        helper.setParametersToSeedDataBasedOnType(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
         GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
         testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
         testContext.setResponse(response);
+    }
+
+    public void seedCustomerFileSourceTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setSeedDataCustomerInformation(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(response);
+    }
+
+    public void validateNegativeTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnType(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(response);
+    }
+
+    public void validatePositiveTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnType(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(response);
+    }
+
+    public void verifyResponsePlans(){
+        helper.verifyResidentialPlansReceivedAgainstDatabase();
+    }
+    public void verifyResponsePlansContainsPlan(GlobalEnums.PlanCode planCode){
+        helper.verifyPlanReturned(planCode);
+    }
+
+    public void verifyResponseDoesNotContainPlans(GetEligiblePlansAndOffersApiLabel testCondition) {
+        helper.verifyDisallowedPlansFor(testCondition);
+    }
+
+    public void verifyEntriesIAllTables(GetEligiblePlansAndOffersApiLabel testCondition){
+        helper.validateAllTheEntriesInTablesForEligiblePlansAndOffers(testCondition);
     }
 }

@@ -153,7 +153,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                             AND l.usrletd_letr_code        = 'DISCONNECT'
                             AND l.usrletd_printed_ind      = 'Y'
                         )
-                  FETCH FIRST 1 ROWS ONLY            
+                  FETCH FIRST 1 ROWS ONLY
             """;
 
 
@@ -219,8 +219,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
              JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
              WHERE a.ucracct_status_ind = ?
                AND z.UZBENRO_PRICE_PLAN  = ?
-             ORDER BY DBMS_RANDOM.VALUE
-             FETCH FIRST 1 ROWS ONLY
+               AND c.ucbcust_first_name IS NOT NULL
+             ORDER BY z.uzbenro_activity_date DESC, DBMS_RANDOM.VALUE
+             FETCH FIRST 1 ROW ONLY
             """;
     public static final String GET_TENANT_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE = """            
              SELECT
@@ -3615,6 +3616,309 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
              FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_CUSTOMER_BY_CREDIT_SCORE_AND_TRANSACTION_TYPE = """    
+        WITH cand AS (
+              SELECT
+                b.UZBENRO_CUST_CODE,
+                b.UZBENRO_PREM_CODE,
+                c.UCBCUST_FIRST_NAME,
+                c.UCBCUST_LAST_NAME,
+                b.UZBENRO_ACTIVITY_DATE   AS activity_dt,
+                b.UZBENRO_TYPE_CODE       AS tran_type,
+                s.UCRSERV_SCLS_CODE       AS scls_code,
+                b.UZBENRO_CRED_SCORE AS credit_score
+              FROM UZBENRO b
+              JOIN UCBCUST c
+                ON c.UCBCUST_CUST_CODE = b.UZBENRO_CUST_CODE
+              JOIN UCRSERV s
+                ON s.UCRSERV_CUST_CODE = b.UZBENRO_CUST_CODE
+               AND s.UCRSERV_PREM_CODE = b.UZBENRO_PREM_CODE
+              WHERE b.UZBENRO_TYPE_CODE = ?
+                AND s.UCRSERV_SCLS_CODE = 'RS'
+                AND b.UZBENRO_CRED_SCORE IS NOT NULL
+                AND b.UZBENRO_CRED_SCORE >= ?
+            )
+        SELECT *
+        FROM cand
+        ORDER BY credit_score DESC, activity_dt DESC
+        FETCH FIRST 1 ROWS ONLY
+ """;
+
+    public static final String GET_CUSTOMER_BY_ENROLLMENT_STATUS_AND_TRANSACTION_TYPE = """    
+        WITH cand AS (
+              SELECT
+                b.UZBENRO_CUST_CODE,
+                b.UZBENRO_PREM_CODE,
+                c.UCBCUST_FIRST_NAME,
+                c.UCBCUST_LAST_NAME,
+                b.UZBENRO_ACTIVITY_DATE   AS activity_dt,
+                b.UZBENRO_TYPE_CODE       AS tran_type,
+                s.UCRSERV_SCLS_CODE       AS scls_code,
+                b.UZBENRO_CRED_SCORE AS credit_score
+              FROM UZBENRO b
+              JOIN UCBCUST c
+                ON c.UCBCUST_CUST_CODE = b.UZBENRO_CUST_CODE
+              JOIN UCRSERV s
+                ON s.UCRSERV_CUST_CODE = b.UZBENRO_CUST_CODE
+               AND s.UCRSERV_PREM_CODE = b.UZBENRO_PREM_CODE
+              WHERE b.UZBENRO_ENRO_STATUS = ?
+                AND b.UZBENRO_TYPE_CODE = ?
+                AND s.UCRSERV_SCLS_CODE = 'RS'
+                AND b.UZBENRO_CRED_SCORE IS NOT NULL
+                AND b.UZBENRO_CRED_SCORE_STATUS = 'TEXT'
+            )
+        SELECT *
+        FROM cand
+        ORDER BY credit_score DESC, activity_dt DESC
+        FETCH FIRST 1 ROWS ONLY
+ """;
+
+    public static final String GET_CUSTOMER_INFORMATION_WITH_TEXT_NO_RECORD = """    
+     WITH cand AS (
+         SELECT
+           b.UZBENRO_CUST_CODE,
+           b.UZBENRO_PREM_CODE,
+           c.UCBCUST_FIRST_NAME,
+           c.UCBCUST_LAST_NAME,
+           b.UZBENRO_ACTIVITY_DATE   AS activity_dt,
+           b.UZBENRO_TYPE_CODE       AS tran_type,
+           s.UCRSERV_SCLS_CODE       AS scls_code,
+           b.UZBENRO_CRED_SCORE      AS credit_score
+         FROM UZBENRO b
+         JOIN UCBCUST c
+           ON c.UCBCUST_CUST_CODE = b.UZBENRO_CUST_CODE
+         JOIN UCRSERV s
+           ON s.UCRSERV_CUST_CODE = b.UZBENRO_CUST_CODE
+          AND s.UCRSERV_PREM_CODE = b.UZBENRO_PREM_CODE
+         WHERE s.UCRSERV_SCLS_CODE = 'RS'
+           AND b.UZBENRO_CRED_SCORE_STATUS = 'TEXT'
+           AND b.UZBENRO_CRED_SCORE_TEXT = 'NO RECORD FOUND'
+           AND c.UCBCUST_FIRST_NAME IS NOT NULL
+       ),
+           top_50 AS (
+             SELECT *
+             FROM cand
+             ORDER BY credit_score DESC, activity_dt DESC
+             FETCH FIRST 50 ROWS ONLY
+           )
+       SELECT *
+       FROM top_50
+       ORDER BY  DBMS_RANDOM.VALUE
+       FETCH FIRST 1 ROWS ONLY
+ """;
+
+    public static final String GET_CUSTOMER_INFORMATION_WITH_CREDIT_FREEZE = """    
+            WITH cand AS (
+                                 SELECT
+                                   b.UZBENRO_CUST_CODE,
+                                   b.UZBENRO_PREM_CODE,
+                                   c.UCBCUST_FIRST_NAME,
+                                   c.UCBCUST_LAST_NAME,
+                                   b.UZBENRO_ACTIVITY_DATE AS activity_dt,
+                                   s.UCRSERV_SCLS_CODE AS scls_code,
+                                   b.UZBENRO_CRED_SCORE_STATUS,
+                                   b.UZBENRO_CRED_SCORE_TEXT
+                                 FROM UZBENRO b
+                                 JOIN UCBCUST c
+                                   ON c.UCBCUST_CUST_CODE = b.UZBENRO_CUST_CODE
+                                 JOIN UCRSERV s
+                                   ON s.UCRSERV_CUST_CODE = b.UZBENRO_CUST_CODE
+                                  AND s.UCRSERV_PREM_CODE = b.UZBENRO_PREM_CODE
+                                 WHERE s.UCRSERV_SCLS_CODE = 'RS'
+                                     AND  b.uzbenro_enro_status = 'BADC'
+                               )
+                               SELECT *
+                               FROM (
+                                 SELECT *
+                                 FROM cand
+                                 ORDER BY activity_dt DESC
+                               )
+                               WHERE ROWNUM = 1
+
+ """;
+
+    public static final String GET_CUSTOMER_BY_CUST_CODE_ENROLLMENT_STATUS = """    
+        WITH cand AS (
+              SELECT
+                b.UZBENRO_CUST_CODE,
+                b.UZBENRO_PREM_CODE,
+                c.UCBCUST_FIRST_NAME,
+                c.UCBCUST_LAST_NAME,
+                b.UZBENRO_ACTIVITY_DATE   AS activity_dt,
+                b.UZBENRO_TYPE_CODE       AS tran_type,
+                s.UCRSERV_SCLS_CODE       AS scls_code,
+                b.UZBENRO_CRED_SCORE AS credit_score
+              FROM UZBENRO b
+              JOIN UCBCUST c
+                ON c.UCBCUST_CUST_CODE = b.UZBENRO_CUST_CODE
+              JOIN UCRSERV s
+                ON s.UCRSERV_CUST_CODE = b.UZBENRO_CUST_CODE
+               AND s.UCRSERV_PREM_CODE = b.UZBENRO_PREM_CODE
+              WHERE  s.UCRSERV_SCLS_CODE = 'RS'
+                AND b.UZBENRO_CRED_SCORE_STATUS = 'TEXT'
+                AND b.UZBENRO_CUST_CODE = ?
+                AND b.UZBENRO_ENRO_STATUS = ?
+            )
+        SELECT *
+        FROM cand
+        ORDER BY credit_score DESC, activity_dt DESC
+        FETCH FIRST 1 ROWS ONLY
+ """;
+
+    public static final String GET_CUSTOMER_NO_CRED = """    
+
+         WITH cand AS (
+               SELECT
+                 b.UZBENRO_CUST_CODE,
+                 b.UZBENRO_PREM_CODE,
+
+                 b.UZBENRO_ACTIVITY_DATE   AS activity_dt,
+                 b.UZBENRO_TYPE_CODE       AS tran_type,
+                 b.UZBENRO_CRED_SCORE AS credit_score
+               FROM UZBENRO b
+             where
+                  b.UZBENRO_CRED_SCORE_TEXT = 'NON EXISTANT CREDIT RATING'
+                  and b.uzbenro_enro_status = 'TNON'
+             )
+         SELECT *
+         FROM cand
+         ORDER BY credit_score DESC, activity_dt DESC
+ """;
+
+    public static final String GET_CUSTOMER_INFO_BY_NAME = """    
+
+         WITH cand AS (
+               SELECT
+                 b.UZBENRO_CUST_CODE,
+                 b.UZBENRO_PREM_CODE,
+
+                 b.UZBENRO_ACTIVITY_DATE   AS activity_dt,
+                 b.UZBENRO_TYPE_CODE       AS tran_type,
+                 b.UZBENRO_CRED_SCORE AS credit_score
+               FROM UZBENRO b
+             where
+                  b.UZBENRO_CRED_SCORE_TEXT = 'NON EXISTANT CREDIT RATING'
+                  and b.uzbenro_enro_status = 'TNON'
+             )
+         SELECT *
+         FROM cand
+         ORDER BY credit_score DESC, activity_dt DESC
+ """;
+
+
+    public static final String GET_AGLC_BY_TRANSACTION_ID = """
+            WITH base AS (
+              SELECT
+                  t1.uztcott_control_num      AS control_num,
+                  t4.gtbenrl_cust_code        AS cust_code,
+                  t4.gtbenrl_prem_code        AS prem_code
+              FROM uztcott t1
+              LEFT JOIN gtbenrl t4
+                ON t1.uztcott_control_num = t4.gtbenrl_control_num
+              WHERE t1.uztcott_app_request_code = 'OMSENRL'
+                AND t1.uztcott_control_num IN ?
+              -- control_num is unique per transaction; keep one row
+            ),
+            svc AS (
+              /* Current/most-recent residential service row for that cust/prem */
+              SELECT
+                  s.ucrserv_cust_code,
+                  s.ucrserv_prem_code,
+                  s.ucrserv_scls_code,
+                  -- ⬇⬇ Use your actual column names for these two if they differ in your schema ⬇⬇
+                  s.ucrserv_aglc_service_location_id   AS aglc_service_location_id,
+                  s.ucrserv_aglc_account_number        AS aglc_account_number,
+                  ROW_NUMBER() OVER (
+                    PARTITION BY s.ucrserv_cust_code, s.ucrserv_prem_code
+                    ORDER BY NVL(s.ucrserv_end_date, DATE '2999-12-31') DESC, s.ucrserv_start_date DESC
+                  ) AS rn
+              FROM ucrserv s
+              WHERE s.ucrserv_scls_code = 'RS'
+            ),
+            prem AS (
+              SELECT
+                  p.ucbprem_code,
+                  -- ⬇⬇ Use your actual column name if different ⬇⬇
+                  p.ucbprem_aglc_account_number AS prem_aglc_account_number
+              FROM ucbprem p
+            )
+            SELECT
+              b.control_num                                  AS "controlNum",
+              b.cust_code                                    AS "customerCode",
+              b.prem_code                                    AS "premisesCode",
+              s.aglc_service_location_id                     AS "aglcServiceLocationID",
+              COALESCE(s.aglc_account_number, p.prem_aglc_account_number) AS "aglcAccountNumber"
+            FROM base b
+            LEFT JOIN svc s
+              ON s.ucrserv_cust_code = b.cust_code
+             AND s.ucrserv_prem_code = b.prem_code
+             AND s.rn = 1
+            LEFT JOIN prem p
+              ON p.ucbprem_code = b.prem_code
+            """;
+
+    public static final String GET_AGLC_BY_CUST_PREM_CODE = """
+            WITH params AS (
+              SELECT ? AS cust_code, ? AS prem_code FROM dual
+            ),
+            svc AS (
+              SELECT
+                  s.UCRSERV_CUST_CODE,
+                  s.UCRSERV_PREM_CODE,
+                  s.UCRSERV_LOCATION_ID,
+                  ROW_NUMBER() OVER (
+                    PARTITION BY s.UCRSERV_CUST_CODE, s.UCRSERV_PREM_CODE
+                    ORDER BY s.UCRSERV_ACTIVITY_DATE DESC NULLS LAST
+                  ) rn
+              FROM UCRSERV s
+              JOIN params p
+                ON s.UCRSERV_CUST_CODE = p.cust_code
+               AND s.UCRSERV_PREM_CODE = p.prem_code
+              WHERE s.UCRSERV_SCLS_CODE = 'RS'
+            ),
+            b_latest AS (
+              SELECT
+                  b.UZBENRO_CUST_CODE,
+                  b.UZBENRO_PREM_CODE,
+                  b.UZBENRO_OLD_ACCT_NUM,
+                  ROW_NUMBER() OVER (
+                    PARTITION BY b.UZBENRO_CUST_CODE, b.UZBENRO_PREM_CODE
+                    ORDER BY b.UZBENRO_ACTIVITY_DATE DESC NULLS LAST
+                  ) rn
+              FROM UZBENRO b
+              JOIN params p
+                ON b.UZBENRO_CUST_CODE = p.cust_code
+               AND b.UZBENRO_PREM_CODE = p.prem_code
+              WHERE b.UZBENRO_OLD_ACCT_NUM IS NOT NULL
+                AND b.UZBENRO_OLD_ACCT_NUM <> '0'
+            ),
+            g_latest AS (
+              SELECT
+                  g.GTBENRL_CONTROL_NUM,
+                  g.GTBENRL_AGLC_PREM_ID,
+                  ROW_NUMBER() OVER (
+                    PARTITION BY g.GTBENRL_CUST_CODE, g.GTBENRL_PREM_CODE
+                    ORDER BY g.GTBENRL_PROC_DATE DESC NULLS LAST, g.GTBENRL_REC_ID DESC
+                  ) rn
+              FROM GTBENRL g
+              JOIN params p
+                ON g.GTBENRL_CUST_CODE = p.cust_code
+               AND g.GTBENRL_PREM_CODE = p.prem_code
+            )
+            SELECT
+              p.cust_code                                   AS "customerCode",
+              p.prem_code                                   AS "premisesCode",
+              COALESCE(s.UCRSERV_LOCATION_ID, g.GTBENRL_AGLC_PREM_ID)
+                                                            AS "aglcServiceLocationID",
+              b.UZBENRO_OLD_ACCT_NUM                        AS "aglcAccountNumber",
+              g.GTBENRL_CONTROL_NUM                         AS "controlNum"
+            FROM params p
+            LEFT JOIN svc      s ON s.rn = 1
+            LEFT JOIN b_latest b ON b.rn = 1
+            LEFT JOIN g_latest g ON g.rn = 1
+            
+            
+            """;
     private DBQuery() {
     }
 

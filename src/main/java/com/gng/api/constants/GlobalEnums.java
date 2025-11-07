@@ -265,7 +265,9 @@ public class GlobalEnums {
         REFUSED_DEPOSIT("RD"),
         SAVE_FOR_FALL_SSP("SF"),
         DEPOSIT_BILLED("DB"),
-        CANCEL_PREPAY("CP");
+        CANCEL_PREPAY("CP"),
+        CREDIT_FREEZE("BADC"),
+        PENDING_REVIEW("PVER");
 
         private final String value;
 
@@ -293,7 +295,10 @@ public class GlobalEnums {
         PGB("PGB"),
         RGB("RGB"),
         MVS("MVS"),
-        GPP("GPP");
+        GPP("GPP"),
+        TRD("TRD"),
+        VML("VML"),
+        GB6("GB6");
 
         private final String value;
         PlanCode(String value) {

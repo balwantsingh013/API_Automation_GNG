@@ -6,12 +6,18 @@ import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.meterSet.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel;
+import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.DBConstant.*;
+import static com.gng.api.constants.TestConstant.CUSTOMER_DATA;
+import static com.gng.api.constants.TestConstant.CUSTOMER_SHEET_NAME;
+import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 @Slf4j
 public class SearchAccountsHelper {
@@ -51,6 +57,74 @@ public class SearchAccountsHelper {
                 payload.setRequestID(FakerDataGenerator.generateString(10));
         }
     }
+
+    public void preparePayloadFromGetEligibleExternalConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
+        setParametersToEmpty(payload);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
+        payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+        payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+
+        switch (testCondition) {
+            case MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022,
+                 MS_GE_RS_INCL_TIER_5_TC_023,
+                 MS_RS_MULTIPLE_PREM_TC_024,
+                 MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025 -> {
+                setParametersToEmpty(payload);
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
+            }
+
+            default -> {
+            }
+        }
+    }
+    public void setParametersFromGetEligiblePlansAndOffersResponse(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+        payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+    }
+
+    public void preparePayloadForExternalConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
+        setParametersToEmpty(payload);
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
+        Map<String, Object> activeCustomerData = null;
+
+        switch (testCondition) {
+            case MS_RS_NO_RECORD_FOUND_TC_013, MS_RS_VARIANT_TC_014-> {
+                activeCustomerData = ApplicationContext.get().getDbAction().getCustomerInformationCreditScoreTextNoRecord();
+                payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
+//                payload.setCustomerCode(activeCustomerData.get(UZBENRO_CUST_CODE).toString());
+//                payload.setPremisesCode(activeCustomerData.get(UZBENRO_PREM_CODE).toString());
+            }
+            case MS_RS_CREDIT_FREEZE_TC_015 -> {
+                activeCustomerData = ApplicationContext.get().getDbAction()
+                        .getCustomerInformationCreditFreeze();
+            //.getCustomerInformationByEnrollmentStatusTransactionType(GlobalEnums.EnrollMentStatus.CREDIT_FREEZE.getValue(), METER_SET.getValue());
+
+            }
+            case MS_RS_DENIAL_DUE_TC_016 -> {
+                loadCustomerData(payload, testCondition);
+
+//                activeCustomerData = ApplicationContext.get().getDbAction()
+//                        .getCustomerInformationNoCredit();
+                payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
+            }
+            case MS_GE_RS_INCL_TIER_5_TC_023 -> {
+                setParametersToEmpty(payload);
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
+            }
+            default -> {
+
+            }
+        }
+        assert activeCustomerData != null;
+        payload.setCustomerCode(activeCustomerData.get(UZBENRO_CUST_CODE).toString());
+        payload.setPremisesCode(activeCustomerData.get(UZBENRO_PREM_CODE).toString());
+    }
+
+
     public void setParametersToEmpty(SearchAccountsRequest payload){
         payload.setCustomerCode("");
         payload.setCustomerLastName("");
@@ -58,5 +132,77 @@ public class SearchAccountsHelper {
         payload.setPremisesZipCode("");
         payload.setCustomerBusinessName("");
         payload.setPremisesCode("");
+    }
+    public void loadCustomerData(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData, testCondition);
+    }
+
+    public void getCustomerAndPremiseDetails(SearchAccountsRequest payload, Map<String, String> data, SearchAccountsApiLabel testCondition ){
+
+        switch (testCondition){
+            case MS_RS_DENIAL_DUE_TC_016
+                    -> {
+                payload.setCustomerLastName(data.get("customerLastName"));
+                payload.setCustomerFirstName(data.get("customerFirstName"));
+                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+                payload.setPremisesStreetName(data.get("premisesStreetName"));
+                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+                payload.setPremisesUnitType(data.get("premisesUnitType"));
+                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+                payload.setPremisesCity(data.get("premisesCity"));
+                payload.setPremisesStateCode(data.get("premisesStateCode"));
+                payload.setPremisesZipCode(data.get("premisesZipCode"));
+                payload.setAglcAccountNumber(null);
+            }
+            default -> {
+                payload.setCustomerLastName(data.get("customerLastName"));
+                payload.setCustomerFirstName(data.get("customerFirstName"));
+                payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+                payload.setPremisesStreetName(data.get("premisesStreetName"));
+                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+                payload.setPremisesUnitType(data.get("premisesUnitType"));
+                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+                payload.setPremisesCity(data.get("premisesCity"));
+                payload.setPremisesStateCode(data.get("premisesStateCode"));
+                payload.setPremisesZipCode(data.get("premisesZipCode"));
+            }
+        }
+
+        String ssn = data.get("SSN");
+        if (ssn != null && !ssn.trim().isEmpty()) {
+            payload.setSocialSecurityNumber(encryptData(data.get("SSN")));
+        }
+        String federalTaxId = data.get("federalTaxId");
+        if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
+            payload.setFederalTaxID(encryptData(data.get("federalTaxId")));
+        }
+    }
+
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
+            String excelPath,
+            String sheetName,
+            E testLabel) {
+
+        try {
+            ExcelReader reader = new ExcelReader(excelPath);
+            List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
+
+            return sheetData.stream()
+                    .filter(row -> {
+                        String condition = row.get("testCondition");
+                        return condition != null && condition.contains(testLabel.name());
+                    }).findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "No matching testConditions found containing: " + testLabel.name()));
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load data from Excel", e);
+        }
     }
 }

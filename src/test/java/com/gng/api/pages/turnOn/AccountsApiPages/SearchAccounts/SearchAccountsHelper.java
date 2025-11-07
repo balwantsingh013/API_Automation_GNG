@@ -758,7 +758,7 @@ public class SearchAccountsHelper {
         }
         String federalTaxId = data.get("federalTaxId");
         if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
-            payload.setSocialSecurityNumber(encryptData(data.get("federalTaxId")));
+            payload.setFederalTaxID(encryptData(data.get("federalTaxId")));
         }
     }
     public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(

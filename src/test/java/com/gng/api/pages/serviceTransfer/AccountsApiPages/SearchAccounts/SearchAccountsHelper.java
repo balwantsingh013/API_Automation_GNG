@@ -455,7 +455,7 @@ public class SearchAccountsHelper {
 
     public void setExternalCasesParameters(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         Map<String, Object> customerData;
-        //payload.setLoginID(USERNAME);
+        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
         payload.setRequestID(FakerDataGenerator.generateString(10));
         switch (testCondition) {
             case ST_SE_INVALID_ENROLLMENT_STATUS_VALUE_TC234,
@@ -483,16 +483,13 @@ public class SearchAccountsHelper {
                 customerData = ApplicationContext.get().getDbAction()
                         .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.MVS.getValue());
                 setCustomerInfo(payload, customerData);
-                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
                 break;
-
             case
                 ST_GE_ST_CURRENT_TRUE_PLAN_NOT_FIXED_OR_CEILING_NEG_TC215A,
                 ST_GE_ST_CURRENT_TRUE_NOT_TRAN_NEG_TC217:
                 customerData = ApplicationContext.get().getDbAction()
                         .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
                 setCustomerInfo(payload, customerData);
-                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
                 break;
 
             case  ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198,
@@ -500,7 +497,6 @@ public class SearchAccountsHelper {
                 customerData = ApplicationContext.get().getDbAction()
                         .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.PGB.getValue());
                 setCustomerInfo(payload, customerData);
-                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
                 break;
         }
     }

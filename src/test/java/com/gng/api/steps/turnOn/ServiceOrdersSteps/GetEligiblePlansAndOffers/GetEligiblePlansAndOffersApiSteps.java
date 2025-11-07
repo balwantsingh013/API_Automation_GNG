@@ -175,6 +175,11 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.validatePositiveTestConditionsPromotionCodeFromExcelData(get_eligible_plans_and_offers, GlobalEnums.PromotionCode.valueOf(promotionCode), valueOf(testCondition));
     }
 
+    @When("a request is made to the GetEligiblePlansAndOffers Api external cases for {string} condition")
+    public void PositiveEligiblePlansAndOffersExternalCasesApi(String testCondition) {
+        getEligiblePlansAndOffersApiPage.validateExternalCasesWithCustomerDataFile(get_eligible_plans_and_offers, valueOf(testCondition));
+    }
+
     @When("a request is made to the GetEligiblePlansAndOffers Api for {string} condition")
     public void PositiveEligiblePlansAndOffersApi(String testCondition) {
         getEligiblePlansAndOffersApiPage.validatePositiveWithNoPromotionCodeTestConditionsFromExcelData(get_eligible_plans_and_offers, valueOf(testCondition));
