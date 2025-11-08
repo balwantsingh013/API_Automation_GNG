@@ -20,7 +20,7 @@ public final class ApiEndPoint {
     public static final String GET_MARKETER_REFERENCE_DATA= "/Common/GetMarketerReferenceData";
     public static final String GET_REASONS_FOR_LEAVING ="/Common/GetReasonsForLeaving";
 
-    public static final String VALIDATE_USERNAME= "/Csi/ValidateUsername";
+    public static final String VALIDATE_USERNAME= "/CustomerService/ValidateUsername";
 
     private ApiEndPoint() {
     }

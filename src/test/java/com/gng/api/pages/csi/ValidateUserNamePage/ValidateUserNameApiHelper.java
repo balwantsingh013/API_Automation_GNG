@@ -65,7 +65,7 @@ public class ValidateUserNameApiHelper {
                 payload.setUsername(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
                 break;
 
-            case Username_does_not_exist_in_mariadb_TC_8:
+            case Username_does_not_exist_in_mariadb_TC_9:
                 String username=FakerDataGenerator.generateAlphanumeric(6);
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(username);
@@ -73,20 +73,26 @@ public class ValidateUserNameApiHelper {
                 Assert.assertTrue(userNames.isEmpty(), "Expected userNames map to be empty");
                 break;
 
-            case Active_username_exists_in_mariadb_TC_9:
+            case Username_exists_in_mariadb_AVAILABLE_TC_8:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case Active_username_exists_in_mariadb_TC_9_2:
+            case Username_exists_in_mariadb__ACTIVE_TC_10:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case Inactive_username_exists_in_mariadb_TC_10:
+            case Inactive_username_exists_in_mariadb_TC_12:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUsername();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername(userNames.get("user_name").toString());
+                break;
+
+            case Username_exists_in_custadv_pending_registrations_table_TC_11:
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;

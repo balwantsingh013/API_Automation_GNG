@@ -176,6 +176,29 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getActiveUsernameFromOtherTable2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_USER_NAME_3;
+
+        logQueryInAllure("get active username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+
+
     public Map<String, Object> getActiveUsernameFromOtherTable() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACTIVE_USER_NAME_2;
@@ -882,6 +905,12 @@ public class DBAction {
     public Map<String, Object> getAccountDetails_LastNameZipCode() {
         String query = DBQuery.GET_LASTNAME_AND_ZIPCODE;
         logQueryInAllure("Get Last Name And Zip Code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeResidentialTier1() {
+        String query = DBQuery.GET_CUST_PREM_CODE_TIER_1;
+        logQueryInAllure("Get Customer code and Prem code for Tier 1", query);
         return jdbcTemplate.queryForMap(query);
     }
 
