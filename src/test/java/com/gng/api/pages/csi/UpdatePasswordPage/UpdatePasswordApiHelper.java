@@ -119,7 +119,7 @@ public class UpdatePasswordApiHelper {
                 break;
 
             case Valid_username_and_password_TC_16:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable2();
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 payload.setPassword(FakerDataGenerator.generateAlphanumeric(9)); // Weak password
