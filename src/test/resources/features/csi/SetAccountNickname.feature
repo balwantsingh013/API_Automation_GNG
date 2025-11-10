@@ -8,9 +8,9 @@ Feature: Verify SetAccountNickname Api
 
     Examples:
       | testCondition                                           | errorCode | errorMessage                          |
-      | Missing_request_id_TC_1                                 | 10001     | Missing Request ID                    |
-      | Length_of_request_id_larger_than_32_TC_2                | 10002     | Invalid Request ID                    |
-      | Duplicate_request_id_TC_3                               | 10003     | Duplicate Request ID                  |
+      | Missing_request_Id_TC_1                                 | 10001     | Missing Request ID                    |
+      | Length_of_request_Id_larger_than_32_TC_2                | 10002     | Invalid Request ID                    |
+      | Duplicate_request_Id_TC_3                               | 10003     | Duplicate Request ID                  |
       | Missing_customerCode_TC_4                               | 10011     | Missing Customer Code                 |
       | CustomerCode_length_greater_than_9_TC_5                 | 10015     | Invalid Customer Code Format          |
       | CustomerCode_not_a_string_TC_6                          | 10015     | Invalid Customer Code Format          |

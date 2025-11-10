@@ -5,9 +5,9 @@ public enum SetAccountNicknameLabel {
     set_account_nickname,
     set_account_nickname_mandatory,
 
-    Missing_request_id_TC_1,
-    Length_of_request_id_larger_than_32_TC_2,
-    Duplicate_request_id_TC_3,
+    Missing_request_Id_TC_1,
+    Length_of_request_Id_larger_than_32_TC_2,
+    Duplicate_request_Id_TC_3,
     Missing_customerCode_TC_4,
     CustomerCode_length_greater_than_9_TC_5,
     CustomerCode_not_a_string_TC_6,

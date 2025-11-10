@@ -33,15 +33,15 @@ public class SetAccountNicknameApiHelper {
         Map<String, Object> accountData = null;
 
         switch (testCondition) {
-            case Missing_request_id_TC_1:
+            case Missing_request_Id_TC_1:
                 payload.setRequestID("");
                 break;
 
-            case Length_of_request_id_larger_than_32_TC_2:
+            case Length_of_request_Id_larger_than_32_TC_2:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
                 break;
 
-            case Duplicate_request_id_TC_3:
+            case Duplicate_request_Id_TC_3:
                 payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
                 break;
 
