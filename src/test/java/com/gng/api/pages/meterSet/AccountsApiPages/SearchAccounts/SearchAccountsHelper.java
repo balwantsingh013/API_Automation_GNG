@@ -94,13 +94,19 @@ public class SearchAccountsHelper {
             case MS_RS_NO_RECORD_FOUND_TC_013, MS_RS_VARIANT_TC_014-> {
                 activeCustomerData = ApplicationContext.get().getDbAction().getCustomerInformationCreditScoreTextNoRecord();
                 payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
-//                payload.setCustomerCode(activeCustomerData.get(UZBENRO_CUST_CODE).toString());
-//                payload.setPremisesCode(activeCustomerData.get(UZBENRO_PREM_CODE).toString());
+
+                if (activeCustomerData == null) throw new AssertionError();
+                payload.setCustomerCode(activeCustomerData.get(UZBENRO_CUST_CODE).toString());
+                payload.setPremisesCode(activeCustomerData.get(UZBENRO_PREM_CODE).toString());
             }
             case MS_RS_CREDIT_FREEZE_TC_015 -> {
                 activeCustomerData = ApplicationContext.get().getDbAction()
                         .getCustomerInformationCreditFreeze();
             //.getCustomerInformationByEnrollmentStatusTransactionType(GlobalEnums.EnrollMentStatus.CREDIT_FREEZE.getValue(), METER_SET.getValue());
+
+                if (activeCustomerData == null) throw new AssertionError();
+                payload.setCustomerCode(activeCustomerData.get(UZBENRO_CUST_CODE).toString());
+                payload.setPremisesCode(activeCustomerData.get(UZBENRO_PREM_CODE).toString());
 
             }
             case MS_RS_DENIAL_DUE_TC_016 -> {
@@ -114,14 +120,13 @@ public class SearchAccountsHelper {
                 setParametersToEmpty(payload);
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
+
             }
             default -> {
 
             }
         }
-        assert activeCustomerData != null;
-        payload.setCustomerCode(activeCustomerData.get(UZBENRO_CUST_CODE).toString());
-        payload.setPremisesCode(activeCustomerData.get(UZBENRO_PREM_CODE).toString());
+
     }
 
 

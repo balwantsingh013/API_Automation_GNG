@@ -21,10 +21,11 @@ import java.util.stream.Collectors;
 import static com.gng.api.constants.DBConstant.UCBCUST_FIRST_NAME;
 import static com.gng.api.constants.DBConstant.UCBCUST_LAST_NAME;
 import static com.gng.api.constants.GlobalEnums.CreditCheckOption.*;
+import static com.gng.api.constants.GlobalEnums.CustomerType.COMMERCIAL;
 import static com.gng.api.constants.GlobalEnums.TransactionType.METER_SET;
 import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
-import static com.gng.api.constants.TestConstant.CUSTOMER_DATA;
-import static com.gng.api.constants.TestConstant.CUSTOMER_SHEET_NAME;
+import static com.gng.api.constants.TestConstant.*;
+import static com.gng.api.constants.TestConstant.EXPERIAN_SHEET_NAME;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
 
 @Slf4j
@@ -102,6 +103,12 @@ public class GetEligiblePlansAndOffersHelper {
             }
 
             case MS_CM_NO_MATCH_INITIAL_TC_026 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+
                 payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
                 payload.setConfirmCreditCheck(false);
                 payload.setCommercialCreditCheckBusinessBIN(null);
@@ -117,13 +124,11 @@ public class GetEligiblePlansAndOffersHelper {
                  MS_CM_VARIANT_TC_031, MS_CM_VARIANT_TC_032, MS_CM_VARIANT_TC_033,
                  MS_CM_VARIANT_TC_034 -> {
                 payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
-
             }
             case get_eligible_plans_and_offers, get_eligible_plans_and_offers_mandatory -> {
             }
         }
     }
-
 
     public void setParametersBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
 
@@ -145,14 +150,19 @@ public class GetEligiblePlansAndOffersHelper {
 
             case MS_RS_FRAUD_ALERT_INVALID_SSN_TC_010 -> {
                 loadCustomerData(payload, testCondition);
-//                payload.setTransactionType(METER_SET.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
             }
 
-            case MS_RS_NO_MATCH_NO_CONFIRM_TC_011 -> {
+            case MS_RS_NO_MATCH_NO_CONFIRM_TC_011, MS_RS_DENIAL_DUE_TC_016, MS_RS_CREDIT_FREEZE_TC_015 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.FALSE);
+            }
+            case MS_RS_VARIANT_TC_014 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setConfirmCreditCheck(Boolean.TRUE);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setCustomerCode(null);
             }
 
             case MS_RS_NO_RECORD_FOUND_CONFIRM_PRP_ONLY_TC_012 -> {
@@ -162,58 +172,27 @@ public class GetEligiblePlansAndOffersHelper {
             }
 
             case MS_RS_NO_RECORD_FOUND_TC_013 -> {
-                //loadCustomerData(payload, testCondition);
-                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-                setInvalidCombinationCustomerData(payload, testCondition);
-
+                loadCustomerData(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.TRUE);
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
-                payload.setAcnStatusIndicator(testContext.getGetEligiblePlansAndOffersResponse().getData().getAcnStatusIndicator());
                 payload.setAuthorizedBy("");
-//                payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
-//                payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
-            }
-
-            case  MS_RS_CREDIT_FREEZE_TC_015 -> {
-                loadCustomerData(payload, testCondition);
-                payload.setConfirmCreditCheck(Boolean.TRUE);
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
-            }
-
-            case   MS_RS_DENIAL_DUE_TC_016 -> {
-                loadCustomerData(payload, testCondition);
-                payload.setSocialSecurityNumber("acfkXTY3/STA6XzuMulKpo1gvgTPjLmi0+i4zdsrLMs=");
-//                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-                payload.setConfirmCreditCheck(Boolean.FALSE);
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
             }
 
             case   MS_RS_CUSTOMER_NO_AUTH_TC_017 -> {
                 loadCustomerData(payload, testCondition);
-//                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setCreditCheckOption(GlobalEnums.CreditCheckOption.NO.getValue());
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
             }
             case MS_GE_TIER_1_NE_TC_018, MS_GE_TIER_2_NE_TC_019, MS_GE_TIER_9_NE_TC_020 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setCreditCheckOption(YES.getValue());
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
-                payload.setAuthorizedBy("TIMOTHY LUCH");
+                payload.setAuthorizedBy("");
 
             }
             case MS_GE_RS_COMM_VS_150_TC_021 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setCreditCheckOption(COMMERCIAL_CREDIT_CHECK_REQUIRED.getValue());
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
                 payload.setAglcAccountNumber("");
             }
 
@@ -245,20 +224,19 @@ public class GetEligiblePlansAndOffersHelper {
                         .getData().getAccounts().getFirst().getCustomerCode());
             }
 
-            case MS_RS_VARIANT_TC_014 -> {
-                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
-                setInvalidCombinationCustomerData(payload, testCondition);
-                payload.setConfirmCreditCheck(Boolean.TRUE);
-                payload.setCreditCheckOption(YES.getValue());
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
-            }
-
-            // ==================== COMMERCIAL (TC-026..034) ====================
             case MS_CM_NO_MATCH_INITIAL_TC_026 -> {
-                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+
                 payload.setConfirmCreditCheck(false);
                 payload.setCommercialCreditCheckBusinessBIN(null);
+
+//                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+//                payload.setConfirmCreditCheck(false);
+//                payload.setCommercialCreditCheckBusinessBIN(null);
             }
 
             case MS_CM_NO_MATCH_CONFIRM_RETURNS_PLANS_TC_027 -> {
@@ -271,49 +249,70 @@ public class GetEligiblePlansAndOffersHelper {
                  MS_CM_VARIANT_TC_031, MS_CM_VARIANT_TC_032, MS_CM_VARIANT_TC_033,
                  MS_CM_VARIANT_TC_034 -> {
                 payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
-
             }
 
             case get_eligible_plans_and_offers, get_eligible_plans_and_offers_mandatory -> {
             }
         }
     }
+    public void setTheFieldToEmptyForCommercialScenarios(GetEligiblePlansAndOffersRequest payload){
+        payload.setSocialSecurityNumber("");
+        payload.setCustomerFirstName("");
+        payload.setCustomerMiddleName("");
+        payload.setCustomerLastName("");
+    }
+
+    public void loadCommercialData(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition){
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(EXPERIAN_DATA, EXPERIAN_SHEET_NAME, testCondition);
+        getCommercialCustomerAndPremiseDetails(payload, customerData);
+    }
+
+    private void getCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
+        parseAddress(payload, data.getOrDefault("BUSINESS STREET ADDRESS", ""));
+        payload.setPremisesCity(data.getOrDefault("BUSINESS CITY", ""));
+        payload.setPremisesStateCode(data.getOrDefault("BUSINESS STATE", ""));
+        payload.setPremisesZipCode(data.getOrDefault("BUSINESS ZIP", ""));
+        payload.setCustomerBusinessName(data.get("BUSINESS NAME"));
+        payload.setFederalTaxID(encryptData(data.get("TAX-ID")));
+    }
 
     public void loadCustomerData(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition){
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData, testCondition);
     }
-
     public void getCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data, GetEligiblePlansAndOffersApiLabel testCondition ){
-        payload.setCustomerLastName(data.get("customerLastName"));
-        payload.setCustomerMiddleName(data.get("customerMiddleName"));
-        payload.setCustomerFirstName(data.get("customerFirstName"));
-        payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
-        payload.setPremisesStreetName(data.get("premisesStreetName"));
-        payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
-        payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
-        payload.setPremisesUnitType(data.get("premisesUnitType"));
-        payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
-        payload.setPremisesCity(data.get("premisesCity"));
-        payload.setPremisesStateCode(data.get("premisesStateCode"));
-        payload.setPremisesZipCode(data.get("premisesZipCode"));
 
         switch (testCondition){
-            case MS_RS_NO_MATCH_NO_CONFIRM_TC_011 -> {
+
+            case MS_RS_NO_MATCH_NO_CONFIRM_TC_011, MS_RS_NO_RECORD_FOUND_CONFIRM_PRP_ONLY_TC_012-> {
+                payload.setCustomerLastName(data.get("customerLastName"));
+                payload.setGenerationCode(data.get("generationCode"));
+                payload.setCustomerMiddleName(data.get("customerMiddleName"));
+                payload.setCustomerFirstName(data.get("customerFirstName"));
                 payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
-
+                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+                payload.setPremisesStreetName(data.get("premisesStreetName"));
+                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+                payload.setPremisesUnitType(data.get("premisesUnitType"));
+                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+                payload.setPremisesCity(data.get("premisesCity"));
+                payload.setPremisesStateCode(data.get("premisesStateCode"));
+                payload.setPremisesZipCode(data.get("premisesZipCode"));
             }
-            case MS_RS_DENIAL_DUE_TC_016 -> {
-                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
-                payload.setAglcAccountNumber(null);
-            }
-
-            case MS_GE_RS_INCL_TIER_5_TC_023, MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025 -> {
-                payload.setAcnStatusIndicator(data.get("acnStatusIndicator"));
-                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
-                payload.setCustomerCode(null);
-                payload.setPremisesCode(null);
-                payload.setSspParticipantCode(null);
+            case MS_RS_NO_RECORD_FOUND_TC_013-> {
+                payload.setCustomerLastName(data.get("customerLastName"));
+                payload.setCustomerFirstName(data.get("customerFirstName"));
+                payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+                payload.setPremisesStreetName(data.get("premisesStreetName"));
+                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+                payload.setPremisesUnitType(data.get("premisesUnitType"));
+                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+                payload.setPremisesCity(data.get("premisesCity"));
+                payload.setPremisesStateCode(data.get("premisesStateCode"));
+                payload.setPremisesZipCode(data.get("premisesZipCode"));
             }
             default -> {
                 payload.setCustomerLastName(data.get("customerLastName"));
@@ -331,6 +330,10 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerCode(null);
                 payload.setPremisesCode(null);
                 payload.setAglcAccountNumber("");
+                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+                payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+                payload.setCustomerMiddleName(data.get("customerMiddleName"));
+
             }
         }
 
@@ -343,6 +346,7 @@ public class GetEligiblePlansAndOffersHelper {
             payload.setFederalTaxID(encryptData(data.get("federalTaxId")));
         }
     }
+
     public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(
             String excelPath,
             String sheetName,
@@ -379,12 +383,10 @@ public class GetEligiblePlansAndOffersHelper {
                 loadCustomerData(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.TRUE);
                 payload.setCreditCheckOption(YES.getValue());
-                //payload.setTransactionType(METER_SET.getValue());
                 payload.setSeasonalSavingsProgramIndicator(false);
                 payload.setMarketingPromotionCode(null);
                 payload.setAuthorizedBy(null);
                 payload.setAglcAccountNumber("");
-                //payload.setTenantLandlord(GlobalEnums.TenantOrLandlord.LANDLORD.getValue());
             }
             case
                  MS_GE_RS_INCL_TIER_5_TC_023 -> {
@@ -414,27 +416,7 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
 
-    public void setInvalidCombinationCustomerData(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
-        Map<String, Object> customerData;
-        switch (testCondition) {
-            case MS_RS_NO_RECORD_FOUND_TC_013,
-                 MS_RS_VARIANT_TC_014,
-                 MS_RS_DENIAL_DUE_TC_016,
-                 MS_RS_CUSTOMER_NO_AUTH_TC_017,
-                 MS_GE_TIER_9_NE_TC_020,
-                 MS_GE_RS_COMM_VS_150_TC_021,
-                 MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022,
-                 MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025:
-                 customerData = ApplicationContext.get().getDbAction().getCustomerInformationCreditScoreTextNoRecord();
-                payload.setCustomerFirstName(customerData.get(UCBCUST_FIRST_NAME).toString());
-                payload.setCustomerLastName(customerData.get(UCBCUST_LAST_NAME).toString());
-                break;
-        }
-    }
-
     public void setSeedlingParamsFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
-        var searchResponseAcct = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst();
-
         payload.setPremisesStreetName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetName());
         payload.setPremisesStreetSuffix(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetSuffix());
         payload.setPremisesStreetNumber(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesStreetNumber());
@@ -554,6 +536,62 @@ public class GetEligiblePlansAndOffersHelper {
         verifyPlansDoNotContainCodes(disallowed);
     }
 
+    private void parseAddress(GetEligiblePlansAndOffersRequest payload, String fullAddress) {
+        if (fullAddress == null || fullAddress.isEmpty()) return;
+
+        String[] parts = fullAddress.trim().split("\\s+");
+
+        String streetNumber = (parts.length >= 1) ? parts[0] : "";
+        String streetSuffix = "";
+        String postDirection = "";
+        String streetName = "";
+        String premisesUnitType = "";
+        String premisesUnitNumber = "";
+
+        List<String> unitTypes = Arrays.asList("STE", "SUITE", "APT", "UNIT", "FL", "RM");
+        List<String> directions = Arrays.asList("N", "S", "E", "W", "NE", "NW", "SE", "SW");
+
+        int unitIndex = -1;
+        for (int i = 0; i < parts.length; i++) {
+            if (unitTypes.contains(parts[i].toUpperCase())) {
+                unitIndex = i;
+                break;
+            }
+        }
+
+        int suffixStart = (unitIndex == -1) ? parts.length : unitIndex;
+
+        // Capture directional suffix (e.g., BLVD SE)
+        if (suffixStart >= 3) {
+            streetSuffix = parts[suffixStart - 2];
+            postDirection = parts[suffixStart - 1];
+
+            if (!directions.contains(postDirection.toUpperCase())) {
+                streetSuffix = parts[suffixStart - 1];
+                postDirection = "";
+            }
+
+            streetName = String.join(" ", Arrays.copyOfRange(parts, 1, suffixStart - (postDirection.isEmpty() ? 1 : 2)));
+        } else if (suffixStart == 3) {
+            streetName = parts[1];
+            streetSuffix = parts[2];
+        } else if (suffixStart == 2) {
+            streetName = parts[1];
+        }
+
+        if (unitIndex != -1 && unitIndex + 1 < parts.length) {
+            premisesUnitType = parts[unitIndex];
+            premisesUnitNumber = String.join(" ", Arrays.copyOfRange(parts, unitIndex + 1, parts.length));
+        }
+
+        payload.setPremisesStreetNumber(streetNumber);
+        payload.setPremisesStreetName(streetName);
+        payload.setPremisesStreetSuffix(streetSuffix);
+        payload.setPremisesStreetPostDirection(postDirection);
+        payload.setPremisesUnitType(premisesUnitType);
+        payload.setPremisesUnitNumber(premisesUnitNumber);
+    }
+
     public static void comparePlanFields(Map<String, Object> eligiblePlan, GetEligiblePlansAndOffersResponse response) {
         String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
         String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
@@ -587,6 +625,7 @@ public class GetEligiblePlansAndOffersHelper {
     private static String normalize(Object value) {
         return value == null ? "" : value.toString().trim();
     }
+
 
     public void validateAllTheEntriesInTablesForEligiblePlansAndOffers(GetEligiblePlansAndOffersApiLabel testCondition){
         String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();

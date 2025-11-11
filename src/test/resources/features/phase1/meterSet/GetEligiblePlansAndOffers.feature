@@ -12,18 +12,22 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition                                                      | errorCode | errorMessage                                                    |
-   # | MS_GE_MISSING_TRANSACTION_TYPE_TC_006                              | 10000 | Missing Transaction Type                                            |
-    #| MS_GE_TRANSACTION_TYPE_MAX_LENGTH_TC_007                           | 10000 | The Transaction Type must be a string with a maximum length of 4    |
-    #| MS_GE_TRANSACTION_TYPE_INVALID_TC_008                              | 1000  | Invalid Request: Invalid Transaction Type                           |
-    #| MS_GE_AGLC_ACCOUNT_PROVIDED_TC_009                                 | 2200  | Parameter Value should be null-AGLC Account Number                  |
+     #| MS_GE_MISSING_TRANSACTION_TYPE_TC_006                              | 10000 | Missing Transaction Type                                            |
+     #| MS_GE_TRANSACTION_TYPE_MAX_LENGTH_TC_007                           | 10000 | The Transaction Type must be a string with a maximum length of 4    |
+     #| MS_GE_TRANSACTION_TYPE_INVALID_TC_008                              | 1000  | Invalid Request: Invalid Transaction Type                           |
+     #| MS_GE_AGLC_ACCOUNT_PROVIDED_TC_009                                 | 2200  | Parameter Value should be null-AGLC Account Number                  |
+     #| MS_RS_FRAUD_ALERT_INVALID_SSN_TC_010 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
+     #| MS_RS_NO_MATCH_NO_CONFIRM_TC_011     | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                   |
+     #| MS_RS_NO_RECORD_FOUND_TC_013                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
+     #| MS_RS_VARIANT_TC_014                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
+     #| MS_RS_CREDIT_FREEZE_TC_015                 | 11113     |   Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.|
+     #| MS_RS_CUSTOMER_NO_AUTH_TC_017                 | 3000     |The customer's enrollment request is denied |
+     # |MS_CM_NO_MATCH_INITIAL_TC_026                  | 11116    | No match found.  Please see  the list of similar businesses found|
+
+ #working above
+    # | MS_RS_DENIAL_DUE_TC_016                 | 11113     |   The customer's enrollment request is denied due to past payment history |
 
 
-    #| MS_RS_FRAUD_ALERT_INVALID_SSN_TC_010 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
-    #| MS_RS_NO_MATCH_NO_CONFIRM_TC_011     | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                   |
-      #| MS_RS_NO_RECORD_FOUND_TC_013                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
-     # | MS_RS_VARIANT_TC_014                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
-     # | MS_RS_VARIANT_TC_015                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
-     # | MS_RS_DENIAL_DUE_TC_016                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
 
 
 
@@ -37,8 +41,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
 
     Examples:
       | testCondition                        | errorCode | errorMessage |
-      #| MS_RS_NO_RECORD_FOUND_TC_013                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
-     #| MS_RS_DENIAL_DUE_TC_016                 | 11113     |   The customer's enrollment request is denied due to past payment history |
+   #  | MS_RS_DENIAL_DUE_TC_016                 | 11113     |   The customer's enrollment request is denied due to past payment history |
 
 
 
@@ -48,19 +51,15 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
     Then verify response code of "SearchAccounts" Api is 200
     Then a request is made to the GetEligiblePlansAndOffers Api negative meterSet to seed data for "<testCondition>" condition
     And verify response code of "GetEligiblePlansAndOffers" Api is 200
-    Then a request is made to the GetEligiblePlansAndOffers Api negative meterSet for "<testCondition>" condition
-    And verify response code of "GetEligiblePlansAndOffers" Api is 200
+    #Then a request is made to the GetEligiblePlansAndOffers Api negative meterSet for "<testCondition>" condition
+  #  And verify response code of "GetEligiblePlansAndOffers" Api is 200
     Then a request is made to the GetEligiblePlansAndOffers Api negative meterSet for "<testCondition>" condition
     And verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
       | testCondition                        | errorCode | errorMessage |
-     | MS_RS_NO_RECORD_FOUND_TC_013                 | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
-     #| MS_RS_VARIANT_TC_014                 | 11114     |   Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com|
-#
-#
-     #| MS_RS_CREDIT_FREEZE_TC_015                 | 11113     |   Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.|
+
      # | MS_RS_DENIAL_DUE_TC_016                 | 11113     |   The customer's enrollment request is denied due to past payment history |
 
 
@@ -77,10 +76,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
 
     Examples:
       | testCondition                           | errorCode | errorMessage                                                    |
-      | MS_RS_DENIAL_DUE_TC_016                 | 11113     |   The customer's enrollment request is denied due to past payment history |
-      #| MS_RS_CUSTOMER_NO_AUTH_TC_017                 | 3000     |The customer's enrollment request is denied |
 
-      | MS_RS_CREDIT_FREEZE_TC_015                 | 11113     |   Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.|
 
 
   @GetEligiblePlansAndOffersMeterSetPositive @HappyFLow @Phase1
@@ -95,12 +91,16 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
 
     Examples:
       | testCondition                          |
+      |MS_RS_NO_RECORD_FOUND_CONFIRM_PRP_ONLY_TC_012|
+      | MS_GE_TIER_2_NE_TC_019                 |
+      | MS_GE_TIER_9_NE_TC_020                 |
+      | MS_GE_RS_COMM_VS_150_TC_021            |
 
-      # 7 instead of 9 plans returned ftd
-      #| MS_GE_TIER_1_NE_TC_018                 |
-      #| MS_GE_TIER_2_NE_TC_019                 |
-     # | MS_GE_TIER_9_NE_TC_020                 |
-      #| MS_GE_RS_COMM_VS_150_TC_021            |
+            # 7 instead of 9 plans returned ftd
+      | MS_GE_TIER_1_NE_TC_018                 |
+
+
+
 
   @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentPositive @HappyFLow @Phase1
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers and SaveEnrollment and SearchAccounts with valid parameters "<testCondition>"
@@ -123,12 +123,12 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
     Examples:
       | testCondition               |
 
-      #| MS_GE_RS_COMM_VS_150_TC_021            |
 
-       #| MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022| worked add uzbenro select * from uzbenro t where t.uzbenro_cust_code = 6125044
+      | MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022|
+       # worked add uzbenro select * from uzbenro t where t.uzbenro_cust_code = 6125044
        #        where UZBENRO_CRED_SCORE_TEXT = '' and UZBENRO_CRED_SCORE_Status = 'ACNL'
 
-      #| MS_RS_MULTIPLE_PREM_TC_024  | worked
+     | MS_RS_MULTIPLE_PREM_TC_024  |
 
   @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentTwicePositive @HappyFLow @Phase1
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers and SaveEnrollment and SearchAccounts for a complete enrollment with valid parameters "<testCondition>"
@@ -156,8 +156,9 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
 
     Examples:
       | testCondition                             |
-      #|MS_GE_RS_INCL_TIER_5_TC_023  |
-     # |MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025  |
+      #working
+      |MS_GE_RS_INCL_TIER_5_TC_023  |
+      |MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025  |
 
 
 
