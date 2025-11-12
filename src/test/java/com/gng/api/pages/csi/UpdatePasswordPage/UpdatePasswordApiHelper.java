@@ -74,7 +74,7 @@ public class UpdatePasswordApiHelper {
                 break;
 
             case Inactive_username_TC_9:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUsername();
+                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
@@ -101,17 +101,17 @@ public class UpdatePasswordApiHelper {
                 break;
 
             case Password_not_a_string_TC_13:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
-                payload.setPassword(Long.parseLong(FakerDataGenerator.generateDigits(8)));
+                payload.setPassword(FakerDataGenerator.generateDigits(8));
                 break;
 
             case Password_does_not_conform_to_policy_TC_14:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
-                payload.setPassword("password"); // Weak password
+                payload.setPassword("SHORT"); // Weak password
                 break;
 
             case Password_matches_current_password_TC_15:

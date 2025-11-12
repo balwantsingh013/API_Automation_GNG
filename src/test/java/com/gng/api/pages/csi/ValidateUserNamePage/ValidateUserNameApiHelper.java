@@ -86,7 +86,7 @@ public class ValidateUserNameApiHelper {
                 break;
 
             case Inactive_username_exists_in_mariadb_TC_12:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUsername();
+                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;

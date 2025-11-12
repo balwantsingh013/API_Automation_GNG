@@ -1977,6 +1977,61 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_CUSTOMER_CODE= """
+            SELECT ucbprem_code
+            FROM ucbprem
+            WHERE ucbprem_code=?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_PREM_CODE= """
+            SELECT ucbcust_cust_code
+            FROM ucbcust
+            WHERE ucbcust_cust_code=?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NEW_ACCOUNT= """
+            SELECT ucracct_cust_code, ucracct_prem_code
+            FROM ucracct
+            WHERE ucracct_status_ind= 'N'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_NICKNAME= """
+            SELECT
+                o.OCSACNM_CUST_CODE,
+                o.OCSACNM_PREM_CODE
+            FROM
+                OCSACNM o
+            JOIN
+                ucracct u
+                ON o.OCSACNM_CUST_CODE = u.ucracct_cust_code
+                AND o.OCSACNM_PREM_CODE = u.ucracct_prem_code
+            WHERE
+                o.OCSACNM_ACCT_NAME IS NOT NULL
+                AND TRIM(o.OCSACNM_ACCT_NAME) <> ''
+                AND u.ucracct_status_ind <> 'N'
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+    public static final String SELECT_ACCOUNT_WITHOUT_NICKNAME= """
+            SELECT
+                o.OCSACNM_CUST_CODE,
+                o.OCSACNM_PREM_CODE
+            FROM
+                OCSACNM o
+            JOIN
+                ucracct u
+                ON o.OCSACNM_CUST_CODE = u.ucracct_cust_code
+                AND o.OCSACNM_PREM_CODE = u.ucracct_prem_code
+            WHERE
+                (o.OCSACNM_ACCT_NAME IS NULL OR TRIM(o.OCSACNM_ACCT_NAME) = '')
+                AND u.ucracct_status_ind <> 'N'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_ACTIVE_USER_NAME_2= """
             SELECT user_name
             FROM users
@@ -1987,6 +2042,14 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             AND user_name REGEXP '^[a-zA-Z0-9]+$'
             ORDER BY user_name DESC
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_INACTIVE_USER= """
+            SELECT user_name
+                        FROM users
+                        WHERE active = 1
+                        AND deleted = 1
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACTIVE_USER_NAME_3= """

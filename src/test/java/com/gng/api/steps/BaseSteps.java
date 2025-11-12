@@ -1,6 +1,7 @@
 package com.gng.api.steps;
 
 import com.gng.api.context.ApplicationContext;
+import com.gng.api.pojo.CSIPojo.SetAccountNickname.SetAccountNicknameResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -72,6 +73,13 @@ public class BaseSteps {
     @And("response should have {string} as {string}")
     public void enrollmentStateresponseShouldHaveFieldAs(String field, String value){
         verifyFieldInResponse(field, value);
+    }
+
+    @And("the response should confirm nickname status as {string}")
+    public void responseShouldConfirmNicknameStatusAs(String expectedStatus) {
+        SetAccountNicknameResponse response = testContext.getSetAccountNicknameResponse();
+        String actualStatus = response.getData().getNicknameStatus();
+        assertThat("Nickname status mismatch", actualStatus, is(expectedStatus));
     }
 
     @And("response should have {string} flag as {string}")

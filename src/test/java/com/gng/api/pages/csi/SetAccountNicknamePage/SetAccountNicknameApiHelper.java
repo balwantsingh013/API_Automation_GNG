@@ -48,32 +48,32 @@ public class SetAccountNicknameApiHelper {
             case Missing_customerCode_TC_4:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode("");
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-                payload.setNickname(FakerDataGenerator.generateString(10));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                payload.setNickname(FakerDataGenerator.generateString(7));
                 break;
 
             case CustomerCode_length_greater_than_9_TC_5:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 payload.setNickname(FakerDataGenerator.generateString(10));
                 break;
 
             case CustomerCode_not_a_string_TC_6:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode("123456789"); // Simulated numeric string
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
+                payload.setCustomerCode(FakerDataGenerator.generateString(5));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 payload.setNickname(FakerDataGenerator.generateString(10));
                 break;
 
             case CustomerCode_not_found_in_UCBCUST_TC_7:
-                String customerCode = FakerDataGenerator.generateDigits(9);
+                String customerCode = FakerDataGenerator.generateDigits(7);
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(customerCode);
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-                payload.setNickname(FakerDataGenerator.generateString(10));
-                //accountData = ApplicationContext.get().getDbAction("banner").getCustomerCode(customerCode);
-                //Assert.assertTrue(accountData.isEmpty(), "Expected customerCode to not exist in UCBCUST");
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                payload.setNickname(FakerDataGenerator.generateString(7));
+                accountData = ApplicationContext.get().getDbAction().getCustomerCode(customerCode);
+                Assert.assertTrue(accountData.isEmpty(), "Expected customerCode to not exist in UCBCUST");
                 break;
 
             case Missing_premisesCode_TC_8:
@@ -85,9 +85,9 @@ public class SetAccountNicknameApiHelper {
 
             case PremisesCode_length_greater_than_7_TC_9:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(7));
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
-                payload.setNickname(FakerDataGenerator.generateString(10));
+                payload.setNickname(FakerDataGenerator.generateString(7));
                 break;
 
             case PremisesCode_not_a_string_TC_10:
@@ -103,40 +103,40 @@ public class SetAccountNicknameApiHelper {
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
                 payload.setPremisesCode(premisesCode);
                 payload.setNickname(FakerDataGenerator.generateString(10));
-                //accountData = ApplicationContext.get().getDbAction("banner").getPremisesCode(premisesCode);
+                accountData = ApplicationContext.get().getDbAction().getPremisesCode(premisesCode);
                 Assert.assertTrue(accountData.isEmpty(), "Expected premisesCode to not exist in UCBPREM");
                 break;
 
             case Nickname_not_allowed_for_new_account_TC_12:
-                //accountData = ApplicationContext.get().getDbAction("banner").getNewStatusAccount();
+                accountData = ApplicationContext.get().getDbAction().getNewStatusAccount();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountData.get("customer_code").toString());
-                payload.setPremisesCode(accountData.get("premises_code").toString());
+                payload.setCustomerCode(accountData.get("ucracct_cust_code").toString());
+                payload.setPremisesCode(accountData.get("ucracct_prem_code").toString());
                 payload.setNickname(FakerDataGenerator.generateString(10));
                 break;
 
             case Nickname_already_exists_for_account_TC_13:
-                //accountData = ApplicationContext.get().getDbAction("banner").getAccountWithNickname();
+                accountData = ApplicationContext.get().getDbAction().getAccountWithNickname();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountData.get("customer_code").toString());
-                payload.setPremisesCode(accountData.get("premises_code").toString());
-                payload.setNickname(accountData.get("nickname").toString());
+                payload.setCustomerCode(accountData.get("OCSACNM_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("OCSACNM_PREM_CODE").toString());
+                payload.setNickname(FakerDataGenerator.generateString(7));
                 break;
 
             case Nickname_missing_for_existing_account_TC_14:
-                //accountData = ApplicationContext.get().getDbAction("banner").getAccountWithoutNickname();
+                accountData = ApplicationContext.get().getDbAction().getAccountWithoutNickname();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountData.get("customer_code").toString());
-                payload.setPremisesCode(accountData.get("premises_code").toString());
+                payload.setCustomerCode(accountData.get("OCSACNM_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("OCSACNM_PREM_CODE").toString());
                 payload.setNickname("");
                 break;
 
             case Valid_account_with_new_nickname_TC_15:
-                //accountData = ApplicationContext.get().getDbAction("banner").getAccountWithoutNickname();
+                accountData = ApplicationContext.get().getDbAction().getAccountWithoutNickname();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountData.get("customer_code").toString());
-                payload.setPremisesCode(accountData.get("premises_code").toString());
-                payload.setNickname(FakerDataGenerator.generateString(10));
+                payload.setCustomerCode(accountData.get("OCSACNM_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("OCSACNM_PREM_CODE").toString());
+                payload.setNickname(FakerDataGenerator.generateString(7));
                 break;
 
             default:
