@@ -24,8 +24,9 @@ Feature: Verify ValidateUserName Api
     And the response should have the username status as "<status>"
 
     Examples:
-      | testCondition                               | errorCode | errorMessage | status    |
-      | Username_does_not_exist_in_mariadb_TC_8     | 0         |              | AVAILABLE |
-      | Active_username_exists_in_mariadb_TC_9      | 0         |              | ACTIVE    |
-      | Active_username_exists_in_mariadb_TC_9_2    | 0         |              | ACTIVE    |
-      | Inactive_username_exists_in_mariadb_TC_10   | 0         |              | INACTIVE  |
+      | testCondition                                                       | errorCode | errorMessage | status    |
+      | Username_does_not_exist_in_mariadb_TC_9                             | 0         |              | AVAILABLE |
+      | Username_exists_in_mariadb_AVAILABLE_TC_8                           | 0         |              | AVAILABLE |
+      | Username_exists_in_mariadb__ACTIVE_TC_10                            | 0         |              | ACTIVE    |
+      | Username_exists_in_custadv_pending_registrations_table_TC_11        | 0         |              | ACTIVE    |
+      | Inactive_username_exists_in_mariadb_TC_12                           | 0         |              | INACTIVE  |

@@ -62,6 +62,29 @@ public class SearchAccountsHelper {
 
     }
 
+    public void fetchRecordFromDBForTestConditions(SearchAccountsApiLabel testCondition){
+        Map<String, Object> validCustomerDetails=null;
+        switch (testCondition) {
+            case ACN_RS_REMAINS_ON_TIER_1:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialTier1();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+        }
+    }
+
+    public void preparePayloadForE2ETestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
+        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        switch(testCondition) {
+            case ACN_RS_REMAINS_ON_TIER_1:
+                payload.setPremisesCode(testContext.getPremisesCode());
+                payload.setCustomerCode(testContext.getCustomerCode());
+                break;
+
+        }
+    }
+
     public void preparePayloadForNegativeTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         setParametersToEmpty(payload);
         Map<String, Object> validCustomerBusinessDetails = null;

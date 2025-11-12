@@ -12,8 +12,9 @@ public enum ValidateUserNameLabel {
     Length_of_username_smaller_than_5_TC_5,
     Length_of_username_greater_than_15_TC_6,
     Username_not_alphanumeric_TC_7,
-    Username_does_not_exist_in_mariadb_TC_8,
-    Active_username_exists_in_mariadb_TC_9,
-    Active_username_exists_in_mariadb_TC_9_2,
-    Inactive_username_exists_in_mariadb_TC_10
+    Username_does_not_exist_in_mariadb_TC_9,
+    Username_exists_in_mariadb_AVAILABLE_TC_8,
+    Username_exists_in_mariadb__ACTIVE_TC_10,
+    Inactive_username_exists_in_mariadb_TC_12,
+    Username_exists_in_custadv_pending_registrations_table_TC_11
 }
