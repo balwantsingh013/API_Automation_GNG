@@ -87,38 +87,6 @@ public class SaveEnrollmentHelper {
         }
     }
 
-    public void setParametersBasedOnTypeNegative(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
-        setPremisesCodeAndTransactionIdBasedOnType(payload, testCondition);
-        switch (testCondition) {
-            case MS_GE_RS_INCL_TIER_5_TC_023 -> {
-                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-                payload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue());
-                setTurnOnDate(payload);
-            }
-
-            default -> { }
-        }
-    }
-
-    public void setPremisesCodeAndTransactionIdBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-
-        switch (testCondition) {
-            case MS_GE_RS_INCL_TIER_5_TC_023 ->
-                    setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
-            default -> {
-//                Map<String, Object> uzrrcotRecord = ApplicationContext.get()
-//                        .getDbAction()
-//                        .getLatestUZRRCOTRecord();
-//                payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
-//                payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-//                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
-                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
-            }
-        }
-    }
     private static Plans findPlanByCode(Collection<Plans> plans, String planCode) {
         return plans.stream()
                 .filter(p -> Objects.equals(p.getPlanCode(), planCode))

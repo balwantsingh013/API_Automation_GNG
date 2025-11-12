@@ -19,11 +19,6 @@ public class SaveEnrollmentApiSteps {
         testContext.setSaveEnrollmentApiPage(saveEnrollmentApiPage);
     }
 
-    @When("a request is made to the SaveEnrollment Api for meterSet with invalid parameters for {string} condition")
-    public void sendInvalidRequest(String testCondition) {
-        saveEnrollmentApiPage.validateInvalidParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
-    }
-
     @When("a request is made to the SaveEnrollment Api for external meterSet calls with valid parameters for {string} condition")
     public void sendValidRequest(String testCondition) {
         saveEnrollmentApiPage.validateExternalConditions(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
