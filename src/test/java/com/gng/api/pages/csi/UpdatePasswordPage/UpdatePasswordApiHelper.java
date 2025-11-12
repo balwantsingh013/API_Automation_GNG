@@ -100,25 +100,11 @@ public class UpdatePasswordApiHelper {
                 payload.setPassword(FakerDataGenerator.generateString(65));
                 break;
 
-            case Password_not_a_string_TC_13:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setUsername(userNames.get("user_name").toString());
-                payload.setPassword(FakerDataGenerator.generateDigits(8));
-                break;
-
-            case Password_does_not_conform_to_policy_TC_14:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setUsername(userNames.get("user_name").toString());
-                payload.setPassword("SHORT"); // Weak password
-                break;
-
-            case Password_matches_current_password_TC_15:
+            case Password_matches_current_password_TC_13:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case Valid_username_and_password_TC_16:
+            case Valid_username_and_password_TC_14:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());

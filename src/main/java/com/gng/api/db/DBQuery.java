@@ -2046,10 +2046,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_INACTIVE_USER= """
             SELECT user_name
-                        FROM users
-                        WHERE active = 1
-                        AND deleted = 1
-                        FETCH FIRST 1 ROWS ONLY
+            FROM users
+            WHERE active = 0
+            AND user_name REGEXP '^[a-zA-Z0-9]+$'
+            ORDER BY user_name DESC
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACTIVE_USER_NAME_3= """

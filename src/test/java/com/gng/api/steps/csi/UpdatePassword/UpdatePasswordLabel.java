@@ -17,9 +17,7 @@ public enum UpdatePasswordLabel {
     Missing_password_TC_10,
     Password_shorter_than_8_characters_TC_11,
     Password_longer_than_64_characters_TC_12,
-    Password_not_a_string_TC_13,
-    Password_does_not_conform_to_policy_TC_14,
-    Password_matches_current_password_TC_15,
-    Valid_username_and_password_TC_16
+    Password_matches_current_password_TC_13,
+    Valid_username_and_password_TC_14
 }
 

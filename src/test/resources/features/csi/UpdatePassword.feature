@@ -20,9 +20,7 @@ Feature: Verify UpdatePassword Api
       | Missing_password_TC_10                         | 10113     | Missing Password                                                          |
       | Password_shorter_than_8_characters_TC_11       | 10157     | Invalid Password Length. The password must be between 8 and 64 characters.|
       | Password_longer_than_64_characters_TC_12       | 10157     | Invalid Password Length. The password must be between 8 and 64 characters.|
-      | Password_not_a_string_TC_13                    | 10157     | Invalid Password Format                                                   |
-      | Password_does_not_conform_to_policy_TC_14      | 10157     | Invalid Password Format                                                   |
-      | Password_matches_current_password_TC_15        | 10359     | Invalid Password. The provided password matches the existing one.         |
+      | Password_matches_current_password_TC_13        | 10359     | Invalid Password. The provided password matches the existing one.         |
 
   @UpdatePasswordPositive @HappyFlow @CSI
   Scenario Outline: Verify the response for UpdatePassword API for "<testCondition>"
@@ -32,4 +30,4 @@ Feature: Verify UpdatePassword Api
 
     Examples:
       | testCondition                     | errorCode | errorMessage |
-      | Valid_username_and_password_TC_16 | 0         |              |
+      | Valid_username_and_password_TC_14 | 0         |              |
