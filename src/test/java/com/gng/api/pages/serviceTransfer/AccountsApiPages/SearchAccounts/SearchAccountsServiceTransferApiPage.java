@@ -24,6 +24,16 @@ public class SearchAccountsServiceTransferApiPage extends BasePage {
         executeSearchAccountsRequest(payload);
     }
 
+    public void searchAccountsE2E(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
+        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
+        helper.preparePayloadForE2ETestConditions(payload, testCondition);
+        executeSearchAccountsRequest(payload);
+    }
+
+    public void searchCustCodePremCodeFromDB(SearchAccountsApiLabel testCondition){
+        helper.fetchRecordFromDBForTestConditions( testCondition);
+    }
+
     private void executeSearchAccountsRequest(SearchAccountsRequest payload) {
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
