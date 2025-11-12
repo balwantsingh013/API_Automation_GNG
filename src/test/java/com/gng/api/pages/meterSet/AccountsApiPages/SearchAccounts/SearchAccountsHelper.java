@@ -9,7 +9,6 @@ import com.gng.api.steps.meterSet.AccountsApiSteps.SearchAccounts.SearchAccounts
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,9 @@ public class SearchAccountsHelper {
             case MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022,
                  MS_GE_RS_INCL_TIER_5_TC_023,
                  MS_RS_MULTIPLE_PREM_TC_024,
-                 MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025 -> {
+                 MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025,
+                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033,
+                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034-> {
                 setParametersToEmpty(payload);
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
@@ -102,7 +103,6 @@ public class SearchAccountsHelper {
             case MS_RS_CREDIT_FREEZE_TC_015 -> {
                 activeCustomerData = ApplicationContext.get().getDbAction()
                         .getCustomerInformationCreditFreeze();
-            //.getCustomerInformationByEnrollmentStatusTransactionType(GlobalEnums.EnrollMentStatus.CREDIT_FREEZE.getValue(), METER_SET.getValue());
 
                 if (activeCustomerData == null) throw new AssertionError();
                 payload.setCustomerCode(activeCustomerData.get(UZBENRO_CUST_CODE).toString());
@@ -111,9 +111,6 @@ public class SearchAccountsHelper {
             }
             case MS_RS_DENIAL_DUE_TC_016 -> {
                 loadCustomerData(payload, testCondition);
-
-//                activeCustomerData = ApplicationContext.get().getDbAction()
-//                        .getCustomerInformationNoCredit();
                 payload.setTransactionType(GlobalEnums.TransactionType.TURN_ON.getValue());
             }
             case MS_GE_RS_INCL_TIER_5_TC_023 -> {
@@ -126,9 +123,7 @@ public class SearchAccountsHelper {
 
             }
         }
-
     }
-
 
     public void setParametersToEmpty(SearchAccountsRequest payload){
         payload.setCustomerCode("");

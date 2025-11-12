@@ -64,15 +64,8 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
     public void verifyResponsePlans(){
         helper.verifyResidentialPlansReceivedAgainstDatabase();
     }
-    public void verifyResponsePlansContainsPlan(GlobalEnums.PlanCode planCode){
-        helper.verifyPlanReturned(planCode);
-    }
 
     public void verifyResponseDoesNotContainPlans(GetEligiblePlansAndOffersApiLabel testCondition) {
         helper.verifyDisallowedPlansFor(testCondition);
-    }
-
-    public void verifyEntriesIAllTables(GetEligiblePlansAndOffersApiLabel testCondition){
-        helper.validateAllTheEntriesInTablesForEligiblePlansAndOffers(testCondition);
     }
 }

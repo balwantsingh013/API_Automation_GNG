@@ -46,17 +46,6 @@ public class DBAction {
         logQueryInAllure("Get Customer info based on account status and plan type", query);
         return jdbcTemplate.queryForMap(query, accountStatus, planType);
     }
-    public Map<String, Object> getCustomerInformationByCreditScoreAndTransactionType(String transactionType, Integer creditScore) {
-        String query = DBQuery.GET_CUSTOMER_BY_CREDIT_SCORE_AND_TRANSACTION_TYPE;
-        logQueryInAllure("Get Customer info based on credit score and transaction type", query);
-        return jdbcTemplate.queryForMap(query, transactionType, creditScore);
-    }
-
-    public Map<String, Object> getCustomerInformationByEnrollmentStatusTransactionType(String enrolmentStatus, String typeCode) {
-        String query = DBQuery.GET_CUSTOMER_BY_ENROLLMENT_STATUS_AND_TRANSACTION_TYPE;
-        logQueryInAllure("Get Customer info based on enrollment status and transaction type", query);
-        return jdbcTemplate.queryForMap(query, enrolmentStatus, typeCode);
-    }
 
     public Map<String, Object> getCustomerInformationCreditScoreTextNoRecord() {
         String query = DBQuery.GET_CUSTOMER_INFORMATION_WITH_TEXT_NO_RECORD;
@@ -68,19 +57,6 @@ public class DBAction {
         String query = DBQuery.GET_CUSTOMER_INFORMATION_WITH_CREDIT_FREEZE;
         logQueryInAllure("Get Customer info based on text no record found", query);
         return jdbcTemplate.queryForMap(query);
-    }
-
-    public Map<String, Object> getCustomerInformationNoCredit() {
-        String query = DBQuery.GET_CUSTOMER_NO_CRED;
-        logQueryInAllure("Get Customer info no cred", query);
-        return jdbcTemplate.queryForMap(query);
-    }
-
-    public Map<String, Object> getAGLC_ByCustCodeAndPremCode(String customerCode, String premCode) {
-        String query = DBQuery.GET_AGLC_BY_CUST_PREM_CODE;
-        logQueryInAllure("Get AGLC by customer and premises code not found", query);
-        Object[] params = { customerCode, premCode };
-        return jdbcTemplate.queryForMap(query, params);
     }
 
     public Map<String, Object> getTenantCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {

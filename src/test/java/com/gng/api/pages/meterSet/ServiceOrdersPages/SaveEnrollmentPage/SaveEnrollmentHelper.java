@@ -81,7 +81,9 @@ public class SaveEnrollmentHelper {
 
         switch (testCondition){
             case MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022,
-                 MS_GE_RS_INCL_TIER_5_TC_023, MS_RS_MULTIPLE_PREM_TC_024 -> payload.setRequestedTurnOnDate(data.getEarliestPossibleTurnOnDate());
+                 MS_GE_RS_INCL_TIER_5_TC_023, MS_RS_MULTIPLE_PREM_TC_024,
+                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033,
+                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034-> payload.setRequestedTurnOnDate(data.getEarliestPossibleTurnOnDate());
         }
     }
 
@@ -97,7 +99,6 @@ public class SaveEnrollmentHelper {
 
             default -> { }
         }
-
     }
 
     public void setPremisesCodeAndTransactionIdBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
@@ -107,12 +108,14 @@ public class SaveEnrollmentHelper {
                     setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
 
             default -> {
-                Map<String, Object> uzrrcotRecord = ApplicationContext.get()
-                        .getDbAction()
-                        .getLatestUZRRCOTRecord();
-                payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
-                payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
-                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+//                Map<String, Object> uzrrcotRecord = ApplicationContext.get()
+//                        .getDbAction()
+//                        .getLatestUZRRCOTRecord();
+//                payload.setCustomerCode(uzrrcotRecord.get("UZRRCOT_CUST_CODE"));
+//                payload.setPremisesCode((String) uzrrcotRecord.get("UZRRCOT_PREM_CODE"));
+//                payload.setTransactionID(uzrrcotRecord.get("UZRRCOT_TRANSACTION_ID"));
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+
             }
         }
     }
@@ -142,7 +145,6 @@ public class SaveEnrollmentHelper {
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
                 payload.setPlanCode(plan.getPlanCode());
-               // setTurnOnDate(payload); attempting to use response value
                 payload.setPromotionCode("");
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber(null);
@@ -160,6 +162,24 @@ public class SaveEnrollmentHelper {
                 payload.setPlanCode(plan.getPlanCode());
                 setTurnOnDate(payload);
                 setCustomerRequestedServiceDate(payload);
+                payload.setPromotionCode(plan.getPromotion1Code());
+                payload.setAglcAccountNumber("");
+                payload.setAglcServiceOrderNumber(null);
+                payload.setServiceTransferReward(null);
+                payload.setServiceTransferCurrentPricePlan(null);
+                payload.setServiceTransferOfferRemainder(null);
+                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+            }
+            case MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033,
+                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034 -> {
+                plan = findPlanByCode(
+                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
+                        GlobalEnums.PlanCode.CVS.getValue());
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
+                payload.setPlanCode(plan.getPlanCode());
+                setTurnOnDate(payload);
+                setCustomerRequestedServiceDate(payload);
                 payload.setPromotionCode("");
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber(null);
@@ -172,10 +192,8 @@ public class SaveEnrollmentHelper {
         }
     }
 
-
     public void setParametersSecondCallTypeExternal(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         setSupportingDefaultParameters(payload);
-
         payload.setAglcAccountNumber("");
         payload.setAglcServiceOrderNumber(null);
         payload.setServiceTransferReward(null);
@@ -184,12 +202,7 @@ public class SaveEnrollmentHelper {
 
         Plans plan;
         switch (testCondition) {
-            case MS_GE_RS_INCL_TIER_5_TC_023
-                  -> {
-//                Plans plan = findPlanByCode(
-//                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-//                        GlobalEnums.PlanCode.TRD.getValue());
-
+            case MS_GE_RS_INCL_TIER_5_TC_023 -> {
               plan = findPlanByNotCode(
                         testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
                         GlobalEnums.PlanCode.MVS.getValue());
@@ -200,7 +213,6 @@ public class SaveEnrollmentHelper {
                 payload.setPromotionCode(plan.getPromotion1Code());
                 setTurnOnDate(payload);
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-
             }
 
             case MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025 -> {

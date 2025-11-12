@@ -298,7 +298,9 @@ public class GlobalEnums {
         GPP("GPP"),
         TRD("TRD"),
         VML("VML"),
-        GB6("GB6");
+        GB6("GB6"),
+        CGB("CGB"),
+        CVS("CVS");
 
         private final String value;
         PlanCode(String value) {

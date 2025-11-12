@@ -43,18 +43,9 @@ public class GetEligiblePlansAndOffersApiSteps {
     public void verifyMeterSetEligibleResponsePlans() {
         getEligiblePlansAndOffersApiPage.verifyResponsePlans();
     }
-    @Then("the meter set response plans should contains a {string} plan")
-    public void verifyMeterSetEligiblePlansAndOffersContainPlanCode(String planCode) {
-        getEligiblePlansAndOffersApiPage.verifyResponsePlansContainsPlan(GlobalEnums.PlanCode.valueOf(planCode));
-    }
 
     @And("verify the response does not contain disallowed plans for {string} condition")
     public void verifyDisallowedPlans(String testCondition){
         getEligiblePlansAndOffersApiPage.verifyResponseDoesNotContainPlans(valueOf(testCondition));
-    }
-
-    @Then("performs the meter set database validation for {string}")
-    public void meterSetDatabaseValidation(String testCondition){
-        getEligiblePlansAndOffersApiPage.verifyEntriesIAllTables(valueOf(testCondition));
     }
 }
