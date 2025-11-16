@@ -9,7 +9,8 @@ public class GlobalEnums {
         PROMOTION_CODE_FOR_EXISTING_CUSTOMER("RENEW12"),
         EXPIRED_MARKETING_PROMOTION_CODE("VIPJUL17"),
         PROMOTION_CODE_RESIDENTIAL("APARTMENT SPECIAL"),
-        PROMOTION_CODE_GREEN_LIFE("GREEN125");
+        PROMOTION_CODE_GREEN_LIFE("GREEN125"),
+        PROMOTION_CODE_DEALS("DEALS");
 
         private final String value;
 
@@ -107,7 +108,8 @@ public class GlobalEnums {
         INVALID_ACCOUNT_NOTE("BOGUS"),
         INVALID_TRANSACTION_TYPE("TOBO"),
         INVALID_CUSTOMER_CODE("0"),
-        INVALID_PREMISES_CODE("0");
+        INVALID_PREMISES_CODE("0"),
+        INVALID_ENROLLMENT_STATE("SEMT");
 
         private final String value;
 
@@ -300,7 +302,8 @@ public class GlobalEnums {
         VML("VML"),
         GB6("GB6"),
         CGB("CGB"),
-        CVS("CVS");
+        CVS("CVS"),
+        CCV("CCV");
 
         private final String value;
         PlanCode(String value) {
@@ -349,6 +352,15 @@ public class GlobalEnums {
 
         private final String value;
         CurrentMarketerCode(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum BillingPlan {
+        BUDGET("B");
+        private final String value;
+        BillingPlan(String value) {
             this.value = value;
         }
     }

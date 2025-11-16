@@ -354,10 +354,37 @@ public class GetEligiblePlansAndOffersHelper {
             payload.setFederalTaxID(encryptData(data.get("federalTaxId")));
         }
         switch (testCondition){
-            case MS_CM_NO_MATCH_INITIAL_TC_026, MS_CM_NO_MATCH_CONFIRM_RETURNS_PLANS_TC_027,
-                 MS_CM_NO_MATCH_WITH_BIN_CONFIRM_RETURNS_PLANS_TC_028, MS_CM_EXCELLENT_CREDIT_CGB_NOT_OFFERED_TC_029,
-                 MS_CM_CREDIT_SKIP_COM_BY_PASS_TC_030, MS_CM_NEW_EN_CREDIT_CHECK_NO_NO_PERMISSIONS_TC_032,
-                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033, MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034 -> {
+//            case MS_CM_NO_MATCH_INITIAL_TC_026, MS_CM_NO_MATCH_CONFIRM_RETURNS_PLANS_TC_027,
+//                 MS_CM_NO_MATCH_WITH_BIN_CONFIRM_RETURNS_PLANS_TC_028, MS_CM_EXCELLENT_CREDIT_CGB_NOT_OFFERED_TC_029,
+//                 MS_CM_CREDIT_SKIP_COM_BY_PASS_TC_030, MS_CM_NEW_EN_CREDIT_CHECK_NO_NO_PERMISSIONS_TC_032,
+//                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033, MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034,
+//                 MS_SE_CM_R_ENROLLMENT_STATUS_DP_TC_046, MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049, MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A -> {
+//                payload.setCustomerBusinessName(data.get("customerLastName"));
+//                payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+//                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+//                payload.setPremisesStreetName(data.get("premisesStreetName"));
+//                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+//                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+//                payload.setPremisesUnitType(data.get("premisesUnitType"));
+//                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+//                payload.setPremisesCity(data.get("premisesCity"));
+//                payload.setPremisesStateCode(data.get("premisesStateCode"));
+//                payload.setPremisesZipCode(data.get("premisesZipCode"));
+//                payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+//                payload.setCommercialCreditCheckBusinessBIN(data.get("Bin"));
+//                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+//            }
+            case MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031 -> {
+                payload.setCustomerLastName("");
+                payload.setCustomerFirstName("");
+                payload.setSocialSecurityNumber("");
+                payload.setCustomerType(data.get("customerType"));
+                payload.setCustomerBusinessName(data.get("customerLastName"));
+                payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(8));
+                payload.setInitialCreditCheckCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+            }
+            default -> {
                 payload.setCustomerBusinessName(data.get("customerLastName"));
                 payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
                 payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
@@ -372,16 +399,6 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesCountyCode(data.get("premisesCountyCode"));
                 payload.setCommercialCreditCheckBusinessBIN(data.get("Bin"));
                 payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
-            }
-            case MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031 -> {
-                payload.setCustomerLastName("");
-                payload.setCustomerFirstName("");
-                payload.setSocialSecurityNumber("");
-                payload.setCustomerType(data.get("customerType"));
-                payload.setCustomerBusinessName(data.get("customerLastName"));
-                payload.setCommercialCreditCheckBusinessBIN(null);
-                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(8));
-                payload.setInitialCreditCheckCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
             }
         }
     }
@@ -444,7 +461,8 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
                 payload.setPremisesCountyCode(data.get("premisesCountyCode"));
             }
-            case  MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031 -> {
+            case  MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031, MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049 -> {
+                payload.setCustomerType(data.get("customerType"));
                 payload.setSocialSecurityNumber("");
                 payload.setCustomerBusinessName(data.get("customerLastName"));
                 payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
@@ -549,21 +567,41 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setTransactionType(METER_SET.getValue());
             }
-            case MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025 -> {
+            case MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025, MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047,
+                 MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048,
+                 MS_SE_RS_R_ENROLLMENT_STATUS_DR_TC_050, MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A,
+                 MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setTransactionType(METER_SET.getValue());
             }
             case MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033,
-                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034 -> {
+                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034,
+                 MS_SE_CM_R_ENROLLMENT_STATUS_DP_TC_046, MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049 -> {
                 setTheFieldToEmptyForCommercialScenarios(payload);
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setCreditCheckOption(YES.getValue());
             }
-
+            case MS_SE_CM_R_ENROLLMENT_STATUS_RD_PROMO_TC_053-> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setConfirmCreditCheck(Boolean.FALSE);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_DEALS.getValue());
+                payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAuthorizedBy("");
+            }
+            case MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setConfirmCreditCheck(Boolean.FALSE);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setTransactionType(METER_SET.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_DEALS.getValue());
+            }
         }
     }
 

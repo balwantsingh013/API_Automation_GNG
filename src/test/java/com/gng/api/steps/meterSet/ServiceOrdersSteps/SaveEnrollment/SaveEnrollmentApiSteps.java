@@ -24,13 +24,23 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateInvalidParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
-    @When("a request is made to the SaveEnrollment Api for external meterSet calls with valid parameters for {string} condition")
+    @When("a request is made to the SaveEnrollment Api for meterSet with valid parameters for {string} condition")
     public void sendValidRequest(String testCondition) {
+        saveEnrollmentApiPage.validateValidParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
+    @When("a second request is made to the SaveEnrollment Api for meterSet with valid parameters for {string} condition")
+    public void sendValidSecondRequest(String testCondition) {
+        saveEnrollmentApiPage.validateValidSecondParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the SaveEnrollment Api for external meterSet calls with valid parameters for {string} condition")
+    public void sendValidExternalRequest(String testCondition) {
         saveEnrollmentApiPage.validateExternalConditions(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the SaveEnrollment Api for external meterSet second calls with valid parameters for {string} condition")
-    public void sendValidSecondRequest(String testCondition) {
+    public void sendValidSecondExternalRequest(String testCondition) {
         saveEnrollmentApiPage.validateSecondCallExternalConditions(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 

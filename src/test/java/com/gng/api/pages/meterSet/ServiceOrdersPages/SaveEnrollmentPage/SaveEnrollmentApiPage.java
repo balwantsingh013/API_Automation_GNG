@@ -31,6 +31,26 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void validateValidParameters(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnTypePositive(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        SaveEnrollmentResponse pojo = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
+        testContext.setSaveEnrollmentResponse(pojo);
+        testContext.setResponse(response);
+    }
+
+    public void validateValidSecondParameters(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setSecondRequestParametersBasedOnTypePositive(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        SaveEnrollmentResponse pojo = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
+        testContext.setSaveEnrollmentResponse(pojo);
+        testContext.setResponse(response);
+    }
+
     public void validateExternalConditions(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setParametersBasedOnTypeExternal(payload, testCondition);

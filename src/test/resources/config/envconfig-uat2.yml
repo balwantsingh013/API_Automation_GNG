@@ -11,7 +11,7 @@ databases:
     driverClassName: "oracle.jdbc.OracleDriver"
     serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGVBAN"
     userName: "AUTOTESTGNG"
-    password: "vrt202406002"
+    password: "vrt202406012"
 
   mariadb:
     driverClassName: "org.mariadb.jdbc.Driver"
