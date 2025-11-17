@@ -1125,6 +1125,15 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FROM UCBNOTE WHERE UCBNOTE_SEQ_NUMBER = ?
             """;
 
+    public static final String SELECT_NOTE_BY_CUSTOMER_CODE = """
+            select * from ucbnote  where ucbnote_cust_code  = ?
+            """;
+
+    public static final String SELECT_NOTE_BY_SEQUENCE_NUMBER = """
+            select * from ucrnote where ucrnote_note_seq_num = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_PASSWORD_EXPIRE_DAYS = """
             SELECT UZRPSTO_PARM_VALUE
             FROM UZRPSTO
@@ -1138,7 +1147,6 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               FROM UZBPSTO
             WHERE  UZBPSTO_OBJECT = 'SPK_WEB_API';
             """;
-
 
     public static final String SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE = """
             SELECT *
