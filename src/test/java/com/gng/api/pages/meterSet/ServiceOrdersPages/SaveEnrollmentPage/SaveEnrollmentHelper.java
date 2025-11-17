@@ -1,15 +1,12 @@
 package com.gng.api.pages.meterSet.ServiceOrdersPages.SaveEnrollmentPage;
 
-
-
-
 import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.Plans;
-import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentRequest;
+import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.meterSet.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel;
-
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.gng.api.pages.poc.CreateAccountNotePage.CreateAccountNoteHelper.assertRowsMatchTokenCount;
 
 @Slf4j
 public class SaveEnrollmentHelper {
@@ -27,195 +25,167 @@ public class SaveEnrollmentHelper {
         this.testContext = testContext;
     }
 
+
     SaveEnrollmentRequest preparePayload(SaveEnrollmentApiLabel apiLabel) {
         log.info("Preparing payload for {}", apiLabel);
         String jsonFileName = apiLabel.equals(SaveEnrollmentApiLabel.save_enrollment)
                 ? SaveEnrollmentApiLabel.save_enrollment.toString()
                 : null;
-
         return BasePage.deserializeJsonToPojo(jsonFileName, SaveEnrollmentRequest.class);
     }
 
-    public void setSupportingDefaultParameters(SaveEnrollmentRequest payload){
+    public void setSupportingDefaultParameters(SaveEnrollmentRequest payload) {
         payload.setRequestID(FakerDataGenerator.generateString(12));
         payload.setTransactionType(GlobalEnums.TransactionType.METER_SET.getValue());
+
         payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
+
         payload.setPromotionCode("");
         payload.setCustomerRequestedServiceDate("");
         payload.setSplitConnectionFeeIndicator(true);
-        payload.setServiceTransferReward(false);
-        payload.setServiceTransferCurrentPricePlan(false);
-        payload.setServiceTransferOfferRemainder(false);
+
         payload.setEstimatedBudgetAmount(null);
-        payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomNumericString(8)); // remove?
+
+        payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomNumericString(8));
+
         payload.setSspParticipantCode(null);
         payload.setCurrentMarketerCode(null);
+        payload.setServiceTransferReward(null);
+        payload.setServiceTransferCurrentPricePlan(null);
+        payload.setServiceTransferOfferRemainder(null);
         payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
     }
 
-    public void setTurnOnDate(SaveEnrollmentRequest payload){
+
+    public void setTurnOnDate(SaveEnrollmentRequest payload) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate turnOnDate = LocalDate.now();
-        String turnOnDateString = turnOnDate.plusDays(120).format(formatter);
-        payload.setRequestedTurnOnDate(turnOnDateString);
+        payload.setRequestedTurnOnDate(turnOnDate.plusDays(120).format(formatter));
     }
 
-    public void setInvalidTurnOnDate(SaveEnrollmentRequest payload){
+    public void setInvalidTurnOnDate(SaveEnrollmentRequest payload) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate earliestTurnOnDate = LocalDate.parse(
                 testContext.getGetEligiblePlansAndOffersResponse().getData().getEarliestPossibleTurnOnDate(),
                 inputFormatter
         );
-
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMddyyyy");
-        String turnOnDateString = earliestTurnOnDate.plusDays(120).format(outputFormatter);
-
-        payload.setRequestedTurnOnDate(turnOnDateString);
+        payload.setRequestedTurnOnDate(earliestTurnOnDate.plusDays(120).format(outputFormatter));
     }
 
-    public void setCustomerRequestedServiceDate(SaveEnrollmentRequest payload){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate customerRequestedServiceDate = LocalDate.now();
-        String customerRequestedServiceDateString = customerRequestedServiceDate.plusDays(1).format(formatter);
-        payload.setCustomerRequestedServiceDate(customerRequestedServiceDateString);
-    }
-    public void setParametersFromGetEligiblePlansAndOffersResponse(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition){
-        //service transfer params need to be null
-        payload.setServiceTransferReward(null);
-        payload.setServiceTransferCurrentPricePlan(null);
-        payload.setServiceTransferOfferRemainder(null);
 
-        var data = testContext.getGetEligiblePlansAndOffersResponse().getData();
-        Plans plan;
-//        plan = findPlanByCode(
-//                testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-//                GlobalEnums.PlanCode.MVS.getValue());
-        plan = testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans().getFirst();
+    public void setParametersFromGetEligiblePlansAndOffersResponse(
+            SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+
+
+        var data  = testContext.getGetEligiblePlansAndOffersResponse().getData();
+        var plans = data.getPlans();
 
         payload.setCustomerCode(data.getCustomerCode());
         payload.setPremisesCode(data.getPremisesCode());
         payload.setTransactionID(data.getTransactionID());
-        payload.setPlanCode(data.getPlans().getFirst().getPlanCode());
-        payload.setEnrollmentStatus(data.getPlans().getFirst().getEnrollmentStatus().getFirst().getCode());
+        Plans plan = choosePlanForCondition(testCondition, plans);
 
+        payload.setPlanCode(plan.getPlanCode());
 
-        switch (testCondition){
-            case MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022,
-                 MS_GE_RS_INCL_TIER_5_TC_023, MS_RS_MULTIPLE_PREM_TC_024,
-                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033,
-                 MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034 -> payload.setRequestedTurnOnDate(data.getEarliestPossibleTurnOnDate());
-            case MS_SE_BUDGET_BILLING_NON_PRP_MISSING_AMOUNT_TC_044_3,
-                 MS_SE_BUDGET_BILLING_NON_PRP_AMOUNT_TOO_LONG_TC_044_4 -> {
-                plan = findPlanByNotCode(
-                    testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-                    GlobalEnums.PlanCode.PRP.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                payload.setEnrollmentStatus(plan.getEnrollmentStatus().getFirst().getCode());
+        String promo = Optional.ofNullable(plan.getPromotion1Code()).orElse("");
+        payload.setPromotionCode(promo);
 
-            }
-            case MS_SE_BUDGET_BILLING_PRP_NULL_AMOUNT_NOT_ALLOWED_TC_044_1,
-                 MS_SE_BUDGET_BILLING_PRP_AMOUNT_PROVIDED_NOT_ALLOWED_TC_044_2,
-                 MS_SE_BUDGET_BILLING_NON_PRP_DECIMAL_AMOUNT_INVALID_TC_044_5,
-                 MS_SE_BUDGET_BILLING_PLAN_CODE_MISSING_TC_044_6, MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047,
-                 MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A, MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051, MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054
-                  ->{
-                plan = findPlanByCode(
-                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-                        GlobalEnums.PlanCode.PRP.getValue());
-                        payload.setPlanCode(plan.getPlanCode());
-                        payload.setEnrollmentStatus(plan.getEnrollmentStatus().getFirst().getCode());
-                        payload.setCustomerRequestedServiceDate(data.getEarliestPossibleTurnOnDate());
-                        //check < 54 for makPromo
-                        payload.setPromotionCode(plan.getPromotion1Code());
+        String etod = data.getEarliestPossibleTurnOnDate();
+        payload.setRequestedTurnOnDate(etod);
 
-            }
-            case MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048, MS_SE_RS_R_ENROLLMENT_STATUS_DR_TC_050 -> {
-                plan = findPlanByCode(
-                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-                        GlobalEnums.PlanCode.VML.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                payload.setEnrollmentStatus(plan.getEnrollmentStatus().getFirst().getCode());
-                payload.setPromotionCode(plan.getPromotion1Code());
-            }
+        payload.setCustomerRequestedServiceDate(etod);
 
-            case MS_SE_CM_R_ENROLLMENT_STATUS_RD_PROMO_TC_053 -> {
-                plan = findPlanByCode(
-                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-                        GlobalEnums.PlanCode.CCV.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                payload.setEnrollmentStatus(plan.getEnrollmentStatus().getFirst().getCode());
-                payload.setPromotionCode(plan.getPromotion1Code());
-            }
-
-            case MS_SE_RS_B_ENROLLMENT_STATUS_CE_TC_045 -> {
-                plan = findPlanByCode(
-                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-                        GlobalEnums.PlanCode.MVS.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                payload.setEnrollmentStatus(plan.getEnrollmentStatus().getFirst().getCode());
-                payload.setPromotionCode(plan.getPromotion1Code());
-                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
-
-            }
-            case MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049 -> {
-                plan = findPlanByCode(
-                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-                        GlobalEnums.PlanCode.CVS.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                payload.setEnrollmentStatus(plan.getEnrollmentStatus().getFirst().getCode());
-                payload.setPromotionCode(plan.getPromotion1Code());
-                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-            }
-
-            default -> {
-//                plan = findPlanByCode(
-//                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-//                        GlobalEnums.PlanCode.MVS.getValue());
-//                payload.setEnrollmentStatus(plan.getEnrollmentStatus().getFirst().getCode());
-            }
-        }
 
         if (data.getAglcAccountNumber() != null && !data.getAglcAccountNumber().isEmpty()) {
             payload.setAglcAccountNumber(data.getAglcAccountNumber());
             payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomNumericString(9));
-        }
-        else{
+        } else {
             payload.setAglcAccountNumber("");
             payload.setAglcServiceOrderNumber("");
         }
-        payload.setRequestedTurnOnDate(data.getEarliestPossibleTurnOnDate());
-
     }
 
+    private static Plans findPlanByCode(Collection<Plans> plans, String planCode) {
+        return plans.stream()
+                .filter(p -> Objects.equals(p.getPlanCode(), planCode))
+                .findFirst()
+                .orElseThrow(() -> {
+                    String codes = plans.stream().map(Plans::getPlanCode).sorted().toList().toString();
+                    return new AssertionError("Plan " + planCode + " not found. Available: " + codes);
+                });
+    }
+
+    private static Plans findPlanByNotCode(Collection<Plans> plans, String planCode) {
+        return plans.stream()
+                .filter(p -> !Objects.equals(p.getPlanCode(), planCode))
+                .findFirst()
+                .orElseThrow(() -> {
+                    String codes = plans.stream().map(Plans::getPlanCode).sorted().toList().toString();
+                    return new AssertionError("Non-" + planCode + " plan not found. Available: " + codes);
+                });
+    }
+
+    private Plans choosePlanForCondition(SaveEnrollmentApiLabel testCondition, List<Plans> plans) {
+        return switch (testCondition) {
+            case MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025,
+                 MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048,
+                 MS_SE_RS_R_ENROLLMENT_STATUS_DR_TC_050,
+                 MS_SE_RS_B_ENROLLMENT_STATUS_BD_BUDGET_TC_055
+                    -> findPlanByCode(plans, GlobalEnums.PlanCode.VML.getValue());
+
+            case MS_SE_BUDGET_BILLING_PRP_NULL_AMOUNT_NOT_ALLOWED_TC_044_1,
+                 MS_SE_BUDGET_BILLING_PRP_AMOUNT_PROVIDED_NOT_ALLOWED_TC_044_2,
+                 MS_SE_BUDGET_BILLING_NON_PRP_DECIMAL_AMOUNT_INVALID_TC_044_5,
+                 MS_SE_BUDGET_BILLING_PLAN_CODE_MISSING_TC_044_6,
+                 MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047,
+                 MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A,
+                 MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051,
+                 MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054
+                    -> findPlanByCode(plans, GlobalEnums.PlanCode.PRP.getValue());
+
+            case MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049,
+                 MS_SE_CM_R_CE_WITH_NOTES_TC_056
+                    -> findPlanByCode(plans, GlobalEnums.PlanCode.CVS.getValue());
+
+            case MS_SE_CM_R_ENROLLMENT_STATUS_RD_PROMO_TC_053
+                    -> findPlanByCode(plans, GlobalEnums.PlanCode.CCV.getValue());
+
+            case MS_SE_BUDGET_BILLING_NON_PRP_MISSING_AMOUNT_TC_044_3,
+                 MS_SE_BUDGET_BILLING_NON_PRP_AMOUNT_TOO_LONG_TC_044_4
+                    -> findPlanByNotCode(plans, GlobalEnums.PlanCode.PRP.getValue());
+
+            default -> plans.getFirst();
+        };
+    }
+
+
     public void setPrePayFieldsByCondition(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        switch (testCondition){
+        switch (testCondition) {
             case MS_SE_BUDGET_BILLING_PRP_NULL_AMOUNT_NOT_ALLOWED_TC_044_1,
                  MS_SE_BUDGET_BILLING_PRP_AMOUNT_PROVIDED_NOT_ALLOWED_TC_044_2,
                  MS_SE_BUDGET_BILLING_NON_PRP_MISSING_AMOUNT_TC_044_3,
                  MS_SE_BUDGET_BILLING_NON_PRP_AMOUNT_TOO_LONG_TC_044_4,
                  MS_SE_BUDGET_BILLING_NON_PRP_DECIMAL_AMOUNT_INVALID_TC_044_5,
                  MS_SE_BUDGET_BILLING_PLAN_CODE_MISSING_TC_044_6,
-                 MS_SE_RS_B_ENROLLMENT_STATUS_CE_TC_045-> {
+                 MS_SE_RS_B_ENROLLMENT_STATUS_CE_TC_045 -> {
                 payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(2));
                 payload.setCustomerRequestedServiceDate(payload.getRequestedTurnOnDate());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(6));
                 payload.setBillingPlan(GlobalEnums.BillingPlan.BUDGET.getValue());
             }
+            default -> {  }
         }
     }
+
 
     public void setParametersBasedOnTypePositive(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         setSupportingDefaultParameters(payload);
         setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-        // only sets Budget fields for the NEGATIVE 044.x cases; positives handled below explicitly
-        // setPrePayFieldsByCondition(payload, testCondition);
 
         var geData  = testContext.getGetEligiblePlansAndOffersResponse().getData();
-        var plans   = geData.getPlans();
-        Plans plan;
 
         switch (testCondition) {
-            // 045: Residential + Budget, finalize as COMPLETE
             case MS_SE_RS_B_ENROLLMENT_STATUS_CE_TC_045 -> {
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
                 payload.setBillingPlan(GlobalEnums.BillingPlan.BUDGET.getValue());
@@ -225,44 +195,33 @@ public class SaveEnrollmentHelper {
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
 
-            // 046: Commercial, Deposit Required
             case MS_SE_CM_R_ENROLLMENT_STATUS_DP_TC_046 -> {
-                payload.setCustomerCode(GlobalEnums.CustomerType.COMMERCIAL);
-                plan = findPlanByCode(plans, GlobalEnums.PlanCode.CVS.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                payload.setPromotionCode(""); // no promo by default
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
-               // setTurnOnDate(payload);
-                //setCustomerRequestedServiceDate(payload);
                 payload.setCustomerRequestedServiceDate(geData.getEarliestPossibleTurnOnDate());
+                payload.setPromotionCode("");
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
 
             case MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047 -> {
                 payload.setBillingPlan(null);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
-                //payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
                 payload.setCustomerRequestedServiceDate(geData.getEarliestPossibleTurnOnDate());
                 payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
+                payload.setPromotionCode("");
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
 
-            // 048: Residential PRP, Deposit Billed
             case MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048 -> {
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
-                payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
                 payload.setCustomerRequestedServiceDate("");
+                payload.setPromotionCode("");
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
 
-            // 049: Commercial, Save Incomplete
             case MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049 -> {
-//                plan = findPlanByCode(plans, GlobalEnums.PlanCode.CVS.getValue());
-//                payload.setPlanCode(plan.getPlanCode());
-                payload.setPromotionCode("");
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+                payload.setPromotionCode("");
             }
 
             case MS_SE_RS_R_ENROLLMENT_STATUS_DR_TC_050 -> {
@@ -285,14 +244,14 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
                 payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
-                payload.setCustomerRequestedServiceDate(geData.getEarliestPossibleTurnOnDate());
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+                payload.setPromotionCode("");
             }
 
             case MS_SE_CM_R_ENROLLMENT_STATUS_RD_PROMO_TC_053 -> {
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.REFUSED_DEPOSIT.getValue());
                 payload.setPromotionCode("");
-                payload.setCustomerRequestedServiceDate(null);
+                payload.setCustomerRequestedServiceDate("");
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
 
@@ -300,41 +259,25 @@ public class SaveEnrollmentHelper {
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
                 payload.setBillingPlan(null);
                 payload.setCustomerRequestedServiceDate(null);
+                payload.setPromotionCode("");
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
 
             case MS_SE_RS_B_ENROLLMENT_STATUS_BD_BUDGET_TC_055 -> {
-                // keep selected residential plan; enable budget billing successfully
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.BILL_DEPOSIT.getValue());
                 payload.setBillingPlan(GlobalEnums.BillingPlan.BUDGET.getValue());
-                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(2));
+                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(3));
                 payload.setCustomerRequestedServiceDate(geData.getEarliestPossibleTurnOnDate());
                 payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-                // leave enrollmentStatus as seeded (happy path)
             }
-
-            // 056: Commercial, CE with notes – choose CVS and finalize as COMPLETE
-            case MS_SE_CM_R_CE_WITH_NOTES_TC_056 -> {
-                plan = findPlanByCode(plans, GlobalEnums.PlanCode.CVS.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
-                payload.setCustomerRequestedServiceDate(payload.getRequestedTurnOnDate());
-                payload.setPromotionCode(""); // explicit none
-                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-                // If your SaveEnrollmentRequest has a notes/comments field, set it here.
-                // e.g., payload.setCsrComments("Automation: CE with notes");
-            }
-
-            // (default) nothing extra – rely on GE-seeded fields
-            default -> { /* no-op */ }
+            default -> { }
         }
     }
-
 
     public void setSecondRequestParametersBasedOnTypePositive(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         setSupportingDefaultParameters(payload);
         setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
 
         switch (testCondition) {
             case MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047 -> {
@@ -344,6 +287,7 @@ public class SaveEnrollmentHelper {
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber("");
+                payload.setPromotionCode("");
             }
             case MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048 -> {
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_BILLED.getValue());
@@ -351,22 +295,38 @@ public class SaveEnrollmentHelper {
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber("");
+                payload.setPromotionCode("");
             }
-
-            default -> { /* no-op */ }
+            default -> {  }
         }
     }
 
+    public void setParametersBasedOnTypePositiveWithNote(SaveEnrollmentRequest payload, String noteText, SaveEnrollmentApiLabel testCondition) {
+        setSupportingDefaultParameters(payload);
+        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+
+        var geData = testContext.getGetEligiblePlansAndOffersResponse().getData();
+
+        switch (testCondition) {
+            case MS_SE_CM_R_CE_WITH_NOTES_TC_056 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setCustomerRequestedServiceDate(payload.getRequestedTurnOnDate());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
+                payload.setPromotionCode("");
+                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+                payload.setNotes(noteText);
+            }
+        }
+    }
 
     public void setParametersBasedOnTypeNegative(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         setSupportingDefaultParameters(payload);
         setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
         setPrePayFieldsByCondition(payload, testCondition);
+
         switch (testCondition) {
             case MS_GE_RS_INCL_TIER_5_TC_023 -> {
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-                // payload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue());
-                // setTurnOnDate(payload);
             }
 
             case MS_SE_MISSING_TRANSACTION_TYPE_TC_035 -> {
@@ -381,18 +341,16 @@ public class SaveEnrollmentHelper {
                 payload.setTransactionType(GlobalEnums.InvalidValues.INVALID_TRANSACTION_TYPE.getValue());
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
-            // 038–042: fields that MUST be null (send non-null to trigger “should be null”)
+
             case MS_SE_SSP_RESULT_SHOULD_BE_NULL_TC_038 -> {
-                //payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.REFUSED_DEPOSIT.getValue());
                 payload.setSeasonalSavingsProgramResult(FakerDataGenerator.generateString(4));
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
-
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber("");
             }
             case MS_SE_AGLC_ACCOUNT_NUMBER_SHOULD_BE_NULL_TC_039 -> {
-                 payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
-                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
+                payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
+                payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
             case MS_SE_AGLC_SERVICE_ORDER_NUMBER_SHOULD_BE_NULL_TC_040 -> {
                 payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomNumericString(8));
@@ -407,9 +365,8 @@ public class SaveEnrollmentHelper {
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
 
-            // 043–044: Requested Turn On Date rules
             case MS_SE_MISSING_REQUESTED_TURN_ON_DATE_TC_043 -> {
-                payload.setRequestedTurnOnDate(null);          // missing
+                payload.setRequestedTurnOnDate(null);
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
             case MS_SE_REQUESTED_TURN_ON_DATE_INVALID_FORMAT_TC_044 -> {
@@ -417,80 +374,47 @@ public class SaveEnrollmentHelper {
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
 
-            // 044.1–044.6: Budget Billing rules
-            // PRP customers not eligible for Budget Billing (amount null)
             case MS_SE_BUDGET_BILLING_PRP_NULL_AMOUNT_NOT_ALLOWED_TC_044_1 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PAYMENT_COMPLETE.getValue());
                 payload.setEstimatedBudgetAmount(null);
-                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+                payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
-            // PRP customers not eligible for Budget Billing (amount provided)
             case MS_SE_BUDGET_BILLING_PRP_AMOUNT_PROVIDED_NOT_ALLOWED_TC_044_2 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PAYMENT_COMPLETE.getValue());
                 payload.setPlanCode(GlobalEnums.PlanCode.PRP.getValue());
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
-            // Non-PRP: missing estimated amount
             case MS_SE_BUDGET_BILLING_NON_PRP_MISSING_AMOUNT_TC_044_3 -> {
-//                payload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue()); // any non-PRP
                 payload.setPromotionCode("");
                 payload.setEstimatedBudgetAmount(null);
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
-            // Non-PRP: amount too long (max length 5)
             case MS_SE_BUDGET_BILLING_NON_PRP_AMOUNT_TOO_LONG_TC_044_4 -> {
-//                payload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue());
                 payload.setPromotionCode("");
-                payload.setEstimatedBudgetAmount(FakerDataGenerator.getRandomNumericString(7));            // 6 digits
+                payload.setEstimatedBudgetAmount(FakerDataGenerator.getRandomNumericString(7));
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
-            // Non-PRP: decimal/invalid integer
             case MS_SE_BUDGET_BILLING_NON_PRP_DECIMAL_AMOUNT_INVALID_TC_044_5 -> {
-                //ayload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue());
-                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(2) + "." +FakerDataGenerator.generateDigits(2));
+                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(2) + "." + FakerDataGenerator.generateDigits(2));
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
-            // Missing plan code
             case MS_SE_BUDGET_BILLING_PLAN_CODE_MISSING_TC_044_6 -> {
                 payload.setPlanCode(null);
-                payload.setEstimatedBudgetAmount("100");              // value present; plan missing
+                payload.setEstimatedBudgetAmount("100");
                 payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
             }
 
-            default -> { /* no-op */ }
+            default -> {  }
         }
-    }
-
-
-    public void setPremisesCodeAndTransactionIdBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-
-        switch (testCondition) {
-            case MS_GE_RS_INCL_TIER_5_TC_023 ->
-                    setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
-            default -> {
-                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
-            }
-        }
-    }
-    private static Plans findPlanByCode(Collection<Plans> plans, String planCode) {
-        return plans.stream()
-                .filter(p -> Objects.equals(p.getPlanCode(), planCode))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Plan " + planCode + " not found"));
-    }
-
-    private static Plans findPlanByNotCode(Collection<Plans> plans, String planCode) {
-        return plans.stream()
-                .filter(p -> !Objects.equals(p.getPlanCode(), planCode))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Plan " + planCode + " not found"));
     }
 
     public void setParametersBasedOnTypeExternal(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         setSupportingDefaultParameters(payload);
-       Plans plan;
+        Plans plan;
+
         switch (testCondition) {
-            case MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022, MS_GE_RS_INCL_TIER_5_TC_023,
+            case MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022,
+                 MS_GE_RS_INCL_TIER_5_TC_023,
                  MS_RS_MULTIPLE_PREM_TC_024 -> {
                 plan = findPlanByCode(
                         testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
@@ -501,21 +425,12 @@ public class SaveEnrollmentHelper {
                 payload.setPromotionCode("");
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber(null);
-                payload.setServiceTransferReward(null);
-                payload.setServiceTransferCurrentPricePlan(null);
-                payload.setServiceTransferOfferRemainder(null);
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
+
             case MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025 -> {
-                plan = findPlanByCode(
-                        testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
-                        GlobalEnums.PlanCode.VML.getValue());
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
-                payload.setPlanCode(plan.getPlanCode());
-                setTurnOnDate(payload);
-                setCustomerRequestedServiceDate(payload);
-                payload.setPromotionCode(plan.getPromotion1Code());
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber(null);
                 payload.setServiceTransferReward(null);
@@ -523,6 +438,7 @@ public class SaveEnrollmentHelper {
                 payload.setServiceTransferOfferRemainder(null);
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
+
             case MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033,
                  MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034 -> {
                 plan = findPlanByCode(
@@ -531,9 +447,7 @@ public class SaveEnrollmentHelper {
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
                 payload.setPlanCode(plan.getPlanCode());
-               //remove?
-                setTurnOnDate(payload);
-                setCustomerRequestedServiceDate(payload);
+               // setTurnOnDate(payload);
                 payload.setPromotionCode("");
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber(null);
@@ -542,6 +456,7 @@ public class SaveEnrollmentHelper {
                 payload.setServiceTransferOfferRemainder(null);
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
+
             default -> { }
         }
     }
@@ -557,13 +472,11 @@ public class SaveEnrollmentHelper {
         Plans plan;
         switch (testCondition) {
             case MS_GE_RS_INCL_TIER_5_TC_023 -> {
-              plan = findPlanByNotCode(
+                plan = findPlanByNotCode(
                         testContext.getGetEligiblePlansAndOffersResponse().getData().getPlans(),
                         GlobalEnums.PlanCode.MVS.getValue());
-
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-                //remove?
                 payload.setPlanCode(plan.getPlanCode());
                 payload.setPromotionCode(plan.getPromotion1Code());
                 setTurnOnDate(payload);
@@ -579,11 +492,62 @@ public class SaveEnrollmentHelper {
                 payload.setPlanCode(plan.getPlanCode());
                 payload.setPromotionCode("");
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-                payload.setCustomerRequestedServiceDate(testContext.getGetEligiblePlansAndOffersResponse().getData().getEarliestPossibleTurnOnDate());
-                payload.setRequestedTurnOnDate(testContext.getGetEligiblePlansAndOffersResponse().getData().getEarliestPossibleTurnOnDate());
+                var geData = testContext.getGetEligiblePlansAndOffersResponse().getData();
+                payload.setCustomerRequestedServiceDate(geData.getEarliestPossibleTurnOnDate());
+                payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
+                payload.setAglcAccountNumber("");
+                payload.setAglcServiceOrderNumber("");
             }
+
             default -> { }
         }
+    }
+
+    public void validateNoteCreation(String noteText, String testCondition) {
+        String expected = noteText.replace("\\|~", "|~");
+        //getNoteByCustomerCode();
+        List<String> storedValues = getNoteByCustomerCode();
+        assertRowsMatchTokenCount(expected, storedValues);
+
+    }
+
+    public List<String> getNoteByCustomerCode(){
+        String custCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
+
+        List<Map<String, Object>> rows = ApplicationContext.get()
+                .getDbAction()
+                .getNoteByCustomerCode(custCode);
+
+        if (rows == null || rows.isEmpty()) {
+            throw new IllegalStateException("No DB rows returned for customer code " + custCode );
+        }
+
+        String seq = rows.getFirst().get("UCBNOTE_SEQ_NUMBER").toString();
+
+        Map<String, Object> noteRow = ApplicationContext.get()
+                .getDbAction()
+                .getNoteBySequenceNumber(seq);
+
+        if (noteRow == null || noteRow.isEmpty()) {
+            throw new IllegalStateException("No DB rows returned for note sequence " + seq);
+        }
+
+        final String VALUE_KEY = firstExistingKey(rows,"UCBNOTE_SEQ_NUMBER");
+
+        return rows.stream()
+                .map(r -> String.valueOf(r.get(VALUE_KEY)))
+                .toList();
+    }
+
+    private static String firstExistingKey(List<Map<String, Object>> rows, String... candidates) {
+        for (String k : candidates) {
+            if (rows.getFirst().containsKey(k)) return k;
+        }
+        throw new IllegalStateException("Could not find note-value column in DB rows.");
+    }
+
+    public void setPremisesCodeAndTransactionIdBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
+        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
     }
 }

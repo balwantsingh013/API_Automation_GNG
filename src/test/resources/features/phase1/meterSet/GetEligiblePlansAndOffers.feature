@@ -20,11 +20,11 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
       | MS_RS_NO_MATCH_NO_CONFIRM_TC_011          | 11112 | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                                                 |
       | MS_RS_NO_RECORD_FOUND_TC_013              | 11114 | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
       | MS_RS_VARIANT_TC_014                      | 11114 | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
-      | MS_RS_CREDIT_FREEZE_TC_015                | 11113 |   Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.                                                                                        |
+      | MS_RS_CREDIT_FREEZE_TC_015                | 11113 | Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.                                                                                        |
       | MS_RS_CUSTOMER_NO_AUTH_TC_017             | 3000  |The customer's enrollment request is denied                                                                                                                                                                                          |
       |MS_CM_NO_MATCH_INITIAL_TC_026              | 11116 | No match found.  Please see  the list of similar businesses found                                                                                                                                                                   |
-
-    # | MS_RS_DENIAL_DUE_TC_016                 | 11113     |   The customer's enrollment request is denied due to past payment history |
+      # unable to reproduce error
+      | MS_RS_DENIAL_DUE_TC_016                   | 11113 | The customer's enrollment request is denied due to past payment history |
 
   @GetEligiblePlansAndOffersMeterSetPositive @HappyFLow @Phase1
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers with valid parameters "<testCondition>"

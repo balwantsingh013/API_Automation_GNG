@@ -1,6 +1,8 @@
 package com.gng.api.steps.meterSet.ServiceOrdersSteps.SaveEnrollment;
 import com.gng.api.pages.meterSet.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
+import io.cucumber.java.PendingException;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +31,11 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateValidParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
+    @When("a request is made to the SaveEnrollment Api for meterSet with noteText {string} and valid parameters for {string} condition")
+    public void sendValidRequestWithNote(String noteText, String testCondition) {
+        saveEnrollmentApiPage.validateValidParametersWithNote(save_enrollment, noteText, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
     @When("a second request is made to the SaveEnrollment Api for meterSet with valid parameters for {string} condition")
     public void sendValidSecondRequest(String testCondition) {
         saveEnrollmentApiPage.validateValidSecondParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
@@ -44,5 +51,9 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateSecondCallExternalConditions(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
+    @And("verify meterSet note is created successfully with {string} noteText for {string} condition")
+    public void verifyMeterSetNoteIsCreatedSuccessfullyWithNoteTextForCondition(String noteText, String testCondition) {
+        saveEnrollmentApiPage.validateNoteCreation(noteText, testCondition);
+    }
 }
 

@@ -41,6 +41,16 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void validateValidParametersWithNote(SaveEnrollmentApiLabel apiLabel, String noteText, SaveEnrollmentApiLabel testCondition) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnTypePositiveWithNote(payload, noteText, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        SaveEnrollmentResponse pojo = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
+        testContext.setSaveEnrollmentResponse(pojo);
+        testContext.setResponse(response);
+    }
+
     public void validateValidSecondParameters(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setSecondRequestParametersBasedOnTypePositive(payload, testCondition);
@@ -69,5 +79,9 @@ public class SaveEnrollmentApiPage extends BasePage {
         SaveEnrollmentResponse pojo = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
         testContext.setSaveEnrollmentResponse(pojo);
         testContext.setResponse(response);
+    }
+
+    public void validateNoteCreation(String noteText, String testCondition){
+        helper.validateNoteCreation(noteText, testCondition);
     }
 }

@@ -51,18 +51,33 @@ Feature: Verify MeterSet SaveEnrollment Api
 
     Examples:
       | testCondition                                        |
-      #| MS_SE_RS_B_ENROLLMENT_STATUS_CE_TC_045               |
-     #| MS_SE_CM_R_ENROLLMENT_STATUS_DP_TC_046               |
-    # | MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047       |
-     #| MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049               |
-    # | MS_SE_RS_R_ENROLLMENT_STATUS_DR_TC_050               |
-     #| MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A         |
-     #| MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051             |
-     | MS_SE_CM_R_ENROLLMENT_STATUS_RD_PROMO_TC_053         |
+      | MS_SE_RS_B_ENROLLMENT_STATUS_CE_TC_045               |
+      | MS_SE_CM_R_ENROLLMENT_STATUS_DP_TC_046               |
+      | MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047       |
+      | MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049               |
+      | MS_SE_RS_R_ENROLLMENT_STATUS_DR_TC_050               |
+      | MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A         |
+      | MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051             |
+      | MS_SE_CM_R_ENROLLMENT_STATUS_RD_PROMO_TC_053         |
     #053 does not return ccv plan
-     | MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054             |
-     #| MS_SE_RS_B_ENROLLMENT_STATUS_BD_BUDGET_TC_055        |
-     #| MS_SE_CM_R_CE_WITH_NOTES_TC_056                      |
+      | MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054             |
+      | MS_SE_RS_B_ENROLLMENT_STATUS_BD_BUDGET_TC_055        |
+
+  @MeterSetSaveEnrollmentPositiveWithNote @HappyFlow @Phase1
+  Scenario Outline: Verify MeterSet SaveEnrollment with valid parameters "<testCondition>"
+    Given a request is made to get Marketer Reference Data
+    When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
+    And verify response code of "GetEligiblePlansAndOffers" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And the meter set response should contain the expected plans
+    When a request is made to the SaveEnrollment Api for meterSet with noteText "<noteText>" and valid parameters for "<testCondition>" condition
+    Then verify response code of "MeterSet/SaveEnrollment" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+    And verify meterSet note is created successfully with "<noteText>" noteText for "<testCondition>" condition
+
+    Examples:
+      | testCondition                                        | noteText                                         |
+      | MS_SE_CM_R_CE_WITH_NOTES_TC_056                      | This is a test notes                             |
 
 
 
@@ -82,9 +97,8 @@ Feature: Verify MeterSet SaveEnrollment Api
 
     Examples:
       | testCondition                                        |
-
-      #| MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047       |
-     # | MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048             |
+      | MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047       |
+      | MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048             |
 
 
 

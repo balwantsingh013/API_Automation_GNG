@@ -127,6 +127,18 @@ public class DBAction {
         return jdbcTemplate.queryForList(query, noteSeqNo);
     }
 
+    public Map<String, Object> getNoteBySequenceNumber(String noteSeqNo) {
+        String query = DBQuery.SELECT_NOTE_BY_SEQUENCE_NUMBER;
+        logQueryInAllure("Get Note By Sequence Number", query, noteSeqNo);
+        return jdbcTemplate.queryForMap(query, noteSeqNo);
+    }
+
+    public List<Map<String, Object>> getNoteByCustomerCode(String customerCode) {
+        String query = DBQuery.SELECT_NOTE_BY_CUSTOMER_CODE;
+        logQueryInAllure("Get Note by customerCode", query, customerCode);
+        return jdbcTemplate.queryForList(query, customerCode);
+    }
+
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC207(String pricePlan, String sclsCode) {
         String query = DBQuery.SELECT_CUST_PREM_AGLC_SERVICE_CODES;
         logQueryInAllure("Get Customer code, premises code, AGLC Account no, service code ", query);
