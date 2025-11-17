@@ -10,11 +10,11 @@ import org.apache.http.client.methods.HttpPost;
 
 import static com.gng.api.constants.ApiEndPoint.SEARCH_ACCOUNTS;
 
-public class SearchAccountsApiPage extends BasePage {
+public class SearchAccountsServiceTransferApiPage extends BasePage {
 
     private final com.gng.api.pages.serviceTransfer.AccountsApiPages.SearchAccounts.SearchAccountsHelper helper;
 
-    public SearchAccountsApiPage(TestContext testContext) {
+    public SearchAccountsServiceTransferApiPage(TestContext testContext) {
         super(testContext);
         this.helper = new SearchAccountsHelper(testContext);
     }
