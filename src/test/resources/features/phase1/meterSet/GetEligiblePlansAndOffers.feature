@@ -131,6 +131,6 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
     Examples:
       | testCondition |
       |MS_CM_CRDS_EN_CREDIT_CHECK_YES_COMM_DEP_PROSP_TC_033|
-      |MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034|
+      |MS_CM_CRDS_EN_CREDIT_CHECK_YES_BUSINESS_NAME_TC_034 |
 
 
