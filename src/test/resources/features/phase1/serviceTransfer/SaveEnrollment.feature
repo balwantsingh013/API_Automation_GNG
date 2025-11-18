@@ -5,7 +5,7 @@ Feature: Verify ServiceTransfer SaveEnrollment Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @ServiceTransferSaveEnrollmentNegative @NegativeFlow @Phase1
+  @ServiceTransferSaveEnrollmentNegative @NegativeFlow @Phase2
   Scenario Outline: Verify ServiceTransfer SaveEnrollment with invalid parameters "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the SaveEnrollment Api for serviceTransfer with invalid parameters for "<testCondition>" condition
@@ -22,7 +22,7 @@ Feature: Verify ServiceTransfer SaveEnrollment Api
       | ST_SE_CURRENT_PRICE_PLAN_FIXED_BOOLEAN_ONLY_TC248               | 10000     | The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.serviceTransferCurrentPricePlan \| LineNumber: 0 \| BytePositionInLine: 555. |
 
 
-  @ServiceTransferSaveEnrollmentWithEligibleNegative @NegativeFlow @Phase1
+  @ServiceTransferSaveEnrollmentWithEligibleNegative @NegativeFlow @Phase2
   Scenario Outline: Verify ServiceTransfer SaveEnrollment error with eligible flow for "<testCondition>"
     When a request is made to the SearchAccounts Api ServiceTransfer with transactionType for "<testCondition>" condition
     And response should have ErrorCode 0 and ErrorMessage ""

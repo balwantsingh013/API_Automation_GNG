@@ -20,14 +20,14 @@ Feature: Verify GetMarketerReferenceData Api
       | INVALID_LOGIN_ID_NOT_ALPHANUMERIC_TC93| 2000      | Invalid Login ID       |
       | INVALID_LOGIN_ID_NOT_FOUND_TC94       | 2000      | Invalid Login ID       |
 
-  @GetMarketerReferenceDataValid @Phase1 @HappyFlow
+  @GetMarketerReferenceDataValid @Phase2 @HappyFlow
   Scenario: GetMarketerReferenceData Api - Verify positive response for GetMarketerReferenceData
     When a request is made to the GetMarketerReferenceData Api with valid parameters
     Then verify response code of "GetReasonsForLeaving" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And the MarketerReferenceData is of length 12
 
-  @GetMarketerReferenceDataUniquenessCheck @Phase1 @HappyFlow
+  @GetMarketerReferenceDataUniquenessCheck @Phase2 @HappyFlow
   Scenario: GetMarketerReferenceData Api - Verify positive response for GetMarketerReferenceData
     When a request is made to the GetMarketerReferenceData Api with valid parameters
     Then verify response code of "GetReasonsForLeaving" Api is 200
