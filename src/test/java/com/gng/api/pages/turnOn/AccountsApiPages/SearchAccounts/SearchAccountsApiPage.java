@@ -399,15 +399,6 @@ public class SearchAccountsApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void searchForExternalCases(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.setExternalCasesParameters(payload, testCondition);
-        setRequestSpecification(payload, testContext.getAuthToken());
-        Response response = sendRequest(HttpPost.METHOD_NAME, SEARCH_ACCOUNTS, 200);
-        SearchAccountsResponse searchAccountsResponse = deserializeResponseToPojo(response, SearchAccountsResponse.class);
-        testContext.setSearchAccountsResponse(searchAccountsResponse);
-        testContext.setResponse(response);
-    }
 }
 
 

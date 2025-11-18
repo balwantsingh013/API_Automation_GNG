@@ -35,16 +35,28 @@ public class DBAction {
         return jdbcTemplate.queryForList(query);
     }
 
-    public List<Map<String, Object>> getActiveCustomerWithServiceTransferEnrollment() {
+    public Map<String, Object> getActiveCustomerWithServiceTransferEnrollment() {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_WITH_SERVICE_TRANSFER_ENROLLMENT;
         logQueryInAllure("Get Active Customer with Service Transfer Enrollment Details", query);
-        return jdbcTemplate.queryForList(query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public Map<String, Object> getCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {
         String query = DBQuery.GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE;
         logQueryInAllure("Get Customer info based on account status and plan type", query);
         return jdbcTemplate.queryForMap(query, accountStatus, planType);
+    }
+
+    public Map<String, Object> getCustomerInformationCreditScoreTextNoRecord() {
+        String query = DBQuery.GET_CUSTOMER_INFORMATION_WITH_TEXT_NO_RECORD;
+        logQueryInAllure("Get Customer info based on text no record found", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustomerInformationCreditFreeze() {
+        String query = DBQuery.GET_CUSTOMER_INFORMATION_WITH_CREDIT_FREEZE;
+        logQueryInAllure("Get Customer info based on text no record found", query);
+        return jdbcTemplate.queryForMap(query);
     }
 
     public Map<String, Object> getTenantCustomerInformationByStatusAndPlanType(String accountStatus, String planType) {
@@ -113,6 +125,18 @@ public class DBAction {
         String query = DBQuery.SELECT_NOTE_SEQUENCE_NUMBER;
         logQueryInAllure("Get Note Sequence Number", query, noteSeqNo);
         return jdbcTemplate.queryForList(query, noteSeqNo);
+    }
+
+    public Map<String, Object> getNoteBySequenceNumber(String noteSeqNo) {
+        String query = DBQuery.SELECT_NOTE_BY_SEQUENCE_NUMBER;
+        logQueryInAllure("Get Note By Sequence Number", query, noteSeqNo);
+        return jdbcTemplate.queryForMap(query, noteSeqNo);
+    }
+
+    public List<Map<String, Object>> getNoteByCustomerCode(String customerCode) {
+        String query = DBQuery.SELECT_NOTE_BY_CUSTOMER_CODE;
+        logQueryInAllure("Get Note by customerCode", query, customerCode);
+        return jdbcTemplate.queryForList(query, customerCode);
     }
 
     public Map<String, Object> custCodeParamCodeAGLCAccNoServNoTC207(String pricePlan, String sclsCode) {

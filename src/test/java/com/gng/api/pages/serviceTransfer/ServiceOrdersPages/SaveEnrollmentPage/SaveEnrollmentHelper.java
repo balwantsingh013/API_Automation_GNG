@@ -35,10 +35,8 @@ public class SaveEnrollmentHelper {
     public void setSupportingDefaultParameters(SaveEnrollmentRequest payload){
         payload.setRequestID(FakerDataGenerator.generateString(12));
         payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-
         payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
         payload.setPromotionCode("");
-
         payload.setCustomerRequestedServiceDate("");
         payload.setSplitConnectionFeeIndicator(true);
         payload.setServiceTransferReward(false);

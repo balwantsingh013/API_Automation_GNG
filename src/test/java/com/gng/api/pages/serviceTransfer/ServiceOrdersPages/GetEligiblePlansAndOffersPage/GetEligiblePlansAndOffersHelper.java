@@ -102,8 +102,8 @@ public class GetEligiblePlansAndOffersHelper {
             case ST_GE_INVALID_PREMISES_CODE_NOT_FOUND_NEG_TC205 -> payload.setPremisesCode(GlobalEnums.InvalidValues.INVALID_PREMISES_CODE.getValue());
 
             case ST_GE_INVALID_ACCOUNT_COMBINATION_NEG_TC206 -> {
-                List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerWithServiceTransferEnrollment();
-                payload.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
+                Map<String, Object> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerWithServiceTransferEnrollment();
+                payload.setCustomerCode(activeCustomerData.get(UCRACCT_CUST_CODE).toString());
             }
             case ST_GE_REFERRAL_CODE_NOT_REQUIRED_FOR_TRAN_NEG_TC207 -> {
                 payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());

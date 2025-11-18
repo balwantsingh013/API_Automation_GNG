@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class DataResult {
 	private String billingUnitNumber;
 	private String homePhoneNumber;
-	private Object similarBusinesses;
 	private String aglcAccountNumber;
 	private String billingUnitType;
 	private String billingAddressLine2;
@@ -70,4 +69,5 @@ public class DataResult {
 	private String premisesStreetSuffix;
 	private boolean seasonalSavingsProgramIndicator;
 	private String billingCity;
+    private List<SimilarBusinesses> similarBusinesses;
 }

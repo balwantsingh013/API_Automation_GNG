@@ -247,11 +247,6 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.verifySearchAccountAPIWhenValidSSNIsPassed(search_accounts);
     }
 
-    @When("a request is made to the SearchAccounts Api ServiceTransfer with transactionType for {string} condition")
-    public void a_request_is_made_to_the_SearchAccounts_Api_with_transactionType(String testCondition) {
-        searchAccountsApiPage.searchForExternalCases(search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
-    }
-
     @Given("a prepay transaction is returned from searchAccounts api for {string}")
     public void validTransactionExists(String testCondition) {
         searchAccountsApiPage.verifyPrepayTransactionIdExists(SearchAccountsApiLabel.search_accounts, SearchAccountsApiLabel.valueOf(testCondition));
