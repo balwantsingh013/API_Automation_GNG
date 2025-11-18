@@ -84,7 +84,7 @@ public class CreateAccountNoteHelper {
             case SERVICE_NUMBER_INVALID_FORMAT_NEGATIVE_TC78 -> payload.setServiceNumber(FakerDataGenerator.generateAlphanumeric(3));
             case NOTE_TYPE_INVALID_NEGATIVE_TC79 -> payload.setNoteTypeCode(GlobalEnums.InvalidValues.INVALID_ACCOUNT_NOTE.getValue());
 
-            default -> log.warn("No negative mutation implemented for {}", testCondition);
+            default -> log.warn("No negative test condition implemented for {}", testCondition);
         }
     }
 
@@ -112,7 +112,7 @@ public class CreateAccountNoteHelper {
                 payload.setNoteTypeCode(noteTypeCode);
                 payload.setNoteText(noteText);
             }
-            default -> log.warn("No positive mutation implemented for {}", testCondition);
+            default -> log.warn("No positive test condition implemented for {}", testCondition);
         }
     }
 

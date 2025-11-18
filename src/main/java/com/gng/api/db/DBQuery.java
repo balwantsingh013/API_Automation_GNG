@@ -200,6 +200,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             
             """;
+    public static final String GET_CUSTOMER_INFORMATION_INACTIVE_ABD_ACCOUNT = """            
+            SELECT a.ucracct_cust_code, a.ucracct_prem_code
+            FROM ucracct a
+            WHERE a.ucracct_status_ind = 'I'
+              AND F_DOES_WU_CREDIT_CARD_EXIST(a.ucracct_cust_code, a.ucracct_prem_code) = 'Y'
+              FETCH FIRST 1 ROWS only
+            """;
 
     public static final String GET_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE = """            
              SELECT
@@ -948,8 +955,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               SELECT
                 CAST(? AS VARCHAR2(20))  AS cust_code,
                 CAST(? AS CHAR(1))       AS st,
-                CAST(? AS VARCHAR2(30))  AS rate_sched,
-                CAST(? AS CHAR(1))       AS plan_ind
+                CAST(? AS VARCHAR2(30))  AS rate_sched
               FROM dual
             ),
               cust_prem AS (
@@ -1006,31 +1012,31 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 GROUP  BY uabopen_cust_code, uabopen_prem_code
               ),
               flags AS (
-                SELECT a.ucracct_cust_code AS cust_code,
-                       a.ucracct_prem_code AS prem_code,
-                       CASE WHEN EXISTS (
-                              SELECT 1 FROM uabpyar
-                               WHERE uabpyar_cust_code = a.ucracct_cust_code
-                                 AND uabpyar_prem_code = a.ucracct_prem_code
-                                 AND uabpyar_status    = (SELECT st FROM params)
-                            ) THEN 'Y' ELSE 'N' END AS active_pa_ind,
-                       CASE WHEN NVL(a.ucracct_draft_acct_status,' ') = (SELECT st FROM params)
-                            THEN 'Y' ELSE 'N' END AS bank_draft_ind,
-                       CASE WHEN EXISTS (
-                              SELECT 1 FROM uabbudg
-                               WHERE uabbudg_cust_code  = a.ucracct_cust_code
-                                 AND uabbudg_prem_code  = a.ucracct_prem_code
-                                 AND uabbudg_status_ind = (SELECT st FROM params)
-                            ) THEN 'Y' ELSE 'N' END AS active_budget_ind,
-                       CASE WHEN EXISTS (
-                              SELECT 1 FROM uabbdbt
-                               WHERE uabbdbt_cust_code = a.ucracct_cust_code
-                                 AND uabbdbt_prem_code = a.ucracct_prem_code
-                            ) THEN 'Y' ELSE 'N' END AS bad_debt_ind,
-                       (SELECT F_DOES_WU_CREDIT_CARD_EXIST(a.ucracct_cust_code, a.ucracct_prem_code)
-                          FROM dual) AS recurring_cc_ind
-                FROM   ucracct a
-              )
+                   SELECT a.ucracct_cust_code AS cust_code,
+                          a.ucracct_prem_code AS prem_code,
+                          CASE WHEN EXISTS (
+                                 SELECT 1 FROM uabpyar
+                                  WHERE uabpyar_cust_code = a.ucracct_cust_code
+                                    AND uabpyar_prem_code = a.ucracct_prem_code
+                                    AND uabpyar_status    = (SELECT st FROM params)
+                               ) THEN 'Y' ELSE 'N' END AS active_pa_ind,
+                          CASE WHEN NVL(a.ucracct_draft_acct_status,' ') = (SELECT st FROM params)
+                               THEN 'Y' ELSE 'N' END AS bank_draft_ind,
+                          CASE WHEN EXISTS (
+                                 SELECT 1 FROM uabbudg
+                                  WHERE uabbudg_cust_code  = a.ucracct_cust_code
+                                    AND uabbudg_prem_code  = a.ucracct_prem_code
+                                    AND uabbudg_status_ind = 'A'
+                               ) THEN 'Y' ELSE 'N' END AS active_budget_ind,
+                          CASE WHEN EXISTS (
+                                 SELECT 1 FROM uabbdbt
+                                  WHERE uabbdbt_cust_code = a.ucracct_cust_code
+                                    AND uabbdbt_prem_code = a.ucracct_prem_code
+                               ) THEN 'Y' ELSE 'N' END AS bad_debt_ind,
+                          (SELECT F_DOES_WU_CREDIT_CARD_EXIST(a.ucracct_cust_code, a.ucracct_prem_code)
+                             FROM dual) AS recurring_cc_ind
+                   FROM   ucracct a
+                 )            
               SELECT
                 a.ucracct_cust_code                                           AS "customerCode",
                 a.ucracct_prem_code                                           AS "premisesCode",
@@ -1113,10 +1119,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                        AND fl.prem_code = a.ucracct_prem_code
               WHERE
                 ( NULLIF((SELECT rate_sched FROM params),'') IS NULL
-                  OR vs.ucrserv_rate_schedule = (SELECT rate_sched FROM params) )
-              AND
-                ( (SELECT plan_ind FROM params) IS NULL
-                  OR vp.uzvplan_pltp_ind = (SELECT plan_ind FROM params) )
+                  OR vs.ucrserv_rate_schedule = (SELECT rate_sched FROM params) )             
               ORDER BY a.ucracct_status_ind, a.ucracct_established_date DESC, a.ucracct_cust_code
             """;
 

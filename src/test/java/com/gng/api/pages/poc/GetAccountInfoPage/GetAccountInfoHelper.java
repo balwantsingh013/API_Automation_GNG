@@ -38,10 +38,9 @@ public class GetAccountInfoHelper {
     public void verifyAccountInformationWithDatabase() {
         GetAccountInfoResponse response = testContext.getGetAccountInfoResponse();
         String status = response.getData().getAccountStatus();
-        String currentPlanType = response.getData().getCurrentPlanType();
         String rateSchedule = response.getData().getRateSchedule();
         List<Map<String, Object>> accountInformationDB = ApplicationContext.get().getDbAction()
-                .getAccountInformationResponseHappy(response.getData().getCustomerCode(), status, currentPlanType, rateSchedule);
+                .getAccountInformationResponseHappy(response.getData().getCustomerCode(), status, rateSchedule);
         if (accountInformationDB.isEmpty()) {
             throw new AssertionError("Validation query returned 0 rows for customer " + response.getData().getCustomerCode());
         }
@@ -134,15 +133,12 @@ public class GetAccountInfoHelper {
 
             case ACTIVE_WITH_PA_PAST_DUE_POSITIVE_TC22 -> {
                 List<Map<String, Object>> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerOnPaymentArrangementWithBalanceDetails();
-
                 payload.setCustomerCode(activeCustomerData.getFirst().get(UCRACCT_CUST_CODE).toString());
                 payload.setPremisesCode(activeCustomerData.getFirst().get(UCRACCT_PREM_CODE).toString());
             }
 
             case INACTIVE_WITH_RECURRING_CC_POSITIVE_TC23 -> {
-                Map<String, Object> row = ApplicationContext.get().getDbAction().getCustomerInformationByStatusAndPlanType
-                        (GlobalEnums.AccountStatus.INACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
-
+                Map<String, Object> row = ApplicationContext.get().getDbAction().getCustomerInformationInactiveABDAccount();
                 payload.setCustomerCode(row.get(UCRACCT_CUST_CODE).toString());
                 payload.setPremisesCode(row.get(UCRACCT_PREM_CODE).toString());
             }

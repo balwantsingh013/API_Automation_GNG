@@ -40,8 +40,8 @@ Feature: Verify CreateAccountNote Api
 
     Examples:
       | testCondition                         | noteText                                         | noteTypeCode | userIDRemind |
-      | CREATE_NOTE_ACCT_POSITIVE_TC80        | Phone number 1234567890 listed \|~ as Caller ID. |              |              |
+      | CREATE_NOTE_ACCT_POSITIVE_TC80        | Phone number 1234567890 listed \|~ as Caller ID. |   ACCT       |              |
       | CREATE_NOTE_PMT_RPT_POSITIVE_TC81     | Payment received 10/01 via IVR\|~ Ref: 555001    |   PMTRPT     | SYSTEM       |
       | CREATE_NOTE_IVR_NPA_POSITIVE_TC82     | IVR NPA/NXX captured 404-555\|~ 1212             |   IVRNPA     |              |
-      | CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 | IVR NPA/NXX captured 770-555\|~ 8989 ext\|~ 42   |              |              |
+      | CREATE_NOTE_IVR_NPA_ALT_POSITIVE_TC83 | IVR NPA/NXX captured 770-555\|~ 8989 ext\|~ 42   |   IVRNPA     |              |
 
