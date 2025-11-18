@@ -9,9 +9,14 @@ import com.gng.api.steps.serviceTransfer.AccountsApiSteps.SearchAccounts.SearchA
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
+import static com.gng.api.constants.DBConstant.UCRACCT_PREM_CODE;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
+import static com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.GetEligiblePlansAndOffers.GetEligiblePlansAndOffersApiLabel.*;
+import static com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.SaveEnrollment.SaveEnrollmentApiLabel.*;
 
 @Slf4j
 public class SearchAccountsHelper {
@@ -82,7 +87,7 @@ public class SearchAccountsHelper {
 
     public void preparePayloadForNegativeTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         setParametersToEmpty(payload);
-        Map<String, Object> validCustomerBusinessDetails=null;
+        Map<String, Object> validCustomerBusinessDetails = null;
         payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
         Map<String, Object> accountDetailsLastNameZipCode = ApplicationContext.get().getDbAction().getAccountDetails_LastNameZipCode();
@@ -468,5 +473,59 @@ public class SearchAccountsHelper {
             default:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
         }
+    }
+
+
+    public void setExternalCasesParameters(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
+        Map<String, Object> customerData;
+        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        switch (testCondition) {
+            case ST_SE_INVALID_ENROLLMENT_STATUS_VALUE_TC234,
+                 ST_SE_INVALID_ES_PAYMENT_CONFIRMATION_REQUIRED_TC235,
+                 ST_SE_INVALID_PAYMENT_CONFIRMATION_TC236,
+                 ST_SE_INVALID_SSP_PARTICIPANT_CODE_VALUE_TC237,
+                 ST_SE_SSP_PARTICIPANT_CODE_NOT_REQUIRED_TC238,
+                 ST_SE_MISSING_MARKETER_REFERENCE_CE_TRAN_TC239,
+                 ST_SE_DUPLICATE_MARKETER_REFERENCE_DATA_TC240,
+                 ST_SE_MARKETER_REFERENCE_DATA_INVALID_TYPE_TC242,
+                 ST_SE_MARKETER_REFERENCE_DATA_TOO_LONG_TC243,
+                 ST_SE_MARKETER_REFERENCE_DATA_TOO_SHORT_TC244,
+                 ST_SE_CURRENT_MARKETER_CODE_PROVIDED_TC245,
+                 ST_SE_REQUESTED_TURN_ON_DATE_PROVIDED_TC246,
+                 ST_SE_SERVICE_TRANSFER_REWARD_BOOLEAN_ONLY_TC247,
+                 ST_SE_CURRENT_PRICE_PLAN_FIXED_BOOLEAN_ONLY_TC248,
+                 ST_SE_CURRENT_PRICE_PLAN_CEILING_BOOLEAN_ONLY_TC249:
+
+                Map<String, Object> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerWithServiceTransferEnrollment();
+                payload.setCustomerCode(activeCustomerData.get(UCRACCT_CUST_CODE).toString());
+                payload.setPremisesCode(activeCustomerData.get(UCRACCT_PREM_CODE).toString());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                break;
+            case ST_SE_CURRENT_PRICE_PLAN_APPLICABLE_FIXED_OR_CEILING_ONLY_TC250:
+                customerData = ApplicationContext.get().getDbAction()
+                        .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.MVS.getValue());
+                setCustomerInfo(payload, customerData);
+                break;
+            case
+                ST_GE_ST_CURRENT_TRUE_PLAN_NOT_FIXED_OR_CEILING_NEG_TC215A,
+                ST_GE_ST_CURRENT_TRUE_NOT_TRAN_NEG_TC217:
+                customerData = ApplicationContext.get().getDbAction()
+                        .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.RGB.getValue());
+                setCustomerInfo(payload, customerData);
+                break;
+
+            case  ST_GE_ENROLLMENT_STATE_INVALID_FOR_TRAN_NEG_TC198,
+                  ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220:
+                customerData = ApplicationContext.get().getDbAction()
+                        .getTenantCustomerInformationByStatusAndPlanType(GlobalEnums.AccountStatus.ACTIVE.getValue(), GlobalEnums.PlanCode.PGB.getValue());
+                setCustomerInfo(payload, customerData);
+                break;
+        }
+    }
+
+    private void setCustomerInfo(SearchAccountsRequest payload, Map<String, Object> row) {
+        payload.setPremisesCode(row.get(UCRACCT_PREM_CODE).toString());
+        payload.setCustomerCode(row.get(UCRACCT_CUST_CODE).toString());
     }
 }

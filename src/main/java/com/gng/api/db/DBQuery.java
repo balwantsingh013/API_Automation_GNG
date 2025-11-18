@@ -153,7 +153,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                             AND l.usrletd_letr_code        = 'DISCONNECT'
                             AND l.usrletd_printed_ind      = 'Y'
                         )
-                  FETCH FIRST 1 ROWS ONLY            
+                  FETCH FIRST 1 ROWS ONLY
             """;
 
 
@@ -219,8 +219,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
              JOIN uzbenro z   ON z.uzbenro_prem_code = a.ucracct_prem_code
              WHERE a.ucracct_status_ind = ?
                AND z.UZBENRO_PRICE_PLAN  = ?
-             ORDER BY DBMS_RANDOM.VALUE
-             FETCH FIRST 1 ROWS ONLY
+               AND c.ucbcust_first_name IS NOT NULL
+             ORDER BY z.uzbenro_activity_date DESC, DBMS_RANDOM.VALUE
+             FETCH FIRST 1 ROW ONLY
             """;
     public static final String GET_TENANT_CUSTOMER_INFORMATION_BASED_ON_ACCOUNT_STATUS_AND_PLAN_TYPE = """            
              SELECT
@@ -303,11 +304,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               a.ucracct_cust_code,
                  a.ucracct_prem_code,
                  a.ucracct_status_ind,
-                 z. UZBENRO_TYPE_CODE    AS typeCode,
+                 c.ucbcust_first_name,
+                 c.ucbcust_last_name,
+                 b.UCBPREM_ZIPC_CODE,
+                 z.UZBENRO_TYPE_CODE  AS typeCode,
                  z.UZBENRO_ENRO_STATUS  AS status,
                  z.UZBENRO_ACTIVITY_DATE
              FROM ucracct a
              JOIN uzbenro z  ON z.uzbenro_prem_code = a.ucracct_prem_code
+             JOIN ucbcust c  ON c.ucbcust_cust_code = a.ucracct_cust_code
+             JOIN ucbprem b ON a.UCRACCT_PREM_CODE = b.UCBPREM_CODE
             WHERE z.UZBENRO_TYPE_CODE = 'SETM'
             AND z.UZBENRO_ENRO_STATUS = 'INCL'
             
@@ -1119,6 +1125,15 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FROM UCBNOTE WHERE UCBNOTE_SEQ_NUMBER = ?
             """;
 
+    public static final String SELECT_NOTE_BY_CUSTOMER_CODE = """
+            select * from ucbnote  where ucbnote_cust_code  = ?
+            """;
+
+    public static final String SELECT_NOTE_BY_SEQUENCE_NUMBER = """
+            select * from ucrnote where ucrnote_note_seq_num = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_PASSWORD_EXPIRE_DAYS = """
             SELECT UZRPSTO_PARM_VALUE
             FROM UZRPSTO
@@ -1132,7 +1147,6 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               FROM UZBPSTO
             WHERE  UZBPSTO_OBJECT = 'SPK_WEB_API';
             """;
-
 
     public static final String SEARCH_ACC_SELECT_INVALID_CUSTOMER_CODE = """
             SELECT *
@@ -3691,6 +3705,70 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
              ORDER BY UZRRCOT_ACTIVITY_DATE DESC
              FETCH FIRST 1 ROWS ONLY
             """;
+
+    public static final String GET_CUSTOMER_INFORMATION_WITH_TEXT_NO_RECORD = """    
+     WITH cand AS (
+         SELECT
+           b.UZBENRO_CUST_CODE,
+           b.UZBENRO_PREM_CODE,
+           c.UCBCUST_FIRST_NAME,
+           c.UCBCUST_LAST_NAME,
+           b.UZBENRO_ACTIVITY_DATE   AS activity_dt,
+           b.UZBENRO_TYPE_CODE       AS tran_type,
+           s.UCRSERV_SCLS_CODE       AS scls_code,
+           b.UZBENRO_CRED_SCORE      AS credit_score
+         FROM UZBENRO b
+         JOIN UCBCUST c
+           ON c.UCBCUST_CUST_CODE = b.UZBENRO_CUST_CODE
+         JOIN UCRSERV s
+           ON s.UCRSERV_CUST_CODE = b.UZBENRO_CUST_CODE
+          AND s.UCRSERV_PREM_CODE = b.UZBENRO_PREM_CODE
+         WHERE s.UCRSERV_SCLS_CODE = 'RS'
+           AND b.UZBENRO_CRED_SCORE_STATUS = 'TEXT'
+           AND b.UZBENRO_CRED_SCORE_TEXT = 'NO RECORD FOUND'
+           AND c.UCBCUST_FIRST_NAME IS NOT NULL
+       ),
+           top_50 AS (
+             SELECT *
+             FROM cand
+             ORDER BY credit_score DESC, activity_dt DESC
+             FETCH FIRST 50 ROWS ONLY
+           )
+       SELECT *
+       FROM top_50
+       ORDER BY  DBMS_RANDOM.VALUE
+       FETCH FIRST 1 ROWS ONLY
+ """;
+
+    public static final String GET_CUSTOMER_INFORMATION_WITH_CREDIT_FREEZE = """    
+            WITH cand AS (
+                                 SELECT
+                                   b.UZBENRO_CUST_CODE,
+                                   b.UZBENRO_PREM_CODE,
+                                   c.UCBCUST_FIRST_NAME,
+                                   c.UCBCUST_LAST_NAME,
+                                   b.UZBENRO_ACTIVITY_DATE AS activity_dt,
+                                   s.UCRSERV_SCLS_CODE AS scls_code,
+                                   b.UZBENRO_CRED_SCORE_STATUS,
+                                   b.UZBENRO_CRED_SCORE_TEXT
+                                 FROM UZBENRO b
+                                 JOIN UCBCUST c
+                                   ON c.UCBCUST_CUST_CODE = b.UZBENRO_CUST_CODE
+                                 JOIN UCRSERV s
+                                   ON s.UCRSERV_CUST_CODE = b.UZBENRO_CUST_CODE
+                                  AND s.UCRSERV_PREM_CODE = b.UZBENRO_PREM_CODE
+                                 WHERE s.UCRSERV_SCLS_CODE = 'RS'
+                                     AND  b.uzbenro_enro_status = 'BADC'
+                               )
+                               SELECT *
+                               FROM (
+                                 SELECT *
+                                 FROM cand
+                                 ORDER BY activity_dt DESC
+                               )
+                               WHERE ROWNUM = 1
+
+ """;
 
     private DBQuery() {
     }

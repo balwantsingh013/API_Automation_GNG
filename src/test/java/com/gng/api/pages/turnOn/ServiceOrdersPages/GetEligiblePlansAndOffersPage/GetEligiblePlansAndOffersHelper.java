@@ -1,5 +1,6 @@
 package com.gng.api.pages.turnOn.ServiceOrdersPages.GetEligiblePlansAndOffersPage;
 
+import com.github.javafaker.Bool;
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
@@ -33,7 +34,7 @@ import static com.gng.api.constants.GlobalEnums.MarketingPromotionCodes.*;
 import static com.gng.api.constants.GlobalEnums.PromotionCode.DEALS;
 import static com.gng.api.constants.GlobalEnums.TenantOrLandlord.LANDLORD;
 import static com.gng.api.constants.GlobalEnums.TenantOrLandlord.TENANT;
-import static com.gng.api.constants.GlobalEnums.TransactionType.TURN_ON;
+import static com.gng.api.constants.GlobalEnums.TransactionType.*;
 import static com.gng.api.constants.GlobalEnums.WorkPhoneType.BUSINESS;
 import static com.gng.api.constants.TestConstant.*;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
@@ -55,9 +56,9 @@ public class GetEligiblePlansAndOffersHelper {
 
     GetEligiblePlansAndOffersRequest preparePayload(GetEligiblePlansAndOffersApiLabel apiLabel) {
         log.info("Preparing payload for {}", apiLabel);
-        String jsonFileName = apiLabel.equals(GetEligiblePlansAndOffersApiLabel.get_eligible_plans_and_offers)
-                ? GetEligiblePlansAndOffersApiLabel.get_eligible_plans_and_offers.toString()
-                : GetEligiblePlansAndOffersApiLabel.get_eligible_plans_and_offers_mandatory.toString();
+        String jsonFileName = apiLabel.equals(get_eligible_plans_and_offers)
+                ? get_eligible_plans_and_offers.toString()
+                : get_eligible_plans_and_offers_mandatory.toString();
         return BasePage.deserializeJsonToPojo(jsonFileName, GetEligiblePlansAndOffersRequest.class);
     }
 
@@ -81,7 +82,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setTransactionType(FakerDataGenerator.generateLowerCaseString(4));
                 break;
             case WHITESPACE_CONTAINS_TRANSACTION_TYPE:
-                payload.setTransactionType(GlobalEnums.InvalidValues.TRANSACTION_TYPE_WITH_WHITESPACE.getValue());
+                payload.setTransactionType(TRANSACTION_TYPE_WITH_WHITESPACE.getValue());
                 break;
             case ALPHANUMERIC_TRANSACTION_TYPE:
                 payload.setTransactionType(FakerDataGenerator.generateAlphanumeric(2));
@@ -110,7 +111,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerType(null);
                 break;
             case INVALID_VALUE_CUSTOMER_TYPE_TC_192:
-                payload.setCustomerType(GlobalEnums.InvalidValues.INVALID_CUSTOMER_TYPE.getValue());
+                payload.setCustomerType(INVALID_CUSTOMER_TYPE.getValue());
                 break;
 
             default:
@@ -251,13 +252,13 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesStreetSuffix(FakerDataGenerator.generateString(7));
                 break;
             case INVALID_PREMISES_STREET_SUFFIX_TC_246A:
-                payload.setPremisesStreetSuffix(GlobalEnums.InvalidValues.INVALID_STREET_SUFFIX.getValue());
+                payload.setPremisesStreetSuffix(INVALID_STREET_SUFFIX.getValue());
                 break;
             case PREMISES_STREET_POST_DIRECTION_LENGTH_VALIDATION_TC_247:
                 payload.setPremisesStreetPostDirection(FakerDataGenerator.generateString(3));
                 break;
             case INVALID_PREMISES_STREET_POST_DIRECTION_TC_247A:
-                payload.setPremisesStreetPostDirection(GlobalEnums.InvalidValues.INVALID_STREET_POST_DIRECTION.getValue());
+                payload.setPremisesStreetPostDirection(INVALID_STREET_POST_DIRECTION.getValue());
                 break;
             case PREMISES_UNIT_TYPE_LENGTH_VALIDATION_TC_248:
                 payload.setPremisesUnitType(FakerDataGenerator.generateString(7));
@@ -299,7 +300,7 @@ public class GetEligiblePlansAndOffersHelper {
                 break;
             case INVALID_BILLING_ADDRESS_TYPE_TC_262:
                 payload.setSeparateBillingAddress(true);
-                payload.setBillingAddressType(GlobalEnums.InvalidValues.INVALID_BILLING_ADDRESS_TYPE.getValue());
+                payload.setBillingAddressType(INVALID_BILLING_ADDRESS_TYPE.getValue());
                 break;
             case BILLING_STREET_NAME_LENGTH_VALIDATION_TC_263:
                 payload.setBillingStreetName(FakerDataGenerator.generateString(31));
@@ -1955,6 +1956,23 @@ public class GetEligiblePlansAndOffersHelper {
         if(testCondition.toString().contains("SSP")&& !(testCondition.toString().equals("SSP_FALSE_ALLOWED_FOR_ACN_TC_477"))){
             payload.setSeasonalSavingsProgramIndicator(true);
         }
+    }
+
+    public void setExternalRequestParams(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getCustomerAndPremiseDetails(payload, customerData);
+
+        switch (testCondition)
+        {
+            case MS_RS_FRAUD_ALERT_INVALID_SSN_TC_010 -> {
+                payload.setTransactionType(METER_SET.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setConfirmCreditCheck(Boolean.FALSE);
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(8));
+        }
+            default -> throw new IllegalStateException("Unexpected value: " + testCondition);
+        }
+
     }
 
     public void setRequestParamsWithoutPromotionCode(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {

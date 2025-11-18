@@ -9,8 +9,11 @@ public final class DBConstant {
     public static final String UCBACCT_SEQ_NUMBER = "UCBNOTE_SEQ_NUMBER";
     public static final String UCRSERV_NUM = "UCRSERV_NUM";
     public static final String UZRPSTO_PARM_VALUE = "UZRPSTO_PARM_VALUE";
-
-
+    public static final String UCBCUST_FIRST_NAME ="UCBCUST_FIRST_NAME";
+    public static final String UCBCUST_LAST_NAME ="UCBCUST_LAST_NAME";
+    public static final String UCBPREM_ZIPC_CODE ="UCBPREM_ZIPC_CODE";
+    public static final String UZBENRO_CUST_CODE = "UZBENRO_CUST_CODE";
+    public static final String UZBENRO_PREM_CODE = "UZBENRO_PREM_CODE";
     private DBConstant() {
     }
 
