@@ -16,12 +16,14 @@ import org.testng.Assert;
 import java.util.List;
 import java.util.Map;
 
+import static com.gng.api.pages.turnOn.Users.ResetPassword.ResetPasswordHelper.loginId;
 import static com.gng.api.pages.turnOn.Users.ResetPassword.ResetPasswordHelper.old_valid_password;
 @Slf4j
 public class GetUserRolesHelper {
     private final TestContext testContext;
     private final GetUserRolesApiPage apiPage; // Reference to GetUserRolesApiPage
     //String user;
+
 
     public GetUserRolesHelper(TestContext testContext, GetUserRolesApiPage apiPage) {
         this.testContext = testContext;
@@ -225,12 +227,12 @@ public class GetUserRolesHelper {
     }
 
     public String validatePasswordExpiredInDB(GetUserRolesRequest payload) {
-        String user = ApplicationContext.get().getDbAction().getActiveUserID();
-        int rowCount = ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(user);
+        int rowCount = ApplicationContext.get().getDbAction().passwordExpiredUpdateQuery(loginId);
         ExtentReportManager.logInfoToReport(rowCount + " row updated successfully.");
         payload.setRequestID(FakerDataGenerator.generateString(6));
-        payload.setLoginID(user);
-        return user;
+        payload.setLoginID(loginId);
+        payload.setPassword(AesEncryptionSteps.encryptData(old_valid_password));
+        return loginId;
     }
 
 

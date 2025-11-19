@@ -84,6 +84,7 @@ public class GlobalEnums {
     public enum InvalidValues {
         DUPLICATE_REQUEST_ID("123"),
         INVALID_LOGIN_ID("FAKE"),
+        INVALID_PASSWORD("dummy$01"),
         TRANSACTION_TYPE_WITH_WHITESPACE("DF HJ"),
         INVALID_CUSTOMER_TYPE("AA"),
         INNVALID_MARKETING_PROMOTION_CODE("AAA"),
@@ -97,6 +98,7 @@ public class GlobalEnums {
         INVALID_BILLING_STATE_CODE("BEE"),
         INVALID_PREMISES_COUNTY_CODE("T"),
         INVALID_ZIP_CODE("31111"),
+        INVALID_ZIP_9_DIGIT("1234-12345"),
         INVALID_PREMISE_STATE_CODE("YU"),
         INVALID_GENERATION_CODE("AB"),
         INVALID_CREDIT_CHECK_OPTION("MAYBE"),

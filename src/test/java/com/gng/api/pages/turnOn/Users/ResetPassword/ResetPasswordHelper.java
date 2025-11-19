@@ -1,5 +1,6 @@
 package com.gng.api.pages.turnOn.Users.ResetPassword;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pages.turnOn.Users.GetUserRolesPage.GetUserRolesApiPage;
@@ -263,7 +264,7 @@ public class ResetPasswordHelper {
                 break;
             case ENCRYPTED_OLD_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC34B:
                 payload.setRequestID(FakerDataGenerator.generateString(10));
-                String encryptedSpecial = AesEncryptionSteps.encryptData(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
+                String encryptedSpecial = AesEncryptionSteps.encryptData(GlobalEnums.InvalidValues.INVALID_PASSWORD.getValue());
                 log.info(encryptedSpecial);
                 ExtentReportManager.logInfoToReport(encryptedSpecial);
                 payload.setNewPassword(encryptedSpecial);
