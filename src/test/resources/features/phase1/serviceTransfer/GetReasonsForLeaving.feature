@@ -5,7 +5,7 @@ Feature: Verify GetReasonsForLeaving Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetReasonsForLeavingInvalidParameters @NegativeFlow
+  @GetReasonsForLeavingInvalidParameters @NegativeFlow @Phase1
   Scenario Outline: GetReasonsForLeaving Api - Verify invalid requestID "<testCondition>"
     When a request is made to the GetReasonsForLeaving Api with invalid parameters for "<testCondition>" condition
     Then verify response code of "GetReasonsForLeaving" Api is 200

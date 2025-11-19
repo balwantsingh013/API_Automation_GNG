@@ -5,7 +5,7 @@ Feature: GetEligiblePlansAndOffers - Negative validations (Service Transfer)
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetEligiblePlansAndOffersTransfer @NegativeFlow @Phase1
+  @GetEligiblePlansAndOffersTransfer @NegativeFlow @Phase2
   Scenario Outline: Verify ServiceTransfer GetEligiblePlansAndOffers with invalid parameters "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api serviceTransfer for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -41,7 +41,7 @@ Feature: GetEligiblePlansAndOffers - Negative validations (Service Transfer)
       | ST_GE_COMMERCIAL_CREDIT_CHECK_BIN_NOT_REQUIRED_NEG_TC214           | 10000     | Parameter Value should be null-Commercial Credit Check Business BIN                                                                        |
       | ST_GE_ST_CURRENT_FLAG_MISSING_WHEN_PLAN_FIXED_OR_CEILING_NEG_TC216 | 10000     | Missing Service Transfer Current Price Plan flag                                                                                           |
 
-  @GetEligiblePlansAndOffersTransferWithSearchAccountsNotAllowed @NegativeFlow @Phase1
+  @GetEligiblePlansAndOffersTransferWithSearchAccountsNotAllowed @NegativeFlow @Phase2
   Scenario Outline: Verify ServiceTransfer GetEligiblePlansAndOffers from SearchAccounts response with invalid parameters "<testCondition>"
     When a request is made to the SearchAccounts Api ServiceTransfer with transactionType for "<testCondition>" condition
     And response should have ErrorCode 0 and ErrorMessage ""
@@ -57,7 +57,7 @@ Feature: GetEligiblePlansAndOffers - Negative validations (Service Transfer)
       | ST_GE_ST_OFFER_REMAINDER_TRUE_NOT_TRAN_NEG_TC220            | 2000      | Current Plan or Offer Transfer Not Allowed       |
 
 
-  @GetEligiblePlansAndOffersTransferWithSearchAccounts_1 @NegativeFlow @Phase1
+  @GetEligiblePlansAndOffersTransferWithSearchAccounts_1 @NegativeFlow @Phase2
   Scenario Outline: Verify ServiceTransfer GetEligiblePlansAndOffers from SearchAccounts response with invalid parameters "<testCondition>"
     When a request is made to the SearchAccounts Api ServiceTransfer with transactionType for "<testCondition>" condition
     And response should have ErrorCode 0 and ErrorMessage ""
