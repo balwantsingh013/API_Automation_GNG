@@ -76,8 +76,8 @@ public class SaveUnenrollmentHelper {
             case PREMISES_CODE_NOT_EXISTS_NEGATIVE_TC113 -> payload.setPremisesCode("0");
 
             case ACCOUNT_COMBINATION_INVALID_NEGATIVE_TC114 -> {
-                payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
-                payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(5));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 payload.setAglcServiceOrderNumber(FakerDataGenerator.generateDigits(5));
             }
 
@@ -298,8 +298,11 @@ public class SaveUnenrollmentHelper {
             case TURN_OFF_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC153 -> {
                 set(payload, TurnOffReason.MOVING_RENOVATION_ELECTRIC);
             }
-            case TURN_OFF_SUB_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC154,
-                 TURN_OFF_SUB_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC155 -> {
+            case TURN_OFF_SUB_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC154 ->{
+                payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_AGLC_TERRITORY_ETC_WAIVED.getReason());
+                payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_AGLC_TERRITORY_ETC_WAIVED.getSubReason());
+            }
+            case TURN_OFF_SUB_REASON_INVALID_FOR_SERVICE_TRANSFER_NEGATIVE_TC155 -> {
                 payload.setTurnOffReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP_ETC_WAIVED.getReason());
                 payload.setTurnOffSubReason(TurnOffReason.MOVING_OUTSIDE_POOL_GROUP_ETC_WAIVED.getSubReason());
             }

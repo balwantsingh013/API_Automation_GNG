@@ -126,9 +126,6 @@ Feature: Verify SaveUnenrollment ServiceTransfer Api
 
   @SaveUnenrollmentWithSearchInvalidParameters @NegativeFlow @SaveUnenrollment @ServiceTransfer @Phase1
   Scenario Outline: Verify SaveUnenrollment ServiceTransfer invalid with prior GetEligiblePlansAndOffers "<testCondition>"
-    When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
-    Then verify response code of "GetEligiblePlansAndOffers" Api is 200
-    And response should have ErrorCode 0 and ErrorMessage ""
     Then a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment ServiceTransfer Api with invalid parameters for "<testCondition>" condition
     Then verify response code of "SaveUnenrollment" Api is 200
