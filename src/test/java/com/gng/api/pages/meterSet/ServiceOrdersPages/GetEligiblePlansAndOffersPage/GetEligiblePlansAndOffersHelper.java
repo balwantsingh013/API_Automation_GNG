@@ -539,7 +539,7 @@ public class GetEligiblePlansAndOffersHelper {
             case MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025, MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047,
                  MS_SE_RS_PRP_ENROLLMENT_STATUS_DB_TC_048,
                  MS_SE_RS_R_ENROLLMENT_STATUS_DR_TC_050, MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A,
-                 MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051 -> {
+                 MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051, GP_MS_PREPAY_ONLY_PRP_TC60 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setCreditCheckOption(YES.getValue());

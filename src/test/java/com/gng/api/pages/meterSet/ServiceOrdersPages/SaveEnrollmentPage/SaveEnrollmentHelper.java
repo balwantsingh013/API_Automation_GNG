@@ -76,8 +76,6 @@ public class SaveEnrollmentHelper {
 
     public void setParametersFromGetEligiblePlansAndOffersResponse(
             SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-
-
         var data  = testContext.getGetEligiblePlansAndOffersResponse().getData();
         var plans = data.getPlans();
 
@@ -85,9 +83,7 @@ public class SaveEnrollmentHelper {
         payload.setPremisesCode(data.getPremisesCode());
         payload.setTransactionID(data.getTransactionID());
         Plans plan = choosePlanForCondition(testCondition, plans);
-
         payload.setPlanCode(plan.getPlanCode());
-
         String promo = Optional.ofNullable(plan.getPromotion1Code()).orElse("");
         payload.setPromotionCode(promo);
 
@@ -95,7 +91,6 @@ public class SaveEnrollmentHelper {
         payload.setRequestedTurnOnDate(etod);
 
         payload.setCustomerRequestedServiceDate(etod);
-
 
         if (data.getAglcAccountNumber() != null && !data.getAglcAccountNumber().isEmpty()) {
             payload.setAglcAccountNumber(data.getAglcAccountNumber());
@@ -141,7 +136,7 @@ public class SaveEnrollmentHelper {
                  MS_SE_RS_R_ENROLLMENT_STATUS_PC_REQUOTE_TC_047,
                  MS_SE_RS_NA_ENROLLMENT_STATUS_RP_PRP_TC_050A,
                  MS_SE_RS_PRP_ENROLLMENT_STATUS_PR_TC_051,
-                 MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054
+                 MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054, GP_MS_PREPAY_ONLY_PRP_TC60
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.PRP.getValue());
 
             case MS_SE_CM_R_ENROLLMENT_STATUS_SI_TC_049,
@@ -447,13 +442,26 @@ public class SaveEnrollmentHelper {
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
                 payload.setPlanCode(plan.getPlanCode());
-               // setTurnOnDate(payload);
                 payload.setPromotionCode("");
                 payload.setAglcAccountNumber("");
                 payload.setAglcServiceOrderNumber(null);
                 payload.setServiceTransferReward(null);
                 payload.setServiceTransferCurrentPricePlan(null);
                 payload.setServiceTransferOfferRemainder(null);
+                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+            }
+            case GP_MS_PREPAY_ONLY_PRP_TC60 -> {
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
+                payload.setBillingPlan(null);
+                payload.setPromotionCode(null);
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setServiceTransferReward(null);
+                payload.setServiceTransferCurrentPricePlan(null);
+                payload.setServiceTransferOfferRemainder(null);
+                payload.setSspParticipantCode(null);
+                payload.setCurrentMarketerCode(null);
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
             }
 

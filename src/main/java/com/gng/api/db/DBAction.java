@@ -46,6 +46,11 @@ public class DBAction {
         logQueryInAllure("Get Customer info based on account status and plan type", query);
         return jdbcTemplate.queryForMap(query, accountStatus, planType);
     }
+    public Map<String, Object> getCustomerInformationInactiveABDAccount() {
+        String query = DBQuery.GET_CUSTOMER_INFORMATION_INACTIVE_ABD_ACCOUNT;
+        logQueryInAllure("Get Customer info for final ABD account", query);
+        return jdbcTemplate.queryForMap(query);
+    }
 
     public Map<String, Object> getCustomerInformationCreditScoreTextNoRecord() {
         String query = DBQuery.GET_CUSTOMER_INFORMATION_WITH_TEXT_NO_RECORD;
@@ -104,7 +109,7 @@ public class DBAction {
         return jdbcTemplate.queryForList(query, accountStatus, rateSchedule, planType, planCode);
     }
 
-    public List<Map<String, Object>> getAccountInformationResponseHappy(String custCode, String accountStatus, String planTypeInd, String rateSchedule) {
+    public List<Map<String, Object>> getAccountInformationResponseHappy(String custCode, String accountStatus, String rateSchedule) {
         final String query = DBQuery.GET_ACCOUNT_INFO_RESPONSE_BY_CUSTOMER_CODE_AND_STATUS;
         final String rs = (rateSchedule == null || rateSchedule.trim().isEmpty())
                 ? null
@@ -116,8 +121,7 @@ public class DBAction {
                 query,
                 new SqlParameterValue(Types.VARCHAR, custCode),
                 new SqlParameterValue(Types.CHAR,    accountStatus),
-                new SqlParameterValue(Types.VARCHAR, rs),
-                new SqlParameterValue(Types.CHAR,    planTypeInd)
+                new SqlParameterValue(Types.VARCHAR, rs)
         );
     }
 
