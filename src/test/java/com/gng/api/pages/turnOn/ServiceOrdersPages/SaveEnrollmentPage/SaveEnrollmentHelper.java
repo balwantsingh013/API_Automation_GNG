@@ -385,7 +385,6 @@ public class SaveEnrollmentHelper {
             case SSP_VALIDATION_CUSTOMER_CODE_MISSING_TC_483:
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_495:
             case SSP_VALIDATION_SSP_PARTICIPANT_CODE_MISSING_TC_490:
-            case SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496:
                 payload.setEnrollmentStatus(COMPLETE.getValue());
                 payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(7));
                 break;
@@ -407,6 +406,11 @@ public class SaveEnrollmentHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_499:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500A:
                 setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                break;
+
+            case SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496:
+                setEnrollmentStatusPCAndPaymentConfirmationNumber(payload);
+                payload.setAglcAccountNumber(FakerDataGenerator.generateDigits(6));
                 break;
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_NOTES_PC_TC_500B:
@@ -585,8 +589,8 @@ public class SaveEnrollmentHelper {
                 payload.setPremisesCode("0");
                 break;
             case INVALID_PREMISES_CODE_CUSTOMER_CODE_NOT_EXISTS_TC393:
-                payload.setPremisesCode("0");
-                payload.setCustomerCode("0");
+                payload.setPremisesCode("12");
+                payload.setCustomerCode("10");
                 break;
             default:
                 payload.setPremisesCode(FakerDataGenerator.generateString(10));
@@ -653,9 +657,12 @@ public class SaveEnrollmentHelper {
                 break;
             case INVALID_PLAN_CODE_PRIME_STATUS_TC396a:
                 payload.setMarketerReferenceData(String.valueOf(testContext.getMarketerReferenceData()));
-                payload.setCustomerCode("6098999");
-                payload.setPremisesCode("6072308");
-                payload.setTransactionID("708");
+                Map<String, Object> uzrrcotRecord1 = ApplicationContext.get()
+                        .getDbAction()
+                        .getLatestUZRRCOTRecord();
+                payload.setCustomerCode(uzrrcotRecord1.get("UZRRCOT_CUST_CODE"));
+                payload.setPremisesCode((String) uzrrcotRecord1.get("UZRRCOT_PREM_CODE"));
+                payload.setTransactionID(uzrrcotRecord1.get("UZRRCOT_TRANSACTION_ID"));
                 payload.setPlanCode("PGB");
                 payload.setEnrollmentStatus(PAYMENT_COMPLETE.getValue());
                 payload.setTransactionType(TURN_ON.getValue());

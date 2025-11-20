@@ -1911,6 +1911,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setTransactionType(TURN_ON.getValue());
                 payload.setCustomerType(RESIDENTIAL.getValue());
                 payload.setEnrollmentSource(MAIL.getValue());
+                payload.setRequestID("1"+ FakerDataGenerator.generateDigits(6));
                 break;
         }
     }
@@ -1978,6 +1979,12 @@ public class GetEligiblePlansAndOffersHelper {
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
         if(testCondition==INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176){
+            payload.setTenantLandlord("T");
+            payload.setCreditCheckOption("Yes");
+            payload.setAcnStatusIndicator("NACN");
+        }
+        if(testCondition==SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496){
+            payload.setSeasonalSavingsProgramIndicator(true);
             payload.setTenantLandlord("T");
             payload.setCreditCheckOption("Yes");
             payload.setAcnStatusIndicator("NACN");
