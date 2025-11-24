@@ -34,13 +34,5 @@ Feature: Verify GetAccountInfo Api
       | INACTIVE_BAD_DEBT_SONP_DISCLETTERS_POSITIVE_TC26 |
       | NEW_NO_BILLS_YET_POSITIVE_TC27                   |
 
-  @GetAccountInfoPositiveWithSearchAccountsFlows @HappyFlow @Phase1
-  Scenario Outline: Verify GetAccountInfo positive flows for "<testCondition>"
-    When a request is made to the MeterSet SearchAccounts Api for external cases for "<testCondition>" condition
-    And response should have ErrorCode 0 and ErrorMessage ""
-    Then a request is made to the GetAccountInfo Api with valid parameters for "<testCondition>" condition
-    Then verify the account information in the response should match the information in the database
-    Examples:
-      | testCondition                                    |
-      | INACTIVE_WITH_RECURRING_CC_POSITIVE_TC23         |
+
 

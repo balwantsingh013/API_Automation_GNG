@@ -315,7 +315,9 @@ public class GlobalEnums {
     public enum EnrollMentState {
         UDCS("UDCS"),
         CRDS("CRDS"),
-        INCL("INCL");
+        INCL("INCL"),
+        PENDINGREVIEW("PVER"),
+        BAD_CREDIT("BADC");
 
         private final String value;
 
@@ -336,7 +338,12 @@ public class GlobalEnums {
         GB6("GB6"),
         CGB("CGB"),
         CVS("CVS"),
-        CCV("CCV");
+        CSV("CSV"),
+        CCV("CCV"),
+        TWENTY_FOUR_M("24M"),
+        EIGHTEEN_M("18M"),
+        RF6("RF6"),
+        MI("MI");
 
         private final String value;
         PlanCode(String value) {
@@ -394,6 +401,31 @@ public class GlobalEnums {
         BUDGET("B");
         private final String value;
         BillingPlan(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum CreditScoreStatus {
+        STATUS_TEXT("TEXT"),
+        REFUSE("REFU"),
+        NUMBER("NUMR");
+
+        private final String value;
+        CreditScoreStatus(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum CreditScoreText {
+        MATCH_CODE_B("NO RECORD FOUND. MATCH CODE B."),
+        VERIFY_ID("NO RECORD FOUND.NO EMCS.VERIFY ID."),
+        NOT_APPLICABLE("NOT APPLICABLE"),
+        MATCH_CODE_C("MATCH CODE C.");
+
+        private final String value;
+        CreditScoreText(String value) {
             this.value = value;
         }
     }

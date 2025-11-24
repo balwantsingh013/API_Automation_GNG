@@ -3691,6 +3691,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE a."UABOPEN_CUST_CODE" = '<customerCode>'
             FETCH FIRST 1 ROWS ONLY
             """;
+
     public static final String UPDATE_PRE_PAY_QUOTE = """
             UPDATE UABOPEN a
             SET a.UABOPEN_DUE_DATE = SYSDATE - 10
@@ -3701,6 +3702,23 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             DELETE
             FROM UBRBLEX a
             WHERE a.UBRBLEX_CUST_CODE = '<customerCode>'
+            """;
+
+    public static final String GET_ENROLLMENT_RECORD_BY_CUSTOMER_CODE = """
+            SELECT *
+            FROM UZBENRO a
+            WHERE a.UZBENRO_CUST_CODE = ?
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_MARKETER_SWITCH_ENROLLMENT_RECORD_BY_CUSTOMER_LAST_NAME = """
+            SELECT *
+            FROM uzbenro
+            WHERE uzbenro_enro_status_date >= SYSDATE - NUMTODSINTERVAL(1, 'MINUTE')
+              AND uzbenro_cust_name = ?
+              AND uzbenro_type_code = 'MKSW'
+            ORDER BY uzbenro_enro_status_date DESC, uzbenro_enro_num DESC
             """;
 
     public static final String GET_LATEST_UZRRCOT = """
