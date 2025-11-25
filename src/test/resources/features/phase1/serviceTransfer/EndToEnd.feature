@@ -25,10 +25,51 @@ Feature: Verify End to End flow for ServiceTransfer
 
     Examples:
     |testCondition           |accountType|setEmail     |etcExists     |
-    |ACN_RS_REMAINS_ON_TIER_1_TC_251|RS         |false        | null         |
+#    |ACN_RS_REMAINS_ON_TIER_1_TC_251|RS         |false        | null         |
 #    |ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252|RS         |false        | null         |
 #    |ACN_RS_TC_253                       |RS         |false        | null         |
 #      |NACN_RS_TC_254                       |RS         |false        | null         |
 #      |ACN_RS_TC_255                      |RS         |false        | null         |
 #    |NACN_RS_TC_256                      |RS         |false        | null         |
 #    |NACN_SR_TC_258                      |RS         |false        | null         |
+#      |ACN_RS_TC_259                      |RS         |false        | null         |
+#   |NACN_RS_TC_260                      |RS         |false        | null         |
+#    |NACN_SR_TC_262                      |RS         |false        | null         |
+#      |ACN_RS_TC_263                      |RS         |false        | null         |
+#   |NACN_RS_TC_264                      |RS         |false        | null         |
+#      |ACN_RS_TC_265                      |RS         |false        | null         |
+#     |NACN_RS_TC_266                      |RS         |false        | null         |
+#    |NACN_RS_TC_267                      |RS         |false        | null         |
+#      |ACN_RS_TC_268                      |RS         |false        | null         |
+#    |ACN_RS_TC_269                      |RS         |false        | null         |
+#    |NACN_RS_TC_270                      |RS         |false        | null         |
+#    |ACN_RS_TC_271                      |RS         |false        | null         |
+    |NACN_RS_TC_273                      |RS         |false        | null         |
+    |ACN_RS_TC_274                      |RS         |false        | null         |
+    |ACN_RS_TC_275                      |RS         |false        | null         |
+    |NACN_RS_TC_276                      |RS         |false        | null         |
+    |NACN_RS_TC_277                      |RS         |false        | null         |
+    |ACN_RS_TC_278                      |RS         |false        | null         |
+    |NACN_RS_TC_279                      |RS         |false        | null         |
+    |NACN_RS_TC_280                      |RS         |false        | null         |
+    |ACN_CM_TC_281                      |CM         |false        | null         |
+    |NACN_CM_TC_282                      |CM         |false        | null         |
+    |NACN_CM_TC_283                      |CM         |false        | null         |
+    |ACN_CM_TC_284                      |CM         |false        | null         |
+    |NACN_RS_TC_285                      |RS         |false        | null         |
+    |NACN_RS_TC_286                      |RS         |false        | null         |
+    |NACN_CM_TC_287                      |CM         |false        | null         |
+    |NACN_CM_TC_288                      |CM         |false        | null         |
+    |NACN_RS_TC_289                      |RS         |false        | null         |
+    |NACN_RS_TC_290                      |RS         |false        | null         |
+    |NACN_RS_TC_291                      |RS         |false        | null         |
+    |NACN_RS_TC_292                      |RS         |false        | null         |
+    |NACN_RS_TC_293                      |RS         |false        | null         |
+    |NACN_RS_TC_294                      |RS         |false        | null         |
+    |NACN_RS_TC_295                      |RS         |false        | null         |
+    |NACN_RS_TC_296                      |RS         |false        | null         |
+    |NACN_RS_TC_297                      |RS         |false        | null         |
+    |ACN_RS_TC_298                      |RS         |false        | null         |
+    |NACN_RS_TC_300                      |RS         |false        | null         |
+    |NACN_CM_TC_301                      |CM         |false        | null         |
+

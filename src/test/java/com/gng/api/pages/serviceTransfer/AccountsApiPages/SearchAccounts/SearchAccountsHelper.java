@@ -106,6 +106,248 @@ public class SearchAccountsHelper {
                 testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
                 testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
                 break;
+
+            case ACN_RS_TC_259:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC259();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_260:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC260();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_SR_TC_262:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC262();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_263:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC263();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_264:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC264();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_265:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC265();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_266:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC266();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_267:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC267();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_268:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC268();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_269:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC269();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_270:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC270();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_271:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC271();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_273:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC273();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_274:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC274();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_275:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC275();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_276:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC276();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_277:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC277();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_278:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC278();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_279:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC279();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_280:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC280();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_CM_TC_281:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC281();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_CM_TC_282:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC282();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_CM_TC_283:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC283();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_CM_TC_284:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC284();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_285:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC285();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_286:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC286();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_CM_TC_287:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC287();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_CM_TC_288:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC288();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_289:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC289();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_290:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC290();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_291:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC291();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_292:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC292();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_293:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC293();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_294:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC294();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_295:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC295();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_296:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC296();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_297:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC297();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_298:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC298();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_300:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC300();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_CM_TC_301:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC301();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+
         }
 
     }
@@ -502,6 +744,18 @@ public class SearchAccountsHelper {
             case ACN_RS_TC_255:
             case NACN_RS_TC_256:
             case NACN_SR_TC_258:
+            case ACN_RS_TC_259:
+            case NACN_RS_TC_260:
+            case NACN_SR_TC_262:
+            case ACN_RS_TC_263:
+            case NACN_RS_TC_264:
+            case ACN_RS_TC_265:
+            case NACN_RS_TC_266:
+            case NACN_RS_TC_267:
+            case ACN_RS_TC_268:
+            case ACN_RS_TC_269:
+            case NACN_RS_TC_270:
+            case ACN_RS_TC_271:
                 payload.setPremisesCode(testContext.getPremisesCode());
                 payload.setCustomerCode(testContext.getCustomerCode());
                 break;

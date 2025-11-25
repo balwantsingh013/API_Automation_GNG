@@ -167,7 +167,68 @@ public class SaveEnrollmentHelper {
 
             }
 
-            case ACN_RS_TC_255, NACN_SR_TC_258-> {
+            case NACN_RS_TC_270 ->{
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.GPP.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode("");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+            }
+
+            case NACN_RS_TC_266->{
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.PGB.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode("");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+                payload.setSplitConnectionFeeIndicator(false);
+                payload.setBillingPlan("");
+            }
+
+            case NACN_RS_TC_260->{
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.RGB.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode("FIX 10 DOLLARS FOR 12 MONTHS");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+            }
+
+            case ACN_RS_TC_269->{
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.RGB.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setServiceTransferReward(false);
+                payload.setPromotionCode("FIX 5 DOLLARS FOR 12 MONTHS");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+            }
+
+
+
+            case ACN_RS_TC_255, NACN_SR_TC_258, ACN_RS_TC_259, NACN_SR_TC_262, ACN_RS_TC_268-> {
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
                 payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
@@ -182,6 +243,20 @@ public class SaveEnrollmentHelper {
 
             }
 
+            case NACN_RS_TC_264 ->{
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.VML.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode(null);
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+            }
+
             case NACN_RS_TC_256 -> {
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
@@ -194,6 +269,37 @@ public class SaveEnrollmentHelper {
                 payload.setPromotionCode("FIX 10 CENTS FOR 24 MONTHS");
                 payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
                 payload.setCustomerRequestedServiceDate(serviceDate);
+            }
+
+            case ACN_RS_TC_263, ACN_RS_TC_271 -> {
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode("25 CENTS FOR 12 MONTHS");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+
+            }
+
+            case ACN_RS_TC_265, NACN_RS_TC_267 ->{
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.PRP.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode(null);
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+                payload.setBillingPlan("");
+
             }
 
             default -> { }

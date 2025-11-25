@@ -200,7 +200,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAcnStatusIndicator("NACN");
             }
 
-            case ACN_RS_TC_253, ACN_RS_TC_255 -> {
+            case ACN_RS_TC_271, ACN_RS_TC_269,ACN_RS_TC_253, ACN_RS_TC_255, ACN_RS_TC_259, ACN_RS_TC_263, ACN_RS_TC_265, ACN_RS_TC_268 -> {
                 clearNewCustomerRequestFields(payload);
                 setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
                 payload.setServiceTransferOfferRemainder(false);
@@ -209,7 +209,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAcnStatusIndicator("ACN");
             }
 
-            case NACN_RS_TC_254, NACN_RS_TC_256, NACN_SR_TC_258 -> {
+            case NACN_RS_TC_270, NACN_RS_TC_267, NACN_RS_TC_266, NACN_RS_TC_254, NACN_RS_TC_256, NACN_SR_TC_258, NACN_RS_TC_260, NACN_SR_TC_262, NACN_RS_TC_264 -> {
                 clearNewCustomerRequestFields(payload);
                 setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
                 payload.setServiceTransferOfferRemainder(false);

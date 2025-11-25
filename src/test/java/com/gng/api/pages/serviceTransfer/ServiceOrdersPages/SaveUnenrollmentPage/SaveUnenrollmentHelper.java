@@ -434,7 +434,7 @@ public class SaveUnenrollmentHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
 
         switch (testCondition) {
-            case ACN_RS_REMAINS_ON_TIER_1_TC_251, ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252, ACN_RS_TC_253, NACN_RS_TC_254, ACN_RS_TC_255, NACN_RS_TC_256, NACN_SR_TC_258 ->{
+            case ACN_RS_TC_271, NACN_RS_TC_270, ACN_RS_TC_269, ACN_RS_TC_268, NACN_RS_TC_267, NACN_RS_TC_266, ACN_RS_TC_265, ACN_RS_REMAINS_ON_TIER_1_TC_251, ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252, ACN_RS_TC_253, NACN_RS_TC_254, ACN_RS_TC_255, NACN_RS_TC_256, NACN_SR_TC_258, ACN_RS_TC_259, NACN_RS_TC_260, NACN_SR_TC_262, ACN_RS_TC_263, NACN_RS_TC_264 ->{
                 payload.setCustomerCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
                 payload.setPremisesCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode());
                 var acct = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst();
@@ -456,12 +456,23 @@ public class SaveUnenrollmentHelper {
             case ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252:
             case ACN_RS_TC_255:
             case NACN_SR_TC_258:
+            case ACN_RS_TC_259:
+            case NACN_SR_TC_262:
+            case ACN_RS_TC_263:
+            case NACN_RS_TC_264:
+            case ACN_RS_TC_265:
+            case NACN_RS_TC_266:
+            case NACN_RS_TC_267:
+            case ACN_RS_TC_269:
+            case NACN_RS_TC_270:
+            case ACN_RS_TC_271:
                 payload.setTurnOffReason("");
                 payload.setTurnOffSubReason("");
                 payload.setForwardingAddressIs("CA");
                 break;
 
             case ACN_RS_TC_253:
+            case ACN_RS_TC_268:
                 payload.setTurnOffReason("");
                 payload.setTurnOffSubReason("");
                 payload.setForwardingAddressIs(forwardingAddressIs);
@@ -477,6 +488,7 @@ public class SaveUnenrollmentHelper {
                 break;
 
             case NACN_RS_TC_254:
+            case NACN_RS_TC_260:
                 payload.setTurnOffReason("MOVING");
                 payload.setTurnOffSubReason("SERVICE TRANSFER - ETC WAIVED");
                 payload.setForwardingAddressIs("CA");
