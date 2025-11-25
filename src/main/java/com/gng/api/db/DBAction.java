@@ -1063,6 +1063,42 @@ public class DBAction {
         return jdbcTemplate.queryForMap(query);
     }
 
+    public Map<String, Object> getCustPremCodeResidentialTier1NACN() {
+        String query = DBQuery.GET_CUST_PREM_CODE_TIER_1_NACN;
+        logQueryInAllure("Get Customer code and Prem code for Tier 1", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeResidentialACNRS() {
+        String query = DBQuery.GET_ACN_RS_TC_253;
+        logQueryInAllure("Get Customer code and Prem code for Tier 1", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeTC254() {
+        String query = DBQuery.GET_NACN_RS_TC_254;
+        logQueryInAllure("Get Customer code and Prem code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeTC255() {
+        String query = DBQuery.GET_NACN_RS_TC_255;
+        logQueryInAllure("Get Customer code and Prem code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeTC256() {
+        String query = DBQuery.GET_NACN_RS_TC_256;
+        logQueryInAllure("Get Customer code and Prem code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeTC258() {
+        String query = DBQuery.GET_NACN_SR_TC_258;
+        logQueryInAllure("Get Customer code and Prem code", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
     public Map<String, Object> getAccountDetails_ForResidentialOrSeniorResAccount(String account_type) {
         String query = DBQuery.GET_FIRSTNAME_LASTNAME_AND_ZIPCODE;
         logQueryInAllure("Get First Name, Last Name And Zip Code", query);

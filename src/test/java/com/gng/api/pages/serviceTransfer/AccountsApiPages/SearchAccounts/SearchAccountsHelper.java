@@ -65,24 +65,49 @@ public class SearchAccountsHelper {
     public void fetchRecordFromDBForTestConditions(SearchAccountsApiLabel testCondition){
         Map<String, Object> validCustomerDetails=null;
         switch (testCondition) {
-            case ACN_RS_REMAINS_ON_TIER_1:
+            case ACN_RS_REMAINS_ON_TIER_1_TC_251:
                 validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialTier1();
                 testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
                 testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
                 break;
-        }
-    }
 
-    public void preparePayloadForE2ETestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
-        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
-        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-        switch(testCondition) {
-            case ACN_RS_REMAINS_ON_TIER_1:
-                payload.setPremisesCode(testContext.getPremisesCode());
-                payload.setCustomerCode(testContext.getCustomerCode());
+            case ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialTier1NACN();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
                 break;
 
+            case ACN_RS_TC_253:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeResidentialACNRS();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_254:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC254();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_TC_255:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC255();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_RS_TC_256:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC256();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
+
+            case NACN_SR_TC_258:
+                validCustomerDetails = ApplicationContext.get().getDbAction().getCustPremCodeTC258();
+                testContext.setCustomerCode(validCustomerDetails.get("UZBENRO_CUST_CODE").toString());
+                testContext.setPremisesCode(validCustomerDetails.get("UZBENRO_PREM_CODE").toString());
+                break;
         }
+
     }
 
     public void preparePayloadForNegativeTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
@@ -468,6 +493,17 @@ public class SearchAccountsHelper {
                 validCustomerBusinessDetails = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveGreenerLifeNoSONP();
                 payload.setCustomerCode(validCustomerBusinessDetails.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(validCustomerBusinessDetails.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case ACN_RS_REMAINS_ON_TIER_1_TC_251:
+            case ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252:
+            case ACN_RS_TC_253:
+            case NACN_RS_TC_254:
+            case ACN_RS_TC_255:
+            case NACN_RS_TC_256:
+            case NACN_SR_TC_258:
+                payload.setPremisesCode(testContext.getPremisesCode());
+                payload.setCustomerCode(testContext.getCustomerCode());
                 break;
 
             default:

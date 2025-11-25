@@ -9,7 +9,6 @@ import com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.GetEligiblePlansAndO
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.DBConstant.UCRACCT_CUST_CODE;
@@ -181,6 +180,42 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setServiceTransferOfferRemainder(false);
                 payload.setServiceTransferCurrentPricePlan(false);
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+            }
+
+            case ACN_RS_REMAINS_ON_TIER_1_TC_251 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("ACN");
+            }
+
+            case ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+            }
+
+            case ACN_RS_TC_253, ACN_RS_TC_255 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("ACN");
+            }
+
+            case NACN_RS_TC_254, NACN_RS_TC_256, NACN_SR_TC_258 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
             }
 
             default -> { }

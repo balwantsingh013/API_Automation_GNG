@@ -18,6 +18,7 @@ import java.util.Map;
 public class SaveEnrollmentHelper {
 
     private final TestContext testContext;
+    String serviceDate="20251212";
 
     public SaveEnrollmentHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -135,6 +136,64 @@ public class SaveEnrollmentHelper {
                 payload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue());
                 payload.setServiceTransferCurrentPricePlan(true);
                 payload.setPaymentConfirmationNumber(null);
+            }
+
+            case ACN_RS_TC_253 ->{
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.RF6.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode("");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+            }
+
+            case NACN_RS_TC_254 -> {
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.RGB.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode("FIX 5 DOLLARS FOR 12 MONTHS");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+
+            }
+
+            case ACN_RS_TC_255, NACN_SR_TC_258-> {
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.MVS.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode(null);
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
+
+            }
+
+            case NACN_RS_TC_256 -> {
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+                payload.setServiceTransferReward(false);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setPlanCode(GlobalEnums.PlanCode.M24.getValue());
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setPromotionCode("FIX 10 CENTS FOR 24 MONTHS");
+                payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
+                payload.setCustomerRequestedServiceDate(serviceDate);
             }
 
             default -> { }

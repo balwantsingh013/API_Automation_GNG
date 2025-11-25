@@ -338,7 +338,9 @@ public class GlobalEnums {
         GB6("GB6"),
         CGB("CGB"),
         CVS("CVS"),
-        CCV("CCV");
+        CCV("CCV"),
+        RF6("RF6"),
+        M24("24M");
 
         private final String value;
         PlanCode(String value) {
