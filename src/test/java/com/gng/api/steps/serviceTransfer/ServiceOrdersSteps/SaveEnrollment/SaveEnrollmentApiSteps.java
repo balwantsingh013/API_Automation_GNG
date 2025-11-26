@@ -22,6 +22,11 @@ public class SaveEnrollmentApiSteps {
         saveEnrollmentApiPage.validateInvalidParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
     }
 
+    @When("a request is made to the SaveEnrollment Api for serviceTransfer with valid parameters for {string} condition")
+    public void sendvalidRequest(String testCondition) {
+        saveEnrollmentApiPage.validateInvalidParameters(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
+    }
+
     @When("a request is made to the SaveEnrollment Api for serviceTransfer for external calls with valid parameters for {string} condition")
     public void sendValidRequest(String testCondition) {
         saveEnrollmentApiPage.validateExternalConditions(save_enrollment, SaveEnrollmentApiLabel.valueOf(testCondition));
