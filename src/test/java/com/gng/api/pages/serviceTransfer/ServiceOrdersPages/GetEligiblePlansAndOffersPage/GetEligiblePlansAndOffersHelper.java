@@ -200,7 +200,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAcnStatusIndicator("NACN");
             }
 
-            case ACN_RS_TC_271, ACN_RS_TC_269,ACN_RS_TC_253, ACN_RS_TC_255, ACN_RS_TC_259, ACN_RS_TC_263, ACN_RS_TC_265, ACN_RS_TC_268 -> {
+            case ACN_RS_TC_298, NACN_RS_TC_285, ACN_RS_TC_278,ACN_RS_TC_275, ACN_RS_TC_274, ACN_RS_TC_271, ACN_RS_TC_269,ACN_RS_TC_253, ACN_RS_TC_255, ACN_RS_TC_259, ACN_RS_TC_263, ACN_RS_TC_265, ACN_RS_TC_268 -> {
                 clearNewCustomerRequestFields(payload);
                 setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
                 payload.setServiceTransferOfferRemainder(false);
@@ -209,10 +209,222 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAcnStatusIndicator("ACN");
             }
 
-            case NACN_RS_TC_270, NACN_RS_TC_267, NACN_RS_TC_266, NACN_RS_TC_254, NACN_RS_TC_256, NACN_SR_TC_258, NACN_RS_TC_260, NACN_SR_TC_262, NACN_RS_TC_264 -> {
+            case ACN_CM_TC_281 -> {
                 clearNewCustomerRequestFields(payload);
                 setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
                 payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("ACN");
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+            }
+
+            case ACN_CM_TC_284 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("ACN");
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName("KITCHEN DESIGN INNOVATION, INC");
+
+            }
+
+            case NACN_CM_TC_282, NACN_CM_TC_283, NACN_CM_TC_287 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("NACN");
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+            }
+
+            case NACN_CM_TC_288 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("NACN");
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+            }
+
+            case NACN_RS_TC_296,NACN_RS_TC_286, NACN_RS_TC_280, NACN_RS_TC_279, NACN_RS_TC_277, NACN_RS_TC_276, NACN_RS_TC_273, NACN_RS_TC_270, NACN_RS_TC_267, NACN_RS_TC_266, NACN_RS_TC_254, NACN_RS_TC_256, NACN_SR_TC_258, NACN_RS_TC_260, NACN_SR_TC_262, NACN_RS_TC_264,
+                 NACN_RS_TC_290, NACN_RS_TC_292, NACN_RS_TC_293, NACN_RS_TC_295 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+            }
+
+            case NACN_RS_TC_300 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+                payload.setSeasonalSavingsProgramIndicator(true);
+            }
+
+            case NACN_CM_TC_301 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("NACN");
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+
+            }
+
+            case NACN_CM_TC_301_2 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("NACN");
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+
+            }
+
+            case NACN_CM_TC_301_3 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("NACN");
+                payload.setMarketingPromotionCode("DEALS");
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+
+            }
+
+            case NACN_CM_TC_301_4 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("NACN");
+                payload.setMarketingPromotionCode("COMEBACK");
+                payload.setSeasonalSavingsProgramIndicator(false);
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+
+            }
+
+            case NACN_CM_TC_301_5 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setCustomerType(GlobalEnums.CustomerType.COMMERCIAL.getValue());
+                payload.setCustomerFirstName("");
+                payload.setCustomerLastName("");
+                payload.setAcnStatusIndicator("NACN");
+                payload.setMarketingPromotionCode(null);
+                payload.setSeasonalSavingsProgramIndicator(true);
+                payload.setCustomerBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+                payload.setCreditCheckBusinessName(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerBusinessName());
+
+            }
+
+            case NACN_RS_TC_300_2, NACN_RS_TC_297 -> {
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+                payload.setSeasonalSavingsProgramIndicator(true);
+            }
+
+            case NACN_RS_TC_300_3 -> {
+                clearNewCustomerRequestFields(payload);
+                payload.setMarketingPromotionCode("DEALS");
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+                payload.setSeasonalSavingsProgramIndicator(true);
+            }
+
+            case NACN_RS_TC_300_4-> {
+                clearNewCustomerRequestFields(payload);
+                payload.setMarketingPromotionCode("COMEBACK");
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(false);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+                payload.setSeasonalSavingsProgramIndicator(false);
+            }
+
+            case NACN_RS_TC_300_5-> {
+                clearNewCustomerRequestFields(payload);
+                payload.setMarketingPromotionCode(null);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+                payload.setSeasonalSavingsProgramIndicator(true);
+            }
+
+            case NACN_RS_TC_289 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(false);
+                payload.setServiceTransferCurrentPricePlan(true);
+                payload.setEnrollmentState(null);
+                payload.setAcnStatusIndicator("NACN");
+            }
+
+            case NACN_RS_TC_291, NACN_RS_TC_294 ->{
+                clearNewCustomerRequestFields(payload);
+                setRequestParamsForTransferFromSearchAccountsResponse(payload, testCondition);
+                payload.setServiceTransferOfferRemainder(true);
                 payload.setServiceTransferCurrentPricePlan(false);
                 payload.setEnrollmentState(null);
                 payload.setAcnStatusIndicator("NACN");

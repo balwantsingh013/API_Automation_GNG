@@ -71,7 +71,16 @@ public enum SaveEnrollmentApiLabel {
     NACN_RS_TC_297,
     ACN_RS_TC_298,
     NACN_RS_TC_300,
-    NACN_CM_TC_301
+    NACN_CM_TC_301,
+    NACN_RS_TC_300_2,
+    NACN_RS_TC_300_3,
+    NACN_RS_TC_300_4,
+    NACN_RS_TC_300_5,
+    NACN_CM_TC_301_1,
+    NACN_CM_TC_301_2,
+    NACN_CM_TC_301_3,
+    NACN_CM_TC_301_4,
+    NACN_CM_TC_301_5
 
 }
 

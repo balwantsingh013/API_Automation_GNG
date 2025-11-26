@@ -434,7 +434,15 @@ public class SaveUnenrollmentHelper {
         payload.setRequestID(FakerDataGenerator.generateString(10));
 
         switch (testCondition) {
-            case ACN_RS_TC_271, NACN_RS_TC_270, ACN_RS_TC_269, ACN_RS_TC_268, NACN_RS_TC_267, NACN_RS_TC_266, ACN_RS_TC_265, ACN_RS_REMAINS_ON_TIER_1_TC_251, ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252, ACN_RS_TC_253, NACN_RS_TC_254, ACN_RS_TC_255, NACN_RS_TC_256, NACN_SR_TC_258, ACN_RS_TC_259, NACN_RS_TC_260, NACN_SR_TC_262, ACN_RS_TC_263, NACN_RS_TC_264 ->{
+            case ACN_RS_TC_271, NACN_RS_TC_270, ACN_RS_TC_269, ACN_RS_TC_268, NACN_RS_TC_267, NACN_RS_TC_266, ACN_RS_TC_265,
+                 ACN_RS_REMAINS_ON_TIER_1_TC_251, ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252, ACN_RS_TC_253, NACN_RS_TC_254,
+                 ACN_RS_TC_255, NACN_RS_TC_256, NACN_SR_TC_258, ACN_RS_TC_259, NACN_RS_TC_260, NACN_SR_TC_262,
+                 ACN_RS_TC_263, NACN_RS_TC_264,
+                 NACN_RS_TC_273, ACN_RS_TC_274, ACN_RS_TC_275, NACN_RS_TC_276, NACN_RS_TC_277, ACN_RS_TC_278,
+                 NACN_RS_TC_279, NACN_RS_TC_280, ACN_CM_TC_281, NACN_CM_TC_282, NACN_CM_TC_283, ACN_CM_TC_284,
+                 NACN_RS_TC_285, NACN_RS_TC_286, NACN_CM_TC_287, NACN_CM_TC_288, NACN_RS_TC_289, NACN_RS_TC_290,
+                 NACN_RS_TC_291, NACN_RS_TC_292, NACN_RS_TC_293, NACN_RS_TC_294, NACN_RS_TC_295, NACN_RS_TC_296,
+                 NACN_RS_TC_297, ACN_RS_TC_298, NACN_RS_TC_300, NACN_CM_TC_301 -> {
                 payload.setCustomerCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
                 payload.setPremisesCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode());
                 var acct = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst();
@@ -444,7 +452,8 @@ public class SaveUnenrollmentHelper {
                 payload.setAglcServiceOrderNumber(last9);
             }
 
-            default ->
+
+        default ->
                     throw new IllegalArgumentException("Unsupported test condition: " + testCondition);
         }
 
@@ -466,9 +475,41 @@ public class SaveUnenrollmentHelper {
             case ACN_RS_TC_269:
             case NACN_RS_TC_270:
             case ACN_RS_TC_271:
+            case NACN_RS_TC_273:
+            case ACN_RS_TC_274:
+            case ACN_RS_TC_275:
+            case NACN_RS_TC_276:
+            case NACN_RS_TC_277:
+            case ACN_RS_TC_278:
+            case NACN_RS_TC_279:
+            case NACN_RS_TC_286:
+            case NACN_RS_TC_289:
+            case NACN_RS_TC_290:
+            case NACN_RS_TC_291:
+            case NACN_RS_TC_292:
+            case NACN_RS_TC_293:
+            case NACN_RS_TC_294:
+            case NACN_RS_TC_295:
+            case NACN_RS_TC_296:
+            case NACN_RS_TC_297:
+            case NACN_RS_TC_300:
+            case NACN_RS_TC_280:
                 payload.setTurnOffReason("");
                 payload.setTurnOffSubReason("");
                 payload.setForwardingAddressIs("CA");
+                break;
+
+            case ACN_CM_TC_281:
+            case NACN_CM_TC_282:
+            case NACN_CM_TC_283:
+            case ACN_CM_TC_284:
+            case NACN_CM_TC_287:
+            case NACN_CM_TC_288:
+            case NACN_CM_TC_301:
+                payload.setTurnOffReason("");
+                payload.setTurnOffSubReason("");
+                payload.setForwardingAddressIs("CA");
+                payload.setCustomerType("CM");
                 break;
 
             case ACN_RS_TC_253:
@@ -489,6 +530,8 @@ public class SaveUnenrollmentHelper {
 
             case NACN_RS_TC_254:
             case NACN_RS_TC_260:
+            case NACN_RS_TC_285:
+            case ACN_RS_TC_298:
                 payload.setTurnOffReason("MOVING");
                 payload.setTurnOffSubReason("SERVICE TRANSFER - ETC WAIVED");
                 payload.setForwardingAddressIs("CA");

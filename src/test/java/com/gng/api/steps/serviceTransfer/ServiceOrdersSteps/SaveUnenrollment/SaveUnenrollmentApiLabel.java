@@ -157,7 +157,7 @@ public enum SaveUnenrollmentApiLabel {
     ACN_RS_TC_269,
     NACN_RS_TC_270,
     ACN_RS_TC_271,
-    ACN_RS_TC_273,
+    NACN_RS_TC_273,
     ACN_RS_TC_274,
     ACN_RS_TC_275,
     NACN_RS_TC_276,
@@ -184,7 +184,15 @@ public enum SaveUnenrollmentApiLabel {
     NACN_RS_TC_297,
     ACN_RS_TC_298,
     NACN_RS_TC_300,
-    NACN_CM_TC_301
-
+    NACN_CM_TC_301,
+    NACN_RS_TC_300_2,
+    NACN_RS_TC_300_3,
+    NACN_RS_TC_300_4,
+    NACN_RS_TC_300_5,
+    NACN_CM_TC_301_1,
+    NACN_CM_TC_301_2,
+    NACN_CM_TC_301_3,
+    NACN_CM_TC_301_4,
+    NACN_CM_TC_301_5,
 
 }

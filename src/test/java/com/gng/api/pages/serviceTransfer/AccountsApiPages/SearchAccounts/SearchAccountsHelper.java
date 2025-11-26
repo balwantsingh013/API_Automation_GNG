@@ -756,6 +756,34 @@ public class SearchAccountsHelper {
             case ACN_RS_TC_269:
             case NACN_RS_TC_270:
             case ACN_RS_TC_271:
+            case NACN_RS_TC_273:
+            case ACN_RS_TC_274:
+            case ACN_RS_TC_275:
+            case NACN_RS_TC_276:
+            case NACN_RS_TC_277:
+            case ACN_RS_TC_278:
+            case NACN_RS_TC_279:
+            case NACN_RS_TC_280:
+            case ACN_CM_TC_281:
+            case NACN_CM_TC_282:
+            case NACN_CM_TC_283:
+            case ACN_CM_TC_284:
+            case NACN_RS_TC_285:
+            case NACN_RS_TC_286:
+            case NACN_CM_TC_287:
+            case NACN_CM_TC_288:
+            case NACN_RS_TC_289:
+            case NACN_RS_TC_290:
+            case NACN_RS_TC_291:
+            case NACN_RS_TC_292:
+            case NACN_RS_TC_293:
+            case NACN_RS_TC_294:
+            case NACN_RS_TC_295:
+            case NACN_RS_TC_296:
+            case NACN_RS_TC_297:
+            case ACN_RS_TC_298:
+            case NACN_RS_TC_300:
+            case NACN_CM_TC_301:
                 payload.setPremisesCode(testContext.getPremisesCode());
                 payload.setCustomerCode(testContext.getCustomerCode());
                 break;
