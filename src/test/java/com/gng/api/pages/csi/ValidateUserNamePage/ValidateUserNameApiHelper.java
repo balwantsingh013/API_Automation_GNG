@@ -33,39 +33,39 @@ public class ValidateUserNameApiHelper {
     public void preparePayloadForNegativeTestCondition(ValidateUsernameRequest payload, ValidateUserNameLabel testCondition) {
         Map<String, Object> userNames= null;
         switch (testCondition) {
-            case Missing_request_id_TC_1:
+            case TC_1__Negative__Missing_Request_ID:
                 payload.setRequestID("");
                 break;
 
-            case Length_of_request_id_larger_than_32_TC_2:
+            case TC_2__Negative__Invalid_Request_ID__Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
                 break;
 
-            case Duplicate_request_id_TC_3:
+            case TC_3__Negative__Duplicate_Request_ID:
                 payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
                 break;
 
-            case Missing_username_TC_4:
+            case TC_4__Negative__Missing_Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername("");
                 break;
 
-            case Length_of_username_smaller_than_5_TC_5:
+            case TC_5__Negative__Invalid_Username_format__Length___Too_Short____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateString(4));
                 break;
 
-            case Length_of_username_greater_than_15_TC_6:
+            case TC_6__Negative__Invalid_Username_format__Length___Too_Long____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateString(16));
                 break;
 
-            case Username_not_alphanumeric_TC_7:
+            case TC_7__Negative__Invalid_Username_format__Alphanumeric:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
                 break;
 
-            case Username_does_not_exist_in_mariadb_TC_9:
+            case TC_9__Positive__Username_Available:
                 String username=FakerDataGenerator.generateAlphanumeric(6);
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(username);
@@ -73,25 +73,25 @@ public class ValidateUserNameApiHelper {
                 Assert.assertTrue(userNames.isEmpty(), "Expected userNames map to be empty");
                 break;
 
-            case Username_exists_in_mariadb_AVAILABLE_TC_8:
+            case TC_8__Positive__Username_Available:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case Username_exists_in_mariadb__ACTIVE_TC_10:
+            case TC_10__Positive__Username_Active__users_table:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case Inactive_username_exists_in_mariadb_TC_12:
+            case TC_12__Positive__Username_Inactive:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case Username_exists_in_custadv_pending_registrations_table_TC_11:
+            case TC_11__Positive__Username_Active__custadv_pending_registrations_table:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());

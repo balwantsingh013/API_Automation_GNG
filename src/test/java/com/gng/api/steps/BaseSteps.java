@@ -1,7 +1,7 @@
 package com.gng.api.steps;
 
 import com.gng.api.context.ApplicationContext;
-import com.gng.api.pojo.CSIPojo.SetAccountNickname.SetAccountNicknameResponse;
+import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -77,7 +77,7 @@ public class BaseSteps {
 
     @And("the response should confirm nickname status as {string}")
     public void responseShouldConfirmNicknameStatusAs(String expectedStatus) {
-        SetAccountNicknameResponse response = testContext.getSetAccountNicknameResponse();
+        UpdateAccountNicknameResponse response = testContext.getUpdateAccountNicknameResponse();
         String actualStatus = response.getData().getNicknameStatus();
         assertThat("Nickname status mismatch", actualStatus, is(expectedStatus));
     }
