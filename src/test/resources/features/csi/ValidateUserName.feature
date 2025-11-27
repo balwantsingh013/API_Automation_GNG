@@ -1,32 +1,32 @@
 Feature: Verify ValidateUserName Api
 
   @ValidateUserName @NegativeFlow @CSI
-  Scenario Outline: Verify the response for ValidateUserName API for "<testCondition>"
+  Scenario Outline: "<testCondition>"
     When a request is made to validateUsername Api for "<testCondition>"
     Then verify response code of "ValidateUserName" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 
     Examples:
-      | testCondition                              | errorCode | errorMessage                                              |
-      | Missing_request_id_TC_1                    | 10001     | Missing Request ID                                        |
-      | Length_of_request_id_larger_than_32_TC_2   | 10002     | Invalid Request ID                                        |
-      | Duplicate_request_id_TC_3                  | 10003     | Duplicate Request ID                                      |
-      | Missing_username_TC_4                      | 10349     | Missing Username                                          |
-      | Length_of_username_smaller_than_5_TC_5     | 10351     | Invalid Username Length                                   |
-      | Length_of_username_greater_than_15_TC_6    | 10351     | Invalid Username Length                                   |
-      | Username_not_alphanumeric_TC_7             | 10353     | Invalid Username Format                                   |
+      | testCondition                                                        | errorCode | errorMessage            |
+      | TC_1__Negative__Missing_Request_ID                                   | 10001     | Missing Request ID      |
+      | TC_2__Negative__Invalid_Request_ID__Length                           | 10002     | Invalid Request ID      |
+      | TC_3__Negative__Duplicate_Request_ID                                 | 10003     | Duplicate Request ID    |
+      | TC_4__Negative__Missing_Username                                     | 10349     | Missing Username        |
+      | TC_5__Negative__Invalid_Username_format__Length___Too_Short____      | 10351     | Invalid Username Length |
+      | TC_6__Negative__Invalid_Username_format__Length___Too_Long____       | 10351     | Invalid Username Length |
+      | TC_7__Negative__Invalid_Username_format__Alphanumeric                | 10353     | Invalid Username Format |
 
   @ValidateUserNamePositve @HappyFlow @CSI
-  Scenario Outline: Verify the response for ValidateUserName API for "<testCondition>"
+  Scenario Outline: "<testCondition>"
     When a request is made to validateUsername Api for "<testCondition>"
     Then verify response code of "ValidateUserName" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     And the response should have the username status as "<status>"
 
     Examples:
-      | testCondition                                                       | errorCode | errorMessage | status    |
-      | Username_does_not_exist_in_mariadb_TC_9                             | 0         |              | AVAILABLE |
-      | Username_exists_in_mariadb_AVAILABLE_TC_8                           | 0         |              | AVAILABLE |
-      | Username_exists_in_mariadb__ACTIVE_TC_10                            | 0         |              | ACTIVE    |
-      | Username_exists_in_custadv_pending_registrations_table_TC_11        | 0         |              | ACTIVE    |
-      | Inactive_username_exists_in_mariadb_TC_12                           | 0         |              | INACTIVE  |
+      | testCondition                                                        | errorCode | errorMessage | status    |
+      | TC_9__Positive__Username_Available                                   | 0         |              | AVAILABLE |
+      | TC_8__Positive__Username_Available                                   | 0         |              | AVAILABLE |
+      | TC_10__Positive__Username_Active__users_table                        | 0         |              | ACTIVE    |
+      | TC_11__Positive__Username_Active__custadv_pending_registrations_table| 0         |              | ACTIVE    |
+      | TC_12__Positive__Username_Inactive                                   | 0         |              | INACTIVE  |

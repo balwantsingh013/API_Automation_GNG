@@ -5,16 +5,16 @@ public enum ValidateUserNameLabel {
     validate_username,
     validate_username_mandatory,
 
-    Missing_request_id_TC_1,
-    Length_of_request_id_larger_than_32_TC_2,
-    Duplicate_request_id_TC_3,
-    Missing_username_TC_4,
-    Length_of_username_smaller_than_5_TC_5,
-    Length_of_username_greater_than_15_TC_6,
-    Username_not_alphanumeric_TC_7,
-    Username_does_not_exist_in_mariadb_TC_9,
-    Username_exists_in_mariadb_AVAILABLE_TC_8,
-    Username_exists_in_mariadb__ACTIVE_TC_10,
-    Inactive_username_exists_in_mariadb_TC_12,
-    Username_exists_in_custadv_pending_registrations_table_TC_11
+    TC_1__Negative__Missing_Request_ID,
+    TC_2__Negative__Invalid_Request_ID__Length,
+    TC_3__Negative__Duplicate_Request_ID,
+    TC_4__Negative__Missing_Username,
+    TC_5__Negative__Invalid_Username_format__Length___Too_Short____,
+    TC_6__Negative__Invalid_Username_format__Length___Too_Long____,
+    TC_7__Negative__Invalid_Username_format__Alphanumeric,
+    TC_9__Positive__Username_Available,
+    TC_8__Positive__Username_Available,
+    TC_10__Positive__Username_Active__users_table,
+    TC_12__Positive__Username_Inactive,
+    TC_11__Positive__Username_Active__custadv_pending_registrations_table
 }

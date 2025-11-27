@@ -1,4 +1,4 @@
-package com.gng.api.pojo.CSIPojo.SetAccountNickname;
+package com.gng.api.pojo.CSIPojo.UpdateAccountNickname;
 
 import lombok.Data;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SetAccountNicknameRequest {
+public class UpdateAccountNicknameRequest {
 
     private String requestID;      // Globally unique identifier for the request
     private String customerCode;   // Up to 9-digit numeric customer code
