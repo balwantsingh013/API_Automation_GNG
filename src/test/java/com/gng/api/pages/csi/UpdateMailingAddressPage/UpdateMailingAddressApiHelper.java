@@ -1,14 +1,12 @@
 package com.gng.api.pages.csi.UpdateMailingAddressPage;
 
 import com.gng.api.constants.GlobalEnums;
-import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.csi.UpdateMailingAddress.UpdateMailingAddressLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.testng.Assert;
 
 import java.util.Map;
 
@@ -16,6 +14,31 @@ import java.util.Map;
 public class UpdateMailingAddressApiHelper {
 
     private final TestContext testContext;
+
+    // Variables for hardcoded values
+    private static final String DUPLICATE_REQUEST_ID = GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue();
+    private static final String NON_EXISTENT_CUSTOMER_CODE_PREFIX = "9";
+    private static final String NON_EXISTENT_PREMISES_CODE_PREFIX = "9";
+    private static final String STREET_PRE_DIRECTION_TOO_LONG = "NORTH";
+    private static final String STREET_PRE_DIRECTION_INVALID = "XX";
+    private static final String STREET_SUFFIX_INVALID = "ZZZ";
+    private static final String STREET_POST_DIRECTION_TOO_LONG = "WESTSIDE";
+    private static final String STREET_POST_DIRECTION_INVALID = "XX";
+    private static final String CITY_INVALID_COMBINATION = "Atlanta";
+    private static final String ZIPCODE_INVALID_COMBINATION = "30043";
+    private static final String COUNTY_CODE_INVALID = "999";
+    private static final String DELIVERY_POINT_INVALID = "ABC";
+    private static final String CARRIER_ROUTE_INVALID = "ABCDE";
+    private static final String STREET_NAME_VALID = "Main";
+    private static final String STREET_NUMBER_VALID = "123";
+    private static final String CITY_VALID = "Lawrenceville";
+    private static final String ZIPCODE_VALID = "30043";
+    private static final String POBOX_VALID = "PO Box 456";
+    private static final String RURAL_ROUTE_VALID = "RR 7";
+    private static final String STREET_NAME_TOO_MANY = "Main St";
+    private static final String POBOX_TOO_MANY = "123";
+    private static final String RURAL_ROUTE_TOO_MANY = "RR 5";
+    private static final String ZIPCODE_INVALID = "99999";
 
     public UpdateMailingAddressApiHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -31,7 +54,7 @@ public class UpdateMailingAddressApiHelper {
 
     public void preparePayloadForNegativeTestCondition(UpdateMailingAddressRequest payload, UpdateMailingAddressLabel testCondition) {
         Map<String, Object> dbValues = null;
-
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
         switch (testCondition) {
             case TC_68__Negative__Missing_Request_ID:
                 payload.setRequestID("");
@@ -42,7 +65,7 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_70__Negative__Duplicate_Request_ID:
-                payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
+                payload.setRequestID(DUPLICATE_REQUEST_ID);
                 break;
 
             case TC_71__Negative__Missing_customerCode:
@@ -58,7 +81,7 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_74__Negative__Invalid_customerCode:
-                payload.setCustomerCode("999999999"); // Non-existent
+                payload.setCustomerCode(NON_EXISTENT_CUSTOMER_CODE_PREFIX + FakerDataGenerator.generateDigits(8));
                 break;
 
             case TC_75__Negative__Missing_premisesCode:
@@ -74,7 +97,7 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_78__Negative__Invalid_premisesCode:
-                payload.setPremisesCode("9999999"); // Non-existent
+                payload.setPremisesCode(NON_EXISTENT_PREMISES_CODE_PREFIX + FakerDataGenerator.generateDigits(5));
                 break;
 
             case TC_79__Negative__Invalid_Address_Fields___Missing____:
@@ -84,9 +107,9 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_80__Negative__Invalid_Address_Fields___Too_Many____:
-                payload.setStreetName("Main St");
-                payload.setPoBox("123");
-                payload.setRuralRoute("RR 5");
+                payload.setStreetName(STREET_NAME_TOO_MANY);
+                payload.setPoBox(POBOX_TOO_MANY);
+                payload.setRuralRoute(RURAL_ROUTE_TOO_MANY);
                 break;
 
             case TC_81__Negative__Invalid_Street_Number__Length:
@@ -94,11 +117,11 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_82__Negative__Invalid_Street_Pre__Direction__Length:
-                payload.setStreetPreDirection("NORTH"); // >2 chars
+                payload.setStreetPreDirection(STREET_PRE_DIRECTION_TOO_LONG);
                 break;
 
             case TC_83__Negative__Invalid_Street_Pre__Direction:
-                payload.setStreetPreDirection("XX"); // Not in reference table
+                payload.setStreetPreDirection(STREET_PRE_DIRECTION_INVALID);
                 break;
 
             case TC_84__Negative__Invalid_Street_Name__Length:
@@ -114,15 +137,15 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_87__Negative__Invalid_StreetSuffix:
-                payload.setStreetSuffix("ZZZ"); // Not in reference table
+                payload.setStreetSuffix(STREET_SUFFIX_INVALID);
                 break;
 
             case TC_88__Negative__Invalid_Street_Post__Direction__Length:
-                payload.setStreetPostDirection("WESTSIDE"); // >2 chars
+                payload.setStreetPostDirection(STREET_POST_DIRECTION_TOO_LONG);
                 break;
 
             case TC_89__Negative__Invalid_Street_Post__Direction:
-                payload.setStreetPostDirection("XX"); // Not in reference table
+                payload.setStreetPostDirection(STREET_POST_DIRECTION_INVALID);
                 break;
 
             case TC_90__Negative__Invalid_Unit_Type__Format:
@@ -130,7 +153,7 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_91__Negative__Missing_Unit_Type:
-                payload.setUnitType("INVALID"); // Not in reference table
+                payload.setUnitType(FakerDataGenerator.generateString(5));
                 break;
 
             case TC_92__Negative__Invalid_Unit_Number__Format:
@@ -154,24 +177,24 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_97__Negative__Invalid_Zip_Code:
-                payload.setZipCode("99999"); // Not in reference table
+                payload.setZipCode(ZIPCODE_INVALID);
                 break;
 
             case TC_98__Negative__Invalid_City_and_Zip_Code__Combination:
-                payload.setCity("ValidCity");
-                payload.setZipCode("99999"); // mismatch
+                payload.setCity(CITY_INVALID_COMBINATION);
+                payload.setZipCode(ZIPCODE_INVALID_COMBINATION);
                 break;
 
             case TC_99__Negative__Invalid_County_Code:
-                payload.setCounty("999"); // Not in reference table
+                payload.setCountyCode(COUNTY_CODE_INVALID);
                 break;
 
             case TC_100__Negative__Invalid_Delivery_Point__Format:
-                payload.setDeliveryPoint("ABC"); // >2 chars
+                payload.setDeliveryPoint(DELIVERY_POINT_INVALID);
                 break;
 
             case TC_101__Negative__Invalid_Carrier_Route__Length:
-                payload.setCarrierRoute("ABCDE"); // >4 chars
+                payload.setCarrierRoute(CARRIER_ROUTE_INVALID);
                 break;
 
             case TC_102__Negative__Invalid_Attention_To__Length:
@@ -183,22 +206,24 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
             case TC_104__Positive__Valid_Street_Address:
-                payload.setStreetName("Main");
-                payload.setStreetNumber("123");
-                payload.setCity("Springfield");
-                payload.setZipCode("12345");
+                payload.setStreetName(STREET_NAME_VALID);
+                payload.setStreetNumber(STREET_NUMBER_VALID);
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
                 break;
 
             case TC_105__Positive__Valid_PO_Box_Address:
-                payload.setPoBox("PO Box 456");
-                payload.setCity("Springfield");
-                payload.setZipCode("12345");
+                payload.setPoBox(POBOX_VALID);
+                payload.setStreetName("");
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
                 break;
 
             case TC_106__Positive__Valid_Rural_Route_Address:
-                payload.setRuralRoute("RR 7");
-                payload.setCity("Springfield");
-                payload.setZipCode("12345");
+                payload.setRuralRoute(RURAL_ROUTE_VALID);
+                payload.setStreetName("");
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
                 break;
 
             default:

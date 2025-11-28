@@ -36,7 +36,7 @@ public class UpdateMailingAddressRequest {
 
     // Location fields
     private String city;                   // City (<= 20 chars, required)
-    private String county;                 // County code (must exist in reference table)
+    private String countyCode;             // County code (must exist in reference table)
     private String zipCode;                // Zip code (<= 10 chars, must exist in reference table)
 
     // Additional fields
