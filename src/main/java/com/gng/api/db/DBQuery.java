@@ -2366,14 +2366,28 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_CUSTOMER_CODE= """
+    public static final String SELECT_PREM_CODE= """
             SELECT ucbprem_code
             FROM ucbprem
             WHERE ucbprem_code=?
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_PREM_CODE= """
+    public static final String SELECT_PREMISES_CODE= """
+            SELECT ucbprem_code
+            FROM ucbprem
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_CODE = """
+        SELECT ucbcust_cust_code
+        FROM ucbcust
+        WHERE LENGTH(ucbcust_cust_code) > 4
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+
+    public static final String SELECT_CUSTOMER_CODE= """
             SELECT ucbcust_cust_code
             FROM ucbcust
             WHERE ucbcust_cust_code=?
@@ -2389,35 +2403,27 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_WITH_NICKNAME= """
             SELECT
-                o.OCSACNM_CUST_CODE,
-                o.OCSACNM_PREM_CODE
-            FROM
-                OCSACNM o
-            JOIN
-                ucracct u
-                ON o.OCSACNM_CUST_CODE = u.ucracct_cust_code
-                AND o.OCSACNM_PREM_CODE = u.ucracct_prem_code
-            WHERE
-                o.OCSACNM_ACCT_NAME IS NOT NULL
-                AND TRIM(o.OCSACNM_ACCT_NAME) <> ''
-                AND u.ucracct_status_ind <> 'N'
-                FETCH FIRST 1 ROWS ONLY
+                                           UCRACCT_CUST_CODE,
+                                           UCRACCT_PREM_CODE
+                                       FROM
+                                           UCRACCT
+                                       WHERE
+                                           UCRACCT_STATUS_IND <> 'N'
+                                           AND UCRACCT_NICK_NAME IS NOT NULL
+                                           AND TRIM(UCRACCT_NICK_NAME) <> ''
+                                       FETCH FIRST 1 ROWS ONLY
             """;
 
 
     public static final String SELECT_ACCOUNT_WITHOUT_NICKNAME= """
             SELECT
-                o.OCSACNM_CUST_CODE,
-                o.OCSACNM_PREM_CODE
+                UCRACCT_CUST_CODE,
+                UCRACCT_PREM_CODE
             FROM
-                OCSACNM o
-            JOIN
-                ucracct u
-                ON o.OCSACNM_CUST_CODE = u.ucracct_cust_code
-                AND o.OCSACNM_PREM_CODE = u.ucracct_prem_code
+                UCRACCT
             WHERE
-                (o.OCSACNM_ACCT_NAME IS NULL OR TRIM(o.OCSACNM_ACCT_NAME) = '')
-                AND u.ucracct_status_ind <> 'N'
+                UCRACCT_STATUS_IND <> 'N'
+                AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
             FETCH FIRST 1 ROWS ONLY
             """;
 

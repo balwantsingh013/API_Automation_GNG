@@ -2,7 +2,7 @@ package com.gng.api.steps.csi.UpdateAccountNickname;
 
 public enum UpdateAccountNicknameLabel {
 
-    set_account_nickname,
+    update_account_nickname,
     set_account_nickname_mandatory,
 
     TC_53__Negative__Missing_Request_ID,

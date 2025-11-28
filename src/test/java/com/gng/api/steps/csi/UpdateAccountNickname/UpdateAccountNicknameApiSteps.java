@@ -7,7 +7,7 @@ import com.gng.api.util.TestContextHolder;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
-import static com.gng.api.steps.csi.UpdateAccountNickname.UpdateAccountNicknameLabel.set_account_nickname;
+import static com.gng.api.steps.csi.UpdateAccountNickname.UpdateAccountNicknameLabel.update_account_nickname;
 
 @Slf4j
 public class UpdateAccountNicknameApiSteps {
@@ -31,6 +31,6 @@ public class UpdateAccountNicknameApiSteps {
     @When("a request is made to UpdateAccountNickname Api for {string}")
     public void a_request_is_made_to_the_SetAccountNickname_Api_with_test_condition(String testCondition) {
         CommonUtil.logTestDescriptionToReports(testCondition);
-        setAccountNicknamePage.validateResponseForNegativeTestConditions(set_account_nickname, UpdateAccountNicknameLabel.valueOf(testCondition));
+        setAccountNicknamePage.validateResponseForNegativeTestConditions(update_account_nickname, UpdateAccountNicknameLabel.valueOf(testCondition));
     }
 }

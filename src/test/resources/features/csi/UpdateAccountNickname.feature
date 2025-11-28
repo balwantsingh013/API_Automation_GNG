@@ -15,7 +15,7 @@ Feature: Verify UpdateAccountNickname Api
       | TC_57__Negative__Invalid_customerCode_Length    | 10015     | Invalid Customer Code Format               |
       | TC_58__Negative__Invalid_customerCode_Format    | 10015     | Invalid Customer Code Format               |
       | TC_59__Negative__Invalid_customerCode           | 40015     | Invalid Account Number                     |
-      | TC_60__Negative__Missing_premisesCode           | 10013     | Missing Premisses Code                     |
+      | TC_60__Negative__Missing_premisesCode           | 10013     | Missing Premises Code                     |
       | TC_61__Negative__Invalid_premisesCode_Length    | 10005     | Invalid Premises Code Format               |
       | TC_62__Negative__Invalid_premisesCode_Format    | 10005     | Invalid Premises Code Format               |
       | TC_63__Negative__Invalid_premisesCode           | 40015     | Invalid Account Number                     |
