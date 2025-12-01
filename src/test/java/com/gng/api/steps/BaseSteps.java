@@ -116,6 +116,21 @@ public class BaseSteps {
         verifyRoleDetails(expectedRoles);
     }
 
+    @And("the response should have the rewards status as {string}")
+    public void responseShouldHaveRewardsStatusAs(String status) {
+        verifyRewardsStatusInResponse(status);
+    }
+
+    private void verifyRewardsStatusInResponse(String expectedStatus) {
+        Response response = testContext.getResponse();
+        List<Map<String, Object>> rewards = response.jsonPath().getList("getAccountRewards.rewards");
+
+        boolean matchFound = rewards != null && rewards.stream()
+                .anyMatch(reward -> expectedStatus.equals(String.valueOf(reward.get("status"))));
+
+        assertThat("Expected reward status not found: " + expectedStatus, matchFound, is(true));
+    }
+
     private void validateUsernameStatus(String expectedStatus) {
         Response response = testContext.getResponse();
 
