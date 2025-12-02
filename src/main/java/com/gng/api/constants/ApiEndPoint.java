@@ -19,6 +19,8 @@ public final class ApiEndPoint {
 
     public static final String GET_MARKETER_REFERENCE_DATA= "/Common/GetMarketerReferenceData";
     public static final String GET_REASONS_FOR_LEAVING ="/Common/GetReasonsForLeaving";
+    public static final String GET_MARKETER_CODES = "/Common/GetMarketerCodes";
+
 
     public static final String VALIDATE_USERNAME= "/CustomerService/ValidateUsername";
     public static final String UPDATE_PASSWORD= "/CustomerService/UpdatePassword";

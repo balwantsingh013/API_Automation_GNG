@@ -7,6 +7,7 @@ import com.gng.api.pojo.CSIPojo.ValidateUsername.ValidateUsernameResponse;
 import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.Response.GetReasonsForLeavingResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetEligiblePlansAndOffers.response.GetEligiblePlansAndOffersResponse;
+import com.gng.api.pojo.CommonPojo.GetMarketerCodes.response.GetMarketerCodesResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetPrepayPlansRequote.GetPrepayPlansRequoteResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveEnrollment.SaveEnrollmentResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
@@ -90,6 +91,9 @@ public class TestContext {
     @Getter @Setter
     private Object searchAccountsApiPage;
     private SearchAccountsResponse searchAccountsResponse;
+    @Getter @Setter
+    private Object getMarketerCodesApiPage;
+    private GetMarketerCodesResponse getMarketerCodesResponse;
 
     public void storeRequestId(String requestId) {
         this.requestId = requestId;
