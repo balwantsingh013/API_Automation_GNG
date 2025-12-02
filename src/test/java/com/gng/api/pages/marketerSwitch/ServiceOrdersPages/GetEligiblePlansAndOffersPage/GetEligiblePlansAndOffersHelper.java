@@ -43,9 +43,7 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
     public void setSupportingDefaultParameters(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
-
         payload.setRequestID(FakerDataGenerator.generateString(12));
-
         payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
         payload.setReferralCode("");
         payload.setCreditCheckOption(YES.getValue());
@@ -65,6 +63,7 @@ public class GetEligiblePlansAndOffersHelper {
         setSupportingDefaultParameters(payload, testCondition);
         switch (testCondition) {
             case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22,
+                 GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23,
                  GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setCreditCheckOption(YES.getValue());
@@ -72,14 +71,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setSspParticipantCode(null);
                 payload.setAuthorizedBy(null);
             }
-//            case GE_MRK_SW_CM_NEW_CC_YES_BIN_NULL_NO_MATCH_CONTINUE_TC26 -> {
-//                setTheFieldToEmptyForCommercialScenarios(payload);
-//                loadCommercialData(payload, testCondition);
-//                payload.setCustomerType(COMMERCIAL.getValue());
-//                payload.setCreditCheckOption(YES.getValue());
-//                payload.setConfirmCreditCheck(Boolean.FALSE);
-//                payload.setCommercialCreditCheckBusinessBIN(null);
-//            }
+
             case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
                 setTheFieldToEmptyForCommercialScenarios(payload);
                 loadCommercialData(payload, testCondition);
@@ -89,6 +81,25 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCommercialCreditCheckBusinessBIN(null);
                 payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
 
+            }
+            case GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setConfirmCreditCheck(Boolean.TRUE);
+                payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_DEALS.getValue());
+            }
+            case GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setConfirmCreditCheck(Boolean.FALSE);
+                payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
             }
         }
     }
@@ -154,6 +165,7 @@ public class GetEligiblePlansAndOffersHelper {
 
             case GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_TC20 -> {
                 loadCustomerData(payload, testCondition);
+                payload.setSocialSecurityNumber(null);
                 payload.setCreditCheckOption(COMMERCIAL_CREDIT_CHECK_REQUIRED.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
             }
@@ -167,27 +179,6 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCustomerCode(null);
                 payload.setPremisesCode(null);
                 payload.setAuthorizedBy("");
-            }
-
-            case GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23 -> {
-                loadCustomerData(payload, testCondition);
-                payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
-                payload.setConfirmCreditCheck(Boolean.FALSE);
-                // payload.setInitialCreditCheckCustomerCode(...) handled via test data if needed
-            }
-
-            case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
-                loadCustomerData(payload, testCondition);
-                payload.setCreditCheckOption(YES.getValue());
-                payload.setConfirmCreditCheck(Boolean.FALSE);
-                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
-                if (testContext.getGetEligiblePlansAndOffersResponse() != null
-                        && testContext.getGetEligiblePlansAndOffersResponse().getData() != null) {
-                    payload.setTransactionID(
-                            testContext.getGetEligiblePlansAndOffersResponse()
-                                    .getData()
-                                    .getTransactionID());
-                }
             }
 
             case GE_MRK_SW_CM_NEW_CC_YES_UC53_TC25 -> {
@@ -219,7 +210,6 @@ public class GetEligiblePlansAndOffersHelper {
 
             case GE_MRK_SW_CM_NEW_CC_YES_TIER_EXCELLENT_VALUE200_CREDIT50_100_TC28 -> {
                 setTheFieldToEmptyForCommercialScenarios(payload);
-
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
@@ -230,13 +220,11 @@ public class GetEligiblePlansAndOffersHelper {
 
             case GE_MRK_SW_CM_NEW_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC29 -> {
                 setTheFieldToEmptyForCommercialScenarios(payload);
-
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
-
             }
 
             case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC31 -> {
@@ -268,10 +256,6 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
             }
-
-            case get_eligible_plans_and_offers,
-                 get_eligible_plans_and_offers_mandatory -> {
-            }
         }
     }
 
@@ -287,8 +271,18 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
                 payload.setAuthorizedBy(null);
             }
+            case GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
+                payload.setInitialCreditCheckCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
+                payload.setEnrollmentState(null);
+                payload.setAuthorizedBy(null);
+            }
             case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
                 loadCustomerData(payload, testCondition);
+                setParamsFromSearchAccountsResponse(payload, testCondition);
                 payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
                 payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
                 payload.setCreditCheckOption(YES.getValue());
@@ -296,7 +290,6 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAuthorizedBy(null);
             }
             case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
-
                 loadSecondCallCommercialData(payload, testCondition);
                 loadCommercialDataFromResponse(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
@@ -306,8 +299,17 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
             }
 
-            case get_eligible_plans_and_offers,
-                 get_eligible_plans_and_offers_mandatory -> {
+            case GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32,
+                 GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33 -> {
+                clearNameFields(payload);
+                loadSecondCallCommercialData(payload, testCondition);
+                setParamsFromSearchAccountsResponse(payload, testCondition);
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setConfirmCreditCheck(Boolean.FALSE);
+                payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
+                payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
             }
         }
     }
@@ -383,16 +385,11 @@ public class GetEligiblePlansAndOffersHelper {
 
         switch (testCondition) {
             case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
-                // Mirrors MS_MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031 commercial-detail flow
-//                payload.setCustomerLastName("");
-//                payload.setCustomerFirstName("");
                 payload.setSocialSecurityNumber("");
                 payload.setCustomerType(data.get("customerType"));
                 payload.setCustomerBusinessName(data.get("customerLastName"));
                 payload.setCommercialCreditCheckBusinessBIN(null);
                 payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(8));
-//                payload.setInitialCreditCheckCustomerCode(
-//                        testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
                 payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
                 payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
                 payload.setPremisesStreetName(data.get("premisesStreetName"));
@@ -428,10 +425,7 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    private void getSecondCallCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload,
-                                                        Map<String, String> data,
-                                                        GetEligiblePlansAndOffersApiLabel testCondition) {
-
+    private void getSecondCallCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data, GetEligiblePlansAndOffersApiLabel testCondition) {
         String federalTaxId = data.get("federalTaxId");
         if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
             payload.setFederalTaxID(encryptData(federalTaxId));
@@ -488,13 +482,8 @@ public class GetEligiblePlansAndOffersHelper {
         applyAddress(payload, data);
 
         switch (testCondition) {
-            case GE_MRK_SW_RS_NEW_CC_YES_INVALID_SSN_FRAUD_ALERT_11114_TC09,
-                 GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10 ->
-                    payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
-
             case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12,
-                 GE_MRK_SW_RS_NEW_CC_YES_UC52_TC13,
-                 GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23 -> {
+                 GE_MRK_SW_RS_NEW_CC_YES_UC52_TC13 -> {
                 payload.setAuthorizedBy("");
                 payload.setGenerationCode(null);
                 payload.setPremisesUnitType(null);
@@ -504,13 +493,16 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEmailAddress(null);
                 payload.setAdditionalEnrollmentData(null);
                 payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
-                payload.setInitialCreditCheckCustomerCode(get(data, "CreditCheckCustomerCode"));
 
+                String creditCheckCustomerCode = get(data, "CreditCheckCustomerCode");
+                payload.setInitialCreditCheckCustomerCode(
+                        creditCheckCustomerCode.isBlank()
+                                ? null
+                                : creditCheckCustomerCode
+                );
             }
-            default -> {
 
-                payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
-            }
+            default ->  payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
         }
 
         encryptAndSetSSN(payload, data.get("SSN"));
@@ -547,7 +539,9 @@ public class GetEligiblePlansAndOffersHelper {
 
         switch (testCondition) {
             case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22,
-                 GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
+                 GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24,
+                 GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32,
+                 GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33 -> {
                 payload.setCustomerCode(matchingAccount.getCustomerCode());
                 payload.setPremisesCode(matchingAccount.getPremisesCode());
                 payload.setAglcAccountNumber(matchingAccount.getAglcAccountNumber());
@@ -571,6 +565,12 @@ public class GetEligiblePlansAndOffersHelper {
     private static void clearIds(GetEligiblePlansAndOffersRequest payload) {
         payload.setCustomerCode(null);
         payload.setPremisesCode(null);
+    }
+    private static void clearNameFields(GetEligiblePlansAndOffersRequest payload) {
+        payload.setCustomerLastName(null);
+        payload.setCustomerMiddleName(null);
+        payload.setCustomerFirstName(null);
+        payload.setGenerationCode(null);
     }
 
     private static void applyPersonNames(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
@@ -604,9 +604,7 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath,
-                                                                                         String sheetName,
-                                                                                         E testLabel) {
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {
         try {
             ExcelReader reader = new ExcelReader(excelPath);
             List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
@@ -738,7 +736,6 @@ public class GetEligiblePlansAndOffersHelper {
         );
 
         List<String> disallowed = switch (testCondition) {
-
             case GE_MRK_SW_RS_NEW_CC_YES_TIER1_VALUE100_CREDIT700_999_SSP_FALSE_TC17,
                  GE_MRK_SW_RS_NEW_CC_YES_TIER2_VALUE101_CREDIT600_699_SSP_FALSE_TC18,
                  GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_TC20,
@@ -766,10 +763,6 @@ public class GetEligiblePlansAndOffersHelper {
 
             case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24
                     -> List.of(GlobalEnums.PlanCode.PGB.getValue());
-
-            // Mirror MS_MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031 behavior: CGB not offered
-//            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30
-//                    -> List.of(GlobalEnums.PlanCode.CGB.getValue());
 
             case GE_MRK_SW_RS_NEW_CC_YES_INVALID_SSN_FRAUD_ALERT_11114_TC09,
                  GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10,

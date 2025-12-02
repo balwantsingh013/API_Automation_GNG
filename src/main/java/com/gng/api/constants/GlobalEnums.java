@@ -344,7 +344,8 @@ public class GlobalEnums {
         TWENTY_FOUR_M("24M"),
         EIGHTEEN_M("18M"),
         RF6("RF6"),
-        MI("MI");
+        MI("MI"),
+        CMI("CMI");
 
         private final String value;
         PlanCode(String value) {

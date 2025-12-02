@@ -151,6 +151,17 @@ public class SaveEnrollmentHelper {
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
                 aglcAccountNumber = payload.getAglcAccountNumber();
             }
+            case GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32,
+                 GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33 -> {
+                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
+                payload.setAglcServiceOrderNumber(null);
+                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+                payload.setCurrentMarketerCode(null);
+                aglcAccountNumber = payload.getAglcAccountNumber();
+            }
+
             default -> { }
         }
     }
@@ -355,6 +366,10 @@ public class SaveEnrollmentHelper {
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.MVS.getValue());
             case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.VML.getValue());
+            case GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32
+                    -> findPlanByCode(plans, GlobalEnums.PlanCode.CVS.getValue());
+            case GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33
+                    -> findPlanByCode(plans, GlobalEnums.PlanCode.CMI.getValue());
             default -> plans.getFirst();
         };
     }
