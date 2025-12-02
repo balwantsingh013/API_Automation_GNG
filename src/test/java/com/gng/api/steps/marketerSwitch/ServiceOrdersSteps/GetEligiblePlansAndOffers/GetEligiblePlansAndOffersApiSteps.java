@@ -26,7 +26,7 @@ public class GetEligiblePlansAndOffersApiSteps {
 
     @When("a request is made to the GetEligiblePlansAndOffers Api from customer file marketerSwitch to seed data for {string} condition")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Customer_file_MarketerSwitch_Seed_data_for_condition(String testCondition) {
-        //getEligiblePlansAndOffersApiPage.seedCustomerFileSourceTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+        getEligiblePlansAndOffersApiPage.seedCustomerFileSourceTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
     @When("a request is made to the GetEligiblePlansAndOffers Api negative marketerSwitch for {string} condition")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Negative_Marketer_Switch_for_condition(String testCondition) {
@@ -36,6 +36,11 @@ public class GetEligiblePlansAndOffersApiSteps {
     @When("a request is made to the GetEligiblePlansAndOffers Api marketerSwitch for {string} condition")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Positive_Market_Switch_for_condition(String testCondition) {
         getEligiblePlansAndOffersApiPage.validatePositiveTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
+    @When("a request is made to the GetEligiblePlansAndOffers Api second call marketerSwitch for {string} condition")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Second_Call_Positive_Market_Switch_for_condition(String testCondition) {
+        getEligiblePlansAndOffersApiPage.validatePositiveSecondCallTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
     @Then("the marketer switch response should contain the expected plans")
@@ -53,4 +58,5 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.verifyEnrollmentRecord(valueOf(testCondition));
 
     }
+
 }

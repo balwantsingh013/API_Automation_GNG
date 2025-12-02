@@ -61,20 +61,49 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setMarketingPromotionCode("");
     }
 
+    public void setSeedDataCustomerInformation(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        setSupportingDefaultParameters(payload, testCondition);
+        switch (testCondition) {
+            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22,
+                 GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9)));
+                payload.setSspParticipantCode(null);
+                payload.setAuthorizedBy(null);
+            }
+//            case GE_MRK_SW_CM_NEW_CC_YES_BIN_NULL_NO_MATCH_CONTINUE_TC26 -> {
+//                setTheFieldToEmptyForCommercialScenarios(payload);
+//                loadCommercialData(payload, testCondition);
+//                payload.setCustomerType(COMMERCIAL.getValue());
+//                payload.setCreditCheckOption(YES.getValue());
+//                payload.setConfirmCreditCheck(Boolean.FALSE);
+//                payload.setCommercialCreditCheckBusinessBIN(null);
+//            }
+            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setConfirmCreditCheck(Boolean.TRUE);
+                payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+
+            }
+        }
+    }
+
     public void setParametersBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         setSupportingDefaultParameters(payload, testCondition);
-
         switch (testCondition) {
-
-
             case GE_MRK_SW_VAL_MISSING_TRANSACTION_TYPE_TC04 ->
-                payload.setTransactionType(null);
+                    payload.setTransactionType(null);
 
             case GE_MRK_SW_VAL_TRANSACTION_TYPE_MAX_LENGTH_TC05 ->
-                payload.setTransactionType(FakerDataGenerator.generateString(5)); // >4 chars
+                    payload.setTransactionType(FakerDataGenerator.generateString(5)); // >4 chars
 
             case GE_MRK_SW_VAL_INVALID_TRANSACTION_TYPE_TC06 ->
-                payload.setTransactionType(GlobalEnums.InvalidValues.INVALID_TRANSACTION_TYPE.getValue());
+                    payload.setTransactionType(GlobalEnums.InvalidValues.INVALID_TRANSACTION_TYPE.getValue());
 
             case GE_MRK_SW_VAL_MISSING_AGLC_ACCOUNT_NUMBER_TC07 -> {
                 payload.setAglcAccountNumber(null);
@@ -85,7 +114,8 @@ public class GetEligiblePlansAndOffersHelper {
             }
 
             case GE_MRK_SW_RS_NEW_CC_YES_INVALID_SSN_FRAUD_ALERT_11114_TC09,
-                 GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10, GE_MRK_SW_RS_NEW_CC_YES_UC47_TC15 -> {
+                 GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10,
+                 GE_MRK_SW_RS_NEW_CC_YES_UC47_TC15 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
@@ -122,11 +152,10 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAuthorizedBy("");
             }
 
-            case GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_ALL_PLANS_TC20 -> {
+            case GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_TC20 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setCreditCheckOption(COMMERCIAL_CREDIT_CHECK_REQUIRED.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
-                //payload.setAglcAccountNumber("");
             }
 
             case GE_MRK_SW_RS_NEW_CC_YES_ACN_LANDLORD_BYPASS_CREDIT_TC21 -> {
@@ -137,29 +166,14 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setTransactionID(null);
                 payload.setCustomerCode(null);
                 payload.setPremisesCode(null);
-                payload.setAglcAccountNumber("");
                 payload.setAuthorizedBy("");
-            }
-
-            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
-                loadCustomerData(payload, testCondition);
-                payload.setCreditCheckOption(YES.getValue());
-                payload.setConfirmCreditCheck(Boolean.FALSE);
-
-                 payload.setSeasonalSavingsProgramIndicator(true);
             }
 
             case GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23 -> {
                 loadCustomerData(payload, testCondition);
                 payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
-                if (testContext.getGetEligiblePlansAndOffersResponse() != null
-                        && testContext.getGetEligiblePlansAndOffersResponse().getData() != null) {
-                    payload.setInitialCreditCheckCustomerCode(
-                            testContext.getGetEligiblePlansAndOffersResponse()
-                                    .getData()
-                                    .getCustomerCode());
-                }
+                // payload.setInitialCreditCheckCustomerCode(...) handled via test data if needed
             }
 
             case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
@@ -176,18 +190,27 @@ public class GetEligiblePlansAndOffersHelper {
                 }
             }
 
-            case GE_MRK_SW_CM_NEW_CC_YES_UC53_TC25, GE_MRK_SW_CM_NEW_CC_YES_BIN_NULL_NO_MATCH_CONTINUE_TC26 -> {
+            case GE_MRK_SW_CM_NEW_CC_YES_UC53_TC25 -> {
                 setTheFieldToEmptyForCommercialScenarios(payload);
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+            }
+
+            case GE_MRK_SW_CM_NEW_CC_YES_BIN_NULL_NO_MATCH_CONTINUE_TC26 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setConfirmCreditCheck(Boolean.TRUE);
+                payload.setCommercialCreditCheckBusinessBIN(null);
             }
 
             case GE_MRK_SW_CM_NEW_CC_YES_BIN_NOT_NULL_SELECT_SIMILAR_BUSINESS_TC27 -> {
                 setTheFieldToEmptyForCommercialScenarios(payload);
-                loadCommercialDataFromResponse(payload, testCondition);
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
@@ -195,27 +218,33 @@ public class GetEligiblePlansAndOffersHelper {
             }
 
             case GE_MRK_SW_CM_NEW_CC_YES_TIER_EXCELLENT_VALUE200_CREDIT50_100_TC28 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
                 payload.setMarketingPromotionCode("");
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
             }
 
             case GE_MRK_SW_CM_NEW_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC29 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
-                payload.setCreditCheckOption(YES.getValue());
+                payload.setCreditCheckOption(CREDIT_CHECK_NOT_REQUIRED.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+
             }
 
-            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30,
-                 GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC31 -> {
+            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC31 -> {
                 setTheFieldToEmptyForCommercialScenarios(payload);
                 loadCommercialData(payload, testCondition);
                 payload.setCustomerType(COMMERCIAL.getValue());
-                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
-                payload.setCreditCheckOption(YES.getValue());
+                payload.setEnrollmentState(null);
+                payload.setCreditCheckOption(NO.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
             }
 
@@ -238,6 +267,43 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setCreditCheckOption(YES.getValue());
                 payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
                 payload.setConfirmCreditCheck(Boolean.FALSE);
+            }
+
+            case get_eligible_plans_and_offers,
+                 get_eligible_plans_and_offers_mandatory -> {
+            }
+        }
+    }
+
+    public void setParametersSecondCallBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        setSupportingDefaultParameters(payload, testCondition);
+        switch (testCondition) {
+            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
+                loadCustomerData(payload, testCondition);
+                setParamsFromSearchAccountsResponse(payload, testCondition);
+                payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.INCL.getValue());
+                payload.setAuthorizedBy(null);
+            }
+            case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setEnrollmentState(GlobalEnums.EnrollMentState.CRDS.getValue());
+                payload.setAuthorizedBy(null);
+            }
+            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
+
+                loadSecondCallCommercialData(payload, testCondition);
+                loadCommercialDataFromResponse(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setConfirmCreditCheck(Boolean.FALSE);
+                payload.setCreditCheckOption(MULTIPLE_PREMISES_OWNER.getValue());
+                payload.setAglcAccountNumber(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcAccountNumber());
+                payload.setAglcServiceLocationID(testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID());
             }
 
             case get_eligible_plans_and_offers,
@@ -270,7 +336,8 @@ public class GetEligiblePlansAndOffersHelper {
     public void loadCommercialDataFromResponse(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         switch (testCondition) {
-            case GE_MRK_SW_CM_NEW_CC_YES_BIN_NOT_NULL_SELECT_SIMILAR_BUSINESS_TC27 -> {
+            case GE_MRK_SW_CM_NEW_CC_YES_BIN_NULL_NO_MATCH_CONTINUE_TC26,
+                 GE_MRK_SW_CM_NEW_CC_YES_BIN_NOT_NULL_SELECT_SIMILAR_BUSINESS_TC27 -> {
                 var data = testContext.getGetEligiblePlansAndOffersResponse()
                         .getData()
                         .getSimilarBusinesses()
@@ -282,6 +349,13 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesZipCode(data.getBusinessZipCode());
                 payload.setCommercialCreditCheckBusinessBIN(data.getBusinessBIN());
             }
+            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
+                var data = testContext.getGetEligiblePlansAndOffersResponse()
+                        .getData();
+                payload.setCustomerBusinessName(data.getCustomerBusinessName());
+                payload.setInitialCreditCheckCustomerCode(testContext.getGetEligiblePlansAndOffersResponse()
+                        .getData().getCustomerCode());
+            }
             default -> {
             }
         }
@@ -292,8 +366,15 @@ public class GetEligiblePlansAndOffersHelper {
                 loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCommercialCustomerAndPremiseDetails(payload, customerData, testCondition);
     }
+    public void loadSecondCallCommercialData(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        Map<String, String> customerData =
+                loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        getSecondCallCommercialCustomerAndPremiseDetails(payload, customerData, testCondition);
+    }
 
-    private void getCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data, GetEligiblePlansAndOffersApiLabel testCondition) {
+    private void getCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload,
+                                                        Map<String, String> data,
+                                                        GetEligiblePlansAndOffersApiLabel testCondition) {
 
         String federalTaxId = data.get("federalTaxId");
         if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
@@ -301,7 +382,31 @@ public class GetEligiblePlansAndOffersHelper {
         }
 
         switch (testCondition) {
-
+            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
+                // Mirrors MS_MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031 commercial-detail flow
+//                payload.setCustomerLastName("");
+//                payload.setCustomerFirstName("");
+                payload.setSocialSecurityNumber("");
+                payload.setCustomerType(data.get("customerType"));
+                payload.setCustomerBusinessName(data.get("customerLastName"));
+                payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(8));
+//                payload.setInitialCreditCheckCustomerCode(
+//                        testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+                payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+                payload.setPremisesStreetName(data.get("premisesStreetName"));
+                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+                payload.setPremisesUnitType(data.get("premisesUnitType"));
+                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+                payload.setPremisesCity(data.get("premisesCity"));
+                payload.setPremisesStateCode(data.get("premisesStateCode"));
+                payload.setPremisesZipCode(data.get("premisesZipCode"));
+                payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+                payload.setCommercialCreditCheckBusinessBIN(data.get("Bin"));
+                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+            }
             default -> {
                 payload.setCustomerBusinessName(data.get("customerLastName"));
                 payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
@@ -317,30 +422,79 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setPremisesCountyCode(data.get("premisesCountyCode"));
                 payload.setCommercialCreditCheckBusinessBIN(data.get("Bin"));
                 payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+                payload.setCreditCheckBusinessName(data.get("creditCheckBusinessName"));
+                payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
+            }
+        }
+    }
+
+    private void getSecondCallCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload,
+                                                        Map<String, String> data,
+                                                        GetEligiblePlansAndOffersApiLabel testCondition) {
+
+        String federalTaxId = data.get("federalTaxId");
+        if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
+            payload.setFederalTaxID(encryptData(federalTaxId));
+        }
+
+        switch (testCondition) {
+            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30 -> {
+                payload.setCustomerLastName("");
+                payload.setCustomerFirstName("");
+                payload.setSocialSecurityNumber("");
+                payload.setCustomerType(data.get("customerType"));
+                payload.setCustomerBusinessName(data.get("customerLastName"));
+                payload.setCommercialCreditCheckBusinessBIN(null);
+                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+                payload.setInitialCreditCheckCustomerCode(
+                        testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+            }
+            default -> {
+                payload.setCustomerBusinessName(data.get("customerLastName"));
+                payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
+                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
+                payload.setPremisesStreetName(data.get("premisesStreetName"));
+                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
+                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
+                payload.setPremisesUnitType(data.get("premisesUnitType"));
+                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
+                payload.setPremisesCity(data.get("premisesCity"));
+                payload.setPremisesStateCode(data.get("premisesStateCode"));
+                payload.setPremisesZipCode(data.get("premisesZipCode"));
+                payload.setPremisesCountyCode(data.get("premisesCountyCode"));
+                payload.setCommercialCreditCheckBusinessBIN(data.get("Bin"));
+                payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
+                payload.setCreditCheckBusinessName(data.get("creditCheckBusinessName"));
+                payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
             }
         }
     }
 
     public void loadCustomerData(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
-        Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
+        Map<String, String> customerData =
+                loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData, testCondition);
     }
 
-    public void getCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void getCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload,
+                                             Map<String, String> data,
+                                             GetEligiblePlansAndOffersApiLabel testCondition) {
         clearIds(payload);
         payload.setAcnStatusIndicator(get(data, "acnStatusIndicator"));
         payload.setAglcAccountNumber(get(data, "aglcAccountNumber"));
         payload.setAglcServiceLocationID(get(data, "aglcServiceLocationID"));
         payload.setPremisesCountyCode(get(data, "premisesCountyCode"));
-        payload.setCustomerMiddleName(get(data, "customerMiddleName"));
-
         applyPersonNames(payload, data);
         applyAddress(payload, data);
 
         switch (testCondition) {
             case GE_MRK_SW_RS_NEW_CC_YES_INVALID_SSN_FRAUD_ALERT_11114_TC09,
-                 GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10 -> payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
-            case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12, GE_MRK_SW_RS_NEW_CC_YES_UC52_TC13 -> {
+                 GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10 ->
+                    payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
+
+            case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12,
+                 GE_MRK_SW_RS_NEW_CC_YES_UC52_TC13,
+                 GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23 -> {
                 payload.setAuthorizedBy("");
                 payload.setGenerationCode(null);
                 payload.setPremisesUnitType(null);
@@ -350,14 +504,64 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setEmailAddress(null);
                 payload.setAdditionalEnrollmentData(null);
                 payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
+                payload.setInitialCreditCheckCustomerCode(get(data, "CreditCheckCustomerCode"));
+
             }
             default -> {
+
                 payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
             }
         }
 
         encryptAndSetSSN(payload, data.get("SSN"));
         encryptAndSetFedTaxId(payload, data.get("federalTaxId"));
+    }
+
+    public void setParamsFromSearchAccountsResponse(GetEligiblePlansAndOffersRequest payload,
+                                                    GetEligiblePlansAndOffersApiLabel testCondition) {
+        String geTransactionIdRaw = String.valueOf(
+                testContext.getGetEligiblePlansAndOffersResponse()
+                        .getData()
+                        .getTransactionID()
+        );
+
+        int geTransactionId = parseIntOrAssert(geTransactionIdRaw,
+                "GetEligiblePlansAndOffersResponse.data.transactionID");
+
+        var matchingAccount = testContext.getSearchAccountsResponse()
+                .getData()
+                .getAccounts()
+                .stream()
+                .filter(acct -> {
+                    String acctTxRaw = String.valueOf(acct.getTransactionID());
+                    int acctTxId = parseIntOrAssert(acctTxRaw,
+                            "SearchAccountsResponse.data.accounts[].transactionID (customerCode=" + acct.getCustomerCode() + ")");
+                    return acctTxId == geTransactionId;
+                })
+                .findFirst()
+                .orElse(null);
+
+        Assert.assertNotNull(matchingAccount,
+                "No SearchAccounts account found for transactionId: " + geTransactionId
+        );
+
+        switch (testCondition) {
+            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22,
+                 GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
+                payload.setCustomerCode(matchingAccount.getCustomerCode());
+                payload.setPremisesCode(matchingAccount.getPremisesCode());
+                payload.setAglcAccountNumber(matchingAccount.getAglcAccountNumber());
+                payload.setTransactionID(geTransactionId);
+            }
+        }
+    }
+
+    private int parseIntOrAssert(String value, String fieldName) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            throw new AssertionError("Unable to parse int from " + fieldName + " value: [" + value + "]", ex);
+        }
     }
 
     private static String get(Map<String, String> data, String key) {
@@ -369,13 +573,14 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setPremisesCode(null);
     }
 
-    private static void applyPersonNames(GetEligiblePlansAndOffersRequest payload,  Map<String, String> data) {
+    private static void applyPersonNames(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
         payload.setCustomerLastName(get(data, "customerLastName"));
+        payload.setCustomerMiddleName(get(data, "customerMiddleName"));
         payload.setCustomerFirstName(get(data, "customerFirstName"));
         payload.setGenerationCode(get(data, "generationCode"));
     }
 
-    private static void applyAddress(GetEligiblePlansAndOffersRequest payload,  Map<String, String> data) {
+    private static void applyAddress(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
         payload.setPremisesStreetNumber(get(data, "premisesStreetNumber"));
         payload.setPremisesStreetName(get(data, "premisesStreetName"));
         payload.setPremisesStreetSuffix(get(data, "premisesStreetSuffix"));
@@ -399,7 +604,9 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {
+    public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath,
+                                                                                         String sheetName,
+                                                                                         E testLabel) {
         try {
             ExcelReader reader = new ExcelReader(excelPath);
             List<Map<String, String>> sheetData = reader.getSheetData(sheetName);
@@ -420,7 +627,8 @@ public class GetEligiblePlansAndOffersHelper {
     public void verifyResidentialPlansReceivedAgainstDatabase() {
         Map<String, Object> controlNumberResult = ApplicationContext.get().getDbAction().getControlNumber();
         String controlNum = controlNumberResult.get("UZTCOTT_CONTROL_NUM").toString();
-        List<Map<String, Object>> eligiblePlansList = ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
+        List<Map<String, Object>> eligiblePlansList =
+                ApplicationContext.get().getDbAction().getValidationPlansAndOffers(controlNum);
         GetEligiblePlansAndOffersResponse response = testContext.getGetEligiblePlansAndOffersResponse();
 
         for (Map<String, Object> eligiblePlan : eligiblePlansList) {
@@ -451,7 +659,8 @@ public class GetEligiblePlansAndOffersHelper {
         }
     }
 
-    public static void comparePlanFields(Map<String, Object> eligiblePlan, GetEligiblePlansAndOffersResponse response) {
+    public static void comparePlanFields(Map<String, Object> eligiblePlan,
+                                         GetEligiblePlansAndOffersResponse response) {
         String dbPlanCode = String.valueOf(eligiblePlan.get("planCode")).trim();
         String dbPlanDescription = String.valueOf(eligiblePlan.get("planDescription")).trim();
         String dbPromo1Code = normalize(eligiblePlan.get("promotion1Code"));
@@ -481,7 +690,8 @@ public class GetEligiblePlansAndOffersHelper {
             }
         }
 
-        Assert.assertTrue(matchFound,"No matching planCode found in API response for: " + dbPlanCode);
+        Assert.assertTrue(matchFound,
+                "No matching planCode found in API response for: " + dbPlanCode);
     }
 
     public void verifyDisallowedPlansFor(GetEligiblePlansAndOffersApiLabel testCondition) {
@@ -495,61 +705,75 @@ public class GetEligiblePlansAndOffersHelper {
             allowed.forEach(dis::remove);
             return new ArrayList<>(dis);
         };
+
         final Supplier<List<String>> allPlans = () -> new ArrayList<>(ALL);
+
+        List<String> standardPlans = List.of(
+                GlobalEnums.PlanCode.RGB.getValue(),
+                GlobalEnums.PlanCode.GPP.getValue(),
+                GlobalEnums.PlanCode.TWENTY_FOUR_M.getValue(), // 24M
+                GlobalEnums.PlanCode.EIGHTEEN_M.getValue(),     // 18M
+                GlobalEnums.PlanCode.RF6.getValue(),
+                GlobalEnums.PlanCode.MVS.getValue(),
+                GlobalEnums.PlanCode.CSV.getValue(),
+                GlobalEnums.PlanCode.MI.getValue(),
+                GlobalEnums.PlanCode.TRD.getValue(),
+                GlobalEnums.PlanCode.PGB.getValue(),
+                GlobalEnums.PlanCode.PRP.getValue()
+        );
+
+        List<String> prepayOnlyPlans = List.of(
+                GlobalEnums.PlanCode.VML.getValue(),
+                GlobalEnums.PlanCode.PGB.getValue(),
+                GlobalEnums.PlanCode.PRP.getValue()
+        );
+
+        List<String> vsMvsMiTrdPgbPrp = List.of(
+                GlobalEnums.PlanCode.MVS.getValue(),
+                GlobalEnums.PlanCode.CSV.getValue(),
+                GlobalEnums.PlanCode.MI.getValue(),
+                GlobalEnums.PlanCode.TRD.getValue(),
+                GlobalEnums.PlanCode.PGB.getValue(),
+                GlobalEnums.PlanCode.PRP.getValue()
+        );
 
         List<String> disallowed = switch (testCondition) {
 
             case GE_MRK_SW_RS_NEW_CC_YES_TIER1_VALUE100_CREDIT700_999_SSP_FALSE_TC17,
-                 GE_MRK_SW_RS_NEW_CC_YES_TIER2_VALUE101_CREDIT600_699_SSP_FALSE_TC18->
-                List.of(GlobalEnums.PlanCode.GB6.getValue(),
-                        GlobalEnums.PlanCode.CGB.getValue(),
-                        GlobalEnums.PlanCode.CCV.getValue(),
-                        GlobalEnums.PlanCode.CVS.getValue()
-                );
-
-            case GE_MRK_SW_RS_NEW_CC_YES_TIER_UC45_TC19 ->
-                    allExcept.apply(List.of(
-                            GlobalEnums.PlanCode.VML.getValue(),
-                            GlobalEnums.PlanCode.PGB.getValue(),
-                            GlobalEnums.PlanCode.PRP.getValue()
-                    ));
-
-            case GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_ALL_PLANS_TC20 ->
-                    allExcept.apply(List.of(
-                            GlobalEnums.PlanCode.RGB.getValue(),
-                            GlobalEnums.PlanCode.GPP.getValue(),
-                            GlobalEnums.PlanCode.TWENTY_FOUR_M.getValue(),
-                            GlobalEnums.PlanCode.EIGHTEEN_M.getValue(),
-                            GlobalEnums.PlanCode.RF6.getValue(),
-                            GlobalEnums.PlanCode.MVS.getValue(),
-                            GlobalEnums.PlanCode.CSV.getValue(),
-                            GlobalEnums.PlanCode.MI.getValue(),
-                            GlobalEnums.PlanCode.TRD.getValue(),
-                            GlobalEnums.PlanCode.PGB.getValue(),
-                            GlobalEnums.PlanCode.PRP.getValue()
-                    ));
-
-            case GE_MRK_SW_RS_NEW_CC_YES_ACN_LANDLORD_BYPASS_CREDIT_TC21,
-                 GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22,
+                 GE_MRK_SW_RS_NEW_CC_YES_TIER2_VALUE101_CREDIT600_699_SSP_FALSE_TC18,
+                 GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_TC20,
                  GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23
-                    -> List.of(
-                    GlobalEnums.PlanCode.GB6.getValue(),
+                    -> allExcept.apply(standardPlans);
+
+            case GE_MRK_SW_RS_NEW_CC_YES_TIER_UC45_TC19
+                    -> allExcept.apply(prepayOnlyPlans);
+
+            case GE_MRK_SW_RS_NEW_CC_YES_ACN_LANDLORD_BYPASS_CREDIT_TC21
+                    -> allExcept.apply(List.of(
                     GlobalEnums.PlanCode.RGB.getValue(),
-                    GlobalEnums.PlanCode.PGB.getValue()
-            );
+                    GlobalEnums.PlanCode.GPP.getValue(),
+                    GlobalEnums.PlanCode.TWENTY_FOUR_M.getValue(),
+                    GlobalEnums.PlanCode.EIGHTEEN_M.getValue(),
+                    GlobalEnums.PlanCode.RF6.getValue(),
+                    GlobalEnums.PlanCode.MVS.getValue(),
+                    GlobalEnums.PlanCode.CSV.getValue(),
+                    GlobalEnums.PlanCode.MI.getValue(),
+                    GlobalEnums.PlanCode.TRD.getValue()
+            ));
 
-            case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 ->
-                    List.of(GlobalEnums.PlanCode.PGB.getValue());
+            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22
+                    -> allExcept.apply(vsMvsMiTrdPgbPrp);
 
-            case GE_MRK_SW_CM_NEW_CC_YES_BIN_NOT_NULL_SELECT_SIMILAR_BUSINESS_TC27,
-                 GE_MRK_SW_CM_NEW_CC_YES_TIER_EXCELLENT_VALUE200_CREDIT50_100_TC28,
-                 GE_MRK_SW_CM_NEW_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC29,
-                 GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30
-                    -> List.of(GlobalEnums.PlanCode.CGB.getValue());
+            case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24
+                    -> List.of(GlobalEnums.PlanCode.PGB.getValue());
+
+            // Mirror MS_MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031 behavior: CGB not offered
+//            case GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC73_TC30
+//                    -> List.of(GlobalEnums.PlanCode.CGB.getValue());
 
             case GE_MRK_SW_RS_NEW_CC_YES_INVALID_SSN_FRAUD_ALERT_11114_TC09,
                  GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10,
-                GE_MRK_SW_RS_NEW_CC_NO_DENIED_BY_CUSTOMER_TC16,
+                 GE_MRK_SW_RS_NEW_CC_NO_DENIED_BY_CUSTOMER_TC16,
                  GE_MRK_SW_CM_NEW_CC_YES_UC53_TC25
                     -> allPlans.get();
 
@@ -558,11 +782,13 @@ public class GetEligiblePlansAndOffersHelper {
 
         verifyPlansDoNotContainCodes(disallowed);
     }
-    public void verifyEnrollmentRecord(GetEligiblePlansAndOffersApiLabel testCondition) {
 
+    public void verifyEnrollmentRecord(GetEligiblePlansAndOffersApiLabel testCondition) {
         GlobalEnums.CreditScoreStatus expectedCreditScoreStatus = null;
         GlobalEnums.CreditScoreText expectedCreditScoreTextEnum = null;
         GlobalEnums.EnrollMentState expectedEnrollmentStateEnum;
+        GlobalEnums.MarketingPromotionCodes expectedMarketingPromotionCodeEnum = null;
+        GlobalEnums.PlanCode expectedPlanCodeEnum = null;
         Supplier<Map<String, Object>> enrollmentSupplier;
 
         switch (testCondition) {
@@ -578,9 +804,7 @@ public class GetEligiblePlansAndOffersHelper {
                 expectedEnrollmentStateEnum = GlobalEnums.EnrollMentState.PENDINGREVIEW;
                 expectedCreditScoreStatus = GlobalEnums.CreditScoreStatus.STATUS_TEXT;
                 expectedCreditScoreTextEnum = GlobalEnums.CreditScoreText.VERIFY_ID;
-                //enrollmentSupplier = this::getEnrollmentRecordFromSearchAccountsResponse;
                 enrollmentSupplier = () -> getEnrollmentRecordFromCustomerLastName(testCondition);
-
             }
 
             case GE_MRK_SW_RS_NEW_CC_YES_UC63_TC14 -> {
@@ -607,18 +831,35 @@ public class GetEligiblePlansAndOffersHelper {
                 expectedCreditScoreStatus = GlobalEnums.CreditScoreStatus.NUMBER;
                 expectedCreditScoreTextEnum = GlobalEnums.CreditScoreText.MATCH_CODE_C;
                 enrollmentSupplier = this::getEnrollmentRecordFromGetEligiblePlansAndOffersResponse;
-
-                //enrollmentSupplier = () -> getEnrollmentRecordFromCustomerLastName(testCondition);
             }
 
-            case GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_ALL_PLANS_TC20 -> {
+            case GE_MRK_SW_RS_NEW_CC_COMM_CREDIT_OPTION_9998_TC20,
+                 GE_MRK_SW_RS_NEW_CC_YES_MULTI_PREMISES_MATCH_UC71_TC23 -> {
                 expectedEnrollmentStateEnum = GlobalEnums.EnrollMentState.INCL;
                 expectedCreditScoreStatus = GlobalEnums.CreditScoreStatus.NUMBER;
                 enrollmentSupplier = this::getEnrollmentRecordFromGetEligiblePlansAndOffersResponse;
-
             }
 
-            default -> { return; }
+            case GE_MRK_SW_RS_NEW_CC_YES_ACN_LANDLORD_BYPASS_CREDIT_TC21 -> {
+                expectedEnrollmentStateEnum = GlobalEnums.EnrollMentState.INCL;
+                expectedCreditScoreStatus = GlobalEnums.CreditScoreStatus.ACNL;
+                expectedCreditScoreTextEnum = GlobalEnums.CreditScoreText.NOT_APPLICABLE;
+                enrollmentSupplier = this::getEnrollmentRecordFromGetEligiblePlansAndOffersResponse;
+            }
+
+            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
+                expectedEnrollmentStateEnum = GlobalEnums.EnrollMentState.INCL;
+                expectedCreditScoreStatus = GlobalEnums.CreditScoreStatus.NUMBER;
+                expectedCreditScoreTextEnum = GlobalEnums.CreditScoreText.MATCH_CODE_C;
+                expectedMarketingPromotionCodeEnum =
+                        GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_FIX_10_DOLLARS_FOR_12_MONTHS;
+                expectedPlanCodeEnum = GlobalEnums.PlanCode.PGB;
+                enrollmentSupplier = this::getEnrollmentRecordFromGetEligiblePlansAndOffersResponse;
+            }
+
+            default -> {
+                return;
+            }
         }
 
         Map<String, Object> enrollmentRecord = enrollmentSupplier.get();
@@ -626,6 +867,10 @@ public class GetEligiblePlansAndOffersHelper {
         String expectedEnrollmentState = expectedEnrollmentStateEnum.getValue();
         String expectedStatus = expectedCreditScoreStatus == null ? null : expectedCreditScoreStatus.getValue();
         String expectedScoreText = expectedCreditScoreTextEnum == null ? null : expectedCreditScoreTextEnum.getValue();
+        String expectedMarketingPromotionCodeText =
+                expectedMarketingPromotionCodeEnum == null ? null : expectedMarketingPromotionCodeEnum.getValue();
+        String expectedPlanCodeText =
+                expectedPlanCodeEnum == null ? null : expectedPlanCodeEnum.getValue();
 
         String actualStatus = enrollmentRecord.get("UZBENRO_CRED_SCORE_STATUS") == null
                 ? null
@@ -639,7 +884,14 @@ public class GetEligiblePlansAndOffersHelper {
                 ? null
                 : enrollmentRecord.get("UZBENRO_ENRO_STATUS").toString();
 
-        // Always assert enrollment state
+        String actualMarketingPromotionCodeText = enrollmentRecord.get("UZBENRO_CAMPAIGN_ID") == null
+                ? null
+                : enrollmentRecord.get("UZBENRO_CAMPAIGN_ID").toString();
+
+        String actualPlanCodeText = enrollmentRecord.get("UZBENRO_PRICE_PLAN") == null
+                ? null
+                : enrollmentRecord.get("UZBENRO_PRICE_PLAN").toString();
+
         Assert.assertEquals(
                 actualEnrollmentStatus,
                 expectedEnrollmentState,
@@ -659,6 +911,22 @@ public class GetEligiblePlansAndOffersHelper {
                     actualScoreText,
                     expectedScoreText,
                     "Unexpected UZBENRO_CRED_SCORE_TEXT for condition: " + testCondition
+            );
+        }
+
+        if (expectedMarketingPromotionCodeText != null) {
+            Assert.assertEquals(
+                    actualMarketingPromotionCodeText,
+                    expectedMarketingPromotionCodeText,
+                    "Unexpected UZBENRO_CAMPAIGN_ID (promo code) for condition: " + testCondition
+            );
+        }
+
+        if (expectedPlanCodeText != null) {
+            Assert.assertEquals(
+                    actualPlanCodeText,
+                    expectedPlanCodeText,
+                    "Unexpected UZBENRO_PRICE_PLAN for condition: " + testCondition
             );
         }
     }
@@ -695,7 +963,6 @@ public class GetEligiblePlansAndOffersHelper {
                 .getEnrollmentRecordByCustomerCode(customerCode);
     }
 
-
     private Map<String, Object> getEnrollmentRecordFromCustomerLastName(GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = preparePayload(testCondition);
         loadCustomerData(payload, testCondition);
@@ -712,7 +979,6 @@ public class GetEligiblePlansAndOffersHelper {
         }
 
         if (records.size() > 1) {
-            // optional: tighten this if you expect exactly one
             log.warn("Multiple Enrollment records found for lastName={}, using the first one", lastName);
         }
 
@@ -733,6 +999,21 @@ public class GetEligiblePlansAndOffersHelper {
                 0,
                 "Expected no Enrollment record to be created for " + testCondition + ", but found " + count + " record(s)"
         );
+    }
+
+    private String padAglcAccountNumber(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        int targetLength = 20;
+        if (value.length() >= targetLength) {
+            return value;
+        }
+
+        String sb = "0".repeat(targetLength - value.length()) +
+                value;
+        return sb;
     }
 
     private static String normalize(Object value) {

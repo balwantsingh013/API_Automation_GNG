@@ -62,8 +62,7 @@ public class SearchAccountsHelper {
         setParametersToEmpty(payload);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
-        payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
-        payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
+        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
 
         switch (testCondition) {
 //            case -> {
@@ -72,7 +71,7 @@ public class SearchAccountsHelper {
 //            }
 
             default -> {
-                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
+              //  setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
             }
         }
     }
@@ -88,13 +87,9 @@ public class SearchAccountsHelper {
         Map<String, Object> activeCustomerData = null;
 
         switch (testCondition) {
-            case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12-> {
-                loadCustomerData(payload, testCondition);
-
-            }
+            case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12 ->  loadCustomerData(payload, testCondition);
 
             default -> {
-
             }
         }
     }

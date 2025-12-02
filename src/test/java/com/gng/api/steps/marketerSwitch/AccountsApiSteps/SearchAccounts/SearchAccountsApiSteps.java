@@ -31,9 +31,10 @@ public class SearchAccountsApiSteps {
         searchAccountsApiPage.validateExternalCases(search_accounts_mandatory, SearchAccountsApiLabel.valueOf(testCondition));
 
     }
-    @When("a request is made to the MarketerSwitch SearchAccounts Api from GetEligiblePlansAndOffers API for external cases for {string} condition")
+    @Then("a request is made to the MarketerSwitch SearchAccounts Api from GetEligiblePlansAndOffers API for external cases for {string} condition")
     public void aRequestIsMadeToTheMarketerSwitchSearchAccountsApiFromGetEligibleForExternalCases(String testCondition) {
         searchAccountsApiPage.searchFromGetEligibleExternalCases(search_accounts_mandatory, SearchAccountsApiLabel.valueOf(testCondition));
 
     }
+
 }

@@ -10,7 +10,8 @@ public class GlobalEnums {
         EXPIRED_MARKETING_PROMOTION_CODE("VIPJUL17"),
         PROMOTION_CODE_RESIDENTIAL("APARTMENT SPECIAL"),
         PROMOTION_CODE_GREEN_LIFE("GREEN125"),
-        PROMOTION_CODE_DEALS("DEALS");
+        PROMOTION_CODE_DEALS("DEALS"),
+        PROMOTION_CODE_FIX_10_DOLLARS_FOR_12_MONTHS("FIX 10 DOLLARS FOR 12 MONTHS");
 
         private final String value;
 
@@ -409,7 +410,8 @@ public class GlobalEnums {
     public enum CreditScoreStatus {
         STATUS_TEXT("TEXT"),
         REFUSE("REFU"),
-        NUMBER("NUMR");
+        NUMBER("NUMR"),
+        ACNL("ACNL");
 
         private final String value;
         CreditScoreStatus(String value) {
