@@ -1538,6 +1538,378 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_CUST_PREM_CODE_TIER_1_NACN= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6095374
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACN_RS_TC_253= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 5999651
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_254= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6095775
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_255= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 5562880
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_256= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 3127775
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_SR_TC_258= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 3889665
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACN_RS_TC_259= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6065754
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_260= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6084817
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_SR_TC_262= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6092310
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACN_RS_TC_263= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6092310
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_264= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6068419
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACN_RS_TC_265= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6079304
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_266= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 6081193
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_267= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 5917691
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_268= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 4077700
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACN_RS_TC_269= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 5756868
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_270= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 3024099
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ACN_RS_TC_271= """
+            SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+            FROM uzbenro 
+            WHERE UZBENRO_CUST_CODE= 5530505
+            ORDER BY UZBENRO_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_NACN_RS_TC_273 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5846423
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_ACN_RS_TC_274 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5489493
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_ACN_RS_TC_275 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5683025
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_276 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5446398
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_277 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5440396
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_ACN_RS_TC_278 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5604443
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_279 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5457237
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_280 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5926346
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_ACN_CM_TC_281 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5320867
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_CM_TC_282 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 6095968
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_CM_TC_283 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 6063100
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_ACN_CM_TC_284 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5496469
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_285 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 4619972
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_286 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5645530
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_CM_TC_287 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5897231
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_CM_TC_288 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 4726305
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_289 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5624822
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_290 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 1790794
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_291 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 6004998
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_292 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 4542311
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_293 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 6012004
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_294 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5966978
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_295 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 5930052
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_296 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 574944
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_RS_TC_297 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 3480662
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_ACN_RS_TC_298 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 6095812
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+
+    public static final String GET_NACN_RS_TC_300 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 4736615
+        AND UZBENRO_PREM_CODE=4743029
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_NACN_CM_TC_301 = """
+        SELECT UZBENRO_CUST_CODE, UZBENRO_PREM_CODE
+        FROM uzbenro 
+        WHERE UZBENRO_CUST_CODE= 4952313
+        ORDER BY UZBENRO_CUST_CODE DESC
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+
+
     public static final String GET_FIRSTNAME_LASTNAME_AND_ZIPCODE = """
             SELECT
                 T3.UZBENRO_DSM_FIRST_NAME,
@@ -1994,14 +2366,28 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_CUSTOMER_CODE= """
+    public static final String SELECT_PREM_CODE= """
             SELECT ucbprem_code
             FROM ucbprem
             WHERE ucbprem_code=?
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_PREM_CODE= """
+    public static final String SELECT_PREMISES_CODE= """
+            SELECT ucbprem_code
+            FROM ucbprem
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_CUST_CODE = """
+        SELECT ucbcust_cust_code
+        FROM ucbcust
+        WHERE LENGTH(ucbcust_cust_code) > 4
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+
+    public static final String SELECT_CUSTOMER_CODE= """
             SELECT ucbcust_cust_code
             FROM ucbcust
             WHERE ucbcust_cust_code=?
@@ -2017,35 +2403,27 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_WITH_NICKNAME= """
             SELECT
-                o.OCSACNM_CUST_CODE,
-                o.OCSACNM_PREM_CODE
-            FROM
-                OCSACNM o
-            JOIN
-                ucracct u
-                ON o.OCSACNM_CUST_CODE = u.ucracct_cust_code
-                AND o.OCSACNM_PREM_CODE = u.ucracct_prem_code
-            WHERE
-                o.OCSACNM_ACCT_NAME IS NOT NULL
-                AND TRIM(o.OCSACNM_ACCT_NAME) <> ''
-                AND u.ucracct_status_ind <> 'N'
-                FETCH FIRST 1 ROWS ONLY
+                                           UCRACCT_CUST_CODE,
+                                           UCRACCT_PREM_CODE
+                                       FROM
+                                           UCRACCT
+                                       WHERE
+                                           UCRACCT_STATUS_IND <> 'N'
+                                           AND UCRACCT_NICK_NAME IS NOT NULL
+                                           AND TRIM(UCRACCT_NICK_NAME) <> ''
+                                       FETCH FIRST 1 ROWS ONLY
             """;
 
 
     public static final String SELECT_ACCOUNT_WITHOUT_NICKNAME= """
             SELECT
-                o.OCSACNM_CUST_CODE,
-                o.OCSACNM_PREM_CODE
+                UCRACCT_CUST_CODE,
+                UCRACCT_PREM_CODE
             FROM
-                OCSACNM o
-            JOIN
-                ucracct u
-                ON o.OCSACNM_CUST_CODE = u.ucracct_cust_code
-                AND o.OCSACNM_PREM_CODE = u.ucracct_prem_code
+                UCRACCT
             WHERE
-                (o.OCSACNM_ACCT_NAME IS NULL OR TRIM(o.OCSACNM_ACCT_NAME) = '')
-                AND u.ucracct_status_ind <> 'N'
+                UCRACCT_STATUS_IND <> 'N'
+                AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
             FETCH FIRST 1 ROWS ONLY
             """;
 

@@ -1,0 +1,48 @@
+package com.gng.api.steps.csi.UpdateMailingAddress;
+
+public enum UpdateMailingAddressLabel {
+
+    update_mailing_address,
+    update_mailing_address_mandatory,
+
+    TC_68__Negative__Missing_Request_ID,
+    TC_69__Negative__Invalid_Request_ID__Length,
+    TC_70__Negative__Duplicate_Request_ID,
+    TC_71__Negative__Missing_customerCode,
+    TC_72__Negative__Invalid_customerCode__Length,
+    TC_73__Negative__Invalid_customerCode__Format,
+    TC_74__Negative__Invalid_customerCode,
+    TC_75__Negative__Missing_premisesCode,
+    TC_76__Negative__Invalid_premisesCode__Length,
+    TC_77__Negative__Invalid_premisesCode__Format,
+    TC_78__Negative__Invalid_premisesCode,
+    TC_79__Negative__Invalid_Address_Fields___Missing____,
+    TC_80__Negative__Invalid_Address_Fields___Too_Many____,
+    TC_81__Negative__Invalid_Street_Number__Length,
+    TC_82__Negative__Invalid_Street_Pre__Direction__Length,
+    TC_83__Negative__Invalid_Street_Pre__Direction,
+    TC_84__Negative__Invalid_Street_Name__Length,
+    TC_85__Negative__Missing_StreetName,
+    TC_86__Negative__Invalid_StreetSuffix__Length,
+    TC_87__Negative__Invalid_StreetSuffix,
+    TC_88__Negative__Invalid_Street_Post__Direction__Length,
+    TC_89__Negative__Invalid_Street_Post__Direction,
+    TC_90__Negative__Invalid_Unit_Type__Format,
+    TC_91__Negative__Missing_Unit_Type,
+    TC_92__Negative__Invalid_Unit_Number__Format,
+    TC_93__Negative__Invalid_City__Length,
+    TC_94__Negative__Missing_City,
+    TC_95__Negative__Invalid_Zip_Code__Format___Length__10____,
+    TC_96__Negative__Missing_Zip_Code,
+    TC_97__Negative__Invalid_Zip_Code,
+    TC_98__Negative__Invalid_City_and_Zip_Code__Combination,
+    TC_99__Negative__Invalid_County_Code,
+    TC_100__Negative__Invalid_Delivery_Point__Format,
+    TC_101__Negative__Invalid_Carrier_Route__Length,
+    TC_102__Negative__Invalid_Attention_To__Length,
+    TC_103__Negative__Invalid_Additional_Address_Line__Length,
+
+    TC_104__Positive__Valid_Street_Address,
+    TC_105__Positive__Valid_PO_Box_Address,
+    TC_106__Positive__Valid_Rural_Route_Address
+}

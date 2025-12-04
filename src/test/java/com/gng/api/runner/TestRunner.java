@@ -25,7 +25,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-        //tags = "@UpdatePasswordPositive",
+        //tags = "@UpdateAccountNicknamePositive",
         plugin = {
                 "pretty",
                 "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting
@@ -106,7 +106,8 @@ public class TestRunner extends AbstractTestNGCucumberTests {
         setRequestSpec();
 
         // Extract scenario name safely
-        String scenarioName = extractScenarioNameSafely(method, testData);
+        String scenarioName = extractScenarioNameSafely(method, testData)
+                .replace("____",")").replace("___","(").replace("__"," - ").replace("_"," ");
 
         // Log thread information for monitoring
         logThreadInfo(scenarioName);

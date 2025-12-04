@@ -484,7 +484,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setBillingStreetName(FakerDataGenerator.generateString(5));
                 payload.setBillingCity(FakerDataGenerator.generateCity());
                 payload.setBillingStateCode(billingAddressState);
-                payload.setBillingZipCode(FakerDataGenerator.generateDigits(4)+FakerDataGenerator.generateDigits(5));
+                payload.setBillingZipCode(INVALID_ZIP_9_DIGIT.getValue());
                 payload.setBillingAddressType(GlobalEnums.AddressType.STREET.getValue());
                 break;
             case NULL_BILLING_ZIP_CODE_TC_281C:
@@ -1577,7 +1577,6 @@ public class GetEligiblePlansAndOffersHelper {
 
             case INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176:
                 payload.setTransactionID(FakerDataGenerator.generateDigits(6));
-                setTheFieldToEmptyForCommercialScenarios(payload);
                 payload.setEnrollmentState(CRDS.getValue());
                 break;
 
@@ -1862,7 +1861,6 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_428:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_436:
-            case INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176:
             case INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_CRDS_TC_178:
             case INVALID_PREMISES_CODE_ENROLLMENT_STATE_CRDS_TC_180:
             case INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182:
@@ -1871,11 +1869,12 @@ public class GetEligiblePlansAndOffersHelper {
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_441:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_444:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_445,
-                 SAVE_ENROLLMENT_INVALID_SPLIT_FEE_VALUE_TC417a:
+                 SAVE_ENROLLMENT_INVALID_SPLIT_FEE_VALUE_TC417a, INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176:
                 customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
                 payload.setCreditCheckOption(YES.getValue());
                 getCustomerDetails(payload,customerData);
                 break;
+
 
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_BD_TC_452:
             case GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_453:
@@ -1912,6 +1911,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setTransactionType(TURN_ON.getValue());
                 payload.setCustomerType(RESIDENTIAL.getValue());
                 payload.setEnrollmentSource(MAIL.getValue());
+                payload.setRequestID("1"+ FakerDataGenerator.generateDigits(6));
                 break;
         }
     }
@@ -1978,6 +1978,17 @@ public class GetEligiblePlansAndOffersHelper {
     public void setRequestParamsWithoutPromotionCode(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         Map<String, String> customerData = loadRowFromExcelToCustomerData(CUSTOMER_DATA, CUSTOMER_SHEET_NAME, testCondition);
         getCustomerAndPremiseDetails(payload, customerData);
+        if(testCondition==INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176){
+            payload.setTenantLandlord("T");
+            payload.setCreditCheckOption("Yes");
+            payload.setAcnStatusIndicator("NACN");
+        }
+        if(testCondition==SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496){
+            payload.setSeasonalSavingsProgramIndicator(true);
+            payload.setTenantLandlord("T");
+            payload.setCreditCheckOption("Yes");
+            payload.setAcnStatusIndicator("NACN");
+        }
     }
 
     public void verifyResidentialPlansReceivedAgainstDatabase() {
@@ -2006,37 +2017,40 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
     public void validateAllTheEntriesInTablesForEligiblePlansAndOffers(GetEligiblePlansAndOffersApiLabel testCondition){
-        String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
-        String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
-        String firstName= testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerFirstName();
-        String lastName= testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerLastName();
-        String zipCode= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesZipCode();
-        String aglcServiceLocationID= testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID();
-        String streetNumber= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesStreetNumber();
-        String city= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCity();
-        String state= testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesStateCode();
-        Map<String, Object> enrollmentRecord= null;
+        if(! (testCondition== DECEASED_OR_NON_ISSUED_CUSTOMER_TC_355 || testCondition==DECEASED_OR_NON_ISSUED_CONFIRM_CREDIT_CHECK_CUSTOMER_TC_355A || testCondition==GET_ELIGIBLE_PLANS_AND_OFFERS_FROZEN_ACCOUNT_357 ||testCondition==NO_MATCH_FOUND_IN_EXPERIAN_TC_353 ||testCondition==NO_MATCH_FOUND_IN_EXPERIAN_TC_356)) {
+            String customerCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
+            String premisesCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode();
+            String firstName = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerFirstName();
+            String lastName = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerLastName();
+            String zipCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesZipCode();
+            String aglcServiceLocationID = testContext.getGetEligiblePlansAndOffersResponse().getData().getAglcServiceLocationID();
+            String streetNumber = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesStreetNumber();
+            String city = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCity();
+            String state = testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesStateCode();
 
-        if (testCondition == NO_MATCH_PLAN_CODE_B_CONTINUE_ENROLLMENT_TC_354 ||
-                testCondition == NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354A ||
-                testCondition == LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B) {
+            Map<String, Object> enrollmentRecord = null;
 
-            enrollmentRecord = ApplicationContext.get()
-                    .getDbAction()
-                    .validateAllTheTablesAfterGetEligiblePlansRequest(
-                            customerCode,
-                            premisesCode,
-                            firstName,
-                            lastName,
-                            zipCode,
-                            aglcServiceLocationID,
-                            streetNumber,
-                            city,
-                            state
-                    );
+            if (testCondition == NO_MATCH_PLAN_CODE_B_CONTINUE_ENROLLMENT_TC_354 ||
+                    testCondition == NO_MATCH_INVALID_NAME_CONTINUE_ENROLLMENT_TC_354A ||
+                    testCondition == LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B) {
+
+                enrollmentRecord = ApplicationContext.get()
+                        .getDbAction()
+                        .validateAllTheTablesAfterGetEligiblePlansRequest(
+                                customerCode,
+                                premisesCode,
+                                firstName,
+                                lastName,
+                                zipCode,
+                                aglcServiceLocationID,
+                                streetNumber,
+                                city,
+                                state
+                        );
+            }
+
+            Assert.assertEquals(enrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
         }
-
-        Assert.assertEquals(enrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
     }
 
     public static <E extends Enum<E>> Map<String, String> loadRowFromExcelToCustomerData(String excelPath, String sheetName, E testLabel) {

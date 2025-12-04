@@ -1,7 +1,7 @@
 package com.gng.api.steps;
 
 import com.gng.api.context.ApplicationContext;
-import com.gng.api.pojo.CSIPojo.SetAccountNickname.SetAccountNicknameResponse;
+import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
 import com.gng.api.pojo.TestContext.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -77,7 +77,7 @@ public class BaseSteps {
 
     @And("the response should confirm nickname status as {string}")
     public void responseShouldConfirmNicknameStatusAs(String expectedStatus) {
-        SetAccountNicknameResponse response = testContext.getSetAccountNicknameResponse();
+        UpdateAccountNicknameResponse response = testContext.getUpdateAccountNicknameResponse();
         String actualStatus = response.getData().getNicknameStatus();
         assertThat("Nickname status mismatch", actualStatus, is(expectedStatus));
     }
@@ -114,6 +114,21 @@ public class BaseSteps {
     public void responseShouldHaveTheFollowingRoles(DataTable dataTable) {
         List<Map<String, String>> expectedRoles = dataTable.asMaps(String.class, String.class);
         verifyRoleDetails(expectedRoles);
+    }
+
+    @And("the response should have the rewards status as {string}")
+    public void responseShouldHaveRewardsStatusAs(String status) {
+        verifyRewardsStatusInResponse(status);
+    }
+
+    private void verifyRewardsStatusInResponse(String expectedStatus) {
+        Response response = testContext.getResponse();
+        List<Map<String, Object>> rewards = response.jsonPath().getList("getAccountRewards.rewards");
+
+        boolean matchFound = rewards != null && rewards.stream()
+                .anyMatch(reward -> expectedStatus.equals(String.valueOf(reward.get("status"))));
+
+        assertThat("Expected reward status not found: " + expectedStatus, matchFound, is(true));
     }
 
     private void validateUsernameStatus(String expectedStatus) {

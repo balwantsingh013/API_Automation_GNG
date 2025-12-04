@@ -1,7 +1,9 @@
 package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
-import com.gng.api.pojo.CSIPojo.SetAccountNickname.SetAccountNicknameResponse;
+import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
+import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
+import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePassword.UpdatePasswordResponse;
 import com.gng.api.pojo.CSIPojo.ValidateUsername.ValidateUsernameResponse;
 import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.Response.GetReasonsForLeavingResponse;
@@ -60,8 +62,14 @@ public class TestContext {
     private Object getReasonsForLeavingApiPage;
     private GetReasonsForLeavingResponse getReasonsForLeavingResponse;
     @Getter @Setter
+    private Object updateMailingAddressApiPage;
+    private UpdateMailingAddressResponse updateMailingAddressResponse;
+    @Getter @Setter
     private Object saveUnenrollmentApiPage;
     private SaveUnenrollmentResponse saveUnenrollmentResponse;
+    @Getter @Setter
+    private Object getAccountRewardsApiPage;
+    private GetAccountRewardsResponse getAccountRewardsResponse;
     @Getter @Setter
     private Object validateUsernameApiPage;
     private ValidateUsernameResponse validateUsernameResponse;
@@ -69,8 +77,8 @@ public class TestContext {
     private Object updatePasswordApiPage;
     private UpdatePasswordResponse updatePasswordResponse;
     @Getter @Setter
-    private Object setAccountNicknameApiPage;
-    private SetAccountNicknameResponse setAccountNicknameResponse;
+    private Object updateAccountNicknameApiPage;
+    private UpdateAccountNicknameResponse updateAccountNicknameResponse;
     @Getter @Setter
     private Object getEligiblePlansAndOffersApiPage;
     private GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse;

@@ -9,6 +9,8 @@ import com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.SaveUnenrollment.Sav
 import com.gng.api.steps.serviceTransfer.ServiceOrdersSteps.SaveUnenrollment.TurnOffReason;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -20,6 +22,19 @@ import static com.gng.api.constants.GlobalEnums.ForwardingAddressType.*;
 public class SaveUnenrollmentHelper {
 
     private final TestContext testContext;
+    String forwardingAddressIs = "NA";
+    String forwardingAddressType = "S";
+    String forwardingAddressPOBox= "P";
+    String forwardingAddressStreetNumber = "609";
+    String forwardingAddressStreetPreDirection = "";
+    String forwardingAddressStreetName = "STOKESWOOD";
+    String forwardingAddressStreetSuffix = "AVE";
+    String forwardingAddressStreetPostDirection = "SE";
+    String forwardingAddressCity = "ATLANTA";
+    String forwardingAddressStateCode = "GA";
+    String forwardingAddressZipCode = "30339";
+
+
 
     public SaveUnenrollmentHelper(TestContext testContext) {
         this.testContext = testContext;
@@ -410,4 +425,153 @@ public class SaveUnenrollmentHelper {
                     payload.setForwardingAddressStreetPreDirection(addr.get("UCRADDR_PDIR_CODE_PRE").toString()); }
             }
     }
+
+    public void setCustomerCodePremCodeAGLCServiceNoForAccountType(
+            SaveUnenrollmentRequest payload,
+            String accountType,
+            SaveUnenrollmentApiLabel testCondition) {
+
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+
+        switch (testCondition) {
+            case ACN_RS_TC_271, NACN_RS_TC_270, ACN_RS_TC_269, ACN_RS_TC_268, NACN_RS_TC_267, NACN_RS_TC_266, ACN_RS_TC_265,
+                 ACN_RS_REMAINS_ON_TIER_1_TC_251, ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252, ACN_RS_TC_253, NACN_RS_TC_254,
+                 ACN_RS_TC_255, NACN_RS_TC_256, NACN_SR_TC_258, ACN_RS_TC_259, NACN_RS_TC_260, NACN_SR_TC_262,
+                 ACN_RS_TC_263, NACN_RS_TC_264,
+                 NACN_RS_TC_273, ACN_RS_TC_274, ACN_RS_TC_275, NACN_RS_TC_276, NACN_RS_TC_277, ACN_RS_TC_278,
+                 NACN_RS_TC_279, NACN_RS_TC_280, ACN_CM_TC_281, NACN_CM_TC_282, NACN_CM_TC_283, ACN_CM_TC_284,
+                 NACN_RS_TC_285, NACN_RS_TC_286, NACN_CM_TC_287, NACN_CM_TC_288, NACN_RS_TC_289, NACN_RS_TC_290,
+                 NACN_RS_TC_291, NACN_RS_TC_292, NACN_RS_TC_293, NACN_RS_TC_294, NACN_RS_TC_295, NACN_RS_TC_296,
+                 NACN_RS_TC_297, ACN_RS_TC_298, NACN_RS_TC_300, NACN_CM_TC_301 -> {
+                payload.setCustomerCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getCustomerCode());
+                payload.setPremisesCode(testContext.getSearchAccountsResponse().getData().getAccounts().getFirst().getPremisesCode());
+                var acct = testContext.getSearchAccountsResponse().getData().getAccounts().getFirst();
+                String aglcAcct = acct.getAglcAccountNumber();
+                payload.setAglcAccountNumber(aglcAcct);
+                String last9 = aglcAcct.substring(Math.max(0, aglcAcct.length() - 9));
+                payload.setAglcServiceOrderNumber(last9);
+            }
+
+
+        default ->
+                    throw new IllegalArgumentException("Unsupported test condition: " + testCondition);
+        }
+
+    }
+
+    public void setTurnOffReasonAndSubReason(SaveUnenrollmentRequest payload, SaveUnenrollmentApiLabel testCondition) {
+        switch (testCondition) {
+            case ACN_RS_REMAINS_ON_TIER_1_TC_251:
+            case ACN_RS_REMAINS_ON_TIER_1_NACN_TC_252:
+            case ACN_RS_TC_255:
+            case NACN_SR_TC_258:
+            case ACN_RS_TC_259:
+            case NACN_SR_TC_262:
+            case ACN_RS_TC_263:
+            case NACN_RS_TC_264:
+            case ACN_RS_TC_265:
+            case NACN_RS_TC_266:
+            case NACN_RS_TC_267:
+            case ACN_RS_TC_269:
+            case NACN_RS_TC_270:
+            case ACN_RS_TC_271:
+            case NACN_RS_TC_273:
+            case ACN_RS_TC_274:
+            case ACN_RS_TC_275:
+            case NACN_RS_TC_276:
+            case NACN_RS_TC_277:
+            case ACN_RS_TC_278:
+            case NACN_RS_TC_279:
+            case NACN_RS_TC_286:
+            case NACN_RS_TC_289:
+            case NACN_RS_TC_290:
+            case NACN_RS_TC_291:
+            case NACN_RS_TC_292:
+            case NACN_RS_TC_293:
+            case NACN_RS_TC_294:
+            case NACN_RS_TC_295:
+            case NACN_RS_TC_296:
+            case NACN_RS_TC_297:
+            case NACN_RS_TC_300:
+            case NACN_RS_TC_280:
+                payload.setTurnOffReason("");
+                payload.setTurnOffSubReason("");
+                payload.setForwardingAddressIs("CA");
+                break;
+
+            case ACN_CM_TC_281:
+            case NACN_CM_TC_282:
+            case NACN_CM_TC_283:
+            case ACN_CM_TC_284:
+            case NACN_CM_TC_287:
+            case NACN_CM_TC_288:
+            case NACN_CM_TC_301:
+                payload.setTurnOffReason("");
+                payload.setTurnOffSubReason("");
+                payload.setForwardingAddressIs("CA");
+                payload.setCustomerType("CM");
+                break;
+
+            case ACN_RS_TC_253:
+            case ACN_RS_TC_268:
+                payload.setTurnOffReason("");
+                payload.setTurnOffSubReason("");
+                payload.setForwardingAddressIs(forwardingAddressIs);
+                payload.setForwardingAddressType(forwardingAddressType);
+                payload.setForwardingAddressStreetNumber(forwardingAddressStreetNumber);
+                payload.setForwardingAddressStreetPreDirection(forwardingAddressStreetPreDirection);
+                payload.setForwardingAddressStreetName(forwardingAddressStreetName);
+                payload.setForwardingAddressStreetSuffix(forwardingAddressStreetSuffix);
+                payload.setForwardingAddressStreetPostDirection(forwardingAddressStreetPostDirection);
+                payload.setForwardingAddressCity(forwardingAddressCity);
+                payload.setForwardingAddressStateCode(forwardingAddressStateCode);
+                payload.setForwardingAddressZipCode(forwardingAddressZipCode);
+                break;
+
+            case NACN_RS_TC_254:
+            case NACN_RS_TC_260:
+            case NACN_RS_TC_285:
+            case ACN_RS_TC_298:
+                payload.setTurnOffReason("MOVING");
+                payload.setTurnOffSubReason("SERVICE TRANSFER - ETC WAIVED");
+                payload.setForwardingAddressIs("CA");
+                break;
+
+            case NACN_RS_TC_256:
+                payload.setTurnOffReason("");
+                payload.setTurnOffSubReason("");
+                payload.setForwardingAddressIs(forwardingAddressIs);
+                payload.setForwardingAddressType(forwardingAddressPOBox);
+                payload.setForwardingAddressPOBox(forwardingAddressStreetNumber);
+                payload.setForwardingAddressCity(forwardingAddressCity);
+                payload.setForwardingAddressStateCode(forwardingAddressStateCode);
+                payload.setForwardingAddressZipCode(forwardingAddressZipCode);
+        }
+    }
+
+
+    public void setEmailAddress(SaveUnenrollmentRequest payload, Boolean setEmail) {
+        if (setEmail) {
+            payload.setEmailAddress(FakerDataGenerator.generateEmail());
+        }
+    }
+
+    public void setEtcExists(SaveUnenrollmentRequest payload, Object etcExists) {
+        if(etcExists.equals("null")){
+            payload.setEtcExists(null);
+        }
+        else {
+            payload.setEtcExists(Boolean.parseBoolean(etcExists.toString()));
+        }
+    }
+
+    public void performDatabaseValidationsPostUnenrollment() {
+        String customerCode = testContext.getCustomerCode();
+        Map<String, Object> unEnrollmentRecord = ApplicationContext.get()
+                .getDbAction()
+                .validateAllTheTablesAfterUnenrollment(customerCode);
+
+        Assert.assertEquals(unEnrollmentRecord.get("UZBENRO_CUST_CODE").toString(), customerCode);
+    }
+
 }

@@ -58,9 +58,9 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     Examples:
       | testCondition                               | errorCode | errorMessage                                                                                                                                |
-      | INVALID_CUSTOMER_CODE_EMPTY_TC388           | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 112. |
+      | INVALID_CUSTOMER_CODE_EMPTY_TC388           | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 113. |
       | INVALID_CUSTOMER_CODE_MAX_LENGTH_TC389      | 10000     | The Customer Code must be an integer with a maximum length of 9                                                                             |
-      | INVALID_CUSTOMER_CODE_ALPHA_NUM_TC390       | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 121. |
+      | INVALID_CUSTOMER_CODE_ALPHA_NUM_TC390       | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode \| LineNumber: 0 \| BytePositionInLine: 122. |
       | INVALID_CUSTOMER_CODE_DOES_NOT_EXIST_TC390a | 10000     | Invalid Request: Invalid Customer Code                                                                                                      |
 
   @SaveEnrollmentInvalidPremisesCODE @Phase1  @NegativeFlow
@@ -201,7 +201,7 @@ Feature: Verify SaveEnrollment Api
     Examples:
       | testCondition                                          | errorCode | errorMessage                                                                                                                                         |
       | SAVE_ENROLLMENT_INVALID_BUDGET_AMOUNT_MAX_LENGTH_TC408 | 10000     | The Estimated Budget Amount must be an integer with a maximum length of 5                                                                            |
-      | SAVE_ENROLLMENT_INVALID_VALUE_BUDGET_AMOUNT_TC409      | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.estimatedBudgetAmount \| LineNumber: 0 \| BytePositionInLine: 276. |
+      | SAVE_ENROLLMENT_INVALID_VALUE_BUDGET_AMOUNT_TC409      | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.estimatedBudgetAmount \| LineNumber: 0 \| BytePositionInLine: 277. |
 
   @SaveEnrollmentInvalidServiceDateWithEligiblePlansAndOffers @Phase1  @NegativeFlow
   Scenario Outline: SaveEnrollment Api- Verify response code for invalid service date for "<testCondition>" condition
@@ -257,7 +257,7 @@ Feature: Verify SaveEnrollment Api
       | SAVE_ENROLLMENT_INVALID_AGLC_SERVICE_ORDER_MAX_LENGTH_TC421 | 10000     | The AGLC Service Order Number must be a numeric string with a maximum length of 9                                                                            |
       | SAVE_ENROLLMENT_INVALID_NOTES_MAX_LENGTH_TC422              | 10000     | The Notes must be a string with a maximum length of 600                                                                                                      |
       | SAVE_ENROLLMENT_INVALID_SSP_PC_MAX_LENGTH_TC422a            | 10000     | The Seasonal Savings Program Participant Code must be an integer with a maximum length of 9                                                                  |
-      | SAVE_ENROLLMENT_INVALID_SSP_PC_VALUE_TC422b                 | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.sspParticipantCode \| LineNumber: 0 \| BytePositionInLine: 396.            |
+      | SAVE_ENROLLMENT_INVALID_SSP_PC_VALUE_TC422b                 | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.sspParticipantCode \| LineNumber: 0 \| BytePositionInLine: 397.            |
 
   @SaveEnrollmentNewFlowMissingNotesCreditCheckSkip @Phase1 @NegativeFlow
   Scenario Outline: SaveEnrollment Api -Verify SaveEnrollment Api throws an appropriate error when notes are missing for <testCondition>
@@ -329,7 +329,7 @@ Feature: Verify SaveEnrollment Api
 
     Examples:
       |testCondition                                                         |planCode|promotionCode                    |planCode2|promotionCode2                  |cycleCode    |reasonCode    |enrollmentStatus    |accountStatusIdicator    |paymentArrear    |badDebtExemptIndicator    |NCOAProtectIndicator    |feedbackIndicator    |contactDirection    |referredIndicator    |OCRCDETStatus    |OCRCTIMAutomaticIndicator    |contactType|
-      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS      |RF6      |FIX 8 CENTS FOR 6 MONTHS        |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
+      |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_424       |RGB     |FIX 5 DOLLARS FOR 12 MONTHS      |RF6      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
       |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426       |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
       |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_426_1     |VML     |                                 |VML      |                                |ENRL         |ENRL1         |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
       |GET_ELIGIBLE_PLANS_AND_OFFERS_SAVE_ENROLLMENT_PREV_SAVED_TC_427       |PGB     |FIX 10 DOLLARS FOR 12 MONTHS     |PGB      |FIX 10 DOLLARS FOR 12 MONTHS    |PGBP         |PRP-ENROLL    |UDCS                |N                        |N                |N                         |N                       |N                    |I                   |N                    |A                |A                            |ENROLL     |
@@ -536,7 +536,7 @@ Feature: Verify SaveEnrollment Api
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should have "recordType" as "ENROLLMENT RECORD"
     And a request is made to get Marketer Reference Data
-    And a request is made to the Save Enrollment API for the "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" with "RF6" and ""
+    And a request is made to the Save Enrollment API for the "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496" with "PRP" and ""
     And response should have ErrorCode 0 and ErrorMessage ""
     Then a request is made to the SearchAccountsApi for "SSP_VALIDATION_PAYMENT_CONFIRMATION_NUMBER_MISSING_TC_496"
     And response should have ErrorCode 0 and ErrorMessage ""

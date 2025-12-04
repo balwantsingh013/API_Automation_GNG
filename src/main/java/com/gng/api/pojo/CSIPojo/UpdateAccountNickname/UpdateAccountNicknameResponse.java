@@ -1,4 +1,4 @@
-package com.gng.api.pojo.CSIPojo.SetAccountNickname;
+package com.gng.api.pojo.CSIPojo.UpdateAccountNickname;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SetAccountNicknameResponse {
+public class UpdateAccountNicknameResponse {
 
     private boolean success;
     private int errorCode;

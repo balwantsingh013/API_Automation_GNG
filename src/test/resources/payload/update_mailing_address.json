@@ -1,0 +1,21 @@
+{
+  "requestID": "defaultRequestID",
+  "customerCode": "123456",
+  "premisesCode": "654321",
+  "streetName": "Main Street",
+  "city": "Springfield",
+  "zipCode": "12345",
+  "ruralRoute": "",
+  "poBox": "",
+  "streetNumber": "",
+  "streetPreDirection": "",
+  "streetSuffix": "",
+  "streetPostDirection": "",
+  "unitType": "",
+  "unitNumber": "",
+  "deliveryPoint": "",
+  "carrierRoute": "",
+  "countyCode": "",
+  "attentionTo": "",
+  "additionalAddressLine": ""
+}

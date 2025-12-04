@@ -1,5 +1,6 @@
 package com.gng.api.pages.serviceTransfer.ServiceOrdersPages.SaveUnenrollmentPage;
 
+import com.gng.api.constants.GlobalEnums;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentRequest;
 import com.gng.api.pojo.ServiceOrdersPojo.SaveUnenrollment.SaveUnenrollmentResponse;
@@ -28,4 +29,23 @@ public class SaveUnenrollmentApiPage extends BasePage {
         testContext.setSaveUnenrollmentResponse(pojo);
         testContext.setResponse(response);
     }
+
+    public void validateForActiveRSAccount(
+            SaveUnenrollmentApiLabel apiLabel,
+            String accountType,
+            SaveUnenrollmentApiLabel testCondition,
+            Boolean setEmail,
+            Object etcExists) {
+
+        SaveUnenrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setCustomerCodePremCodeAGLCServiceNoForAccountType(payload, accountType, testCondition);
+        helper.setTurnOffReasonAndSubReason(payload, testCondition);
+        helper.setEmailAddress(payload, setEmail);
+        helper.setEtcExists(payload, etcExists);
+        helper.setMarketerReferenceData(payload, String.valueOf(testContext.getMarketerReferenceData()));
+        payload.setTransactionType(GlobalEnums.TransactionType.TRANSFER.getValue());
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_UNENROLLMENT, 200);
+    }
+
 }
