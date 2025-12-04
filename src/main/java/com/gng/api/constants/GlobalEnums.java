@@ -319,7 +319,7 @@ public class GlobalEnums {
         UDCS("UDCS"),
         CRDS("CRDS"),
         INCL("INCL"),
-        PENDINGREVIEW("PVER"),
+        PENDING_REVIEW("PVER"),
         BAD_CREDIT("BADC");
 
         private final String value;
@@ -343,8 +343,7 @@ public class GlobalEnums {
         CVS("CVS"),
         CSV("CSV"),
         CCV("CCV"),
-        TWENTY_FOUR_M("24M"),
-        EIGHTEEN_M("18M"),
+        M18("18M"),
         RF6("RF6"),
         MI("MI"),
         CMI("CMI"),

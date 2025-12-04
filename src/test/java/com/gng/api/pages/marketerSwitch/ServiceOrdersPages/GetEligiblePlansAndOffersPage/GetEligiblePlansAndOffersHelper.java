@@ -709,8 +709,8 @@ public class GetEligiblePlansAndOffersHelper {
         List<String> standardPlans = List.of(
                 GlobalEnums.PlanCode.RGB.getValue(),
                 GlobalEnums.PlanCode.GPP.getValue(),
-                GlobalEnums.PlanCode.TWENTY_FOUR_M.getValue(), // 24M
-                GlobalEnums.PlanCode.EIGHTEEN_M.getValue(),     // 18M
+                GlobalEnums.PlanCode.M24.getValue(), // 24M
+                GlobalEnums.PlanCode.M18.getValue(),     // 18M
                 GlobalEnums.PlanCode.RF6.getValue(),
                 GlobalEnums.PlanCode.MVS.getValue(),
                 GlobalEnums.PlanCode.CSV.getValue(),
@@ -749,8 +749,8 @@ public class GetEligiblePlansAndOffersHelper {
                     -> allExcept.apply(List.of(
                     GlobalEnums.PlanCode.RGB.getValue(),
                     GlobalEnums.PlanCode.GPP.getValue(),
-                    GlobalEnums.PlanCode.TWENTY_FOUR_M.getValue(),
-                    GlobalEnums.PlanCode.EIGHTEEN_M.getValue(),
+                    GlobalEnums.PlanCode.M24.getValue(),
+                    GlobalEnums.PlanCode.M18.getValue(),
                     GlobalEnums.PlanCode.RF6.getValue(),
                     GlobalEnums.PlanCode.MVS.getValue(),
                     GlobalEnums.PlanCode.CSV.getValue(),
@@ -794,7 +794,7 @@ public class GetEligiblePlansAndOffersHelper {
 
             case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12,
                  GE_MRK_SW_RS_NEW_CC_YES_UC52_TC13 -> {
-                expectedEnrollmentStateEnum = GlobalEnums.EnrollMentState.PENDINGREVIEW;
+                expectedEnrollmentStateEnum = GlobalEnums.EnrollMentState.PENDING_REVIEW;
                 expectedCreditScoreStatus = GlobalEnums.CreditScoreStatus.STATUS_TEXT;
                 expectedCreditScoreTextEnum = GlobalEnums.CreditScoreText.VERIFY_ID;
                 enrollmentSupplier = () -> getEnrollmentRecordFromCustomerLastName(testCondition);
