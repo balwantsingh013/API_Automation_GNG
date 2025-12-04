@@ -307,13 +307,13 @@ public class DBAction {
         return result;
     }
 
-    public Map<String, Object> getPremisesCode(String premCode) {
+    public Map<String, Object> selectPremisesCode() {
         long startTime = System.currentTimeMillis();
-        String query = DBQuery.SELECT_PREM_CODE;
+        String query = DBQuery.SELECT_PREMISES_CODE;
 
         logQueryInAllure("get customer code", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query,premCode);
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
 
         long elapsed = System.currentTimeMillis() - startTime;
 
@@ -328,17 +328,73 @@ public class DBAction {
     }
 
 
+    public Map<String, Object> selectCustCode() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_CUST_CODE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPremisesCode(String premCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PREM_CODE;
+
+        logQueryInAllure("get premises code", query);
+
+        Map<String, Object> result;
+        try {
+            // safer: use queryForList to avoid exception
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(query, premCode);
+            result = results.isEmpty() ? Collections.emptyMap() : results.get(0);
+        } catch (EmptyResultDataAccessException e) {
+            // fallback if queryForMap is used internally
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+
     public Map<String, Object> getCustomerCode(String custCode) {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_CUSTOMER_CODE;
 
         logQueryInAllure("get customer code", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query,custCode);
+        Map<String, Object> result;
+        try {
+            // safer: use queryForList to avoid exception
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(query, custCode);
+            result = results.isEmpty() ? Collections.emptyMap() : results.get(0);
+        } catch (EmptyResultDataAccessException e) {
+            // fallback if queryForMap is used
+            result = Collections.emptyMap();
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
