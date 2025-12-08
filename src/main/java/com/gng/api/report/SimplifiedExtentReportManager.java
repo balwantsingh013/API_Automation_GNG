@@ -624,7 +624,7 @@ public class SimplifiedExtentReportManager {
     .extent-test-node .node-name,
     .test-node h1, .test-node h2, .test-node h3, .test-node h4,
     .test-detail h1, .test-detail h2, .test-detail h3, .test-detail h4 {
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         padding: 5px 10px !important; /* Increased padding */
         margin: 4px 0 !important; /* Increased from 3px */
         line-height: 1.3 !important;
@@ -1131,7 +1131,7 @@ public class SimplifiedExtentReportManager {
         padding: 5px 12px !important; /* Increased padding */
         border-radius: 18px !important; /* Increased from 16px */
         font-weight: 700 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
@@ -1143,7 +1143,7 @@ public class SimplifiedExtentReportManager {
         padding: 5px 12px !important; /* Increased padding */
         border-radius: 18px !important; /* Increased from 16px */
         font-weight: 700 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
@@ -1155,11 +1155,50 @@ public class SimplifiedExtentReportManager {
         padding: 5px 12px !important; /* Increased padding */
         border-radius: 18px !important; /* Increased from 16px */
         font-weight: 700 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
     }
+    
+    /* === NODE STATUS BADGE (Test Execution Steps Badge) === */
+                        /* Target the badge that appears next to node names like "Test Execution Steps" */
+                        .node-name .badge,
+                        .extent-node .badge,
+                        .test-node .badge,
+                        .card-header .badge,
+                        .node .badge,
+                        [class*="node"] .badge,
+                        .badge.fail,
+                        .badge.pass,
+                        .badge.skip,
+                        .badge.warning,
+                        .badge.info {
+                            padding: 10px 24px !important;
+                            border-radius: 20px !important;
+                            font-size: 15px !important;
+                            font-weight: 800 !important;
+                            min-width: 90px !important;
+                            text-align: center !important;
+                            display: inline-block !important;
+                            margin-left: 15px !important;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+                            letter-spacing: 0.5px !important;
+                            text-transform: uppercase !important;
+                        }
+                
+                        /* Specific colors for node badges */
+                        .node-name .badge.fail,
+                        .badge.fail {
+                            background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+                            color: white !important;
+                        }
+                
+                        .node-name .badge.pass,
+                        .badge.pass {
+                            background: linear-gradient(135deg, #059669, #10b981) !important;
+                            color: white !important;
+                        }
     
     /* === SPECIALIZED SECTIONS === */
     .response-time-badge {
@@ -1260,7 +1299,7 @@ public class SimplifiedExtentReportManager {
         box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
         font-weight: 600 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
     }
     
     /* === UTILITY CLASSES === */
@@ -1340,7 +1379,7 @@ public class SimplifiedExtentReportManager {
     
     /* Test node content */
     .test-node, .category-node, .feature-node {
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 12px !important; /* Increased from 9px */
     }
     
     /* Timeline content */
@@ -1356,7 +1395,7 @@ public class SimplifiedExtentReportManager {
     
     /* Status indicators */
     .status-indicator, .badge, .label {
-        font-size: 10px !important; /* Increased from 8px */
+        font-size: 14px !important; /* Increased from 8px */
     }
     
     /* === RESPONSIVE DESIGN FOR COLUMNS === */
