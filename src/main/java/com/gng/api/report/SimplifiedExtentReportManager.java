@@ -1742,12 +1742,55 @@ class TimelineFixWithNavigation {
         console.log('✅ Applying timeline fixes...');
         this.setupTimelineMonitoring();
         this.applyTimelineStyling();
+        this.fixTimestampBadgeColors();  // ✅ NEW: Fix timestamp badge colors
 
         setTimeout(() => this.overrideNavigation(), 2000);
         setTimeout(() => this.hideFailedTestButtons(), 3000);
 
         // Auto-highlight first test on load
         setTimeout(() => this.autoHighlightFirstTest(), 500);
+    }
+
+    // ✅ NEW METHOD: INTELLIGENT TIMESTAMP BADGE COLOR FIX - NO HARDCODED DATES
+    fixTimestampBadgeColors() {
+        document.querySelectorAll('.badge-danger, .badge.badge-danger').forEach(badge => {
+            const text = badge.textContent.trim();
+            
+            // Intelligent timestamp detection using patterns (no hardcoded years)
+            const isTimestamp = (
+                // Pattern: DD.MM.YYYY HH:MM:SS PM/AM
+                /\\d{2}\\.\\d{2}\\.\\d{4}\\s+\\d{1,2}:\\d{2}:\\d{2}\\s+(AM|PM)/i.test(text) ||
+                // Pattern: HH:MM:SS
+                /^\\d{1,2}:\\d{2}:\\d{2}$/.test(text) ||
+                // Pattern: DD.MM.YYYY
+                /^\\d{2}\\.\\d{2}\\.\\d{4}$/.test(text) ||
+                // Pattern: Time with AM/PM
+                /\\d{1,2}:\\d{2}(:\\d{2})?\\s*(AM|PM)/i.test(text) ||
+                // Pattern: ISO date format
+                /^\\d{4}-\\d{2}-\\d{2}/.test(text) ||
+                // Pattern: Time with milliseconds
+                /\\d{2}:\\d{2}:\\d{2}\\.\\d{3}/.test(text)
+            );
+            
+            // Exclude status badges
+            const isStatusBadge = /fail|pass|skip|error|success|warning/i.test(text);
+            
+            // Only change timestamp badges, NOT status badges
+            if (isTimestamp && !isStatusBadge) {
+                badge.style.background = 'linear-gradient(135deg, #059669, #10b981)';
+                badge.style.boxShadow = '0 3px 10px rgba(5, 150, 105, 0.4)';
+                badge.style.color = 'white';
+                badge.classList.remove('badge-danger');
+                badge.classList.add('badge-success');
+                console.log('✅ Fixed timestamp badge:', text);
+            }
+        });
+        
+        // Watch for dynamically added badges
+        const observer = new MutationObserver(() => {
+            setTimeout(() => this.fixTimestampBadgeColors(), 100);
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 
     autoHighlightFirstTest() {
@@ -1778,13 +1821,13 @@ class TimelineFixWithNavigation {
         testElement.style.cssText = originalStyle + `
             position: relative !important;
             z-index: 9999 !important;
-            outline: 2px solid #2563eb !important;        /* thinner outline */
-            outline-offset: 2px !important;               /* thinner offset */
+            outline: 2px solid #2563eb !important;
+            outline-offset: 2px !important;
             background: rgba(37, 99, 235, 0.15) !important;
             box-shadow:
                 0 0 0 1px rgba(37, 99, 235, 0.4),
                 0 0 10px rgba(37, 99, 235, 0.6),
-                inset 0 0 10px rgba(37, 99, 235, 0.1) !important;   /* thinner shadow */
+                inset 0 0 10px rgba(37, 99, 235, 0.1) !important;
             border-radius: 10px !important;
             transform: scale(1.02) !important;
             transition: all 0.3s ease !important;
@@ -1864,10 +1907,9 @@ class TimelineFixWithNavigation {
 
 // Initialize
 window.timelineFixWithNavigation = new TimelineFixWithNavigation();
-console.log('✅ Timeline highlighting initialized');
+console.log('✅ Timeline highlighting with intelligent timestamp badge fix initialized');
 """;
 }
-
 
 
 
