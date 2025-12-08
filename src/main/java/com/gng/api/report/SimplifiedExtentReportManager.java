@@ -1199,6 +1199,58 @@ public class SimplifiedExtentReportManager {
                             background: linear-gradient(135deg, #059669, #10b981) !important;
                             color: white !important;
                         }
+                        
+                        /* === NAVIGATION HIGHLIGHTING - SUPER STRONG === */
+                                            .nav-highlighted {
+                                                position: relative !important;
+                                                z-index: 1000 !important;
+                                                outline: 5px solid #2563eb !important;
+                                                outline-offset: 3px !important;
+                                                background: rgba(37, 99, 235, 0.25) !important;
+                                                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3),\s
+                                                            0 0 20px rgba(37, 99, 235, 0.5),\s
+                                                            inset 0 0 20px rgba(37, 99, 235, 0.1) !important;
+                                                border-radius: 8px !important;
+                                                transform: scale(1.02) !important;
+                                                transition: all 0.3s ease !important;
+                                            }
+                
+                                            /* Stronger border for highlighted test */
+                                            .nav-highlighted::before {
+                                                content: '👉 CURRENT TEST' !important;
+                                                position: absolute !important;
+                                                top: -30px !important;
+                                                left: 50% !important;
+                                                transform: translateX(-50%) !important;
+                                                background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+                                                color: white !important;
+                                                padding: 6px 16px !important;
+                                                border-radius: 20px !important;
+                                                font-size: 12px !important;
+                                                font-weight: 800 !important;
+                                                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5) !important;
+                                                z-index: 1001 !important;
+                                                animation: pulse 1.5s infinite !important;
+                                                letter-spacing: 1px !important;
+                                            }
+                
+                                            /* Pulse animation for the indicator */
+                                            @keyframes pulse {
+                                                0%, 100% {\s
+                                                    opacity: 1;\s
+                                                    transform: translateX(-50%) scale(1);\s
+                                                }
+                                                50% {\s
+                                                    opacity: 0.8;\s
+                                                    transform: translateX(-50%) scale(1.05);\s
+                                                }
+                                            }
+                
+                                            /* Make sure highlighted content is visible */
+                                            .nav-highlighted * {
+                                                position: relative !important;
+                                                z-index: 1001 !important;
+                                            }
     
     /* === SPECIALIZED SECTIONS === */
     .response-time-badge {
@@ -1659,362 +1711,167 @@ public class SimplifiedExtentReportManager {
     }
 
     // TIMELINE FIX JAVASCRIPT - ONLY FIXES TIMELINE ISSUES, DOESN'T CHANGE EXISTING FUNCTIONALITY
-    private static String getTimelineFixJavaScript() {
-        return """
-        // === TIMELINE FIX + NAVIGATION OVERRIDE ===
-        class TimelineFixWithNavigation {
-            constructor() {
-                this.init();
-            }
-            
-            init() {
-                console.log('Timeline Fix + Navigation: Initializing...');
-                
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', () => this.applyFixes());
-                } else {
-                    this.applyFixes();
-                }
-            }
-            
-            applyFixes() {
-                console.log('Applying timeline fixes and navigation override...');
-                
-                // Apply timeline fixes first
-                this.fixOffsetWidthIssues();
-                this.setupTimelineMonitoring();
-                this.applyTimelineStyling();
-                
-                // Apply navigation override after delay
-                setTimeout(() => this.overrideNavigation(), 2000);
-                setTimeout(() => this.hideFailedTestButtons(), 3000);
-            }
-            
-            overrideNavigation() {
-                console.log('Applying navigation override...');
-                
-                // Method 1: Hide failed test buttons
-                this.hideFailedTestButtons();
-                
-                // Method 2: Add keyboard navigation
-                this.addKeyboardNavigation();
-                
-                // Method 3: Monitor for new buttons
-                this.monitorForFailedTestButtons();
-            }
-            
-            hideFailedTestButtons() {
-                // Find and hide all buttons with "failed" in text, onclick, or title
-                const selectors = [
-                    'button', '.btn', 'a[role="button"]', '[onclick]', 
-                    '[class*="btn"]', '[class*="button"]', '[class*="nav"]'
-                ];
-                
-                selectors.forEach(selector => {
-                    document.querySelectorAll(selector).forEach(element => {
-                        const text = (element.textContent || element.innerText || '').toLowerCase();
-                        const title = (element.title || '').toLowerCase();
-                        const onclick = (element.getAttribute('onclick') || '').toLowerCase();
-                        const className = (element.className || '').toLowerCase();
-                        
-                        if (this.isFailedTestButton(text, title, onclick, className)) {
-                            console.log('Hiding failed test button:', text.substring(0, 30));
-                            element.style.display = 'none';
-                            element.style.visibility = 'hidden';
-                            element.style.pointerEvents = 'none';
-                            element.setAttribute('data-hidden-failed-btn', 'true');
-                        }
-                    });
-                });
-            }
-            
-            isFailedTestButton(text, title, onclick, className) {
-                const checkTexts = [text, title, onclick, className];
-                return checkTexts.some(str => 
-                    (str.includes('failed') && (str.includes('next') || str.includes('skip'))) ||
-                    str.includes('nextfailed') ||
-                    str.includes('skipfailed') ||
-                    (str.includes('fail') && str.includes('nav'))
-                );
-            }
-            
-            addKeyboardNavigation() {
-                document.addEventListener('keydown', (e) => {
-                    // Ctrl + Down or Ctrl + J for next test
-                    if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowDown' || e.key === 'j' || e.key === 'J')) {
-                        e.preventDefault();
-                        this.navigateToNextTest();
-                    }
-                    // Ctrl + Up or Ctrl + K for previous test  
-                    else if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowUp' || e.key === 'k' || e.key === 'K')) {
-                        e.preventDefault();
-                        this.navigateToPreviousTest();
-                    }
-                });
-                
-                console.log('Keyboard navigation added: Ctrl+J/Down (next), Ctrl+K/Up (previous)');
-            }
-            
-            monitorForFailedTestButtons() {
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        mutation.addedNodes.forEach((node) => {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                // Check if the new node is a button or contains buttons
-                                const buttons = node.tagName === 'BUTTON' ? [node] : 
-                                               (node.querySelectorAll ? Array.from(node.querySelectorAll('button, .btn, [onclick]')) : []);
-                                
-                                buttons.forEach(button => {
-                                    const text = (button.textContent || '').toLowerCase();
-                                    const title = (button.title || '').toLowerCase();
-                                    const onclick = (button.getAttribute('onclick') || '').toLowerCase();
-                                    const className = (button.className || '').toLowerCase();
-                                    
-                                    if (this.isFailedTestButton(text, title, onclick, className)) {
-                                        console.log('Hiding new failed test button:', text.substring(0, 30));
-                                        button.style.display = 'none';
-                                        button.style.visibility = 'hidden';
-                                        button.style.pointerEvents = 'none';
-                                    }
-                                });
-                            }
-                        });
-                    });
-                });
-                
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
-            }
-            
-            navigateToNextTest() {
-                console.log('Navigating to next test...');
-                const tests = this.getAllTestElements();
-                if (tests.length === 0) return;
-                
-                const currentIndex = this.getCurrentTestIndex(tests);
-                const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % tests.length;
-                
-                this.scrollToTest(tests[nextIndex]);
-            }
-            
-            navigateToPreviousTest() {
-                console.log('Navigating to previous test...');
-                const tests = this.getAllTestElements();
-                if (tests.length === 0) return;
-                
-                const currentIndex = this.getCurrentTestIndex(tests);
-                const prevIndex = currentIndex <= 0 ? tests.length - 1 : currentIndex - 1;
-                
-                this.scrollToTest(tests[prevIndex]);
-            }
-            
-            getAllTestElements() {
-                const selectors = [
-                    '.test-node', '.scenario-node', '.extent-node', 
-                    '.card-panel', '.test-item', '.test-case',
-                    '.extent-test', '.node'
-                ];
-                
-                let tests = [];
-                for (const selector of selectors) {
-                    tests = Array.from(document.querySelectorAll(selector));
-                    if (tests.length > 0) break;
-                }
-                
-                return tests.filter(test => test.offsetHeight > 0); // Only visible tests
-            }
-            
-            getCurrentTestIndex(tests) {
-                for (let i = 0; i < tests.length; i++) {
-                    const rect = tests[i].getBoundingClientRect();
-                    if (rect.top >= 0 && rect.top < window.innerHeight * 0.6) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            
-            // In the scrollToTest method within getTimelineFixJavaScript(), replace the highlighting section:
-                
-                    scrollToTest(testElement) {
-                        if (!testElement) return;
-                
-                        // Remove previous highlights
-                        document.querySelectorAll('.nav-highlighted').forEach(el => {
-                            el.classList.remove('nav-highlighted');
-                            el.style.outline = '';
-                            el.style.backgroundColor = '';
-                            el.style.boxShadow = '';
-                            el.style.borderRadius = '';
-                        });
-                
-                        // Highlight current test with stronger emphasis
-                        testElement.classList.add('nav-highlighted');
-                        testElement.style.outline = '4px solid #2563eb';           // thicker, darker blue outline
-                        testElement.style.backgroundColor = 'rgba(59, 130, 246, 0.2)'; // deeper blue background
-                        testElement.style.boxShadow = '0 0 12px rgba(59, 130, 246, 0.6)'; // glowing blue shadow
-                        testElement.style.borderRadius = '6px';                   // rounded corners for emphasis
-                
-                        // Scroll to test
-                        testElement.scrollIntoView({\s
-                            behavior: 'smooth',\s
-                            block: 'center'\s
-                        });
-                
-                        // Try to expand the test if it's collapsible
-                        setTimeout(() => {
-                            const clickable = testElement.querySelector('a, button, .clickable, [onclick]') || testElement;
-                            if (clickable && clickable.click && !testElement.classList.contains('expanded')) {
-                                try {
-                                    clickable.click();
-                                } catch (e) {
-                                    // Ignore click errors
-                                }
-                            }
-                        }, 500);
-                
-                        // Remove highlight after 3 seconds
-                        setTimeout(() => {
-                            testElement.style.outline = '';
-                            testElement.style.backgroundColor = '';
-                            testElement.style.boxShadow = '';
-                            testElement.style.borderRadius = '';
-                            testElement.classList.remove('nav-highlighted');
-                        }, 3000);
-                
-                        console.log('Navigated to:', (testElement.textContent || '').substring(0, 50) + '...');
-                    }
-            
-            // === EXISTING TIMELINE FIX METHODS ===
-            fixOffsetWidthIssues() {
-                const problematicElements = document.querySelectorAll('*');
-                
-                problematicElements.forEach(element => {
-                    if (element.style && element.style.cssText.includes('offsetWidth')) {
-                        element.style.cssText = element.style.cssText.replace(/[^;]*offsetWidth[^;]*;?/g, '');
-                        element.style.maxWidth = '350px';
-                        element.style.overflow = 'hidden';
-                        element.style.textOverflow = 'ellipsis';
-                        element.style.whiteSpace = 'nowrap';
-                    }
-                    
-                    if (element.textContent && element.textContent.includes('offsetWidth')) {
-                        if (element.classList.contains('card-title') || 
-                            element.classList.contains('node-name') || 
-                            element.classList.contains('test-title') ||
-                            element.closest('.timeline-view')) {
-                            
-                            const meaningfulName = this.getMeaningfulTestName(element);
-                            element.textContent = meaningfulName;
-                            console.log('Fixed offsetWidth issue: ' + meaningfulName);
-                        }
-                    }
-                });
-            }
-            
-            getMeaningfulTestName(element) {
-                const parentCard = element.closest('.card-panel');
-                if (parentCard) {
-                    const allTextElements = parentCard.querySelectorAll('*');
-                    for (const textEl of allTextElements) {
-                        if (textEl !== element && textEl.textContent && 
-                            !textEl.textContent.includes('offsetWidth') &&
-                            textEl.textContent.trim().length > 3 &&
-                            !textEl.textContent.includes('Thread') &&
-                            !textEl.textContent.includes('ms')) {
-                            return textEl.textContent.trim();
-                        }
-                    }
-                }
-                
-                const timestamp = new Date().toLocaleTimeString();
-                return `API Test - ${timestamp}`;
-            }
-            
-            applyTimelineStyling() {
-                const timelineElements = document.querySelectorAll(
-                    '.timeline-view, .timeline-container, .timeline, ' +
-                    '.timeline-view .card-panel, .timeline-container .card-panel'
-                );
-                
-                timelineElements.forEach(element => {
-                    element.style.overflow = 'visible';
-                    element.style.minHeight = '60px';
-                    element.style.position = 'relative';
-                });
-                
-                const timelineTextElements = document.querySelectorAll(
-                    '.timeline-view .card-title, .timeline-view .card-title *, ' +
-                    '.timeline-view .node-name, .timeline-item .test-title'
-                );
-                
-                timelineTextElements.forEach(element => {
-                    element.style.maxWidth = '350px';
-                    element.style.overflow = 'hidden';
-                    element.style.textOverflow = 'ellipsis';
-                    element.style.whiteSpace = 'nowrap';
-                    element.style.color = 'white';
-                    element.style.fontWeight = '600';
-                });
-            }
-            
-            setupTimelineMonitoring() {
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.type === 'childList') {
-                            mutation.addedNodes.forEach((node) => {
-                                if (node.nodeType === Node.ELEMENT_NODE) {
-                                    if (node.classList && (
-                                        node.classList.contains('timeline-view') ||
-                                        node.classList.contains('timeline-container') ||
-                                        node.classList.contains('card-panel') ||
-                                        (node.querySelector && node.querySelector('.timeline-view, .timeline-container'))
-                                    )) {
-                                        setTimeout(() => {
-                                            this.fixOffsetWidthIssues();
-                                            this.applyTimelineStyling();
-                                        }, 100);
-                                    }
-                                }
-                            });
-                        }
-                        
-                        if (mutation.type === 'characterData' && 
-                            mutation.target.textContent && 
-                            mutation.target.textContent.includes('offsetWidth')) {
-                            setTimeout(() => {
-                                if (mutation.target.parentElement) {
-                                    const meaningfulName = this.getMeaningfulTestName(mutation.target.parentElement);
-                                    mutation.target.textContent = meaningfulName;
-                                }
-                            }, 50);
-                        }
-                    });
-                });
-                
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true,
-                    characterData: true
-                });
-                
-                console.log('Timeline monitoring activated');
-            }
-        }
-        
-        // Initialize the system
-        window.timelineFixWithNavigation = new TimelineFixWithNavigation();
-        
-        // Expose navigation functions for manual use
-        window.goToNextTest = () => window.timelineFixWithNavigation.navigateToNextTest();
-        window.goToPreviousTest = () => window.timelineFixWithNavigation.navigateToPreviousTest();
-        
-        console.log('Timeline Fix + Navigation Override initialized');
-        console.log('Use Ctrl+J/Down for next test, Ctrl+K/Up for previous test');
-        """;
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+private static String getTimelineFixJavaScript() {
+    return """
+// === FULLY FIXED TIMELINE HIGHLIGHTING FOR li.test-item (thin borders) ===
+class TimelineFixWithNavigation {
+    constructor() {
+        this.currentHighlightedElement = null;
+        this.init();
     }
+
+    init() {
+        console.log('🎯 Timeline Fix: Initializing...');
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.applyFixes());
+        } else {
+            this.applyFixes();
+        }
+    }
+
+    applyFixes() {
+        console.log('✅ Applying timeline fixes...');
+        this.setupTimelineMonitoring();
+        this.applyTimelineStyling();
+
+        setTimeout(() => this.overrideNavigation(), 2000);
+        setTimeout(() => this.hideFailedTestButtons(), 3000);
+
+        // Auto-highlight first test on load
+        setTimeout(() => this.autoHighlightFirstTest(), 500);
+    }
+
+    autoHighlightFirstTest() {
+        const firstTest = this.getAllTestElements()[0];
+        if (firstTest) {
+            this.highlightTestElement(firstTest, false);
+        }
+    }
+
+    getAllTestElements() {
+        const tests = Array.from(document.querySelectorAll('li.test-item'));
+        return tests.filter(test => test.offsetHeight > 0);
+    }
+
+    highlightTestElement(testElement, shouldScroll = true) {
+        if (!testElement) return;
+
+        // Remove previous highlight
+        if (this.currentHighlightedElement) {
+            this.removeHighlight(this.currentHighlightedElement);
+        }
+
+        this.currentHighlightedElement = testElement;
+
+        const originalStyle = testElement.getAttribute('style') || '';
+        testElement.setAttribute('data-original-style', originalStyle);
+
+        testElement.style.cssText = originalStyle + `
+            position: relative !important;
+            z-index: 9999 !important;
+            outline: 2px solid #2563eb !important;        /* thinner outline */
+            outline-offset: 2px !important;               /* thinner offset */
+            background: rgba(37, 99, 235, 0.15) !important;
+            box-shadow:
+                0 0 0 1px rgba(37, 99, 235, 0.4),
+                0 0 10px rgba(37, 99, 235, 0.6),
+                inset 0 0 10px rgba(37, 99, 235, 0.1) !important;   /* thinner shadow */
+            border-radius: 10px !important;
+            transform: scale(1.02) !important;
+            transition: all 0.3s ease !important;
+        `;
+
+        if (shouldScroll) {
+            testElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    removeHighlight(element) {
+        if (!element) return;
+        const originalStyle = element.getAttribute('data-original-style');
+        if (originalStyle !== null) {
+            element.style.cssText = originalStyle;
+            element.removeAttribute('data-original-style');
+        }
+        if (this.currentHighlightedElement === element) {
+            this.currentHighlightedElement = null;
+        }
+    }
+
+    overrideNavigation() {
+        this.hideFailedTestButtons();
+        this.addClickHighlighting();
+    }
+
+    addClickHighlighting() {
+        document.addEventListener('click', (e) => {
+            const testElement = e.target.closest('li.test-item');
+            if (testElement) {
+                this.highlightTestElement(testElement, false);
+            }
+        }, true);
+    }
+
+    hideFailedTestButtons() {
+        const selectors = ['button', '.btn', 'a[role="button"]', '[onclick]', '[class*="btn"]', '[class*="button"]', '[class*="nav"]'];
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                const text = (el.textContent || el.innerText || '').toLowerCase();
+                const title = (el.title || '').toLowerCase();
+                const onclick = (el.getAttribute('onclick') || '').toLowerCase();
+                const className = (el.className || '').toLowerCase();
+                if ((text.includes('failed') && (text.includes('next') || text.includes('skip'))) ||
+                    text.includes('nextfailed') || text.includes('skipfailed') ||
+                    (text.includes('fail') && text.includes('nav'))) {
+                    el.style.display = 'none';
+                    el.style.visibility = 'hidden';
+                    el.style.pointerEvents = 'none';
+                }
+            });
+        });
+    }
+
+    applyTimelineStyling() {
+        document.querySelectorAll('li.test-item').forEach(el => {
+            el.style.transition = 'all 0.3s ease';
+        });
+    }
+
+    setupTimelineMonitoring() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === Node.ELEMENT_NODE && node.matches('li.test-item')) {
+                            node.style.transition = 'all 0.3s ease';
+                        }
+                    });
+                }
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+}
+
+// Initialize
+window.timelineFixWithNavigation = new TimelineFixWithNavigation();
+console.log('✅ Timeline highlighting initialized');
+""";
+}
+
+
+
+
+
 
     private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
         StringBuilder successLog = new StringBuilder();
