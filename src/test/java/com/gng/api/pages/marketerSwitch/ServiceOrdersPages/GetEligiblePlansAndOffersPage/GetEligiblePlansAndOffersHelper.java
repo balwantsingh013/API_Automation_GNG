@@ -59,6 +59,26 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setMarketingPromotionCode("");
     }
 
+    public void setParametersToSeedExternalDataBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        setSupportingDefaultParameters(payload, testCondition);
+        switch (testCondition) {
+            case SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9)));
+                payload.setSspParticipantCode(null);
+                //payload.setAuthorizedBy(null);
+            }
+            default -> {
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9)));
+                payload.setSspParticipantCode(null);
+                payload.setAuthorizedBy(null);}
+        }
+    }
+
     public void setSeedDataCustomerInformation(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         setSupportingDefaultParameters(payload, testCondition);
         switch (testCondition) {

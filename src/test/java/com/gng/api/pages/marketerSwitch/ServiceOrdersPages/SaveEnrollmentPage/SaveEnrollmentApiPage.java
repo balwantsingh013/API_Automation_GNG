@@ -18,15 +18,15 @@ public class SaveEnrollmentApiPage extends BasePage {
         this.helper = new SaveEnrollmentHelper(testContext);
     }
 
-//    public void validateInvalidParameters(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
-//        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
-//        helper.setParametersBasedOnTypeNegative(payload, testCondition);
-//        setRequestSpecification(payload, testContext.getAuthToken());
-//        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
-//        SaveEnrollmentResponse pojo = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
-//        testContext.setSaveEnrollmentResponse(pojo);
-//        testContext.setResponse(response);
-//    }
+    public void validateNegativeConditions(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
+        SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersBasedOnTypeNegative(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, SAVE_ENROLLMENT, 200);
+        SaveEnrollmentResponse pojo = deserializeResponseToPojo(response, SaveEnrollmentResponse.class);
+        testContext.setSaveEnrollmentResponse(pojo);
+        testContext.setResponse(response);
+    }
 
     public void validateValidParameters(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);

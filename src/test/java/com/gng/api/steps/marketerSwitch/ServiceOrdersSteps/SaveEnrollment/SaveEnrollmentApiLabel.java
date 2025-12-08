@@ -2,6 +2,18 @@ package com.gng.api.steps.marketerSwitch.ServiceOrdersSteps.SaveEnrollment;
 
 public enum SaveEnrollmentApiLabel {
     save_enrollment,
+    save_enrollment_mandatory,
+
+    SE_MRK_SW_MISSING_TRANSACTION_TYPE_TC_034,
+    SE_MRK_SW_MAX_LENGTH_TRANSACTION_TYPE_TC_035,
+    SE_MRK_SW_INVALID_TRANSACTION_TYPE_TC_036,
+    SE_MRK_SW_SPLIT_CONN_FEE_TRUE_TC_037,
+    SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038,
+    SE_MRK_SW_ABLC_SERVICE_PROVIDED_TC_039,
+    SE_MRK_SW_MAX_LENGTH_CURRENT_MRK_CODE_TC_040,
+    SE_MRK_SW_INVALID_CURRENT_MRK_CODE_TC_041,
+    SE_MRK_SW_NOT_ALPHA_CURRENT_MRK_CODE_TC_042,
+
 
 
     //external

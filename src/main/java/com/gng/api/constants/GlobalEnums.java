@@ -112,7 +112,8 @@ public class GlobalEnums {
         INVALID_TRANSACTION_TYPE("TOBO"),
         INVALID_CUSTOMER_CODE("0"),
         INVALID_PREMISES_CODE("0"),
-        INVALID_ENROLLMENT_STATE("SEMT");
+        INVALID_ENROLLMENT_STATE("SEMT"),
+        INVALID_CURRENT_MARKETER_CODE("JUMP");
 
         private final String value;
 

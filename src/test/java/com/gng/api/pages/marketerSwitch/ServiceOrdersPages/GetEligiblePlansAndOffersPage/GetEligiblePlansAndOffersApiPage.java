@@ -18,15 +18,15 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         this.helper = new GetEligiblePlansAndOffersHelper(testContext);
     }
 
-//    public void seedNegativeTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
-//        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
-//        helper.setParametersToSeedDataBasedOnType(payload, testCondition);
-//        setRequestSpecification(payload, testContext.getAuthToken());
-//        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
-//        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
-//        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
-//        testContext.setResponse(response);
-//    }
+    public void seedNegativeExternalTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+        GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
+        helper.setParametersToSeedExternalDataBasedOnType(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_ELIGIBLE_PLANS_AND_OFFERS, 200);
+        GetEligiblePlansAndOffersResponse getEligiblePlansAndOffersResponse = deserializeResponseToPojo(response, GetEligiblePlansAndOffersResponse.class);
+        testContext.setGetEligiblePlansAndOffersResponse(getEligiblePlansAndOffersResponse);
+        testContext.setResponse(response);
+    }
 
     public void seedCustomerFileSourceTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);

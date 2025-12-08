@@ -45,7 +45,7 @@ public class SaveEnrollmentHelper {
         payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
         payload.setPromotionCode("");
         payload.setCustomerRequestedServiceDate("");
-        payload.setSplitConnectionFeeIndicator(true);
+        payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
         payload.setEstimatedBudgetAmount(null);
         payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomNumericString(8));
         payload.setSspParticipantCode(null);
@@ -56,19 +56,22 @@ public class SaveEnrollmentHelper {
         payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
     }
 
-
-
-    public void setPrePayFieldsByCondition(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        switch (testCondition) {
-//            case  -> {
-//                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(2));
-//                payload.setCustomerRequestedServiceDate(payload.getRequestedTurnOnDate());
-//                payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(6));
-//                payload.setBillingPlan(GlobalEnums.BillingPlan.BUDGET.getValue());
-//            }
-            default -> {  }
-        }
+    public void setNegativeSupportingDefaultParameters(SaveEnrollmentRequest payload) {
+        payload.setRequestID(FakerDataGenerator.generateString(12));
+        payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
+        payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
+        payload.setPromotionCode("");
+        payload.setCustomerRequestedServiceDate("");
+        payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
+        payload.setEstimatedBudgetAmount(null);
+        payload.setSspParticipantCode(null);
+        payload.setCurrentMarketerCode(null);
+        payload.setServiceTransferReward(null);
+        payload.setServiceTransferCurrentPricePlan(null);
+        payload.setServiceTransferOfferRemainder(null);
+        payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
     }
+
 
     public void setParametersBasedOnTypePositive(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         setSupportingDefaultParameters(payload);
@@ -121,11 +124,25 @@ public class SaveEnrollmentHelper {
     }
 
     public void setParametersBasedOnTypeNegative(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
+        setNegativeSupportingDefaultParameters(payload);
         setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-        setPrePayFieldsByCondition(payload, testCondition);
+        payload.setAglcAccountNumber("");
+        payload.setAglcServiceOrderNumber("");
+        payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
 
         switch (testCondition) {
+            case SE_MRK_SW_MISSING_TRANSACTION_TYPE_TC_034 -> payload.setTransactionType(null);
+            case SE_MRK_SW_MAX_LENGTH_TRANSACTION_TYPE_TC_035 -> payload.setTransactionType(FakerDataGenerator.generateString(5));
+            case SE_MRK_SW_INVALID_TRANSACTION_TYPE_TC_036 -> payload.setTransactionType(GlobalEnums.InvalidValues.INVALID_TRANSACTION_TYPE.getValue());
+            case SE_MRK_SW_SPLIT_CONN_FEE_TRUE_TC_037 -> payload.setSplitConnectionFeeIndicator(Boolean.TRUE);
+            case SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.REFUSED_DEPOSIT.getValue());
+                payload.setAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9));
+            }
+            case SE_MRK_SW_ABLC_SERVICE_PROVIDED_TC_039 -> payload.setAglcServiceOrderNumber(FakerDataGenerator.getRandomNumericString(9));
+            case SE_MRK_SW_MAX_LENGTH_CURRENT_MRK_CODE_TC_040 -> payload.setCurrentMarketerCode(FakerDataGenerator.generateString(5));
+            case SE_MRK_SW_INVALID_CURRENT_MRK_CODE_TC_041 -> payload.setCurrentMarketerCode(GlobalEnums.InvalidValues.INVALID_CURRENT_MARKETER_CODE.getValue());
+            case SE_MRK_SW_NOT_ALPHA_CURRENT_MRK_CODE_TC_042 -> payload.setCurrentMarketerCode(FakerDataGenerator.getRandomNumericString(4));
 
             default -> {  }
         }
@@ -144,7 +161,6 @@ public class SaveEnrollmentHelper {
             }
             case  GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-                //override to null
                 payload.setAglcServiceOrderNumber(null);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
                 payload.setAglcServiceOrderNumber(null);
@@ -179,20 +195,15 @@ public class SaveEnrollmentHelper {
             case  GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
                 setSecondCallParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.REFUSED_PREPAY.getValue());
-                //payload.setPlanCode(GlobalEnums.PlanCode.TRD.getValue());
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
                 payload.setBillingPlan(null);
             }
             case  GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
-                //loadCustomerData(payload, testCondition);
                 setSecondCallParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-                //adding aglcAcc#?
-                //setParamsFromSearchAccountsResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_BILLED.getValue());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
 
-                //testing
                 payload.setAglcServiceOrderNumber(null);
                 payload.setAglcAccountNumber(aglcAccountNumber);
             }
@@ -368,8 +379,11 @@ public class SaveEnrollmentHelper {
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.VML.getValue());
             case GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.CVS.getValue());
-            case GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33
+            case GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33,
+                 SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.CMI.getValue());
+//            case SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038
+//                    -> findPlanByCode(plans, GlobalEnums.PlanCode.CCV.getValue());
             default -> plans.getFirst();
         };
     }

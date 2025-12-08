@@ -19,9 +19,9 @@ public class GetEligiblePlansAndOffersApiSteps {
         this.getEligiblePlansAndOffersApiPage = getEligiblePlansAndOffersApiPage;
     }
 
-    @When("a request is made to the GetEligiblePlansAndOffers Api negative marketerSwitch to seed data for {string} condition")
-    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Negative_Marketer_Switch_Seed_data_for_condition(String testCondition) {
-       // getEligiblePlansAndOffersApiPage.seedNegativeTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    @When("a request is made to the GetEligiblePlansAndOffers Api for marketer switch from SearchAccounts response for external cases for {string} condition")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Negative_Marketer_Switch_External_for_condition(String testCondition) {
+        getEligiblePlansAndOffersApiPage.seedNegativeExternalTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
     @When("a request is made to the GetEligiblePlansAndOffers Api from customer file marketerSwitch to seed data for {string} condition")
