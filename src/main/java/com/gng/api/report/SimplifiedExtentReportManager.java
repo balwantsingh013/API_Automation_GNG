@@ -172,9 +172,9 @@ public class SimplifiedExtentReportManager {
     public static void logTestDescription(String description) {
         ExtentTest currentTest = test.get();
         if (currentTest != null) {
-            String html = "<div style='margin-top:30px; padding:15px; background:#ffffff; border:1px solid #2E86C1; border-radius:10px;'>"
-                    + "<div style='font-size:23px; font-weight:bold;'>📝 Test Description:</div>"
-                    + "<div style='color:#2E86C1; font-size:23px; font-weight:bold;'>" + description + "</div>"
+            String html = "<div class='test-description-block'>"
+                    + "<div class='test-description-title'>📝 Test Description:</div>"
+                    + "<div class='test-description-text'>" + description + "</div>"
                     + "</div>";
             currentTest.getModel().setDescription(html);
         }
@@ -182,10 +182,17 @@ public class SimplifiedExtentReportManager {
 
 
 
-    public static synchronized void initialiseExtentReport() {
+
+    public static synchronized void initialiseExtentReport(String config) {
         if (extent == null) {
             extent = new ExtentReports();
-            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Client-" + CommonUtil.getCurrentDateTime() + ".html");
+            if (config != null && !config.isEmpty()) {
+                spark = new ExtentSparkReporter(REPORT_PATH + "GNG- " + config + ".html");
+            }
+            else{
+                spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Client-" + CommonUtil.getCurrentDateTime() + ".html");
+
+            }
             setConfig();
             log.info("📊 Simplified Extent Report initialized");
         }
@@ -245,11 +252,6 @@ public class SimplifiedExtentReportManager {
     });
 """);
 
-
-
-
-
-
         extent.attachReporter(spark);
         setSystemInfo();
     }
@@ -291,7 +293,7 @@ public class SimplifiedExtentReportManager {
     .timeline-item .card-title * {
         color: white !important;
         font-weight: 600 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
         text-decoration: none !important;
@@ -633,7 +635,7 @@ public class SimplifiedExtentReportManager {
     .test-node .node-name, .test-node .test-name,
     .test-node .scenario-name, .test-node .feature-name,
     .test-node a, .test-node span, .test-node div {
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         font-weight: 500 !important;
         line-height: 1.4 !important;
         max-width: 350px !important; /* Increased width */
@@ -641,14 +643,34 @@ public class SimplifiedExtentReportManager {
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
     }
-                .test-description-block {
-                    margin: 15px 0;
-                    padding: 15px;
-                    background: #fffbe6;
-                    border: 1px solid #fcd34d;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-                }
+.test-description-block {
+    margin-top: 25px;     /* smaller top margin to avoid overlap */
+    margin-bottom: 0px; /* reduced bottom gap */
+    padding: 15px;       /* keep padding comfortable */
+    background: #ffffff;
+    border: 2px solid #2E86C1;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #2E86C1 !important;
+    line-height: 1.4 !important;
+}
+
+
+.test-description-title {
+    font-size: 15px !important;    /* reduced from 17px */
+    font-weight: 700 !important;
+    margin-bottom: 8px;            /* reduced from 10px */
+    color: #1f2937 !important;
+}
+
+.test-description-text {
+    font-size: 14px !important;    /* reduced from 16px */
+    color: #2E86C1 !important;
+}
+
+
                 
     
     /* === COMPONENT STYLES === */
@@ -1200,7 +1222,7 @@ public class SimplifiedExtentReportManager {
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
         font-weight: 600 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 13px !important; /* Increased from 9px */
     }
     
     .warning-log {
@@ -1251,7 +1273,7 @@ public class SimplifiedExtentReportManager {
         overflow-x: auto !important;
         box-shadow: inset 0 2px 6px rgba(0,0,0,0.3) !important; /* Enhanced shadow */
         border: 1px solid #374151 !important;
-        font: 9px/1.5 'Fira Code', 'Monaco', 'Consolas', monospace !important; /* Increased from 8px */
+        font: 12px/1.5 'Fira Code', 'Monaco', 'Consolas', monospace !important; /* Increased from 8px */
     }
     
     .card-panel { 
@@ -1334,7 +1356,7 @@ public class SimplifiedExtentReportManager {
     
     /* Status indicators */
     .status-indicator, .badge, .label {
-        font-size: 9px !important; /* Increased from 8px */
+        font-size: 10px !important; /* Increased from 8px */
     }
     
     /* === RESPONSIVE DESIGN FOR COLUMNS === */
@@ -1382,7 +1404,7 @@ public class SimplifiedExtentReportManager {
         .thread-info { font-size: 8px !important; } /* Increased from 7px */
         .response-time-badge { font-size: 8px !important; } /* Increased from 7px */
         .perf-value { font-size: 8px !important; } /* Increased from 7px */
-        .code-block { font-size: 8px !important; } /* Increased from 7px */
+        .code-block { font-size: 11px !important; } /* Increased from 7px */
         
         /* Mobile header improvements */
         .enhanced-stats-header { padding: 12px !important; } /* Increased from 10px */
@@ -1392,7 +1414,7 @@ public class SimplifiedExtentReportManager {
         /* Mobile test names - better readable */
         .test-name, .scenario-name, .feature-name,
         .test-node .node-name, .test-node .test-name {
-            font-size: 8px !important; /* Increased from 7px */
+            font-size: 14px !important; /* Increased from 7px */
             max-width: 280px !important; /* Increased from 250px */
         }
         
@@ -1593,6 +1615,7 @@ public class SimplifiedExtentReportManager {
                                 .test-node, .scenario-node, .extent-node, .card-panel {
                                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
                                 }
+                                       
     """;
     }
 
@@ -1774,48 +1797,56 @@ public class SimplifiedExtentReportManager {
                 return -1;
             }
             
-            scrollToTest(testElement) {
-                if (!testElement) return;
+            // In the scrollToTest method within getTimelineFixJavaScript(), replace the highlighting section:
                 
-                // Remove previous highlights
-                document.querySelectorAll('.nav-highlighted').forEach(el => {
-                    el.classList.remove('nav-highlighted');
-                    el.style.outline = '';
-                    el.style.backgroundColor = '';
-                });
+                    scrollToTest(testElement) {
+                        if (!testElement) return;
                 
-                // Highlight current test
-                testElement.classList.add('nav-highlighted');
-                testElement.style.outline = '3px solid #3b82f6';
-                testElement.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+                        // Remove previous highlights
+                        document.querySelectorAll('.nav-highlighted').forEach(el => {
+                            el.classList.remove('nav-highlighted');
+                            el.style.outline = '';
+                            el.style.backgroundColor = '';
+                            el.style.boxShadow = '';
+                            el.style.borderRadius = '';
+                        });
                 
-                // Scroll to test
-                testElement.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
+                        // Highlight current test with stronger emphasis
+                        testElement.classList.add('nav-highlighted');
+                        testElement.style.outline = '4px solid #2563eb';           // thicker, darker blue outline
+                        testElement.style.backgroundColor = 'rgba(59, 130, 246, 0.2)'; // deeper blue background
+                        testElement.style.boxShadow = '0 0 12px rgba(59, 130, 246, 0.6)'; // glowing blue shadow
+                        testElement.style.borderRadius = '6px';                   // rounded corners for emphasis
                 
-                // Try to expand the test if it's collapsible
-                setTimeout(() => {
-                    const clickable = testElement.querySelector('a, button, .clickable, [onclick]') || testElement;
-                    if (clickable && clickable.click && !testElement.classList.contains('expanded')) {
-                        try {
-                            clickable.click();
-                        } catch (e) {
-                            // Ignore click errors
-                        }
+                        // Scroll to test
+                        testElement.scrollIntoView({\s
+                            behavior: 'smooth',\s
+                            block: 'center'\s
+                        });
+                
+                        // Try to expand the test if it's collapsible
+                        setTimeout(() => {
+                            const clickable = testElement.querySelector('a, button, .clickable, [onclick]') || testElement;
+                            if (clickable && clickable.click && !testElement.classList.contains('expanded')) {
+                                try {
+                                    clickable.click();
+                                } catch (e) {
+                                    // Ignore click errors
+                                }
+                            }
+                        }, 500);
+                
+                        // Remove highlight after 3 seconds
+                        setTimeout(() => {
+                            testElement.style.outline = '';
+                            testElement.style.backgroundColor = '';
+                            testElement.style.boxShadow = '';
+                            testElement.style.borderRadius = '';
+                            testElement.classList.remove('nav-highlighted');
+                        }, 3000);
+                
+                        console.log('Navigated to:', (testElement.textContent || '').substring(0, 50) + '...');
                     }
-                }, 500);
-                
-                // Remove highlight after 3 seconds
-                setTimeout(() => {
-                    testElement.style.outline = '';
-                    testElement.style.backgroundColor = '';
-                    testElement.classList.remove('nav-highlighted');
-                }, 3000);
-                
-                console.log('Navigated to:', (testElement.textContent || '').substring(0, 50) + '...');
-            }
             
             // === EXISTING TIMELINE FIX METHODS ===
             fixOffsetWidthIssues() {
@@ -1950,7 +1981,7 @@ public class SimplifiedExtentReportManager {
         StringBuilder successLog = new StringBuilder();
 
         successLog.append("<div class='info-log'>");
-        successLog.append("✅ <strong>Test Passed Successfully</strong>");
+        successLog.append("✅ Test Passed Successfully");
         successLog.append("</div>");
 
         // ❌ REMOVED: getAllApiCallsLog() - API calls are already logged during test execution
@@ -2383,7 +2414,7 @@ public class SimplifiedExtentReportManager {
             stats.append("</div>"); // End card-body
             stats.append("</div>"); // End status-code-stats card
         }
-       stats.append("</div>"); // End stats-dashboard
+        stats.append("</div>"); // End stats-dashboard
 
         statsTest.info(stats.toString());
     }
@@ -2439,7 +2470,7 @@ public class SimplifiedExtentReportManager {
 
         // Endpoint header
         apiLog.append("<div class='info-log'>");
-        apiLog.append("🌐 <strong>BaseURI:</strong> ").append(endpoint);
+        apiLog.append("🌐 BaseURI: ").append(endpoint);
         apiLog.append("</div>");
 
         // REQUEST SECTION

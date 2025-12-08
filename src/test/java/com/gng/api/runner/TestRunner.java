@@ -20,7 +20,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/turnOff"
+                "src/test/resources/features/phase1/turnOff"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
@@ -75,7 +75,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
         LogUtil.configureLogging();
 
         // ✅ Initialize reports - this reads the system property we just set
-        DualReportManager.initialize();
+        DualReportManager.initialize("");
 
         log.info("✅ Test Suite Setup Complete");
         log.info("═══════════════════════════════════════════════════════════════\n");
