@@ -19,17 +19,6 @@ public class SearchAccountsApiPage extends BasePage {
         this.helper = new SearchAccountsHelper(testContext);
     }
 
-    public void validatePositiveCases(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForPositiveTestConditions(payload, testCondition);
-        executeSearchAccountsRequest(payload);
-    }
-
-    public void validateExternalCases(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
-        SearchAccountsRequest payload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForExternalConditions(payload, testCondition);
-        executeSearchAccountsRequest(payload);
-    }
     public void searchFromGetEligibleExternalCases(SearchAccountsApiLabel apiLabel, SearchAccountsApiLabel testCondition){
         SearchAccountsRequest payload = helper.preparePayload(apiLabel);
         helper.preparePayloadFromGetEligibleExternalConditions(payload, testCondition);

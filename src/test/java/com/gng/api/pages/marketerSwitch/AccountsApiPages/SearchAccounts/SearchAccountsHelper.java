@@ -36,44 +36,12 @@ public class SearchAccountsHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, SearchAccountsRequest.class);
     }
 
-    public void preparePayloadForPositiveTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
-        setParametersToEmpty(payload);
-
-        payload.setRequestID(FakerDataGenerator.generateString(10));
-        payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
-        Map<String, Object> activeCustomerData = ApplicationContext.get().getDbAction().getActiveCustomerWithServiceTransferEnrollment();
-
-        switch (testCondition) {
-//        case MS_SA_LAST_NAME_AND_ZIP_POSITIVE_TC001 -> {
-//            payload.setCustomerLastName(activeCustomerData.get(UCBCUST_LAST_NAME).toString());
-//            payload.setPremisesZipCode(activeCustomerData.get(UCBPREM_ZIPC_CODE).toString());
-//        }
-//        case MS_SA_FIRST_NAME_LAST_NAME_AND_ZIP_POSITIVE_TC002 -> {
-//            payload.setCustomerFirstName(activeCustomerData.get(UCBCUST_FIRST_NAME).toString());
-//            payload.setCustomerLastName(activeCustomerData.get(UCBCUST_LAST_NAME).toString());
-//            payload.setPremisesZipCode(activeCustomerData.get(UCBPREM_ZIPC_CODE).toString());
-//        }
-            default ->
-                payload.setRequestID(FakerDataGenerator.generateString(10));
-        }
-    }
-
     public void preparePayloadFromGetEligibleExternalConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         setParametersToEmpty(payload);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
         setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
 
-        switch (testCondition) {
-//            case -> {
-//                setParametersToEmpty(payload);
-//                setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-//            }
-
-            default -> {
-              //  setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-            }
-        }
     }
     public void setParametersFromGetEligiblePlansAndOffersResponse(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
         payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
@@ -84,11 +52,9 @@ public class SearchAccountsHelper {
         setParametersToEmpty(payload);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
-        Map<String, Object> activeCustomerData = null;
 
         switch (testCondition) {
             case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12 ->  loadCustomerData(payload, testCondition);
-
             default -> {
             }
         }
@@ -115,17 +81,6 @@ public class SearchAccountsHelper {
                     -> {
                 payload.setCustomerLastName(data.get("customerLastName"));
                 payload.setCustomerFirstName(data.get("customerFirstName"));
-               // payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
-//                payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
-//                payload.setPremisesStreetName(data.get("premisesStreetName"));
-//                payload.setPremisesStreetSuffix(data.get("premisesStreetSuffix"));
-//                payload.setPremisesStreetPostDirection(data.get("premisesStreetPostDirection"));
-//                payload.setPremisesUnitType(data.get("premisesUnitType"));
-//                payload.setPremisesUnitNumber(data.get("premisesUnitNumber"));
-//                payload.setPremisesCity(data.get("premisesCity"));
-//                payload.setPremisesStateCode(data.get("premisesStateCode"));
-//                payload.setPremisesZipCode(data.get("premisesZipCode"));
-               // payload.setAglcAccountNumber(null);
             }
             default -> {
                 payload.setCustomerLastName(data.get("customerLastName"));

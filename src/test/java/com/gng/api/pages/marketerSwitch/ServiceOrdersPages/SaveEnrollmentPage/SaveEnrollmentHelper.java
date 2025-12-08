@@ -56,81 +56,6 @@ public class SaveEnrollmentHelper {
         payload.setMarketerReferenceData(testContext.getMarketerReferenceData());
     }
 
-
-
-    public void setPrePayFieldsByCondition(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        switch (testCondition) {
-//            case  -> {
-//                payload.setEstimatedBudgetAmount(FakerDataGenerator.generateDigits(2));
-//                payload.setCustomerRequestedServiceDate(payload.getRequestedTurnOnDate());
-//                payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(6));
-//                payload.setBillingPlan(GlobalEnums.BillingPlan.BUDGET.getValue());
-//            }
-            default -> {  }
-        }
-    }
-
-    public void setParametersBasedOnTypePositive(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
-        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
-        var geData  = testContext.getGetEligiblePlansAndOffersResponse().getData();
-
-        switch (testCondition) {
-//            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
-//                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-//                payload.setCustomerRequestedServiceDate(geData.getEarliestPossibleTurnOnDate());
-//                payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
-//               // payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-//            }
-            default -> { }
-        }
-    }
-
-    public void setSecondRequestParametersBasedOnTypePositive(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
-        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
-        switch (testCondition) {
-//            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
-//                payload.setBillingPlan(null);
-//                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-//                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-//                payload.setAglcServiceOrderNumber(null;
-//            }
-            default -> {  }
-        }
-    }
-
-    public void setParametersBasedOnTypePositiveWithNote(SaveEnrollmentRequest payload, String noteText, SaveEnrollmentApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
-        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
-        var geData = testContext.getGetEligiblePlansAndOffersResponse().getData();
-
-        switch (testCondition) {
-//            case  -> {
-//                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
-//                payload.setCustomerRequestedServiceDate(payload.getRequestedTurnOnDate());
-//                payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
-//                payload.setPromotionCode("");
-//                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-//                payload.setNotes(noteText);
-//            }
-        }
-    }
-
-    public void setParametersBasedOnTypeNegative(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        setSupportingDefaultParameters(payload);
-        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-        setPrePayFieldsByCondition(payload, testCondition);
-
-        switch (testCondition) {
-
-            default -> {  }
-        }
-    }
-
     public void setParametersBasedOnTypeExternal(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
         setSupportingDefaultParameters(payload);
         Plans plan;
@@ -144,7 +69,6 @@ public class SaveEnrollmentHelper {
             }
             case  GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
                 setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-                //override to null
                 payload.setAglcServiceOrderNumber(null);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
                 payload.setAglcServiceOrderNumber(null);
@@ -179,83 +103,21 @@ public class SaveEnrollmentHelper {
             case  GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
                 setSecondCallParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.REFUSED_PREPAY.getValue());
-                //payload.setPlanCode(GlobalEnums.PlanCode.TRD.getValue());
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
                 payload.setBillingPlan(null);
             }
             case  GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
-                //loadCustomerData(payload, testCondition);
                 setSecondCallParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-                //adding aglcAcc#?
-                //setParamsFromSearchAccountsResponse(payload, testCondition);
                 payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_BILLED.getValue());
                 payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
                 payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
 
-                //testing
                 payload.setAglcServiceOrderNumber(null);
                 payload.setAglcAccountNumber(aglcAccountNumber);
             }
 
             default -> { }
         }
-    }
-    public void setParamsFromSearchAccountsResponse(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition){
-        String geTransactionIdRaw = String.valueOf(
-                testContext.getGetEligiblePlansAndOffersResponse()
-                        .getData()
-                        .getTransactionID()
-        );
-
-        int geTransactionId = parseIntOrAssert(geTransactionIdRaw, "SaveEnrollmentResponse.data.transactionID");
-
-        var matchingAccount = testContext.getSearchAccountsResponse()
-                .getData()
-                .getAccounts()
-                .stream()
-                .filter(acct -> {
-                    String acctTxRaw = String.valueOf(acct.getTransactionID());
-                    int acctTxId = parseIntOrAssert(acctTxRaw,  "SearchAccountsResponse.data.accounts[].transactionID (customerCode=" + acct.getCustomerCode() + ")");
-                    return acctTxId == geTransactionId;
-                })
-                .findFirst()
-                .orElse(null);
-
-        Assert.assertNotNull(matchingAccount,"No SearchAccounts account found for transactionId: " + geTransactionId
-        );
-
-        switch (testCondition){
-            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22, GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24 -> {
-                payload.setCustomerCode(matchingAccount.getCustomerCode());
-                payload.setPremisesCode(matchingAccount.getPremisesCode());
-                payload.setAglcAccountNumber(matchingAccount.getAglcAccountNumber());
-                payload.setTransactionID(geTransactionId);
-            }
-        }
-    }
-
-    private int parseIntOrAssert(String value, String fieldName) {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException ex) {
-            throw new AssertionError("Unable to parse int from " + fieldName + " value: [" + value + "]", ex);
-        }
-    }
-
-    public void setTurnOnDate(SaveEnrollmentRequest payload) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate turnOnDate = LocalDate.now();
-        payload.setRequestedTurnOnDate(turnOnDate.plusDays(120).format(formatter));
-    }
-
-    public void setInvalidTurnOnDate(SaveEnrollmentRequest payload) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate earliestTurnOnDate = LocalDate.parse(
-                testContext.getGetEligiblePlansAndOffersResponse().getData().getEarliestPossibleTurnOnDate(),
-                inputFormatter
-        );
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMddyyyy");
-        payload.setRequestedTurnOnDate(earliestTurnOnDate.plusDays(120).format(outputFormatter));
     }
 
     public void setParametersFromGetEligiblePlansAndOffersResponse(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
@@ -276,7 +138,6 @@ public class SaveEnrollmentHelper {
             payload.setRequestedTurnOnDate(etod);
             payload.setCustomerRequestedServiceDate(etod);
         } else {
-            // Either leave them unset (null) or explicitly set to ""
             payload.setRequestedTurnOnDate("");
             payload.setCustomerRequestedServiceDate("");
         }
@@ -307,7 +168,6 @@ public class SaveEnrollmentHelper {
             payload.setRequestedTurnOnDate(etod);
             payload.setCustomerRequestedServiceDate(etod);
         } else {
-            // Either leave them unset (null) or explicitly set to ""
             payload.setRequestedTurnOnDate("");
             payload.setCustomerRequestedServiceDate("");
         }
@@ -326,11 +186,9 @@ public class SaveEnrollmentHelper {
 
         String value = rawEtod.trim();
         DateTimeFormatter ETOD_FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
-        // Treat "null" and empty as no date
         if (value.isEmpty() || value.equalsIgnoreCase("null")) {
             return null;
         }
-        // Validate format
         try {
             LocalDate.parse(value, ETOD_FORMATTER);
         } catch (DateTimeParseException ex) {
@@ -347,16 +205,6 @@ public class SaveEnrollmentHelper {
                 .orElseThrow(() -> {
                     String codes = plans.stream().map(Plans::getPlanCode).sorted().toList().toString();
                     return new AssertionError("Plan " + planCode + " not found. Available: " + codes);
-                });
-    }
-
-    private static Plans findPlanByNotCode(Collection<Plans> plans, String planCode) {
-        return plans.stream()
-                .filter(p -> !Objects.equals(p.getPlanCode(), planCode))
-                .findFirst()
-                .orElseThrow(() -> {
-                    String codes = plans.stream().map(Plans::getPlanCode).sorted().toList().toString();
-                    return new AssertionError("Non-" + planCode + " plan not found. Available: " + codes);
                 });
     }
 
@@ -384,50 +232,4 @@ public class SaveEnrollmentHelper {
         };
     }
 
-    public void validateNoteCreation(String noteText, String testCondition) {
-        String expected = noteText.replace("\\|~", "|~");
-        //getNoteByCustomerCode();
-        List<String> storedValues = getNoteByCustomerCode();
-        assertRowsMatchTokenCount(expected, storedValues);
-
-    }
-
-    public List<String> getNoteByCustomerCode(){
-        String custCode = testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode();
-
-        List<Map<String, Object>> rows = ApplicationContext.get()
-                .getDbAction()
-                .getNoteByCustomerCode(custCode);
-
-        if (rows == null || rows.isEmpty()) {
-            throw new IllegalStateException("No DB rows returned for customer code " + custCode );
-        }
-
-        String seq = rows.getFirst().get("UCBNOTE_SEQ_NUMBER").toString();
-
-        Map<String, Object> noteRow = ApplicationContext.get()
-                .getDbAction()
-                .getNoteBySequenceNumber(seq);
-
-        if (noteRow == null || noteRow.isEmpty()) {
-            throw new IllegalStateException("No DB rows returned for note sequence " + seq);
-        }
-
-        final String VALUE_KEY = firstExistingKey(rows,"UCBNOTE_SEQ_NUMBER");
-
-        return rows.stream()
-                .map(r -> String.valueOf(r.get(VALUE_KEY)))
-                .toList();
-    }
-
-    private static String firstExistingKey(List<Map<String, Object>> rows, String... candidates) {
-        for (String k : candidates) {
-            if (rows.getFirst().containsKey(k)) return k;
-        }
-        throw new IllegalStateException("Could not find note-value column in DB rows.");
-    }
-
-    public void setPremisesCodeAndTransactionIdBasedOnType(SaveEnrollmentRequest payload, SaveEnrollmentApiLabel testCondition) {
-        setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-    }
 }
