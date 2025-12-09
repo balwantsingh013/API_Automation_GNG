@@ -5,7 +5,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetEligiblePlansAndOffersRSPositive @GetEligiblePlansAndOffersPositive @HappyFlow
+  @GetEligiblePlansAndOffersRSPositive @GetEligiblePlansAndOffersPositive @HappyFlow @Phase1 @turnOn
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -35,7 +35,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       #| GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338a|
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_338e|
 
-  @GetEligiblePlansAndOffersPromotionCodePositive @HappyFlow
+  @GetEligiblePlansAndOffersPromotionCodePositive @HappyFlow @Phase1 @turnOn
   Scenario Outline: GetEligiblePlansAndOffersAPI - returns <numberOfMatches> plans for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api with "<promotionCode>" promotionCode for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -47,7 +47,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_321 | AAA           |
       | GET_ELIGIBLE_PLANS_AND_OFFERS_TC_327 | AAA           |
 
-  @GetEligiblePlansAndOffersCommercialPositive @GetEligiblePlansAndOffersPositive @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersCommercialPositive @GetEligiblePlansAndOffersPositive @Phase1 @turnOn @HappyFlow
   Scenario Outline: GetEligiblePlansAndOffersAPI - Verify GetEligiblePlansAndOffers Api with customer type commercial for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api with customer type commercial for "<testCondition>"
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -71,7 +71,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
     |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350B        |
     |COMMERCIAL_CREDIT_CHECK_YES_CRDS_ENROLLMENT_TC_350E        |
 
-  @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersWithInvalidRequestIDTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify GetEligiblePlansAndOffers Api with invalid requestID <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api with "<testCondition>"TC155_157
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -84,7 +84,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | LONG_REQUEST_ID_TC_157          | 10002     | Invalid Request ID   |
 
 
-  @GetEligiblePlansAndOffersInvalidLoginIDTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidLoginIDTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with login "<testCondition>" ID TC158_160b
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -97,7 +97,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | ALPHANUMERIC_LOGIN_ID_TC_160A      | 2000      | Invalid Login ID                                          |
       | MAX_LENGTH_LOGIN_ID_TC_159         | 10000     | The Login ID must be a string with a maximum length of 30 |
 
-  @GetEligiblePlansAndOffersInvalidTransactionIDTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidTransactionIDTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with transaction "<testCondition>" ID TC161_162
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -107,7 +107,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | NULL_TRANSACTION_ID_INCL_ENROLLMENT_STATE_TC_161 | 2000      | Invalid Request: Missing conditional parameters-Transaction ID |
       | NULL_TRANSACTION_ID_CRDS_ENROLLMENT_STATE_TC_162 | 2000      | Invalid Request: Missing conditional parameters-Transaction ID |
 
-  @GetEligiblePlansAndOffersInvalidCustomerCodeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCustomerCodeTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with customer "<testCondition>" code TC163_164
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -117,7 +117,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | NULL_CUSTOMER_CODE_INCL_ENROLLMENT_STATE_TC_163 | 2000      | Invalid Request: Missing conditional parameters-Customer Code |
       | NULL_CUSTOMER_CODE_CRDS_ENROLLMENT_STATE_TC_164 | 2000      | Invalid Request: Missing conditional parameters-Customer Code |
 
-  @GetEligiblePlansAndOffersInvalidPremisesCodeAndEnrollmentStateTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidPremisesCodeAndEnrollmentStateTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with premises "<testCondition>" code TC165_167
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -135,7 +135,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       |ENROLLMENT_STATE_TRAN_ID_NULL_TC_173               |2000       | Invalid Request: Invalid Parameter Combination - For new enrollment Transaction ID,Customer Code and Premises Code should be null |
       |INVALID_ENROLLMENT_STATE_TC_174                    |2000       |Invalid Request: Invalid Enrollment State                                                                                          |
 
-  @GetEligiblePlansAndOffersInvalidTransactionId @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidTransactionId @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     And response should have ErrorCode 0 and ErrorMessage ""
@@ -151,7 +151,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_TRANSACTION_ID_ENROLLMENT_STATE_INCL_TC_175  | 2000      | Invalid Request: Invalid Transaction ID|MVS     |25 CENTS FOR 12 MONTHS    |
       | INVALID_TRANSACTION_ID_ENROLLMENT_STATE_CRDS_TC_176  | 2000      | Invalid Request: Invalid Transaction ID|VML     |                          |
 
-  @GetEligiblePlansAndOffersInvalidCustomerCode @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCustomerCode @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
     And response should have ErrorCode 0 and ErrorMessage ""
@@ -171,7 +171,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_CUSTOMER_CODE_EMPTY_ENROLLMENT_STATE_INCL_TC_186B       | 10000     | The JSON value could not be converted to System.Nullable`1[System.Int64]. Path: $.customerCode [PIPE] LineNumber: 0 [PIPE] BytePositionInLine:      |MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_CUSTOMER_CODE_ENROLLMENT_STATE_INCL_TC_187              | 2000      | Invalid Request: Invalid Customer Code                                                                                                              |MVS     |25 CENTS FOR 12 MONTHS        |
 
-  @GetEligiblePlansAndOffersInvalidPremisesCode @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidPremisesCode @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
     And response should have ErrorCode 0 and ErrorMessage ""
@@ -190,7 +190,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_PREMISES_CODE_NON_NUMERIC_ENROLLMENT_STATE_INCL_TC_188A | 10000     |The Premises Code must be a numeric string with a maximum length of 7|MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_PREMISES_CODE_ENROLLMENT_STATE_INCL_TC_189              |  2000     |Invalid Request: Invalid Premises Code                               |MVS     |25 CENTS FOR 12 MONTHS        |
 
-  @GetEligiblePlansAndOffersInvalidCombinationOfCustPremCode @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCombinationOfCustPremCode @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers for a "<testCondition>"
     And response should have ErrorCode 0 and ErrorMessage ""
@@ -206,7 +206,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_INCL_TC_181      | 2000      |Invalid Request: Invalid Account|MVS     |25 CENTS FOR 12 MONTHS        |
       | INVALID_COMBINATION_OF_CUSTOMER_AND_PREMISES_CODE_CRDS_TC_182      | 2000      |Invalid Request: Invalid Account|VML     |                              |
 
-  @GetEligiblePlansAndOffersInvalidWorkPhoneNumberTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidWorkPhoneNumberTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: Verify response code for invalid "<WorkPhoneNumber>"
     When a request is made to the GetEligiblePlansAndOffers Api with workPhone "<WorkPhoneNumber>" Number284_286
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -217,7 +217,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | ALPHANUMERIC_WORK_PHONE_NUMBER_TC_285                    | 2000      | Invalid Request: Invalid Work Phone Number                       |
       | NULL_WORK_PHONE_NUMBER_WITH_VALID_WORK_PHONE_TYPE_TC_286 | 2000      | Invalid Request: Missing conditional parameters-Work Phone Number|
 
-  @GetEligiblePlansAndOffersCommercialNegative @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersCommercialNegative @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -228,7 +228,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | VALID_DATA_REENTERED_COMMERCIAL_TC_362          | 0         |                                                                  |
       | CREDIT_CHECK_BUSINESS_BIN_NOT_NULL_TC_262A      | 0         |                                                                  |
 
-  @GetEligiblePlansAndOffersFraudAlertInvalidSSN @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersFraudAlertInvalidSSN @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -250,7 +250,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       #| ENROLLMENT_DENIED_DUE_TO_NO_PAYMENT_TC_358                  | 3000      | The customer's enrollment request is denied due to past payment history                                                                                                                             |
       #| ENROLLMENT_DENIED_AS_CREDIT_CHECK_NOT_AUTHORIZED_TC_360     | 3000      | The customer's enrollment request is denied                                                                                                                                                         |
 
-    @GetEligiblePlansAndOffersLowCreditForSSP @Phase1 @NegativeFlow
+    @GetEligiblePlansAndOffersLowCreditForSSP @Phase1 @turnOn @NegativeFlow
     Scenario: GetEligiblePlansAndOffersApi- Verify response code for invalid LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B
       When a request is made to the GetEligiblePlansAndOffers Api for "LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B" condition
       Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -258,7 +258,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       And response should have a SSP eligible as "false" and "WARNING: This customer does not meet the required credit criteria to participate in the Seasonal Savings Plan"
       And performs the database validation for "LOW_CREDIT_SCORE_FOR_SSP_ENROLLMENT_TC_338B"
 
-  @GetEligiblePlansAndOffersInvalidWorkPhoneTypeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidWorkPhoneTypeTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<WorkPhoneType>"
     When a request is made to the GetEligiblePlansAndOffers Api with WorkPhone "<WorkPhoneType>" Type287_290
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -270,7 +270,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | WORK_PHONE_TYPE_PROVIDED_MAX_1_CHAR_TC_289               | 10000     | The Work Phone Type must be a string with a maximum length of 1.      |
       | INVALID_WORK_PHONE_TYPE_VALUE_TC_290                     | 2000      | Invalid Request: Invalid Work Phone Type                              |
 
-  @GetEligiblePlansAndOffersInvalidHomePhoneNumberTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidHomePhoneNumberTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<HomePhoneNumber>"
     When a request is made to the GetEligiblePlansAndOffers Api with HomePhone "<HomePhoneNumber>" Number291_293
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -281,7 +281,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | ALPHANUMERIC_HOME_PHONE_NUMBER_TC_292                    | 2000      | Invalid Request: Invalid Home Phone Number                        |
       | NULL_HOME_PHONE_NUMBER_WITH_VALID_HOME_PHONE_TYPE_TC_293 | 2000      | Invalid Request: Missing conditional parameters-Home Phone Number |
 
-  @GetEligiblePlansAndOffersInvalidHomePhoneTypeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidHomePhoneTypeTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<HomePhoneType>"
     When a request is made to the GetEligiblePlansAndOffers Api with HomePhone "<HomePhoneType>" Type294_297
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -292,7 +292,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | HOME_PHONE_TYPE_PROVIDED_MAX_1_CHAR_296               | 10000     | The Home Phone Type must be a string with a maximum length of 1. |
       | INVALID_HOME_PHONE_TYPE_VALUE_297                     | 2000      | Invalid Request: Invalid Home Phone Type                         |
 
-  @GetEligiblePlansAndOffersInvalidAcnStatusIndicatorTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidAcnStatusIndicatorTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<AcnStatusIndicator>"
     When a request is made to the GetEligiblePlansAndOffers Api with acnStatus "<AcnStatusIndicator>" IndicatorTC298_307
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -311,7 +311,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_L_WITH_INVALID_USER_ROLE_TC_306  | 10000     | Invalid or missing ACN Status Indicator                               |
       | NULL_ACN_STATUS_INDICATOR_VALID_TENANT_LANDLORD_T_WITH_INVALID_USER_ROLE_TC_307  | 10000     | Invalid or missing ACN Status Indicator                               |
 
-  @GetEligiblePlansAndOffersInvalidCustomerPEWCPreferencesTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCustomerPEWCPreferencesTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<CustomerPEWCPreferences>"
     When a request is made to the GetEligiblePlansAndOffers Api with CustomerPEWC "<CustomerPEWCPreferences>" PreferencesTC308_310
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -321,7 +321,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | CUSTOMER_PEWC_PREFRENCES_VALUE_GOOD_WITH_OTHER_PARAM_NULL_TC_308 | 10000     |The JSON value could not be converted to System.Boolean. Path: $.customerPEWCPreferences [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 174.|
       | CUSTOMER_PEWC_PREFRENCES_VALUE_TRUE_WITH_OTHER_PARAM_NULL_TC_309 | 2000      | Invalid Request: Missing conditional parameters-Customer PEWC Preference                                                                    |
 
-  @GetEligiblePlansAndOffersInvalidCreditCheckOptionTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCreditCheckOptionTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<CreditCheckOption>"
     When a request is made to the GetEligiblePlansAndOffers Api with credit "<CreditCheckOption>" CheckoptionTC310_312
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -332,7 +332,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_CREDIT_CHECK_OPTION_TC_311    | 2000      | Invalid Request: Invalid Credit Check Option                          |
       | MAX_LENGTH_CREDIT_CHECK_OPTION_TC_310 | 10000     | The Credit Check Option must be a string with a maximum length of 32. |
 
-  @GetEligiblePlansAndOffersInitialCreditCheckCustomerCodeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInitialCreditCheckCustomerCodeTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<InitialCreditCheckCustomerCode>"
     When a request is made to the GetEligiblePlansAndOffers Api with InitialCreditCheck "<InitialCreditCheckCustomerCode>" CustomerCodeTC313_317
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -345,7 +345,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_NOT_PRESENT_IN_TABLE_316   | 2000      | Invalid or missing Initial Credit Check Customer Code                                                                                                                |
       | INVALID_INITIAL_CREDIT_CHECK_CUSTOMER_CODE_WITHOUT_CREDIT_SCORE_317   | 2100      | Unable to locate a credit score within 3 months for the Customer Code provided - 5908691                                                                             |
 
-  @GetEligiblePlansAndOffersInvalidTransactionTypeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidTransactionTypeTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"Type
     When a request is made to the GetEligiblePlansAndOffers Api with  transaction "<testCondition>" Type
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -362,7 +362,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
 #     | WHITESPACE_CONTAINS_TRANSACTION_TYPE        | 10000     | The Transaction Type must be a string with a maximum length of 4 |
       | INVALID_TRANSACTION_TYPE_TC_185             | 1000      | Invalid Request: Invalid Transaction Type                        |
 
-  @GetEligiblePlansAndOffersInvalidCustomerTypeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCustomerTypeTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify GetEligiblePlansAndOffers Api with invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with  customer "<testCondition>" Type
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -376,7 +376,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | MAX_LENGTH_CUSTOMER_TYPE_TC_191        | 10000     | The Customer Type must be a string with a maximum length of 2    |
       | INVALID_VALUE_CUSTOMER_TYPE_TC_192     | 1000      | Invalid Request: Invalid Customer Type                           |
 
-  @GetEligiblePlansAndOffersInvalidEnrollmentSourcesTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidEnrollmentSourcesTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<testCondition>" Sources
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -390,7 +390,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | NULL_ENROLLMENT_SOURCES_TC_193        | 10000     | Invalid or missing Enrollment Source                                |
       | INVALID_VALUE_ENROLLMENT_SOURCE_195   | 1000      | Invalid Request: Invalid Enrollment Source                          |
 
-  @GetEligiblePlansAndOffersNegativeTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersNegativeTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: GetEligiblePlansAndOffersApi- Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<testCondition>" Sources
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -511,7 +511,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | INVALID_BILLING_COUNTY_CODE_RURAL_TC_283A                  | 2000      | Invalid Request: Invalid Billing County Code                                                                            |
       | INVALID_BILLING_POBOX_COUNTY_CODE_TC_283B                  | 2000      | Invalid Request: Invalid Billing County Code                                                                            |
 
-  @GetEligiblePlansAndOffersInvalidCallerIdAndCallerIdNotAvailableOptionCombinationTNON @Phase1 @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCallerIdAndCallerIdNotAvailableOptionCombinationTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with enrollment "<testCondition>" Sources
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -527,7 +527,7 @@ Feature: Verify GetEligiblePlansAndOffers Api
       | SSP_INDICATOR_NOT_PROVIDED_TC_210                           | 10000     | Seasonal Saving Program Indicator Not Provided                                                                                           |
       | INVALID_SSP_INDICATOR_VALUE_TC_211                          | 10000     | The JSON value could not be converted to System.Nullable`1[System.Boolean]. Path: $.seasonalSavingsProgramIndicator [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: 711. |
 
-  @GetEligiblePlansAndOffersInvalidCustomerLastNameTNON @Phase1  @NegativeFlow
+  @GetEligiblePlansAndOffersInvalidCustomerLastNameTNON @Phase1 @turnOn @NegativeFlow
   Scenario Outline: Verify response code for invalid "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api with customer "<testCondition>" LastName
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -550,57 +550,57 @@ Feature: Verify GetEligiblePlansAndOffers Api
 #      | LOWERCASE_TENANT_LANDLORD  | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
 #      | NUMERIC_TENANT_LANDLORD    | 10000     | The Tenant/Landlord must be a string with a maximum length of 1. |
 
-  @GetEligiblePlansAndOffersTC25UC53 @Phase1
+  @GetEligiblePlansAndOffersTC25UC53  @Phase1 @turnOn
   Scenario: Verify response code Commercial marketer switch  TC_25
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_25
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 11116 and ErrorMessage "No match found.  Please see  the list of similar businesses found"
 
 
-  @GetEligiblePlansAndOffersTC26UC54PositiveMKSW @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersTC26UC54PositiveMKSW  @Phase1 @turnOn @HappyFlow
   Scenario: Verify response code Commercial marketer switch  TC_26
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_26
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
-  @GetEligiblePlansAndOffersTC27UC54aMKSW @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersTC27UC54aMKSW  @Phase1 @turnOn @HappyFlow
   Scenario: Verify response code Commercial marketer switch  TC_27
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_27
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
-  @GetEligiblePlansAndOffersTC28UCN/AMKSW @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersTC28UCN/AMKSW  @Phase1 @turnOn @HappyFlow
   Scenario: Verify response code Commercial marketer switch  TC_28
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_28
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
-  @GetEligiblePlansAndOffersTC29UC61MKSW @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersTC29UC61MKSW  @Phase1 @turnOn @HappyFlow
   Scenario: Verify response code Commercial marketer switch  TC_29
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_29
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
-  @GetEligiblePlansAndOffersTC30UC60MKSW @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersTC30UC60MKSW  @Phase1 @turnOn @HappyFlow
   Scenario: Verify response code Commercial marketer switch  TC_30
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_30
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
-  @GetEligiblePlansAndOffersTC31UC69MKSW @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffersTC31UC69MKSW  @Phase1 @turnOn @HappyFlow
   Scenario: Verify response code Commercial marketer switch  TC_31
     When a request is made to the GetEligiblePlansAndOffers Api with Commercial marketer switch  TC_31
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
-  @GetEligiblePlansAndOffers_RSTC11UC50MKSW @Phase1 @HappyFlow
+  @GetEligiblePlansAndOffers_RSTC11UC50MKSW  @Phase1 @turnOn @HappyFlow
   Scenario: Verify response code Residential marketer switch  RSTC11UC50
     When a request is made to the GetEligiblePlansAndOffers Api with Residential marketer switch  RSTC11UC50
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
 
 
-  @SSPValidations @NegativeFlow @Phase1
+  @SSPValidations @NegativeFlow  @Phase1 @turnOn
   Scenario: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for SSP_TRUE_NOT_ALLOWED_FOR_ACN_TC_476
     When a request is made to the GetEligiblePlansAndOffers Api for "SSP_TRUE_NOT_ALLOWED_FOR_ACN_TC_476" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
     And response should have ErrorCode 2100 and ErrorMessage "WARNING:Seasonal Savings Program Participation is not allowed for ACN premises"
 
 
-  @SSPValidations @HappyFlow @Phase1
+  @SSPValidations @HappyFlow  @Phase1 @turnOn
   Scenario: GetEligiblePlansAndOffersAPISSPValidations - Verify the SSP validation for SSP_FALSE_ALLOWED_FOR_ACN_TC_477
     When a request is made to the GetEligiblePlansAndOffers Api for "SSP_FALSE_ALLOWED_FOR_ACN_TC_477" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200

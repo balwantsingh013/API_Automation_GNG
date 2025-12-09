@@ -27,9 +27,6 @@ public class ExtentReportManager {
     /**
      * Initialize extent report - delegates to DualReportManager
      */
-    public static synchronized void initialiseExtentReport() {
-        DualReportManager.initialize();
-    }
 
     /**
      * Create test - delegates to DualReportManager

@@ -5,7 +5,7 @@ Feature: Verify MeterSet SaveEnrollment Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @MeterSetSaveEnrollmentNegative @NegativeFlow @Phase1
+  @MeterSetSaveEnrollmentNegative @NegativeFlow @Phase2 @meterSet
   Scenario Outline: Verify MeterSet SaveEnrollment with invalid parameters "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
@@ -38,7 +38,7 @@ Feature: Verify MeterSet SaveEnrollment Api
 
 
 
-  @MeterSetSaveEnrollmentPositive @HappyFlow @Phase1
+  @MeterSetSaveEnrollmentPositive @HappyFlow @Phase2 @meterSet
   Scenario Outline: Verify MeterSet SaveEnrollment with valid parameters "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
@@ -63,7 +63,7 @@ Feature: Verify MeterSet SaveEnrollment Api
       | MS_SE_RS_PRP_ENROLLMENT_STATUS_CP_TC_054             |
       | MS_SE_RS_B_ENROLLMENT_STATUS_BD_BUDGET_TC_055        |
 
-  @MeterSetSaveEnrollmentPositiveWithNote @HappyFlow @Phase1
+  @MeterSetSaveEnrollmentPositiveWithNote @HappyFlow @Phase2 @meterSet
   Scenario Outline: Verify MeterSet SaveEnrollment with valid parameters "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
@@ -81,7 +81,7 @@ Feature: Verify MeterSet SaveEnrollment Api
 
 
 
-  @MeterSetDoubleSaveEnrollmentPositive @HappyFlow @Phase1
+  @MeterSetDoubleSaveEnrollmentPositive @HappyFlow @Phase2 @meterSet
   Scenario Outline: Verify MeterSet SaveEnrollment with valid parameters "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition

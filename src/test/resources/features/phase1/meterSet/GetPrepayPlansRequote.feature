@@ -5,7 +5,7 @@ Feature: Verify GetPrepayPlansRequote Api MeterSet
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetPrepayPlansRequoteMeterSetPositive @HappyFlow
+  @GetPrepayPlansRequoteMeterSetPositive @HappyFlow @Phase2 @meterSet
   Scenario Outline: GetPrepayPlansRequote API – MeterSet returns quotes for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -27,7 +27,7 @@ Feature: Verify GetPrepayPlansRequote Api MeterSet
       | PRP      | GP_MS_PREPAY_ONLY_PRP_TC60 |
 
 
-  @GetPrepayPlansRequoteMeterSetNegativeConditions @Phase1 @NegativeFlow
+  @GetPrepayPlansRequoteMeterSetNegativeConditions @Phase2 @meterSet @NegativeFlow
   Scenario Outline: GetPrepayPlansRequote Api - meterSet Verify GetPrepayPlansRequote Api for "<testCondition>" negative condition
     When a request is made to the GetPrepayPlansRequote Api meterSet for "<testCondition>" negative condition
     Then verify response code of "GetPrepayPlansRequote" Api is 200

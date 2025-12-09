@@ -5,7 +5,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetEligiblePlansAndOffersMeterSetNegative @NegativeFlow @Phase1
+  @GetEligiblePlansAndOffersMeterSetNegative @NegativeFlow @Phase2 @meterSet
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers with invalid parameters "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api negative meterSet for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -26,7 +26,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
       # unable to reproduce error
       | MS_RS_DENIAL_DUE_TC_016                   | 11113 | The customer's enrollment request is denied due to past payment history |
 
-  @GetEligiblePlansAndOffersMeterSetPositive @HappyFLow @Phase1
+  @GetEligiblePlansAndOffersMeterSetPositive @HappyFLow @Phase2 @meterSet
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers with valid parameters "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api meterSet for "<testCondition>" condition
     And verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -45,7 +45,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
       | MS_CM_EXCELLENT_CREDIT_CGB_NOT_OFFERED_TC_029       |
       |MS_CM_NEW_EN_CREDIT_CHECK_NO_NO_PERMISSIONS_TC_032   |
 
-  @GetEligiblePlansAndOffersMeterSetWithSeedPositive @HappyFLow @Phase1
+  @GetEligiblePlansAndOffersMeterSetWithSeedPositive @HappyFLow @Phase2 @meterSet
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers with valid parameters "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api negative meterSet to seed data for "<testCondition>" condition
     When a request is made to the GetEligiblePlansAndOffers Api meterSet for "<testCondition>" condition
@@ -59,7 +59,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
       |MS_CM_CREDIT_SKIP_COM_BY_PASS_TC_030                  |
       |MS_CM_CREDIT_MULTIPLE_CONFIRM_FALSE_NO_CGB_TC_031     |
 
-  @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentPositive @HappyFLow @Phase1
+  @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentPositive @HappyFLow @Phase2 @meterSet
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers and SaveEnrollment and SearchAccounts with valid parameters "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
     And verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -81,7 +81,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
       | MS_GE_RS_ACN_LAND_BYPASS_CREDIT_TC_022 |
       | MS_RS_MULTIPLE_PREM_TC_024             |
 
-  @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentTwicePositive @HappyFLow @Phase1
+  @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentTwicePositive @HappyFLow @Phase2 @meterSet
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers and SaveEnrollment and SearchAccounts for a complete enrollment with valid parameters "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
     And verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -109,7 +109,7 @@ Feature: Verify MeterSet GetEligiblePlansAndOffers API
       |MS_GE_RS_INCL_TIER_5_TC_023                |
       |MS_RS_CRDS_ENROLLMENT_CREDIT_CHECK_TC_025  |
 
-  @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentTwicePositive @HappyFLow @Phase1
+  @GetEligiblePlansAndOffersMeterSetWithSaveEnrollmentTwicePositive @HappyFLow @Phase2 @meterSet
   Scenario Outline: Verify meter set GetEligiblePlansAndOffers and SaveEnrollment and SearchAccounts with valid parameters "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api from customer file meterSet to seed data for "<testCondition>" condition
     And verify response code of "GetEligiblePlansAndOffers" Api is 200

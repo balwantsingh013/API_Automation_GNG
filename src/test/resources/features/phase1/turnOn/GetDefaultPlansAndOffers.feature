@@ -5,7 +5,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetDefaultPlansAndOffersPositive @HappyFlow
+  @GetDefaultPlansAndOffersPositive @HappyFlow @turnOn @Phase1
   Scenario Outline: GetDefaultPlansAndOffersAPi - returns <numberOfMatches> plans for <testCondition>
     When a request is made to the GetDefaultPlansAndOffers Api with "<customerType>" customer type "<promotionCode>" promotion code "<enrollmentSource>" enrollment source "<testCondition>" condition
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
@@ -40,7 +40,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | RESIDENTIAL  |               | MAIL               | GET_DEFAULT_PLANS_AND_OFFERS_TC_154   | 10              |
 
 
-  @GetDefaultPlansAndOffersNegativeInvalidRequestId @Phase1 @NegativeFlow
+  @GetDefaultPlansAndOffersNegativeInvalidRequestId  @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetDefaultPlansAndOffers Api - Verify GetDefaultPlansAndOffers Api with invalid requestID for "<testCondition>" condition
     When a request is made to the GetDefaultPlansAndOffers Api with an invalid requestID for "<testCondition>"
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
@@ -52,7 +52,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | GET_DEFAULT_PLANS_AND_OFFERS_INVALID_REQUEST_ID_TC_130  | 10002     | Invalid Request ID   |
       | GET_DEFAULT_PLANS_AND_OFFERS_DUPLICATE_REQUEST_ID_TC_128| 10003     | Duplicate Request ID |
 
-  @GetDefaultPlansAndOffersNegativeInvalidLoginId @Phase1 @NegativeFlow
+  @GetDefaultPlansAndOffersNegativeInvalidLoginId  @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetDefaultPlansAndOffers Api - Verify GetDefaultPlansAndOffers Api with invalid loginId for "<testCondition>" condition
     When a request is made to the GetDefaultPlansAndOffers Api with an invalid loginId for "<testCondition>"
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
@@ -65,7 +65,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | GET_DEFAULT_PLANS_AND_OFFERS_NON_ALPHANUMERIC_ID_TC_133 | 2000      | Invalid Login ID          |
 
 
-  @GetDefaultPlansAndOffersNegativeInvalidCustomerType @Phase1 @NegativeFlow
+  @GetDefaultPlansAndOffersNegativeInvalidCustomerType @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetDefaultPlansAndOffers Api - Verify GetDefaultPlansAndOffers Api with invalid customerType for "<testCondition>" condition
     When a request is made to the GetDefaultPlansAndOffers Api with an invalid customerType for "<testCondition>"
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
@@ -78,7 +78,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | GET_DEFAULT_PLANS_AND_OFFERS_INVALID_CUSTOMER_TYPE_TC_136       | 1000     |Invalid Request: Invalid Customer Type|
 
 
-  @GetDefaultPlansAndOffersNegativeInvalidTransactionType @Phase1 @NegativeFlow
+  @GetDefaultPlansAndOffersNegativeInvalidTransactionType @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetDefaultPlansAndOffers Api - Verify GetDefaultPlansAndOffers Api with invalid transactionType for "<testCondition>" condition
     When a request is made to the GetDefaultPlansAndOffers Api with an invalid transactionType for "<testCondition>"
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
@@ -91,7 +91,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | GET_DEFAULT_PLANS_AND_OFFERS_INVALID_TRANSACTION_TYPE_TC_139        |10113      |Invalid or missing Transaction Type|
 
 
-  @GetDefaultPlansAndOffersNegativeInvalidEnrollmentSource @Phase1 @NegativeFlow
+  @GetDefaultPlansAndOffersNegativeInvalidEnrollmentSource @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetDefaultPlansAndOffers Api - Verify GetDefaultPlansAndOffers Api with invalid enrollmentSource for "<testCondition>" condition
     When a request is made to the GetDefaultPlansAndOffers Api with an invalid enrollmentSource for "<testCondition>"
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
@@ -103,7 +103,7 @@ Feature: Verify GetDefaultPlansAndOffers Api
       | GET_DEFAULT_PLANS_AND_OFFERS_INVALID_LENGTH_ENROLLMENT_SOURCE_TC_141  | 1000      |Invalid Request: Invalid Enrollment Source|
       | GET_DEFAULT_PLANS_AND_OFFERS_INVALID_ENROLLMENT_SOURCE_TC_142         |1000       |Invalid Request: Invalid Enrollment Source|
 
-  @InvalidMarketingPromotionCodes @Phase1 @NegativeFlow
+  @InvalidMarketingPromotionCodes @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetDefaultPlansAndOffers Api - Verify GetDefaultPlansAndOffers Api with invalid enrollmentSource for "<testCondition>" condition
     When a request is made to the GetDefaultPlansAndOffers Api with an invalid promotionCode for "<testCondition>"
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
