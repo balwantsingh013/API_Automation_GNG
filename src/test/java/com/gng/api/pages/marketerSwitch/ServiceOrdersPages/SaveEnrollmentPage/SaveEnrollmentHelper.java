@@ -80,12 +80,142 @@ public class SaveEnrollmentHelper {
         var geData  = testContext.getGetEligiblePlansAndOffersResponse().getData();
 
         switch (testCondition) {
-//            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
-//                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-//                payload.setCustomerRequestedServiceDate(geData.getEarliestPossibleTurnOnDate());
-//                payload.setRequestedTurnOnDate(geData.getEarliestPossibleTurnOnDate());
-//               // payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-//            }
+            case SE_MRK_SW_UPDATE_ENROLLMENT_GOOD_TC_43 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.COMPLETE.getValue());
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+            }
+            case SE_MRK_SW_DEPOSIT_PAID_NEW_FLOW_TC_44 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_PAID.getValue());
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(6));
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+            }
+            case SE_MRK_SW_PAYMENT_COMPLETE_PRP_PREVIOUS_TC_45 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PAYMENT_COMPLETE.getValue());
+                payload.setPromotionCode(null);
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
+                payload.setBillingPlan("R");
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_PAYMENT_COMPLETE_PGB_NEW_TC_46 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PAYMENT_COMPLETE.getValue());
+                payload.setPaymentConfirmationNumber(FakerDataGenerator.getRandomNumericString(7));
+                payload.setBillingPlan(null);
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_SAVE_INCOMPLETE_SI_NEW_TC_47 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
+                payload.setPromotionCode(null);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(null);
+            }
+            case SE_MRK_SW_DEPOSIT_REQUIRED_DR_PREVIOUS_TC_48 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.DEPOSIT_REQUIRED.getValue());
+                payload.setPromotionCode(null);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(null);
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_PREPAY_REQUIRED_PR_NEW_TC_49 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
+                payload.setPromotionCode(null);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_PREPAY_REQUIRED_PR_PREVIOUS_TC_50 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.PREPAY_REQUIRED.getValue());
+                payload.setPromotionCode(null);
+                payload.setPaymentConfirmationNumber(null);
+                payload.setBillingPlan("R");
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_REFUSED_PREPAY_RP_NEW_TC_51 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.REFUSED_DEPOSIT.getValue());
+                payload.setPaymentConfirmationNumber(null);
+                payload.setBillingPlan("R");
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_REFUSED_DEPOSIT_RD_NEW_TC_52 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.REFUSED_DEPOSIT.getValue());
+                payload.setPaymentConfirmationNumber(null);
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_CANCEL_PREPAY_CP_PREVIOUS_TC_53 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.CANCEL_PREPAY.getValue());
+                payload.setPaymentConfirmationNumber(null);
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setPromotionCode(Objects.requireNonNullElse(payload.getPromotionCode(), "PROMO"));
+                payload.setNotes(null);
+            }
+            case SE_MRK_SW_BUDGET_BILL_BD_NEW_TC_54 -> {
+                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.BILL_DEPOSIT.getValue());
+                payload.setPaymentConfirmationNumber(null);
+                payload.setEstimatedBudgetAmount(null);
+                payload.setCustomerRequestedServiceDate("");
+                payload.setRequestedTurnOnDate("");
+                payload.setAglcAccountNumber(null);
+                payload.setAglcServiceOrderNumber(null);
+                payload.setCurrentMarketerCode(GlobalEnums.CurrentMarketerCode.FIRE.getValue());
+                payload.setNotes(null);
+            }
             default -> { }
         }
     }
@@ -94,15 +224,7 @@ public class SaveEnrollmentHelper {
         setSupportingDefaultParameters(payload);
         setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
 
-        switch (testCondition) {
-//            case GE_MRK_SW_RS_NEW_CC_YES_UC65_TC22 -> {
-//                payload.setBillingPlan(null);
-//                payload.setEnrollmentStatus(GlobalEnums.EnrollMentStatus.SAVE_INCOMPLETE.getValue());
-//                payload.setSplitConnectionFeeIndicator(Boolean.FALSE);
-//                payload.setAglcServiceOrderNumber(null;
-//            }
-            default -> {  }
-        }
+
     }
 
     public void setParametersBasedOnTypePositiveWithNote(SaveEnrollmentRequest payload, String noteText, SaveEnrollmentApiLabel testCondition) {
@@ -318,7 +440,6 @@ public class SaveEnrollmentHelper {
             payload.setRequestedTurnOnDate(etod);
             payload.setCustomerRequestedServiceDate(etod);
         } else {
-            // Either leave them unset (null) or explicitly set to ""
             payload.setRequestedTurnOnDate("");
             payload.setCustomerRequestedServiceDate("");
         }
@@ -377,13 +498,15 @@ public class SaveEnrollmentHelper {
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.MVS.getValue());
             case GE_MRK_SW_RS_CRDS_CC_YES_DEPOSIT_BILLED_VALUE110_TC24
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.VML.getValue());
-            case GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32
+            case GE_MRK_SW_CM_CRDS_CC_YES_PROMO_DEPOSIT_REQUIRED_VALUE210_CREDIT0_49_TC32,
+                 SE_MRK_SW_DEPOSIT_PAID_NEW_FLOW_TC_44
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.CVS.getValue());
             case GE_MRK_SW_CM_CRDS_CC_YES_DEPOSIT_REQUIRED_BUSINESS_NAME_POPULATED_UC42_TC33,
                  SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038
                     -> findPlanByCode(plans, GlobalEnums.PlanCode.CMI.getValue());
-//            case SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038
-//                    -> findPlanByCode(plans, GlobalEnums.PlanCode.CCV.getValue());
+            case SE_MRK_SW_UPDATE_ENROLLMENT_GOOD_TC_43
+                    -> findPlanByCode(plans, GlobalEnums.PlanCode.RGB.getValue());
+
             default -> plans.getFirst();
         };
     }

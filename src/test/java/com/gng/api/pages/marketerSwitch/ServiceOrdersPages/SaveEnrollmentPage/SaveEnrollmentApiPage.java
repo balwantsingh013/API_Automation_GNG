@@ -28,7 +28,7 @@ public class SaveEnrollmentApiPage extends BasePage {
         testContext.setResponse(response);
     }
 
-    public void validateValidParameters(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
+    public void validatePositiveConditions(SaveEnrollmentApiLabel apiLabel, SaveEnrollmentApiLabel testCondition) {
         SaveEnrollmentRequest payload = helper.preparePayload(apiLabel);
         helper.setParametersBasedOnTypePositive(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());

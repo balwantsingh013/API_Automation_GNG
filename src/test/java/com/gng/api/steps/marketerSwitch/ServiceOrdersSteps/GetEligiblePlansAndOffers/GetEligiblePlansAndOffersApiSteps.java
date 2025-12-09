@@ -24,6 +24,11 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.seedNegativeExternalTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
     }
 
+    @When("a request is made to the GetEligiblePlansAndOffers Api for marketer switch response for external positive cases for {string} condition")
+    public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_N_Positive_Marketer_Switch_External_for_condition(String testCondition) {
+        getEligiblePlansAndOffersApiPage.seedPositiveExternalTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
+    }
+
     @When("a request is made to the GetEligiblePlansAndOffers Api from customer file marketerSwitch to seed data for {string} condition")
     public void a_request_is_made_to_the_GetEligiblePlansAndOffers_Api_Customer_file_MarketerSwitch_Seed_data_for_condition(String testCondition) {
         getEligiblePlansAndOffersApiPage.seedCustomerFileSourceTestConditions(get_eligible_plans_and_offers, GetEligiblePlansAndOffersApiLabel.valueOf(testCondition));
@@ -58,5 +63,4 @@ public class GetEligiblePlansAndOffersApiSteps {
         getEligiblePlansAndOffersApiPage.verifyEnrollmentRecord(valueOf(testCondition));
 
     }
-
 }
