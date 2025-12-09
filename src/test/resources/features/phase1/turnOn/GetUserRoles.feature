@@ -5,16 +5,16 @@ Feature: Verify GetUserRoles Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-    @DBValidation
+    @DBValidation @turnOn @Phase1
   Scenario: GetUserRoles Api - TC_01 Ensure the entry for UZBPSTO_OBJECT = SPK_WEB_API is present in the UZBPSTO table
     When we query the database for validate UZBPSTO_OBJECT value
 
-  @DBValidation
+  @DBValidation @turnOn @Phase1
   Scenario: GetUserRoles Api - TC_02 Ensure the entry for UZRPSTO_PARM_NAME = FAILED_LOGINS_TO_LOCK is present in the UZRPSTO table with value 4
     When we query the database for validate UZRPSTO_PARM_NAME value
 
 
-  @GetUserRoleWithInvalidRequestID @Phase1 @NegativeFlow
+  @GetUserRoleWithInvalidRequestID @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetUserRoles Api - Verify Api Response with invalid requestID "<requestID>"
     When a request is made to the GetUserRoles Api with "<requestID>"TC3_TC5
     Then verify response code of "GetUserRoles" Api is 200
@@ -27,7 +27,7 @@ Feature: Verify GetUserRoles Api
       | DUPLICATE_REQUEST_ID_TC4 | 10003     | Duplicate Request ID |
       | LONG_REQUEST_ID_TC5      | 10002     | Invalid Request ID   |
 
-  @GetUserRolesInvalidLoginID @Phase1  @NegativeFlow
+  @GetUserRolesInvalidLoginID @turnOn @Phase1  @NegativeFlow
   Scenario Outline: GetUserRoles Api - Verify response code for invalid loginID "<loginID>"
     When a request is made to the GetUserRoles Api with "<loginID>"TC6_TC9
     Then verify response code of "GetUserRole" Api is 200
@@ -42,7 +42,7 @@ Feature: Verify GetUserRoles Api
       | LOGIN_ID_WITH_SPECIAL_CHAR_TC9    | 10110     | Invalid Login Credentials |
 
 
-  @GetUserRolesInvalidPassword @Phase1  @NegativeFlow
+  @GetUserRolesInvalidPassword @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetUserRoles Api - Verify response code for invalid Password "<password>"
     When a request is made to the GetUserRoles Api with "<password>" TC10_TC12
     Then verify response code of "GetUserRole" Api is 200
@@ -57,7 +57,7 @@ Feature: Verify GetUserRoles Api
       | ENCRYPTED_PASSWORD_WITH_8_CHAR_WITH_SPECIAL_CHAR_TC12B | 10110     | Invalid Login Credentials |
 
 
-  @GetUserRolesInvalidTestConditionRespUserTable @Phase1  @NegativeFlow
+  @GetUserRolesInvalidTestConditionRespUserTable @turnOn @Phase1  @NegativeFlow
   Scenario Outline: GetUserRoles Api - Verify response code for invalid testCondition "<testCondition>"
     When a request is made to the GetUserRoles Api with "<testCondition>"TC13_TC14
     Then verify response code of "GetUserRole" Api is 200
@@ -68,28 +68,28 @@ Feature: Verify GetUserRoles Api
       | PASSWORD_MISMATCH_WITH_LOGIN_ID_TC14      | 2000      | The password doesn't match the Login ID |
 
 
-  @GetUserRolesInvalidPasswordInDB @Phase1  @NegativeFlow
+  @GetUserRolesInvalidPasswordInDB @turnOn @Phase1 @NegativeFlow
   Scenario: GetUserRoles Api - TC15 - Verify response code for invalid Password
     When a request is made to the GetUserRoles Api with TC15
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2000 and ErrorMessage "The password doesn't match the Login ID. The Login ID has been locked."
 
 
-  @GetUserRolesExpiredPasswordInDB @Phase1  @NegativeFlow
+  @GetUserRolesExpiredPasswordInDB @turnOn @Phase1  @NegativeFlow
   Scenario: GetUserRoles Api - TC16 - Verify response code for Expired password
     When a request is made to the GetUserRoles Api with TC16
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2010 and ErrorMessage "Expired password"
 
 
-  @GetUserRolesLockedOutLoginIDInDB @Phase1  @NegativeFlow
+  @GetUserRolesLockedOutLoginIDInDB @turnOn @Phase1  @NegativeFlow
   Scenario: GetUserRoles Api - TC17 - Verify response code for Locked out Login ID
     When a request is made to the GetUserRoles Api with TC17
     Then verify response code of "GetUserRole" Api is 200
     And response should have ErrorCode 2000 and ErrorMessage "Locked out Login ID"
 
 
-  @GetUserRolesSuccessfulResponseWithUserRolesIDInDB @Phase1 @HappyFlow
+  @GetUserRolesSuccessfulResponseWithUserRolesIDInDB @turnOn @Phase1 @HappyFlow
   Scenario: GetUserRoles Api  TC19 - Verify response for get user roles for valid credentials
     When a request is made to the GetUserRoles Api with TC19
     Then verify response code of "GetUserRole" Api is 200
