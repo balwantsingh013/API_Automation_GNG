@@ -451,16 +451,18 @@ public class SimplifiedExtentReportManager {
         box-shadow: 0 3px 10px rgba(0,0,0,0.08) !important; /* Enhanced shadow */
     }
     
-    /* FIXED: Column headers with light, subtle backgrounds */
-    .status-column, .timestamp-column, .details-column,
-    .test-status, .test-timestamp, .test-details {
-        padding: 10px 15px !important; /* Increased padding */
-        border-radius: 10px !important; /* Increased radius */
-        font-weight: 700 !important; /* Made bolder */
-        font-size: 10px !important; /* Increased from 9px */
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-    }
+    /* FIXED: Column headers with light, subtle backgrounds and PROMINENT text */
+                    .status-column, .timestamp-column, .details-column,
+                    .test-status, .test-timestamp, .test-details {
+                        padding: 10px 15px !important; /* Increased padding */
+                        border-radius: 10px !important; /* Increased radius */
+                        font-weight: 500 !important; /* Bold but not too heavy */
+                        font-size: 14px !important; /* Increased from 14px for better visibility */
+                        text-transform: uppercase !important;
+                        letter-spacing: 0.6px !important;
+                        color: #1f2937 !important; /* Dark gray for high contrast and visibility */
+                        text-shadow: 0 1px 1px rgba(0,0,0,0.1) !important; /* Minimal shadow for depth */
+                    }
     
     /* STATUS column styling - Light blue background */
     .status-column, .test-status {
@@ -1720,12 +1722,19 @@ public class SimplifiedExtentReportManager {
 // Replace the getTimelineFixJavaScript() method with this enhanced version
 
 // Replace the getTimelineFixJavaScript() method with this enhanced version
-private static String getTimelineFixJavaScript() {
-    return """
-// === FULLY FIXED TIMELINE HIGHLIGHTING FOR li.test-item (thin borders) ===
+// Replace your existing getTimelineFixJavaScript() method with this complete version:
+
+// Replace your existing getTimelineFixJavaScript() method with this complete version:
+
+// Replace your existing getTimelineFixJavaScript() method with this complete version:
+
+    private static String getTimelineFixJavaScript() {
+        return """
+// === FULLY FIXED TIMELINE HIGHLIGHTING FOR li.test-item (thin borders) + KEYBOARD NAVIGATION ===
 class TimelineFixWithNavigation {
     constructor() {
         this.currentHighlightedElement = null;
+        this.currentIndex = 0;
         this.init();
     }
 
@@ -1742,7 +1751,8 @@ class TimelineFixWithNavigation {
         console.log('✅ Applying timeline fixes...');
         this.setupTimelineMonitoring();
         this.applyTimelineStyling();
-        this.fixTimestampBadgeColors();  // ✅ NEW: Fix timestamp badge colors
+        this.fixTimestampBadgeColors();
+        this.setupKeyboardNavigation();  // ✅ Setup keyboard navigation
 
         setTimeout(() => this.overrideNavigation(), 2000);
         setTimeout(() => this.hideFailedTestButtons(), 3000);
@@ -1751,7 +1761,60 @@ class TimelineFixWithNavigation {
         setTimeout(() => this.autoHighlightFirstTest(), 500);
     }
 
-    // ✅ NEW METHOD: INTELLIGENT TIMESTAMP BADGE COLOR FIX - NO HARDCODED DATES
+    // ✅ FIXED: Setup Up/Down arrow key navigation WITHOUT wrapping
+    setupKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            // Only handle arrow keys
+            if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
+                return;
+            }
+
+            // Prevent default scrolling behavior
+            e.preventDefault();
+
+            const allTests = this.getAllTestElements();
+            if (allTests.length === 0) return;
+
+            // Store previous index for debugging
+            const previousIndex = this.currentIndex;
+            let newIndex = this.currentIndex;
+
+            if (e.key === 'ArrowDown') {
+                // Move to next test ONLY if not at the end
+                if (this.currentIndex < allTests.length - 1) {
+                    newIndex = this.currentIndex + 1;
+                } else {
+                    console.log('⚠️ Already at last test - cannot go down');
+                    return; // Do nothing if at last test
+                }
+            } else if (e.key === 'ArrowUp') {
+                // Move to previous test ONLY if not at the beginning
+                if (this.currentIndex > 0) {
+                    newIndex = this.currentIndex - 1;
+                } else {
+                    console.log('⚠️ Already at first test - cannot go up');
+                    return; // Do nothing if at first test
+                }
+            }
+
+            // Update index only if it changed
+            this.currentIndex = newIndex;
+
+            // Get the target element
+            const targetTest = allTests[this.currentIndex];
+            
+            if (targetTest) {
+                this.highlightTestElement(targetTest, true);
+                console.log(`✅ Navigated from test ${previousIndex + 1} to test ${this.currentIndex + 1}/${allTests.length}`);
+            } else {
+                console.warn(`⚠️ No test element found at index ${this.currentIndex}`);
+            }
+        });
+        
+        console.log('✅ Keyboard navigation enabled (Use ↑↓ arrow keys, no wrapping)');
+    }
+
+    // ✅ INTELLIGENT TIMESTAMP BADGE COLOR FIX - NO HARDCODED DATES
     fixTimestampBadgeColors() {
         document.querySelectorAll('.badge-danger, .badge.badge-danger').forEach(badge => {
             const text = badge.textContent.trim();
@@ -1796,6 +1859,7 @@ class TimelineFixWithNavigation {
     autoHighlightFirstTest() {
         const firstTest = this.getAllTestElements()[0];
         if (firstTest) {
+            this.currentIndex = 0;
             this.highlightTestElement(firstTest, false);
         }
     }
@@ -1805,11 +1869,15 @@ class TimelineFixWithNavigation {
         return tests.filter(test => test.offsetHeight > 0);
     }
 
+    // ✅ FIXED: Improved highlight with proper index tracking
     highlightTestElement(testElement, shouldScroll = true) {
-        if (!testElement) return;
+        if (!testElement) {
+            console.warn('⚠️ Cannot highlight - test element is null');
+            return;
+        }
 
         // Remove previous highlight
-        if (this.currentHighlightedElement) {
+        if (this.currentHighlightedElement && this.currentHighlightedElement !== testElement) {
             this.removeHighlight(this.currentHighlightedElement);
         }
 
@@ -1835,6 +1903,14 @@ class TimelineFixWithNavigation {
 
         if (shouldScroll) {
             testElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Update current index to match the element we just highlighted
+        const allTests = this.getAllTestElements();
+        const newIndex = allTests.indexOf(testElement);
+        if (newIndex !== -1) {
+            this.currentIndex = newIndex;
+            console.log(`✅ Highlighted test at index ${this.currentIndex + 1}/${allTests.length}`);
         }
     }
 
@@ -1907,13 +1983,9 @@ class TimelineFixWithNavigation {
 
 // Initialize
 window.timelineFixWithNavigation = new TimelineFixWithNavigation();
-console.log('✅ Timeline highlighting with intelligent timestamp badge fix initialized');
+console.log('✅ Timeline highlighting with keyboard navigation (↑↓) and intelligent timestamp badge fix initialized');
 """;
-}
-
-
-
-
+    }
 
     private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
         StringBuilder successLog = new StringBuilder();
