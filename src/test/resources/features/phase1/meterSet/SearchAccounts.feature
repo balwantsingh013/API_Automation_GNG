@@ -5,7 +5,7 @@ Feature: Verify MeterSet SearchAccounts API
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @MeterSet @MS_SA @Positive @Phase1
+  @MeterSet @MS_SA @Positive @Phase2 @meterSet
   Scenario Outline: MeterSet SearchAccounts - Verify "<testCondition>" returns success
     When a request is made to the MeterSet SearchAccounts Api for "<testCondition>" condition
     Then verify response code of "SearchAccounts" Api is 200

@@ -5,7 +5,7 @@ Feature: Verify GetAccountInfo Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetAccountInfoWithInvalidParameters @NegativeFlow @Phase1
+  @GetAccountInfoWithInvalidParameters @NegativeFlow @Phase1 @poc
   Scenario Outline: Verify GetAccountInfo with invalid parameters "<testCondition>"
     When a request is made to the GetAccountInfo Api with invalid parameters for "<testCondition>" condition
     Then verify response code of "GetAccountInfo" Api is 200
@@ -21,7 +21,7 @@ Feature: Verify GetAccountInfo Api
       | INVALID_PREMISES_CODE_LENGTH_NEGATIVE_TC20      | 10005     | Invalid Premises Code Format     |
       | INVALID_ACCOUNT_COMBINATION_NEGATIVE_TC21       | 40015     | Invalid Account Number           |
 
-  @GetAccountInfoPositiveFlows @HappyFlow @Phase1
+  @GetAccountInfoPositiveFlows @HappyFlow @Phase1 @poc
   Scenario Outline: Verify GetAccountInfo positive flows for "<testCondition>"
     When a request is made to the GetAccountInfo Api with valid parameters for "<testCondition>" condition
     Then verify the account information in the response should match the information in the database

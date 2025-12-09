@@ -5,7 +5,7 @@ Feature: Verify GetPrepayPlansRequote Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetPrepayPlansRequotePositive @HappyFlow
+  @GetPrepayPlansRequotePositive @HappyFlow @turnOn @Phase1
   Scenario Outline: GetPrepayPlansRequote API – returns quotes for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
@@ -27,7 +27,7 @@ Feature: Verify GetPrepayPlansRequote Api
       | PRP      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_471 |
       | PGB      | GET_PREPAY_PLANS_REQUOTE_POSITIVE_TC_472 |
 
-  @GetPrepayPlansRequoteNegativeInvalidRequestId @Phase1 @NegativeFlow
+  @GetPrepayPlansRequoteNegativeInvalidRequestId @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetPrepayPlansRequote Api - Verify GetPrepayPlansRequote Api with invalid requestID for "<testCondition>" condition
     When a request is made to the GetPrepayPlansRequote Api with an invalid requestID for "<testCondition>" condition
     Then verify response code of "GetPrepayPlansRequote" Api is 200
@@ -39,7 +39,7 @@ Feature: Verify GetPrepayPlansRequote Api
       | GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_458 | 10002     | Invalid Request ID   |
       | GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_456 | 10003     | Duplicate Request ID |
 
-  @GetPrepayPlansRequoteNegativeInvalidLoginId @Phase1 @NegativeFlow
+  @GetPrepayPlansRequoteNegativeInvalidLoginId @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetPrepayPlansRequote Api - Verify GetPrepayPlansRequote Api with invalid requestID for "<testCondition>" condition
     When a request is made to the GetPrepayPlansRequote Api with an invalid loginID for "<testCondition>" condition
     Then verify response code of "GetPrepayPlansRequote" Api is 200
@@ -52,7 +52,7 @@ Feature: Verify GetPrepayPlansRequote Api
       | GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_461 | 2000      | Invalid Login ID                                          |
       | GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_462 | 2000      | Invalid Login ID                                          |
 
-  @GetPrepayPlansRequoteNegativeConditions @Phase1 @NegativeFlow
+  @GetPrepayPlansRequoteNegativeConditions @turnOn @Phase1 @NegativeFlow
   Scenario Outline: GetPrepayPlansRequote Api - Verify GetPrepayPlansRequote Api for "<testCondition>" negative condition
     When a request is made to the GetPrepayPlansRequote Api for "<testCondition>" negative condition
     Then verify response code of "GetPrepayPlansRequote" Api is 200
@@ -73,7 +73,7 @@ Feature: Verify GetPrepayPlansRequote Api
       | GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_461 | 2000      | Invalid Login ID                                                                                                                            |
       | GET_PREPAY_PLANS_REQUOTE_NEGATIVE_TC_462 | 2000      | Invalid Login ID                                                                                                                            |
 
-  @GetPrepayPlansRequoteNegativeCompleteFlow @NegativeFlow
+  @GetPrepayPlansRequoteNegativeCompleteFlow @NegativeFlow @turnOn @Phase1
   Scenario Outline: GetPrepayPlansRequote API – does not return quotes for <testCondition>
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200

@@ -5,7 +5,7 @@ Feature: Verify CreateAccountNote Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @CreateBannerNotesWithInvalidParameters @NegativeFlow @Phase1
+  @CreateBannerNotesWithInvalidParameters @NegativeFlow @Phase1 @poc
   Scenario Outline: Verify CreateBannerNotes with invalid parameters "<testCondition>"
     When a request is made to the CreateBannerNotes Api with invalid parameters for "<testCondition>" condition
     Then verify response code of "CreateBannerNotes" Api is 200
@@ -30,7 +30,7 @@ Feature: Verify CreateAccountNote Api
       | SERVICE_NUMBER_INVALID_FORMAT_NEGATIVE_TC78              | 10045     | Invalid Service Number Format          |
       | NOTE_TYPE_INVALID_NEGATIVE_TC79                          | 40045     | Invalid Note Type                      |
 
-  @CreateBannerNotesPositiveFlows @HappyFlow @Phase1
+  @CreateBannerNotesPositiveFlows @HappyFlow @Phase1 @poc
   Scenario Outline: Verify CreateBannerNotes positive flows for "<testCondition>"
     When a request is made to the CreateBannerNotes Api with valid parameters "<noteText>" noteText "<noteTypeCode>" noteTypeCode "<userIDRemind>" userIDRemind for "<testCondition>" condition
     Then verify response code of "CreateBannerNotes" Api is 200

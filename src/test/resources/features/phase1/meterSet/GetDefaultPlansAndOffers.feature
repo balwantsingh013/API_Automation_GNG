@@ -6,7 +6,7 @@ Feature: Verify GetDefaultPlansAndOffers Api MeterSet
     And a valid token is received in response
 
 
-  @GetDefaultPlansAndOffersMeterSetNegativeRequest @Phase1 @NegativeFlow
+  @GetDefaultPlansAndOffersMeterSetNegativeRequest @Phase2 @meterSet @NegativeFlow
   Scenario Outline: GetDefaultPlansAndOffers Api - Verify GetDefaultPlansAndOffers Api with invalid requestID for "<testCondition>" condition
     When a request is made to the GetDefaultPlansAndOffers Api MeterSet with an invalid params for "<testCondition>"
     Then verify response code of "GetDefaultPlansAndOffers" Api is 200
