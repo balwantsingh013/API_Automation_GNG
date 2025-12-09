@@ -5,7 +5,7 @@ Feature: Verify GetMarketerReferenceData Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @GetMarketerReferenceDataInvalid @NegativeFlow
+  @GetMarketerReferenceDataInvalid @NegativeFlow @Phase2 @serviceTransfer
   Scenario Outline: GetMarketerReferenceData Api - Verify invalid request for "<testCondition>"
     When a request is made to the GetMarketerReferenceData Api with invalid parameters for "<testCondition>"
     Then verify response code of "GetMarketerReferenceData" Api is 200
@@ -20,14 +20,14 @@ Feature: Verify GetMarketerReferenceData Api
       | INVALID_LOGIN_ID_NOT_ALPHANUMERIC_TC93| 2000      | Invalid Login ID       |
       | INVALID_LOGIN_ID_NOT_FOUND_TC94       | 2000      | Invalid Login ID       |
 
-  @GetMarketerReferenceDataValid @Phase2 @HappyFlow
+  @GetMarketerReferenceDataValid @Phase2 @HappyFlow @serviceTransfer
   Scenario: GetMarketerReferenceData Api - Verify positive response for GetMarketerReferenceData
     When a request is made to the GetMarketerReferenceData Api with valid parameters
     Then verify response code of "GetReasonsForLeaving" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And the MarketerReferenceData is of length 12
 
-  @GetMarketerReferenceDataUniquenessCheck @Phase2 @HappyFlow
+  @GetMarketerReferenceDataUniquenessCheck @Phase2 @HappyFlow @serviceTransfer
   Scenario: GetMarketerReferenceData Api - Verify positive response for GetMarketerReferenceData
     When a request is made to the GetMarketerReferenceData Api with valid parameters
     Then verify response code of "GetReasonsForLeaving" Api is 200

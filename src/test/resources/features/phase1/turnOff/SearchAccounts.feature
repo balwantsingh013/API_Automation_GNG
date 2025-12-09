@@ -5,7 +5,7 @@ Feature: Verify SearchAccounts TurnOff Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-    @InvalidAndValidCombinationLastNameZipcode @Phase1 @HappyFlow @SearchAccountTOFF
+    @InvalidAndValidCombinationLastNameZipcode @Phase1 @turnOff @HappyFlow @SearchAccountTOFF
     Scenario Outline: SearchAccountsApiTOFF- Verify Response when Last Name, Zipcode And transactionType As TOFF is provided With "<combinationType>"
     When a request is made to the SearchAccounts Api with Last Name And Zipcode And transactionType As TOFF With "<combinationType>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -17,7 +17,7 @@ Feature: Verify SearchAccounts TurnOff Api
       |INVALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC_77|0          |
       |VALID_COMBINATION_OF_LASTNAME_ZIPCODE_TC_78  |30         |
 
-    @validFirstNameLastNameZipcodeRSOrSR @Phase1 @HappyFlow @SearchAccountTOFF
+    @validFirstNameLastNameZipcodeRSOrSR @Phase1 @turnOff @HappyFlow @SearchAccountTOFF
     Scenario Outline: SearchAccountsApiTOFF- Verify Response when a Valid Combination Of First Name, Last Name And Zipcode with transactionType As TOFF is provided For "<accountType>"
     When a request is made to the SearchAccounts Api with First Name, Last Name And Zipcode with transactionType As TOFF is provided For "<accountType>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -32,7 +32,7 @@ Feature: Verify SearchAccounts TurnOff Api
       |RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC_79      |1          |RS          |A            |true            |true            |
       |SENIOR_RESIDENTIAL_VALID_ACTIVE_ACCOUNT_TC_80|1          |SR          |A            |true            |true            |
 
-    @validCustomerBusinessName @Phase1 @HappyFlow @SearchAccountTOFF
+    @validCustomerBusinessName @Phase1 @turnOff @HappyFlow @SearchAccountTOFF
     Scenario Outline: SearchAccountsApiTOFF- Verify Response when a Valid CustomerBusinessName Parameter with transactionType As TOFF is provided For "<accountType>"
     When a request is made to the SearchAccounts Api with Valid CustomerBusinessName Parameter with transactionType As TOFF is provided For "<accountType>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -53,7 +53,7 @@ Feature: Verify SearchAccounts TurnOff Api
       |COMMERCIAL_VALID_ACTIVE_PRICE_PLAN_CCV_TC_87        |CM          |A            |true            |true            |false        |0            |
       |COMMERCIAL_VALID_FINAL_ACCOUNT_TC_88                |CM          |F            |true            |true            |false        |0            |
 
-  @validCustPremCode @Phase1 @HappyFlow @SearchAccountTOFF
+  @validCustPremCode @Phase1 @turnOff @HappyFlow @SearchAccountTOFF
   Scenario Outline: SearchAccountsApiTOFF- Verify Response when a valid customer and premisesCode are provided for "TOFF" for <testCondition>
     When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -102,14 +102,14 @@ Feature: Verify SearchAccounts TurnOff Api
     |NON_SSP_ACCOUNT_WITH_ETC_TC_105C          |A            |true            |CM          |true            |false          |false        |
     |NON_SSP_ACCOUNT_WITHOUT_ETC_TC_105D       |A            |true            |RS          |true            |false          |false        |
 
-  @validCustCodeInvalidPremCode @Phase1 @HappyFlow @SearchAccountTOFF
+  @validCustCodeInvalidPremCode @Phase1 @turnOff @HappyFlow @SearchAccountTOFF
   Scenario: SearchAccountsApiTOFF- Verify Response when a valid customer and premisesCode are provided for "TOFF" for VALID_CUST_CODE_INVALID_PREM_CODE_TC_74
     When a request is made to the SearchAccounts Api with Valid customer and premisesCode with TOFF for "VALID_CUST_CODE_INVALID_PREM_CODE_TC_74"
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode 0 and ErrorMessage ""
     And response should return numberOfMatches as 0
 
-  @validAGLCAccountNumberRSActiveAccount @Phase1 @HappyFlow @SearchAccountTOFF
+  @validAGLCAccountNumberRSActiveAccount @Phase1 @turnOff @HappyFlow @SearchAccountTOFF
   Scenario: SearchAccountsApiTOFF- Verify Response when a Valid AGLC Account Number Parameter with transactionType As TOFF is input For Residential Active Account TC_103
     When a request is made to the SearchAccounts Api with Valid AGLC Account Number Parameter with transactionType As TOFF is input For Residential Active account
     Then verify response code of "SearchAccounts" Api is 200
@@ -120,7 +120,7 @@ Feature: Verify SearchAccounts TurnOff Api
     And response should have "customerType" as "RS"
     And response should have "turnOffAllowed" flag as "true"
 
-  @ValidAddressDetailsRSActiveAccount @Phase1 @HappyFlow @SearchAccountTOFF
+  @ValidAddressDetailsRSActiveAccount @Phase1 @turnOff @HappyFlow @SearchAccountTOFF
   Scenario Outline: SearchAccountsApiTOFF- Verify Response when a Valid Address Details parameters with transactionType As TOFF is input For <testCondition>
     When a request is made to the SearchAccounts Api with Valid Address Details parameters with transactionType As TOFF is input For "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -145,7 +145,7 @@ Feature: Verify SearchAccounts TurnOff Api
 #    And response should have "customerType" as "RS"
 #    And response should have "turnOffAllowed" flag as "true"
 
-  @SearchAccountsTurnOffInvalidRequestId @Phase1 @NegativeFlow
+  @SearchAccountsTurnOffInvalidRequestId @Phase1 @turnOff @NegativeFlow
   Scenario Outline: SearchAccountsApiTOFF - Verify SearchAccounts Api with invalid requestID for "<testCondition>"
     When a request is made to the SearchAccounts Api with an invalid requestID for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -158,7 +158,7 @@ Feature: Verify SearchAccounts TurnOff Api
       | SEARCH_ACCOUNTS_DUPLICATE_REQUEST_ID_TC_14       | 10003     | Duplicate Request ID |
 
 
-  @SearchAccountsTurnOffNegativeInvalidLoginId @Phase1 @NegativeFlow
+  @SearchAccountsTurnOffNegativeInvalidLoginId @Phase1 @turnOff @NegativeFlow
   Scenario Outline: SearchAccountsApiTOFF Api - Verify SearchAccounts Api with invalid loginId for "<testCondition>" condition
     When a request is made to the SearchAccounts Api with an invalid loginId for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -171,7 +171,7 @@ Feature: Verify SearchAccounts TurnOff Api
       | SEARCH_ACCOUNTS_NON_ALPHANUMERIC_ID_TC_17      | 10112     |Invalid or missing Login ID|
       |SEARCH_ACCOUNT_LOGIN_ID_NOT_IN_USERS_TABLE_TC_18|2000       |Invalid Login ID           |
 
-  @SearchAccountsTurnOffNegativeInvalidCustomerCode @Phase1 @NegativeFlow
+  @SearchAccountsTurnOffNegativeInvalidCustomerCode @Phase1 @turnOff @NegativeFlow
   Scenario Outline: SearchAccountsApiTOFF Api - Verify SearchAccounts Api with invalid CustomerCode for "<testCondition>" condition
     When a request is made to the SearchAccounts Api with an invalid field for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -218,7 +218,7 @@ Feature: Verify SearchAccounts TurnOff Api
       |INVALID_ZIP_CODE_LENGTH_LESS_THAN_5_TC_54B                  |10115      |Invalid PremisesZipCode provided                                                                                                                                                  |
       |MISSING_ZIP_CODE_TC_55                                      |1001       |Invalid Request: Invalid required search field combination - premisesZipCode required.                                                                                            |
 
-  @InvalidFirstNameAndZipCombination @Phase1 @NegativeFlow
+  @InvalidFirstNameAndZipCombination @Phase1 @NegativeFlow @turnOff
   Scenario: SearchAccountsApiTOFF Api - Verify SearchAccounts Api with invalid last name and zip for TC_28
     When a request is made to the SearchAccounts Api with an invalid field for "INVALID_LASTNAME_AND_ZIP_COMBINATION_TC_28"
     Then verify response code of "SearchAccounts" Api is 200

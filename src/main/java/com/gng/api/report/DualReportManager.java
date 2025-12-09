@@ -24,6 +24,11 @@ public class DualReportManager {
      * Initialize report managers based on configuration
      */
     public static synchronized void initialize() {
+        // default initialization
+        initialize(null); // delegate to the overloaded version
+    }
+
+    public static synchronized void initialize(String config) {
         if (initialized) {
             log.warn("⚠️ DualReportManager already initialized, skipping...");
             return;
@@ -47,7 +52,7 @@ public class DualReportManager {
 
             try {
                 log.info("🔄 Initializing Simplified Report Manager...");
-                SimplifiedExtentReportManager.initialiseExtentReport();
+                SimplifiedExtentReportManager.initialiseExtentReport(config);
                 log.info("   ✅ Simplified report manager initialized");
             } catch (Exception e) {
                 log.error("   ❌ Failed to initialize Simplified report: {}", e.getMessage(), e);
@@ -68,7 +73,7 @@ public class DualReportManager {
             log.info("╚═══════════════════════════════════════════════════════════════╝");
 
             try {
-                SimplifiedExtentReportManager.initialiseExtentReport();
+                SimplifiedExtentReportManager.initialiseExtentReport(config);
                 log.info("✅ Simplified report initialized");
             } catch (Exception e) {
                 log.error("❌ Failed to initialize Simplified report: {}", e.getMessage(), e);

@@ -5,7 +5,7 @@ Feature: Verify End to End flow for ServiceTransfer
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @ServiceTransferE2E @HappyFlow @Phase2
+  @ServiceTransferE2E @HappyFlow @Phase2 @serviceTransfer
   Scenario Outline: Verify end to end flow for ServiceTransfer for "<testCondition>"
     When customer code, premises code and transaction id is fetched from db for "<testCondition>"
     Then a request is made to the SearchAccounts Api for "<testCondition>"
@@ -71,7 +71,7 @@ Feature: Verify End to End flow for ServiceTransfer
       |NACN_RS_TC_297                        |RS         |false   |null     |
       |ACN_RS_TC_298                         |RS         |false   |null     |
 
-  @ServiceTransferE2E2 @HappyFlow @Phase2
+  @ServiceTransferE2E2 @HappyFlow @Phase2 @serviceTransfer
   Scenario Outline: Verify end to end flow for ServiceTransfer for "<testCondition>"
     When customer code, premises code and transaction id is fetched from db for "<testCondition>"
     Then a request is made to the SearchAccounts Api for "<testCondition>"

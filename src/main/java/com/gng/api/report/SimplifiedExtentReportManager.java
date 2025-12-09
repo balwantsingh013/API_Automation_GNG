@@ -172,9 +172,9 @@ public class SimplifiedExtentReportManager {
     public static void logTestDescription(String description) {
         ExtentTest currentTest = test.get();
         if (currentTest != null) {
-            String html = "<div style='margin-top:30px; padding:15px; background:#ffffff; border:1px solid #2E86C1; border-radius:10px;'>"
-                    + "<div style='font-size:23px; font-weight:bold;'>📝 Test Description:</div>"
-                    + "<div style='color:#2E86C1; font-size:23px; font-weight:bold;'>" + description + "</div>"
+            String html = "<div class='test-description-block'>"
+                    + "<div class='test-description-title'>📝 Test Description:</div>"
+                    + "<div class='test-description-text'>" + description + "</div>"
                     + "</div>";
             currentTest.getModel().setDescription(html);
         }
@@ -182,10 +182,17 @@ public class SimplifiedExtentReportManager {
 
 
 
-    public static synchronized void initialiseExtentReport() {
+
+    public static synchronized void initialiseExtentReport(String config) {
         if (extent == null) {
             extent = new ExtentReports();
-            spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Client-" + CommonUtil.getCurrentDateTime() + ".html");
+            if (config != null && !config.isEmpty()) {
+                spark = new ExtentSparkReporter(REPORT_PATH + "GNG- " + config + ".html");
+            }
+            else{
+                spark = new ExtentSparkReporter(REPORT_PATH + "GNG-API-Report-Client-" + CommonUtil.getCurrentDateTime() + ".html");
+
+            }
             setConfig();
             log.info("📊 Simplified Extent Report initialized");
         }
@@ -245,11 +252,6 @@ public class SimplifiedExtentReportManager {
     });
 """);
 
-
-
-
-
-
         extent.attachReporter(spark);
         setSystemInfo();
     }
@@ -291,7 +293,7 @@ public class SimplifiedExtentReportManager {
     .timeline-item .card-title * {
         color: white !important;
         font-weight: 600 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
         text-decoration: none !important;
@@ -449,16 +451,18 @@ public class SimplifiedExtentReportManager {
         box-shadow: 0 3px 10px rgba(0,0,0,0.08) !important; /* Enhanced shadow */
     }
     
-    /* FIXED: Column headers with light, subtle backgrounds */
-    .status-column, .timestamp-column, .details-column,
-    .test-status, .test-timestamp, .test-details {
-        padding: 10px 15px !important; /* Increased padding */
-        border-radius: 10px !important; /* Increased radius */
-        font-weight: 700 !important; /* Made bolder */
-        font-size: 10px !important; /* Increased from 9px */
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-    }
+    /* FIXED: Column headers with light, subtle backgrounds and PROMINENT text */
+                    .status-column, .timestamp-column, .details-column,
+                    .test-status, .test-timestamp, .test-details {
+                        padding: 10px 15px !important; /* Increased padding */
+                        border-radius: 10px !important; /* Increased radius */
+                        font-weight: 500 !important; /* Bold but not too heavy */
+                        font-size: 14px !important; /* Increased from 14px for better visibility */
+                        text-transform: uppercase !important;
+                        letter-spacing: 0.6px !important;
+                        color: #1f2937 !important; /* Dark gray for high contrast and visibility */
+                        text-shadow: 0 1px 1px rgba(0,0,0,0.1) !important; /* Minimal shadow for depth */
+                    }
     
     /* STATUS column styling - Light blue background */
     .status-column, .test-status {
@@ -622,7 +626,7 @@ public class SimplifiedExtentReportManager {
     .extent-test-node .node-name,
     .test-node h1, .test-node h2, .test-node h3, .test-node h4,
     .test-detail h1, .test-detail h2, .test-detail h3, .test-detail h4 {
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         padding: 5px 10px !important; /* Increased padding */
         margin: 4px 0 !important; /* Increased from 3px */
         line-height: 1.3 !important;
@@ -633,7 +637,7 @@ public class SimplifiedExtentReportManager {
     .test-node .node-name, .test-node .test-name,
     .test-node .scenario-name, .test-node .feature-name,
     .test-node a, .test-node span, .test-node div {
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         font-weight: 500 !important;
         line-height: 1.4 !important;
         max-width: 350px !important; /* Increased width */
@@ -641,14 +645,34 @@ public class SimplifiedExtentReportManager {
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
     }
-                .test-description-block {
-                    margin: 15px 0;
-                    padding: 15px;
-                    background: #fffbe6;
-                    border: 1px solid #fcd34d;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-                }
+.test-description-block {
+    margin-top: 25px;     /* smaller top margin to avoid overlap */
+    margin-bottom: 0px; /* reduced bottom gap */
+    padding: 15px;       /* keep padding comfortable */
+    background: #ffffff;
+    border: 2px solid #2E86C1;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #2E86C1 !important;
+    line-height: 1.4 !important;
+}
+
+
+.test-description-title {
+    font-size: 15px !important;    /* reduced from 17px */
+    font-weight: 700 !important;
+    margin-bottom: 8px;            /* reduced from 10px */
+    color: #1f2937 !important;
+}
+
+.test-description-text {
+    font-size: 14px !important;    /* reduced from 16px */
+    color: #2E86C1 !important;
+}
+
+
                 
     
     /* === COMPONENT STYLES === */
@@ -1109,7 +1133,7 @@ public class SimplifiedExtentReportManager {
         padding: 5px 12px !important; /* Increased padding */
         border-radius: 18px !important; /* Increased from 16px */
         font-weight: 700 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
@@ -1121,7 +1145,7 @@ public class SimplifiedExtentReportManager {
         padding: 5px 12px !important; /* Increased padding */
         border-radius: 18px !important; /* Increased from 16px */
         font-weight: 700 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
@@ -1133,11 +1157,102 @@ public class SimplifiedExtentReportManager {
         padding: 5px 12px !important; /* Increased padding */
         border-radius: 18px !important; /* Increased from 16px */
         font-weight: 700 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
         box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
         border: 2px solid rgba(255,255,255,0.2) !important;
     }
+    
+    /* === NODE STATUS BADGE (Test Execution Steps Badge) === */
+                        /* Target the badge that appears next to node names like "Test Execution Steps" */
+                        .node-name .badge,
+                        .extent-node .badge,
+                        .test-node .badge,
+                        .card-header .badge,
+                        .node .badge,
+                        [class*="node"] .badge,
+                        .badge.fail,
+                        .badge.pass,
+                        .badge.skip,
+                        .badge.warning,
+                        .badge.info {
+                            padding: 10px 24px !important;
+                            border-radius: 20px !important;
+                            font-size: 15px !important;
+                            font-weight: 800 !important;
+                            min-width: 90px !important;
+                            text-align: center !important;
+                            display: inline-block !important;
+                            margin-left: 15px !important;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+                            letter-spacing: 0.5px !important;
+                            text-transform: uppercase !important;
+                        }
+                
+                        /* Specific colors for node badges */
+                        .node-name .badge.fail,
+                        .badge.fail {
+                            background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+                            color: white !important;
+                        }
+                
+                        .node-name .badge.pass,
+                        .badge.pass {
+                            background: linear-gradient(135deg, #059669, #10b981) !important;
+                            color: white !important;
+                        }
+                        
+                        /* === NAVIGATION HIGHLIGHTING - SUPER STRONG === */
+                                            .nav-highlighted {
+                                                position: relative !important;
+                                                z-index: 1000 !important;
+                                                outline: 5px solid #2563eb !important;
+                                                outline-offset: 3px !important;
+                                                background: rgba(37, 99, 235, 0.25) !important;
+                                                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3),\s
+                                                            0 0 20px rgba(37, 99, 235, 0.5),\s
+                                                            inset 0 0 20px rgba(37, 99, 235, 0.1) !important;
+                                                border-radius: 8px !important;
+                                                transform: scale(1.02) !important;
+                                                transition: all 0.3s ease !important;
+                                            }
+                
+                                            /* Stronger border for highlighted test */
+                                            .nav-highlighted::before {
+                                                content: '👉 CURRENT TEST' !important;
+                                                position: absolute !important;
+                                                top: -30px !important;
+                                                left: 50% !important;
+                                                transform: translateX(-50%) !important;
+                                                background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+                                                color: white !important;
+                                                padding: 6px 16px !important;
+                                                border-radius: 20px !important;
+                                                font-size: 12px !important;
+                                                font-weight: 800 !important;
+                                                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5) !important;
+                                                z-index: 1001 !important;
+                                                animation: pulse 1.5s infinite !important;
+                                                letter-spacing: 1px !important;
+                                            }
+                
+                                            /* Pulse animation for the indicator */
+                                            @keyframes pulse {
+                                                0%, 100% {\s
+                                                    opacity: 1;\s
+                                                    transform: translateX(-50%) scale(1);\s
+                                                }
+                                                50% {\s
+                                                    opacity: 0.8;\s
+                                                    transform: translateX(-50%) scale(1.05);\s
+                                                }
+                                            }
+                
+                                            /* Make sure highlighted content is visible */
+                                            .nav-highlighted * {
+                                                position: relative !important;
+                                                z-index: 1001 !important;
+                                            }
     
     /* === SPECIALIZED SECTIONS === */
     .response-time-badge {
@@ -1200,7 +1315,7 @@ public class SimplifiedExtentReportManager {
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
         font-weight: 600 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 13px !important; /* Increased from 9px */
     }
     
     .warning-log {
@@ -1238,7 +1353,7 @@ public class SimplifiedExtentReportManager {
         box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
         text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
         font-weight: 600 !important;
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 14px !important; /* Increased from 9px */
     }
     
     /* === UTILITY CLASSES === */
@@ -1251,7 +1366,7 @@ public class SimplifiedExtentReportManager {
         overflow-x: auto !important;
         box-shadow: inset 0 2px 6px rgba(0,0,0,0.3) !important; /* Enhanced shadow */
         border: 1px solid #374151 !important;
-        font: 9px/1.5 'Fira Code', 'Monaco', 'Consolas', monospace !important; /* Increased from 8px */
+        font: 12px/1.5 'Fira Code', 'Monaco', 'Consolas', monospace !important; /* Increased from 8px */
     }
     
     .card-panel { 
@@ -1318,7 +1433,7 @@ public class SimplifiedExtentReportManager {
     
     /* Test node content */
     .test-node, .category-node, .feature-node {
-        font-size: 10px !important; /* Increased from 9px */
+        font-size: 12px !important; /* Increased from 9px */
     }
     
     /* Timeline content */
@@ -1334,7 +1449,7 @@ public class SimplifiedExtentReportManager {
     
     /* Status indicators */
     .status-indicator, .badge, .label {
-        font-size: 9px !important; /* Increased from 8px */
+        font-size: 14px !important; /* Increased from 8px */
     }
     
     /* === RESPONSIVE DESIGN FOR COLUMNS === */
@@ -1382,7 +1497,7 @@ public class SimplifiedExtentReportManager {
         .thread-info { font-size: 8px !important; } /* Increased from 7px */
         .response-time-badge { font-size: 8px !important; } /* Increased from 7px */
         .perf-value { font-size: 8px !important; } /* Increased from 7px */
-        .code-block { font-size: 8px !important; } /* Increased from 7px */
+        .code-block { font-size: 11px !important; } /* Increased from 7px */
         
         /* Mobile header improvements */
         .enhanced-stats-header { padding: 12px !important; } /* Increased from 10px */
@@ -1392,7 +1507,7 @@ public class SimplifiedExtentReportManager {
         /* Mobile test names - better readable */
         .test-name, .scenario-name, .feature-name,
         .test-node .node-name, .test-node .test-name {
-            font-size: 8px !important; /* Increased from 7px */
+            font-size: 14px !important; /* Increased from 7px */
             max-width: 280px !important; /* Increased from 250px */
         }
         
@@ -1593,364 +1708,290 @@ public class SimplifiedExtentReportManager {
                                 .test-node, .scenario-node, .extent-node, .card-panel {
                                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
                                 }
+                                       
     """;
     }
 
     // TIMELINE FIX JAVASCRIPT - ONLY FIXES TIMELINE ISSUES, DOESN'T CHANGE EXISTING FUNCTIONALITY
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+
+// Replace the getTimelineFixJavaScript() method with this enhanced version
+// Replace your existing getTimelineFixJavaScript() method with this complete version:
+
+// Replace your existing getTimelineFixJavaScript() method with this complete version:
+
+// Replace your existing getTimelineFixJavaScript() method with this complete version:
+
     private static String getTimelineFixJavaScript() {
         return """
-        // === TIMELINE FIX + NAVIGATION OVERRIDE ===
-        class TimelineFixWithNavigation {
-            constructor() {
-                this.init();
+// === FULLY FIXED TIMELINE HIGHLIGHTING FOR li.test-item (thin borders) + KEYBOARD NAVIGATION ===
+class TimelineFixWithNavigation {
+    constructor() {
+        this.currentHighlightedElement = null;
+        this.currentIndex = 0;
+        this.init();
+    }
+
+    init() {
+        console.log('🎯 Timeline Fix: Initializing...');
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.applyFixes());
+        } else {
+            this.applyFixes();
+        }
+    }
+
+    applyFixes() {
+        console.log('✅ Applying timeline fixes...');
+        this.setupTimelineMonitoring();
+        this.applyTimelineStyling();
+        this.fixTimestampBadgeColors();
+        this.setupKeyboardNavigation();  // ✅ Setup keyboard navigation
+
+        setTimeout(() => this.overrideNavigation(), 2000);
+        setTimeout(() => this.hideFailedTestButtons(), 3000);
+
+        // Auto-highlight first test on load
+        setTimeout(() => this.autoHighlightFirstTest(), 500);
+    }
+
+    // ✅ FIXED: Setup Up/Down arrow key navigation WITHOUT wrapping
+    setupKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            // Only handle arrow keys
+            if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
+                return;
             }
-            
-            init() {
-                console.log('Timeline Fix + Navigation: Initializing...');
-                
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', () => this.applyFixes());
+
+            // Prevent default scrolling behavior
+            e.preventDefault();
+
+            const allTests = this.getAllTestElements();
+            if (allTests.length === 0) return;
+
+            // Store previous index for debugging
+            const previousIndex = this.currentIndex;
+            let newIndex = this.currentIndex;
+
+            if (e.key === 'ArrowDown') {
+                // Move to next test ONLY if not at the end
+                if (this.currentIndex < allTests.length - 1) {
+                    newIndex = this.currentIndex + 1;
                 } else {
-                    this.applyFixes();
+                    console.log('⚠️ Already at last test - cannot go down');
+                    return; // Do nothing if at last test
+                }
+            } else if (e.key === 'ArrowUp') {
+                // Move to previous test ONLY if not at the beginning
+                if (this.currentIndex > 0) {
+                    newIndex = this.currentIndex - 1;
+                } else {
+                    console.log('⚠️ Already at first test - cannot go up');
+                    return; // Do nothing if at first test
                 }
             }
+
+            // Update index only if it changed
+            this.currentIndex = newIndex;
+
+            // Get the target element
+            const targetTest = allTests[this.currentIndex];
             
-            applyFixes() {
-                console.log('Applying timeline fixes and navigation override...');
-                
-                // Apply timeline fixes first
-                this.fixOffsetWidthIssues();
-                this.setupTimelineMonitoring();
-                this.applyTimelineStyling();
-                
-                // Apply navigation override after delay
-                setTimeout(() => this.overrideNavigation(), 2000);
-                setTimeout(() => this.hideFailedTestButtons(), 3000);
+            if (targetTest) {
+                this.highlightTestElement(targetTest, true);
+                console.log(`✅ Navigated from test ${previousIndex + 1} to test ${this.currentIndex + 1}/${allTests.length}`);
+            } else {
+                console.warn(`⚠️ No test element found at index ${this.currentIndex}`);
             }
+        });
+        
+        console.log('✅ Keyboard navigation enabled (Use ↑↓ arrow keys, no wrapping)');
+    }
+
+    // ✅ INTELLIGENT TIMESTAMP BADGE COLOR FIX - NO HARDCODED DATES
+    fixTimestampBadgeColors() {
+        document.querySelectorAll('.badge-danger, .badge.badge-danger').forEach(badge => {
+            const text = badge.textContent.trim();
             
-            overrideNavigation() {
-                console.log('Applying navigation override...');
-                
-                // Method 1: Hide failed test buttons
-                this.hideFailedTestButtons();
-                
-                // Method 2: Add keyboard navigation
-                this.addKeyboardNavigation();
-                
-                // Method 3: Monitor for new buttons
-                this.monitorForFailedTestButtons();
-            }
+            // Intelligent timestamp detection using patterns (no hardcoded years)
+            const isTimestamp = (
+                // Pattern: DD.MM.YYYY HH:MM:SS PM/AM
+                /\\d{2}\\.\\d{2}\\.\\d{4}\\s+\\d{1,2}:\\d{2}:\\d{2}\\s+(AM|PM)/i.test(text) ||
+                // Pattern: HH:MM:SS
+                /^\\d{1,2}:\\d{2}:\\d{2}$/.test(text) ||
+                // Pattern: DD.MM.YYYY
+                /^\\d{2}\\.\\d{2}\\.\\d{4}$/.test(text) ||
+                // Pattern: Time with AM/PM
+                /\\d{1,2}:\\d{2}(:\\d{2})?\\s*(AM|PM)/i.test(text) ||
+                // Pattern: ISO date format
+                /^\\d{4}-\\d{2}-\\d{2}/.test(text) ||
+                // Pattern: Time with milliseconds
+                /\\d{2}:\\d{2}:\\d{2}\\.\\d{3}/.test(text)
+            );
             
-            hideFailedTestButtons() {
-                // Find and hide all buttons with "failed" in text, onclick, or title
-                const selectors = [
-                    'button', '.btn', 'a[role="button"]', '[onclick]', 
-                    '[class*="btn"]', '[class*="button"]', '[class*="nav"]'
-                ];
-                
-                selectors.forEach(selector => {
-                    document.querySelectorAll(selector).forEach(element => {
-                        const text = (element.textContent || element.innerText || '').toLowerCase();
-                        const title = (element.title || '').toLowerCase();
-                        const onclick = (element.getAttribute('onclick') || '').toLowerCase();
-                        const className = (element.className || '').toLowerCase();
-                        
-                        if (this.isFailedTestButton(text, title, onclick, className)) {
-                            console.log('Hiding failed test button:', text.substring(0, 30));
-                            element.style.display = 'none';
-                            element.style.visibility = 'hidden';
-                            element.style.pointerEvents = 'none';
-                            element.setAttribute('data-hidden-failed-btn', 'true');
-                        }
-                    });
-                });
-            }
+            // Exclude status badges
+            const isStatusBadge = /fail|pass|skip|error|success|warning/i.test(text);
             
-            isFailedTestButton(text, title, onclick, className) {
-                const checkTexts = [text, title, onclick, className];
-                return checkTexts.some(str => 
-                    (str.includes('failed') && (str.includes('next') || str.includes('skip'))) ||
-                    str.includes('nextfailed') ||
-                    str.includes('skipfailed') ||
-                    (str.includes('fail') && str.includes('nav'))
-                );
+            // Only change timestamp badges, NOT status badges
+            if (isTimestamp && !isStatusBadge) {
+                badge.style.background = 'linear-gradient(135deg, #059669, #10b981)';
+                badge.style.boxShadow = '0 3px 10px rgba(5, 150, 105, 0.4)';
+                badge.style.color = 'white';
+                badge.classList.remove('badge-danger');
+                badge.classList.add('badge-success');
+                console.log('✅ Fixed timestamp badge:', text);
             }
-            
-            addKeyboardNavigation() {
-                document.addEventListener('keydown', (e) => {
-                    // Ctrl + Down or Ctrl + J for next test
-                    if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowDown' || e.key === 'j' || e.key === 'J')) {
-                        e.preventDefault();
-                        this.navigateToNextTest();
-                    }
-                    // Ctrl + Up or Ctrl + K for previous test  
-                    else if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowUp' || e.key === 'k' || e.key === 'K')) {
-                        e.preventDefault();
-                        this.navigateToPreviousTest();
-                    }
-                });
-                
-                console.log('Keyboard navigation added: Ctrl+J/Down (next), Ctrl+K/Up (previous)');
-            }
-            
-            monitorForFailedTestButtons() {
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        mutation.addedNodes.forEach((node) => {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                // Check if the new node is a button or contains buttons
-                                const buttons = node.tagName === 'BUTTON' ? [node] : 
-                                               (node.querySelectorAll ? Array.from(node.querySelectorAll('button, .btn, [onclick]')) : []);
-                                
-                                buttons.forEach(button => {
-                                    const text = (button.textContent || '').toLowerCase();
-                                    const title = (button.title || '').toLowerCase();
-                                    const onclick = (button.getAttribute('onclick') || '').toLowerCase();
-                                    const className = (button.className || '').toLowerCase();
-                                    
-                                    if (this.isFailedTestButton(text, title, onclick, className)) {
-                                        console.log('Hiding new failed test button:', text.substring(0, 30));
-                                        button.style.display = 'none';
-                                        button.style.visibility = 'hidden';
-                                        button.style.pointerEvents = 'none';
-                                    }
-                                });
-                            }
-                        });
-                    });
-                });
-                
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
-            }
-            
-            navigateToNextTest() {
-                console.log('Navigating to next test...');
-                const tests = this.getAllTestElements();
-                if (tests.length === 0) return;
-                
-                const currentIndex = this.getCurrentTestIndex(tests);
-                const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % tests.length;
-                
-                this.scrollToTest(tests[nextIndex]);
-            }
-            
-            navigateToPreviousTest() {
-                console.log('Navigating to previous test...');
-                const tests = this.getAllTestElements();
-                if (tests.length === 0) return;
-                
-                const currentIndex = this.getCurrentTestIndex(tests);
-                const prevIndex = currentIndex <= 0 ? tests.length - 1 : currentIndex - 1;
-                
-                this.scrollToTest(tests[prevIndex]);
-            }
-            
-            getAllTestElements() {
-                const selectors = [
-                    '.test-node', '.scenario-node', '.extent-node', 
-                    '.card-panel', '.test-item', '.test-case',
-                    '.extent-test', '.node'
-                ];
-                
-                let tests = [];
-                for (const selector of selectors) {
-                    tests = Array.from(document.querySelectorAll(selector));
-                    if (tests.length > 0) break;
-                }
-                
-                return tests.filter(test => test.offsetHeight > 0); // Only visible tests
-            }
-            
-            getCurrentTestIndex(tests) {
-                for (let i = 0; i < tests.length; i++) {
-                    const rect = tests[i].getBoundingClientRect();
-                    if (rect.top >= 0 && rect.top < window.innerHeight * 0.6) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            
-            scrollToTest(testElement) {
-                if (!testElement) return;
-                
-                // Remove previous highlights
-                document.querySelectorAll('.nav-highlighted').forEach(el => {
-                    el.classList.remove('nav-highlighted');
-                    el.style.outline = '';
-                    el.style.backgroundColor = '';
-                });
-                
-                // Highlight current test
-                testElement.classList.add('nav-highlighted');
-                testElement.style.outline = '3px solid #3b82f6';
-                testElement.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
-                
-                // Scroll to test
-                testElement.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
-                
-                // Try to expand the test if it's collapsible
-                setTimeout(() => {
-                    const clickable = testElement.querySelector('a, button, .clickable, [onclick]') || testElement;
-                    if (clickable && clickable.click && !testElement.classList.contains('expanded')) {
-                        try {
-                            clickable.click();
-                        } catch (e) {
-                            // Ignore click errors
-                        }
-                    }
-                }, 500);
-                
-                // Remove highlight after 3 seconds
-                setTimeout(() => {
-                    testElement.style.outline = '';
-                    testElement.style.backgroundColor = '';
-                    testElement.classList.remove('nav-highlighted');
-                }, 3000);
-                
-                console.log('Navigated to:', (testElement.textContent || '').substring(0, 50) + '...');
-            }
-            
-            // === EXISTING TIMELINE FIX METHODS ===
-            fixOffsetWidthIssues() {
-                const problematicElements = document.querySelectorAll('*');
-                
-                problematicElements.forEach(element => {
-                    if (element.style && element.style.cssText.includes('offsetWidth')) {
-                        element.style.cssText = element.style.cssText.replace(/[^;]*offsetWidth[^;]*;?/g, '');
-                        element.style.maxWidth = '350px';
-                        element.style.overflow = 'hidden';
-                        element.style.textOverflow = 'ellipsis';
-                        element.style.whiteSpace = 'nowrap';
-                    }
-                    
-                    if (element.textContent && element.textContent.includes('offsetWidth')) {
-                        if (element.classList.contains('card-title') || 
-                            element.classList.contains('node-name') || 
-                            element.classList.contains('test-title') ||
-                            element.closest('.timeline-view')) {
-                            
-                            const meaningfulName = this.getMeaningfulTestName(element);
-                            element.textContent = meaningfulName;
-                            console.log('Fixed offsetWidth issue: ' + meaningfulName);
-                        }
-                    }
-                });
-            }
-            
-            getMeaningfulTestName(element) {
-                const parentCard = element.closest('.card-panel');
-                if (parentCard) {
-                    const allTextElements = parentCard.querySelectorAll('*');
-                    for (const textEl of allTextElements) {
-                        if (textEl !== element && textEl.textContent && 
-                            !textEl.textContent.includes('offsetWidth') &&
-                            textEl.textContent.trim().length > 3 &&
-                            !textEl.textContent.includes('Thread') &&
-                            !textEl.textContent.includes('ms')) {
-                            return textEl.textContent.trim();
-                        }
-                    }
-                }
-                
-                const timestamp = new Date().toLocaleTimeString();
-                return `API Test - ${timestamp}`;
-            }
-            
-            applyTimelineStyling() {
-                const timelineElements = document.querySelectorAll(
-                    '.timeline-view, .timeline-container, .timeline, ' +
-                    '.timeline-view .card-panel, .timeline-container .card-panel'
-                );
-                
-                timelineElements.forEach(element => {
-                    element.style.overflow = 'visible';
-                    element.style.minHeight = '60px';
-                    element.style.position = 'relative';
-                });
-                
-                const timelineTextElements = document.querySelectorAll(
-                    '.timeline-view .card-title, .timeline-view .card-title *, ' +
-                    '.timeline-view .node-name, .timeline-item .test-title'
-                );
-                
-                timelineTextElements.forEach(element => {
-                    element.style.maxWidth = '350px';
-                    element.style.overflow = 'hidden';
-                    element.style.textOverflow = 'ellipsis';
-                    element.style.whiteSpace = 'nowrap';
-                    element.style.color = 'white';
-                    element.style.fontWeight = '600';
-                });
-            }
-            
-            setupTimelineMonitoring() {
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.type === 'childList') {
-                            mutation.addedNodes.forEach((node) => {
-                                if (node.nodeType === Node.ELEMENT_NODE) {
-                                    if (node.classList && (
-                                        node.classList.contains('timeline-view') ||
-                                        node.classList.contains('timeline-container') ||
-                                        node.classList.contains('card-panel') ||
-                                        (node.querySelector && node.querySelector('.timeline-view, .timeline-container'))
-                                    )) {
-                                        setTimeout(() => {
-                                            this.fixOffsetWidthIssues();
-                                            this.applyTimelineStyling();
-                                        }, 100);
-                                    }
-                                }
-                            });
-                        }
-                        
-                        if (mutation.type === 'characterData' && 
-                            mutation.target.textContent && 
-                            mutation.target.textContent.includes('offsetWidth')) {
-                            setTimeout(() => {
-                                if (mutation.target.parentElement) {
-                                    const meaningfulName = this.getMeaningfulTestName(mutation.target.parentElement);
-                                    mutation.target.textContent = meaningfulName;
-                                }
-                            }, 50);
-                        }
-                    });
-                });
-                
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true,
-                    characterData: true
-                });
-                
-                console.log('Timeline monitoring activated');
-            }
+        });
+        
+        // Watch for dynamically added badges
+        const observer = new MutationObserver(() => {
+            setTimeout(() => this.fixTimestampBadgeColors(), 100);
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    autoHighlightFirstTest() {
+        const firstTest = this.getAllTestElements()[0];
+        if (firstTest) {
+            this.currentIndex = 0;
+            this.highlightTestElement(firstTest, false);
+        }
+    }
+
+    getAllTestElements() {
+        const tests = Array.from(document.querySelectorAll('li.test-item'));
+        return tests.filter(test => test.offsetHeight > 0);
+    }
+
+    // ✅ FIXED: Improved highlight with proper index tracking
+    highlightTestElement(testElement, shouldScroll = true) {
+        if (!testElement) {
+            console.warn('⚠️ Cannot highlight - test element is null');
+            return;
+        }
+
+        // Remove previous highlight
+        if (this.currentHighlightedElement && this.currentHighlightedElement !== testElement) {
+            this.removeHighlight(this.currentHighlightedElement);
+        }
+
+        this.currentHighlightedElement = testElement;
+
+        const originalStyle = testElement.getAttribute('style') || '';
+        testElement.setAttribute('data-original-style', originalStyle);
+
+        testElement.style.cssText = originalStyle + `
+            position: relative !important;
+            z-index: 9999 !important;
+            outline: 2px solid #2563eb !important;
+            outline-offset: 2px !important;
+            background: rgba(37, 99, 235, 0.15) !important;
+            box-shadow:
+                0 0 0 1px rgba(37, 99, 235, 0.4),
+                0 0 10px rgba(37, 99, 235, 0.6),
+                inset 0 0 10px rgba(37, 99, 235, 0.1) !important;
+            border-radius: 10px !important;
+            transform: scale(1.02) !important;
+            transition: all 0.3s ease !important;
+        `;
+
+        if (shouldScroll) {
+            testElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
-        // Initialize the system
-        window.timelineFixWithNavigation = new TimelineFixWithNavigation();
-        
-        // Expose navigation functions for manual use
-        window.goToNextTest = () => window.timelineFixWithNavigation.navigateToNextTest();
-        window.goToPreviousTest = () => window.timelineFixWithNavigation.navigateToPreviousTest();
-        
-        console.log('Timeline Fix + Navigation Override initialized');
-        console.log('Use Ctrl+J/Down for next test, Ctrl+K/Up for previous test');
-        """;
+        // Update current index to match the element we just highlighted
+        const allTests = this.getAllTestElements();
+        const newIndex = allTests.indexOf(testElement);
+        if (newIndex !== -1) {
+            this.currentIndex = newIndex;
+            console.log(`✅ Highlighted test at index ${this.currentIndex + 1}/${allTests.length}`);
+        }
+    }
+
+    removeHighlight(element) {
+        if (!element) return;
+        const originalStyle = element.getAttribute('data-original-style');
+        if (originalStyle !== null) {
+            element.style.cssText = originalStyle;
+            element.removeAttribute('data-original-style');
+        }
+        if (this.currentHighlightedElement === element) {
+            this.currentHighlightedElement = null;
+        }
+    }
+
+    overrideNavigation() {
+        this.hideFailedTestButtons();
+        this.addClickHighlighting();
+    }
+
+    addClickHighlighting() {
+        document.addEventListener('click', (e) => {
+            const testElement = e.target.closest('li.test-item');
+            if (testElement) {
+                this.highlightTestElement(testElement, false);
+            }
+        }, true);
+    }
+
+    hideFailedTestButtons() {
+        const selectors = ['button', '.btn', 'a[role="button"]', '[onclick]', '[class*="btn"]', '[class*="button"]', '[class*="nav"]'];
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                const text = (el.textContent || el.innerText || '').toLowerCase();
+                const title = (el.title || '').toLowerCase();
+                const onclick = (el.getAttribute('onclick') || '').toLowerCase();
+                const className = (el.className || '').toLowerCase();
+                if ((text.includes('failed') && (text.includes('next') || text.includes('skip'))) ||
+                    text.includes('nextfailed') || text.includes('skipfailed') ||
+                    (text.includes('fail') && text.includes('nav'))) {
+                    el.style.display = 'none';
+                    el.style.visibility = 'hidden';
+                    el.style.pointerEvents = 'none';
+                }
+            });
+        });
+    }
+
+    applyTimelineStyling() {
+        document.querySelectorAll('li.test-item').forEach(el => {
+            el.style.transition = 'all 0.3s ease';
+        });
+    }
+
+    setupTimelineMonitoring() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === Node.ELEMENT_NODE && node.matches('li.test-item')) {
+                            node.style.transition = 'all 0.3s ease';
+                        }
+                    });
+                }
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+}
+
+// Initialize
+window.timelineFixWithNavigation = new TimelineFixWithNavigation();
+console.log('✅ Timeline highlighting with keyboard navigation (↑↓) and intelligent timestamp badge fix initialized');
+""";
     }
 
     private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
         StringBuilder successLog = new StringBuilder();
 
         successLog.append("<div class='info-log'>");
-        successLog.append("✅ <strong>Test Passed Successfully</strong>");
+        successLog.append("✅ Test Passed Successfully");
         successLog.append("</div>");
 
         // ❌ REMOVED: getAllApiCallsLog() - API calls are already logged during test execution
@@ -2383,7 +2424,7 @@ public class SimplifiedExtentReportManager {
             stats.append("</div>"); // End card-body
             stats.append("</div>"); // End status-code-stats card
         }
-       stats.append("</div>"); // End stats-dashboard
+        stats.append("</div>"); // End stats-dashboard
 
         statsTest.info(stats.toString());
     }
@@ -2439,7 +2480,7 @@ public class SimplifiedExtentReportManager {
 
         // Endpoint header
         apiLog.append("<div class='info-log'>");
-        apiLog.append("🌐 <strong>BaseURI:</strong> ").append(endpoint);
+        apiLog.append("🌐 BaseURI: ").append(endpoint);
         apiLog.append("</div>");
 
         // REQUEST SECTION

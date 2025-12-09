@@ -5,7 +5,7 @@ Feature: Verify SaveUnenrollment Api
 #    Then verify Authentication Token Api response status code is 200
 #    And a valid token is received in response
 
-  @HappyFlow @SaveUnenrollment @Phase1
+  @HappyFlow @SaveUnenrollment @Phase1 @turnOff
   Scenario Outline: SaveUnenrollmentApi - Verify SaveUnenrollment Api positive flow <testCondition>
     Given a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment Api for account with "<pricePlan>" plan "<accountType>" type with forwardingAddressIs "<forwardingAddressIs>" with type "<addressType>" and turnoffreason "<testCondition>" and setEmail "<setEmail>" with etcExists "<etcExists>"
@@ -41,7 +41,7 @@ Feature: Verify SaveUnenrollment Api
     |PRP      |RS         |NEW_ADDRESS                 |ADDRESS_TYPE_STREET      |HOUSEHOLD_ACCOUNT_CHANGE_TC_214                |true       |false         |
     |INX      |CM         |NEW_ADDRESS                 |ADDRESS_TYPE_STREET      |MOVING_OUTSIDE_POOL_GROUP_TC_226               |false      |false         |
 
-  @SaveUnenrollmentWithInvalidRequestAndLoginID @NegativeFlow @SaveUnenrollment @Phase1 @CSI
+  @SaveUnenrollmentWithInvalidRequestAndLoginID @NegativeFlow @SaveUnenrollment @Phase1 @turnOff
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment Api with "<testCondition>"
@@ -58,7 +58,7 @@ Feature: Verify SaveUnenrollment Api
       | LOGIN_ID_INVALID_ALPHA_NEGATIVE_TC111 | 2000      | Invalid Login ID                                          |
       | LOGIN_ID_NOT_EXISTS_NEGATIVE_TC112    | 2000      | Invalid Login ID                                          |
 
-  @SaveUnenrollmentWithInvalidParameters @NegativeFlow @SaveUnenrollment @Phase1
+  @SaveUnenrollmentWithInvalidParameters @NegativeFlow @SaveUnenrollment @Phase1 @turnOff
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment Api with invalid parameters for "<testCondition>" condition
@@ -160,7 +160,7 @@ Feature: Verify SaveUnenrollment Api
 
 
 
-  @SaveUnenrollmentWithSearchInvalidParameters @NegativeFlow @SaveUnenrollment @Phase1
+  @SaveUnenrollmentWithSearchInvalidParameters @NegativeFlow @SaveUnenrollment @Phase1 @turnOff
   Scenario Outline: Verify SaveUnenrollment Api with invalid request and login id for "<testCondition>"
     When a request is made to the GetEligiblePlansAndOffers Api for "<testCondition>" condition
     Then verify response code of "GetEligiblePlansAndOffers" Api is 200
