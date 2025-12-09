@@ -6,7 +6,7 @@ Feature: Verify SearchAccounts ServiceTransfer Api
     And a valid token is received in response
 
 
-  @SearchAccountsServiceTransferNegative @Phase1 @NegativeFlow
+  @SearchAccountsServiceTransferNegative @Phase1 @NegativeFlow @serviceTransfer
   Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the "<testCondition>" for searchAccounts API
     When a request is made to the SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -59,7 +59,7 @@ Feature: Verify SearchAccounts ServiceTransfer Api
       | INVALID_ZIP_CODE_LENGTH_LESS_THAN_5_TC_44              | 10115     | Invalid PremisesZipCode provided                                                                                                                                                  |
       | MISSING_ZIP_CODE_TC_45                                 | 1001      | Invalid Request: Invalid required search field combination - premisesZipCode required.                                                                                            |
 
-  @SearchAccountsServiceTransferNoMatchingRecords @Phase1 @HappyFlow
+  @SearchAccountsServiceTransferNoMatchingRecords @Phase1 @HappyFlow @serviceTransfer
   Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the results for <testCondition>
     When a request is made to the SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -76,7 +76,7 @@ Feature: Verify SearchAccounts ServiceTransfer Api
     |VALID_CUSTOMER_BUSINESS_NAME_TC_50              |0        |            |1          |
 
 
-  @SearchAccountsServiceTransferPositive @Phase1 @HappyFlow
+  @SearchAccountsServiceTransferPositive @Phase1 @HappyFlow @serviceTransfer
   Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the results for <testCondition>
     When a request is made to the SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -104,7 +104,7 @@ Feature: Verify SearchAccounts ServiceTransfer Api
       |SONP_UNAPPLIEDDEPOSIT_TC_70            |0        |            |1          |A            |true         |25              |359.35       |0            |0000              |
 
 
-  @SearchAccountsServiceTransferRewards @Phase1 @HappyFlow
+  @SearchAccountsServiceTransferRewards @Phase1 @HappyFlow @serviceTransfer
   Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the no results are returned for <testCondition>
     When a request is made to the SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -124,7 +124,7 @@ Feature: Verify SearchAccounts ServiceTransfer Api
       |ACTIVE_SONP_WITH_REWARDS_TC_71            |0        |            |1          |A            |true         |250             |0            |0            |0000              |true   |
 
 
-  @SearchAccountsServiceTransfer @Phase1 @HappyFlow
+  @SearchAccountsServiceTransfer @Phase1 @HappyFlow @serviceTransfer
   Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the no results are returned for <testCondition>
     When a request is made to the SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -143,7 +143,7 @@ Feature: Verify SearchAccounts ServiceTransfer Api
       |testCondition                          |errorCode|errorMessage|noOfRecords|accountStatus|isSONPAccount|unappliedDeposit|pastDueAmount|badDebtAmount|aglcAccountNumber|currentPricePlanCode|currentPricePlanDescription           |
       |ACTIVE_PAST_DUE_REWARDS_TC_63          |0        |            |1          |A            |false        |250             |0            |0            |0000              |CCV                   |CVS with Price Pro Guarantee           |
 
-  @SearchAccountsServiceTransferDiscounts @Phase1 @HappyFlow
+  @SearchAccountsServiceTransferDiscounts @Phase1 @HappyFlow @serviceTransfer
   Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the no results are returned for <testCondition>
     When a request is made to the SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -170,7 +170,7 @@ Feature: Verify SearchAccounts ServiceTransfer Api
       |MULTIPLE_DISCOUNTS_TC_SONP_TC_75       |0        |            |1          |A            |true         |0               |0            |MVS                   |Variable Select                      |This offer is Transferable except to the Guaranteed Bill Plan    |
 
 
-  @SearchAccountsServiceTransferGreenerLife @Phase1 @HappyFlow
+  @SearchAccountsServiceTransferGreenerLife @Phase1 @HappyFlow @serviceTransfer
   Scenario Outline: SearchAccountsApiServiceTransfer Api - Verify the no results are returned for <testCondition>
     When a request is made to the SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200

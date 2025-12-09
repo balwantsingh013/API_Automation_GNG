@@ -5,7 +5,7 @@ Feature: Verify SaveUnenrollment ServiceTransfer Api
     Then verify Authentication Token Api response status code is 200
     And a valid token is received in response
 
-  @SaveUnenrollmentWithInvalidParameters @NegativeFlow @SaveUnenrollment @ServiceTransfer @Phase1
+  @SaveUnenrollmentWithInvalidParameters @NegativeFlow @SaveUnenrollment @serviceTransfer @Phase1
   Scenario Outline: Verify SaveUnenrollment ServiceTransfer with invalid parameters "<testCondition>"
     Given a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment ServiceTransfer Api with invalid parameters for "<testCondition>" condition
@@ -124,7 +124,7 @@ Feature: Verify SaveUnenrollment ServiceTransfer Api
       | MRD_DUPLICATE_NEGATIVE_TC186                                     | 10000     | The Marketer Reference Data must be a number with 12 digits                                                                                                 |
       | MRD_NOT_NUMERIC_NEGATIVE_TC187                                   | 2000      | Invalid Request: Invalid Marketer Reference Number - Duplicate                                                                                              |
 
-  @SaveUnenrollmentWithSearchInvalidParameters @NegativeFlow @SaveUnenrollment @ServiceTransfer @Phase1
+  @SaveUnenrollmentWithSearchInvalidParameters @NegativeFlow @SaveUnenrollment @serviceTransfer @Phase1
   Scenario Outline: Verify SaveUnenrollment ServiceTransfer invalid with prior GetEligiblePlansAndOffers "<testCondition>"
     Then a request is made to get Marketer Reference Data
     When a request is made to the SaveUnenrollment ServiceTransfer Api with invalid parameters for "<testCondition>" condition
