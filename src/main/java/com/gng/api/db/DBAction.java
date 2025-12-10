@@ -1648,6 +1648,18 @@ public class DBAction {
         return jdbcTemplate.update(query);
     }
 
+    public Map<String, Object> getEnrollmentRecordByCustomerCode(String customerCode) {
+        String query = DBQuery.GET_ENROLLMENT_RECORD_BY_CUSTOMER_CODE;
+        logQueryInAllure("Get enrollment record by customer code", query);
+        return jdbcTemplate.queryForMap(query, customerCode);
+    }
+
+    public List<Map<String, Object>> getEnrollmentRecordsForMarketerSwitch(String customerLastName) {
+        String query = DBQuery.GET_MARKETER_SWITCH_ENROLLMENT_RECORD_BY_CUSTOMER_LAST_NAME;
+        logQueryInAllure("Get enrollment record by customer last name", query);
+        return jdbcTemplate.queryForList(query, customerLastName);
+    }
+
     private void logQueryInAllure(String title, String query, Object... params) {
         // Convert parameters to a string
         String paramsString = params != null ? java.util.Arrays.toString(params) : "None";

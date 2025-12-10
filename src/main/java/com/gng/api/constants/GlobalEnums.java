@@ -10,7 +10,8 @@ public class GlobalEnums {
         EXPIRED_MARKETING_PROMOTION_CODE("VIPJUL17"),
         PROMOTION_CODE_RESIDENTIAL("APARTMENT SPECIAL"),
         PROMOTION_CODE_GREEN_LIFE("GREEN125"),
-        PROMOTION_CODE_DEALS("DEALS");
+        PROMOTION_CODE_DEALS("DEALS"),
+        PROMOTION_CODE_FIX_10_DOLLARS_FOR_12_MONTHS("FIX 10 DOLLARS FOR 12 MONTHS");
 
         private final String value;
 
@@ -317,7 +318,9 @@ public class GlobalEnums {
     public enum EnrollMentState {
         UDCS("UDCS"),
         CRDS("CRDS"),
-        INCL("INCL");
+        INCL("INCL"),
+        PENDING_REVIEW("PVER"),
+        BAD_CREDIT("BADC");
 
         private final String value;
 
@@ -338,9 +341,13 @@ public class GlobalEnums {
         GB6("GB6"),
         CGB("CGB"),
         CVS("CVS"),
-        CFM("CFM"),
+        CSV("CSV"),
         CCV("CCV"),
+        M18("18M"),
         RF6("RF6"),
+        MI("MI"),
+        CMI("CMI"),
+        CFM("CFM"),
         M24("24M"),
         B24("24B"),
         FIX("FIX");
@@ -401,6 +408,32 @@ public class GlobalEnums {
         BUDGET("B");
         private final String value;
         BillingPlan(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum CreditScoreStatus {
+        STATUS_TEXT("TEXT"),
+        REFUSE("REFU"),
+        NUMBER("NUMR"),
+        ACNL("ACNL");
+
+        private final String value;
+        CreditScoreStatus(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
+    public enum CreditScoreText {
+        MATCH_CODE_B("NO RECORD FOUND. MATCH CODE B."),
+        VERIFY_ID("NO RECORD FOUND.NO EMCS.VERIFY ID."),
+        NOT_APPLICABLE("NOT APPLICABLE"),
+        MATCH_CODE_C("MATCH CODE C.");
+
+        private final String value;
+        CreditScoreText(String value) {
             this.value = value;
         }
     }
