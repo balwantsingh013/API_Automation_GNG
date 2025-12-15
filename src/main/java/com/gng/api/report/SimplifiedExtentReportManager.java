@@ -91,8 +91,11 @@ public class SimplifiedExtentReportManager {
         StringBuilder log = new StringBuilder();
 
         log.append("<div class='db-log'>");
-        log.append("<h4>").append(dbQuery.isSuccess ? "✅" : "❌").append(" Database Query</h4>");
-        log.append("<div class='collapsible-content'>");
+        log.append("  <div class='db-log-header'>");
+        log.append("    <h4>").append(dbQuery.isSuccess ? "✅" : "❌").append(" Database Query</h4>");
+        log.append("  </div>");
+        log.append("  <div class='collapsible-content'>");
+
 
         // Query Details
         log.append("<div class='request-detail-item'>");
@@ -1343,18 +1346,28 @@ public class SimplifiedExtentReportManager {
         font-size: 10px !important; /* Increased from 9px */
     }
     
-    .db-log {
-        background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
-        color: white !important;
-        padding: 10px 18px !important; /* Increased padding */
-        border-radius: 22px !important; /* Increased from 20px */
-        margin: 10px 0 !important; /* Increased from 8px */
-        border-left: 3px solid #a855f7 !important; /* Increased from 2px */
-        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4) !important; /* Enhanced shadow */
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
-        font-weight: 600 !important;
-        font-size: 14px !important; /* Increased from 9px */
-    }
+ /* full-width container (keep this) */
+                 .db-log {
+                     background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
+                     padding: 12px;
+                     border-radius: 22px;
+                     box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+                 }
+                
+                 /* header pill — new class */
+                 .db-log-header {
+                     display: inline-block !important;
+                     background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
+                     padding: 10px 18px !important;
+                     border-radius: 18px !important;
+                     margin-bottom: 10px !important;
+                 }
+                
+                 .db-log-header h4 {
+                     margin: 0 !important;
+                     color: white !important;
+                 }
+                
     
     /* === UTILITY CLASSES === */
     .code-block {
@@ -1730,7 +1743,7 @@ public class SimplifiedExtentReportManager {
 
     private static String getTimelineFixJavaScript() {
         return """
-// === FULLY FIXED TIMELINE HIGHLIGHTING FOR li.test-item (thin borders) + KEYBOARD NAVIGATION ===
+// === FULLY FIXED TIMELINE HIGHLIGHTING FOR li.test-item (thin borders) + KEYBOARD NAVIGATION + AUTO-EXPAND ===
 class TimelineFixWithNavigation {
     constructor() {
         this.currentHighlightedElement = null;
@@ -1752,13 +1765,46 @@ class TimelineFixWithNavigation {
         this.setupTimelineMonitoring();
         this.applyTimelineStyling();
         this.fixTimestampBadgeColors();
-        this.setupKeyboardNavigation();  // ✅ Setup keyboard navigation
+        this.setupKeyboardNavigation();
 
         setTimeout(() => this.overrideNavigation(), 2000);
         setTimeout(() => this.hideFailedTestButtons(), 3000);
 
         // Auto-highlight first test on load
         setTimeout(() => this.autoHighlightFirstTest(), 500);
+        
+        // ✅ Expand all test execution steps by default
+        setTimeout(() => this.expandAllTestSteps(), 100);
+    }
+    
+    // ✅ NEW: Expand all collapsed test execution steps
+    expandAllTestSteps() {
+        console.log('📂 Expanding all test execution steps...');
+        
+        // Find all collapse elements that are currently collapsed
+        const collapsedElements = document.querySelectorAll('.collapse:not(.show)');
+        
+        collapsedElements.forEach(element => {
+            // Add 'show' class to expand
+            element.classList.add('show');
+            
+            // Also update the toggle button/link if it exists
+            const toggleId = element.id;
+            if (toggleId) {
+                const toggleButton = document.querySelector(`[data-toggle="collapse"][href="#${toggleId}"], [data-toggle="collapse"][data-target="#${toggleId}"]`);
+                if (toggleButton) {
+                    toggleButton.setAttribute('aria-expanded', 'true');
+                    toggleButton.classList.remove('collapsed');
+                }
+            }
+        });
+        
+        // Also handle any node-collapsed classes
+        document.querySelectorAll('.node.collapsed').forEach(node => {
+            node.classList.remove('collapsed');
+        });
+        
+        console.log(`✅ Expanded ${collapsedElements.length} test execution step sections`);
     }
 
     // ✅ FIXED: Setup Up/Down arrow key navigation WITHOUT wrapping
@@ -1983,10 +2029,9 @@ class TimelineFixWithNavigation {
 
 // Initialize
 window.timelineFixWithNavigation = new TimelineFixWithNavigation();
-console.log('✅ Timeline highlighting with keyboard navigation (↑↓) and intelligent timestamp badge fix initialized');
+console.log('✅ Timeline highlighting with keyboard navigation (↑↓), intelligent timestamp badge fix, and auto-expand test steps initialized');
 """;
     }
-
     private static void logSuccessDetails(ExtentTest logger, long executionTime, String threadName) {
         StringBuilder successLog = new StringBuilder();
 
