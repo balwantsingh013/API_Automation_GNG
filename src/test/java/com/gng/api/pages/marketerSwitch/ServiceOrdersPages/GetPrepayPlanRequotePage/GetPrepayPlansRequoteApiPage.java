@@ -30,4 +30,30 @@ public class GetPrepayPlansRequoteApiPage extends BasePage {
         testContext.setGetPrepayPlansRequoteResponse(getPrepayPlansRequoteResponse);
         testContext.setResponse(response);
     }
+
+    public void validatePositivePrepayPlanRequote(GetPrepayPlansRequoteApiLabel apiLabel, GetPrepayPlansRequoteApiLabel testCondition) {
+        configureQuote();
+        GetPrepayPlansRequoteRequest payload = helper.preparePayload(apiLabel);
+        helper.verifyPositivePrepayPlanRequote(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_PREPAY_PLANS_REQUOTE, 200);
+        GetPrepayPlansRequoteResponse getPrepayPlansRequoteResponse = deserializeResponseToPojo(response, GetPrepayPlansRequoteResponse.class);
+        testContext.setGetPrepayPlansRequoteResponse(getPrepayPlansRequoteResponse);
+        testContext.setResponse(response);
+    }
+
+    public void validatePositiveExternalPrepayPlanRequote(GetPrepayPlansRequoteApiLabel apiLabel, GetPrepayPlansRequoteApiLabel testCondition) {
+        configureQuote();
+        GetPrepayPlansRequoteRequest payload = helper.preparePayload(apiLabel);
+        helper.verifyPositiveExternalGetEligiblePrepayPlanRequote(payload, testCondition);
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, GET_PREPAY_PLANS_REQUOTE, 200);
+        GetPrepayPlansRequoteResponse getPrepayPlansRequoteResponse = deserializeResponseToPojo(response, GetPrepayPlansRequoteResponse.class);
+        testContext.setGetPrepayPlansRequoteResponse(getPrepayPlansRequoteResponse);
+        testContext.setResponse(response);
+    }
+
+    public void configureQuote() {
+        helper.expirePrepayQuoteIfOpenDateInFuture(testContext.getSearchAccountsResponse(), testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
+    }
 }

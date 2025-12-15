@@ -9,12 +9,9 @@ import com.gng.api.steps.marketerSwitch.AccountsApiSteps.SearchAccounts.SearchAc
 import com.gng.api.util.ExcelReader;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import static com.gng.api.constants.DBConstant.*;
 import static com.gng.api.constants.TestConstant.CUSTOMER_DATA;
 import static com.gng.api.constants.TestConstant.CUSTOMER_SHEET_NAME;
 import static com.gng.api.steps.AesEncryption.AesEncryptionSteps.encryptData;
@@ -36,13 +33,21 @@ public class SearchAccountsHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, SearchAccountsRequest.class);
     }
 
+    public void preparePayloadForPositiveTestConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
+        setParametersToEmpty(payload);
+
+        payload.setRequestID(FakerDataGenerator.generateString(10));
+        payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
+
+    }
+
     public void preparePayloadFromGetEligibleExternalConditions(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition) {
         setParametersToEmpty(payload);
         payload.setRequestID(FakerDataGenerator.generateString(10));
         payload.setTransactionType(GlobalEnums.TransactionType.MKSW.getValue());
         setParametersFromGetEligiblePlansAndOffersResponse(payload, testCondition);
-
     }
+
     public void setParametersFromGetEligiblePlansAndOffersResponse(SearchAccountsRequest payload, SearchAccountsApiLabel testCondition){
         payload.setCustomerCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getCustomerCode());
         payload.setPremisesCode(testContext.getGetEligiblePlansAndOffersResponse().getData().getPremisesCode());
@@ -55,6 +60,7 @@ public class SearchAccountsHelper {
 
         switch (testCondition) {
             case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12 ->  loadCustomerData(payload, testCondition);
+
             default -> {
             }
         }
@@ -77,8 +83,7 @@ public class SearchAccountsHelper {
     public void getCustomerAndPremiseDetails(SearchAccountsRequest payload, Map<String, String> data, SearchAccountsApiLabel testCondition ){
 
         switch (testCondition){
-            case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12
-                    -> {
+            case GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12 -> {
                 payload.setCustomerLastName(data.get("customerLastName"));
                 payload.setCustomerFirstName(data.get("customerFirstName"));
             }

@@ -59,6 +59,122 @@ public class GetEligiblePlansAndOffersHelper {
         payload.setMarketingPromotionCode("");
     }
 
+    public void setParametersToSeedExternalDataBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        setSupportingDefaultParameters(payload, testCondition);
+        switch (testCondition) {
+            case SE_MRK_SW_ABLC_ACCOUNT_PROVIDED_TC_038 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCustomerType(COMMERCIAL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9)));
+                payload.setSspParticipantCode(null);
+            }
+            default -> {
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9)));
+                payload.setSspParticipantCode(null);
+                payload.setAuthorizedBy(null);}
+        }
+    }
+
+    public void setParametersToSeedExternalPositiveDataBasedOnType(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
+        setSupportingDefaultParameters(payload, testCondition);
+        switch (testCondition) {
+            case SE_MRK_SW_UPDATE_ENROLLMENT_GOOD_TC_43 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.PHONECALL.getValue());
+                payload.setCallerIDNotAvailable(Boolean.FALSE);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(9));
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setSspParticipantCode(null);
+            }
+            case SE_MRK_SW_DEPOSIT_PAID_NEW_FLOW_TC_44 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.MAIL.getValue());
+                payload.setCallerIDNotAvailable(Boolean.FALSE);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(9));
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setSspParticipantCode(null);
+            }
+            case SE_MRK_SW_PAYMENT_COMPLETE_PRP_PREVIOUS_TC_45 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(9));
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setSspParticipantCode(null);
+                payload.setCallerID("");
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_DEALS.getValue());
+            }
+            case SE_MRK_SW_PAYMENT_COMPLETE_PGB_NEW_TC_46 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setMarketingPromotionCode(GlobalEnums.PromotionCode.DEALS.getValue());
+
+                 payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(9));
+                 payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                 payload.setSspParticipantCode(null);
+            }
+            case SE_MRK_SW_SAVE_INCOMPLETE_SI_NEW_TC_47, SE_MRK_SW_COMPLETE_ENROLLMENT_CE_NOTES_TC_55 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.MAIL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(9));
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setSspParticipantCode(null);
+            }
+            case SE_MRK_SW_DEPOSIT_REQUIRED_DR_PREVIOUS_TC_48 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setEnrollmentSource(GlobalEnums.EnrollmentSource.MAIL.getValue());
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcServiceLocationID(FakerDataGenerator.getRandomNumericString(9));
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setSspParticipantCode(null);
+            }
+
+            case SE_MRK_SW_PREPAY_REQUIRED_PR_NEW_TC_49, SE_MRK_SW_PREPAY_REQUIRED_PR_PREVIOUS_TC_50,
+                 SE_MRK_SW_REFUSED_PREPAY_RP_NEW_TC_51 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setSspParticipantCode(null);
+            }
+            case SE_MRK_SW_REFUSED_DEPOSIT_RD_NEW_TC_52 -> {
+                setTheFieldToEmptyForCommercialScenarios(payload);
+                loadCommercialData(payload, testCondition);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setSspParticipantCode(null);
+            }
+            case SE_MRK_SW_CANCEL_PREPAY_CP_PREVIOUS_TC_53 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_DEALS.getValue());
+                payload.setSspParticipantCode(null);
+            }
+
+            case  SE_MRK_SW_BUDGET_BILL_BD_NEW_TC_54 -> {
+                loadCustomerData(payload, testCondition);
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(payload.getAglcServiceLocationID()));
+                payload.setMarketingPromotionCode(GlobalEnums.MarketingPromotionCodes.PROMOTION_CODE_DEALS.getValue());
+                payload.setSspParticipantCode(null);
+                payload.setAcnStatusIndicator(GlobalEnums.ACNorNACN.ACN.getValue());
+            }
+
+            default -> {
+                payload.setCreditCheckOption(YES.getValue());
+                payload.setAglcAccountNumber(padAglcAccountNumber(FakerDataGenerator.getRandomNumericString(9)));
+                payload.setSspParticipantCode(null);
+                payload.setAuthorizedBy(null);}
+        }
+    }
+
     public void setSeedDataCustomerInformation(GetEligiblePlansAndOffersRequest payload, GetEligiblePlansAndOffersApiLabel testCondition) {
         setSupportingDefaultParameters(payload, testCondition);
         switch (testCondition) {
@@ -374,9 +490,7 @@ public class GetEligiblePlansAndOffersHelper {
         getSecondCallCommercialCustomerAndPremiseDetails(payload, customerData, testCondition);
     }
 
-    private void getCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload,
-                                                        Map<String, String> data,
-                                                        GetEligiblePlansAndOffersApiLabel testCondition) {
+    private void getCommercialCustomerAndPremiseDetails(GetEligiblePlansAndOffersRequest payload, Map<String, String> data, GetEligiblePlansAndOffersApiLabel testCondition) {
 
         String federalTaxId = data.get("federalTaxId");
         if (federalTaxId != null && !federalTaxId.trim().isEmpty()) {
@@ -405,6 +519,7 @@ public class GetEligiblePlansAndOffersHelper {
                 payload.setAglcServiceLocationID(data.get("aglcServiceLocationID"));
             }
             default -> {
+                payload.setCustomerType(data.get("customerType"));
                 payload.setCustomerBusinessName(data.get("customerLastName"));
                 payload.setAglcAccountNumber(data.get("aclcAccountNumber"));
                 payload.setPremisesStreetNumber(data.get("premisesStreetNumber"));
@@ -474,10 +589,12 @@ public class GetEligiblePlansAndOffersHelper {
                                              Map<String, String> data,
                                              GetEligiblePlansAndOffersApiLabel testCondition) {
         clearIds(payload);
+        payload.setCustomerType(get(data, "customerType"));
         payload.setAcnStatusIndicator(get(data, "acnStatusIndicator"));
         payload.setAglcAccountNumber(get(data, "aglcAccountNumber"));
         payload.setAglcServiceLocationID(get(data, "aglcServiceLocationID"));
         payload.setPremisesCountyCode(get(data, "premisesCountyCode"));
+        payload.setCallerID(get(data, "Phone"));
         applyPersonNames(payload, data);
         applyAddress(payload, data);
 
@@ -581,6 +698,8 @@ public class GetEligiblePlansAndOffersHelper {
     }
 
     private static void applyAddress(GetEligiblePlansAndOffersRequest payload, Map<String, String> data) {
+
+
         payload.setPremisesStreetNumber(get(data, "premisesStreetNumber"));
         payload.setPremisesStreetName(get(data, "premisesStreetName"));
         payload.setPremisesStreetSuffix(get(data, "premisesStreetSuffix"));
@@ -709,8 +828,8 @@ public class GetEligiblePlansAndOffersHelper {
         List<String> standardPlans = List.of(
                 GlobalEnums.PlanCode.RGB.getValue(),
                 GlobalEnums.PlanCode.GPP.getValue(),
-                GlobalEnums.PlanCode.M24.getValue(), // 24M
-                GlobalEnums.PlanCode.M18.getValue(),     // 18M
+                GlobalEnums.PlanCode.M24.getValue(),
+                GlobalEnums.PlanCode.M18.getValue(),
                 GlobalEnums.PlanCode.RF6.getValue(),
                 GlobalEnums.PlanCode.MVS.getValue(),
                 GlobalEnums.PlanCode.CSV.getValue(),

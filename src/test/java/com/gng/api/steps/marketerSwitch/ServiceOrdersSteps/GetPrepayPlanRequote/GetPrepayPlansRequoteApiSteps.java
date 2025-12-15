@@ -22,5 +22,14 @@ public class GetPrepayPlansRequoteApiSteps {
         getPrepayPlansRequoteApiPage.validateNegativePrepayPlanRequote(get_prepay_plans_requote, GetPrepayPlansRequoteApiLabel.valueOf(testCondition));
     }
 
+    @When("a request is made to the GetPrepayPlansRequote Api marketer switch with an valid params for {string} condition")
+    public void callPrepayPlansRequotePositive(String testCondition) {
+        getPrepayPlansRequoteApiPage.validatePositivePrepayPlanRequote(get_prepay_plans_requote, GetPrepayPlansRequoteApiLabel.valueOf(testCondition));
+    }
+
+    @When("a external request is made to the GetPrepayPlansRequote Api marketer switch with an valid params for {string} condition")
+    public void callPrepayPlansRequotePositiveExternal(String testCondition) {
+        getPrepayPlansRequoteApiPage.validatePositiveExternalPrepayPlanRequote(get_prepay_plans_requote, GetPrepayPlansRequoteApiLabel.valueOf(testCondition));
+    }
 
 }
