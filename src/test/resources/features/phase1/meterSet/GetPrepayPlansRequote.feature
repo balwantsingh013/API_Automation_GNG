@@ -23,7 +23,6 @@ Feature: Verify GetPrepayPlansRequote Api MeterSet
 
     Examples:
       | planCode | testCondition              |
-      #needs billingPlan = null, otherwise error: prepay customers are not eligible for budget billing
       | PRP      | GP_MS_PREPAY_ONLY_PRP_TC60 |
 
 

@@ -16,3 +16,14 @@ Feature: Verify GetPrepayPlansRequote Api marketer switch
       | GPP_PR_MISSING_TRANSACTION_TYPE_TC_056    | 10000     | Missing Transaction Type                                          |
       | GPP_PR_MAX_LENGTH_TRANSACTION_TYPE_TC_057 | 10000     | The Transaction Type must be a string with a maximum length of 4  |
       | GPP_PR_INVALID_TRANSACTION_TYPE_TC_058    | 1000      | Invalid Request: Invalid Transaction Type                         |
+
+  @GetPrepayPlansRequotePositiveParamsMarketerSwitch @Phase2 @HappyFlow
+  Scenario Outline: GetPrepayPlansRequote Api - Verify GetPrepayPlansRequote Api marketer switch with valid params for "<testCondition>" condition
+    When a request is made to the GetPrepayPlansRequote Api marketer switch with an valid params for "<testCondition>" condition
+    Then verify response code of "GetPrepayPlansRequote" Api is 200
+    And response should have ErrorCode 0 and ErrorMessage ""
+
+    Examples:
+      | testCondition                             |
+      |     |
+
