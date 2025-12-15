@@ -3,6 +3,8 @@ package com.gng.api.constants;
 public final class ApiEndPoint {
 
     public static final String GET_ACCOUNT_INFO = "/Accounts/GetAccountInfo";
+    public static final String CSI_GET_ACCOUNT_INFO = "/Accounts/GetAccountInfo";
+
     public static final String CREATE_ACCOUNT_NOTE = "/Accounts/CreateAccountNote";
     public static final String SEARCH_ACCOUNTS = "/Accounts/SearchAccounts";
 
