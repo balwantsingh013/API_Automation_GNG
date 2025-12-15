@@ -18,7 +18,7 @@ public class GetEligiblePlansAndOffersApiPage extends BasePage {
         this.helper = new GetEligiblePlansAndOffersHelper(testContext);
     }
 
-    public void seedNegativeExternalTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
+    public void seedExternalTestConditions(GetEligiblePlansAndOffersApiLabel apiLabel, GetEligiblePlansAndOffersApiLabel testCondition) {
         GetEligiblePlansAndOffersRequest payload = helper.preparePayload(apiLabel);
         helper.setParametersToSeedExternalDataBasedOnType(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());

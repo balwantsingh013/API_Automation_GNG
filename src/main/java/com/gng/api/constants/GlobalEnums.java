@@ -123,6 +123,17 @@ public class GlobalEnums {
     }
 
     @Getter
+    public enum Notes {
+        TESTING("TESTING, 1, 2, 3");
+
+        private final String value;
+
+        Notes(String value) {
+            this.value = value;
+        }
+    }
+
+    @Getter
     public enum CustomerType {
         RESIDENTIAL("RS"),
         COMMERCIAL("CM"),
