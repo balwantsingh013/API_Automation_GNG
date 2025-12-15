@@ -20,8 +20,6 @@ Feature: Verify MarketSwitch GetEligiblePlansAndOffers API
       | GE_MRK_SW_VAL_MISSING_AGLC_SERVICE_LOCATION_ID_TC08                 | 10000     | Missing AGLC Service Location ID                                                                                                                                                                                                    |
       | GE_MRK_SW_RS_NEW_CC_YES_INVALID_SSN_FRAUD_ALERT_11114_TC09          | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
       | GE_MRK_SW_RS_NEW_CC_YES_NO_RECORD_CONFIRM_FALSE_11112_TC10          | 11112     | CUSTOMER NOT FOUND,  PLEASE CHECK SPELLING of CUSTOMER NAME and SSN                                                                                                                                                                 |
-
-      # bug 1311 logged not expected result
       | GE_MRK_SW_RS_NEW_CC_YES_UC50_ALT_PATH_TC12                          | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of SS card to:  Georgia Natural Gas Attn: Back Office Team PO Box 440667 Kennesaw, GA 30160-9512 FAX: 877-281-5775 Email: customerservice@gng.com |
       | GE_MRK_SW_RS_NEW_CC_YES_UC52_TC13                                   | 11114     | Identification Verification Required.  Ask customer to mail or fax photo ID, copy of ss card to:  Georgia Natural Gas Attention: Consumer Relations PO Box 78760 Atlanta GA 30357 Fax: 404 685 - 4117                               |
       | GE_MRK_SW_RS_NEW_CC_YES_UC63_TC14                                   | 11113     | Credit file blocked by consumer.  Inform customer to contact Experian regarding the credit block at 888-397-3742.  DO NOT override denial.                                                                                          |
@@ -46,9 +44,9 @@ Feature: Verify MarketSwitch GetEligiblePlansAndOffers API
     | GE_MRK_SW_RS_NEW_CC_YES_ACN_LANDLORD_BYPASS_CREDIT_TC21             |
     | GE_MRK_SW_CM_NEW_CC_YES_BIN_NULL_NO_MATCH_CONTINUE_TC26             |
     |  GE_MRK_SW_CM_NEW_CC_YES_BIN_NOT_NULL_SELECT_SIMILAR_BUSINESS_TC27  |
-   | GE_MRK_SW_CM_NEW_CC_YES_TIER_EXCELLENT_VALUE200_CREDIT50_100_TC28    |
-   | GE_MRK_SW_CM_NEW_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC29              |
-   | GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC31             |
+    | GE_MRK_SW_CM_NEW_CC_YES_TIER_EXCELLENT_VALUE200_CREDIT50_100_TC28    |
+    | GE_MRK_SW_CM_NEW_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC29              |
+    | GE_MRK_SW_CM_CRDS_CC_YES_COMM_DEPOSIT_PROSPECT_UC72_TC31             |
 
 
   @GetEligiblePlansAndOffersMarketerSwitchWithSaveEnrollmentTwicePositive @HappyFLow @Phase2
