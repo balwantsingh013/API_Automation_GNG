@@ -3,7 +3,6 @@ package com.gng.api.steps.meterSet.AccountsApiSteps.SearchAccounts;
 
 import com.gng.api.pages.meterSet.AccountsApiPages.SearchAccounts.SearchAccountsApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import static com.gng.api.steps.meterSet.AccountsApiSteps.SearchAccounts.SearchAccountsApiLabel.search_accounts_mandatory;

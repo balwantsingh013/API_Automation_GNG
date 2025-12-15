@@ -1,7 +1,6 @@
 package com.gng.api.steps.meterSet.ServiceOrdersSteps.SaveEnrollment;
 import com.gng.api.pages.meterSet.ServiceOrdersPages.SaveEnrollmentPage.SaveEnrollmentApiPage;
 import com.gng.api.pojo.TestContext.TestContext;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
