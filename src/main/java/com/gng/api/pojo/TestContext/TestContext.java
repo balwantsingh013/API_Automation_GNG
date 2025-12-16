@@ -7,6 +7,7 @@ import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePassword.UpdatePasswordResponse;
+import com.gng.api.pojo.CSIPojo.UpdateUsername.UpdateUsernameResponse;
 import com.gng.api.pojo.CSIPojo.ValidateUsername.ValidateUsernameResponse;
 import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.Response.GetReasonsForLeavingResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
@@ -57,6 +58,9 @@ public class TestContext {
     @Getter @Setter
     private Object authenticateCustomerApiPage;
     private AuthenticateCustomerResponse authenticateCustomerResponse;
+    @Getter @Setter
+    private Object updateUsernameApiPage;
+    private UpdateUsernameResponse updateUsernameResponse;
     @Getter @Setter
     private Object createAccountNoteApiPage;
     private CreateAccountNoteResponse createAccountNoteResponse;

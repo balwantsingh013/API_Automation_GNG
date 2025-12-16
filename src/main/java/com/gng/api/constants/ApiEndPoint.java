@@ -30,6 +30,7 @@ public final class ApiEndPoint {
     public static final String UPDATE_MAILING_ADDRESS= "/Accounts/UpdateMailingAddress";
     public static final String GET_ACCOUNT_REWARDS= "/Accounts/GetAccountRewards";
     public static final String AUTHENTICATE_CUSTOMER="/Accounts/VerifyAccount";
+    public static final String UPDATE_USERNAME="/CustomerService/UpdateUsername";
 
 
     private ApiEndPoint() {
