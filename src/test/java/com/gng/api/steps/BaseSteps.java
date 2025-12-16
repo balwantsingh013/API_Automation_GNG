@@ -121,6 +121,19 @@ public class BaseSteps {
         verifyRewardsStatusInResponse(status);
     }
 
+    @And("the response should have success as {string}")
+    public void responseShouldHaveSuccessAs(String success) {
+        verifySuccess(Boolean.parseBoolean(success));
+    }
+
+    private void verifySuccess(boolean expectedSuccess) {
+        Response response = testContext.getResponse();
+
+        assertThat("Incorrect success flag returned",
+                response.jsonPath().getBoolean("success"),
+                equalTo(expectedSuccess));
+    }
+
     private void verifyRewardsStatusInResponse(String expectedStatus) {
         Response response = testContext.getResponse();
         List<Map<String, Object>> rewards = response.jsonPath().getList("getAccountRewards.rewards");

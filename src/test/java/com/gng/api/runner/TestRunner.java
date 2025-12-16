@@ -107,7 +107,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
         // Extract scenario name safely
         String scenarioName = extractScenarioNameSafely(method, testData)
-                .replace("____",")").replace("___","(").replace("__"," - ").replace("_"," ");
+                .replace("_____"," + ").replace("____",")").replace("___","(").replace("__"," - ").replace("_"," ");
 
         // Log thread information for monitoring
         logThreadInfo(scenarioName);

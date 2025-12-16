@@ -29,6 +29,8 @@ public final class ApiEndPoint {
     public static final String UPDATE_ACCOUNT_NICKNAME= "/Accounts/UpdateAccountNickname";
     public static final String UPDATE_MAILING_ADDRESS= "/Accounts/UpdateMailingAddress";
     public static final String GET_ACCOUNT_REWARDS= "/Accounts/GetAccountRewards";
+    public static final String AUTHENTICATE_CUSTOMER="/Accounts/VerifyAccount";
+
 
     private ApiEndPoint() {
     }
