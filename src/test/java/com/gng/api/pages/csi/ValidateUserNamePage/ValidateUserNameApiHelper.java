@@ -15,7 +15,6 @@ import java.util.Map;
 @Slf4j
 public class ValidateUserNameApiHelper {
 
-
     private final TestContext testContext;
 
     public ValidateUserNameApiHelper(TestContext testContext) {
@@ -30,8 +29,8 @@ public class ValidateUserNameApiHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, ValidateUsernameRequest.class);
     }
 
-    public void preparePayloadForNegativeTestCondition(ValidateUsernameRequest payload, ValidateUserNameLabel testCondition) {
-        Map<String, Object> userNames= null;
+    public void preparePayloadForTestCondition(ValidateUsernameRequest payload, ValidateUserNameLabel testCondition) {
+        Map<String, Object> userNames = null;
         switch (testCondition) {
             case TC_1__Negative__Missing_Request_ID:
                 payload.setRequestID("");
@@ -66,7 +65,7 @@ public class ValidateUserNameApiHelper {
                 break;
 
             case TC_9__Positive__Username_Available:
-                String username=FakerDataGenerator.generateAlphanumeric(6);
+                String username = FakerDataGenerator.generateAlphanumeric(6);
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(username);
                 userNames = ApplicationContext.get().getDbAction("mariadb").getUsername(username);
@@ -85,24 +84,28 @@ public class ValidateUserNameApiHelper {
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case TC_12__Positive__Username_Inactive:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setUsername(userNames.get("user_name").toString());
-                break;
-
             case TC_11__Positive__Username_Active__custadv_pending_registrations_table:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
+            case TC_12__Positive__Username_Inactive:
+                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername(userNames.get("user_name").toString());
+                break;
+
+            case TC_13__Positive__LoginID_Saved:
+                payload.setLoginID("CSRLogin123");
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername(userNames.get("user_name").toString());
+                break;
+
             default:
-                // Handle unknown test condition
+                log.warn("Unhandled test condition: {}", testCondition);
                 break;
         }
-
     }
-
 }
-

@@ -16,7 +16,7 @@ Feature: Verify ValidateUserName Api
       | TC_6__Negative__Invalid_Username_format__Length___Too_Long____       | 10351     | Invalid Username Length |
       | TC_7__Negative__Invalid_Username_format__Alphanumeric                | 10353     | Invalid Username Format |
 
-  @ValidateUserNamePositve @HappyFlow @CSI
+  @ValidateUserNamePositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to validateUsername Api for "<testCondition>"
     Then verify response code of "ValidateUserName" Api is 200
@@ -30,3 +30,4 @@ Feature: Verify ValidateUserName Api
       | TC_10__Positive__Username_Active__users_table                        | 0         |              | ACTIVE    |
       | TC_11__Positive__Username_Active__custadv_pending_registrations_table| 0         |              | ACTIVE    |
       | TC_12__Positive__Username_Inactive                                   | 0         |              | INACTIVE  |
+      | TC_13__Positive__LoginID_Saved                                       | 0         |              | ACTIVE    |
