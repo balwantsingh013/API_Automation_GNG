@@ -21,7 +21,7 @@ public class UpdatePasswordPage extends BasePage {
 
     public void validateResponseForNegativeTestConditions(UpdatePasswordLabel apiLabel, UpdatePasswordLabel testCondition) {
         UpdatePasswordRequest payload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForNegativeTestCondition(payload, testCondition);
+        helper.preparePayloadForTestCondition(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, UPDATE_PASSWORD, 200);
         UpdatePasswordResponse updatePasswordResponse = deserializeResponseToPojo(response, UpdatePasswordResponse.class);

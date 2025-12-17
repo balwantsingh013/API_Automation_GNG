@@ -15,5 +15,6 @@ public class UpdatePasswordRequest {
 
     private String requestID;
     private String username;
-    private Object password;
+    private String password;
+    private String loginID;
 }
