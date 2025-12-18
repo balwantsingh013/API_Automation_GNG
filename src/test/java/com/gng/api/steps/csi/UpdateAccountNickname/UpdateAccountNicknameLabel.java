@@ -5,19 +5,24 @@ public enum UpdateAccountNicknameLabel {
     update_account_nickname,
     set_account_nickname_mandatory,
 
-    TC_53__Negative__Missing_Request_ID,
-    TC_54__Negative__Invalid_Request_ID__Length,
-    TC_55__Negative__Duplicate_Request_ID,
-    TC_56__Negative__Missing_customerCode,
-    TC_57__Negative__Invalid_customerCode_Length,
-    TC_58__Negative__Invalid_customerCode_Format,
-    TC_59__Negative__Invalid_customerCode,
-    TC_60__Negative__Missing_premisesCode,
-    TC_61__Negative__Invalid_premisesCode_Length,
-    TC_62__Negative__Invalid_premisesCode_Format,
-    TC_63__Negative__Invalid_premisesCode,
-    TC_64__Negative__Nickname_Not_Allowed,
-    TC_65__Negative__Nickname_Already_Exists,
-    TC_66__Negative__Nickname_Missing,
-    TC_67__Positive__Nickname_Set
+    TC_56__Negative__Missing_Request_ID,
+    TC_57__Negative__Invalid_Request_ID__Length,
+    TC_58__Negative__Duplicate_Request_ID,
+
+    TC_59__Negative__Missing_CustomerCode,
+    TC_60__Negative__Invalid_CustomerCode_Length,
+    TC_61__Negative__Invalid_CustomerCode_Format__Not_String,
+    TC_62__Negative__Invalid_CustomerCode__Not_Found,
+
+    TC_63__Negative__Missing_PremisesCode,
+    TC_64__Negative__Invalid_PremisesCode_Length,
+    TC_65__Negative__Invalid_PremisesCode_Format__Not_String,
+    TC_66__Negative__Invalid_PremisesCode__Not_Found,
+
+    TC_67__Negative__Nickname_Not_Allowed_For_New_Account,
+    TC_68__Negative__Nickname_Already_Exists,
+    TC_69__Negative__Nickname_Missing,
+
+    TC_70__Positive__Nickname_Updated,
+    TC_71__Positive__LoginID_Saved
 }

@@ -21,7 +21,7 @@ public class UpdateAccountNicknamePage extends BasePage {
 
     public void validateResponseForNegativeTestConditions(UpdateAccountNicknameLabel apiLabel, UpdateAccountNicknameLabel testCondition) {
         UpdateAccountNicknameRequest payload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForNegativeTestCondition(payload, testCondition);
+        helper.preparePayloadForTestCondition(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, UPDATE_ACCOUNT_NICKNAME, 200);
         UpdateAccountNicknameResponse setAccountNicknameResponse = deserializeResponseToPojo(response, UpdateAccountNicknameResponse.class);

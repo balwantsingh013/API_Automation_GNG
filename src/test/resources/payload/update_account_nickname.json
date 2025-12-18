@@ -1,6 +1,7 @@
 {
-  "requestID": "defaultRequestID",
+  "requestID": "defaultRequestID1234567890",
   "customerCode": "2516314",
   "premisesCode": "2537079",
-  "nickname": "tom"
+  "nickname": "tom",
+  "loginID": ""
 }
