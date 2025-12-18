@@ -17,4 +17,5 @@ public class GetAccountRewardsRequest {
     private String customerCode;
     private String premisesCode;
     private String userID;
+    private String loginID;   // Optional field for CSR/user identification
 }
