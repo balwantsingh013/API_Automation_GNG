@@ -52,178 +52,186 @@ public class UpdateMailingAddressApiHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, UpdateMailingAddressRequest.class);
     }
 
-    public void preparePayloadForNegativeTestCondition(UpdateMailingAddressRequest payload, UpdateMailingAddressLabel testCondition) {
+    public void preparePayloadForTestCondition(UpdateMailingAddressRequest payload, UpdateMailingAddressLabel testCondition) {
         Map<String, Object> dbValues = null;
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
         switch (testCondition) {
-            case TC_68__Negative__Missing_Request_ID:
+            case TC_72__Negative__Missing_Request_ID:
                 payload.setRequestID("");
                 break;
 
-            case TC_69__Negative__Invalid_Request_ID__Length:
+            case TC_73__Negative__Invalid_Request_ID_Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
                 break;
 
-            case TC_70__Negative__Duplicate_Request_ID:
+            case TC_74__Negative__Duplicate_Request_ID:
                 payload.setRequestID(DUPLICATE_REQUEST_ID);
                 break;
 
-            case TC_71__Negative__Missing_customerCode:
+            case TC_75__Negative__Missing_customerCode:
                 payload.setCustomerCode("");
                 break;
 
-            case TC_72__Negative__Invalid_customerCode__Length:
+            case TC_76__Negative__Invalid_customerCode_Length:
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
                 break;
 
-            case TC_73__Negative__Invalid_customerCode__Format:
+            case TC_77__Negative__Invalid_customerCode_Format:
                 payload.setCustomerCode(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
                 break;
 
-            case TC_74__Negative__Invalid_customerCode:
+            case TC_78__Negative__Invalid_customerCode:
                 payload.setCustomerCode(NON_EXISTENT_CUSTOMER_CODE_PREFIX + FakerDataGenerator.generateDigits(8));
                 break;
 
-            case TC_75__Negative__Missing_premisesCode:
+            case TC_79__Negative__Missing_premisesCode:
                 payload.setPremisesCode("");
                 break;
 
-            case TC_76__Negative__Invalid_premisesCode__Length:
+            case TC_80__Negative__Invalid_premisesCode_Length:
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
                 break;
 
-            case TC_77__Negative__Invalid_premisesCode__Format:
+            case TC_81__Negative__Invalid_premisesCode_Format:
                 payload.setPremisesCode(FakerDataGenerator.generateAlphanumericWithSpecialChars(5));
                 break;
 
-            case TC_78__Negative__Invalid_premisesCode:
+            case TC_82__Negative__Invalid_premisesCode:
                 payload.setPremisesCode(NON_EXISTENT_PREMISES_CODE_PREFIX + FakerDataGenerator.generateDigits(5));
                 break;
 
-            case TC_79__Negative__Invalid_Address_Fields___Missing____:
+            case TC_83__Negative__Invalid_Address_Fields_Missing:
                 payload.setStreetName("");
                 payload.setPoBox("");
                 payload.setRuralRoute("");
                 break;
 
-            case TC_80__Negative__Invalid_Address_Fields___Too_Many____:
+            case TC_84__Negative__Invalid_Address_Fields_Too_Many:
                 payload.setStreetName(STREET_NAME_TOO_MANY);
                 payload.setPoBox(POBOX_TOO_MANY);
                 payload.setRuralRoute(RURAL_ROUTE_TOO_MANY);
                 break;
 
-            case TC_81__Negative__Invalid_Street_Number__Length:
+            case TC_85__Negative__Invalid_Street_Number_Length:
                 payload.setStreetNumber(FakerDataGenerator.generateAlphanumeric(13));
                 break;
 
-            case TC_82__Negative__Invalid_Street_Pre__Direction__Length:
+            case TC_86__Negative__Invalid_Street_Pre_Direction_Length:
                 payload.setStreetPreDirection(STREET_PRE_DIRECTION_TOO_LONG);
                 break;
 
-            case TC_83__Negative__Invalid_Street_Pre__Direction:
+            case TC_87__Negative__Invalid_Street_Pre_Direction:
                 payload.setStreetPreDirection(STREET_PRE_DIRECTION_INVALID);
                 break;
 
-            case TC_84__Negative__Invalid_Street_Name__Length:
+            case TC_88__Negative__Invalid_Street_Name_Length:
                 payload.setStreetName(FakerDataGenerator.generateString(31));
                 break;
 
-            case TC_85__Negative__Missing_StreetName:
+            case TC_89__Negative__Missing_StreetName:
                 payload.setStreetName("");
                 break;
 
-            case TC_86__Negative__Invalid_StreetSuffix__Length:
+            case TC_90__Negative__Invalid_StreetSuffix_Length:
                 payload.setStreetSuffix(FakerDataGenerator.generateString(7));
                 break;
 
-            case TC_87__Negative__Invalid_StreetSuffix:
+            case TC_91__Negative__Invalid_StreetSuffix:
                 payload.setStreetSuffix(STREET_SUFFIX_INVALID);
                 break;
 
-            case TC_88__Negative__Invalid_Street_Post__Direction__Length:
+            case TC_92__Negative__Invalid_Street_Post_Direction_Length:
                 payload.setStreetPostDirection(STREET_POST_DIRECTION_TOO_LONG);
                 break;
 
-            case TC_89__Negative__Invalid_Street_Post__Direction:
+            case TC_93__Negative__Invalid_Street_Post_Direction:
                 payload.setStreetPostDirection(STREET_POST_DIRECTION_INVALID);
                 break;
 
-            case TC_90__Negative__Invalid_Unit_Type__Format:
+            case TC_94__Negative__Invalid_Unit_Type_Format:
                 payload.setUnitType(FakerDataGenerator.generateString(7));
                 break;
 
-            case TC_91__Negative__Missing_Unit_Type:
-                payload.setUnitType(FakerDataGenerator.generateString(5));
+            case TC_95__Negative__Missing_Unit_Type:
+                payload.setUnitType("");
                 break;
 
-            case TC_92__Negative__Invalid_Unit_Number__Format:
-                payload.setUnitNumber(FakerDataGenerator.generateString(7));
+            case TC_96__Negative__Invalid_Unit_Number_Format:
+                payload.setUnitNumber(FakerDataGenerator.generateDigits(7));
                 break;
 
-            case TC_93__Negative__Invalid_City__Length:
+            case TC_97__Negative__Invalid_City_Length:
                 payload.setCity(FakerDataGenerator.generateString(21));
                 break;
 
-            case TC_94__Negative__Missing_City:
+            case TC_98__Negative__Missing_City:
                 payload.setCity("");
                 break;
 
-            case TC_95__Negative__Invalid_Zip_Code__Format___Length__10____:
+            case TC_99__Negative__Invalid_Zip_Code_Format_Length:
                 payload.setZipCode(FakerDataGenerator.generateDigits(11));
                 break;
 
-            case TC_96__Negative__Missing_Zip_Code:
+            case TC_100__Negative__Missing_Zip_Code:
                 payload.setZipCode("");
                 break;
 
-            case TC_97__Negative__Invalid_Zip_Code:
+            case TC_101__Negative__Invalid_Zip_Code:
                 payload.setZipCode(ZIPCODE_INVALID);
                 break;
 
-            case TC_98__Negative__Invalid_City_and_Zip_Code__Combination:
+            case TC_102__Negative__Invalid_City_and_Zip_Code_Combination:
                 payload.setCity(CITY_INVALID_COMBINATION);
                 payload.setZipCode(ZIPCODE_INVALID_COMBINATION);
                 break;
 
-            case TC_99__Negative__Invalid_County_Code:
+            case TC_103__Negative__Invalid_County_Code:
                 payload.setCountyCode(COUNTY_CODE_INVALID);
                 break;
 
-            case TC_100__Negative__Invalid_Delivery_Point__Format:
+            case TC_104__Negative__Invalid_Delivery_Point_Format:
                 payload.setDeliveryPoint(DELIVERY_POINT_INVALID);
                 break;
 
-            case TC_101__Negative__Invalid_Carrier_Route__Length:
+            case TC_105__Negative__Invalid_Carrier_Route_Length:
                 payload.setCarrierRoute(CARRIER_ROUTE_INVALID);
                 break;
 
-            case TC_102__Negative__Invalid_Attention_To__Length:
+            case TC_106__Negative__Invalid_Attention_To_Length:
                 payload.setAttentionTo(FakerDataGenerator.generateString(31));
                 break;
 
-            case TC_103__Negative__Invalid_Additional_Address_Line__Length:
+            case TC_107__Negative__Invalid_Additional_Address_Line_Length:
                 payload.setAdditionalAddressLine(FakerDataGenerator.generateString(31));
                 break;
 
-            case TC_104__Positive__Valid_Street_Address:
+            case TC_108__Positive__Valid_Street_Address:
                 payload.setStreetName(STREET_NAME_VALID);
                 payload.setStreetNumber(STREET_NUMBER_VALID);
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
                 break;
 
-            case TC_105__Positive__Valid_PO_Box_Address:
+            case TC_109__Positive__Valid_PO_Box_Address:
                 payload.setPoBox(POBOX_VALID);
                 payload.setStreetName("");
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
                 break;
 
-            case TC_106__Positive__Valid_Rural_Route_Address:
+            case TC_110__Positive__Valid_Rural_Route_Address:
                 payload.setRuralRoute(RURAL_ROUTE_VALID);
                 payload.setStreetName("");
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
+                break;
+
+            case TC_111__Positive__LoginID_Saved:
+                payload.setStreetName(STREET_NAME_VALID);
+                payload.setStreetNumber(STREET_NUMBER_VALID);
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
+                payload.setLoginID("CSRLogin123");
                 break;
 
             default:
