@@ -31,6 +31,7 @@ public class UpdateUsernameApiHelper {
 
     public void preparePayloadForTestCondition(UpdateUsernameRequest payload, UpdateUsernameLabel testCondition) {
         Map<String, Object> userInfo = null;
+        Map<String, Object> userNames = null;
         switch (testCondition) {
             case TC_29__Negative__Missing_Request_ID:
                 payload.setRequestID("");
@@ -66,7 +67,10 @@ public class UpdateUsernameApiHelper {
                 break;
 
             case TC_37__Negative__Invalid_Username__Not_Found:
-                payload.setUsername("NonExistentUser123");
+                String username = FakerDataGenerator.generateAlphanumeric(7);
+                payload.setUsername(username);
+                userNames = ApplicationContext.get().getDbAction("mariadb").getUsername(username);
+                Assert.assertTrue(userNames.isEmpty(), "Expected userNames map to be empty");
                 break;
 
             case TC_38__Negative__Missing_Password:
@@ -97,7 +101,7 @@ public class UpdateUsernameApiHelper {
             case TC_44__Negative__Password_does_not_match_username:
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
                 payload.setUsername(userInfo.get("user_name").toString());
-                payload.setPassword("WrongPassword123");
+                payload.setPassword(FakerDataGenerator.generateAlphanumeric(8));
                 break;
 
             case TC_45__Negative__Missing_customerCode:
@@ -113,7 +117,8 @@ public class UpdateUsernameApiHelper {
                 break;
 
             case TC_48__Negative__Invalid_customerCode:
-                payload.setCustomerCode("999999999"); // not in Banner
+                String customerCode="";
+                payload.setCustomerCode(customerCode); // not in Banner
                 break;
 
             case TC_49__Negative__Missing_premisesCode:
@@ -145,6 +150,8 @@ public class UpdateUsernameApiHelper {
                 break;
 
             case TC_55__Positive__Login_ID_Saved:
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+                payload.setUsername(userInfo.get("user_name").toString());
                 payload.setLoginID("CSRLogin123");
                 break;
 
