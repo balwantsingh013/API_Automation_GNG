@@ -85,7 +85,7 @@ public class AuthenticateCustomerApiHelper {
                 break;
 
             case TC_142__Negative__Invalid_Email_Address_Format:
-                payload.setEmailAddress("invalidEmailFormat");
+                payload.setEmailAddress(FakerDataGenerator.generateString(10));
                 break;
 
             case TC_143__Negative__Invalid_Phone_Number_Length___Too_Long____:
@@ -116,35 +116,125 @@ public class AuthenticateCustomerApiHelper {
             // Insufficient search criteria cases
             case TC_149__Negative__Insufficient_Search_Criteria:
             case TC_150__Negative__Last_4_SSN_____Password:
-            case TC_151__Negative__Last_4_SSN_____Username:
-            case TC_152__Negative__Last_4_SSN_____Customer_Code_____Premises_Code:
-            case TC_153__Negative__Last_4_SSN_____Federal_Tax_ID_Number:
-            case TC_154__Negative__Password_____Federal_Tax_ID_Number:
-            case TC_155__Negative__Customer_Last_Name_____Email_Address:
-            case TC_156__Negative__Customer_Last_Name_____Phone_Number:
-            case TC_157__Negative__Customer_Last_Name_____Username:
-            case TC_158__Negative__Customer_Last_Name_____Customer_Code_____Premises_Code:
-            case TC_159__Negative__Business_Name_____Email_Address:
-            case TC_160__Negative__Business_Name_____Phone_Number:
-            case TC_161__Negative__Business_Name_____Username:
-            case TC_162__Negative__Business_Name_____Customer_Code_____Premises_Code:
-            case TC_163__Negative__Email_Address_____Phone_Number:
-            case TC_164__Negative__Email_Address_____Username:
-            case TC_165__Negative__Email_Address_____Customer_Code_____Premises_Code:
-            case TC_166__Negative__Email_Address_____Federal_Tax_ID_Number:
-            case TC_167__Negative__Phone_Number_____Username:
-            case TC_168__Negative__Phone_Number_____Customer_Code_____Premises_Code:
-            case TC_169__Negative__Phone_Number_____Federal_Tax_ID_Number:
-            case TC_170__Negative__Username_____Customer_Code_____Premises_Code:
-            case TC_171__Negative__Username_____Federal_Tax_ID_Number:
-            case TC_172__Negative__Customer_Code_____Premises_Code_____Federal_Tax_ID_Number:
-                payload.setLastFourSocialSecurityNumber("1234");
-                payload.setPassword("password123");
+                payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
+                payload.setPassword(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case TC_173__Negative__Too_Many_Matches:
-                payload.setCustomerCode("999999999");
-                payload.setPremisesCode("7777777");
+            case TC_151__Negative__Last_4_SSN_____Username:
+                payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
+                payload.setUsername(FakerDataGenerator.generateAlphanumeric(6));
+                break;
+
+            case TC_152__Negative__Last_4_SSN_____Customer_Code_____Premises_Code:
+                payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_153__Negative__Last_4_SSN_____Federal_Tax_ID_Number:
+                payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
+                payload.setFederalTaxID(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_154__Negative__Password_____Federal_Tax_ID_Number:
+                payload.setPassword(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setFederalTaxID(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_155__Negative__Customer_Last_Name_____Email_Address:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case TC_159__Negative__Business_Name_____Email_Address:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                break;
+
+            case TC_156__Negative__Customer_Last_Name_____Phone_Number:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
+                break;
+
+            case TC_160__Negative__Business_Name_____Phone_Number:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
+                break;
+
+            case TC_157__Negative__Customer_Last_Name_____Username:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setUsername(FakerDataGenerator.generateString(6));
+                break;
+
+            case TC_161__Negative__Business_Name_____Username:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setUsername(FakerDataGenerator.generateString(6));
+                break;
+
+            case TC_158__Negative__Customer_Last_Name_____Customer_Code_____Premises_Code:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_162__Negative__Business_Name_____Customer_Code_____Premises_Code:
+                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(6));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_163__Negative__Email_Address_____Phone_Number:
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
+                break;
+
+            case TC_164__Negative__Email_Address_____Username:
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                payload.setUsername(FakerDataGenerator.generateString(6));
+                break;
+
+            case TC_165__Negative__Email_Address_____Customer_Code_____Premises_Code:
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_166__Negative__Email_Address_____Federal_Tax_ID_Number:
+                payload.setEmailAddress(FakerDataGenerator.generateEmail());
+                payload.setFederalTaxID(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_167__Negative__Phone_Number_____Username:
+                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
+                payload.setUsername(FakerDataGenerator.generateString(6));
+                break;
+
+            case TC_168__Negative__Phone_Number_____Customer_Code_____Premises_Code:
+                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_169__Negative__Phone_Number_____Federal_Tax_ID_Number:
+                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
+                payload.setFederalTaxID(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_170__Negative__Username_____Customer_Code_____Premises_Code:
+                payload.setUsername(FakerDataGenerator.generateString(6));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_171__Negative__Username_____Federal_Tax_ID_Number:
+                payload.setUsername(FakerDataGenerator.generateString(6));
+                payload.setFederalTaxID(FakerDataGenerator.generateDigits(6));
+                break;
+
+            case TC_172__Negative__Customer_Code_____Premises_Code_____Federal_Tax_ID_Number:
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
+                payload.setFederalTaxID(FakerDataGenerator.generateDigits(6));
                 break;
 
             // Positive cases
@@ -200,6 +290,8 @@ public class AuthenticateCustomerApiHelper {
                 break;
 
             case TC_184__Positive__Login_ID_Saved:
+                payload.setCustomerLastNameBusiness("AcmeCorp");
+                payload.setFederalTaxID("123456789");
                 payload.setLoginID("testLoginID");
                 break;
 
