@@ -50,6 +50,12 @@ public class BaseSteps {
         validateUsernameStatus(status);
     }
 
+    @And("the response should have data as {string}")
+    public void validateDataFieldStep(String expectedData) {
+        validateDataField(expectedData);
+    }
+
+
     @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid State code {string}")
     public void responseShouldHaveErrorCodeAndErrorMessageWithInvalidStateCode(int errorCode, String errorMessage, String invalidStateCode) {
         verifyErrorCodeAndMessage(errorCode, errorMessage + " " + invalidStateCode);
@@ -126,6 +132,31 @@ public class BaseSteps {
         verifySuccess(Boolean.parseBoolean(success));
     }
 
+    private void validateDataField(String expectedDataValue) {
+        Response response = testContext.getResponse();
+
+        Object actualData = response.jsonPath().get("data");
+
+        // Case 1: Expecting null
+        if ("null".equalsIgnoreCase(expectedDataValue)) {
+            assertThat("Expected data to be null but it was not",
+                    actualData,
+                    equalTo(null));
+            return;
+        }
+
+        // Case 2: Expecting NOT null
+        if ("notNull".equalsIgnoreCase(expectedDataValue)) {
+            assertThat("Expected data to NOT be null but it was",
+                    actualData != null,
+                    equalTo(true));
+            return;
+        }
+
+    }
+
+
+
     private void verifySuccess(boolean expectedSuccess) {
         Response response = testContext.getResponse();
 
@@ -147,10 +178,12 @@ public class BaseSteps {
     private void validateUsernameStatus(String expectedStatus) {
         Response response = testContext.getResponse();
 
-        // Validate usernameStatus at data.usernameStatus
-        assertThat("Incorrect usernameStatus returned",
-                response.jsonPath().getString("data.usernameStatus"),
-                equalTo(expectedStatus));
+        if(!Objects.equals(expectedStatus, "null")) {
+            // Validate usernameStatus at data.usernameStatus
+            assertThat("Incorrect usernameStatus returned",
+                    response.jsonPath().getString("data.usernameStatus"),
+                    equalTo(expectedStatus));
+        }
     }
 
 

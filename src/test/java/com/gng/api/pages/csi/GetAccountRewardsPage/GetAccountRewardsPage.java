@@ -21,7 +21,7 @@ public class GetAccountRewardsPage extends BasePage {
 
     public void validateResponseForNegativeTestConditions(GetAccountRewardsLabel apiLabel, GetAccountRewardsLabel testCondition) {
         GetAccountRewardsRequest payload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForNegativeTestCondition(payload, testCondition);
+        helper.preparePayloadForTestCondition(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, GET_ACCOUNT_REWARDS, 200);
         GetAccountRewardsResponse getAccountRewardsResponse = deserializeResponseToPojo(response, GetAccountRewardsResponse.class);

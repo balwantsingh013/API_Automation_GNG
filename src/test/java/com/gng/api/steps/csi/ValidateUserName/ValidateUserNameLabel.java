@@ -15,7 +15,8 @@ public enum ValidateUserNameLabel {
     TC_9__Positive__Username_Available,
     TC_8__Positive__Username_Available,
     TC_10__Positive__Username_Active__users_table,
-    TC_12__Positive__Username_Inactive,
+    TC_11__Positive__Username_Inactive,
     TC_11__Positive__Username_Active__custadv_pending_registrations_table,
-    TC_13__Positive__LoginID_Saved
+    TC_13__Positive__LoginID_Saved,
+    TC_12__Negative__Data_null_for_failure
 }

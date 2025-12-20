@@ -32,7 +32,7 @@ public class ValidateUserNameApiHelper {
     public void preparePayloadForTestCondition(ValidateUsernameRequest payload, ValidateUserNameLabel testCondition) {
         Map<String, Object> userNames = null;
         switch (testCondition) {
-            case TC_1__Negative__Missing_Request_ID:
+            case TC_1__Negative__Missing_Request_ID, TC_12__Negative__Data_null_for_failure:
                 payload.setRequestID("");
                 break;
 
@@ -90,7 +90,7 @@ public class ValidateUserNameApiHelper {
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case TC_12__Positive__Username_Inactive:
+            case TC_11__Positive__Username_Inactive:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());

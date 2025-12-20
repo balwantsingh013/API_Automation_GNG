@@ -21,7 +21,7 @@ public class UpdateMailingAddressPage extends BasePage {
 
     public void validateResponseForNegativeTestConditions(UpdateMailingAddressLabel apiLabel, UpdateMailingAddressLabel testCondition) {
         UpdateMailingAddressRequest payload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForNegativeTestCondition(payload, testCondition);
+        helper.preparePayloadForTestCondition(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, UPDATE_MAILING_ADDRESS, 200);
         UpdateMailingAddressResponse updateMailingAddressResponse = deserializeResponseToPojo(response, UpdateMailingAddressResponse.class);

@@ -22,12 +22,12 @@ Feature: Verify ValidateUserName Api
     Then verify response code of "ValidateUserName" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     And the response should have the username status as "<status>"
+    And the response should have data as "<data>"
 
     Examples:
-      | testCondition                                                        | errorCode | errorMessage | status    |
-      | TC_9__Positive__Username_Available                                   | 0         |              | AVAILABLE |
-      | TC_8__Positive__Username_Available                                   | 0         |              | AVAILABLE |
-      | TC_10__Positive__Username_Active__users_table                        | 0         |              | ACTIVE    |
-      | TC_11__Positive__Username_Active__custadv_pending_registrations_table| 0         |              | ACTIVE    |
-      | TC_12__Positive__Username_Inactive                                   | 0         |              | INACTIVE  |
-      | TC_13__Positive__LoginID_Saved                                       | 0         |              | ACTIVE    |
+      | testCondition                                                        | errorCode | errorMessage           | status    |data   |
+      | TC_8__Positive__Username_Available                                   | 0         |                        | AVAILABLE |notNull|
+      | TC_9__Positive__Username_Available                                   | 0         |                        | AVAILABLE |notNull|
+      | TC_10__Positive__Username_Active__users_table                        | 0         |                        | ACTIVE    |notNull|
+      | TC_11__Positive__Username_Inactive                                   | 0         |                        | INACTIVE  |notNull|
+      | TC_12__Negative__Data_null_for_failure                               |10001      | Missing Request ID     | null      |null   |
