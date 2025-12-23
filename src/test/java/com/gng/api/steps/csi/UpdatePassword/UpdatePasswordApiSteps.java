@@ -33,4 +33,5 @@ public class UpdatePasswordApiSteps {
         CommonUtil.logTestDescriptionToReports(testCondition);
         updatePasswordPage.validateResponseForNegativeTestConditions(update_password, UpdatePasswordLabel.valueOf(testCondition));
     }
+
 }

@@ -204,6 +204,25 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getActiveUsernameForUpdatePassword() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_USER_NAME_FOR_UPDATE_PASSWORD;
+        logQueryInAllure("get active username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query );
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getActiveUsernameFromOtherTable2() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACTIVE_USER_NAME_3;
@@ -224,6 +243,31 @@ public class DBAction {
         return result;
     }
 
+
+    public Map<String, Object> getPasswordForUser(String userName) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PASSWORD_FOR_USER;
+
+        // Build a safe, readable version of the query for logging
+        String loggedQuery = query.replaceFirst("\\?", "'" + userName.replace("'", "''") + "'");
+
+        // Log the actual SQL being executed
+        logQueryInAllure("get password for user", loggedQuery);
+
+        // Execute the query with parameter binding (prevents SQL injection)
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, userName);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
 
 
 

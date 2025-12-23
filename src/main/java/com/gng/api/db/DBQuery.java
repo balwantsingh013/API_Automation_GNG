@@ -2354,6 +2354,12 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             where user_name=?
             """;
 
+    public static final String SELECT_ACTIVE_USER_NAME_FOR_UPDATE_PASSWORD= """
+            SELECT user_name
+                        FROM users
+                        WHERE user_name='ZZZ999'
+            """;
+
     public static final String SELECT_ACTIVE_USER_NAME= """
             SELECT user_name
             FROM users
@@ -2457,6 +2463,12 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               )
             ORDER BY user_name DESC
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_PASSWORD_FOR_USER= """
+            SELECT password
+            FROM users
+            WHERE user_name=?
             """;
 
     public static final String SELECT_INACTIVE_USER_NAME= """
