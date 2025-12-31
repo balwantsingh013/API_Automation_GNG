@@ -14,12 +14,10 @@ public enum UpdatePasswordLabel {
     TC_19__Negative__Invalid_Username_format__Alphanumeric,
     TC_20__Negative__Invalid_Username__Not_Found,
     TC_21__Negative__Invalid_Username__Inactive,
-    TC_22__Negative__Missing_Password,
-    TC_23__Negative__Invalid_Password_Format__Length___Too_Short____,
-    TC_24__Negative__Invalid_Password_Format__Length___Too_Long____,
-    TC_25__Negative__Invalid_Password__Reused_Password,
-
-    TC_26__Positive__Password__Updated,
-    TC_27__Positive__LoginID_Saved,
-    TC_26_DB_Validation
+    TC_22__Negative__Invalid_Username__Inactive,
+    TC_23__Negative__Missing_Password,
+    TC_24__Negative__Invalid_Password_Format__Length___Too_Short____,
+    TC_25__Negative__Invalid_Password_Format__Length___Too_Long____,
+    TC_26__Negative__Invalid_Password__Reused_Password,
+    TC_27__Positive__Password__Updated,
 }

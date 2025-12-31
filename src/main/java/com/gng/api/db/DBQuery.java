@@ -2400,6 +2400,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_PREMISE_CODE= """
+            SELECT ucbprem_code
+            FROM ucbprem
+            WHERE ucbprem_code=?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_NEW_ACCOUNT= """
             SELECT ucracct_cust_code, ucracct_prem_code
             FROM ucracct
@@ -2449,7 +2456,18 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT user_name
             FROM users
             WHERE active = 0
+            AND domain_id = 2
             AND user_name REGEXP '^[a-zA-Z0-9]+$'
+            ORDER BY user_name DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_INACTIVE_USER2= """
+            SELECT user_name
+            FROM users
+            WHERE deleted = 1
+              AND LENGTH(user_name) >= 5
+              AND user_name REGEXP '^[a-zA-Z0-9]+$'
             ORDER BY user_name DESC
             FETCH FIRST 1 ROWS ONLY
             """;

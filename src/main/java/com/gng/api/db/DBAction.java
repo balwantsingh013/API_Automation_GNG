@@ -448,9 +448,58 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getPremCode(String premCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PREMISE_CODE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result;
+        try {
+            // safer: use queryForList to avoid exception
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(query, premCode);
+            result = results.isEmpty() ? Collections.emptyMap() : results.get(0);
+        } catch (EmptyResultDataAccessException e) {
+            // fallback if queryForMap is used
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+
     public Map<String, Object> getInactiveUser() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_INACTIVE_USER;
+
+        logQueryInAllure("get active username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getInactiveUser2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_INACTIVE_USER2;
 
         logQueryInAllure("get active username", query);
 
