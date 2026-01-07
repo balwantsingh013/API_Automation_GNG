@@ -82,8 +82,10 @@ public class GetAccountInfoApiHelper {
 
             case TC_195__Positive__Login_ID_Saved:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-//                payload.setCustomerCode(ApplicationContext.get().getDbAction("mariadb").getValidCustomerCode());
-//                payload.setPremisesCode(ApplicationContext.get().getDbAction("mariadb").getValidPremisesCode());
+                Map<String, Object> accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 payload.setLoginID(FakerDataGenerator.generateAlphanumeric(8));
                 break;
 

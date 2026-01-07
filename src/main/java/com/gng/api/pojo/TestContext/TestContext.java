@@ -43,6 +43,7 @@ public class TestContext {
     private String suspenseDate;
     private String userIDRemind;
     private Long marketerReferenceData;
+    private String loginId;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes

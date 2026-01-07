@@ -33,4 +33,11 @@ public class UpdateAccountNicknameApiSteps {
         CommonUtil.logTestDescriptionToReports(testCondition);
         setAccountNicknamePage.validateResponseForNegativeTestConditions(update_account_nickname, UpdateAccountNicknameLabel.valueOf(testCondition));
     }
+
+    @When("verify if login id is saved")
+    public void verify_if_login_id_is_saved() {
+        setAccountNicknamePage.validateLoginId();
+    }
+
+
 }

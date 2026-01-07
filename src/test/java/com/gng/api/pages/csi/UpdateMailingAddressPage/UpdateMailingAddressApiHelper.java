@@ -1,6 +1,7 @@
 package com.gng.api.pages.csi.UpdateMailingAddressPage;
 
 import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressRequest;
 import com.gng.api.pojo.TestContext.TestContext;
@@ -54,6 +55,7 @@ public class UpdateMailingAddressApiHelper {
 
     public void preparePayloadForTestCondition(UpdateMailingAddressRequest payload, UpdateMailingAddressLabel testCondition) {
         Map<String, Object> dbValues = null;
+        Map<String, Object> accountData=null;
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
         switch (testCondition) {
             case TC_72__Negative__Missing_Request_ID:
@@ -210,6 +212,9 @@ public class UpdateMailingAddressApiHelper {
                 payload.setStreetNumber(STREET_NUMBER_VALID);
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
+                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_109__Positive__Valid_PO_Box_Address:
@@ -217,6 +222,9 @@ public class UpdateMailingAddressApiHelper {
                 payload.setStreetName("");
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
+                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_110__Positive__Valid_Rural_Route_Address:
@@ -224,6 +232,9 @@ public class UpdateMailingAddressApiHelper {
                 payload.setStreetName("");
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
+                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_111__Positive__LoginID_Saved:
@@ -231,7 +242,10 @@ public class UpdateMailingAddressApiHelper {
                 payload.setStreetNumber(STREET_NUMBER_VALID);
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
-                payload.setLoginID("CSRLogin123");
+                payload.setLoginID(FakerDataGenerator.generateString(6));
+                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             default:

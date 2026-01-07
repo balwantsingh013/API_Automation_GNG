@@ -10,6 +10,7 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -54,30 +55,31 @@ public class UpdateUsernameApiHelper {
                 break;
 
             case TC_32__Negative__Invalid_Username__Inactive:
-                userInfo = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
+                payload.setUsername("0000000000");
+                payload.setPassword("i8J6WjjzyLz8");
+                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
+                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
+                break;
+
+            case TC_33__Negative__Invalid_Username__Inactive:
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getInactiveUser2();
                 payload.setUsername(userInfo.get("user_name").toString());
                 userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 break;
 
-            case TC_33__Negative__Invalid_Username_format__Length___Too_Short____:
+            case TC_34__Negative__Invalid_Username_format__Length___Too_Short____:
                 payload.setUsername(FakerDataGenerator.generateString(4));
                 break;
 
-            case TC_34__Negative__Invalid_Username_format__Length___Too_Long____:
+            case TC_35__Negative__Invalid_Username_format__Length___Too_Long____:
                 payload.setUsername(FakerDataGenerator.generateString(16));
                 break;
 
-            case TC_35__Negative__Invalid_Username_format__Alphanumeric:
+            case TC_36__Negative__Invalid_Username_format__Alphanumeric:
                 payload.setUsername(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
-                break;
-
-            case TC_36__Negative__Invalid_Username__Not_Found:
-                String username = FakerDataGenerator.generateAlphanumeric(7);
-                payload.setUsername(username);
-                userNames = ApplicationContext.get().getDbAction("mariadb").getUsername(username);
-                Assert.assertTrue(userNames.isEmpty(), "Expected userNames map to be empty");
                 break;
 
             case TC_37__Negative__Missing_Password:
@@ -92,25 +94,26 @@ public class UpdateUsernameApiHelper {
                 payload.setPassword(FakerDataGenerator.generateString(65));
                 break;
 
-            case TC_40__Negative__Invalid_Password_Format___Not_A_String____:
-                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
-                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
-                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
-                payload.setUsername(userNames.get("user_name").toString());
-                payload.setPassword("12345678");
-                break;
-
-            case TC_41__Negative__Invalid_Password_Format__Policy_Requirement___s____:
-                payload.setPassword("password");
-                break;
 
             case TC_42__Negative__Account_username_already_exists:
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
                 payload.setUsername(userInfo.get("user_name").toString());
+                userInfo = ApplicationContext.get().getDbAction().getAccountWithoutNickname();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_43__Negative__Password_does_not_match_username:
+            case TC_43__Negative__Invalid_credentials___Password____:
+                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
+                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername2();
+                payload.setUsername(userInfo.get("user_name").toString());
+                payload.setPassword(FakerDataGenerator.generateAlphanumeric(8));
+                break;
+
+            case TC_44__Negative__Invalid_credentials___Username_does_not_exist____:
                 userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
@@ -119,19 +122,36 @@ public class UpdateUsernameApiHelper {
                 payload.setPassword(FakerDataGenerator.generateAlphanumeric(8));
                 break;
 
-            case TC_44__Negative__Missing_customerCode:
+            case TC_45__Negative__Invalid_credentials___Username_Inactive____:
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
+                payload.setUsername(userInfo.get("user_name").toString());
+                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
+                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
+                break;
+
+            case TC_46__Negative__Invalid_credentials___Username_Inactive____:
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getInactiveUser2();
+                payload.setUsername(userInfo.get("user_name").toString());
+                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
+                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
+                break;
+
+            case TC_47__Negative__Missing_customerCode:
                 payload.setCustomerCode("");
                 break;
 
-            case TC_45__Negative__Invalid_customerCode_Length:
+
+            case TC_48__Negative__Invalid_customerCode_Length:
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
                 break;
 
-            case TC_46__Negative__Invalid_customerCode_Format:
+            case TC_49__Negative__Invalid_customerCode_Format:
                 payload.setCustomerCode(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case TC_47__Negative__Invalid_customerCode:
+            case TC_50__Negative__Invalid_customerCode:
                 String customerCode = "9988776";
                 payload.setCustomerCode(customerCode);
                 userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
@@ -140,44 +160,229 @@ public class UpdateUsernameApiHelper {
                 Assert.assertEquals(userInfo.size(), 0, "Expected customerCode to not exist in UCBCUST");
                 break;
 
-            case TC_48__Negative__Missing_premisesCode:
+            case TC_51__Negative__Missing_premisesCode:
                 payload.setPremisesCode("");
                 break;
 
-            case TC_49__Negative__Invalid_premisesCode_Length:
+            case TC_52__Negative__Invalid_premisesCode_Length:
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
                 break;
 
-            case TC_50__Negative__Invalid_premisesCode_Format:
+            case TC_53__Negative__Invalid_premisesCode_Format:
                 payload.setPremisesCode(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case TC_51__Negative__Invalid_premisesCode:
-                String premCode = "9988776";
-                payload.setPremisesCode(premCode);
-                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
-                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
-                userInfo = ApplicationContext.get().getDbAction().getPremCode(premCode);
-                Assert.assertEquals(userInfo.size(), 0, "Expected premCode to not exist in UCBCUST");
-                break;
 
-            case TC_52__Positive__Username_Available:
+            case TC_54__Positive__Username_Available___Banner_Active____:
                 payload.setUsername(newUsername);
-                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
-                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
-                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
+
+                while (true) {
+                    // Step 1: Oracle call — get random ACTIVE Banner account
+                    userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly();
+
+                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
+                    System.out.println("Oracle returned ACTIVE custCode=" + custCode + ", premCode=" + premCode);
+
+                    // Step 2: MariaDB call — check if this account is already registered
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode);
+
+                    System.out.println("MariaDB returned: " + registeredAccount);
+
+                    // Step 3: If NOT found in MariaDB → valid account → break loop
+                    if (registeredAccount == null) {
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+
+                    // Otherwise loop again and fetch another random Oracle account
+                    System.out.println("Active account exists in MariaDB, retrying...");
+                }
+
                 break;
 
-            case TC_53__Positive__Username_Active:
-                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
-                payload.setUsername(userInfo.get("user_name").toString());
+
+            case TC_55__Positive__Username_Available___Banner_New____:
+                payload.setUsername(newUsername);
+
+                while (true) {
+                    userInfo = ApplicationContext.get().getDbAction().getNewAccountOnly();
+
+                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
+                    userInfo =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode);
+
+                    // If no row returned → account is NOT registered → break
+                    if (userInfo == null) {
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+
+                    // Otherwise try again
+                }
+
                 break;
 
-            case TC_54__Positive__Login_ID_Saved:
+
+            case TC_56__Positive__Username_Available___Banner_Final____:
+                payload.setUsername(newUsername);
+
+                while (true) {
+                    // Step 1: Oracle call — get random FINAL Banner account
+                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
+
+                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
+                    System.out.println("Oracle returned FINAL custCode=" + custCode + ", premCode=" + premCode);
+
+                    // Step 2: MariaDB call — check if this account is already registered
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode);
+
+                    System.out.println("MariaDB returned: " + registeredAccount);
+
+                    // Step 3: If NOT found in MariaDB → valid account → break loop
+                    if (registeredAccount == null) {
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+
+                    // Otherwise loop again and fetch another random Oracle account
+                    System.out.println("Final account exists in MariaDB, retrying...");
+                }
+
+                break;
+
+
+            case TC_57__Positive__Username_Active___Banner_Active____:
+
+                // Step 1: Get an ACTIVE username from MariaDB
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
                 payload.setUsername(userInfo.get("user_name").toString());
-                payload.setLoginID("CSRLogin123");
+
+                // Step 2: Loop until we find an ACTIVE Banner account not registered in MariaDB
+                while (true) {
+
+                    // Oracle: get random ACTIVE Banner account
+                    userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly();
+
+                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
+                    System.out.println("Oracle returned ACTIVE custCode=" + custCode + ", premCode=" + premCode);
+
+                    // MariaDB: check if this account is already registered
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode);
+
+                    System.out.println("MariaDB returned: " + registeredAccount);
+
+                    // If NOT found in MariaDB → valid account → break loop
+                    if (registeredAccount == null) {
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+
+                    // Otherwise loop again
+                    System.out.println("Active account exists in MariaDB, retrying...");
+                }
                 break;
+
+            case TC_58__Positive__Username_Active___Banner_Final____:
+
+                // Step 1: Get an ACTIVE username from MariaDB
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+                payload.setUsername(userInfo.get("user_name").toString());
+
+                // Step 2: Loop until we find a FINAL Banner account not registered in MariaDB
+                while (true) {
+
+                    // Oracle: get random FINAL Banner account
+                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
+
+                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
+                    System.out.println("Oracle returned FINAL custCode=" + custCode + ", premCode=" + premCode);
+
+                    // MariaDB: check if this account is already registered
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode);
+
+                    System.out.println("MariaDB returned: " + registeredAccount);
+
+                    // If NOT found in MariaDB → valid account → break loop
+                    if (registeredAccount == null) {
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+
+                    // Otherwise loop again
+                    System.out.println("Final account exists in MariaDB, retrying...");
+                }
+
+                break;
+
+            case TC_59__Positive__Username_Active___Banner_Inactive____:
+
+                // Step 1: Get an ACTIVE username from MariaDB
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+                payload.setUsername(userInfo.get("user_name").toString());
+
+                // Step 2: Loop until we find an INACTIVE Banner account not registered in MariaDB
+                while (true) {
+
+                    // Oracle: get random INACTIVE Banner account
+                    userInfo = ApplicationContext.get().getDbAction().getInactiveAccountOnly();
+
+                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
+                    System.out.println("Oracle returned INACTIVE custCode=" + custCode + ", premCode=" + premCode);
+
+                    // MariaDB: check if this account is already registered
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode);
+
+                    System.out.println("MariaDB returned: " + registeredAccount);
+
+                    // If NOT found in MariaDB → valid account → break loop
+                    if (registeredAccount == null) {
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+
+                    // Otherwise loop again
+                    System.out.println("Inactive account exists in MariaDB, retrying...");
+                }
+
+                break;
+
+
+
 
             default:
                 log.warn("Unhandled test condition: {}", testCondition);

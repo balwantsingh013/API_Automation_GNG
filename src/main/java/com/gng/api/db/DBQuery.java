@@ -2368,6 +2368,17 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             AND domain_id <> 2
             AND LENGTH(user_name) > 5
             AND user_name REGEXP '^[a-zA-Z0-9]+$'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_USER_NAME2= """
+            SELECT user_name
+            FROM users
+            WHERE active = 1
+            AND deleted = 0
+            AND domain_id = 2
+            AND LENGTH(user_name) > 5
+            AND user_name REGEXP '^[a-zA-Z0-9]+$'
             ORDER BY user_name DESC
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -2421,10 +2432,84 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                        FROM
                                            UCRACCT
                                        WHERE
-                                           UCRACCT_STATUS_IND <> 'N'
+                                           UCRACCT_STATUS_IND = 'A'
                                            AND UCRACCT_NICK_NAME IS NOT NULL
-                                           AND TRIM(UCRACCT_NICK_NAME) <> ''
                                        FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_FINAL_ACCOUNT_WITH_NICKNAME= """
+            SELECT
+                                           UCRACCT_CUST_CODE,
+                                           UCRACCT_PREM_CODE
+                                       FROM
+                                           UCRACCT
+                                       WHERE
+                                           UCRACCT_STATUS_IND = 'F'
+                                           AND UCRACCT_NICK_NAME IS NOT NULL
+                                       FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_INACTIVE_ACCOUNT_WITH_NICKNAME= """
+            SELECT
+                                           UCRACCT_CUST_CODE,
+                                           UCRACCT_PREM_CODE
+                                       FROM
+                                           UCRACCT
+                                       WHERE
+                                           UCRACCT_STATUS_IND = 'I'
+                                           AND UCRACCT_NICK_NAME IS NOT NULL
+                                       FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_LATEST_LOGIN_ID= """
+            SELECT gzrapil_login_id
+            FROM gcismgr.gzrapil
+            ORDER BY gzrapil_activity_date DESC
+            FETCH FIRST 1 ROW ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_ACCOUNT_ONLY= """
+            SELECT T1.UCRACCT_CUST_CODE,
+                   T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            WHERE T1.UCRACCT_STATUS_IND = 'A'
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NEW_ACCOUNT_ONLY= """
+            SELECT T1.UCRACCT_CUST_CODE,
+                   T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            WHERE T1.UCRACCT_STATUS_IND = 'N'
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String CHECK_ACCOUNT_REGISTERED = """
+            SELECT account_number
+            FROM custadv_registered_accounts
+            WHERE account_number LIKE CONCAT('%', ?, '%')
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+    public static final String SELECT_FINAL_ACCOUNT_ONLY= """
+            SELECT T1.UCRACCT_CUST_CODE,
+                                          T1.UCRACCT_PREM_CODE
+                                   FROM UCRACCT T1
+                                   WHERE T1.UCRACCT_STATUS_IND = 'F'
+                                   ORDER BY DBMS_RANDOM.VALUE
+                                   FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_INACTIVE_ACCOUNT_ONLY= """
+            SELECT T1.UCRACCT_CUST_CODE,
+                                          T1.UCRACCT_PREM_CODE
+                                   FROM UCRACCT T1
+                                   WHERE T1.UCRACCT_STATUS_IND = 'I'
+                                   ORDER BY DBMS_RANDOM.VALUE
+                                   FETCH FIRST 1 ROWS ONLY
             """;
 
 
@@ -2440,6 +2525,62 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACTIVE_ACCOUNT_WITHOUT_NICKNAME= """
+            SELECT
+                UCRACCT_CUST_CODE,
+                UCRACCT_PREM_CODE
+            FROM
+                UCRACCT
+            WHERE
+                UCRACCT_STATUS_IND = 'A'
+                AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_REWARDS= """
+            SELECT GZBRWDS_CUST_CODE, GZBRWDS_PREM_CODE FROM GZBRWDS
+            WHERE GZBRWDS_REWARD_ID=46
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+    public static final String SELECT_PENDING_REWARDS= """
+            SELECT GZBRWDS_CUST_CODE, GZBRWDS_PREM_CODE FROM GZBRWDS
+            WHERE GZBRWDS_REWARD_ID=25
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NO_REWARDS= """
+            SELECT GZBRWDS_CUST_CODE, GZBRWDS_PREM_CODE FROM GZBRWDS
+            WHERE GZBRWDS_REWARD_ID=22
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+    public static final String SELECT_FINAL_ACCOUNT_WITHOUT_NICKNAME= """
+            SELECT
+                UCRACCT_CUST_CODE,
+                UCRACCT_PREM_CODE
+            FROM
+                UCRACCT
+            WHERE
+                UCRACCT_STATUS_IND = 'F'
+                AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_INACTIVE_ACCOUNT_WITHOUT_NICKNAME= """
+            SELECT
+                UCRACCT_CUST_CODE,
+                UCRACCT_PREM_CODE
+            FROM
+                UCRACCT
+            WHERE
+                UCRACCT_STATUS_IND = 'I'
+                AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_ACTIVE_USER_NAME_2= """
             SELECT user_name
             FROM users
@@ -2448,7 +2589,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             AND domain_id = 2
             AND LENGTH(user_name) > 5
             AND user_name REGEXP '^[a-zA-Z0-9]+$'
-            ORDER BY user_name DESC
+            ORDER BY user_name ASC
             FETCH FIRST 1 ROWS ONLY
             """;
 

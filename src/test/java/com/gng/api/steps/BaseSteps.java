@@ -354,8 +354,8 @@ public class BaseSteps {
 
         // Normalize expected message
         boolean containsPipe = errorMessage.contains("[PIPE]");
-        boolean containsZipCode=errorMessage.contains("Invalid PremisesZipCode");
-        boolean containsStateCode= errorMessage.contains("Invalid PremisesStateCode provided");
+        boolean containsZipCode = errorMessage.contains("Invalid PremisesZipCode");
+        boolean containsStateCode = errorMessage.contains("Invalid PremisesStateCode provided");
         String normalizedExpectedMessage = errorMessage.replace("[PIPE]", "|");
 
         // Validate error code
@@ -363,8 +363,15 @@ public class BaseSteps {
                 response.jsonPath().getInt("errorCode"),
                 equalTo(errorCode));
 
-        // Conditional validation based on presence of [PIPE]
-        if (containsPipe||containsZipCode||containsStateCode) {
+        // Special handling when expected message is literal "null"
+        if ("null".equalsIgnoreCase(normalizedExpectedMessage)) {
+            assertThat("ErrorMessage should be null or \"null\"",
+                    actualErrorMessage == null || "null".equalsIgnoreCase(actualErrorMessage));
+            return;
+        }
+
+        // Conditional validation based on presence of [PIPE] or specific substrings
+        if (containsPipe || containsZipCode || containsStateCode) {
             assertThat("ErrorMessage does not contain expected content",
                     actualErrorMessage,
                     containsString(normalizedExpectedMessage));
@@ -374,6 +381,7 @@ public class BaseSteps {
                     equalTo(normalizedExpectedMessage));
         }
     }
+
 
     private void verifySSPEligibilityAndWarning(boolean sspEligibility, String warning) {
         Response response = testContext.getResponse();

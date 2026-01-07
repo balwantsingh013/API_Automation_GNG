@@ -28,4 +28,8 @@ public class UpdateAccountNicknamePage extends BasePage {
         testContext.setUpdateAccountNicknameResponse(setAccountNicknameResponse);
         testContext.setResponse(response);
     }
+
+    public void validateLoginId(){
+        helper.validateIfLoginIdIsSaved();
+    }
 }

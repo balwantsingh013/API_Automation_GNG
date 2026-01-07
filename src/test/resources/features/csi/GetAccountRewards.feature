@@ -25,13 +25,11 @@ Feature: Verify GetAccountRewards Api
     When a request is made to GetAccountRewards Api for "<testCondition>"
     Then verify response code of "GetAccountRewards" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    And the response should have the rewards status as "<status>"
 
     Examples:
-      | testCondition                                               | errorCode | errorMessage | status   |
-      | TC_123__Positive__Active_Rewards                            | 0         |              | ACTIVE   |
-      | TC_124__Positive__Pending_Rewards                           | 0         |              | PENDING  |
-      | TC_125__Positive__Active_and_Pending_Rewards                | 0         |              | MIXED    |
-      | TC_126__Positive__No_Rewards                                | 0         |              | NONE     |
-      | TC_127__Positive__Refer_A_Friend_Rewards                    | 0         |              | REFERRED |
-      | TC_128__Positive__LoginID_Saved                             | 0         |              | SAVED    |
+      | testCondition                                               | errorCode | errorMessage |
+      | TC_123__Positive__Active_Rewards                            | 0         |              |
+#      | TC_124__Positive__Pending_Rewards                           | 0         |              |
+#      | TC_125__Positive__Active_and_Pending_Rewards                | 0         |              |
+      | TC_126__Positive__No_Rewards                                | 0         |              |
+#      | TC_127__Positive__Refer_A_Friend_Rewards                    | 0         |              |

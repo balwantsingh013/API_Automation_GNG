@@ -31,6 +31,7 @@ public class GetAccountRewardsApiHelper {
 
     public void preparePayloadForTestCondition(GetAccountRewardsRequest payload, GetAccountRewardsLabel testCondition) {
         Map<String, Object> accountData = null;
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
         switch (testCondition) {
             // Negative flows
             case TC_112__Negative__Missing_Request_ID:
@@ -77,21 +78,18 @@ public class GetAccountRewardsApiHelper {
                 payload.setPremisesCode("9999999"); // Non-existent
                 break;
 
-            // Positive flows
             case TC_123__Positive__Active_Rewards:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-                // accountData = ApplicationContext.get().getDbAction("mariadb").getActiveRewards();
-                Assert.assertFalse(accountData.isEmpty(), "Expected active rewards data");
+                accountData = ApplicationContext.get().getDbAction().getActiveRewards();
+                payload.setCustomerCode(accountData.get("GZBRWDS_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("GZBRWDS_PREM_CODE").toString());
                 break;
 
             case TC_124__Positive__Pending_Rewards:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-                // accountData = ApplicationContext.get().getDbAction("mariadb").getPendingRewards();
-                Assert.assertFalse(accountData.isEmpty(), "Expected pending rewards data");
+                accountData = ApplicationContext.get().getDbAction().getPendingRewards();
+                payload.setCustomerCode(accountData.get("GZBRWDS_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("GZBRWDS_PREM_CODE").toString());
                 break;
 
             case TC_125__Positive__Active_and_Pending_Rewards:
@@ -104,10 +102,9 @@ public class GetAccountRewardsApiHelper {
 
             case TC_126__Positive__No_Rewards:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-                // accountData = ApplicationContext.get().getDbAction("mariadb").getNoRewards();
-                Assert.assertTrue(accountData.isEmpty(), "Expected no rewards data");
+                accountData = ApplicationContext.get().getDbAction().getNoRewards();
+                payload.setCustomerCode(accountData.get("GZBRWDS_CUST_CODE").toString());
+                payload.setPremisesCode(accountData.get("GZBRWDS_PREM_CODE").toString());
                 break;
 
             case TC_127__Positive__Refer_A_Friend_Rewards:

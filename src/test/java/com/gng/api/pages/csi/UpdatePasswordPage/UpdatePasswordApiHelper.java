@@ -114,6 +114,16 @@ public class UpdatePasswordApiHelper {
                 payload.setPassword("test12345");
                 break;
 
+//            case TC_27__Positive__Password__Updated:
+//                String newPssword= FakerDataGenerator.generateAlphanumeric(12);
+//                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
+//                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+//                payload.setUsername(userNames.get("user_name").toString());
+//                payload.setPassword(newPssword);
+//                userNames = ApplicationContext.get().getDbAction("mariadb").getPasswordForUser(userNames.get("user_name").toString());
+//                Assert.assertNotEquals(newPssword,userNames.get("password").toString() );
+//                break;
+
             case TC_27__Positive__Password__Updated:
                 String newPssword= FakerDataGenerator.generateAlphanumeric(12);
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
