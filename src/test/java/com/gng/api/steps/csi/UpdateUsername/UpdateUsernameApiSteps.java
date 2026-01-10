@@ -37,4 +37,14 @@ public class UpdateUsernameApiSteps {
                 UpdateUsernameLabel.valueOf(testCondition)
         );
     }
+
+    @When("verify if the username is present")
+    public void verify_if_username_is_present(){
+        updateUsernamePage.validateIfUSernameIsPresent();
+        }
+
+    @When("verify if the account is accosiated with the username")
+    public void verify_account_association(){
+        updateUsernamePage.validateAccountAssociation();
+    }
 }

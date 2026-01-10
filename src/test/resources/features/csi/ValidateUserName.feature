@@ -31,4 +31,3 @@ Feature: Verify ValidateUserName Api
       | TC_9__Positive__Username_Available                   | 0         |              | AVAILABLE | notNull |
       | TC_10__Positive__Username_Active__users_table        | 0         |              | ACTIVE    | notNull |
       | TC_11__Positive__Username_Inactive                   | 0         |              | INACTIVE  | notNull |
-      | TC_12__Positive__Username_Inactive                   | 0         |              | INACTIVE  | notNull |

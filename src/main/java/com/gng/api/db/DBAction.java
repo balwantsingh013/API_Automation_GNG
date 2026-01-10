@@ -204,6 +204,26 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getActiveUsername3() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_USER_NAME3;
+
+        logQueryInAllure("get active username", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
 
     public Map<String, Object> getActiveUsername() {
         long startTime = System.currentTimeMillis();
@@ -648,29 +668,38 @@ public class DBAction {
     public Map<String, Object> getRegisteredAccount(String custCode) {
         long startTime = System.currentTimeMillis();
 
-        String query = DBQuery.CHECK_ACCOUNT_REGISTERED;
+        String queryTemplate = DBQuery.CHECK_ACCOUNT_REGISTERED;
 
-        logQueryInAllure("check account number registered", query);
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + custCode.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
 
         Map<String, Object> result = null;
 
         try {
-            result = jdbcTemplate.queryForMap(query, custCode);
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, custCode);
         } catch (EmptyResultDataAccessException e) {
-            // No rows found → return null
             result = null;
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
+        // Log expanded SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
-                query,
+                loggedQuery,          // <-- use expanded query here
                 String.valueOf(result),
                 elapsed
         );
 
         return result;
     }
+
 
 
 
@@ -811,6 +840,31 @@ public class DBAction {
 
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getDesiredUsername(String username) {
+        long startTime = System.currentTimeMillis();
+        String queryTemplate = DBQuery.SELECT_DESIRED_USERNAME;
+
+        // Replace ? with quoted and escaped username for logging
+        String loggedQuery = queryTemplate.replaceFirst("\\?", "'" + username.replace("'", "''") + "'");
+
+        // Log the fully expanded SQL
+        logQueryInAllure("get desired username", loggedQuery);
+
+        // Execute the actual parameterized query
+        Map<String, Object> result = jdbcTemplate.queryForMap(queryTemplate, username);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
                 result.toString(),
                 elapsed
         );

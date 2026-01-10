@@ -28,4 +28,12 @@ public class UpdateUsernamePage extends BasePage {
         testContext.setUpdateUsernameResponse(updateUsernameResponse);
         testContext.setResponse(response);
     }
+
+    public void validateIfUSernameIsPresent(){
+        helper.validateUsername();
+    }
+
+    public void validateAccountAssociation(){
+        helper.validateAccountAssociationWithUsername();
+    }
 }

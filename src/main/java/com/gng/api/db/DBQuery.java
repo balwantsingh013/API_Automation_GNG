@@ -2362,12 +2362,30 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACTIVE_USER_NAME= """
             SELECT user_name
-            FROM users
-            WHERE active = 1
-            AND deleted = 0
-            AND domain_id <> 2
-            AND LENGTH(user_name) > 5
-            AND user_name REGEXP '^[a-zA-Z0-9]+$'
+            FROM users u
+            WHERE u.active = 1
+              AND u.deleted = 0
+              AND u.domain_id <> 2
+              AND LENGTH(u.user_name) > 5
+              AND u.user_name REGEXP '^[a-zA-Z0-9]+$'
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM users x
+                    WHERE x.user_name = u.user_name
+                      AND x.domain_id = 2
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_USER_NAME3= """
+            SELECT user_name
+            FROM users u
+            WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM users x
+                    WHERE x.user_name = u.user_name
+                      AND x.domain_id = 2
+                )
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -2594,7 +2612,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_INACTIVE_USER= """
-            SELECT user_name
+            SELECT user_name, password
             FROM users
             WHERE active = 0
             AND domain_id = 2
@@ -2603,13 +2621,22 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_DESIRED_USERNAME= """
+            SELECT user_name
+            FROM users
+            WHERE active = 1
+            AND domain_id = 2
+            AND user_name=?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_INACTIVE_USER2= """
             SELECT user_name
             FROM users
             WHERE deleted = 1
+            AND domain_id = 2
               AND LENGTH(user_name) >= 5
               AND user_name REGEXP '^[a-zA-Z0-9]+$'
-            ORDER BY user_name DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 

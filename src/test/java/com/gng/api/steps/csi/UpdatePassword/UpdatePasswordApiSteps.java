@@ -34,4 +34,9 @@ public class UpdatePasswordApiSteps {
         updatePasswordPage.validateResponseForNegativeTestConditions(update_password, UpdatePasswordLabel.valueOf(testCondition));
     }
 
+    @When("verify if the new password is different from the old password")
+    public void verify_if_the_password_is_updated(){
+        updatePasswordPage.verifyUpdatedPassword();
+    }
+
 }

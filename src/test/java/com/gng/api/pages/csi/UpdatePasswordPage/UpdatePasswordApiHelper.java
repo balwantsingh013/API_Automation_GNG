@@ -34,39 +34,39 @@ public class UpdatePasswordApiHelper {
 
         switch (testCondition) {
 
-            case TC_13__Negative__Missing_Request_ID:
+            case TC_12__Negative__Missing_Request_ID:
                 payload.setRequestID("");
                 break;
 
-            case TC_14__Negative__Invalid_Request_ID__Length:
+            case TC_13__Negative__Invalid_Request_ID__Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
                 break;
 
-            case TC_15__Negative__Duplicate_Request_ID:
+            case TC_14__Negative__Duplicate_Request_ID:
                 payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
                 break;
 
-            case TC_16__Negative__Missing_Username:
+            case TC_15__Negative__Missing_Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername("");
                 break;
 
-            case TC_17__Negative__Invalid_Username_format__Length___Too_Short____:
+            case TC_16__Negative__Invalid_Username_format__Length___Too_Short____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateString(4));
                 break;
 
-            case TC_18__Negative__Invalid_Username_format__Length___Too_Long____:
+            case TC_17__Negative__Invalid_Username_format__Length___Too_Long____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateString(16));
                 break;
 
-            case TC_19__Negative__Invalid_Username_format__Alphanumeric:
+            case TC_18__Negative__Invalid_Username_format__Alphanumeric:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
                 break;
 
-            case TC_20__Negative__Invalid_Username__Not_Found:
+            case TC_19__Negative__Invalid_Username__Not_Found:
                 String username = FakerDataGenerator.generateAlphanumeric(6);
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(username);
@@ -74,69 +74,60 @@ public class UpdatePasswordApiHelper {
                 Assert.assertTrue(userNames.isEmpty(), "Expected userNames map to be empty");
                 break;
 
-            case TC_21__Negative__Invalid_Username__Inactive:
+            case TC_20__Negative__Invalid_Username__Inactive:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case TC_22__Negative__Invalid_Username__Inactive:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser2();
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setUsername(userNames.get("user_name").toString());
-                break;
-
-            case TC_23__Negative__Missing_Password:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+            case TC_21__Negative__Missing_Password:
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 payload.setPassword("");
                 break;
 
-            case TC_24__Negative__Invalid_Password_Format__Length___Too_Short____:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+            case TC_22__Negative__Invalid_Password_Format__Length___Too_Short____:
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 payload.setPassword(FakerDataGenerator.generateString(7));
                 break;
 
-            case TC_25__Negative__Invalid_Password_Format__Length___Too_Long____:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername();
+            case TC_23__Negative__Invalid_Password_Format__Length___Too_Long____:
+                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsername2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 payload.setPassword(FakerDataGenerator.generateString(65));
                 break;
 
-            case TC_26__Negative__Invalid_Password__Reused_Password:
+            case TC_24__Negative__Invalid_Password__Reused_Password:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameForUpdatePassword();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(userNames.get("user_name").toString());
                 payload.setPassword("test12345");
                 break;
 
-//            case TC_27__Positive__Password__Updated:
-//                String newPssword= FakerDataGenerator.generateAlphanumeric(12);
-//                userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
-//                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-//                payload.setUsername(userNames.get("user_name").toString());
-//                payload.setPassword(newPssword);
-//                userNames = ApplicationContext.get().getDbAction("mariadb").getPasswordForUser(userNames.get("user_name").toString());
-//                Assert.assertNotEquals(newPssword,userNames.get("password").toString() );
-//                break;
-
-            case TC_27__Positive__Password__Updated:
-                String newPssword= FakerDataGenerator.generateAlphanumeric(12);
+            case TC_25__Positive__Password__Updated:
+                String newPassword = FakerDataGenerator.generateAlphanumeric(12);
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setUsername(userNames.get("user_name").toString());
-                payload.setPassword(newPssword);
-                userNames = ApplicationContext.get().getDbAction("mariadb").getPasswordForUser(userNames.get("user_name").toString());
-                Assert.assertNotEquals(newPssword,userNames.get("password").toString() );
+                String userName = userNames.get("user_name").toString();
+                payload.setUsername(userName);
+                payload.setPassword(newPassword);
+                userNames = ApplicationContext.get().getDbAction("mariadb").getPasswordForUser(userName);
+                testContext.setPassword(userNames.get("password").toString());
+                testContext.setUsername(userName);
                 break;
 
             default:
                 log.warn("Unhandled test condition: {}", testCondition);
                 break;
         }
+    }
+
+    public void validateIfPasswordIsChanged(){
+        Map<String, Object> userNames =  ApplicationContext.get().getDbAction("mariadb").getPasswordForUser(testContext.getUsername());
+        Assert.assertNotEquals(testContext.getPassword(),userNames.get("password").toString());
     }
 }

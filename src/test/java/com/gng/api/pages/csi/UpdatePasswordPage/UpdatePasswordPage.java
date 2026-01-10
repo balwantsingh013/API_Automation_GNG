@@ -28,4 +28,8 @@ public class UpdatePasswordPage extends BasePage {
         testContext.setUpdatePasswordResponse(updatePasswordResponse);
         testContext.setResponse(response);
     }
+
+    public void verifyUpdatedPassword(){
+        helper.validateIfPasswordIsChanged();
+    }
 }
