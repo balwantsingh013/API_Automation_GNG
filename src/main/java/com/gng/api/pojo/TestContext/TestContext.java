@@ -46,6 +46,7 @@ public class TestContext {
     private String loginId;
     private String password;
     private String username;
+    private String accountNickname;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes

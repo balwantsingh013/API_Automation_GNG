@@ -32,4 +32,8 @@ public class UpdateAccountNicknamePage extends BasePage {
     public void validateLoginId(){
         helper.validateIfLoginIdIsSaved();
     }
+
+    public void validateNickname(){
+        helper.validateNicknameForAccount();
+    }
 }

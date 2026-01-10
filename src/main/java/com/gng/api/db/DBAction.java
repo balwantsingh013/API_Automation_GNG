@@ -605,6 +605,61 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getNicknameForAccount(String nickName, String custCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_UPDATED_NICKNAME_RECORD;
+
+        // Replace ? placeholders with actual escaped values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + nickName.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + custCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get nickname for account", loggedQuery);
+
+        // Execute parameterized query safely
+        Map<String, Object> result = jdbcTemplate.queryForMap(queryTemplate, nickName, custCode, premCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // log expanded SQL
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getNicknameForAccount2( String custCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_UPDATED_NICKNAME_RECORD2;
+
+        // Replace ? placeholders with actual escaped values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + custCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get nickname for account", loggedQuery);
+
+        // Execute parameterized query safely
+        Map<String, Object> result = jdbcTemplate.queryForMap(queryTemplate, custCode, premCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // log expanded SQL
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
     public Map<String, Object> getActiveAccountWithoutNickname() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACTIVE_ACCOUNT_WITHOUT_NICKNAME;

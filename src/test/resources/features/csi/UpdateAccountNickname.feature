@@ -29,6 +29,7 @@ Feature: Verify UpdateAccountNickname Api
     When a request is made to UpdateAccountNickname Api for "<testCondition>"
     Then verify response code of "UpdateAccountNickname" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And verify if the nickname has been set for the account
 
     Examples:
       | testCondition                     | errorCode | errorMessage |

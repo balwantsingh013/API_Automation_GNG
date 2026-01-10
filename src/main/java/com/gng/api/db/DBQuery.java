@@ -2446,7 +2446,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_ACCOUNT_WITH_NICKNAME= """
             SELECT
                                            UCRACCT_CUST_CODE,
-                                           UCRACCT_PREM_CODE
+                                           UCRACCT_PREM_CODE,
+                                           UCRACCT_NICK_NAME
                                        FROM
                                            UCRACCT
                                        WHERE
@@ -2458,7 +2459,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_FINAL_ACCOUNT_WITH_NICKNAME= """
             SELECT
                                            UCRACCT_CUST_CODE,
-                                           UCRACCT_PREM_CODE
+                                           UCRACCT_PREM_CODE,
+                                           UCRACCT_NICK_NAME
                                        FROM
                                            UCRACCT
                                        WHERE
@@ -2470,7 +2472,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_INACTIVE_ACCOUNT_WITH_NICKNAME= """
             SELECT
                                            UCRACCT_CUST_CODE,
-                                           UCRACCT_PREM_CODE
+                                           UCRACCT_PREM_CODE,
+                                           UCRACCT_NICK_NAME
                                        FROM
                                            UCRACCT
                                        WHERE
@@ -2552,6 +2555,28 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE
                 UCRACCT_STATUS_IND = 'A'
                 AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_UPDATED_NICKNAME_RECORD= """
+            SELECT UCRACCT_NICK_NAME
+            FROM
+                UCRACCT
+            WHERE
+                UCRACCT_NICK_NAME=?
+                AND UCRACCT_CUST_CODE= ?
+                AND UCRACCT_PREM_CODE=?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_UPDATED_NICKNAME_RECORD2= """
+            SELECT UCRACCT_NICK_NAME
+            FROM
+                UCRACCT
+            WHERE
+                UCRACCT_NICK_NAME IS NULL
+                AND UCRACCT_CUST_CODE= ?
+                AND UCRACCT_PREM_CODE=?
             FETCH FIRST 1 ROWS ONLY
             """;
 
