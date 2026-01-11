@@ -2684,22 +2684,111 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACTIVE_REWARDS= """
-            SELECT GZBRWDS_CUST_CODE, GZBRWDS_PREM_CODE FROM GZBRWDS
-            WHERE GZBRWDS_REWARD_ID=46
-            FETCH FIRST 1 ROWS ONLY
+            SELECT
+                *
+            FROM
+                GZBRWDS b
+                 JOIN GZRRWDR r
+                    ON r.GZRRWDR_ID = b.GZBRWDS_REWARD_ID
+            WHERE
+                 NOT EXISTS (
+                    SELECT 1
+                    FROM GZBPRWD p
+                    WHERE p.GZBPRWD_CUST_CODE = b.GZBRWDS_CUST_CODE
+                      AND p.GZBPRWD_PREM_CODE = b.GZBRWDS_PREM_CODE
+                )
+                FETCH FIRST 1 ROWS ONLY
             """;
 
 
     public static final String SELECT_PENDING_REWARDS= """
-            SELECT GZBRWDS_CUST_CODE, GZBRWDS_PREM_CODE FROM GZBRWDS
-            WHERE GZBRWDS_REWARD_ID=25
-            FETCH FIRST 1 ROWS ONLY
+            SELECT
+                          *
+                        FROM
+                            GZBPRWD b
+                             JOIN GZRRWDR r
+                                ON r.GZRRWDR_ID = b.GZBPRWD_REWARD_ID
+                        WHERE
+                             NOT EXISTS (
+                                SELECT 1
+                                FROM GZBRWDS p
+                                WHERE b.GZBPRWD_CUST_CODE = p.GZBRWDS_CUST_CODE
+                                  AND b.GZBPRWD_PREM_CODE = p.GZBRWDS_PREM_CODE
+                            )
+                            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_REFER_A_FRIEND_REWARDS= """
+            SELECT
+                            *
+                        FROM
+                            GZBRWDS b
+                             JOIN GZRRWDR r
+                                ON r.GZRRWDR_ID = b.GZBRWDS_REWARD_ID
+                                AND b.GZBRWDS_REWARD_ID=2
+                        FETCH FIRST 1 ROWS ONLY
+
+            """;
+
+    public static final String SELECT_PENDING_REFER_A_FRIEND_REWARDS= """
+            SELECT
+                                        *
+                                    FROM
+                                        GZBPRWD b
+                                         JOIN GZRRWDR r
+                                            ON r.GZRRWDR_ID = b.GZBPRWD_REWARD_ID
+                                            AND GZBPRWD_REWARD_ID= 2
+                        FETCH FIRST 1 ROWS ONLY
+
+            """;
+
+    public static final String SELECT_REWARD_DETAILS= """
+            SELECT
+                *
+            FROM
+                GZRRWDR
+                WHERE GZRRWDR_ID= ?
+                FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_NO_REWARDS= """
-            SELECT GZBRWDS_CUST_CODE, GZBRWDS_PREM_CODE FROM GZBRWDS
-            WHERE GZBRWDS_REWARD_ID=22
-            FETCH FIRST 1 ROWS ONLY
+            SELECT *
+            FROM
+                UCRACCT a
+            WHERE
+                NOT EXISTS (
+                    SELECT 1
+                    FROM GZBRWDS b
+                    WHERE b.GZBRWDS_CUST_CODE = a.UCRACCT_CUST_CODE
+                      AND b.GZBRWDS_PREM_CODE = a.UCRACCT_PREM_CODE
+                )
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM GZBPRWD p
+                    WHERE p.GZBPRWD_CUST_CODE = a.UCRACCT_CUST_CODE
+                      AND p.GZBPRWD_PREM_CODE = a.UCRACCT_PREM_CODE
+                )
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_MIXED_REWARDS= """
+            SELECT *
+            FROM
+                UCRACCT a
+            WHERE
+                 EXISTS (
+                    SELECT 1
+                    FROM GZBRWDS b
+                    WHERE b.GZBRWDS_CUST_CODE = a.UCRACCT_CUST_CODE
+                      AND b.GZBRWDS_PREM_CODE = a.UCRACCT_PREM_CODE
+                )
+                AND EXISTS (
+                    SELECT 1
+                    FROM GZBPRWD p
+                    WHERE p.GZBPRWD_CUST_CODE = a.UCRACCT_CUST_CODE
+                      AND p.GZBPRWD_PREM_CODE = a.UCRACCT_PREM_CODE
+                )
+                FETCH FIRST 1 ROWS ONLY
             """;
 
 

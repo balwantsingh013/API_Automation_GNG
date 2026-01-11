@@ -37,4 +37,9 @@ public class GetAccountRewardsApiSteps {
                 GetAccountRewardsLabel.valueOf(testCondition)
         );
     }
+
+    @When("verify the reward details in database for {string}")
+    public void verify_reward_in_db(String testCondition){
+        getAccountRewardsPage.validateRewardDetailsInDatabase(GetAccountRewardsLabel.valueOf(testCondition));
+    }
 }

@@ -28,4 +28,8 @@ public class GetAccountRewardsPage extends BasePage {
         testContext.setGetAccountRewardsResponse(getAccountRewardsResponse);
         testContext.setResponse(response);
     }
+
+    public void validateRewardDetailsInDatabase( GetAccountRewardsLabel testCondition){
+        helper.validateRewardInfo(testCondition);
+    }
 }
