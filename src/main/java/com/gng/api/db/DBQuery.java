@@ -2558,6 +2558,64 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACCOUNT_WITHOUT_ADDRESS= """
+            SELECT
+                A.UCRACCT_CUST_CODE,
+                A.UCRACCT_PREM_CODE
+            FROM
+                UCRACCT A
+            WHERE
+                NOT EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        UCRADDR B
+                    WHERE
+                        A.UCRACCT_CUST_CODE = B.UCRADDR_CUST_CODE
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ADDRESS_DIFFERENT_DAY= """
+            SELECT
+                A.UCRACCT_CUST_CODE,
+                A.UCRACCT_PREM_CODE
+            FROM
+                UCRACCT A
+            WHERE
+                EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        UCRADDR B
+                    WHERE
+                        A.UCRACCT_CUST_CODE = B.UCRADDR_CUST_CODE
+                        AND B.UCRADDR_STATUS_IND = 'A'
+                        AND TRUNC(B.UCRADDR_FROM_DATE) > TRUNC(SYSDATE)
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ADDRESS_SAME_DAY= """
+            SELECT
+                A.UCRACCT_CUST_CODE,
+                A.UCRACCT_PREM_CODE
+            FROM
+                UCRACCT A
+            WHERE
+                EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        UCRADDR B
+                    WHERE
+                        A.UCRACCT_CUST_CODE = B.UCRADDR_CUST_CODE
+                        AND B.UCRADDR_STATUS_IND = 'A'
+                        AND TRUNC(B.UCRADDR_FROM_DATE) = TRUNC(SYSDATE)
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_UPDATED_NICKNAME_RECORD= """
             SELECT UCRACCT_NICK_NAME
             FROM
