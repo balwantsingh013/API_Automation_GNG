@@ -28,4 +28,8 @@ public class UpdateMailingAddressPage extends BasePage {
         testContext.setUpdateMailingAddressResponse(updateMailingAddressResponse);
         testContext.setResponse(response);
     }
+
+    public void databaseValidations(UpdateMailingAddressLabel testCondition){
+        helper.databaseValidationsForPositiveTCs(testCondition);
+    }
 }

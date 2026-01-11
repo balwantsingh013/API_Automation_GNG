@@ -2576,6 +2576,51 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACCOUNT_TC_113= """
+            SELECT
+                *
+            FROM
+                UCRADDR
+            WHERE
+                    UCRADDR_CUST_CODE = ?
+                AND UCRADDR_STATUS_IND = 'A'
+                AND TRUNC(UCRADDR_FROM_DATE) = TRUNC(SYSDATE)
+                AND TRUNC(UCRADDR_TO_DATE) IS NULL
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_TC_116= """
+            SELECT
+                *
+            FROM
+                UCRADDR
+            WHERE
+                    UCRADDR_CUST_CODE = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_TC_119= """
+            SELECT
+                *
+            FROM
+                UCRADDR
+            WHERE
+                    UCRADDR_CUST_CODE = ?
+                    AND UCRADDR_STATUS_IND = 'A'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_TC_119_2= """
+            SELECT
+                *
+            FROM
+                UCRADDR
+            WHERE
+                    UCRADDR_CUST_CODE = ?
+                    AND UCRADDR_STATUS_IND = 'I'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_ACCOUNT_WITH_ADDRESS_DIFFERENT_DAY= """
             SELECT
                 A.UCRACCT_CUST_CODE,

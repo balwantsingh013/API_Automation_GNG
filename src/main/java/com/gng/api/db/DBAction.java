@@ -680,6 +680,98 @@ public class DBAction {
         return result;
     }
 
+
+    public Map<String, Object> performDatabaseValidationsTC113(String custCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_TC_113;
+
+        // Replace ? with actual value for logging only
+        String loggedQuery = query.replace("?", "'" + custCode + "'");
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, custCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> performDatabaseValidationsTC116(String custCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_TC_116;
+
+        // Replace ? with actual value for logging only
+        String loggedQuery = query.replace("?", "'" + custCode + "'");
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, custCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> performDatabaseValidationsTC119(String custCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_TC_119;
+
+        // Replace ? with actual value for logging only
+        String loggedQuery = query.replace("?", "'" + custCode + "'");
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, custCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> performDatabaseValidationsTC119_2(String custCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_TC_119_2;
+
+        // Replace ? with actual value for logging only
+        String loggedQuery = query.replace("?", "'" + custCode + "'");
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, custCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
     public Map<String, Object> getAccountWithoutAddress() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_WITHOUT_ADDRESS;
