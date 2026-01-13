@@ -122,9 +122,20 @@ public class UpdateUsernameApiHelper {
             case TC_37__Negative__Account_username_already_exists:
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername2();
                 payload.setUsername(userInfo.get("user_name").toString());
-                userInfo = ApplicationContext.get().getDbAction().getAccountWithoutNickname();
-                payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
-                payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
+                while (true) {
+                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
+                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
+                    if (registeredAccount != null) {
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        testContext.setCustomerCode(custCode);
+                        testContext.setPremisesCode(premCode);
+                        break;
+                    }
+                }
                 break;
 
             case TC_38__Negative__Invalid_credentials___Password____:

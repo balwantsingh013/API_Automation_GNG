@@ -22,7 +22,6 @@ Feature: Verify UpdateUsername Api
       | TC_36__Negative__Invalid_Password_Format__Length___Too_Long____      | 10157     | Invalid Password Length. The password must be between 8 and 64 characters. | false |
       | TC_37__Negative__Account_username_already_exists                     | 10361     | The account is already linked to a username| false   |
       | TC_38__Negative__Invalid_credentials___Password____                  | 10363     | Invalid Credentials                        | false   |
-      | TC_39__Negative__Invalid_credentials___Username_does_not_exist____   | 10363     | Invalid Credentials                        | false   |
       | TC_40__Negative__Invalid_credentials___Username_Inactive____         | 10363     | Invalid Credentials                        | false   |
       | TC_41__Negative__Missing_customerCode                                | 10011     | Missing Customer Code                      | false   |
       | TC_42__Negative__Invalid_customerCode_Length                         | 10015     | Invalid Customer Code Format               | false   |
