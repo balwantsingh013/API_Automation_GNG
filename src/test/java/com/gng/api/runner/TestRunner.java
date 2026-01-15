@@ -20,7 +20,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/csi/GetAccountRewards.feature"
+                "src/test/resources/features/csi/GetAccountInfo.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,

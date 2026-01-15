@@ -16,5 +16,4 @@ public class UpdateUsernameRequest {
     private String password;
     private String customerCode;
     private String premisesCode;
-    private String loginID;
 }

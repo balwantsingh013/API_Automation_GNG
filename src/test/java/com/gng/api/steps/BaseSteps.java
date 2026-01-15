@@ -9,6 +9,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.Assert;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -130,6 +131,475 @@ public class BaseSteps {
     @And("the response should have success as {string}")
     public void responseShouldHaveSuccessAs(String success) {
         verifySuccess(Boolean.parseBoolean(success));
+    }
+    @And("response should have email existence as {string}")
+    public void responseShouldHaveEmailExistenceAs(String expected) {
+        verifyEmailExistence(expected);
+    }
+
+    @And("response should have partner promotions indicator as {string}")
+    public void responseShouldHavePartnerPromotionsIndicatorAs(String expectedValue) {
+        verifyPartnerPromotionsIndicator(expectedValue);
+    }
+
+    @And("response should have marketing offers indicator as {string}")
+    public void responseShouldHaveMarketingOffersIndicatorAs(String expectedValue) {
+        verifyMarketingOffersIndicator(expectedValue);
+    }
+
+    @And("response should have account billing reminder as {string}")
+    public void responseShouldHaveAccountBillingReminderAs(String expectedValue) {
+        verifyAccountBillingReminder(expectedValue);
+    }
+
+    @And("response should have phone number existence as {string}")
+    public void responseShouldHavePhoneNumberExistenceAs(String expected) {
+        verifyPhoneNumberExistence(expected);
+    }
+
+    @And("response should validate greener life rate as {string}")
+    public void responseShouldValidateGreenerLifeRateAs(String expected) {
+        verifyGreenerLifeRate(expected);
+    }
+
+    @And("response should have bill delivery option as {string}")
+    public void responseShouldHaveBillDeliveryOptionAs(String expectedValue) {
+        verifyBillDeliveryOption(expectedValue);
+    }
+
+    @And("response should have correspondence delivery option as {string}")
+    public void responseShouldHaveCorrespondenceDeliveryOptionAs(String expectedValue) {
+        verifyCorrespondenceDeliveryOption(expectedValue);
+    }
+
+    @And("response should have price plan count as {string}")
+    public void responseShouldHavePricePlanCountAs(String expectedType) {
+        verifyPricePlanCount(expectedType);
+    }
+
+    @And("response should validate guaranteed bill plan for {string}")
+    public void responseShouldValidateGuaranteedBillPlanFor(String testCondition) {
+        verifyGuaranteedBillPlan(testCondition);
+    }
+
+    @And("response should validate price protection guarantee plan for {string}")
+    public void responseShouldValidatePriceProtectionGuaranteePlanFor(String testCondition) {
+        verifyPriceProtectionGuaranteePlan(testCondition);
+    }
+
+    @And("response should validate rollover plan indicator for {string}")
+    public void responseShouldValidateRolloverPlanIndicatorFor(String testCondition) {
+        verifyRolloverPlanIndicator(testCondition);
+    }
+
+    @And("response should validate restricted plan indicator for {string}")
+    public void responseShouldValidateRestrictedPlanIndicatorFor(String testCondition) {
+        verifyRestrictedPlanIndicator(testCondition);
+    }
+
+    @And("response should validate discounts for {string}")
+    public void responseShouldValidateDiscountsFor(String testCondition) {
+        verifyDiscounts(testCondition);
+    }
+
+    private void verifyDiscounts(String testCondition) {
+        Response response = testContext.getResponse();
+
+        List<Map<String, Object>> discounts = response.jsonPath().getList("data.discounts");
+        Assert.assertNotNull(discounts, "discounts array should not be null");
+
+        int count = discounts.size();
+
+        boolean isSingle = testCondition.contains("TC_182");
+        boolean isMultiple = testCondition.contains("TC_183");
+        boolean isNone = testCondition.contains("TC_184");
+        boolean isTransferable = testCondition.contains("TC_185");
+        boolean isNonTransferable = testCondition.contains("TC_186");
+
+        // --- COUNT VALIDATIONS ---
+        if (isSingle) {
+            Assert.assertEquals(count, 1, "Expected exactly 1 discount for single discount scenario");
+            return;
+        }
+
+        if (isMultiple) {
+            Assert.assertTrue(count > 1, "Expected multiple discounts for multiple discount scenario");
+            return;
+        }
+
+        if (isNone) {
+            Assert.assertEquals(count, 0, "Expected no discounts for no-discount scenario");
+            return;
+        }
+
+        // --- TRANSFERABILITY VALIDATIONS ---
+        boolean matchFound = false;
+
+        for (Map<String, Object> discount : discounts) {
+            Object indicator = discount.get("discountTransferabilityIndicator");
+            String value = indicator == null ? "" : indicator.toString().trim();
+
+            if (isTransferable && value.equalsIgnoreCase("Y")) {
+                matchFound = true;
+                break;
+            }
+
+            if (isNonTransferable && value.equalsIgnoreCase("N")) {
+                matchFound = true;
+                break;
+            }
+        }
+
+        Assert.assertTrue(
+                matchFound,
+                "No discount matched expected transferability indicator for: " + testCondition
+        );
+    }
+
+    private void verifyRestrictedPlanIndicator(String testCondition) {
+        Response response = testContext.getResponse();
+
+        List<Map<String, Object>> plans = response.jsonPath().getList("data.pricePlans");
+        Assert.assertNotNull(plans, "pricePlans array should not be null");
+        Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
+
+        boolean expectRestricted = testCondition.contains("TC_181"); // TC_181 = restricted expected
+
+        boolean matchFound = false;
+
+        for (Map<String, Object> plan : plans) {
+
+            Object indicator = plan.get("restrictedPlanIndicator");
+            String value = indicator == null ? "" : indicator.toString().trim();
+
+            if (!expectRestricted) {
+                // TC_180: Non-Restricted → expect "N"
+                if (value.equalsIgnoreCase("N")) {
+                    matchFound = true;
+                    break;
+                }
+            } else {
+                // TC_181: Restricted → expect "Y"
+                if (value.equalsIgnoreCase("Y")) {
+                    matchFound = true;
+                    break;
+                }
+            }
+        }
+
+        Assert.assertTrue(
+                matchFound,
+                "No plan matched expected restricted plan indicator for: " + testCondition
+        );
+    }
+
+    private void verifyRolloverPlanIndicator(String testCondition) {
+        Response response = testContext.getResponse();
+
+        List<Map<String, Object>> plans = response.jsonPath().getList("data.pricePlans");
+        Assert.assertNotNull(plans, "pricePlans array should not be null");
+        Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
+
+        boolean expectRollover = testCondition.contains("TC_179"); // TC_179 = rollover expected
+
+        boolean matchFound = false;
+
+        for (Map<String, Object> plan : plans) {
+
+            Object indicator = plan.get("rolloverPlanIndicator");
+            String value = indicator == null ? "" : indicator.toString().trim();
+
+            if (!expectRollover) {
+                // TC_178: No Rollover → expect "N"
+                if (value.equalsIgnoreCase("N")) {
+                    matchFound = true;
+                    break;
+                }
+            } else {
+                // TC_179: Rollover → expect "Y"
+                if (value.equalsIgnoreCase("Y")) {
+                    matchFound = true;
+                    break;
+                }
+            }
+        }
+
+        Assert.assertTrue(
+                matchFound,
+                "No plan matched expected rollover indicator for: " + testCondition
+        );
+    }
+
+
+    private void verifyPriceProtectionGuaranteePlan(String testCondition) {
+        Response response = testContext.getResponse();
+
+        List<Map<String, Object>> plans = response.jsonPath().getList("data.pricePlans");
+        Assert.assertNotNull(plans, "pricePlans array should not be null");
+        Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
+
+        boolean expectPPG = testCondition.contains("TC_177"); // TC_177 = PPG plan expected
+
+        boolean matchFound = false;
+
+        for (Map<String, Object> plan : plans) {
+
+            Object fee = plan.get("priceProtectionGuaranteeFee");
+            Object ceiling = plan.get("priceProtectionGuaranteeCeiling");
+
+            boolean feeEmpty = isEmptyOrZero(fee);
+            boolean ceilingEmpty = isEmptyOrZero(ceiling);
+
+            if (!expectPPG) {
+                // TC_176: No Price Protection Guarantee Plan
+                if (feeEmpty && ceilingEmpty) {
+                    matchFound = true;
+                    break;
+                }
+            } else {
+                // TC_177: Price Protection Guarantee Plan
+                if (!feeEmpty && !ceilingEmpty) {
+                    matchFound = true;
+                    break;
+                }
+            }
+        }
+
+        Assert.assertTrue(
+                matchFound,
+                "No price plan matched the expected Price Protection Guarantee rules for: " + testCondition
+        );
+    }
+    private boolean isEmptyOrZero(Object value) {
+        if (value == null) return true;
+
+        String str = String.valueOf(value).trim();
+        if (str.isEmpty()) return true;
+
+        try {
+            double num = Double.parseDouble(str);
+            return num == 0.0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+
+
+    private void verifyGuaranteedBillPlan(String testCondition) {
+        Response response = testContext.getResponse();
+
+        List<Map<String, Object>> plans = response.jsonPath().getList("data.pricePlans");
+        Assert.assertNotNull(plans, "pricePlans array should not be null");
+        Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
+
+        boolean isGuaranteedPlan = testCondition.contains("TC_175");
+
+        boolean matchFound = false;
+
+        for (Map<String, Object> plan : plans) {
+
+            Object gbpAmount = plan.get("planGBPAmount");
+            Object thermPrice = plan.get("planThermPrice");
+            Object serviceCharge = plan.get("planServiceCharge");
+
+            if (!isGuaranteedPlan) {
+                // TC_174: No Guaranteed Bill Plan
+                if (gbpAmount == null &&
+                        thermPrice != null &&
+                        serviceCharge != null) {
+
+                    matchFound = true;
+                    break;
+                }
+
+            } else {
+                // TC_175: Guaranteed Bill Plan
+                boolean thermEmpty =
+                        thermPrice == null ||
+                                String.valueOf(thermPrice).trim().isEmpty() ||
+                                String.valueOf(thermPrice).trim().equals("0.0") ||
+                                String.valueOf(thermPrice).trim().equals("0");
+
+                boolean serviceEmpty =
+                        serviceCharge == null ||
+                                String.valueOf(serviceCharge).trim().isEmpty() ||
+                                String.valueOf(serviceCharge).trim().equals("0.0") ||
+                                String.valueOf(serviceCharge).trim().equals("0");
+
+                if (gbpAmount != null && thermEmpty && serviceEmpty) {
+                    matchFound = true;
+                    break;
+                }
+            }
+        }
+
+        Assert.assertTrue(
+                matchFound,
+                "No price plan matched the expected Guaranteed/Non-Guaranteed Bill Plan rules"
+        );
+    }
+
+
+    private void verifyPricePlanCount(String expectedType) {
+        Response response = testContext.getResponse();
+        List<?> plans = response.jsonPath().getList("data.pricePlans");
+
+        int count = (plans == null) ? 0 : plans.size();
+        boolean isSingle = "single".equalsIgnoreCase(expectedType);
+        boolean isMultiple = "multiple".equalsIgnoreCase(expectedType);
+
+        boolean matches = false;
+
+        if (isSingle) {
+            matches = count == 1;
+        } else if (isMultiple) {
+            matches = count > 1;
+        }
+
+        assertThat(
+                "Price plan count mismatch. Expected type: " + expectedType + ", Actual count: " + count,
+                matches,
+                is(true)
+        );
+    }
+
+
+    private void verifyCorrespondenceDeliveryOption(String expectedValue) {
+        Response response = testContext.getResponse();
+        Object actualValue = response.jsonPath().get("data.correspondenceDeliveryOption");
+
+        String actual = actualValue == null ? "null" : actualValue.toString().trim();
+        String expected = expectedValue.trim();
+
+        boolean matches = actual.equalsIgnoreCase(expected);
+
+        assertThat(
+                "Correspondence Delivery Option mismatch. Expected: " + expected + ", Actual: " + actual,
+                matches,
+                is(true)
+        );
+    }
+
+
+    private void verifyBillDeliveryOption(String expectedValue) {
+        Response response = testContext.getResponse();
+        Object actualValue = response.jsonPath().get("data.billDeliveryOption");
+
+        String actual = actualValue == null ? "null" : actualValue.toString().trim();
+        String expected = expectedValue.trim();
+
+        boolean matches = actual.equalsIgnoreCase(expected);
+
+        assertThat(
+                "Bill Delivery Option mismatch. Expected: " + expected + ", Actual: " + actual,
+                matches,
+                is(true)
+        );
+    }
+
+
+    private void verifyGreenerLifeRate(String expected) {
+        Response response = testContext.getResponse();
+        Object value = response.jsonPath().get("data.greenerLifeRate");
+
+        boolean shouldExist = Boolean.parseBoolean(expected);
+
+        boolean exists = false;
+
+        if (value != null) {
+            String str = value.toString().trim();
+            exists = !str.isEmpty();   // any non-empty string counts as existing
+        }
+
+        assertThat(
+                "Greener Life Rate existence mismatch. Expected: " + shouldExist + ", Actual: " + exists,
+                exists,
+                is(shouldExist)
+        );
+    }
+
+
+
+
+    private void verifyPhoneNumberExistence(String expected) {
+        Response response = testContext.getResponse();
+        String phone = response.jsonPath().getString("data.phoneNumber");
+
+        boolean shouldExist = Boolean.parseBoolean(expected);
+        boolean exists = phone != null && !phone.trim().isEmpty();
+
+        assertThat(
+                "Phone number existence mismatch. Expected: " + shouldExist + ", Actual: " + exists,
+                exists,
+                is(shouldExist)
+        );
+    }
+
+
+    private void verifyAccountBillingReminder(String expectedValue) {
+        Response response = testContext.getResponse();
+        Object actualValue = response.jsonPath().get("data.accountBillingReminder");
+
+        String actual = actualValue == null ? "null" : actualValue.toString().trim();
+        String expected = expectedValue.trim();
+
+        boolean matches = actual.equalsIgnoreCase(expected);
+
+        assertThat(
+                "Account Billing Reminder mismatch. Expected: " + expected + ", Actual: " + actual,
+                matches,
+                is(true)
+        );
+    }
+
+
+    private void verifyMarketingOffersIndicator(String expectedValue) {
+        Response response = testContext.getResponse();
+        Object actualValue = response.jsonPath().get("data.marketingOffersIndicator");
+
+        String actual = actualValue == null ? "null" : actualValue.toString().trim();
+        String expected = expectedValue.trim();
+
+        boolean matches = actual.equalsIgnoreCase(expected);
+
+        assertThat(
+                "Marketing Offers Indicator mismatch. Expected: " + expected + ", Actual: " + actual,
+                matches,
+                is(true)
+        );
+    }
+
+
+    private void verifyPartnerPromotionsIndicator(String expectedValue) {
+        Response response = testContext.getResponse();
+        Object actualValue = response.jsonPath().get("data.partnerPromotionsIndicator");
+
+        String actual = actualValue == null ? "null" : actualValue.toString().trim();
+        String expected = expectedValue.trim();
+
+        boolean matches = actual.equalsIgnoreCase(expected);
+
+        assertThat(
+                "Partner Promotions Indicator mismatch. Expected: " + expected + ", Actual: " + actual,
+                matches,
+                is(true)
+        );
+    }
+
+
+    private void verifyEmailExistence(String expected) {
+        Response response = testContext.getResponse();
+        String email = response.jsonPath().getString("data.emailAddress");
+
+        boolean shouldExist = Boolean.parseBoolean(expected);
+        boolean exists = email != null && !email.trim().isEmpty();
+
+        assertThat(
+                "Email existence mismatch. Expected: " + shouldExist + ", Actual: " + exists,
+                exists,
+                is(shouldExist)
+        );
     }
 
     private void validateDataField(String expectedDataValue) {

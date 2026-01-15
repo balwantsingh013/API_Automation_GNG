@@ -22,14 +22,14 @@ Feature: Verify UpdateUsername Api
       | TC_36__Negative__Invalid_Password_Format__Length___Too_Long____      | 10157     | Invalid Password Length. The password must be between 8 and 64 characters. | false |
       | TC_37__Negative__Account_username_already_exists                     | 10361     | The account is already linked to a username| false   |
       | TC_38__Negative__Invalid_credentials___Password____                  | 10363     | Invalid Credentials                        | false   |
-      | TC_40__Negative__Invalid_credentials___Username_Inactive____         | 10363     | Invalid Credentials                        | false   |
-      | TC_41__Negative__Missing_customerCode                                | 10011     | Missing Customer Code                      | false   |
-      | TC_42__Negative__Invalid_customerCode_Length                         | 10015     | Invalid Customer Code Format               | false   |
-      | TC_43__Negative__Invalid_customerCode_Format                         | 10015     | Invalid Customer Code Format               | false   |
-      | TC_44__Negative__Invalid_Account_number                              | 40015     | Invalid Account Number                     | false   |
-      | TC_45__Negative__Missing_premisesCode                                | 10013     | Missing Premises Code                      | false   |
-      | TC_46__Negative__Invalid_premisesCode_Length                         | 10005     | Invalid Premises Code Format               | false   |
-      | TC_47__Negative__Invalid_premisesCode_Format                         | 10005     | Invalid Premises Code Format               | false   |
+      | TC_39__Negative__Invalid_credentials___Username_Inactive____         | 10363     | Invalid Credentials                        | false   |
+      | TC_40__Negative__Missing_customerCode                                | 10011     | Missing Customer Code                      | false   |
+      | TC_41__Negative__Invalid_customerCode_Length                         | 10015     | Invalid Customer Code Format               | false   |
+      | TC_42__Negative__Invalid_customerCode_Format                         | 10015     | Invalid Customer Code Format               | false   |
+      | TC_43__Negative__Invalid_Account_number                              | 40015     | Invalid Account Number                     | false   |
+      | TC_44__Negative__Missing_premisesCode                                | 10013     | Missing Premises Code                      | false   |
+      | TC_45__Negative__Invalid_premisesCode_Length                         | 10005     | Invalid Premises Code Format               | false   |
+      | TC_46__Negative__Invalid_premisesCode_Format                         | 10005     | Invalid Premises Code Format               | false   |
 
   @UpdateUsernamePositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -42,9 +42,9 @@ Feature: Verify UpdateUsername Api
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | success |
-      | TC_48__Positive__Username_Available___Banner_Active____  | 0         | null         | true    |
-      | TC_49__Positive__Username_Available___Banner_New____     | 0         | null         | true    |
-      | TC_50__Positive__Username_Available___Banner_Final____   | 0         | null         | true    |
-      | TC_51__Positive__Username_Active___Banner_Active____     | 0         | null         | true    |
-      | TC_52__Positive__Username_Active___Banner_Final____      | 0         | null         | true    |
-      | TC_53__Positive__Username_Active___Banner_Inactive____   | 0         | null         | true    |
+      | TC_47__Positive__Username_Available___Banner_Active____  | 0         |              | true    |
+      | TC_48__Positive__Username_Available___Banner_New____     | 0         |              | true    |
+      | TC_49__Positive__Username_Available___Banner_Final____   | 0         |              | true    |
+      | TC_50__Positive__Username_Active___Banner_Active____     | 0         |              | true    |
+      | TC_51__Positive__Username_Active___Banner_Final____      | 0         |              | true    |
+      | TC_52__Positive__Username_Active___Banner_Inactive____   | 0         |              | true    |

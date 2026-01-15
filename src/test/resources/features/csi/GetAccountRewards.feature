@@ -8,16 +8,16 @@ Feature: Verify GetAccountRewards Api
 
     Examples:
       | testCondition                                | errorCode | errorMessage                 |
-      | TC_125__Negative__Missing_Request_ID         | 10001     | Missing Request ID           |
-      | TC_126__Negative__Invalid_Request_ID_Length  | 10002     | Invalid Request ID           |
-      | TC_127__Negative__Duplicate_Request_ID       | 10003     | Duplicate Request ID         |
-      | TC_128__Negative__Missing_customerCode       | 10011     | Missing Customer Code        |
-      | TC_129__Negative__Invalid_customerCode_Length| 10015     | Invalid Customer Code Format |
-      | TC_130__Negative__Invalid_customerCode_Format| 10015     | Invalid Customer Code Format |
-      | TC_131__Negative__Invalid_Account_number     | 40015     | Invalid Account Number       |
-      | TC_132__Negative__Missing_premisesCode       | 10013     | Missing Premises Code        |
-      | TC_133__Negative__Invalid_premisesCode_Length| 10005     | Invalid Premises Code Format |
-      | TC_134__Negative__Invalid_premisesCode_Format| 10005     | Invalid Premises Code Format |
+      | TC_124__Negative__Missing_Request_ID         | 10001     | Missing Request ID           |
+      | TC_125__Negative__Invalid_Request_ID_Length  | 10002     | Invalid Request ID           |
+      | TC_126__Negative__Duplicate_Request_ID       | 10003     | Duplicate Request ID         |
+      | TC_127__Negative__Missing_customerCode       | 10011     | Missing Customer Code        |
+      | TC_128__Negative__Invalid_customerCode_Length| 10015     | Invalid Customer Code Format |
+      | TC_129__Negative__Invalid_customerCode_Format| 10015     | Invalid Customer Code Format |
+      | TC_130__Negative__Invalid_Account_number     | 40015     | Invalid Account Number       |
+      | TC_131__Negative__Missing_premisesCode       | 10013     | Missing Premises Code        |
+      | TC_132__Negative__Invalid_premisesCode_Length| 10005     | Invalid Premises Code Format |
+      | TC_133__Negative__Invalid_premisesCode_Format| 10005     | Invalid Premises Code Format |
 
   @GetAccountRewardsPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -28,9 +28,9 @@ Feature: Verify GetAccountRewards Api
 
     Examples:
       | testCondition                                               | errorCode | errorMessage |
-      | TC_135__Positive__Rewards_Response_Returned_with_Active_Rewards                            | 0         |              |
-      | TC_136__Positive__Rewards_Response_Returned_with_Pending_Rewards                         | 0         |              |
-      | TC_137__Positive__Rewards_Response_Returned_with_Active_and_Pending_Rewards               | 0         |              |
-      | TC_138__Positive__Rewards_Response_Returned_with_No_Rewards                               | 0         |              |
-      | TC_139__Positive__Active_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards                    | 0         |              |
-      | TC_140__Positive__Pending_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards                    | 0         |              |
+      | TC_134__Positive__Rewards_Response_Returned_with_Active_Rewards                            | 0         |              |
+      | TC_135__Positive__Rewards_Response_Returned_with_Pending_Rewards                         | 0         |              |
+      | TC_136__Positive__Rewards_Response_Returned_with_Active_and_Pending_Rewards               | 0         |              |
+      | TC_137__Positive__Rewards_Response_Returned_with_No_Rewards                               | 0         |              |
+      | TC_138__Positive__Active_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards                    | 0         |              |
+      | TC_139__Positive__Pending_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards                    | 0         |              |

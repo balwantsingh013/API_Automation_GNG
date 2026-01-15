@@ -78,9 +78,9 @@ public class UpdateUsernameApiHelper {
             case TC_30__Negative__Invalid_Username__Inactive:
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setUsername(userInfo.get("user_name").toString());
-                payload.setPassword("UAT2@CustomerPass");
+                payload.setPassword("UAT2@CustomerPa");
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
@@ -123,12 +123,12 @@ public class UpdateUsernameApiHelper {
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername2();
                 payload.setUsername(userInfo.get("user_name").toString());
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
-                    if (registeredAccount != null) {
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode+premCode);
+                           if (registeredAccount != null) {
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
@@ -147,27 +147,7 @@ public class UpdateUsernameApiHelper {
                 payload.setPassword(FakerDataGenerator.generateAlphanumeric(8));
                 break;
 
-            case TC_39__Negative__Invalid_credentials___Username_does_not_exist____:
-                while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
-                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
-                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
-                    Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
-                    if (registeredAccount == null) {
-                        payload.setCustomerCode(custCode);
-                        payload.setPremisesCode(premCode);
-                        testContext.setCustomerCode(custCode);
-                        testContext.setPremisesCode(premCode);
-                        break;
-                    }
-                }
-                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsername3();
-                payload.setUsername(userInfo.get("user_name").toString());
-                payload.setPassword(FakerDataGenerator.generateAlphanumeric(8));
-                break;
-
-            case TC_40__Negative__Invalid_credentials___Username_Inactive____:
+            case TC_39__Negative__Invalid_credentials___Username_Inactive____:
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setUsername(userInfo.get("user_name").toString());
                 userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
@@ -175,43 +155,43 @@ public class UpdateUsernameApiHelper {
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_41__Negative__Missing_customerCode:
+            case TC_40__Negative__Missing_customerCode:
                 payload.setCustomerCode("");
                 break;
 
-            case TC_42__Negative__Invalid_customerCode_Length:
+            case TC_41__Negative__Invalid_customerCode_Length:
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
                 break;
 
-            case TC_43__Negative__Invalid_customerCode_Format:
+            case TC_42__Negative__Invalid_customerCode_Format:
                 payload.setCustomerCode(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case TC_44__Negative__Invalid_Account_number:
+            case TC_43__Negative__Invalid_Account_number:
                 payload.setCustomerCode("9988776");
                 userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActivePastDueRewards();
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_45__Negative__Missing_premisesCode:
+            case TC_44__Negative__Missing_premisesCode:
                 payload.setPremisesCode("");
                 break;
 
-            case TC_46__Negative__Invalid_premisesCode_Length:
+            case TC_45__Negative__Invalid_premisesCode_Length:
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
                 break;
 
-            case TC_47__Negative__Invalid_premisesCode_Format:
+            case TC_46__Negative__Invalid_premisesCode_Format:
                 payload.setPremisesCode(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
             // POSITIVE CASES
 
-            case TC_48__Positive__Username_Available___Banner_Active____:
+            case TC_47__Positive__Username_Available___Banner_Active____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
@@ -226,11 +206,11 @@ public class UpdateUsernameApiHelper {
                 }
                 break;
 
-            case TC_49__Positive__Username_Available___Banner_New____:
+            case TC_48__Positive__Username_Available___Banner_New____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getNewAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getNewAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
@@ -245,11 +225,11 @@ public class UpdateUsernameApiHelper {
                 }
                 break;
 
-            case TC_50__Positive__Username_Available___Banner_Final____:
+            case TC_49__Positive__Username_Available___Banner_Final____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
@@ -264,12 +244,12 @@ public class UpdateUsernameApiHelper {
                 }
                 break;
 
-            case TC_51__Positive__Username_Active___Banner_Active____:
-                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
+            case TC_50__Positive__Username_Active___Banner_Active____:
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable3();
                 payload.setUsername(userInfo.get("user_name").toString());
                 testContext.setUsername(userInfo.get("user_name").toString());
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
@@ -284,12 +264,12 @@ public class UpdateUsernameApiHelper {
                 }
                 break;
 
-            case TC_52__Positive__Username_Active___Banner_Final____:
-                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
+            case TC_51__Positive__Username_Active___Banner_Final____:
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable4();
                 payload.setUsername(userInfo.get("user_name").toString());
                 testContext.setUsername(userInfo.get("user_name").toString());
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
@@ -304,12 +284,12 @@ public class UpdateUsernameApiHelper {
                 }
                 break;
 
-            case TC_53__Positive__Username_Active___Banner_Inactive____:
-                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable();
+            case TC_52__Positive__Username_Active___Banner_Inactive____:
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameFromOtherTable5();
                 payload.setUsername(userInfo.get("user_name").toString());
                 testContext.setUsername(userInfo.get("user_name").toString());
                 while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getInactiveAccountOnly();
+                    userInfo = ApplicationContext.get().getDbAction().getInactiveAccountOnly2();
                     String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =

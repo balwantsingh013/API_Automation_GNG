@@ -48,6 +48,8 @@ public class TestContext {
     private String username;
     private String accountNickname;
     private String rewardId;
+    private String activeRewardId;
+    private String pendingRewardId;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes

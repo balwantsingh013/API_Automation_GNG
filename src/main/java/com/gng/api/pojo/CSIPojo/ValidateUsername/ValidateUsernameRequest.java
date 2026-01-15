@@ -15,5 +15,4 @@ public class ValidateUsernameRequest {
 
     private String requestID;   // Required, String(32)
     private String username;    // Required, String(15)
-    private String loginID;     // Optional, String(30)
 }
