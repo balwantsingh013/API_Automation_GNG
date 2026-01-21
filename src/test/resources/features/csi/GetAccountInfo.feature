@@ -47,7 +47,7 @@ Feature: Verify GetAccountInfo Api
       | TC_151__Positive__Account_Info_Returned___Partner_Promotions_Indicator__equals_N____ | 0 | | true | N |
       | TC_152__Positive__Account_Info_Returned___Partner_Promotions_Indicator_is_null____   | 0 | | true | null |
 
-  @GetAccountInfoPositive12 @HappyFlow @CSI
+  @GetAccountInfoPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to GetAccountInfo Api for "<testCondition>"
     Then verify response code of "GetAccountInfo" Api is 200

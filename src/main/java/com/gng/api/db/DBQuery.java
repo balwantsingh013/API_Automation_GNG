@@ -2591,40 +2591,30 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC151= """
-            SELECT
-                                        e.*,
-                                        a.ucracct_prem_code
-                                    FROM
-                                        gzbemcp e
-                                    INNER JOIN
-                                        ucracct a
-                                        ON e.gzbemcp_cust_code = a.ucracct_cust_code
-                                        WHERE e.GZBEMCP_PARTNER_IND='Y'
-                                         AND e.gzbemcp_cust_code IN (
-                    SELECT gzbemcp_cust_code
-                    FROM gzbemcp
-                    GROUP BY gzbemcp_cust_code
-                    HAVING COUNT(*) = 1
-                )
+            SELECT a.*
+                FROM
+                    ucracct a
+                WHERE a.ucracct_cust_code IN (
+            SELECT gzbemcp_cust_code
+            FROM gzbemcp g
+            WHERE g.gzbemcp_partner_ind='Y'
+            GROUP BY gzbemcp_cust_code
+            HAVING COUNT(*) = 1
+            )
                                     FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC152= """
-            SELECT
-                                        e.*,
-                                        a.ucracct_prem_code
-                                    FROM
-                                        gzbemcp e
-                                    INNER JOIN
-                                        ucracct a
-                                        ON e.gzbemcp_cust_code = a.ucracct_cust_code
-                                        WHERE e.GZBEMCP_PARTNER_IND='N'
-                                         AND e.gzbemcp_cust_code IN (
-                    SELECT gzbemcp_cust_code
-                    FROM gzbemcp
-                    GROUP BY gzbemcp_cust_code
-                    HAVING COUNT(*) = 1
-                )
+            SELECT a.*
+                FROM
+                    ucracct a
+                WHERE a.ucracct_cust_code IN (
+            SELECT gzbemcp_cust_code
+            FROM gzbemcp g
+            WHERE g.gzbemcp_partner_ind='N'
+            GROUP BY gzbemcp_cust_code
+            HAVING COUNT(*) = 1
+            )
                                     FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -2643,42 +2633,31 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC154= """
-            SELECT
-                                        e.*,
-                                        a.ucracct_prem_code
-                                    FROM
-                                        gzbemcp e
-                                    INNER JOIN
-                                        ucracct a
-                                        ON e.gzbemcp_cust_code = a.ucracct_cust_code
-                                        WHERE e.GZBEMCP_MARKETING_IND='Y'
-                                         AND e.gzbemcp_cust_code IN (
-                    SELECT gzbemcp_cust_code
-                    FROM gzbemcp
-                    GROUP BY gzbemcp_cust_code
-                    HAVING COUNT(*) = 1
-                )
+            SELECT a.*
+                FROM
+                    ucracct a
+                WHERE a.ucracct_cust_code IN (
+            SELECT gzbemcp_cust_code
+            FROM gzbemcp g
+            WHERE g.GZBEMCP_MARKETING_IND='Y'
+            GROUP BY gzbemcp_cust_code
+            HAVING COUNT(*) >= 1
+            )
                                     FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC155= """
-            SELECT\s
-                e.*,
-                a.ucracct_prem_code AS UCRACCT_PREM_CODE
-            FROM\s
-                gzbemcp e
-            INNER JOIN\s
-                ucracct a
-                    ON e.gzbemcp_cust_code = a.ucracct_cust_code
-            WHERE\s
-                e.gzbemcp_marketing_ind = 'N'
-                AND e.gzbemcp_cust_code IN (
-                    SELECT gzbemcp_cust_code
-                    FROM gzbemcp
-                    GROUP BY gzbemcp_cust_code
-                    HAVING COUNT(*) = 1
-                )
-            FETCH FIRST 1 ROWS ONLY
+            SELECT a.*
+                FROM
+                    ucracct a
+                WHERE a.ucracct_cust_code IN (
+            SELECT gzbemcp_cust_code
+            FROM gzbemcp g
+            WHERE g.GZBEMCP_MARKETING_IND='N'
+            GROUP BY gzbemcp_cust_code
+            HAVING COUNT(*) >= 1
+            )
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC156= """
@@ -2690,69 +2669,51 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FROM gzbemcp g
             WHERE g.GZBEMCP_MARKETING_IND IS NULL
             GROUP BY gzbemcp_cust_code
-            HAVING COUNT(*) = 1
+            HAVING COUNT(*) >= 1
             )
                                     FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC157= """
-            SELECT
-                                                     e.*,
-                                                     a.*
-                                                 FROM
-                                                     gzbemcp e
-                                                 INNER JOIN
-                                                     ucracct a
-                                                     ON e.gzbemcp_cust_code = a.ucracct_cust_code
-                                                 WHERE
-                                                     e.GZBEMCP_ACCOUNT_IND = 'Y'
-                                                     AND LENGTH(e.gzbemcp_cust_code) >= 4
-                                                     AND e.gzbemcp_cust_code IN (
-                                                         SELECT gzbemcp_cust_code
-                                                         FROM gzbemcp g
-                                                         WHERE g.gzbemcp_account_ind = 'Y'
-                                                         AND g.gzbemcp_ocs_pymt_remind = 'Y'
-                                                           AND TRUNC(g.gzbemcp_expiration_date) >= TRUNC(SYSDATE)
-                                                     )
-                                                 FETCH FIRST 1 ROWS ONLY
+            SELECT a.*
+                                                                                        FROM
+                                                                                            ucracct a
+                                                                                        WHERE a.ucracct_cust_code IN (
+                                                                                    SELECT gzbemcp_cust_code
+                                                                                    FROM gzbemcp g
+                                                                                    WHERE g.gzbemcp_ocs_pymt_remind= 'Y'
+                                                                                    GROUP BY gzbemcp_cust_code
+                                                                                    HAVING COUNT(*) = 1
+                                                                                    )
+                                                                                                            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC158= """
-            SELECT
-                                        e.*,
-                                        a.ucracct_prem_code
-                                    FROM
-                                        gzbemcp e
-                                    INNER JOIN
-                                        ucracct a
-                                        ON e.gzbemcp_cust_code = a.ucracct_cust_code
-                                        WHERE e.GZBEMCP_ACCOUNT_IND='N'
-                                         AND e.gzbemcp_cust_code IN (
-                    SELECT gzbemcp_cust_code
-                    FROM gzbemcp
-                    GROUP BY gzbemcp_cust_code
-                    HAVING COUNT(*) = 1
-                )
-                                    FETCH FIRST 1 ROWS ONLY
+             SELECT a.*
+                                                                                        FROM
+                                                                                            ucracct a
+                                                                                        WHERE a.ucracct_cust_code IN (
+                                                                                    SELECT gzbemcp_cust_code
+                                                                                    FROM gzbemcp g
+                                                                                    WHERE g.gzbemcp_ocs_pymt_remind='N'
+                                                                                    GROUP BY gzbemcp_cust_code
+                                                                                    HAVING COUNT(*) = 1
+                                                                                    )
+                                                                                                            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC159= """
-            SELECT
-                                        e.*,
-                                        a.ucracct_prem_code
-                                    FROM
-                                        gzbemcp e
-                                    INNER JOIN
-                                        ucracct a
-                                        ON e.gzbemcp_cust_code = a.ucracct_cust_code
-                                        WHERE e.GZBEMCP_ACCOUNT_IND IS NULL
-                                         AND e.gzbemcp_cust_code IN (
-                    SELECT gzbemcp_cust_code
-                    FROM gzbemcp
-                    GROUP BY gzbemcp_cust_code
-                    HAVING COUNT(*) = 1
-                )
-                                    FETCH FIRST 1 ROWS ONLY
+            SELECT a.*
+                                                                                          FROM
+                                                                                              ucracct a
+                                                                                          WHERE a.ucracct_cust_code IN (
+                                                                                      SELECT gzbemcp_cust_code
+                                                                                      FROM gzbemcp g
+                                                                                      WHERE g.gzbemcp_ocs_pymt_remind IS NULL
+                                                                                      GROUP BY gzbemcp_cust_code
+                                                                                      HAVING COUNT(*) = 1
+                                                                                      )
+                                                                                                              FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC160= """
@@ -3296,32 +3257,29 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_DETAILS_TC179= """
             SELECT
-                a.ucracct_cust_code,
-                a.ucracct_prem_code,
-                s.ucrserv_scls_code,
-                c.ucrscmp_scty_code,
-                c.ucrscmp_plan_code,
-                a.ucracct_bill_pres_type,
-                a.ucracct_corr_del_type,
-                c.ucrscmp_acr_ind,
-                p.uztppuc_rollover,
-                p.uztppuc_restrict_ind
-            FROM ucracct a
-            JOIN ucrserv s
-                ON s.ucrserv_cust_code = a.ucracct_cust_code
-               AND s.ucrserv_prem_code = a.ucracct_prem_code
-            JOIN ucrscmp c
-                ON c.ucrscmp_cust_code = a.ucracct_cust_code
-               AND c.ucrscmp_prem_code = a.ucracct_prem_code
-            JOIN uztppuc p
-                ON p.uztppuc_plan_code = c.ucrscmp_plan_code
-            WHERE a.ucracct_status_ind = 'A'
-              AND a.ucracct_cycl_code <> 'DEPO'
-              AND s.ucrserv_scls_code = 'RS'
-              AND c.ucrscmp_end_date > SYSDATE
-              AND p.uztppuc_rollover = 'N'
-              AND c.ucrscmp_plan_code<>'MVS'
-            FETCH FIRST 1 ROWS ONLY
+                                                       a.ucracct_cust_code,
+                                                       a.ucracct_prem_code,
+                                                       s.ucrserv_scls_code,
+                                                       c.ucrscmp_scty_code,
+                                                       c.ucrscmp_plan_code,
+                                                       a.ucracct_bill_pres_type,
+                                                       a.ucracct_corr_del_type,
+                                                       c.ucrscmp_acr_ind,
+                                                       p.uztppuc_rollover,
+                                                       p.uztppuc_restrict_ind
+                                                   FROM ucracct a
+                                                   JOIN ucrserv s
+                                                       ON s.ucrserv_cust_code = a.ucracct_cust_code
+                                                      AND s.ucrserv_prem_code = a.ucracct_prem_code
+                                                   JOIN ucrscmp c
+                                                       ON c.ucrscmp_cust_code = a.ucracct_cust_code
+                                                      AND c.ucrscmp_prem_code = a.ucracct_prem_code
+                                                   JOIN uztppuc p
+                                                       ON p.uztppuc_plan_code = c.ucrscmp_plan_code
+                                                   WHERE  c.ucrscmp_end_date > SYSDATE
+                                                     AND p.uztppuc_rollover = 'N'
+                                                     AND c.ucrscmp_plan_code= 'CFM'
+                                                   FETCH FIRST 1 ROWS ONLY
     """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC180= """
