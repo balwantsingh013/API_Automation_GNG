@@ -79,7 +79,7 @@ public class GetAccountInfoApiHelper {
             case TC_149__Positive__Account_Info_Returned___No_Email_Address____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC150();
-                payload.setCustomerCode(accountInfo.get("GZBEMCP_CUST_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
@@ -100,7 +100,7 @@ public class GetAccountInfoApiHelper {
             case TC_152__Positive__Account_Info_Returned___Partner_Promotions_Indicator_is_null____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC153();
-                payload.setCustomerCode(accountInfo.get("GZBEMCP_CUST_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
@@ -121,7 +121,7 @@ public class GetAccountInfoApiHelper {
             case TC_155__Positive__Account_Info_Returned___Marketing_Offers_Indicator_is_null____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC156();
-                payload.setCustomerCode(accountInfo.get("GZBEMCP_CUST_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("UCRACCT_CODE_CODE").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 

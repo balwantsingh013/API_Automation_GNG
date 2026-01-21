@@ -14,7 +14,7 @@ Feature: Verify UpdateMailingAddress Api
       | TC_81__Negative__Missing_customerCode              | 10011     | Missing Customer Code              |
       | TC_82__Negative__Invalid_customerCode_Length       | 10015     | Invalid Customer Code Format       |
       | TC_83__Negative__Invalid_customerCode_Format       | 10015     | Invalid Customer Code Format       |
-      | TC_84__Negative__Invalid_Account_number            | 40015     | Invalid Account Number             |
+      | TC_84__Negative__Invalid_Account_Number            | 40015     | Invalid Account Number             |
       | TC_85__Negative__Missing_premisesCode              | 10013     | Missing Premises Code              |
       | TC_86__Negative__Invalid_premisesCode_Length       | 10005     | Invalid Premises Code Format       |
       | TC_87__Negative__Invalid_premisesCode_Format       | 10005     | Invalid Premises Code Format       |

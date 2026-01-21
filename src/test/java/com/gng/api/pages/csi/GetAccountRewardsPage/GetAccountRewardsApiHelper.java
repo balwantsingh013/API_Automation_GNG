@@ -86,7 +86,7 @@ public class GetAccountRewardsApiHelper {
                 payload.setCustomerCode(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
                 break;
 
-            case TC_130__Negative__Invalid_Account_number:
+            case TC_130__Negative__Invalid_Account_Number:
                 payload.setCustomerCode("999999999"); // Non-existent
                 break;
 

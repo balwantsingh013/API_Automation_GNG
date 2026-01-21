@@ -538,6 +538,7 @@ public class DBAction {
     }
 
 
+
     public Map<String, Object> getInactiveAccountOnly2() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_INACTIVE_ACCOUNT_ONLY;
@@ -1878,6 +1879,42 @@ public class DBAction {
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+
+    public Map<String, Object> getUserAccountInfo(String custCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_USER_ACCOUNT_INFO;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + custCode.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, custCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
                 elapsed
         );
 

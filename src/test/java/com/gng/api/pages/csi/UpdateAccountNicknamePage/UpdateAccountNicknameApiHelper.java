@@ -88,7 +88,7 @@ public class UpdateAccountNicknameApiHelper {
                 payload.setNickname(FakerDataGenerator.generateString(10));
                 break;
 
-            case TC_59__Negative__Invalid_Account_number:
+            case TC_59__Negative__Invalid_Account_Number:
                 String customerCode = "9" + FakerDataGenerator.generateDigits(8);
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(customerCode);

@@ -117,7 +117,7 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCustomerCode(FakerDataGenerator.generateAlphanumericWithSpecialChars(6));
                 break;
 
-            case TC_84__Negative__Invalid_Account_number:
+            case TC_84__Negative__Invalid_Account_Number:
                 payload.setCustomerCode(NON_EXISTENT_CUSTOMER_CODE_PREFIX + FakerDataGenerator.generateDigits(8));
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 break;

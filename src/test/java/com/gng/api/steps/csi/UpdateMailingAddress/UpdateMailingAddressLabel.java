@@ -12,7 +12,7 @@ public enum UpdateMailingAddressLabel {
     TC_81__Negative__Missing_customerCode,
     TC_82__Negative__Invalid_customerCode_Length,
     TC_83__Negative__Invalid_customerCode_Format,
-    TC_84__Negative__Invalid_Account_number,
+    TC_84__Negative__Invalid_Account_Number,
 
     TC_85__Negative__Missing_premisesCode,
     TC_86__Negative__Invalid_premisesCode_Length,

@@ -12,7 +12,7 @@ public enum GetAccountRewardsLabel {
     TC_127__Negative__Missing_customerCode,
     TC_128__Negative__Invalid_customerCode_Length,
     TC_129__Negative__Invalid_customerCode_Format,
-    TC_130__Negative__Invalid_Account_number,
+    TC_130__Negative__Invalid_Account_Number,
     TC_131__Negative__Missing_premisesCode,
     TC_132__Negative__Invalid_premisesCode_Length,
     TC_133__Negative__Invalid_premisesCode_Format,

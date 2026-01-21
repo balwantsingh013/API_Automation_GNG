@@ -23,7 +23,7 @@ public enum UpdateUsernameLabel {
     TC_40__Negative__Missing_customerCode,
     TC_41__Negative__Invalid_customerCode_Length,
     TC_42__Negative__Invalid_customerCode_Format,
-    TC_43__Negative__Invalid_Account_number,
+    TC_43__Negative__Invalid_Account_Number,
     TC_44__Negative__Missing_premisesCode,
     TC_45__Negative__Invalid_premisesCode_Length,
     TC_46__Negative__Invalid_premisesCode_Format,

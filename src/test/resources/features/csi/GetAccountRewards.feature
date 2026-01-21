@@ -14,7 +14,7 @@ Feature: Verify GetAccountRewards Api
       | TC_127__Negative__Missing_customerCode       | 10011     | Missing Customer Code        |
       | TC_128__Negative__Invalid_customerCode_Length| 10015     | Invalid Customer Code Format |
       | TC_129__Negative__Invalid_customerCode_Format| 10015     | Invalid Customer Code Format |
-      | TC_130__Negative__Invalid_Account_number     | 40015     | Invalid Account Number       |
+      | TC_130__Negative__Invalid_Account_Number     | 40015     | Invalid Account Number       |
       | TC_131__Negative__Missing_premisesCode       | 10013     | Missing Premises Code        |
       | TC_132__Negative__Invalid_premisesCode_Length| 10005     | Invalid Premises Code Format |
       | TC_133__Negative__Invalid_premisesCode_Format| 10005     | Invalid Premises Code Format |

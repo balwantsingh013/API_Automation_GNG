@@ -13,7 +13,7 @@ public enum UpdateAccountNicknameLabel {
     TC_56__Negative__Missing_CustomerCode,
     TC_57__Negative__Invalid_CustomerCode_Length,
     TC_58__Negative__Invalid_CustomerCode_Format__Not_String,
-    TC_59__Negative__Invalid_Account_number,
+    TC_59__Negative__Invalid_Account_Number,
 
     TC_60__Negative__Missing_PremisesCode,
     TC_61__Negative__Invalid_PremisesCode_Length,
