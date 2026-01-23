@@ -12,12 +12,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchAccountsResponseCSI {
-    private String requestID;
+
+    private DataSection data;   // <-- NEW wrapper for numberOfMatches + accounts
     private boolean success;
     private int errorCode;
     private String errorMessage;
-    private int numberOfMatches;
-    private List<com.gng.api.pojo.CSIPojo.AuthenticateCustomer.AuthenticateCustomerResponse.Account> accounts;
+    private String requestID;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DataSection {
+        private int numberOfMatches;
+        private List<Account> accounts;
+    }
 
     @Data
     @Builder
