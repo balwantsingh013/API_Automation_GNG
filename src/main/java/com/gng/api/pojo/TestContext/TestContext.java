@@ -1,7 +1,8 @@
 package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
-import com.gng.api.pojo.CSIPojo.AuthenticateCustomer.AuthenticateCustomerResponse;
+import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
+
 import com.gng.api.pojo.CSIPojo.GetAccountInfo.GetAccountInformationResponse;
 import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
@@ -63,9 +64,6 @@ public class TestContext {
     private Object getAccountInformationApiPage;
     private GetAccountInformationResponse getAccountInformationResponse;
     @Getter @Setter
-    private Object authenticateCustomerApiPage;
-    private AuthenticateCustomerResponse authenticateCustomerResponse;
-    @Getter @Setter
     private Object updateUsernameApiPage;
     private UpdateUsernameResponse updateUsernameResponse;
     @Getter @Setter
@@ -118,6 +116,9 @@ public class TestContext {
     @Getter @Setter
     private Object searchAccountsApiPage;
     private SearchAccountsResponse searchAccountsResponse;
+    @Getter @Setter
+    private Object searchAccountsApiPageCSI;
+    private SearchAccountsResponseCSI searchAccountsResponseCSI;
     @Getter @Setter
     private Object getMarketerCodesApiPage;
     private GetMarketerCodesResponse getMarketerCodesResponse;

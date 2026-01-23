@@ -1,4 +1,4 @@
-package com.gng.api.pojo.CSIPojo.AuthenticateCustomer;
+package com.gng.api.pojo.CSIPojo.SearchAccounts;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,14 +11,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticateCustomerResponse {
-
+public class SearchAccountsResponseCSI {
     private String requestID;
     private boolean success;
     private int errorCode;
     private String errorMessage;
     private int numberOfMatches;
-    private List<Account> accounts;
+    private List<com.gng.api.pojo.CSIPojo.AuthenticateCustomer.AuthenticateCustomerResponse.Account> accounts;
 
     @Data
     @Builder

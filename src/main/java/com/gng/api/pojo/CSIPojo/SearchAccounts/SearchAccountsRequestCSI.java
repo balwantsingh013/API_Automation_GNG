@@ -1,16 +1,16 @@
-package com.gng.api.pojo.CSIPojo.AuthenticateCustomer;
+package com.gng.api.pojo.CSIPojo.SearchAccounts;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticateCustomerRequest {
-
+public class SearchAccountsRequestCSI {
     private String requestID;
     private String customerCode;
     private String premisesCode;
@@ -24,3 +24,4 @@ public class AuthenticateCustomerRequest {
     private String password;
     private String loginID;
 }
+

@@ -1935,7 +1935,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String GET_CUSTOMERBUSINESSNAME_FOR_PASTDUEBALANCE_COMMERCIALACCOUNT = """
-            SELECT T2.UCBCUST_LAST_NAME
+            SELECT T2.UCBCUST_LAST_NAME, T1.*
             FROM UCRACCT T1, UCBCUST T2, UCRSERV T3, UCRSCMP T5,UABOPEN T7
             WHERE T1.UCRACCT_CUST_CODE = T2.UCBCUST_CUST_CODE
               AND T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
@@ -2456,6 +2456,24 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                        FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACCOUNT_WITH_FIRST_NAME= """
+            SELECT a.*
+            FROM ucracct a
+            JOIN ucbcust b
+                ON a.ucracct_cust_code = b.ucbcust_cust_code
+            WHERE b.ucbcust_first_name IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_FIRST_NAME= """
+            SELECT *
+                                                              FROM ucracct
+                                                              JOIN ucbcust
+                                                                  ON ucracct_cust_code = ucbcust_cust_code
+                                                              WHERE ucbcust_first_name IS NULL
+                                                              FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_FINAL_ACCOUNT_WITH_NICKNAME= """
             SELECT
                                            UCRACCT_CUST_CODE,
@@ -2543,6 +2561,389 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE
                 UCRACCT_STATUS_IND <> 'N'
                 AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_INDUSTRIAL_ACCOUNT= """
+            SELECT *
+                FROM
+                ucracct
+                join
+                 ucrserv
+                 ON ucracct_prem_code=ucrserv_prem_code
+                 WHERE ucrserv_scls_code = 'IN'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_AGRICULTURAL_ACCOUNT= """
+            SELECT *
+                FROM
+                ucracct
+                join
+                 ucrserv
+                 ON ucracct_prem_code=ucrserv_prem_code
+                 WHERE ucrserv_scls_code = 'AG'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_MULTIFAMILY_ACCOUNT= """
+            SELECT *
+                FROM
+                ucracct
+                join
+                 ucrserv
+                 ON ucracct_prem_code=ucrserv_prem_code
+                 WHERE ucrserv_scls_code = 'MF'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_SEASONAL_ACCOUNT= """
+            SELECT *
+                FROM
+                ucracct
+                join
+                 ucrserv
+                 ON ucracct_prem_code=ucrserv_prem_code
+                 WHERE ucrserv_scls_code = 'SE'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_SENIOR_CITIZEN_ACCOUNT= """
+            SELECT *
+                FROM
+                ucracct
+                join
+                 ucrserv
+                 ON ucracct_prem_code=ucrserv_prem_code
+                 WHERE ucrserv_scls_code = 'SR'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_STREET_NUMBER= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_street_number IS NOT null
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_STREET_NAME= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_street_name IS NOT null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_STREET_SUFFIX= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_ssfx_code IS NOT null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_STREET_SUFFIX= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_ssfx_code IS null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_STREET_POST_DIR= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_pdir_code_post IS NOT null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_UNIT_TYPE= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_utyp_code IS NOT null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_UNIT_NUMBER= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_unit IS NOT null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_UNIT_NUMBER= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_unit IS null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_CITY= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_city IS not null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_STATE= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_stat_code IS not null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_STATE= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_stat_code IS null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ZIP_CODE= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_zip IS not null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_ZIP_CODE= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_zip IS null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_CITY= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_city IS null
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_UNIT_TYPE= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_utyp_code IS null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_STREET_POST_DIR= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_pdir_code_post IS null
+                 AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_STREET_NAME= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_street_name IS null
+                   AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_STREET_NUMBER= """
+            SELECT a.*, b.*
+            FROM ucracct a
+            JOIN ucraddr b
+                ON a.ucracct_cust_code = b.ucraddr_cust_code
+            WHERE b.ucraddr_street_number IS NULL
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM ucraddr x
+                    WHERE x.ucraddr_cust_code = b.ucraddr_cust_code
+                      AND x.ucraddr_street_number IS NOT NULL
+              )
+              AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_STREET_PREDIRECTION= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_pdir_code_pre IS NOT null
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_STREET_PREDIRECTION= """
+            SELECT a.*, b.*
+                FROM
+                ucracct a
+                join
+                 ucraddr b
+                 ON a.ucracct_cust_code=b.ucraddr_cust_code
+                 WHERE\s
+                 b.ucraddr_pdir_code_pre IS null
+                  AND (
+                    SELECT COUNT(*)
+                    FROM ucraddr y
+                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
+                  ) = 1
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -3220,6 +3621,21 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 t1.ucracct_cust_code DESC
             FETCH FIRST 1 ROWS ONLY
     """;
+
+    public static final String SELECT_LAST_NAME_AND_SSN= """
+            SELECT a.*, b.*, c.*, d.*
+            FROM ucbcust a
+            JOIN gzbemcp b\s
+                ON b.gzbemcp_cust_code = a.ucbcust_cust_code
+            JOIN ucracct c\s
+                ON c.ucracct_cust_code = b.gzbemcp_cust_code
+                JOIN ucrtele d
+                ON d.ucrtele_cust_code= c.ucracct_cust_code
+            WHERE b.gzbemcp_email_addr IS NOT NULL
+            AND c.ucracct_status_ind= 'A'
+            AND a.ucbcust_ssn_last_four IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
+            """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC178= """
             SELECT \s
