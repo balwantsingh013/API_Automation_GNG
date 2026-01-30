@@ -2364,7 +2364,6 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT user_name
             FROM users u
             WHERE u.active = 1
-              AND u.deleted = 0
               AND u.domain_id <> 2
               AND LENGTH(u.user_name) > 5
               AND u.user_name REGEXP '^[a-zA-Z0-9]+$'
@@ -2555,7 +2554,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_ACCOUNT_WITHOUT_NICKNAME= """
             SELECT
                 UCRACCT_CUST_CODE,
-                UCRACCT_PREM_CODE
+                UCRACCT_PREM_CODE,
+                UCRACCT_NICK_NAME
             FROM
                 UCRACCT
             WHERE
@@ -2950,7 +2950,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_ACTIVE_ACCOUNT_WITHOUT_NICKNAME= """
             SELECT
                 UCRACCT_CUST_CODE,
-                UCRACCT_PREM_CODE
+                UCRACCT_PREM_CODE,
+                UCRACCT_NICK_NAME
             FROM
                 UCRACCT
             WHERE
@@ -4221,7 +4222,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_FINAL_ACCOUNT_WITHOUT_NICKNAME= """
             SELECT
                 UCRACCT_CUST_CODE,
-                UCRACCT_PREM_CODE
+                UCRACCT_PREM_CODE,
+                UCRACCT_NICK_NAME
             FROM
                 UCRACCT
             WHERE
@@ -4233,7 +4235,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_INACTIVE_ACCOUNT_WITHOUT_NICKNAME= """
             SELECT
                 UCRACCT_CUST_CODE,
-                UCRACCT_PREM_CODE
+                UCRACCT_PREM_CODE,
+                UCRACCT_NICK_NAME
             FROM
                 UCRACCT
             WHERE
@@ -4252,7 +4255,6 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT user_name
             FROM users
             WHERE active = 1
-            AND deleted = 0
             AND domain_id = 2
             AND LENGTH(user_name) > 5
             AND user_name REGEXP '^[a-zA-Z0-9]+$'

@@ -2652,30 +2652,38 @@ public class DBAction {
 
     public Map<String, Object> getCustomerCode(String custCode) {
         long startTime = System.currentTimeMillis();
-        String query = DBQuery.SELECT_CUSTOMER_CODE;
+        String queryTemplate = DBQuery.SELECT_CUSTOMER_CODE;
 
-        logQueryInAllure("get customer code", query);
+        // Escape single quotes inside the value
+        String safeValue = custCode.replace("'", "''");
+
+        // Replace the first ? with the actual value for logging
+        String loggedQuery = queryTemplate.replaceFirst("\\?", "'" + safeValue + "'");
+
+        // Log expanded SQL in Allure
+        logQueryInAllure("get customer code", loggedQuery);
 
         Map<String, Object> result;
         try {
             // safer: use queryForList to avoid exception
-            List<Map<String, Object>> results = jdbcTemplate.queryForList(query, custCode);
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(queryTemplate, custCode);
             result = results.isEmpty() ? Collections.emptyMap() : results.get(0);
         } catch (EmptyResultDataAccessException e) {
-            // fallback if queryForMap is used
             result = Collections.emptyMap();
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
+        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
-                query,
-                result.toString(),
+                loggedQuery,          // expanded SQL
+                result.toString(),    // DB result
                 elapsed
         );
 
         return result;
     }
+
 
     public Map<String, Object> getPremCode(String premCode) {
         long startTime = System.currentTimeMillis();

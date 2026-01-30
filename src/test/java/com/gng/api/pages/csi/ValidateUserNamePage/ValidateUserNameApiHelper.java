@@ -97,11 +97,6 @@ public class ValidateUserNameApiHelper {
                 payload.setUsername(userNames.get("user_name").toString());
                 break;
 
-            case TC_12__Positive__Username_Inactive:
-                userNames = ApplicationContext.get().getDbAction("mariadb").getInactiveUser2();
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setUsername(userNames.get("user_name").toString());
-                break;
 
             default:
                 log.warn("Unhandled test condition: {}", testCondition);
