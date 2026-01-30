@@ -17,7 +17,7 @@ public enum UpdateUsernameLabel {
     TC_34__Negative__Missing_Password,
     TC_35__Negative__Invalid_Password_Format__Length___Too_Short____,
     TC_36__Negative__Invalid_Password_Format__Length___Too_Long____,
-    TC_37__Negative__Account_username_already_exists,
+    TC_37__Negative__Account_username_already_linked,
     TC_38__Negative__Invalid_credentials___Password____,
     TC_39__Negative__Invalid_credentials___Username_Inactive____,
     TC_40__Negative__Missing_customerCode,
@@ -32,7 +32,9 @@ public enum UpdateUsernameLabel {
     TC_47__Positive__Username_Available___Banner_Active____,
     TC_48__Positive__Username_Available___Banner_New____,
     TC_49__Positive__Username_Available___Banner_Final____,
-    TC_50__Positive__Username_Active___Banner_Active____,
-    TC_51__Positive__Username_Active___Banner_Final____,
-    TC_52__Positive__Username_Active___Banner_Inactive____
+    TC_50__Positive__Username_Available___Banner_Inactive____,
+    TC_51__Positive__Username_Active___Banner_Active____,
+    TC_52__Positive__Username_Active___Banner_New____,
+    TC_53__Positive__Username_Active___Banner_Final____,
+    TC_54__Positive__Username_Active___Banner_Inactive____
 }

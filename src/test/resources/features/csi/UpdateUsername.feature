@@ -1,6 +1,6 @@
 Feature: Verify UpdateUsername Api
 
-  @UpdateUsername @NegativeFlow @CSI
+  @UpdateUsername123 @NegativeFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition>"
     Then verify response code of "UpdateUsername" Api is 200
@@ -20,7 +20,7 @@ Feature: Verify UpdateUsername Api
       | TC_34__Negative__Missing_Password                                    | 10113     | Missing Password                           | false   |
       | TC_35__Negative__Invalid_Password_Format__Length___Too_Short____     | 10157     | Invalid Password Length. The password must be between 8 and 64 characters. | false |
       | TC_36__Negative__Invalid_Password_Format__Length___Too_Long____      | 10157     | Invalid Password Length. The password must be between 8 and 64 characters. | false |
-      | TC_37__Negative__Account_username_already_exists                     | 10361     | The account is already linked to a username| false   |
+      | TC_37__Negative__Account_username_already_linked                     | 10361     | The account is already linked to a username| false   |
       | TC_38__Negative__Invalid_credentials___Password____                  | 10363     | Invalid Credentials                        | false   |
       | TC_39__Negative__Invalid_credentials___Username_Inactive____         | 10363     | Invalid Credentials                        | false   |
       | TC_40__Negative__Missing_customerCode                                | 10011     | Missing Customer Code                      | false   |
@@ -45,6 +45,8 @@ Feature: Verify UpdateUsername Api
       | TC_47__Positive__Username_Available___Banner_Active____  | 0         |              | true    |
       | TC_48__Positive__Username_Available___Banner_New____     | 0         |              | true    |
       | TC_49__Positive__Username_Available___Banner_Final____   | 0         |              | true    |
-      | TC_50__Positive__Username_Active___Banner_Active____     | 0         |              | true    |
-      | TC_51__Positive__Username_Active___Banner_Final____      | 0         |              | true    |
-      | TC_52__Positive__Username_Active___Banner_Inactive____   | 0         |              | true    |
+      | TC_50__Positive__Username_Available___Banner_Inactive____   | 0         |              | true    |
+      | TC_51__Positive__Username_Active___Banner_Active____     | 0         |              | true    |
+      | TC_52__Positive__Username_Active___Banner_New____      | 0         |              | true    |
+      | TC_53__Positive__Username_Active___Banner_Final____      | 0         |              | true    |
+      | TC_54__Positive__Username_Active___Banner_Inactive____   | 0         |              | true    |

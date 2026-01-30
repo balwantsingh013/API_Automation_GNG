@@ -696,12 +696,12 @@ public class DBAction {
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
-//        SimplifiedExtentReportManager.logDatabaseQuery(
-//                query,
-//                result.toString(),
-//                elapsed
-//        );
+//         Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
 
         return result;
     }
@@ -2478,6 +2478,41 @@ public class DBAction {
 
         long elapsed = System.currentTimeMillis() - startTime;
 
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getRegisteredAccount2(String custCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.CHECK_ACCOUNT_REGISTERED;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + custCode.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, custCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log expanded SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 loggedQuery,          // <-- use expanded query here
                 String.valueOf(result),

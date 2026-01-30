@@ -210,11 +210,11 @@ public class BaseSteps {
 
         int count = discounts.size();
 
-        boolean isSingle = testCondition.contains("TC_182");
-        boolean isMultiple = testCondition.contains("TC_183");
-        boolean isNone = testCondition.contains("TC_184");
-        boolean isTransferable = testCondition.contains("TC_185");
-        boolean isNonTransferable = testCondition.contains("TC_186");
+        boolean isSingle = testCondition.contains("TC_184");
+        boolean isMultiple = testCondition.contains("TC_185");
+        boolean isNone = testCondition.contains("TC_186");
+        boolean isTransferable = testCondition.contains("TC_187");
+        boolean isNonTransferable = testCondition.contains("TC_188");
 
         // --- COUNT VALIDATIONS ---
         if (isSingle) {

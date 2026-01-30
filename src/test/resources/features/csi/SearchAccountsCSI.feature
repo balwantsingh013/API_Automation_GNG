@@ -17,11 +17,11 @@ Feature: Verify SearchAccounts Api
       | TC_195__Negative__Invalid_premisesCode_Format__Not_String         | 10005     | Invalid Premises Code Format                                   |
       | TC_196__Negative__Invalid_Last_or_Business_Name_Length            | 10119     | Invalid Last or Business Name Format                           |
       | TC_197__Negative__Invalid_First_Name_Length                       | 10121     | Invalid First Name Format                                      |
-      | TC_198__Negative__Invalid_Last_Four_SSN_Length_Too_Long           | 10065     | Invalid Last Four SSN Format                                   |
-      | TC_199__Negative__Invalid_Last_Four_SSN_Length_Too_Short          | 10065     | Invalid Last Four SSN Format                                   |
-      | TC_200__Negative__Invalid_Federal_Tax_ID_Length_Too_Long          | 10125     | Invalid Federal Tax ID Format                                  |
-      | TC_201__Negative__Invalid_Federal_Tax_ID_Length_Too_Short         | 10125     | Invalid Federal Tax ID Format                                  |
-      | TC_202__Negative__Invalid_Email_Address_Format                    | 10067     | Invalid Email Address Format                                   |
+      | TC_198__Negative__Invalid_Last_Four_SSN_Length_Too_Long           | 10063     | Invalid Last Four SSN Format                                   |
+      | TC_199__Negative__Invalid_Last_Four_SSN_Length_Too_Short          | 10063     | Invalid Last Four SSN Format                                   |
+      | TC_200__Negative__Invalid_Federal_Tax_ID_Length_Too_Long          | 10069     | Invalid Federal Tax ID Format                                  |
+      | TC_201__Negative__Invalid_Federal_Tax_ID_Length_Too_Short         | 10069     | Invalid Federal Tax ID Format                                  |
+      | TC_202__Negative__Invalid_Email_Address_Format                    | 10065     | Invalid Email Address Format                                   |
       | TC_203__Negative__Invalid_Phone_Number_Length_Too_Long            | 10009     | Invalid Phone Number Format                                    |
       | TC_204__Negative__Invalid_Phone_Number_Length_Too_Short           | 10009     | Invalid Phone Number Format                                    |
       | TC_205__Negative__Invalid_Username_Format                         | 10353     | Invalid Username Format                                        |

@@ -2535,11 +2535,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_FINAL_ACCOUNT_ONLY= """
             SELECT T1.UCRACCT_CUST_CODE,
-                                          T1.UCRACCT_PREM_CODE
-                                   FROM UCRACCT T1
-                                   WHERE T1.UCRACCT_STATUS_IND = 'F'
-                                   ORDER BY DBMS_RANDOM.VALUE
-                                   FETCH FIRST 1 ROWS ONLY
+            T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            WHERE T1.UCRACCT_STATUS_IND = 'F'
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_INACTIVE_ACCOUNT_ONLY= """
@@ -3082,7 +3082,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                                                                         WHERE a.ucracct_cust_code IN (
                                                                                     SELECT gzbemcp_cust_code
                                                                                     FROM gzbemcp g
-                                                                                    WHERE g.gzbemcp_ocs_pymt_remind= 'Y'
+                                                                                    WHERE g.gzbemcp_ocs_bill_notif= 'Y'
                                                                                     GROUP BY gzbemcp_cust_code
                                                                                     HAVING COUNT(*) = 1
                                                                                     )
@@ -3090,31 +3090,35 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC158= """
-             SELECT a.*
-                                                                                        FROM
-                                                                                            ucracct a
-                                                                                        WHERE a.ucracct_cust_code IN (
-                                                                                    SELECT gzbemcp_cust_code
-                                                                                    FROM gzbemcp g
-                                                                                    WHERE g.gzbemcp_ocs_pymt_remind='N'
-                                                                                    GROUP BY gzbemcp_cust_code
-                                                                                    HAVING COUNT(*) = 1
-                                                                                    )
-                                                                                                            FETCH FIRST 1 ROWS ONLY
+            SELECT a.*
+                                                                                                                                   FROM ucracct a
+                                                                                                                                   WHERE a.ucracct_cust_code IN (
+                                                                                                                                       SELECT g.gzbemcp_cust_code
+                                                                                                                                       FROM gzbemcp g
+                                                                                                                                       WHERE g.gzbemcp_ocs_bill_notif = 'N'
+                                                                                                                                         AND g.gzbemcp_effective_date <= SYSDATE
+                                                                                                                                       GROUP BY g.gzbemcp_cust_code
+                                                                                                                                       HAVING COUNT(*) = 1
+                                                                                                                                   )
+                                                                                                                                   ORDER BY a.ucracct_cust_code
+                                                                                                                                   FETCH FIRST 1 ROWS ONLY
+            
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC159= """
-            SELECT a.*
-                                                                                          FROM
-                                                                                              ucracct a
-                                                                                          WHERE a.ucracct_cust_code IN (
-                                                                                      SELECT gzbemcp_cust_code
-                                                                                      FROM gzbemcp g
-                                                                                      WHERE g.gzbemcp_ocs_pymt_remind IS NULL
-                                                                                      GROUP BY gzbemcp_cust_code
-                                                                                      HAVING COUNT(*) = 1
-                                                                                      )
-                                                                                                              FETCH FIRST 1 ROWS ONLY
+                SELECT a.*
+                FROM ucracct a
+                WHERE LENGTH(a.ucracct_cust_code) >= 4
+                  AND a.ucracct_cust_code IN (
+                        SELECT g.gzbemcp_cust_code
+                        FROM gzbemcp g
+                        WHERE g.gzbemcp_ocs_bill_notif IS NULL
+                          AND g.gzbemcp_effective_date <= SYSDATE
+                        GROUP BY g.gzbemcp_cust_code
+                        HAVING COUNT(*) = 1
+                  )
+                ORDER BY a.ucracct_cust_code
+                FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC160= """
@@ -4252,6 +4256,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             AND domain_id = 2
             AND LENGTH(user_name) > 5
             AND user_name REGEXP '^[a-zA-Z0-9]+$'
+            AND user_name <> '0000000000'
             ORDER BY user_name ASC
             FETCH FIRST 1 ROWS ONLY
             """;
