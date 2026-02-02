@@ -52,15 +52,15 @@ Feature: Verify UpdateMailingAddress Api
 
     Examples:
       | testCondition                           | errorCode | errorMessage |
-      | TC_114__Positive__Valid_Street_Address___Minimum_parameters_or_No_Existing_Address____  | 0         |              |
-      | TC_115__Positive__Valid_Street_Address___Maximum_parameters_or_No_Existing_Address____  | 0         |              |
-      | TC_116__Positive__Valid_Street_Address___Mixed_parameters_or_No_Existing_Address____  | 0         |              |
-      | TC_117__Positive__Valid_Street_Address___Minimum_parameters_or_Existing_Address_or_Same_Day____  | 0         |              |
-      | TC_118__Positive__Valid_Street_Address___Maximum_parameters_or_Existing_Address_or_Same_Day____  | 0         |              |
-      | TC_119__Positive__Valid_Street_Address___Mixed_parameters_or_Existing_Address_or_Same_Day____  | 0         |              |
-      | TC_120__Positive__Valid_Street_Address___Minimum_parameters_or_Existing_Address_or_Different_Day____  | 0         |              |
-      | TC_121__Positive__Valid_Street_Address___Maximum_parameters_or_Existing_Address_or_Different_Day____  | 0         |              |
-      | TC_122__Positive__Valid_Street_Address___Mixed_parameters_or_Existing_Address_or_Different_Day____  | 0         |              |
+      | TC_114__Positive__Valid_Street_Address___Minimum_parameters_and_No_Existing_Address____  | 0         |              |
+      | TC_115__Positive__Valid_Street_Address___Maximum_parameters_and_No_Existing_Address____  | 0         |              |
+      | TC_116__Positive__Valid_Street_Address___Mixed_parameters_and_No_Existing_Address____  | 0         |              |
+      | TC_117__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Same_Day____  | 0         |              |
+      | TC_118__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Same_Day____  | 0         |              |
+      | TC_119__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Same_Day____  | 0         |              |
+      | TC_120__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Different_Day____  | 0         |              |
+      | TC_121__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Different_Day____  | 0         |              |
+      | TC_122__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Different_Day____  | 0         |              |
       | TC_123__Positive__Valid_PO_Box_Address  | 0         |              |
       | TC_124__Positive__Valid_Rural_Route_Address | 0      |              |
 

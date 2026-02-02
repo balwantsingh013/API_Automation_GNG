@@ -4047,6 +4047,30 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACCOUNT_TC_1= """
+            SELECT
+                *
+            FROM
+                UCRADDR
+            WHERE
+                    UCRADDR_CUST_CODE = ?
+                AND UCRADDR_STATUS_IND = 'I'
+                ORDER BY UCRADDR_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_TC_2= """
+            SELECT
+                *
+            FROM
+                UCRADDR
+            WHERE
+                    UCRADDR_CUST_CODE = ?
+                AND UCRADDR_STATUS_IND = 'A'
+                ORDER BY UCRADDR_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_ACCOUNT_TC_116= """
             SELECT
                 *
@@ -4065,6 +4089,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE
                     UCRADDR_CUST_CODE = ?
                     AND UCRADDR_STATUS_IND = 'A'
+                    ORDER BY UCRADDR_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -4076,6 +4101,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE
                     UCRADDR_CUST_CODE = ?
                     AND UCRADDR_STATUS_IND = 'I'
+                    ORDER BY UCRADDR_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -4095,6 +4121,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                         A.UCRACCT_CUST_CODE = B.UCRADDR_CUST_CODE
                         AND TRUNC(B.UCRADDR_FROM_DATE) > TRUNC(SYSDATE)
                 )
+                ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -4115,6 +4142,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                         AND B.UCRADDR_STATUS_IND = 'A'
                         AND TRUNC(B.UCRADDR_FROM_DATE) = TRUNC(SYSDATE)
                 )
+                ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -4248,6 +4276,37 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String GET_USER_ACCOUNT_INFO = """
             SELECT * FROM UCRACCT
             WHERE UCRACCT_CUST_CODE= ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_PRE_DIRECTION = """
+            SELECT * FROM UTVPDIR
+            WHERE UTVPDIR_CODE= ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_UNIT_TYPE = """
+            SELECT * FROM UTVUTYP
+            WHERE UTVUTYP_CODE= ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ZIP = """
+            SELECT * FROM GTVZIPC
+            WHERE GTVZIPC_CODE= ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_ZIP_AND_CITY = """
+            SELECT * FROM GTVZIPC
+            WHERE GTVZIPC_CODE= ?
+            AND GTVZIPC_CITY= ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_STREET_SUFFIX = """
+            SELECT * FROM UTVSSFX
+            WHERE UTVSSFX_CODE= ?
             FETCH FIRST 1 ROWS ONLY
             """;
 

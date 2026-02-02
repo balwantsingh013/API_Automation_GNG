@@ -1500,6 +1500,50 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> performDatabaseValidations1(String custCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_TC_1;
+
+        // Replace ? with actual value for logging only
+        String loggedQuery = query.replace("?", "'" + custCode + "'");
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, custCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> performDatabaseValidations2(String custCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_TC_2;
+
+        // Replace ? with actual value for logging only
+        String loggedQuery = query.replace("?", "'" + custCode + "'");
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, custCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
 
     public Map<String, Object> performDatabaseValidationsTC119(String custCode) {
         long startTime = System.currentTimeMillis();
@@ -2451,6 +2495,183 @@ public class DBAction {
         return result;
     }
 
+
+
+    public Map<String, Object> verifyThePredirection(String preDir) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_PRE_DIRECTION;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + preDir.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, preDir);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> verifyTheUnitType(String unitType) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_UNIT_TYPE;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + unitType.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, unitType);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> verifyTheZipCode(String zip) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_ZIP;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + zip.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, zip);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> verifyTheZipCodeAncCity(String zip, String city) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_ZIP_AND_CITY;
+
+        // Escape single quotes
+        String safeZip = zip.replace("'", "''");
+        String safeCity = city.replace("'", "''");
+
+        // Replace first ? with zip
+        String loggedQuery = queryTemplate.replaceFirst("\\?", "'" + safeZip + "'");
+
+        // Replace second ? with city
+        loggedQuery = loggedQuery.replaceFirst("\\?", "'" + safeCity + "'");
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, zip, city);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // expanded SQL with both parameters
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+
+    public Map<String, Object> verifyTheStreetSuffix(String suffix) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_STREET_SUFFIX;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + suffix.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, suffix);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
 
 
     public Map<String, Object> getUserAccountInfo(String custCode) {
