@@ -10,6 +10,7 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -68,14 +69,16 @@ public class UpdateMailingAddressApiHelper {
 
 
             case TC_123__Positive__Valid_PO_Box_Address,
-                    TC_124__Positive__Valid_Rural_Route_Address,
-                 TC_117__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Same_Day____,
-                 TC_118__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Same_Day____,
-                 TC_119__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Same_Day____:
-            accountData = ApplicationContext.get().getDbAction().performDatabaseValidations1(customerCode);
-            Assert.assertNotNull(accountData, "accountData should not be null");
+                    TC_124__Positive__Valid_Rural_Route_Address:
              accountData = ApplicationContext.get().getDbAction().performDatabaseValidations2(customerCode);
             break;
+
+            case TC_117__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Same_Day____,
+                 TC_118__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Same_Day____,
+                 TC_119__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Same_Day____:
+            accountData = ApplicationContext.get().getDbAction().performDatabaseValidations2(customerCode);
+            break;
+
 
             case TC_120__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Different_Day____,
                  TC_121__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Different_Day____,
@@ -93,6 +96,7 @@ public class UpdateMailingAddressApiHelper {
     public void preparePayloadForTestCondition(UpdateMailingAddressRequest payload, UpdateMailingAddressLabel testCondition) {
         Map<String, Object> dbValues = null;
         Map<String, Object> accountData=null;
+        List<Map<String, Object>> accountsData=null;
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
         String customerCode="";
         switch (testCondition) {
@@ -164,7 +168,7 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 payload.setStreetPreDirection(STREET_PRE_DIRECTION_INVALID);
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection(STREET_PRE_DIRECTION_INVALID);
+                accountsData = ApplicationContext.get().getDbAction().verifyThePredirection();
                 break;
 
             case TC_95__Negative__Invalid_Street_Name_Length:
@@ -184,7 +188,7 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 payload.setStreetSuffix(STREET_SUFFIX_INVALID);
-                accountData = ApplicationContext.get().getDbAction().verifyTheStreetSuffix(STREET_SUFFIX_INVALID);
+                accountsData = ApplicationContext.get().getDbAction().verifyTheStreetSuffix();
                 break;
 
             case TC_99__Negative__Invalid_Street_Post_Direction_Length:
@@ -196,7 +200,7 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 payload.setStreetPostDirection(STREET_POST_DIRECTION_INVALID);
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection(STREET_POST_DIRECTION_INVALID);
+                accountsData = ApplicationContext.get().getDbAction().verifyThePredirection();
                 break;
 
             case TC_101__Negative__Invalid_Unit_Type_Format:
@@ -209,7 +213,7 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 payload.setUnitType(unitType);
-                accountData = ApplicationContext.get().getDbAction().verifyTheUnitType(unitType);
+                accountsData = ApplicationContext.get().getDbAction().verifyTheUnitType();
                 break;
 
             case TC_103__Negative__Invalid_Unit_Number_Format:
@@ -293,9 +297,6 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCarrierRoute("3400");
                 payload.setAttentionTo("JOHN DOE");
                 payload.setAdditionalAddressLine("BUILDING 5");
-                accountData = ApplicationContext.get().getDbAction().verifyTheUnitType("APT");
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection("N");
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection("NW");
                 break;
 
             case TC_116__Positive__Valid_Street_Address___Mixed_parameters_and_No_Existing_Address____:
@@ -339,9 +340,6 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCarrierRoute("3400");
                 payload.setAttentionTo("JOHN DOE");
                 payload.setAdditionalAddressLine("BUILDING 5");
-                accountData = ApplicationContext.get().getDbAction().verifyTheUnitType("APT");
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection("N");
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection("NW");
                 accountData = ApplicationContext.get().getDbAction().performDatabaseValidationsTC116(customerCode);
                 break;
 
@@ -366,11 +364,14 @@ public class UpdateMailingAddressApiHelper {
                 payload.setStreetName(STREET_NAME_VALID);
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
+                accountData = ApplicationContext.get().getDbAction().performDatabaseValidationsTC119(testContext.getCustomerCode());
                 break;
 
             case TC_121__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Different_Day____:
                 accountData = ApplicationContext.get().getDbAction().getAccountWithAddressDifferentDay();
+                String customerCode1="";
                 testContext.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                customerCode1=accountData.get("UCRACCT_CUST_CODE").toString();
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 payload.setStreetName(STREET_NAME_VALID);
@@ -385,20 +386,20 @@ public class UpdateMailingAddressApiHelper {
                 payload.setCarrierRoute("3400");
                 payload.setAttentionTo("JOHN DOE");
                 payload.setAdditionalAddressLine("BUILDING 5");
-                accountData = ApplicationContext.get().getDbAction().verifyTheUnitType("APT");
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection("N");
-                accountData = ApplicationContext.get().getDbAction().verifyThePredirection("NW");
+                accountData = ApplicationContext.get().getDbAction().performDatabaseValidationsTC119(customerCode1);
                 break;
 
             case TC_122__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Different_Day____:
                 accountData = ApplicationContext.get().getDbAction().getAccountWithAddressDifferentDay();
                 testContext.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                customerCode=accountData.get("UCRACCT_CUST_CODE").toString();
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 payload.setStreetName(STREET_NAME_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
                 payload.setCity(CITY_VALID);
                 payload.setStreetNumber(STREET_NUMBER_VALID);
+                accountData = ApplicationContext.get().getDbAction().performDatabaseValidationsTC119(customerCode);
                 break;
 
             case TC_123__Positive__Valid_PO_Box_Address:
@@ -406,10 +407,12 @@ public class UpdateMailingAddressApiHelper {
                 payload.setStreetName("");
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
-                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                accountData = ApplicationContext.get().getDbAction().getAccountWithoutAddress();
+                customerCode=accountData.get("UCRACCT_CUST_CODE").toString();
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 testContext.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
+                accountData = ApplicationContext.get().getDbAction().performDatabaseValidationsTC119(customerCode);
                 break;
 
             case TC_124__Positive__Valid_Rural_Route_Address:
@@ -417,10 +420,12 @@ public class UpdateMailingAddressApiHelper {
                 payload.setStreetName("");
                 payload.setCity(CITY_VALID);
                 payload.setZipCode(ZIPCODE_VALID);
-                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                accountData = ApplicationContext.get().getDbAction().getAccountWithoutAddress();
+                customerCode=accountData.get("UCRACCT_CUST_CODE").toString();
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 testContext.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
+                accountData = ApplicationContext.get().getDbAction().performDatabaseValidationsTC119(customerCode);
                 break;
 
             case TC_125__Positive__LoginID_Saved:

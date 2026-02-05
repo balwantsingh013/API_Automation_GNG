@@ -104,8 +104,11 @@ public class UpdatePasswordApiHelper {
             case TC_24__Negative__Invalid_Password__Reused_Password:
                 userNames = ApplicationContext.get().getDbAction("mariadb").getActiveUsernameForUpdatePassword();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                testContext.setUsername(userNames.get("user_name").toString());
                 payload.setUsername(userNames.get("user_name").toString());
-                payload.setPassword("test12345");
+                String pass= "test"+FakerDataGenerator.generateDigits(5);
+                testContext.setPassword(pass);
+                payload.setPassword(pass);
                 break;
 
             case TC_25__Positive__Password__Updated:
@@ -118,6 +121,12 @@ public class UpdatePasswordApiHelper {
                 userNames = ApplicationContext.get().getDbAction("mariadb").getPasswordForUser(userName);
                 testContext.setPassword(userNames.get("password").toString());
                 testContext.setUsername(userName);
+                break;
+
+            case TC_24__Negative__Invalid_Password__Reused_Password_2:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername(testContext.getUsername());
+                payload.setPassword(testContext.getPassword());
                 break;
 
             default:

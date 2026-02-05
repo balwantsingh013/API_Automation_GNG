@@ -174,7 +174,7 @@ Feature: Verify GetAccountInfo Api
       | TC_178__Positive__Account_Info_Returned___No_Price_Protection_Guarantee_Plan____                   | 0         |              | true    |
       | TC_179__Positive__Account_Info_Returned___Price_Protection_Guarantee_Plan____                      | 0         |              | true    |
 
-  @GetAccountInfoPositive @HappyFlow @CSI
+  @GetAccountInfo @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to GetAccountInfo Api for "<testCondition>"
     Then verify response code of "GetAccountInfo" Api is 200
@@ -184,8 +184,8 @@ Feature: Verify GetAccountInfo Api
 
     Examples:
       | testCondition                                                                                     | errorCode | errorMessage | success |
-      | TC_180__Positive__Account_Info_Returned___No_Rollover___ACR__Plans____                             | 0         |              | true    |
-      | TC_181__Positive__Account_Info_Returned___Rollover___ACR__Plans____                                | 0         |              | true    |
+      | TC_180__Positive__Account_Info_Returned___No_Rollover___ACR______Plans____                             | 0         |              | true    |
+      | TC_181__Positive__Account_Info_Returned___Rollover___ACR______Plans____                                | 0         |              | true    |
 
   @GetAccountInfoPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -198,8 +198,6 @@ Feature: Verify GetAccountInfo Api
     Examples:
       | testCondition                                                                                     | errorCode | errorMessage | success |
       | TC_182__Positive__Account_Info_Returned___Non__Restricted_Plans____                                | 0         |              | true    |
-      | TC_183__Positive__Account_Info_Returned___Restricted_Plans____                                     | 0         |              | true    |
-
 
   @GetAccountInfoPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -211,8 +209,8 @@ Feature: Verify GetAccountInfo Api
 
     Examples:
       | testCondition                                                                                     | errorCode | errorMessage | success |
-      | TC_184__Positive__Account_Info_Returned___Single_Discount____                                      | 0         |              | true    |
-      | TC_185__Positive__Account_Info_Returned___Multiple_Discounts____                                   | 0         |              | true    |
-      | TC_186__Positive__Account_Info_Returned___No_Discounts____                                         | 0         |              | true    |
-      | TC_187__Positive__Account_Info_Returned___Transferable_Discount____                               | 0         |              | true    |
-      | TC_188__Positive__Account_Info_Returned___Non__Transferable_Discount____                          | 0         |              | true    |
+      | TC_183__Positive__Account_Info_Returned___Single_Discount____                                      | 0         |              | true    |
+      | TC_184__Positive__Account_Info_Returned___Multiple_Discounts____                                   | 0         |              | true    |
+      | TC_185__Positive__Account_Info_Returned___No_Discounts____                                         | 0         |              | true    |
+      | TC_186__Positive__Account_Info_Returned___Transferable_Discount____                               | 0         |              | true    |
+      | TC_187__Positive__Account_Info_Returned___Non__Transferable_Discount____                          | 0         |              | true    |

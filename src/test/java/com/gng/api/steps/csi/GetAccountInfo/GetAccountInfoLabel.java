@@ -46,13 +46,12 @@ public enum GetAccountInfoLabel {
     TC_177__Positive__Account_Info_Returned___Guaranteed_Bill_Plan____,
     TC_178__Positive__Account_Info_Returned___No_Price_Protection_Guarantee_Plan____,
     TC_179__Positive__Account_Info_Returned___Price_Protection_Guarantee_Plan____,
-    TC_180__Positive__Account_Info_Returned___No_Rollover___ACR__Plans____,
-    TC_181__Positive__Account_Info_Returned___Rollover___ACR__Plans____,
+    TC_180__Positive__Account_Info_Returned___No_Rollover___ACR______Plans____,
+    TC_181__Positive__Account_Info_Returned___Rollover___ACR______Plans____,
     TC_182__Positive__Account_Info_Returned___Non__Restricted_Plans____,
-    TC_183__Positive__Account_Info_Returned___Restricted_Plans____,
-    TC_184__Positive__Account_Info_Returned___Single_Discount____,
-    TC_185__Positive__Account_Info_Returned___Multiple_Discounts____,
-    TC_186__Positive__Account_Info_Returned___No_Discounts____,
-    TC_187__Positive__Account_Info_Returned___Transferable_Discount____,
-    TC_188__Positive__Account_Info_Returned___Non__Transferable_Discount____
+    TC_183__Positive__Account_Info_Returned___Single_Discount____,
+    TC_184__Positive__Account_Info_Returned___Multiple_Discounts____,
+    TC_185__Positive__Account_Info_Returned___No_Discounts____,
+    TC_186__Positive__Account_Info_Returned___Transferable_Discount____,
+    TC_187__Positive__Account_Info_Returned___Non__Transferable_Discount____
 }

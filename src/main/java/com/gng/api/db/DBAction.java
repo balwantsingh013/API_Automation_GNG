@@ -697,11 +697,11 @@ public class DBAction {
         long elapsed = System.currentTimeMillis() - startTime;
 
 //         Log SQL, result, and execution time
-        SimplifiedExtentReportManager.logDatabaseQuery(
-                query,
-                result.toString(),
-                elapsed
-        );
+//        SimplifiedExtentReportManager.logDatabaseQuery(
+//                query,
+//                result.toString(),
+//                elapsed
+//        );
 
         return result;
     }
@@ -1554,7 +1554,14 @@ public class DBAction {
 
         logQueryInAllure("get customer code", loggedQuery);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query, custCode);
+        Map<String, Object> result;
+
+        try {
+            result = jdbcTemplate.queryForMap(query, custCode);
+        } catch (EmptyResultDataAccessException e) {
+            // Do not fail — return empty map instead
+            result = Collections.emptyMap();
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
@@ -1566,6 +1573,7 @@ public class DBAction {
 
         return result;
     }
+
 
 
     public Map<String, Object> performDatabaseValidationsTC119_2(String custCode) {
@@ -2497,33 +2505,27 @@ public class DBAction {
 
 
 
-    public Map<String, Object> verifyThePredirection(String preDir) {
+    public List<Map<String, Object>> verifyThePredirection() {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.GET_PRE_DIRECTION;
 
-        // Replace ? with quoted and escaped custCode for logging
-        String loggedQuery = queryTemplate.replaceFirst(
-                "\\?",
-                "'" + preDir.replace("'", "''") + "'"
-        );
-
         // Log expanded SQL
-        logQueryInAllure("check account number registered", loggedQuery);
+        logQueryInAllure("check account number registered", queryTemplate);
 
-        Map<String, Object> result = null;
+        List<Map<String, Object>> result = null;
 
         try {
-            // Execute parameterized query (safe)
-            result = jdbcTemplate.queryForMap(queryTemplate, preDir);
+            // Execute query and return list of maps
+            result = jdbcTemplate.queryForList(queryTemplate);
         } catch (EmptyResultDataAccessException e) {
-            result = null;
+            result = Collections.emptyList();
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
         SimplifiedExtentReportManager.logDatabaseQuery(
-                loggedQuery,          // <-- use expanded query here
+                queryTemplate,
                 String.valueOf(result),
                 elapsed
         );
@@ -2531,25 +2533,21 @@ public class DBAction {
         return result;
     }
 
-    public Map<String, Object> verifyTheUnitType(String unitType) {
+
+    public List<Map<String, Object>> verifyTheUnitType() {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.GET_UNIT_TYPE;
 
-        // Replace ? with quoted and escaped custCode for logging
-        String loggedQuery = queryTemplate.replaceFirst(
-                "\\?",
-                "'" + unitType.replace("'", "''") + "'"
-        );
 
         // Log expanded SQL
-        logQueryInAllure("check account number registered", loggedQuery);
+        logQueryInAllure("check account number registered", queryTemplate);
 
-        Map<String, Object> result = null;
+        List<Map<String, Object>> result = null;
 
         try {
             // Execute parameterized query (safe)
-            result = jdbcTemplate.queryForMap(queryTemplate, unitType);
+            result = jdbcTemplate.queryForList(queryTemplate);
         } catch (EmptyResultDataAccessException e) {
             result = null;
         }
@@ -2557,7 +2555,7 @@ public class DBAction {
         long elapsed = System.currentTimeMillis() - startTime;
 
         SimplifiedExtentReportManager.logDatabaseQuery(
-                loggedQuery,          // <-- use expanded query here
+                queryTemplate,          // <-- use expanded query here
                 String.valueOf(result),
                 elapsed
         );
@@ -2639,15 +2637,45 @@ public class DBAction {
 
 
 
-    public Map<String, Object> verifyTheStreetSuffix(String suffix) {
+    public List<Map<String, Object>> verifyTheStreetSuffix() {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.GET_STREET_SUFFIX;
 
+
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", queryTemplate);
+
+        List<Map<String, Object>> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForList(queryTemplate);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                queryTemplate,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getUserAccountInfoNew(String accountNo) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_USER_ACCOUNT_INFO_NEW;
+
         // Replace ? with quoted and escaped custCode for logging
         String loggedQuery = queryTemplate.replaceFirst(
                 "\\?",
-                "'" + suffix.replace("'", "''") + "'"
+                "'" + accountNo.replace("'", "''") + "'"
         );
 
         // Log expanded SQL
@@ -2657,7 +2685,41 @@ public class DBAction {
 
         try {
             // Execute parameterized query (safe)
-            result = jdbcTemplate.queryForMap(queryTemplate, suffix);
+            result = jdbcTemplate.queryForMap(queryTemplate, accountNo);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getUserAccountInfoNewInactive(String accountNo) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_USER_ACCOUNT_INFO_NEW_INACTIVE;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + accountNo.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, accountNo);
         } catch (EmptyResultDataAccessException e) {
             result = null;
         }

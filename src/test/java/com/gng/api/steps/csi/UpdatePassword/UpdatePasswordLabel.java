@@ -18,5 +18,6 @@ public enum UpdatePasswordLabel {
     TC_22__Negative__Invalid_Password_Format__Length___Too_Short____,
     TC_23__Negative__Invalid_Password_Format__Length___Too_Long____,
     TC_24__Negative__Invalid_Password__Reused_Password,
+    TC_24__Negative__Invalid_Password__Reused_Password_2,
     TC_25__Positive__Password__Updated,
 }

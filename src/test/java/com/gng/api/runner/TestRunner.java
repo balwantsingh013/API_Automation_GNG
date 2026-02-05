@@ -20,12 +20,12 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/csi/UpdateMailingAddress.feature"
+                "src/test/resources/features/csi/GetAccountInfo.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-       // tags = "@GetAccountRewardsPositive12",
+       //tags = "@GetAccountInfoPositive",
         plugin = {
                 "pretty",
                 "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting
@@ -107,7 +107,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
         // Extract scenario name safely
         String scenarioName = extractScenarioNameSafely(method, testData)
-                .replace("_____"," + ").replace("____",")").replace("___","(").replace("__"," - ").replace("_"," ");
+                .replace("______",")-").replace("_____"," + ").replace("____",")").replace("___","(").replace("__"," - ").replace("_"," ");
 
         // Log thread information for monitoring
         logThreadInfo(scenarioName);

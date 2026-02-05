@@ -1,5 +1,10 @@
 Feature: Verify SearchAccounts Api
 
+#
+#
+#
+#  SELECT * FROM ucbprem
+#  WHERE ucbprem_code='8462'
   @SearchAccounts @NegativeFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to SearchAccounts Api for "<testCondition>"

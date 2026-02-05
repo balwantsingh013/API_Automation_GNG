@@ -66,7 +66,8 @@ public class GetAccountInfoApiHelper {
 
             case TC_149__Negative__Invalid_Account_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode("9999999");
+                payload.setCustomerCode("9988776");
+                Map<String, Object> userInfo = ApplicationContext.get().getDbAction().getUserAccountInfo("9988776");
                 break;
 
             case TC_150__Positive__Account_Info_Returned___Email_Address____:
@@ -279,14 +280,14 @@ public class GetAccountInfoApiHelper {
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_180__Positive__Account_Info_Returned___No_Rollover___ACR__Plans____:
+            case TC_180__Positive__Account_Info_Returned___No_Rollover___ACR______Plans____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC179();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_181__Positive__Account_Info_Returned___Rollover___ACR__Plans____:
+            case TC_181__Positive__Account_Info_Returned___Rollover___ACR______Plans____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC180();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
@@ -300,42 +301,35 @@ public class GetAccountInfoApiHelper {
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_183__Positive__Account_Info_Returned___Restricted_Plans____:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC182();
-                payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
-                break;
-
-            case TC_184__Positive__Account_Info_Returned___Single_Discount____:
+            case TC_183__Positive__Account_Info_Returned___Single_Discount____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC183();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_185__Positive__Account_Info_Returned___Multiple_Discounts____:
+            case TC_184__Positive__Account_Info_Returned___Multiple_Discounts____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC184();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_186__Positive__Account_Info_Returned___No_Discounts____:
+            case TC_185__Positive__Account_Info_Returned___No_Discounts____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC185();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_187__Positive__Account_Info_Returned___Transferable_Discount____:
+            case TC_186__Positive__Account_Info_Returned___Transferable_Discount____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC186();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_188__Positive__Account_Info_Returned___Non__Transferable_Discount____:
+            case TC_187__Positive__Account_Info_Returned___Non__Transferable_Discount____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC187();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());

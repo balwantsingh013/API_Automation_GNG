@@ -2355,9 +2355,15 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACTIVE_USER_NAME_FOR_UPDATE_PASSWORD= """
-            SELECT user_name
-                        FROM users
-                        WHERE user_name='ZZZ999'
+            SELECT
+                user_name
+            FROM
+                users
+            WHERE
+                active = 1
+            ORDER BY
+                RAND()
+            LIMIT 1
             """;
 
     public static final String SELECT_ACTIVE_USER_NAME= """
@@ -2947,6 +2953,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+
     public static final String SELECT_ACTIVE_ACCOUNT_WITHOUT_NICKNAME= """
             SELECT
                 UCRACCT_CUST_CODE,
@@ -3123,7 +3130,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC160= """
-            SELECT t.ucrtele_cust_code,
+            SELECT t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number,
+            t.ucrtele_cust_code,
             a.ucracct_prem_code\s
             FROM
             ucrtele t
@@ -3135,7 +3143,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC161= """
-            SELECT t.ucrtele_cust_code,
+            SELECT  t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number, 
+            t.ucrtele_cust_code,
             a.ucracct_prem_code\s
             FROM
             ucrtele t
@@ -3147,7 +3156,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC162= """
-            SELECT\s
+            SELECT  t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number,
                 t.*,
                 a.ucracct_prem_code
             FROM\s
@@ -3156,12 +3165,12 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ucracct a
                 ON t.ucrtele_cust_code = a.ucracct_cust_code
             WHERE\s
-                t.ucrtele_tele_code = 'BU'
+                t.ucrtele_tele_code = 'BI'
                 AND t.ucrtele_primary_ind = 'Y'
                 AND t.ucrtele_cust_code IN (
                     SELECT ucrtele_cust_code
                     FROM ucrtele
-                    WHERE ucrtele_tele_code = 'BI'
+                    WHERE ucrtele_tele_code = 'BU'
                       AND ucrtele_primary_ind = 'Y'
                 )
             FETCH FIRST 1 ROWS ONLY
@@ -4279,16 +4288,40 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_USER_ACCOUNT_INFO_NEW = """
+            SELECT u.user_name, ra.account_number
+            FROM users u
+            JOIN custadv_registered_accounts ra
+                ON u.user_id = ra.user_id
+            WHERE ra.account_number LIKE CONCAT('%', ?, '%')
+            AND u.domain_id = 2
+            AND u.user_name REGEXP '^[A-Za-z0-9]+$'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_USER_ACCOUNT_INFO_NEW_INACTIVE = """
+            SELECT
+                u.user_name,
+                ra.account_number
+            FROM
+                users u
+            JOIN
+                custadv_registered_accounts ra
+                    ON u.user_id = ra.user_id
+            WHERE
+                ra.account_number LIKE CONCAT('%', ?, '%')
+                AND u.domain_id = 2
+                AND u.active= 0
+                AND u.user_name REGEXP '^[A-Za-z0-9]+$'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String GET_PRE_DIRECTION = """
             SELECT * FROM UTVPDIR
-            WHERE UTVPDIR_CODE= ?
-            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String GET_UNIT_TYPE = """
             SELECT * FROM UTVUTYP
-            WHERE UTVUTYP_CODE= ?
-            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String GET_ZIP = """
@@ -4306,8 +4339,6 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String GET_STREET_SUFFIX = """
             SELECT * FROM UTVSSFX
-            WHERE UTVSSFX_CODE= ?
-            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACTIVE_USER_NAME_2= """
