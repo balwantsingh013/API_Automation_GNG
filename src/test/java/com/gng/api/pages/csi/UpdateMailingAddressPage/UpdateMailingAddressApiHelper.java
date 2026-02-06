@@ -68,10 +68,15 @@ public class UpdateMailingAddressApiHelper {
                 break;
 
 
-            case TC_123__Positive__Valid_PO_Box_Address,
-                    TC_124__Positive__Valid_Rural_Route_Address:
+            case TC_123__Positive__Valid_PO_Box_Address:
              accountData = ApplicationContext.get().getDbAction().performDatabaseValidations2(customerCode);
+            Assert.assertEquals(accountData.get("UCRADDR_STREET_LINE2").toString(),POBOX_VALID);
             break;
+
+            case TC_124__Positive__Valid_Rural_Route_Address:
+                accountData = ApplicationContext.get().getDbAction().performDatabaseValidations2(customerCode);
+                Assert.assertEquals(accountData.get("UCRADDR_STREET_LINE2").toString(),RURAL_ROUTE_VALID);
+                break;
 
             case TC_117__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Same_Day____,
                  TC_118__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Same_Day____,

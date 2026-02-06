@@ -4317,11 +4317,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String GET_PRE_DIRECTION = """
-            SELECT * FROM UTVPDIR
+            SELECT UTVPDIR_CODE FROM UTVPDIR
             """;
 
     public static final String GET_UNIT_TYPE = """
-            SELECT * FROM UTVUTYP
+            SELECT UTVUTYP_CODE FROM UTVUTYP
             """;
 
     public static final String GET_ZIP = """
@@ -4338,7 +4338,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String GET_STREET_SUFFIX = """
-            SELECT * FROM UTVSSFX
+            SELECT UTVSSFX_CODE FROM UTVSSFX
             """;
 
     public static final String SELECT_ACTIVE_USER_NAME_2= """

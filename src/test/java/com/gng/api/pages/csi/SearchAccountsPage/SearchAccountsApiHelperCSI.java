@@ -35,84 +35,84 @@ public class SearchAccountsApiHelperCSI {
 
             // ---------------- EXISTING NEGATIVE CASES ----------------
 
-            case TC_189__Negative__Missing_Request_ID:
+            case TC_188__Negative__Missing_Request_ID:
                 payload.setRequestID("");
                 break;
 
-            case TC_190__Negative__Invalid_Request_ID_Length:
+            case TC_189__Negative__Invalid_Request_ID_Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(33));
                 break;
 
-            case TC_191__Negative__Duplicate_Request_ID:
+            case TC_190__Negative__Duplicate_Request_ID:
                 payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
                 break;
 
-            case TC_192__Negative__Invalid_customerCode_Length:
+            case TC_191__Negative__Invalid_customerCode_Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
                 break;
 
-            case TC_193__Negative__Invalid_customerCode_Format__Not_String:
+            case TC_192__Negative__Invalid_customerCode_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode("ABC@23XYZ");
                 break;
 
-            case TC_194__Negative__Invalid_premisesCode_Length:
+            case TC_193__Negative__Invalid_premisesCode_Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(8));
                 break;
 
-            case TC_195__Negative__Invalid_premisesCode_Format__Not_String:
+            case TC_194__Negative__Invalid_premisesCode_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPremisesCode("PREM!23");
                 break;
 
-            case TC_196__Negative__Invalid_Last_or_Business_Name_Length:
+            case TC_195__Negative__Invalid_Last_or_Business_Name_Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(61));
                 break;
 
-            case TC_197__Negative__Invalid_First_Name_Length:
+            case TC_196__Negative__Invalid_First_Name_Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerFirstName(FakerDataGenerator.generateString(16));
                 break;
 
-            case TC_198__Negative__Invalid_Last_Four_SSN_Length_Too_Long:
+            case TC_197__Negative__Invalid_Last_Four_SSN_Length_Too_Long:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(5));
                 break;
 
-            case TC_199__Negative__Invalid_Last_Four_SSN_Length_Too_Short:
+            case TC_198__Negative__Invalid_Last_Four_SSN_Length_Too_Short:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(3));
                 break;
 
-            case TC_200__Negative__Invalid_Federal_Tax_ID_Length_Too_Long:
+            case TC_199__Negative__Invalid_Federal_Tax_ID_Length_Too_Long:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(10));
                 break;
 
-            case TC_201__Negative__Invalid_Federal_Tax_ID_Length_Too_Short:
+            case TC_200__Negative__Invalid_Federal_Tax_ID_Length_Too_Short:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(8));
                 break;
 
-            case TC_202__Negative__Invalid_Email_Address_Format:
+            case TC_201__Negative__Invalid_Email_Address_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setEmailAddress("invalid-email-format");
                 break;
 
-            case TC_203__Negative__Invalid_Phone_Number_Length_Too_Long:
+            case TC_202__Negative__Invalid_Phone_Number_Length_Too_Long:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPhoneNumber(FakerDataGenerator.generateDigits(11));
                 break;
 
-            case TC_204__Negative__Invalid_Phone_Number_Length_Too_Short:
+            case TC_203__Negative__Invalid_Phone_Number_Length_Too_Short:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPhoneNumber(FakerDataGenerator.generateDigits(9));
                 break;
 
-            case TC_205__Negative__Invalid_Username_Format:
+            case TC_204__Negative__Invalid_Username_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateAlphanumericWithSpecialChars(8));
                 break;
@@ -120,37 +120,37 @@ public class SearchAccountsApiHelperCSI {
 
             // ---------------- NEW NEGATIVE CASES (TC_204 - TC_221) ----------------
 
-            case TC_206__Negative__Inactive_Username:
+            case TC_205__Negative__Inactive_Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 userInfo = ApplicationContext.get().getDbAction("mariadb").getInactiveUser();
                 payload.setUsername(userInfo.get("user_name").toString());
                 break;
 
-            case TC_207__Negative__Invalid_Password_Format_Length_Too_Short:
+            case TC_206__Negative__Invalid_Password_Format_Length_Too_Short:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPassword(FakerDataGenerator.generateString(5));
                 break;
 
-            case TC_208__Negative__Invalid_Password_Format_Length_Too_Long:
+            case TC_207__Negative__Invalid_Password_Format_Length_Too_Long:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPassword(FakerDataGenerator.generateString(65));
                 break;
 
-            case TC_209__Negative__Last4SSN_Password:
+            case TC_208__Negative__Last4SSN_____Password:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
                 payload.setPassword(FakerDataGenerator.generateString(10));
                 payload.setUsername(null);
                 break;
 
-            case TC_210__Negative__Last4SSN_Username:
+            case TC_209__Negative__Last4SSN_____Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
                 payload.setUsername(FakerDataGenerator.generateString(8));
                 payload.setPassword(null);
                 break;
 
-            case TC_211__Negative__Last4SSN_CustomerCode_PremisesCode:
+            case TC_210__Negative__Last4SSN_____CustomerCode_____PremisesCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
@@ -159,7 +159,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_212__Negative__Last4SSN_FederalTaxID:
+            case TC_211__Negative__Last4SSN_____FederalTaxID_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setLastFourSocialSecurityNumber(FakerDataGenerator.generateDigits(4));
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(9));
@@ -167,14 +167,14 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_213__Negative__Password_FederalTaxID:
+            case TC_212__Negative__Password_____FederalTaxID_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPassword(FakerDataGenerator.generateString(10));
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(9));
                 payload.setUsername(null);
                 break;
 
-            case TC_214__Negative__CustomerLastName_EmailAddress:
+            case TC_213__Negative__CustomerLastName_____EmailAddress:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
                 payload.setEmailAddress("test@test.com");
@@ -182,7 +182,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_215__Negative__CustomerLastName_PhoneNumber:
+            case TC_214__Negative__CustomerLastName_____PhoneNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
                 payload.setPhoneNumber("5413907434");
@@ -190,14 +190,14 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_216__Negative__CustomerLastName_Username:
+            case TC_215__Negative__CustomerLastName_____Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
                 payload.setUsername(FakerDataGenerator.generateString(8));
                 payload.setPassword(null);
                 break;
 
-            case TC_217__Negative__CustomerLastName_CustomerCode_PremisesCode:
+            case TC_216__Negative__CustomerLastName_____CustomerCode_____PremisesCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
@@ -206,39 +206,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_218__Negative__BusinessName_EmailAddress:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
-                payload.setEmailAddress("test@test.com");
-                payload.setUsername(null);
-                payload.setPassword(null);
-                break;
-
-            case TC_219__Negative__BusinessName_PhoneNumber:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
-                payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
-                payload.setUsername(null);
-                payload.setPassword(null);
-                break;
-
-            case TC_220__Negative__BusinessName_Username:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
-                payload.setUsername(FakerDataGenerator.generateString(8));
-                payload.setPassword(null);
-                break;
-
-            case TC_221__Negative__BusinessName_CustomerCode_PremisesCode:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerLastNameBusiness(FakerDataGenerator.generateString(10));
-                payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
-                payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
-                payload.setUsername(null);
-                payload.setPassword(null);
-                break;
-
-            case TC_222__Negative__EmailAddress_PhoneNumber:
+            case TC_217__Negative__EmailAddress_____PhoneNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setEmailAddress("test@test.com");
                 payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
@@ -246,7 +214,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_223__Negative__EmailAddress_Username:
+            case TC_218__Negative__EmailAddress_____Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setEmailAddress("test@test.com");
                 payload.setUsername(FakerDataGenerator.generateString(8));
@@ -255,7 +223,7 @@ public class SearchAccountsApiHelperCSI {
 
             // ---------------- NEW NEGATIVE CASES (TC_222 - TC_230) ----------------
 
-            case TC_224__Negative__EmailAddress_CustomerCode_PremisesCode:
+            case TC_219__Negative__EmailAddress_____CustomerCode_____PremisesCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setEmailAddress("test@test.com");
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
@@ -264,7 +232,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_225__Negative__EmailAddress_FederalTaxID:
+            case TC_220__Negative__EmailAddress_____FederalTaxID_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setEmailAddress("test@test.com");
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(9));
@@ -272,14 +240,14 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_226__Negative__PhoneNumber_Username:
+            case TC_221__Negative__PhoneNumber_____Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
                 payload.setUsername(FakerDataGenerator.generateString(8));
                 payload.setPassword(null);
                 break;
 
-            case TC_227__Negative__PhoneNumber_CustomerCode_PremisesCode:
+            case TC_222__Negative__PhoneNumber_____CustomerCode_____PremisesCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
@@ -288,7 +256,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_228__Negative__PhoneNumber_FederalTaxID:
+            case TC_223__Negative__PhoneNumber_____FederalTaxID_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPhoneNumber(FakerDataGenerator.generateDigits(10));
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(9));
@@ -296,7 +264,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_229__Negative__Username_CustomerCode_PremisesCode:
+            case TC_224__Negative__Username_____CustomerCode_____PremisesCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateString(8));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
@@ -304,14 +272,14 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_230__Negative__Username_FederalTaxID:
+            case TC_225__Negative__Username_____FederalTaxID_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setUsername(FakerDataGenerator.generateString(8));
                 payload.setFederalTaxID(FakerDataGenerator.generateDigits(9));
                 payload.setPassword(null);
                 break;
 
-            case TC_231__Negative__CustomerCode_PremisesCode_FederalTaxID:
+            case TC_226__Negative__CustomerCode_____PremisesCode_____FederalTaxID_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(9));
                 payload.setPremisesCode(FakerDataGenerator.generateDigits(7));
@@ -320,14 +288,14 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_232__Negative__Too_Many_Matches:
+            case TC_227__Negative__Too_Many_Matches:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness("FRIEDMAN"); // extremely common
                 break;
 
             // ---------------- POSITIVE CASES (TC_231 - TC_233) ----------------
 
-            case TC_233__Positive__Last4SSN_CustomerLastName:
+            case TC_228__Positive__Last4SSN_____CustomerLastName:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 userInfo =
@@ -338,7 +306,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_234__Positive__Last4SSN_EmailAddress:
+            case TC_229__Positive__Last4SSN_____EmailAddress:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 // Fetch a valid customer with matching email + SSN
                 userInfo =
@@ -350,7 +318,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-            case TC_235__Positive__Last4SSN_PhoneNumber:
+            case TC_230__Positive__Last4SSN_____PhoneNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 // Fetch a valid customer with matching phone + SSN
                 userInfo =
@@ -362,36 +330,36 @@ public class SearchAccountsApiHelperCSI {
 
             // ---------------- POSITIVE CASES (TC_234 - TC_239) ----------------
 
-            case TC_236__Positive__Password_Username:
+            case TC_231__Positive__Password_____Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case TC_237__Positive__Password_CustomerLastNameBusiness:
+            case TC_232__Positive__Password_____CustomerLastNameBusiness:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness("JACOB");
                 payload.setUsername(null);
                 break;
 
-            case TC_238__Positive__Password_CustomerCode_PremisesCode:
+            case TC_233__Positive__Password_____CustomerCode_____PremisesCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode("128350");
                 payload.setPremisesCode("131232");
                 payload.setUsername(null);
                 break;
 
-            case TC_239__Positive__Password_EmailAddress:
+            case TC_234__Positive__Password_____EmailAddress:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setEmailAddress("uzair.shafi@vertexone.ai");
                 payload.setUsername(null);
                 break;
 
-            case TC_240__Positive__Password_PhoneNumber:
+            case TC_235__Positive__Password_____PhoneNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPhoneNumber("4046965919");
                 payload.setUsername(null);
                 break;
 
-            case TC_241__Positive__BusinessName_FederalTaxID:
+            case TC_236__Positive__BusinessName_____FederalTaxID:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness("WILSON WIRE & CABLE, INC");
                 payload.setFederalTaxID("630854169");
@@ -400,7 +368,7 @@ public class SearchAccountsApiHelperCSI {
                 break;
 
 
-            case TC_242__Positive__AccountStatus_Active:
+            case TC_237__Positive__AccountStatus_Active:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 payload.setCustomerCode("13476");
@@ -408,7 +376,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_243__Positive__AccountStatus_Final:
+            case TC_238__Positive__AccountStatus_Final:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 payload.setCustomerCode("107176");
@@ -416,21 +384,21 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_244__Positive__AccountStatus_Inactive:
+            case TC_239__Positive__AccountStatus_Inactive:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode("128350");
                 payload.setPremisesCode("131232");
                 payload.setUsername(null);
                 break;
 
-            case TC_245__Positive__AccountStatus_New:
+            case TC_240__Positive__AccountStatus_New:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerLastNameBusiness("LINGENFELTER");
                 payload.setUsername(null);
                 break;
 
 
-            case TC_246__Positive__Username:
+            case TC_241__Positive__Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode("2370976");
                 payload.setPremisesCode("2392173");
@@ -438,7 +406,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword("UAT2@CustomerPass");
                 break;
 
-            case TC_247__Positive__No_Username:
+            case TC_242__Positive__No_Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 while (true) {
                     userInfo = ApplicationContext.get().getDbAction().getInactiveAccountOnly2();
@@ -457,7 +425,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_248__Positive__Nickname:
+            case TC_243__Positive__Nickname:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 userInfo = ApplicationContext.get().getDbAction().getAccountWithNickname();
@@ -469,7 +437,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_249__Positive__No_Nickname:
+            case TC_244__Positive__No_Nickname:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 userInfo = ApplicationContext.get().getDbAction().getAccountWithoutNickname();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
@@ -480,7 +448,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_250__Positive__FirstName:
+            case TC_245__Positive__FirstName:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where firstName IS set
@@ -494,7 +462,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_251__Positive__No_FirstName:
+            case TC_246__Positive__No_FirstName:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where firstName is NOT set
@@ -508,7 +476,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_252__Positive__Residential:
+            case TC_247__Positive__Residential:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
 
@@ -522,7 +490,7 @@ public class SearchAccountsApiHelperCSI {
 
                 break;
 
-            case TC_253__Positive__Commercial:
+            case TC_248__Positive__Commercial:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 userInfo = ApplicationContext.get().getDbAction().getAccountWithoutNickname();
@@ -533,7 +501,7 @@ public class SearchAccountsApiHelperCSI {
 
                 payload.setUsername(null);
 //
-            case TC_254__Positive__Industrial:
+            case TC_249__Positive__Industrial:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an Industrial account (customerType = 'IN')
@@ -547,7 +515,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_255__Positive__Agriculture:
+            case TC_250__Positive__Agriculture:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 userInfo =
@@ -560,7 +528,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_256__Positive__MultiFamily:
+            case TC_251__Positive__MultiFamily:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch a Multi-Family account (customerType = 'MF')
@@ -575,7 +543,7 @@ public class SearchAccountsApiHelperCSI {
                 break;
 
 
-            case TC_257__Positive__Seasonal:
+            case TC_252__Positive__Seasonal:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch a Seasonal account (customerType = 'SE')
@@ -589,7 +557,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_258__Positive__SeniorCitizen:
+            case TC_253__Positive__SeniorCitizen:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch a Senior Citizen account (customerType = 'SR')
@@ -603,7 +571,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_259__Positive__PremisesAddress_StreetNumber:
+            case TC_254__Positive__PremisesAddress_StreetNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street number IS set
@@ -617,7 +585,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_260__Positive__PremisesAddress_No_StreetNumber:
+            case TC_255__Positive__PremisesAddress_No_StreetNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street number is NOT set
@@ -631,7 +599,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_261__Positive__PremisesAddress_StreetPreDirection:
+            case TC_256__Positive__PremisesAddress_StreetPreDirection:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street pre-direction IS set
@@ -645,7 +613,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_262__Positive__PremisesAddress_No_StreetPreDirection:
+            case TC_257__Positive__PremisesAddress_No_StreetPreDirection:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street pre-direction is NOT set
@@ -659,7 +627,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_263__Positive__PremisesAddress_StreetName:
+            case TC_258__Positive__PremisesAddress_StreetName:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street name IS set
@@ -673,7 +641,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_264__Positive__PremisesAddress_No_StreetName:
+            case TC_259__Positive__PremisesAddress_No_StreetName:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street name is NOT set
@@ -687,7 +655,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_265__Positive__PremisesAddress_StreetSuffix:
+            case TC_260__Positive__PremisesAddress_StreetSuffix:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street suffix IS set
@@ -701,7 +669,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_266__Positive__PremisesAddress_No_StreetSuffix:
+            case TC_261__Positive__PremisesAddress_No_StreetSuffix:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street suffix is NOT set
@@ -715,7 +683,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_267__Positive__PremisesAddress_StreetPostDirection:
+            case TC_262__Positive__PremisesAddress_StreetPostDirection:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where street post-direction IS set
@@ -730,7 +698,7 @@ public class SearchAccountsApiHelperCSI {
                 break;
 
 
-            case TC_268__Positive__PremisesAddress_No_StreetPostDirection:
+            case TC_263__Positive__PremisesAddress_No_StreetPostDirection:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 userInfo =
@@ -743,7 +711,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_269__Positive__PremisesAddress_UnitType:
+            case TC_264__Positive__PremisesAddress_UnitType:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(8));
 
                 userInfo =
@@ -756,7 +724,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_270__Positive__PremisesAddress_No_UnitType:
+            case TC_265__Positive__PremisesAddress_No_UnitType:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where unit type is NOT set
@@ -770,7 +738,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_271__Positive__PremisesAddress_UnitNumber:
+            case TC_266__Positive__PremisesAddress_UnitNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where unit number IS set
@@ -784,7 +752,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_272__Positive__PremisesAddress_No_UnitNumber:
+            case TC_267__Positive__PremisesAddress_No_UnitNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where unit number is NOT set
@@ -798,7 +766,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_273__Positive__PremisesAddress_City:
+            case TC_268__Positive__PremisesAddress_City:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where city IS set
@@ -812,7 +780,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_274__Positive__PremisesAddress_No_City:
+            case TC_269__Positive__PremisesAddress_No_City:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where city is NOT set
@@ -826,7 +794,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_275__Positive__PremisesAddress_State:
+            case TC_270__Positive__PremisesAddress_State:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where state IS set
@@ -840,7 +808,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_276__Positive__PremisesAddress_No_State:
+            case TC_271__Positive__PremisesAddress_No_State:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where state is NOT set
@@ -854,7 +822,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_277__Positive__PremisesAddress_ZipCode:
+            case TC_272__Positive__PremisesAddress_ZipCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where zip code IS set
@@ -868,7 +836,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setUsername(null);
                 break;
 
-            case TC_278__Positive__PremisesAddress_No_ZipCode:
+            case TC_273__Positive__PremisesAddress_No_ZipCode:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
 
                 // Fetch an account where zip code is NOT set
