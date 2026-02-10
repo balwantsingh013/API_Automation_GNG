@@ -120,5 +120,13 @@ public enum SearchAccountsLabelCSI {
     TC_273__Positive__PremisesAddress_No_ZipCode,
     TC_274__Positive__Search_Order__Active_______Final_______New_______Inactive,
     TC_275__Positive__Search_Order__Active_______Final_______New,
-    TC_276__Positive__Search_Order__Active_______Final_______Inactive
+    TC_276__Positive__Search_Order__Active_______Final_______Inactive,
+    TC_277__Positive__Search_Order__Active_______Final,
+    TC_278__Positive__Search_Order__Active_______New_______Inactive,
+    TC_279__Positive__Search_Order__Active_______New,
+    TC_280__Positive__Search_Order__Active_______Inactive,
+    TC_281__Positive__Search_Order__Final_______New_______Inactive,
+    TC_282__Positive__Search_Order__Final_______New,
+    TC_283__Positive__Search_Order__Final_______Inactive,
+    TC_284__Positive__Search_Order__New_______Inactive
 }

@@ -25,7 +25,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-       tags = "@SearchAccountsSorting3",
+       tags = "@SearchAccountsSorting11",
         plugin = {
                 "pretty",
                 "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting

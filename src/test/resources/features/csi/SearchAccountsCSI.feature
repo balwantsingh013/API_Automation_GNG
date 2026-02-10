@@ -155,3 +155,116 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|testCondition3|
       |TC_276__Positive__Search_Order__Active_______Final_______Inactive| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_49__Positive__Username_Available___Banner_Final____|TC_50__Positive__Username_Available___Banner_Inactive____|
 
+  @SearchAccountsSorting4 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|
+      |TC_277__Positive__Search_Order__Active_______Final| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_49__Positive__Username_Available___Banner_Final____|
+
+
+  @SearchAccountsSorting5 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to UpdateUsername Api for "<testCondition3>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|testCondition3|
+      |TC_278__Positive__Search_Order__Active_______New_______Inactive| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_48__Positive__Username_Available___Banner_New____|TC_50__Positive__Username_Available___Banner_Inactive____|
+
+
+  @SearchAccountsSorting6 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|
+      |TC_279__Positive__Search_Order__Active_______New| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_48__Positive__Username_Available___Banner_New____|
+
+
+  @SearchAccountsSorting7 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|
+      |TC_280__Positive__Search_Order__Active_______Inactive| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_50__Positive__Username_Available___Banner_Inactive____|
+
+
+
+  @SearchAccountsSorting8 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to UpdateUsername Api for "<testCondition3>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|testCondition3|
+      |TC_281__Positive__Search_Order__Final_______New_______Inactive| 0  |                 |TC_48__Positive__Username_Available___Banner_New____|TC_50__Positive__Username_Available___Banner_Inactive____|TC_49__Positive__Username_Available___Banner_Final____|
+
+
+  @SearchAccountsSorting9 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|
+      |TC_282__Positive__Search_Order__Final_______New| 0  |                 |TC_48__Positive__Username_Available___Banner_New____|TC_49__Positive__Username_Available___Banner_Final____|
+
+
+  @SearchAccountsSorting10 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|
+      |TC_283__Positive__Search_Order__Final_______Inactive| 0  |                 |TC_50__Positive__Username_Available___Banner_Inactive____|TC_49__Positive__Username_Available___Banner_Final____|
+
+
+  @SearchAccountsSorting11 @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateUsername Api for "<testCondition1>"
+    When a request is made to UpdateUsername Api for "<testCondition2>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And accounts should be sorted by accountStatus in order A, F, N, I
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|
+      |TC_284__Positive__Search_Order__New_______Inactive| 0  |                 |TC_50__Positive__Username_Available___Banner_Inactive____|TC_48__Positive__Username_Available___Banner_New____|
