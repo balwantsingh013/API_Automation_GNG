@@ -25,13 +25,14 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-       //tags = "@GetAccountInfoPositive",
+       tags = "@SearchAccountsSorting3",
         plugin = {
                 "pretty",
                 "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         }
 )
+
 
 @Slf4j
 public class TestRunner extends AbstractTestNGCucumberTests {
@@ -107,7 +108,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
         // Extract scenario name safely
         String scenarioName = extractScenarioNameSafely(method, testData)
-                .replace("______",")-").replace("_____"," + ").replace("____",")").replace("___","(").replace("__"," - ").replace("_"," ");
+                .replace("_______"," -> ").replace("______",")-").replace("_____"," + ").replace("____",")").replace("___","(").replace("__"," - ").replace("_"," ");
 
         // Log thread information for monitoring
         logThreadInfo(scenarioName);

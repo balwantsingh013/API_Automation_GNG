@@ -2162,6 +2162,76 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getRequiredAccountDetails() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_DETAILS_REQUIRED;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getLastnameForCustomerCode(String customerCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_LAST_NAME_FOR_CUST_CODE;
+
+        String loggedQuery = query.replaceFirst(
+                "\\?",
+                "'" + customerCode.replace("'", "''") + "'"
+        );
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, customerCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getEmailAddressFromCustCode(String customerCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_EMAIL_FOR_CUST_CODE;
+
+        String loggedQuery = query.replaceFirst(
+                "\\?",
+                "'" + customerCode.replace("'", "''") + "'"
+        );
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, customerCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getAccountDetailsTC177() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC177;
@@ -2497,6 +2567,40 @@ public class DBAction {
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getPhoneNumbers(String premCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_PHONE_NUMBERS;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + premCode.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        List<Map<String, Object>> result = null;
+
+        try {
+            // Execute query and return list of maps
+            result = jdbcTemplate.queryForList(queryTemplate, premCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
                 elapsed
         );
 

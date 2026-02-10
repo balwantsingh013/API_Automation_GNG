@@ -19,14 +19,14 @@ public class GetAccountRewardsResponse {
     private boolean success;
     private int errorCode;
     private String errorMessage;
-    private GetAccountRewards getAccountRewards;
+    private DataBlock data; // <-- MUST be named "data" to match JSON
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class GetAccountRewards {
+    public static class DataBlock {
         private int activeRewardsCount;
         private int pendingRewardsCount;
         private List<Reward> rewards;

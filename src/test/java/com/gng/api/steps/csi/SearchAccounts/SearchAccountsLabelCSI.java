@@ -117,5 +117,8 @@ public enum SearchAccountsLabelCSI {
     TC_270__Positive__PremisesAddress_State,
     TC_271__Positive__PremisesAddress_No_State,
     TC_272__Positive__PremisesAddress_ZipCode,
-    TC_273__Positive__PremisesAddress_No_ZipCode
+    TC_273__Positive__PremisesAddress_No_ZipCode,
+    TC_274__Positive__Search_Order__Active_______Final_______New_______Inactive,
+    TC_275__Positive__Search_Order__Active_______Final_______New,
+    TC_276__Positive__Search_Order__Active_______Final_______Inactive
 }

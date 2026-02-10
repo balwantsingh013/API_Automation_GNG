@@ -10,6 +10,7 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -31,6 +32,7 @@ public class GetAccountInfoApiHelper {
 
     public void preparePayloadForTestCondition(GetAccountInfoRequest payload, GetAccountInfoLabel testCondition) {
         Map<String, Object> accountInfo = null;
+        List<Map<String, Object>> accountsInfo = null;
         switch (testCondition) {
             case TC_142__Negative__Missing_Request_ID:
                 payload.setRequestID("");
@@ -152,6 +154,7 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC160();
                 payload.setCustomerCode(accountInfo.get("ucrtele_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_162__Positive__Account_Info_Returned___Primary_Phone_is_Work____:
@@ -159,6 +162,7 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC161();
                 payload.setCustomerCode(accountInfo.get("ucrtele_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_163__Positive__Account_Info_Returned___Primary_Phone_is_both_Home_and_Work____:
@@ -166,6 +170,7 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC162();
                 payload.setCustomerCode(accountInfo.get("ucrtele_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_164__Positive__Account_Info_Returned___No_Phone_Number____:
@@ -173,6 +178,7 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC163();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_165__Positive__Account_Info_Returned___Greener_Life_Rate____:

@@ -50,9 +50,14 @@ public class UpdateUsernameApiHelper {
     }
 
     public void preparePayloadForTestCondition(UpdateUsernameRequest payload, UpdateUsernameLabel testCondition) {
-
+        String newUsername="";
         Map<String, Object> userInfo = null;
-        String newUsername = FakerDataGenerator.generateAlphanumeric(8);
+        if(testContext.getUsername() == null || testContext.getUsername().isEmpty()) {
+             newUsername = FakerDataGenerator.generateAlphanumeric(8);
+        }
+        else{
+             newUsername=testContext.getUsername();
+        }
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
 
         String custCode="";

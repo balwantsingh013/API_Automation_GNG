@@ -34,10 +34,14 @@ public class GetAccountRewardsApiHelper {
 
         switch (testCondition) {
 
-            case TC_136__Positive__Rewards_Response_Returned_with_Active_Rewards,
-                 TC_137__Positive__Rewards_Response_Returned_with_Pending_Rewards:
+            case TC_136__Positive__Rewards_Response_Returned_with_Active_Rewards:
                 accountData = ApplicationContext.get().getDbAction().getRewardDetails(testContext.getRewardId());
                 break;
+
+            case TC_137__Positive__Rewards_Response_Returned_with_Pending_Rewards:
+            accountData = ApplicationContext.get().getDbAction().getRewardDetails(testContext.getRewardId());
+            Assert.assertEquals(testContext.getGetAccountRewardsResponse().getData().getRewards().getFirst().getRemainingOccurrences(),0,"Incorrect count for remainingOccurrences returned for Pending rewards");
+            break;
 
             case TC_140__Positive__Active_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards,
                  TC_141__Positive__Pending_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards:
@@ -87,7 +91,8 @@ public class GetAccountRewardsApiHelper {
                 break;
 
             case TC_132__Negative__Invalid_Account_Number:
-                payload.setCustomerCode("999999999"); // Non-existent
+                payload.setCustomerCode("9988776");
+                accountData = ApplicationContext.get().getDbAction().getUserAccountInfo("9988776");// Non-existent
                 break;
 
             case TC_133__Negative__Missing_premisesCode:

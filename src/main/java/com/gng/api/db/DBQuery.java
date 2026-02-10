@@ -3157,7 +3157,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_DETAILS_TC162= """
             SELECT  t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number,
-                t.*,
+                t.ucrtele_cust_code,
                 a.ucracct_prem_code
             FROM\s
                 ucrtele t
@@ -3650,6 +3650,30 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             AND a.ucbcust_ssn_last_four IS NOT NULL
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_REQUIRED= """
+            SELECT
+                u.user_name,
+                ra.account_number
+            FROM
+                users u
+            JOIN
+                custadv_registered_accounts ra
+                    ON u.user_id = ra.user_id
+            WHERE  u.domain_id = 2
+                AND u.user_name='zzbookie223'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_LAST_NAME_FOR_CUST_CODE= """
+        SELECT UCBCUST_CUST_CODE, UCBCUST_LAST_NAME FROM UCBCUST
+        WHERE UCBCUST_CUST_CODE= ?
+""";
+
+    public static final String SELECT_EMAIL_FOR_CUST_CODE= """
+        SELECT GZBEMCP_EMAIL_ADDR, GZBEMCP_CUST_CODE FROM GZBEMCP
+        WHERE GZBEMCP_CUST_CODE= ?
+""";
 
     public static final String SELECT_ACCOUNT_DETAILS_TC178= """
             SELECT \s
@@ -4280,6 +4304,20 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 UCRACCT_STATUS_IND = 'I'
                 AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_PHONE_NUMBERS= """
+            SELECT  t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number,
+                 t.ucrtele_tele_code, t.ucrtele_primary_ind,
+                --t.*,
+                a.ucracct_prem_code
+            FROM
+                ucrtele t
+            JOIN
+                ucracct a
+                ON t.ucrtele_cust_code = a.ucracct_cust_code
+            WHERE a.ucracct_prem_code = ?
+            AND t.ucrtele_primary_ind = 'Y'
             """;
 
     public static final String GET_USER_ACCOUNT_INFO = """

@@ -14,6 +14,7 @@ import org.testng.Assert;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.testng.AssertJUnit.*;
@@ -202,6 +203,51 @@ public class BaseSteps {
         verifyDiscounts(testCondition);
     }
 
+    @And("accounts should be sorted by accountStatus in order A, F, N, I")
+    public void accountsShouldBeSortedByAccountStatus() {
+        validateAccountStatusSorting();
+    }
+    private void validateAccountStatusSorting() {
+        Response response = testContext.getResponse();
+
+        List<Map<String, Object>> accounts =
+                response.jsonPath().getList("data.accounts");
+
+        if (accounts == null || accounts.size() <= 1) {
+            return; // nothing to validate
+        }
+
+        // Required order
+        List<String> requiredOrder = Arrays.asList("A", "F", "N", "I");
+
+        // Map status → rank
+        Map<String, Integer> statusRank = new HashMap<>();
+        statusRank.put("A", 1);
+        statusRank.put("F", 2);
+        statusRank.put("N", 3);
+        statusRank.put("I", 4);
+
+        // Extract actual statuses from response
+        List<String> actualStatuses = accounts.stream()
+                .map(acc -> acc.get("accountStatus").toString())
+                .collect(Collectors.toList());
+
+        // Create expected sorted version
+        List<String> expectedStatuses = new ArrayList<>(actualStatuses);
+        expectedStatuses.sort(Comparator.comparingInt(statusRank::get));
+
+        // Human-readable assertion
+        assertThat(
+                "Accounts are NOT sorted by accountStatus in order A, F, N, I\n" +
+                        "Expected: " + expectedStatuses + "\n" +
+                        "Actual:   " + actualStatuses,
+                actualStatuses,
+                equalTo(expectedStatuses)
+        );
+    }
+
+
+
     private void verifyDiscounts(String testCondition) {
         Response response = testContext.getResponse();
 
@@ -210,11 +256,11 @@ public class BaseSteps {
 
         int count = discounts.size();
 
-        boolean isSingle = testCondition.contains("TC_184");
-        boolean isMultiple = testCondition.contains("TC_185");
-        boolean isNone = testCondition.contains("TC_186");
-        boolean isTransferable = testCondition.contains("TC_187");
-        boolean isNonTransferable = testCondition.contains("TC_188");
+        boolean isSingle = testCondition.contains("TC_183");
+        boolean isMultiple = testCondition.contains("TC_184");
+        boolean isNone = testCondition.contains("TC_185");
+        boolean isTransferable = testCondition.contains("TC_186");
+        boolean isNonTransferable = testCondition.contains("TC_187");
 
         // --- COUNT VALIDATIONS ---
         if (isSingle) {
