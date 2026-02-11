@@ -1,7 +1,7 @@
 Feature: Verify SearchAccounts Api
 
 
-  @SearchAccounts987 @NegativeFlow @CSI
+  @SearchAccounts987 @NegativeFlow @CSI @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
@@ -94,7 +94,7 @@ Feature: Verify SearchAccounts Api
 
 
 
-  @SearchAccounts @NegativeFlow @CSI
+  @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"
@@ -105,7 +105,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_237__Positive__AccountStatus_Active| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|
 
-  @SearchAccounts103 @NegativeFlow @CSI
+  @SearchAccounts103 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"
@@ -116,7 +116,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_238__Positive__AccountStatus_Final| 0  |                 |TC_49__Positive__Username_Available___Banner_Final____|
 
-  @SearchAccounts @NegativeFlow @CSI
+  @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"
@@ -127,7 +127,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_239__Positive__AccountStatus_Inactive| 0  |                 |TC_50__Positive__Username_Available___Banner_Inactive____|
 
-  @SearchAccounts @NegativeFlow @CSI
+  @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"
@@ -138,7 +138,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_240__Positive__AccountStatus_New| 0  |                 |TC_48__Positive__Username_Available___Banner_New____|
 
-  @SearchAccountsSorting @NegativeFlow @CSI
+  @SearchAccountsSorting @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -153,7 +153,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|testCondition3|testCondition4|
     |TC_274__Positive__Search_Order__Active_______Final_______New_______Inactive| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_48__Positive__Username_Available___Banner_New____|TC_49__Positive__Username_Available___Banner_Final____|TC_50__Positive__Username_Available___Banner_Inactive____|
 
-  @SearchAccountsSorting2 @NegativeFlow @CSI
+  @SearchAccountsSorting2 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -168,7 +168,7 @@ Feature: Verify SearchAccounts Api
       |TC_275__Positive__Search_Order__Active_______Final_______New| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_48__Positive__Username_Available___Banner_New____|TC_49__Positive__Username_Available___Banner_Final____|
 
 
-  @SearchAccountsSorting3 @NegativeFlow @CSI
+  @SearchAccountsSorting3 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -182,7 +182,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|testCondition2|testCondition3|
       |TC_276__Positive__Search_Order__Active_______Final_______Inactive| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_49__Positive__Username_Available___Banner_Final____|TC_50__Positive__Username_Available___Banner_Inactive____|
 
-  @SearchAccountsSorting4 @NegativeFlow @CSI
+  @SearchAccountsSorting4 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -196,7 +196,7 @@ Feature: Verify SearchAccounts Api
       |TC_277__Positive__Search_Order__Active_______Final| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_49__Positive__Username_Available___Banner_Final____|
 
 
-  @SearchAccountsSorting5 @NegativeFlow @CSI
+  @SearchAccountsSorting5 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -211,7 +211,7 @@ Feature: Verify SearchAccounts Api
       |TC_278__Positive__Search_Order__Active_______New_______Inactive| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_48__Positive__Username_Available___Banner_New____|TC_50__Positive__Username_Available___Banner_Inactive____|
 
 
-  @SearchAccountsSorting6 @NegativeFlow @CSI
+  @SearchAccountsSorting6 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -225,7 +225,7 @@ Feature: Verify SearchAccounts Api
       |TC_279__Positive__Search_Order__Active_______New| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|TC_48__Positive__Username_Available___Banner_New____|
 
 
-  @SearchAccountsSorting7 @NegativeFlow @CSI
+  @SearchAccountsSorting7 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -240,7 +240,7 @@ Feature: Verify SearchAccounts Api
 
 
 
-  @SearchAccountsSorting8 @NegativeFlow @CSI
+  @SearchAccountsSorting8 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -255,7 +255,7 @@ Feature: Verify SearchAccounts Api
       |TC_281__Positive__Search_Order__Final_______New_______Inactive| 0  |                 |TC_48__Positive__Username_Available___Banner_New____|TC_50__Positive__Username_Available___Banner_Inactive____|TC_49__Positive__Username_Available___Banner_Final____|
 
 
-  @SearchAccountsSorting9 @NegativeFlow @CSI
+  @SearchAccountsSorting9 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -269,7 +269,7 @@ Feature: Verify SearchAccounts Api
       |TC_282__Positive__Search_Order__Final_______New| 0  |                 |TC_48__Positive__Username_Available___Banner_New____|TC_49__Positive__Username_Available___Banner_Final____|
 
 
-  @SearchAccountsSorting10 @NegativeFlow @CSI
+  @SearchAccountsSorting10 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -283,7 +283,7 @@ Feature: Verify SearchAccounts Api
       |TC_283__Positive__Search_Order__Final_______Inactive| 0  |                 |TC_50__Positive__Username_Available___Banner_Inactive____|TC_49__Positive__Username_Available___Banner_Final____|
 
 
-  @SearchAccountsSorting11 @NegativeFlow @CSI
+  @SearchAccountsSorting11 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to UpdateUsername Api for "<testCondition2>"
@@ -297,7 +297,7 @@ Feature: Verify SearchAccounts Api
       |TC_284__Positive__Search_Order__New_______Inactive| 0  |                 |TC_50__Positive__Username_Available___Banner_Inactive____|TC_48__Positive__Username_Available___Banner_New____|
 
 
-  @SearchAccountsSorting12 @NegativeFlow @CSI
+  @SearchAccountsSorting12 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
