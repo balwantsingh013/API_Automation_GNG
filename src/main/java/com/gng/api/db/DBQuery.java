@@ -2623,7 +2623,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String CHECK_ACCOUNT_REGISTERED2 = """
             SELECT account_number
             FROM custadv_registered_accounts
-            WHERE account_number LIKE '%' || ? || '%' || ? || '%'
+            WHERE account_number LIKE CONCAT('%', ?, '%')
             FETCH FIRST 1 ROWS ONLY
             """;
 
