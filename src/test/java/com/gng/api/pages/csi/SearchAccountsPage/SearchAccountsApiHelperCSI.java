@@ -387,7 +387,10 @@ public class SearchAccountsApiHelperCSI {
 
             case TC_235__Positive__Password_____PhoneNumber:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setPhoneNumber("4046965919");
+                userInfo =
+                        ApplicationContext.get().getDbAction().getPhoneNumberFromDB();
+                payload.setPhoneNumber(userInfo.get("phone_number").toString());
+                payload.setPassword("UAT2@CustomerPass");
                 payload.setUsername(null);
                 break;
 
@@ -399,41 +402,20 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(null);
                 break;
 
-
-            case TC_237__Positive__AccountStatus_Active:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-
-                payload.setCustomerCode("13476");
-                payload.setPremisesCode("14893");
-                payload.setUsername(null);
-                break;
-
-            case TC_238__Positive__AccountStatus_Final:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-
-                payload.setCustomerCode("107176");
-                payload.setPremisesCode("109808");
-                payload.setUsername(null);
-                break;
-
-            case TC_239__Positive__AccountStatus_Inactive:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode("128350");
-                payload.setPremisesCode("131232");
-                payload.setUsername(null);
-                break;
-
-            case TC_240__Positive__AccountStatus_New:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerLastNameBusiness("LINGENFELTER");
-                payload.setUsername(null);
-                break;
-
-
             case TC_241__Positive__Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode("2370976");
-                payload.setPremisesCode("2392173");
+//                payload.setCustomerCode("2370976");
+//                payload.setPremisesCode("2392173");
+                userInfo =
+                        ApplicationContext.get().getDbAction("mariadb").getAccountNumber();
+                String accNo = userInfo.get("account_number").toString();
+
+                String ccode = accNo.substring(0, 9);          // first 9 characters
+                String pcode = accNo.substring(9);             // everything after 9th character
+
+                payload.setCustomerCode(ccode);
+                payload.setPremisesCode(pcode);
+
                 payload.setUsername(null);
                 payload.setPassword("UAT2@CustomerPass");
                 break;
@@ -892,10 +874,42 @@ public class SearchAccountsApiHelperCSI {
                  TC_281__Positive__Search_Order__Final_______New_______Inactive,
                  TC_282__Positive__Search_Order__Final_______New,
                  TC_283__Positive__Search_Order__Final_______Inactive,
-                 TC_284__Positive__Search_Order__New_______Inactive:
+                 TC_284__Positive__Search_Order__New_______Inactive,
+                 TC_237__Positive__AccountStatus_Active,
+                 TC_239__Positive__AccountStatus_Inactive,
+                 TC_238__Positive__AccountStatus_Final,
+                 TC_240__Positive__AccountStatus_New:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setPassword("UAT2@CustomerPass");
                 payload.setUsername(testContext.getUsername());
+                break;
+
+                case TC_285__Positive__Search_Order__Active_Name_order:
+                    payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                    payload.setPassword("testActiveAccounts");
+                    payload.setCustomerLastNameBusiness("BAILEY");
+                    payload.setUsername(null);
+                    break;
+
+            case TC_286__Positive__Search_Order__Final_Name_order:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPassword("testFinalAccount1");
+                payload.setCustomerLastNameBusiness("FRAZIER");
+                payload.setUsername(null);
+                break;
+
+            case TC_287__Positive__Search_Order__New_Name_order:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPassword("NewStatusAcc");
+                payload.setCustomerLastNameBusiness("ABBAS");
+                payload.setUsername(null);
+                break;
+
+            case TC_288__Positive__Search_Order__Inactive_Name_order:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPassword("InactiveAccount");
+                payload.setCustomerLastNameBusiness("ANDERSON");
+                payload.setUsername(null);
                 break;
 
             default:

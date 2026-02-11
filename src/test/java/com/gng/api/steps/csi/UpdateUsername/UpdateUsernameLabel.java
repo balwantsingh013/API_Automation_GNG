@@ -36,5 +36,7 @@ public enum UpdateUsernameLabel {
     TC_51__Positive__Username_Active___Banner_Active____,
     TC_52__Positive__Username_Active___Banner_New____,
     TC_53__Positive__Username_Active___Banner_Final____,
-    TC_54__Positive__Username_Active___Banner_Inactive____
+    TC_54__Positive__Username_Active___Banner_Inactive____,
+    TC_285__Positive__Search_Order__Active_Name_order,
+    TC_285__Positive__Search_Order__Active_Name_order_2
 }

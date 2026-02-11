@@ -2521,6 +2521,89 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACTIVE_ACCOUNT_WITH_SAME_NAME= """
+            SELECT\s
+                                        u.ucbcust_last_name,
+                                        u.ucbcust_cust_code,
+                                        u.ucbcust_first_name,
+                                        a.ucracct_prem_code,
+                                        a.ucracct_status_ind
+                                    FROM\s
+                                        ucbcust u
+                                    JOIN\s
+                                        ucracct a
+                                            ON a.ucracct_cust_code = u.ucbcust_cust_code
+                                    WHERE\s
+                                        a.ucracct_status_ind = 'A'
+                                        AND u.ucbcust_last_name IN (
+                                            SELECT last_name
+                                            FROM (
+                                                SELECT\s
+                                                    u2.ucbcust_last_name AS last_name,
+                                                    COUNT(DISTINCT u2.ucbcust_first_name) AS fn_count,
+                                                    COUNT(DISTINCT u2.ucbcust_cust_code) AS cust_count,
+                                                    COUNT(*) AS acct_count
+                                                FROM\s
+                                                    ucbcust u2
+                                                JOIN\s
+                                                    ucracct a2
+                                                        ON a2.ucracct_cust_code = u2.ucbcust_cust_code
+                                                WHERE\s
+                                                    a2.ucracct_status_ind = 'A'
+                                                GROUP BY\s
+                                                    u2.ucbcust_last_name
+                                            )
+                                            WHERE fn_count > 1
+                                              AND cust_count > 1
+                                              AND acct_count > 1
+                                        )
+                                    ORDER BY\s
+                                        DBMS_RANDOM.VALUE
+                                    FETCH FIRST 2 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_ACCOUNT_WITH_SAME_NAME2= """
+            SELECT\s
+                                        u.ucbcust_last_name,
+                                        u.ucbcust_cust_code,
+                                        u.ucbcust_first_name,
+                                        a.ucracct_prem_code,
+                                        a.ucracct_status_ind
+                                    FROM\s
+                                        ucbcust u
+                                    JOIN\s
+                                        ucracct a
+                                            ON a.ucracct_cust_code = u.ucbcust_cust_code
+                                    WHERE\s
+                                        a.ucracct_status_ind = 'A'
+                                        AND u.ucbcust_first_name=?
+                                        AND u.ucbcust_last_name IN (
+                                            SELECT last_name
+                                            FROM (
+                                                SELECT\s
+                                                    u2.ucbcust_last_name AS last_name,
+                                                    COUNT(DISTINCT u2.ucbcust_first_name) AS fn_count,
+                                                    COUNT(DISTINCT u2.ucbcust_cust_code) AS cust_count,
+                                                    COUNT(*) AS acct_count
+                                                FROM\s
+                                                    ucbcust u2
+                                                JOIN\s
+                                                    ucracct a2
+                                                        ON a2.ucracct_cust_code = u2.ucbcust_cust_code
+                                                WHERE\s
+                                                    a2.ucracct_status_ind = 'A'
+                                                GROUP BY\s
+                                                    u2.ucbcust_last_name
+                                            )
+                                            WHERE fn_count > 1
+                                              AND cust_count > 1
+                                              AND acct_count > 1
+                                        )
+                                    ORDER BY\s
+                                        DBMS_RANDOM.VALUE
+                                    FETCH FIRST 2 ROWS ONLY
+            """;
+
     public static final String SELECT_NEW_ACCOUNT_ONLY= """
             SELECT T1.UCRACCT_CUST_CODE,
                    T1.UCRACCT_PREM_CODE
@@ -2537,12 +2620,20 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String CHECK_ACCOUNT_REGISTERED2 = """
+            SELECT account_number
+            FROM custadv_registered_accounts
+            WHERE account_number LIKE '%' || ? || '%' || ? || '%'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
 
     public static final String SELECT_FINAL_ACCOUNT_ONLY= """
             SELECT T1.UCRACCT_CUST_CODE,
             T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
             WHERE T1.UCRACCT_STATUS_IND = 'F'
+            AND LENGTH(t1.ucracct_cust_code) >5
             ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -2626,331 +2717,264 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_NUMBER= """
-            SELECT a.*, b.*
-                FROM
+            SELECT\s
+                a.*,\s
+                b.*
+            FROM\s
                 ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_street_number IS NOT null
+            JOIN\s
+                ucbprem b
+                    ON a.ucracct_prem_code = b.ucbprem_code
+            WHERE\s
+                b.ucbprem_street_number IS NOT NULL
+                AND LENGTH(a.ucracct_cust_code) >= 5
             FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_NAME= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_street_name IS NOT null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_street_name IS NOT NULL\s
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_SUFFIX= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_ssfx_code IS NOT null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                                   FROM
+                                                   ucracct a
+                                                   join
+                                                    ucbprem b
+                                                    ON a.ucracct_prem_code=b.ucbprem_code
+                                                    WHERE
+                                                    b.ucbprem_ssfx_code IS NOT NULL\s
+                                                    AND LENGTH(a.ucracct_cust_code) >= 5
+                                               FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_SUFFIX= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_ssfx_code IS null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                                   FROM
+                                                   ucracct a
+                                                   join
+                                                    ucbprem b
+                                                    ON a.ucracct_prem_code=b.ucbprem_code
+                                                    WHERE
+                                                    b.ucbprem_ssfx_code IS NULL\s
+                                                    AND LENGTH(a.ucracct_cust_code) >= 5
+                                               FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_POST_DIR= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_pdir_code_post IS NOT null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_pdir_code_post IS NOT null
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_UNIT_TYPE= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_utyp_code IS NOT null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_utyp_code IS NOT null
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_UNIT_NUMBER= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_unit IS NOT null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                        FROM
+                                        ucracct a
+                                        join
+                                         ucbprem b
+                                         ON a.ucracct_prem_code=b.ucbprem_code
+                                         WHERE
+                                         b.ucbprem_unit IS NOT null
+                                         AND LENGTH(a.ucracct_cust_code) >= 5
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_UNIT_NUMBER= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_unit IS null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                        FROM
+                                        ucracct a
+                                        join
+                                         ucbprem b
+                                         ON a.ucracct_prem_code=b.ucbprem_code
+                                         WHERE
+                                         b.ucbprem_unit IS null
+                                         AND LENGTH(a.ucracct_cust_code) >= 5
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_CITY= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_city IS not null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                        FROM
+                                        ucracct a
+                                        join
+                                         ucbprem b
+                                         ON a.ucracct_prem_code=b.ucbprem_code
+                                         WHERE
+                                         b.ucbprem_city IS NOT null
+                                         AND LENGTH(a.ucracct_cust_code) >= 5
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STATE= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_stat_code IS not null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                                                FROM
+                                                                ucracct a
+                                                                join
+                                                                 ucbprem b
+                                                                 ON a.ucracct_prem_code=b.ucbprem_code
+                                                                 WHERE
+                                                                 b.ucbprem_stat_code_addr IS NOT null
+                                                                 AND LENGTH(a.ucracct_cust_code) >= 5
+                                                            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STATE= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_stat_code IS null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                        FROM
+                                        ucracct a
+                                        join
+                                         ucbprem b
+                                         ON a.ucracct_prem_code=b.ucbprem_code
+                                         WHERE
+                                         b.ucbprem_stat_code_addr IS null
+                                         AND LENGTH(a.ucracct_cust_code) >= 5
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_ZIP_CODE= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_zip IS not null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                        FROM
+                                        ucracct a
+                                        join
+                                         ucbprem b
+                                         ON a.ucracct_prem_code=b.ucbprem_code
+                                         WHERE
+                                         b.ucbprem_zipc_code IS NOT null
+                                         AND LENGTH(a.ucracct_cust_code) >= 5
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_ZIP_CODE= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_zip IS null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                                        FROM
+                                        ucracct a
+                                        join
+                                         ucbprem b
+                                         ON a.ucracct_prem_code=b.ucbprem_code
+                                         WHERE
+                                         b.ucbprem_zipc_code IS null
+                                         AND LENGTH(a.ucracct_cust_code) >= 5
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_CITY= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_city IS null
-            FETCH FIRST 1 ROWS ONLY
+                                        FROM
+                                        ucracct a
+                                        join
+                                         ucbprem b
+                                         ON a.ucracct_prem_code=b.ucbprem_code
+                                         WHERE
+                                         b.ucbprem_city IS null
+                                         AND LENGTH(a.ucracct_cust_code) >= 5
+                                    FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_UNIT_TYPE= """
-            SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_utyp_code IS null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+           SELECT a.*, b.*
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_utyp_code IS null
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_POST_DIR= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_pdir_code_post IS null
-                 AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_pdir_code_post IS null
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_NAME= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_street_name IS null
-                   AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_street_name IS NULL
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_NUMBER= """
             SELECT a.*, b.*
-            FROM ucracct a
-            JOIN ucraddr b
-                ON a.ucracct_cust_code = b.ucraddr_cust_code
-            WHERE b.ucraddr_street_number IS NULL
-              AND NOT EXISTS (
-                    SELECT 1
-                    FROM ucraddr x
-                    WHERE x.ucraddr_cust_code = b.ucraddr_cust_code
-                      AND x.ucraddr_street_number IS NOT NULL
-              )
-              AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_street_number IS null
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_PREDIRECTION= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_pdir_code_pre IS NOT null
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_pdir_code_pre IS NOT NULL\s
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_PREDIRECTION= """
             SELECT a.*, b.*
-                FROM
-                ucracct a
-                join
-                 ucraddr b
-                 ON a.ucracct_cust_code=b.ucraddr_cust_code
-                 WHERE\s
-                 b.ucraddr_pdir_code_pre IS null
-                  AND (
-                    SELECT COUNT(*)
-                    FROM ucraddr y
-                    WHERE y.ucraddr_cust_code = b.ucraddr_cust_code
-                  ) = 1
-            FETCH FIRST 1 ROWS ONLY
+                            FROM
+                            ucracct a
+                            join
+                             ucbprem b
+                             ON a.ucracct_prem_code=b.ucbprem_code
+                             WHERE
+                             b.ucbprem_pdir_code_pre IS NULL
+                             AND LENGTH(a.ucracct_cust_code) >= 5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
 
@@ -3669,6 +3693,33 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
         SELECT UCBCUST_CUST_CODE, UCBCUST_LAST_NAME FROM UCBCUST
         WHERE UCBCUST_CUST_CODE= ?
 """;
+
+    public static final String SELECT_ACCOUNT_NUMBER= """
+            SELECT u.user_name, ra.account_number
+                        FROM users u
+                        JOIN custadv_registered_accounts ra
+                            ON u.user_id = ra.user_id
+                        WHERE u.user_name ='testing1234'
+                        AND u.domain_id = 2
+                        AND u.user_name REGEXP '^[A-Za-z0-9]+$'
+                        FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_PHONE_NUMBER_FROM_DB= """
+            SELECT\s
+                t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number,
+                t.ucrtele_tele_code,
+                t.ucrtele_primary_ind
+            FROM\s
+                ucrtele t
+            JOIN\s
+                ucracct a
+                    ON t.ucrtele_cust_code = a.ucracct_cust_code
+            WHERE\s
+                t.ucrtele_primary_ind = 'Y'
+                AND LENGTH(t.ucrtele_cust_code) >= 5
+            FETCH FIRST 1 ROWS ONLY
+            """;
 
     public static final String SELECT_EMAIL_FOR_CUST_CODE= """
         SELECT GZBEMCP_EMAIL_ADDR, GZBEMCP_CUST_CODE FROM GZBEMCP

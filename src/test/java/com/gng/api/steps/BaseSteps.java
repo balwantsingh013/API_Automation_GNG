@@ -207,6 +207,60 @@ public class BaseSteps {
     public void accountsShouldBeSortedByAccountStatus() {
         validateAccountStatusSorting();
     }
+
+    @And("accounts should be alphabetically sorted by customerFirstName when status and last name match")
+    public void accountsShouldBeAlphabeticallySortedByCustomerFirstName() {
+        validateAlphabeticalSortingForMatchingStatusAndLastName();
+    }
+
+    private void validateAlphabeticalSortingForMatchingStatusAndLastName() {
+        Response response = testContext.getResponse();
+
+        List<Map<String, Object>> accounts =
+                response.jsonPath().getList("data.accounts");
+
+        if (accounts == null || accounts.size() <= 1) {
+            return; // nothing to validate
+        }
+
+        // Group accounts by (status + lastName)
+        Map<String, List<Map<String, Object>>> grouped = accounts.stream()
+                .collect(Collectors.groupingBy(acc ->
+                        acc.get("accountStatus") + "|" +
+                                acc.get("customerLastNameBusiness")
+                ));
+
+        for (Map.Entry<String, List<Map<String, Object>>> entry : grouped.entrySet()) {
+
+            List<Map<String, Object>> group = entry.getValue();
+
+            // Only validate groups with 2 or more accounts
+            if (group.size() <= 1) {
+                continue;
+            }
+
+            // Extract actual first names
+            List<String> actualNames = group.stream()
+                    .map(acc -> acc.get("customerFirstName").toString())
+                    .collect(Collectors.toList());
+
+            // Expected sorted list
+            List<String> expectedNames = new ArrayList<>(actualNames);
+            expectedNames.sort(String.CASE_INSENSITIVE_ORDER);
+
+            // Human-readable assertion
+            assertThat(
+                    "Accounts with same status and last name are NOT sorted alphabetically by customerFirstName\n" +
+                            "Group: " + entry.getKey() + "\n" +
+                            "Expected alphabetical: " + expectedNames + "\n" +
+                            "Actual:               " + actualNames,
+                    actualNames,
+                    equalTo(expectedNames)
+            );
+        }
+    }
+
+
     private void validateAccountStatusSorting() {
         Response response = testContext.getResponse();
 

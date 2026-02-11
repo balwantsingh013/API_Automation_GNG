@@ -557,6 +557,46 @@ public class DBAction {
         return result;
     }
 
+    public List<Map<String, Object>> getActiveAccountWithSameName() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_ACCOUNT_WITH_SAME_NAME;
+
+        logQueryInAllure("get customer code", query);
+
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+//        // Log SQL, result, and execution time
+//        SimplifiedExtentReportManager.logDatabaseQuery(
+//                query,
+//                result.toString(),
+//                elapsed
+//        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getActiveAccountWithSameName2(String firstname) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_ACCOUNT_WITH_SAME_NAME2;
+
+        logQueryInAllure("get customer code", query);
+
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query, firstname);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+//        // Log SQL, result, and execution time
+//        SimplifiedExtentReportManager.logDatabaseQuery(
+//                query,
+//                result.toString(),
+//                elapsed
+//        );
+
+        return result;
+    }
+
     public Map<String, Object> getInactiveAccountOnly() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_INACTIVE_ACCOUNT_ONLY;
@@ -2207,6 +2247,46 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getPhoneNumberFromDB() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PHONE_NUMBER_FROM_DB;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountNumber() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_NUMBER;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getEmailAddressFromCustCode(String customerCode) {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_EMAIL_FOR_CUST_CODE;
@@ -2874,15 +2954,20 @@ public class DBAction {
         return result;
     }
 
-    public Map<String, Object> getRegisteredAccount2(String custCode) {
+    public Map<String, Object> getRegisteredAccount2(String custCode, String premCode) {
         long startTime = System.currentTimeMillis();
 
-        String queryTemplate = DBQuery.CHECK_ACCOUNT_REGISTERED;
+        String queryTemplate = DBQuery.CHECK_ACCOUNT_REGISTERED2;
 
         // Replace ? with quoted and escaped custCode for logging
         String loggedQuery = queryTemplate.replaceFirst(
                 "\\?",
                 "'" + custCode.replace("'", "''") + "'"
+        );
+
+        loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + premCode.replace("'", "''") + "'"
         );
 
         // Log expanded SQL
@@ -2892,7 +2977,7 @@ public class DBAction {
 
         try {
             // Execute parameterized query (safe)
-            result = jdbcTemplate.queryForMap(queryTemplate, custCode);
+            result = jdbcTemplate.queryForMap(queryTemplate, custCode, premCode);
         } catch (EmptyResultDataAccessException e) {
             result = null;
         }

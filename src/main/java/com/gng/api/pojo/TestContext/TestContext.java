@@ -51,6 +51,7 @@ public class TestContext {
     private String rewardId;
     private String activeRewardId;
     private String pendingRewardId;
+    private String firstName;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes

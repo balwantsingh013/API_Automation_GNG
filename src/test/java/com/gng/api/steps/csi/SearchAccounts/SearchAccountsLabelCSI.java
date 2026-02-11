@@ -128,5 +128,10 @@ public enum SearchAccountsLabelCSI {
     TC_281__Positive__Search_Order__Final_______New_______Inactive,
     TC_282__Positive__Search_Order__Final_______New,
     TC_283__Positive__Search_Order__Final_______Inactive,
-    TC_284__Positive__Search_Order__New_______Inactive
+    TC_284__Positive__Search_Order__New_______Inactive,
+    TC_285__Positive__Search_Order__Active_Name_order,
+    TC_286__Positive__Search_Order__Final_Name_order,
+    TC_287__Positive__Search_Order__New_Name_order,
+    TC_288__Positive__Search_Order__Inactive_Name_order
+
 }

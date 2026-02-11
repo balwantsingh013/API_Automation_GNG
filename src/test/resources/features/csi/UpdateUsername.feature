@@ -43,9 +43,9 @@ Feature: Verify UpdateUsername Api
     Examples:
       | testCondition                                            | errorCode | errorMessage | success |
 #      | TC_47__Positive__Username_Available___Banner_Active____  | 0         |              | true    |
-      | TC_48__Positive__Username_Available___Banner_New____     | 0         |              | true    |
-#      | TC_49__Positive__Username_Available___Banner_Final____   | 0         |              | true    |
-      | TC_50__Positive__Username_Available___Banner_Inactive____   | 0         |              | true    |
+#      | TC_48__Positive__Username_Available___Banner_New____     | 0         |              | true    |
+      | TC_49__Positive__Username_Available___Banner_Final____   | 0         |              | true    |
+#      | TC_50__Positive__Username_Available___Banner_Inactive____   | 0         |              | true    |
 #      | TC_51__Positive__Username_Active___Banner_Active____     | 0         |              | true    |
 #      | TC_52__Positive__Username_Active___Banner_New____      | 0         |              | true    |
 #      | TC_53__Positive__Username_Active___Banner_Final____      | 0         |              | true    |

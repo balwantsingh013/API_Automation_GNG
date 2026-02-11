@@ -10,6 +10,7 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -51,6 +52,7 @@ public class UpdateUsernameApiHelper {
 
     public void preparePayloadForTestCondition(UpdateUsernameRequest payload, UpdateUsernameLabel testCondition) {
         String newUsername="";
+        List<Map<String, Object>> usersInfo=null;
         Map<String, Object> userInfo = null;
         if(testContext.getUsername() == null || testContext.getUsername().isEmpty()) {
              newUsername = FakerDataGenerator.generateAlphanumeric(8);
@@ -207,6 +209,45 @@ public class UpdateUsernameApiHelper {
 
             // POSITIVE CASES
 
+            case TC_285__Positive__Search_Order__Active_Name_order:
+                newUsername= "sameNameSortA";
+                payload.setUsername(newUsername);
+                testContext.setUsername(newUsername);
+                while (true) {
+                    usersInfo = ApplicationContext.get().getDbAction().getActiveAccountWithSameName();
+                    custCode = usersInfo.getFirst().get("UCBCUST_CUST_CODE").toString();
+                    premCode = usersInfo.getFirst().get("UCRACCT_PREM_CODE").toString();
+                    testContext.setFirstName(usersInfo.getFirst().get("UCBCUST_FIRST_NAME").toString());
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                    if (registeredAccount == null) {
+                        userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+                }
+                break;
+
+            case TC_285__Positive__Search_Order__Active_Name_order_2:
+                newUsername= "sameNameSortA";
+                payload.setUsername(newUsername);
+                testContext.setUsername(newUsername);
+                while (true) {
+                    usersInfo = ApplicationContext.get().getDbAction().getActiveAccountWithSameName2(testContext.getFirstName());
+                    custCode = usersInfo.getFirst().get("UCBCUST_CUST_CODE").toString();
+                    premCode = usersInfo.getFirst().get("UCRACCT_PREM_CODE").toString();
+                    Map<String, Object> registeredAccount =
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                    if (registeredAccount == null) {
+                        userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
+                        payload.setCustomerCode(custCode);
+                        payload.setPremisesCode(premCode);
+                        break;
+                    }
+                }
+                break;
+
             case TC_47__Positive__Username_Available___Banner_Active____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
@@ -215,7 +256,7 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
@@ -235,7 +276,7 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
@@ -255,7 +296,7 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
@@ -275,7 +316,7 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
