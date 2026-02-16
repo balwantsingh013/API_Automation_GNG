@@ -2442,6 +2442,20 @@ public class DBAction {
         return rowsAffected;
     }
 
+    public int rollbackPasswordToPrev(String username) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.UPDATE_PASSWORD;
+        logQueryInAllure("delete registered account", query);
+
+        int rowsAffected = jdbcTemplate.update(query, username);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        return rowsAffected;
+    }
+
+
+
 
     public Map<String, Object> getRequiredAccountDetails() {
         long startTime = System.currentTimeMillis();

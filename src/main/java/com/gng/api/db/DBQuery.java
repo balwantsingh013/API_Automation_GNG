@@ -3879,6 +3879,12 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE account_number LIKE CONCAT('%', ?, '%')
             """;
 
+    public static final String UPDATE_PASSWORD= """
+            update users
+            set password='UAT2@CustomerPass'
+            where user_name=?
+            """;
+
     public static final String SELECT_ACCOUNT_DETAILS_REQUIRED= """
             SELECT
                 u.user_name,

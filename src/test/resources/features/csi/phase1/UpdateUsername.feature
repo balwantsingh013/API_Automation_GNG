@@ -33,6 +33,22 @@ Feature: Verify UpdateUsername Api
 
   @UpdateUsernamePositive1234 @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
+    When a request is made to UpdatePassword Api for "<testCondition2>"
+    When a request is made to UpdateUsername Api for "<testCondition>"
+    Then verify response code of "UpdateUsername" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the response should have success as "<success>"
+    And verify if the username is present
+    And verify if the account is accosiated with the username
+    And performs rollback operation
+
+    Examples:
+      | testCondition                                            | errorCode | errorMessage | success |testCondition2|
+      | TC_47__Positive__Username_Available___Banner_Active____  | 0         |              | true    |update1        |
+
+
+  @UpdateUsernamePositive1234 @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition>"
     Then verify response code of "UpdateUsername" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
@@ -43,7 +59,6 @@ Feature: Verify UpdateUsername Api
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | success |
-      | TC_47__Positive__Username_Available___Banner_Active____  | 0         |              | true    |
       | TC_48__Positive__Username_Available___Banner_New____     | 0         |              | true    |
       | TC_49__Positive__Username_Available___Banner_Final____   | 0         |              | true    |
       | TC_50__Positive__Username_Available___Banner_Inactive____   | 0         |              | true    |

@@ -29,6 +29,10 @@ public class UpdatePasswordPage extends BasePage {
         testContext.setResponse(response);
     }
 
+    public void rollbackPasswordToPreviousOne(){
+        helper.changePasswordWithQuery();
+    }
+
     public void verifyUpdatedPassword(){
         helper.validateIfPasswordIsChanged();
     }

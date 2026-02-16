@@ -20,4 +20,5 @@ public enum UpdatePasswordLabel {
     TC_24__Negative__Invalid_Password__Reused_Password,
     TC_24__Negative__Invalid_Password__Reused_Password_2,
     TC_25__Positive__Password__Updated,
+    update1
 }

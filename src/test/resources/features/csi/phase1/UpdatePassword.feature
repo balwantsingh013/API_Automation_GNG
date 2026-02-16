@@ -39,6 +39,7 @@ Feature: Verify UpdatePassword Api
     Then verify response code of "UpdatePassword" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     And verify if the new password is different from the old password
+    And change the password back to the old one
 
     Examples:
       | testCondition                      | errorCode | errorMessage |

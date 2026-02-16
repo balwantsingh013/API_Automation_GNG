@@ -29,6 +29,10 @@ public class UpdatePasswordApiHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, UpdatePasswordRequest.class);
     }
 
+    public void changePasswordWithQuery(){
+        int updatePassword= ApplicationContext.get().getDbAction("mariadb").rollbackPasswordToPrev(testContext.getUsername());
+    }
+
     public void preparePayloadForTestCondition(UpdatePasswordRequest payload, UpdatePasswordLabel testCondition) {
         Map<String, Object> userNames = null;
 
@@ -121,6 +125,12 @@ public class UpdatePasswordApiHelper {
                 userNames = ApplicationContext.get().getDbAction("mariadb").getPasswordForUser(userName);
                 testContext.setPassword(userNames.get("password").toString());
                 testContext.setUsername(userName);
+                break;
+
+            case update1:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername("000000000000000");
+                payload.setPassword("UAT2@CustomerPass");
                 break;
 
             case TC_24__Negative__Invalid_Password__Reused_Password_2:
