@@ -9,14 +9,14 @@ databases:
   oracle:
     driverClassName: "oracle.jdbc.OracleDriver"
     serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
-    userName: "AUTOTESTGNG"
-    password: "vrt20260206"
+    userName: "KJADHAV"
+    password: "vrt20240602"
 
   mariadb:
     driverClassName: "org.mariadb.jdbc.Driver"
     serverName: "jdbc:mariadb://10.209.34.6:3308/billvantage_gng_uat1"
-    userName: "AUTOTESTGNG"
-    password: "V3rTeX@dm!N#432"
+    userName: "KJADHAV"
+    password: "vrt20240602"
 
 enableLogsOnPass: true
 enableLogsOnFail: true

@@ -1,0 +1,48 @@
+package com.gng.api.steps.csi.GetUsageHistory;
+
+public enum GetUsageHistoryLabel {
+
+    get_usage_history,
+    get_usage_history_mandatory,
+
+    TC_01__Negative__Missing_Request_ID,
+    TC_02__Negative__Invalid_Request_ID__Length,
+    TC_03__Negative__Duplicate_Request_ID,
+    TC_04__Negative__Missing_customerCode,
+    TC_05__Negative__Invalid_customerCode__Length,
+    TC_06__Negative__Invalid_customerCode__Format,
+    TC_07__Negative__Missing_premisesCode,
+    TC_08__Negative__Invalid_premisesCode__Length,
+    TC_09__Negative__Invalid_premisesCode__Format,
+    TC_10__Negative__Invalid_Account_Number,
+    TC_11__Negative__Missing_Number_of_Months,
+    TC_12__Negative__Invalid_Number_of_Months__Format__Not_a_Number,
+    TC_13__Negative__Invalid_Number_of_Months__Format__Zero_Value,
+    TC_14__Negative__Invalid_Number_of_Months__Format__Negative_Number,
+    TC_15__Negative__Invalid_Number_of_Months__Length,
+    TC_16__Negative__New_Account_Not_Allowed,
+
+    TC_17__Positive__Usage_History_Service_Number_Format,
+    TC_18__Positive__Usage_History_Bill_Date_Format,
+    TC_19__Positive__Usage_History_Usage_From_Date_Format,
+    TC_20__Positive__Usage_History_Usage_To_Date_Format,
+    TC_21__Positive__Usage_History_Average_Daily_Actual_Consumption_Format,
+    TC_22__Positive__Usage_History_Average_Daily_Billed_Consumption_Format,
+    TC_23__Positive__Usage_History_Total_Billed_Consumption_Format,
+    TC_24__Positive__Usage_History_Days_Of_Service_Format,
+    TC_25__Positive__Usage_History_Reading_Format,
+    TC_26__Positive__Usage_History_Read_Type_Format__Actual,
+    TC_27__Positive__Usage_History_Read_Type_Format__Zero_Consumption,
+    TC_28__Positive__Usage_History_Read_Type_Format__Estimated,
+    TC_29__Positive__Usage_History_Read_Date_Format,
+    TC_30__Positive__Usage_History_Average_Temperature_Format,
+    TC_31__Positive__Usage_History_Heating_Degree_Days_Format,
+    TC_32__Positive__Usage_History_Bill_History_Transaction_Format,
+    TC_33__Positive__No_Usage_History_Active,
+    TC_34__Positive__No_Usage_History_Final,
+    TC_35__Positive__No_Usage_History_Inactive,
+    TC_36__Positive__Usage_History_Too_Old_Valid_Number_of_Months,
+    TC_37__Positive__Usage_History_Less_Than_Requested_Months,
+    TC_38__Positive__Usage_History_Equals_Requested_Months,
+    TC_39__Positive__Usage_History_Greater_Than_Requested_Months
+}

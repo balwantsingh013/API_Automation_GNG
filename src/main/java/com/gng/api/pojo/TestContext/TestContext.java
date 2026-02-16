@@ -1,6 +1,7 @@
 package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
+import com.gng.api.pojo.CSIPojo.GetUsageHistory.GetUsageHistoryResponse;
 import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
 
 import com.gng.api.pojo.CSIPojo.GetAccountInfo.GetAccountInformationResponse;
@@ -52,6 +53,14 @@ public class TestContext {
     private String activeRewardId;
     private String pendingRewardId;
     private String firstName;
+    private String customerCode1;
+    private String customerCode2;
+    private String customerCode3;
+    private String customerCode4;
+    private String customerCode5;
+    private String customerCode6;
+    private String customerCode7;
+    private String customerCode8;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes
@@ -73,6 +82,9 @@ public class TestContext {
     @Getter @Setter
     private Object saveEnrollmentApiPage;
     private SaveEnrollmentResponse saveEnrollmentResponse;
+    @Getter @Setter
+    private Object getUsageHistoryApiPage;
+    private GetUsageHistoryResponse getUsageHistoryResponse;
     @Getter @Setter
     private Object getMarketerReferenceDataApiPage;
     private SaveEnrollmentResponse getMarketerReferenceDataResponse;

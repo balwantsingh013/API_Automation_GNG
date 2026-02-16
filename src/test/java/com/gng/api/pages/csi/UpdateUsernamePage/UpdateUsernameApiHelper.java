@@ -219,7 +219,7 @@ public class UpdateUsernameApiHelper {
                     premCode = usersInfo.getFirst().get("UCRACCT_PREM_CODE").toString();
                     testContext.setFirstName(usersInfo.getFirst().get("UCBCUST_FIRST_NAME").toString());
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
@@ -238,7 +238,7 @@ public class UpdateUsernameApiHelper {
                     custCode = usersInfo.getFirst().get("UCBCUST_CUST_CODE").toString();
                     premCode = usersInfo.getFirst().get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
@@ -256,13 +256,14 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode1(custCode);
                         break;
                     }
                 }
@@ -276,13 +277,14 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode2(custCode);
                         break;
                     }
                 }
@@ -296,13 +298,14 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode3(custCode);
                         break;
                     }
                 }
@@ -316,13 +319,14 @@ public class UpdateUsernameApiHelper {
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                     Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode,premCode);
+                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
                     if (registeredAccount == null) {
                         userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode4(custCode);
                         break;
                     }
                 }
@@ -345,6 +349,7 @@ public class UpdateUsernameApiHelper {
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode5(custCode);
                         break;
                     }
                 }
@@ -366,6 +371,7 @@ public class UpdateUsernameApiHelper {
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode6(custCode);
                         break;
                     }
                 }
@@ -388,6 +394,7 @@ public class UpdateUsernameApiHelper {
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode7(custCode);
                         break;
                     }
                 }
@@ -409,6 +416,7 @@ public class UpdateUsernameApiHelper {
                         payload.setPremisesCode(premCode);
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
+                        testContext.setCustomerCode8(custCode);
                         break;
                     }
                 }

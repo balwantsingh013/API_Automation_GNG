@@ -37,4 +37,9 @@ public class SearchAccountsApiStepsCSI {
                 SearchAccountsLabelCSI.valueOf(testCondition)
         );
     }
+
+    @When("performs rollback operation")
+    public void perform_rollback_operation(){
+        searchAccountsPageCSI.performRollback();
+    }
 }

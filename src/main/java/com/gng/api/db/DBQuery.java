@@ -2462,21 +2462,48 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_FIRST_NAME= """
-            SELECT a.*
-            FROM ucracct a
-            JOIN ucbcust b
-                ON a.ucracct_cust_code = b.ucbcust_cust_code
-            WHERE b.ucbcust_first_name IS NOT NULL
-            FETCH FIRST 1 ROWS ONLY
+            SELECT b.ucbcust_first_name, a.ucracct_cust_code, a.ucracct_prem_code
+                        FROM ucracct a
+                        JOIN ucbcust b
+                            ON a.ucracct_cust_code = b.ucbcust_cust_code
+                        WHERE b.ucbcust_first_name IS NOT NULL
+                        AND LENGTH(a.ucracct_cust_code)>=5
+                        FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_FIRST_NAME= """
+            SELECT b.ucbcust_first_name, a.ucracct_cust_code, a.ucracct_prem_code
+                        FROM ucracct a
+                        JOIN ucbcust b
+                            ON a.ucracct_cust_code = b.ucbcust_cust_code
+                        WHERE b.ucbcust_first_name IS NULL
+                        AND LENGTH(a.ucracct_cust_code)>=5
+                        order by ucracct_cust_code desc
+                        FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_RESIDENTIAL_ACCOUNT= """
             SELECT *
-                                                              FROM ucracct
-                                                              JOIN ucbcust
-                                                                  ON ucracct_cust_code = ucbcust_cust_code
-                                                              WHERE ucbcust_first_name IS NULL
-                                                              FETCH FIRST 1 ROWS ONLY
+                FROM
+                ucracct
+                join
+                 ucrserv
+                 ON ucracct_prem_code=ucrserv_prem_code
+                 WHERE ucrserv_scls_code = 'RS'
+                 and length(ucracct_cust_code)>=5
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_COMMERCIAL_ACCOUNT= """
+            SELECT *
+                FROM
+                ucracct
+                join
+                 ucrserv
+                 ON ucracct_prem_code=ucrserv_prem_code
+                 WHERE ucrserv_scls_code = 'CM'
+                 and length(ucracct_cust_code)>=5
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_FINAL_ACCOUNT_WITH_NICKNAME= """
@@ -2613,6 +2640,82 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_VALID_USAGE_HISTORY_ACCOUNT= """
+            SELECT\s
+                ua.ucracct_cust_code,
+                ua.ucracct_prem_code,
+                ua.ucracct_status_ind
+            FROM\s
+                ucracct ua
+            WHERE\s
+                LENGTH(ua.ucracct_cust_code) >= 5
+                AND ua.ucracct_status_ind <> 'N'
+                AND EXISTS (
+                    SELECT 1\s
+                    FROM ubbchst ch
+                    WHERE ch.ubbchst_cust_code = ua.ucracct_cust_code
+                      AND ch.ubbchst_prem_code = ua.ucracct_prem_code
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NO_USAGE_HISTORY_ACTIVE_ACCOUNT= """
+            SELECT\s
+                ua.ucracct_cust_code,
+                ua.ucracct_prem_code,
+                ua.ucracct_status_ind
+            FROM\s
+                ucracct ua
+            WHERE\s
+                LENGTH(ua.ucracct_cust_code) >= 5
+                AND ua.ucracct_status_ind = 'A'
+                AND NOT EXISTS (
+                    SELECT 1\s
+                    FROM ubbchst ch
+                    WHERE ch.ubbchst_cust_code = ua.ucracct_cust_code
+                      AND ch.ubbchst_prem_code = ua.ucracct_prem_code
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NO_USAGE_HISTORY_FINAL_ACCOUNT= """
+            SELECT\s
+                ua.ucracct_cust_code,
+                ua.ucracct_prem_code,
+                ua.ucracct_status_ind
+            FROM\s
+                ucracct ua
+            WHERE\s
+                LENGTH(ua.ucracct_cust_code) >= 5
+                AND ua.ucracct_status_ind = 'A'
+                AND NOT EXISTS (
+                    SELECT 1\s
+                    FROM ubbchst ch
+                    WHERE ch.ubbchst_cust_code = ua.ucracct_cust_code
+                      AND ch.ubbchst_prem_code = ua.ucracct_prem_code
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NO_USAGE_HISTORY_INACTIVE_ACCOUNT= """
+            SELECT\s
+                ua.ucracct_cust_code,
+                ua.ucracct_prem_code,
+                ua.ucracct_status_ind
+            FROM\s
+                ucracct ua
+            WHERE\s
+                LENGTH(ua.ucracct_cust_code) >= 5
+                AND ua.ucracct_status_ind = 'A'
+                AND NOT EXISTS (
+                    SELECT 1\s
+                    FROM ubbchst ch
+                    WHERE ch.ubbchst_cust_code = ua.ucracct_cust_code
+                      AND ch.ubbchst_prem_code = ua.ucracct_prem_code
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String CHECK_ACCOUNT_REGISTERED = """
             SELECT account_number
             FROM custadv_registered_accounts
@@ -2645,6 +2748,101 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                    WHERE T1.UCRACCT_STATUS_IND = 'I'
                                    ORDER BY DBMS_RANDOM.VALUE
                                    FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ACTUAL_READING= """
+            SELECT *
+            FROM urrshis x
+            WHERE x.urrshis_rtyp_code = 'A'
+            AND x.URRSHIS_ACTION_DATE >= ADD_MONTHS(SYSDATE, -12)
+              AND EXISTS (
+                    SELECT 1
+                    FROM ucracct a
+                    WHERE x.urrshis_cust_code = a.ucracct_cust_code
+                      AND x.urrshis_prem_code = a.ucracct_prem_code
+                      AND a.ucracct_status_ind <> 'N'
+                      AND LENGTH(a.ucracct_cust_code) >= 5
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ACTUAL_READING2= """
+            SELECT *
+            FROM urrshis x
+            WHERE x.urrshis_rtyp_code = 'A'
+            AND x.URRSHIS_ACTION_DATE >= ADD_MONTHS(SYSDATE, -12)
+              AND EXISTS (
+                    SELECT 1
+                    FROM ucracct a
+                    WHERE x.urrshis_cust_code = a.ucracct_cust_code
+                      AND x.urrshis_prem_code = a.ucracct_prem_code
+                      AND a.ucracct_status_ind <> 'N'
+                      AND LENGTH(a.ucracct_cust_code) >= 5
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ACTUAL_READING3= """
+            SELECT *
+                                    FROM urrshis x
+                                    WHERE x.urrshis_rtyp_code = 'A'
+                                      AND x.urrshis_action_date >= ADD_MONTHS(SYSDATE, -12)
+                                      AND EXISTS (
+                                            SELECT 1
+                                            FROM ucracct a
+                                            WHERE a.ucracct_cust_code = x.urrshis_cust_code
+                                              AND a.ucracct_prem_code = x.urrshis_prem_code
+                                              AND a.ucracct_status_ind <> 'N'
+                                              AND LENGTH(a.ucracct_cust_code) >= 5
+                                        )
+                                        AND NOT EXISTS (
+                                            SELECT 1
+                                            FROM ucracct a
+                                            WHERE a.ucracct_cust_code = x.urrshis_cust_code
+                                              AND a.ucracct_prem_code = x.urrshis_prem_code
+                                              AND a.ucracct_status_ind = 'A'
+                                              AND LENGTH(a.ucracct_cust_code) >= 5
+                                        )
+                                      AND NOT EXISTS (
+                                            SELECT 1
+                                            FROM urrshis y
+                                            WHERE y.urrshis_cust_code = x.urrshis_cust_code
+                                              AND y.urrshis_prem_code = x.urrshis_prem_code
+                                              AND y.urrshis_action_date < ADD_MONTHS(SYSDATE, -12)
+                                        )
+                                    FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ZERO_READING= """
+            SELECT *
+            FROM urrshis x
+            WHERE x.urrshis_rtyp_code = 'Z'
+            AND x.URRSHIS_ACTION_DATE >= ADD_MONTHS(SYSDATE, -12)
+              AND EXISTS (
+                    SELECT 1
+                    FROM ucracct a
+                    WHERE x.urrshis_cust_code = a.ucracct_cust_code
+                      AND x.urrshis_prem_code = a.ucracct_prem_code
+                      AND a.ucracct_status_ind <> 'N'
+                      AND LENGTH(a.ucracct_cust_code) >= 5
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_ESTIMATED_READING= """
+            SELECT *
+            FROM urrshis x
+            WHERE x.urrshis_rtyp_code = 'E'
+            AND x.URRSHIS_ACTION_DATE >= ADD_MONTHS(SYSDATE, -12)
+              AND EXISTS (
+                    SELECT 1
+                    FROM ucracct a
+                    WHERE x.urrshis_cust_code = a.ucracct_cust_code
+                      AND x.urrshis_prem_code = a.ucracct_prem_code
+                      AND a.ucracct_status_ind <> 'N'
+                      AND LENGTH(a.ucracct_cust_code) >= 5
+                )
+            FETCH FIRST 1 ROWS ONLY
             """;
 
 
@@ -3675,6 +3873,12 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String DELETE_REGISTERED_ACCOUNT= """
+            DELETE
+            FROM custadv_registered_accounts
+            WHERE account_number LIKE CONCAT('%', ?, '%')
+            """;
+
     public static final String SELECT_ACCOUNT_DETAILS_REQUIRED= """
             SELECT
                 u.user_name,
@@ -3709,7 +3913,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT\s
                 t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number,
                 t.ucrtele_tele_code,
-                t.ucrtele_primary_ind
+                t.ucrtele_primary_ind,
+                a.ucracct_cust_code,
+                a.ucracct_prem_code
             FROM\s
                 ucrtele t
             JOIN\s
@@ -3719,6 +3925,14 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 t.ucrtele_primary_ind = 'Y'
                 AND LENGTH(t.ucrtele_cust_code) >= 5
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_COUNT_OF_RECORDS= """
+            SELECT COUNT(*)
+            FROM ucbcust
+            JOIN ucracct
+              ON ucracct.ucracct_cust_code = ucbcust.ucbcust_cust_code
+            WHERE ucbcust.ucbcust_last_name = 'CASCADE OAKS APTS'
             """;
 
     public static final String SELECT_EMAIL_FOR_CUST_CODE= """

@@ -19,6 +19,10 @@ public class SearchAccountsPageCSI extends BasePage {
         this.helper = new SearchAccountsApiHelperCSI(testContext);
     }
 
+    public void performRollback(){
+        helper.performRollbackOperation();
+    }
+
     public void validateResponseForTestConditions(SearchAccountsLabelCSI apiLabel, SearchAccountsLabelCSI testCondition) {
         // Build base payload
         SearchAccountsRequestCSI payload = helper.preparePayload(apiLabel);

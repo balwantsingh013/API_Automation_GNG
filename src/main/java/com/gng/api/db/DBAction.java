@@ -455,6 +455,47 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getResidentialAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_RESIDENTIAL_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getCommercialAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_COMMERCIAL_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
     public Map<String, Object> getFinalAccountWithNickname() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_FINAL_ACCOUNT_WITH_NICKNAME;
@@ -661,6 +702,193 @@ public class DBAction {
         );
 
         return exists;
+    }
+
+
+    public Map<String, Object> getAccountWithActualReading() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_ACTUAL_READING;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithActualReading3() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_ACTUAL_READING3;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getAccountWithActualReading2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_ACTUAL_READING2;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithZeroReading() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_ZERO_READING;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getAccountWithEstimatedReading() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_ESTIMATED_READING;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+
+    public Map<String, Object> getValidUsageHistoryAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_VALID_USAGE_HISTORY_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getNoUsageHistoryActiveAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_NO_USAGE_HISTORY_ACTIVE_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getNoUsageHistoryFinalAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_NO_USAGE_HISTORY_FINAL_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getNoUsageHistoryInactiveAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_NO_USAGE_HISTORY_INACTIVE_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
     }
 
 
@@ -2202,6 +2430,19 @@ public class DBAction {
         return result;
     }
 
+    public int performRollbackForUpdateUsername(String accountNumber) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.DELETE_REGISTERED_ACCOUNT;
+        logQueryInAllure("delete registered account", query);
+
+        int rowsAffected = jdbcTemplate.update(query, accountNumber);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        return rowsAffected;
+    }
+
+
     public Map<String, Object> getRequiredAccountDetails() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_DETAILS_REQUIRED;
@@ -2250,6 +2491,26 @@ public class DBAction {
     public Map<String, Object> getPhoneNumberFromDB() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_PHONE_NUMBER_FROM_DB;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> countOfRecords() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_COUNT_OF_RECORDS;
 
         logQueryInAllure("get customer code", query);
 
@@ -2954,7 +3215,7 @@ public class DBAction {
         return result;
     }
 
-    public Map<String, Object> getRegisteredAccount2(String custCode, String premCode) {
+    public Map<String, Object> getRegisteredAccount2(String custCode) {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.CHECK_ACCOUNT_REGISTERED2;
@@ -2965,10 +3226,6 @@ public class DBAction {
                 "'" + custCode.replace("'", "''") + "'"
         );
 
-        loggedQuery = queryTemplate.replaceFirst(
-                "\\?",
-                "'" + premCode.replace("'", "''") + "'"
-        );
 
         // Log expanded SQL
         logQueryInAllure("check account number registered", loggedQuery);
@@ -2977,19 +3234,19 @@ public class DBAction {
 
         try {
             // Execute parameterized query (safe)
-            result = jdbcTemplate.queryForMap(queryTemplate, custCode, premCode);
+            result = jdbcTemplate.queryForMap(queryTemplate, custCode);
         } catch (EmptyResultDataAccessException e) {
             result = null;
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log expanded SQL, result, and execution time
-        SimplifiedExtentReportManager.logDatabaseQuery(
-                loggedQuery,          // <-- use expanded query here
-                String.valueOf(result),
-                elapsed
-        );
+//         Log expanded SQL, result, and execution time
+//        SimplifiedExtentReportManager.logDatabaseQuery(
+//                loggedQuery,          // <-- use expanded query here
+//                String.valueOf(result),
+//                elapsed
+//        );
 
         return result;
     }
