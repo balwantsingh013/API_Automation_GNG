@@ -3817,6 +3817,206 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
         FETCH FIRST 1 ROWS ONLY
     """;
 
+    public static final String SELECT_ACCOUNT_WITH_ACTIVE_BANK_DRAFT= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status = 'A'
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_PRENOTIFICATION_BANK_DRAFT= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status = 'P'
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+    public static final String SELECT_ACCOUNT_WITH_CANCELLED_BANK_DRAFT= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status = 'C'
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+    public static final String SELECT_ACCOUNT_WITH_INACTIVE_BANK_DRAFT= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status = 'I'
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_CHECKING_ACCOUNT= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status IS NOT NULL      -- Account has bank draft configuration
+                AND b.utrbank_status = 'A'                   -- Routing/bank record is ACTIVE
+                AND a.ucracct_bank_acct IS NOT NULL          -- Bank account number exists
+                AND a.ucracct_check_saving_ind = 'C'  -- Bank account type is CHECKING
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_SAVINGS_ACCOUNT= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status IS NOT NULL      -- Account has bank draft configuration
+                AND b.utrbank_status = 'A'                   -- Routing/bank record is ACTIVE
+                AND a.ucracct_bank_acct IS NOT NULL          -- Bank account number exists
+                AND a.ucracct_check_saving_ind = 'S'  -- Bank account type is CHECKING
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_BANK_NAME= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status IS NOT NULL     -- Account has bank draft configuration
+                AND b.utrbank_status = 'A'                  -- Routing/bank record is ACTIVE
+                AND a.ucracct_bank_acct IS NOT NULL         -- Bank account number exists
+                AND c.ucbcust_last_name IS NOT NULL         -- Bank name exists            
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_BANK_DRAFT_AND_ROUTING_NUMBER= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status IS NOT NULL       -- Account has bank draft configuration
+                AND b.utrbank_status = 'A'                    -- Routing/bank record is ACTIVE
+                AND (
+                        b.utrbank_transit_1 IS NOT NULL\s
+                    OR  b.utrbank_transit_2 IS NOT NULL\s
+                    OR  b.utrbank_transit_3 IS NOT NULL
+                    )                                         -- Routing number components exist
+                AND a.ucracct_bank_acct IS NOT NULL
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_BANK_DRAFT_AND_ACCOUNT_NUMBER= """
+            SELECT\s
+                a.ucracct_cust_code   AS customer_code,
+                a.ucracct_prem_code   AS premises_code
+            FROM\s
+                UCRACCT a
+            JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status IS NOT NULL     -- Account has bank draft configuration
+                AND b.utrbank_status = 'A'                  -- Routing/bank record is ACTIVE
+                AND a.ucracct_bank_acct IS NOT NULL
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_BANK_DRAFT= """
+            SELECT\s
+                a.ucracct_cust_code      AS customer_code,
+                a.ucracct_prem_code      AS premises_code
+            FROM\s
+                UCRACCT a
+            LEFT JOIN\s
+                UTRBANK b\s
+                    ON a.ucracct_bank_code = b.utrbank_code
+            LEFT JOIN\s
+                UCBCUST c\s
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE\s
+                a.ucracct_draft_acct_status IS NULL          
+                AND (b.utrbank_status IS NULL\s
+                     OR b.utrbank_status <> 'A')             
+        FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_ACCOUNT_DETAILS_TC177= """
             SELECT \s
                 t1.ucracct_cust_code, \s

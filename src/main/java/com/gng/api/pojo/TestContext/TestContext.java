@@ -1,6 +1,7 @@
 package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
+import com.gng.api.pojo.CSIPojo.GetBankDraftInfo.GetBankDraftInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetUsageHistory.GetUsageHistoryResponse;
 import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
 
@@ -88,6 +89,9 @@ public class TestContext {
     @Getter @Setter
     private Object getMarketerReferenceDataApiPage;
     private SaveEnrollmentResponse getMarketerReferenceDataResponse;
+    @Getter @Setter
+    private Object getBankDraftInfoApiPage;
+    private GetBankDraftInfoResponse getBankDraftInfoResponse;
     @Getter @Setter
     private Object getReasonsForLeavingApiPage;
     private GetReasonsForLeavingResponse getReasonsForLeavingResponse;
