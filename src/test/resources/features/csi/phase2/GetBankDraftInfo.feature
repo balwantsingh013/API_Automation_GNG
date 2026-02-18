@@ -25,18 +25,40 @@ Feature: Verify GetBankDraftInfo Api
     When a request is made to GetBankDraftInfo Api for "<testCondition>"
     Then verify response code of "GetBankDraftInfo" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-#    And the response should have data as "<data>"
-#    And the response should have bankDraftStatus as "<bankDraftStatus>"
+    And the response should have data as "<data>"
 
     Examples:
       | testCondition                                           | errorCode | errorMessage | data    | bankDraftStatus   |
       | TC_11__Positive__No_BankDraft_Info                      | 0         |              | notNull | null              |
+
+  @GetBankDraftInfoPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetBankDraftInfo Api for "<testCondition>"
+    Then verify response code of "GetBankDraftInfo" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the response should have data as "<data>"
+    And the response should have bankDraftStatus as "<bankDraftStatus>"
+
+    Examples:
+      | testCondition                                           | errorCode | errorMessage | data    | bankDraftStatus   |
       | TC_12__Positive__BankDraftStatus_Active                 | 0         |              | notNull | ACTIVE            |
       | TC_13__Positive__BankDraftStatus_PreNotification        | 0         |              | notNull | PRENOTIFICATION   |
       | TC_14__Positive__BankDraftStatus_Canceled               | 0         |              | notNull | CANCELED          |
       | TC_15__Positive__BankDraftStatus_Inactive               | 0         |              | notNull | INACTIVE          |
-      | TC_16__Positive__BankRoutingNumber                      | 0         |              | notNull | notNull           |
-      | TC_17__Positive__BankAccountNumber                      | 0         |              | notNull | notNull           |
-      | TC_18__Positive__BankAccountType_Checking               | 0         |              | notNull | CHECKING          |
-      | TC_19__Positive__BankAccountType_Savings                | 0         |              | notNull | SAVINGS           |
-      | TC_20__Positive__BankName                               | 0         |              | notNull | notNull           |
+
+
+  @GetBankDraftInfoPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetBankDraftInfo Api for "<testCondition>"
+    Then verify response code of "GetBankDraftInfo" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the response should have data as "<data>"
+    And perform the validation for "<testCondition>"
+
+    Examples:
+      | testCondition                                           | errorCode | errorMessage | data    |
+      | TC_16__Positive__BankRoutingNumber                      | 0         |              | notNull |
+      | TC_17__Positive__BankAccountNumber                      | 0         |              | notNull |
+      | TC_18__Positive__BankAccountType_Checking               | 0         |              | notNull |
+      | TC_19__Positive__BankAccountType_Savings                | 0         |              | notNull |
+      | TC_20__Positive__BankName                               | 0         |              | notNull |

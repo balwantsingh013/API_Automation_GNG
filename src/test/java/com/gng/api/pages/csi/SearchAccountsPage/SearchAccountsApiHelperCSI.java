@@ -9,6 +9,7 @@ import com.gng.api.steps.csi.SearchAccounts.SearchAccountsLabelCSI;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -90,6 +91,7 @@ public class SearchAccountsApiHelperCSI {
         String accountNo="";
         String customerCode="";
         String premisesCode="";
+        List<Map<String, Object>> accountsInfo = null;
 
         switch (testCondition) {
 
@@ -367,9 +369,8 @@ public class SearchAccountsApiHelperCSI {
 
             case TC_232__Positive__Last4SSN_____EmailAddress:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                // Fetch a valid customer with matching email + SSN
                 userInfo =
-                        ApplicationContext.get().getDbAction().getCustomerWithLastNameAndSSN();
+                        ApplicationContext.get().getDbAction().getCustomerWithEmailAndSSN();
                 payload.setLastFourSocialSecurityNumber(userInfo.get("ucbcust_ssn_last_four").toString());
 
                 payload.setEmailAddress(userInfo.get("GZBEMCP_EMAIL_ADDR").toString());
@@ -381,7 +382,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 // Fetch a valid customer with matching phone + SSN
                 userInfo =
-                        ApplicationContext.get().getDbAction().getCustomerWithLastNameAndSSN();
+                        ApplicationContext.get().getDbAction().getCustomerWithPhoneAndSSN();
                 String phoneNumber= userInfo.get("ucrtele_phone_area").toString()+userInfo.get("ucrtele_phone_number").toString();
                         payload.setPhoneNumber(phoneNumber);
                 payload.setLastFourSocialSecurityNumber(userInfo.get("ucbcust_ssn_last_four").toString());
@@ -398,23 +399,27 @@ public class SearchAccountsApiHelperCSI {
                 payload.setPassword(password);
                 userInfo =
                         ApplicationContext.get().getDbAction("mariadb").getRequiredAccountDetails();
+                String accNo= userInfo.get("account_number").toString();
+                String custCode = accNo.substring(0, 9);
+
+                userInfo =
+                        ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
                 break;
 
             case TC_235__Positive__Password_____CustomerLastNameBusiness:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 userInfo =
-                        ApplicationContext.get().getDbAction("mariadb").getRequiredAccountDetails();
+                        ApplicationContext.get().getDbAction("mariadb").getRequiredAccountDetails2();
 
                 accountNo= userInfo.get("account_number").toString();
                 customerCode = accountNo.substring(0, 9);
-                premisesCode = accountNo.substring(9);
 
                 userInfo =
-                        ApplicationContext.get().getDbAction().getLastnameForCustomerCode(customerCode);
-
+                        ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode);
 
                 payload.setCustomerLastNameBusiness(userInfo.get("ucbcust_last_name").toString());
                 payload.setUsername(null);
+                payload.setPassword("TestingUsr91");
                 break;
 
             case TC_236__Positive__Password_____CustomerCode_____PremisesCode:
@@ -428,24 +433,25 @@ public class SearchAccountsApiHelperCSI {
                 payload.setCustomerCode(customerCode);
                 payload.setPremisesCode(premisesCode);
                 payload.setUsername(null);
+                userInfo =
+                        ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode);
                 break;
 
             case TC_237__Positive__Password_____EmailAddress:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-//                payload.setEmailAddress("uzair.shafi@vertexone.ai");
                payload.setUsername(null);
 
                 userInfo =
-                        ApplicationContext.get().getDbAction("mariadb").getRequiredAccountDetails();
+                        ApplicationContext.get().getDbAction("mariadb").getRequiredAccountDetails3();
 
                 accountNo= userInfo.get("account_number").toString();
                 customerCode = accountNo.substring(0, 9);
-                premisesCode = accountNo.substring(9);
 
                 userInfo =
                         ApplicationContext.get().getDbAction().getEmailAddressFromCustCode(customerCode);
 
                 payload.setEmailAddress(userInfo.get("GZBEMCP_EMAIL_ADDR").toString());
+                payload.setPassword("Testing93");
                 break;
 
             case TC_238__Positive__Password_____PhoneNumber:
@@ -459,31 +465,28 @@ public class SearchAccountsApiHelperCSI {
 
             case TC_239__Positive__BusinessName_____FederalTaxID:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerLastNameBusiness("CASCADE OAKS APTS");
-                payload.setFederalTaxID("123456789");
+                payload.setCustomerLastNameBusiness("MANE PRIORITY");
+                payload.setFederalTaxID("789123456");
                         userInfo =
                         ApplicationContext.get().getDbAction().countOfRecords();
+                        accountsInfo= ApplicationContext.get().getDbAction().getTheMatchingAccounts("MANE PRIORITY");
                 payload.setUsername(null);
                 payload.setPassword(null);
                 break;
 
             case TC_245__Positive__No_Username:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                while (true) {
-                    userInfo = ApplicationContext.get().getDbAction().getInactiveAccountOnly2();
-                    String custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
-                    String premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
-                    Map<String, Object> registeredAccount =
-                            ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode);
-                    if (registeredAccount == null) {
-                        userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
-                        userInfo = ApplicationContext.get().getDbAction().getUserAccountInfo(custCode);
-                        payload.setCustomerCode(custCode);
-                        payload.setPremisesCode(premCode);
-                        break;
-                    }
-                }
-                payload.setPassword("UAT2@CustomerPass");
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerLastNameBusiness("MANE PRIORITY");
+                payload.setFederalTaxID("789123456");
+                Map<String, Object> registeredAccount =
+                        ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount("3935333");
+                Map<String, Object> registeredAccount2 =
+                        ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount("1314486");
+                userInfo = ApplicationContext.get().getDbAction().getAccountInformation();
+                userInfo = ApplicationContext.get().getDbAction().getAccountInformation2();
+
+                payload.setPassword(null);
                 payload.setUsername(null);
                 break;
 
@@ -501,7 +504,7 @@ public class SearchAccountsApiHelperCSI {
 
             case TC_247__Positive__No_Nickname:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                userInfo = ApplicationContext.get().getDbAction().getAccountWithoutNickname();
+                userInfo = ApplicationContext.get().getDbAction().getAccountWithoutNickname2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
@@ -918,6 +921,62 @@ public class SearchAccountsApiHelperCSI {
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
                 payload.setPassword("UAT2@CustomerPass");
                 payload.setUsername(testContext.getUsername());
+
+                String customerCode1 = testContext.getCustomerCode1();
+                String customerCode2 = testContext.getCustomerCode2();
+                String customerCode3 = testContext.getCustomerCode3();
+                String customerCode4 = testContext.getCustomerCode4();
+                String customerCode5 = testContext.getCustomerCode5();
+                String customerCode6 = testContext.getCustomerCode6();
+                String customerCode7 = testContext.getCustomerCode7();
+                String customerCode8 = testContext.getCustomerCode8();
+
+                if (customerCode1 != null && !customerCode1.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode1);
+                }
+
+                if (customerCode2 != null && !customerCode2.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode2);
+
+                }
+
+                if (customerCode3 != null && !customerCode3.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode3);
+
+                }
+
+                if (customerCode4 != null && !customerCode4.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode4);
+
+                }
+
+                if (customerCode5 != null && !customerCode5.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode5);
+
+                }
+
+                if (customerCode6 != null && !customerCode6.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode6);
+
+                }
+
+                if (customerCode7 != null && !customerCode7.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode7);
+
+                }
+
+                if (customerCode8 != null && !customerCode8.isEmpty()) {
+                    userInfo =
+                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode8);
+
+                }
                 break;
 
                 case TC_287__Positive__Search_Order__Active_Name_order:

@@ -45,8 +45,8 @@ public class GetAccountRewardsResponse {
         private String status;
         private String rewardEstablishedDate;
         private String rewardInitiatedDate;
-        private Integer remainingOccurrences;
-        private int totalOccurrences;
+        private Object remainingOccurrences;
+        private Object totalOccurrences;
         private String restrictions;
         private String referenceCustomerCode;
         private String referencePremisesCode;

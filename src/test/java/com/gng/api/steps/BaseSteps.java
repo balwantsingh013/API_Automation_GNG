@@ -213,6 +213,83 @@ public class BaseSteps {
         validateAlphabeticalSortingForMatchingStatusAndLastName();
     }
 
+    @And("the response should have bankDraftStatus as {string}")
+    public void validateBankDraftStatusStep(String expectedStatus) {
+        validateBankDraftStatus(expectedStatus);
+    }
+
+    private void validateBankDraftStatus(String expectedStatus) {
+        Response response = testContext.getResponse();
+
+        String actualStatus = response.jsonPath().getString("data.bankDraftStatus");
+
+        assertThat("bankDraftStatus value mismatch", actualStatus, equalTo(expectedStatus));
+    }
+
+    @And("perform the validation for {string}")
+    public void performValidationForTestCondition(String testCondition) {
+        validateBankDraftInfoFields(testCondition);
+    }
+
+    private void validateBankDraftInfoFields(String testCondition) {
+        Response response = testContext.getResponse();
+
+        switch (testCondition) {
+
+            case "TC_16__Positive__BankRoutingNumber": {
+                String routing = response.jsonPath().getString("data.bankDraftRoutingNumber");
+
+                assertThat("bankDraftRoutingNumber should not be null", routing, notNullValue());
+                assertThat("bankDraftRoutingNumber should be at least 4 characters long", routing.length() >= 4, equalTo(true));
+
+                String last4 = routing.substring(routing.length() - 4);
+                String maskedPart = routing.substring(0, routing.length() - 4);
+
+                assertThat("bankDraftRoutingNumber last 4 digits should be numeric", last4.matches("\\d{4}"), equalTo(true));
+                assertThat("bankDraftRoutingNumber should be masked except last 4 digits", maskedPart.matches("[*]+"), equalTo(true));
+                break;
+            }
+
+            case "TC_17__Positive__BankAccountNumber": {
+                String acct = response.jsonPath().getString("data.bankDraftAccountNumber");
+
+                assertThat("bankDraftAccountNumber should not be null", acct, notNullValue());
+                assertThat("bankDraftAccountNumber should be at least 4 characters long", acct.length() >= 4, equalTo(true));
+
+                String last4 = acct.substring(acct.length() - 4);
+                String maskedPart = acct.substring(0, acct.length() - 4);
+
+                assertThat("bankDraftAccountNumber last 4 digits should be numeric", last4.matches("\\d{4}"), equalTo(true));
+                assertThat("bankDraftAccountNumber should be masked except last 4 digits", maskedPart.matches("[*]+"), equalTo(true));
+                break;
+            }
+
+            case "TC_18__Positive__BankAccountType_Checking": {
+                String type = response.jsonPath().getString("data.bankDraftAccountType");
+                assertThat("bankDraftAccountType mismatch", type, equalTo("CHECKING"));
+                break;
+            }
+
+            case "TC_19__Positive__BankAccountType_Savings": {
+                String type = response.jsonPath().getString("data.bankDraftAccountType");
+                assertThat("bankDraftAccountType mismatch", type, equalTo("SAVINGS"));
+                break;
+            }
+
+            case "TC_20__Positive__BankName": {
+                String bankName = response.jsonPath().getString("data.bankName");
+                assertThat("bankName should not be null", bankName, notNullValue());
+                assertThat("bankName should not be empty", bankName.trim().isEmpty(), equalTo(false));
+                break;
+            }
+
+            default:
+                throw new IllegalArgumentException("Unknown test condition: " + testCondition);
+        }
+    }
+
+
+
     private void validateAlphabeticalSortingForMatchingStatusAndLastName() {
         Response response = testContext.getResponse();
 
