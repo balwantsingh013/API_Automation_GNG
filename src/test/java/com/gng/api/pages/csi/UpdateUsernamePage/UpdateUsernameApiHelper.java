@@ -251,86 +251,158 @@ public class UpdateUsernameApiHelper {
             case TC_47__Positive__Username_Available___Banner_Active____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
-                while (true) {
+
+                int attempts = 0;
+
+                while (attempts < 20) {
+                    attempts++;
+
                     userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly2();
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
                     Map<String, Object> registeredAccount =
                             ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
+
                     if (registeredAccount == null) {
-                        userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
+                        userInfo = ApplicationContext.get().getDbAction("mariadb")
+                                .getUserAccountInfoNew(custCode + premCode);
+
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
+
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
                         testContext.setCustomerCode1(custCode);
+
                         break;
                     }
                 }
+
+                // Optional: handle case where no valid account was found
+                if (attempts >= 20) {
+                    throw new RuntimeException("No unregistered ACTIVE account found after 20 attempts.");
+                }
+
                 break;
+
 
             case TC_48__Positive__Username_Available___Banner_New____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
-                while (true) {
+
+                int noOfattempts = 0;
+
+                while (noOfattempts < 20) {
+                    noOfattempts++;
+
                     userInfo = ApplicationContext.get().getDbAction().getNewAccountOnly2();
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
                     Map<String, Object> registeredAccount =
                             ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
+
                     if (registeredAccount == null) {
-                        userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
+                        userInfo = ApplicationContext.get().getDbAction("mariadb")
+                                .getUserAccountInfoNew(custCode + premCode);
+
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
+
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
                         testContext.setCustomerCode2(custCode);
+
                         break;
                     }
                 }
+
+                // Optional: handle case where no valid account was found
+                if (noOfattempts >= 20) {
+                    throw new RuntimeException("No unregistered account found after 20 attempts.");
+                }
+
                 break;
+
 
             case TC_49__Positive__Username_Available___Banner_Final____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
-                while (true) {
+
+                int retry = 0;
+
+                while (retry < 20) {
+                    retry++;
+
                     userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly2();
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
                     Map<String, Object> registeredAccount =
                             ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
+
                     if (registeredAccount == null) {
-                        userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
+                        userInfo = ApplicationContext.get().getDbAction("mariadb")
+                                .getUserAccountInfoNew(custCode + premCode);
+
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
+
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
                         testContext.setCustomerCode3(custCode);
+
                         break;
                     }
                 }
+
+                // Optional: fail if no valid account found
+                if (retry >= 20) {
+                    throw new RuntimeException("No unregistered FINAL account found after 20 attempts.");
+                }
+
                 break;
+
 
             case TC_50__Positive__Username_Available___Banner_Inactive____:
                 payload.setUsername(newUsername);
                 testContext.setUsername(newUsername);
-                while (true) {
+
+                int retryCount = 0;
+
+                while (retryCount < 20) {
+                    retryCount++;
+
                     userInfo = ApplicationContext.get().getDbAction().getInactiveAccountOnly2();
                     custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                     premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
+
                     Map<String, Object> registeredAccount =
                             ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount2(custCode);
+
                     if (registeredAccount == null) {
-                        userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
+                        userInfo = ApplicationContext.get().getDbAction("mariadb")
+                                .getUserAccountInfoNew(custCode + premCode);
+
                         payload.setCustomerCode(custCode);
                         payload.setPremisesCode(premCode);
+
                         testContext.setCustomerCode(custCode);
                         testContext.setPremisesCode(premCode);
                         testContext.setCustomerCode4(custCode);
+
                         break;
                     }
                 }
+
+                // Optional: fail if no valid inactive account found
+                if (retryCount >= 20) {
+                    throw new RuntimeException("No unregistered INACTIVE account found after 20 attempts.");
+                }
+
                 break;
+
 
 
             case TC_51__Positive__Username_Active___Banner_Active____:

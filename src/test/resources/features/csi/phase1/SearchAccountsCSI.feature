@@ -71,7 +71,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_240__Positive__AccountStatus_Active| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|
 
-  @SearchAccounts103 @NegativeFlow @CSI  @searchAccountsCSI
+  @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"
@@ -83,7 +83,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_241__Positive__AccountStatus_Final| 0  |                 |TC_49__Positive__Username_Available___Banner_Final____|
 
-  @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
+  @SearchAccounts321 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"

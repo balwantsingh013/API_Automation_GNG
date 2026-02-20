@@ -2849,6 +2849,35 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getAccountNo(String customerCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_NO;
+
+        // Escape single quotes
+        String safeCustomer = customerCode.replace("'", "''");
+        String safePrem = premCode.replace("'", "''");
+
+        // Replace both ? placeholders in order
+        String loggedQuery = query
+                .replaceFirst("\\?", "'" + safeCustomer + "'")
+                .replaceFirst("\\?", "'" + safePrem + "'");
+
+        logQueryInAllure("get customer and premises code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, customerCode, premCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
     public Map<String, Object> getTheAccountInfo(String customerCode) {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_INFO;

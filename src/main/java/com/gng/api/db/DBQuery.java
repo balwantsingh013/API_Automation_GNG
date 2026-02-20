@@ -4017,46 +4017,70 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_BANK_DRAFT_AND_ROUTING_NUMBER= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
-                UCRACCT a
-            JOIN\s
-                UTRBANK b\s
-                    ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
-                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status IS NOT NULL       -- Account has bank draft configuration
-                AND b.utrbank_status = 'A'                    -- Routing/bank record is ACTIVE
-                AND (
-                        b.utrbank_transit_1 IS NOT NULL\s
-                    OR  b.utrbank_transit_2 IS NOT NULL\s
-                    OR  b.utrbank_transit_3 IS NOT NULL
-                    )                                         -- Routing number components exist
-                AND a.ucracct_bank_acct IS NOT NULL
-                FETCH FIRST 1 ROWS ONLY
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                CASE
+                    WHEN a.ucracct_draft_acct_status IS NOT NULL
+                         AND b.utrbank_status = 'A'
+                    THEN
+                        '******' ||
+                        SUBSTR(
+                            LPAD(b.utrbank_transit_1, 4, '0') ||
+                            LPAD(b.utrbank_transit_2, 4, '0') ||
+                            b.utrbank_transit_3,
+                            -4
+                        )
+                    ELSE ''
+                END AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status IS NOT NULL
+              AND b.utrbank_status = 'A'
+              AND (
+                    b.utrbank_transit_1 IS NOT NULL
+                 OR b.utrbank_transit_2 IS NOT NULL
+                 OR b.utrbank_transit_3 IS NOT NULL
+                  )
+              AND a.ucracct_bank_acct IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_BANK_DRAFT_AND_ACCOUNT_NUMBER= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
-                UCRACCT a
-            JOIN\s
-                UTRBANK b\s
-                    ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
-                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status IS NOT NULL     -- Account has bank draft configuration
-                AND b.utrbank_status = 'A'                  -- Routing/bank record is ACTIVE
-                AND a.ucracct_bank_acct IS NOT NULL
-                FETCH FIRST 1 ROWS ONLY
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                CASE
+                    WHEN a.ucracct_draft_acct_status IS NOT NULL
+                         AND b.utrbank_status = 'A'
+                    THEN
+                        '******' ||
+                        SUBSTR(
+                            LPAD(b.utrbank_transit_1, 4, '0') ||
+                            LPAD(b.utrbank_transit_2, 4, '0') ||
+                            b.utrbank_transit_3,
+                            -4
+                        )
+                    ELSE ''
+                END AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status IS NOT NULL
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_BANK_DRAFT= """
@@ -4364,6 +4388,18 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
         SELECT UCBCUST_CUST_CODE, UCBCUST_LAST_NAME FROM UCBCUST
         WHERE UCBCUST_CUST_CODE= ?
 """;
+
+    public static final String SELECT_ACCOUNT_NO= """
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                '******' || SUBSTR(REGEXP_REPLACE(a.ucracct_bank_acct, '[^0-9]', ''), -4) AS maskedAccountNumber
+            FROM UCRACCT a
+            WHERE a.ucracct_cust_code = ?
+              AND a.ucracct_prem_code = ?
+              AND a.ucracct_bank_acct IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
+            """;
 
     public static final String SELECT_ACCOUNT_NUMBER= """
             SELECT u.user_name, ra.account_number

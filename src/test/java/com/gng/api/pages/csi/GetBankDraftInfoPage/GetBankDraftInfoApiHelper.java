@@ -140,6 +140,11 @@ public class GetBankDraftInfoApiHelper {
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                String custCode= accountInfo.get("customer_code").toString();
+
+                String premCode= accountInfo.get("premises_code").toString();
+                accountInfo = ApplicationContext.get().getDbAction().getAccountNo(custCode, premCode);
+
                 break;
 
             case TC_18__Positive__BankAccountType_Checking:
