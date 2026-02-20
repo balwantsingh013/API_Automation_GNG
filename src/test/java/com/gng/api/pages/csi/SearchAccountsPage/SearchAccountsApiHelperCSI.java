@@ -483,8 +483,8 @@ public class SearchAccountsApiHelperCSI {
                         ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount("3935333");
                 Map<String, Object> registeredAccount2 =
                         ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount("1314486");
-                userInfo = ApplicationContext.get().getDbAction().getAccountInformation();
-                userInfo = ApplicationContext.get().getDbAction().getAccountInformation2();
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo("3935333");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo("1314486");
 
                 payload.setPassword(null);
                 payload.setUsername(null);
@@ -497,8 +497,9 @@ public class SearchAccountsApiHelperCSI {
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
                 payload.setPassword("UAT2@CustomerPass");
-
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
                 payload.setUsername(null);
                 break;
 
@@ -506,10 +507,11 @@ public class SearchAccountsApiHelperCSI {
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 userInfo = ApplicationContext.get().getDbAction().getAccountWithoutNickname2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
-
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
                 payload.setUsername(null);
                 break;
 
@@ -519,11 +521,11 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where firstName IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithFirstName();
-
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
-
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
                 payload.setUsername(null);
                 break;
 
@@ -533,11 +535,11 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where firstName is NOT set
                userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutFirstName();
-
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
-
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo2(custCode);
                 payload.setUsername(null);
                 break;
 
@@ -546,10 +548,13 @@ public class SearchAccountsApiHelperCSI {
 
 
                 userInfo = ApplicationContext.get().getDbAction().getResidentialAccount();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
+
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
 
@@ -560,9 +565,12 @@ public class SearchAccountsApiHelperCSI {
 
                 userInfo = ApplicationContext.get().getDbAction().getCommercialAccount();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
+
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -573,10 +581,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an Industrial account (customerType = 'IN')
                 userInfo =
                         ApplicationContext.get().getDbAction().getIndustrialAccount();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -586,10 +596,12 @@ public class SearchAccountsApiHelperCSI {
 
                 userInfo =
                         ApplicationContext.get().getDbAction().getAgricultureAccount();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -600,10 +612,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch a Multi-Family account (customerType = 'MF')
                 userInfo =
                         ApplicationContext.get().getDbAction().getMultiFamilyAccount();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -615,10 +629,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch a Seasonal account (customerType = 'SE')
                 userInfo =
                         ApplicationContext.get().getDbAction().getSeasonalAccount();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -629,10 +645,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch a Senior Citizen account (customerType = 'SR')
                 userInfo =
                         ApplicationContext.get().getDbAction().getSeniorCitizenAccount();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -643,10 +661,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street number IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithStreetNumber();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -657,10 +677,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street number is NOT set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutStreetNumber();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -671,10 +693,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street pre-direction IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithStreetPreDirection();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -685,10 +709,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street pre-direction is NOT set
                userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutStreetPreDirection();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -699,10 +725,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street name IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithStreetName();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -714,10 +742,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street suffix IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithStreetSuffix();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -728,10 +758,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street suffix is NOT set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutStreetSuffix();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -742,10 +774,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where street post-direction IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithStreetPostDirection();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -756,10 +790,12 @@ public class SearchAccountsApiHelperCSI {
 
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutStreetPostDirection();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -769,10 +805,12 @@ public class SearchAccountsApiHelperCSI {
 
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithUnitType();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -783,10 +821,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where unit type is NOT set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutUnitType();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -797,10 +837,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where unit number IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithUnitNumber();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -811,10 +853,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where unit number is NOT set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutUnitNumber();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -825,10 +869,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where city IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithCity();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -839,10 +885,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where city is NOT set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutCity();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -853,10 +901,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where state IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithState();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -867,10 +917,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where state is NOT set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutState();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -881,10 +933,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where zip code IS set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithZipCode();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -895,10 +949,12 @@ public class SearchAccountsApiHelperCSI {
                 // Fetch an account where zip code is NOT set
                 userInfo =
                         ApplicationContext.get().getDbAction().getAccountWithoutZipCode();
+                custCode=userInfo.get("UCRACCT_CUST_CODE").toString();
 
                 payload.setCustomerCode(userInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(userInfo.get("UCRACCT_PREM_CODE").toString());
                 payload.setPassword("UAT2@CustomerPass");
+                userInfo = ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
 
                 payload.setUsername(null);
                 break;
@@ -916,8 +972,7 @@ public class SearchAccountsApiHelperCSI {
                  TC_286__Positive__Search_Order__New_______Inactive,
                  TC_240__Positive__AccountStatus_Active,
                  TC_241__Positive__AccountStatus_Final,
-                 TC_242__Positive__AccountStatus_Inactive,
-                 TC_243__Positive__AccountStatus_New:
+                 TC_242__Positive__AccountStatus_Inactive:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
                 payload.setPassword("UAT2@CustomerPass");
                 payload.setUsername(testContext.getUsername());
@@ -933,12 +988,12 @@ public class SearchAccountsApiHelperCSI {
 
                 if (customerCode1 != null && !customerCode1.isEmpty()) {
                     userInfo =
-                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode1);
+                            ApplicationContext.get().getDbAction().getTheAccountInfo2(customerCode1);
                 }
 
                 if (customerCode2 != null && !customerCode2.isEmpty()) {
                     userInfo =
-                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode2);
+                            ApplicationContext.get().getDbAction().getTheAccountInfo2(customerCode2);
 
                 }
 
@@ -950,7 +1005,7 @@ public class SearchAccountsApiHelperCSI {
 
                 if (customerCode4 != null && !customerCode4.isEmpty()) {
                     userInfo =
-                            ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode4);
+                            ApplicationContext.get().getDbAction().getTheAccountInfo2(customerCode4);
 
                 }
 
@@ -978,6 +1033,21 @@ public class SearchAccountsApiHelperCSI {
 
                 }
                 break;
+
+            case TC_243__Positive__AccountStatus_New:
+            payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
+            payload.setPassword("UAT2@CustomerPass");
+            payload.setUsername(testContext.getUsername());
+
+            String custCode2 = testContext.getCustomerCode2();
+
+            if (custCode2 != null && !custCode2.isEmpty()) {
+                userInfo =
+                        ApplicationContext.get().getDbAction().getTheAccountInfo2(custCode2);
+
+            }
+
+            break;
 
                 case TC_287__Positive__Search_Order__Active_Name_order:
                     payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));

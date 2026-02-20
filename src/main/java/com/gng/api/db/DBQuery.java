@@ -2483,7 +2483,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_RESIDENTIAL_ACCOUNT= """
-            SELECT *
+            SELECT UCRACCT_PREM_CODE, UCRACCT_CUST_CODE
                 FROM
                 ucracct
                 join
@@ -2495,7 +2495,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_COMMERCIAL_ACCOUNT= """
-            SELECT *
+            SELECT UCRACCT_PREM_CODE, UCRACCT_CUST_CODE
                 FROM
                 ucracct
                 join
@@ -2874,7 +2874,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_INDUSTRIAL_ACCOUNT= """
-            SELECT *
+            SELECT UCRACCT_PREM_CODE, UCRACCT_CUST_CODE
                 FROM
                 ucracct
                 join
@@ -2885,7 +2885,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_AGRICULTURAL_ACCOUNT= """
-            SELECT *
+            SELECT UCRACCT_PREM_CODE, UCRACCT_CUST_CODE
                 FROM
                 ucracct
                 join
@@ -2896,7 +2896,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_MULTIFAMILY_ACCOUNT= """
-            SELECT *
+            SELECT UCRACCT_PREM_CODE, UCRACCT_CUST_CODE
                 FROM
                 ucracct
                 join
@@ -2907,7 +2907,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_SEASONAL_ACCOUNT= """
-            SELECT *
+            SELECT UCRACCT_PREM_CODE, UCRACCT_CUST_CODE
                 FROM
                 ucracct
                 join
@@ -2918,7 +2918,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_SENIOR_CITIZEN_ACCOUNT= """
-            SELECT *
+            SELECT UCRACCT_PREM_CODE, UCRACCT_CUST_CODE
                 FROM
                 ucracct
                 join
@@ -2930,8 +2930,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_WITH_STREET_NUMBER= """
             SELECT\s
-                a.*,\s
-                b.*
+                a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
             FROM\s
                 ucracct a
             JOIN\s
@@ -2944,7 +2943,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_NAME= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -2957,7 +2956,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_SUFFIX= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                                    FROM
                                                    ucracct a
                                                    join
@@ -2970,7 +2969,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_SUFFIX= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                                    FROM
                                                    ucracct a
                                                    join
@@ -2983,7 +2982,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_POST_DIR= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -2996,7 +2995,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_UNIT_TYPE= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -3009,7 +3008,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_UNIT_NUMBER= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                         FROM
                                         ucracct a
                                         join
@@ -3022,7 +3021,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_UNIT_NUMBER= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                         FROM
                                         ucracct a
                                         join
@@ -3035,7 +3034,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_CITY= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                         FROM
                                         ucracct a
                                         join
@@ -3048,7 +3047,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STATE= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                                                 FROM
                                                                 ucracct a
                                                                 join
@@ -3061,7 +3060,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STATE= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                         FROM
                                         ucracct a
                                         join
@@ -3074,7 +3073,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_ZIP_CODE= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                         FROM
                                         ucracct a
                                         join
@@ -3087,7 +3086,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_ZIP_CODE= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                         FROM
                                         ucracct a
                                         join
@@ -3100,7 +3099,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_CITY= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                                         FROM
                                         ucracct a
                                         join
@@ -3113,7 +3112,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_UNIT_TYPE= """
-           SELECT a.*, b.*
+           SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -3126,7 +3125,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_POST_DIR= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -3139,7 +3138,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_NAME= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -3151,7 +3150,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_NUMBER= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -3164,7 +3163,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_STREET_PREDIRECTION= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -3177,7 +3176,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_STREET_PREDIRECTION= """
-            SELECT a.*, b.*
+            SELECT a.UCRACCT_PREM_CODE, a.UCRACCT_CUST_CODE
                             FROM
                             ucracct a
                             join
@@ -3832,81 +3831,129 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     """;
 
     public static final String SELECT_ACCOUNT_WITH_ACTIVE_BANK_DRAFT= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
-                UCRACCT a
-            JOIN\s
-                UTRBANK b\s
-                    ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
-                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status = 'A'
-                AND b.utrbank_status = 'A'
-                AND a.ucracct_bank_acct IS NOT NULL
-                FETCH FIRST 1 ROWS ONLY
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                CASE
+                    WHEN a.ucracct_draft_acct_status = 'A'
+                         AND b.utrbank_status = 'A'
+                    THEN
+                        '******' ||
+                        SUBSTR(
+                            LPAD(b.utrbank_transit_1, 4, '0') ||
+                            LPAD(b.utrbank_transit_2, 4, '0') ||
+                            b.utrbank_transit_3,
+                            -4
+                        )
+                    ELSE ''
+                END AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status = 'A'
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_PRENOTIFICATION_BANK_DRAFT= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
-                UCRACCT a
-            JOIN\s
-                UTRBANK b\s
-                    ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
-                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status = 'P'
-                AND b.utrbank_status = 'A'
-                AND a.ucracct_bank_acct IS NOT NULL
-                FETCH FIRST 1 ROWS ONLY
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                CASE\s
+                    WHEN a.ucracct_draft_acct_status = 'P'
+                         AND b.utrbank_status = 'A'
+                    THEN
+                        '******' ||
+                        SUBSTR(
+                            LPAD(b.utrbank_transit_1, 4, '0') ||
+                            LPAD(b.utrbank_transit_2, 4, '0') ||
+                            b.utrbank_transit_3,
+                            -4
+                        )
+                    ELSE ''
+                END AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status = 'P'
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
             """;
 
 
     public static final String SELECT_ACCOUNT_WITH_CANCELLED_BANK_DRAFT= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
-                UCRACCT a
-            JOIN\s
-                UTRBANK b\s
-                    ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
-                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status = 'C'
-                AND b.utrbank_status = 'A'
-                AND a.ucracct_bank_acct IS NOT NULL
-                FETCH FIRST 1 ROWS ONLY
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                CASE
+                    WHEN a.ucracct_draft_acct_status = 'C'
+                         AND b.utrbank_status = 'A'
+                    THEN
+                        '******' ||
+                        SUBSTR(
+                            LPAD(b.utrbank_transit_1, 4, '0') ||
+                            LPAD(b.utrbank_transit_2, 4, '0') ||
+                            b.utrbank_transit_3,
+                            -4
+                        )
+                    ELSE ''
+                END AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status = 'C'
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
             """;
 
 
     public static final String SELECT_ACCOUNT_WITH_INACTIVE_BANK_DRAFT= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
-                UCRACCT a
-            JOIN\s
-                UTRBANK b\s
-                    ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
-                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status = 'I'
-                AND b.utrbank_status = 'A'
-                AND a.ucracct_bank_acct IS NOT NULL
-                FETCH FIRST 1 ROWS ONLY
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                CASE
+                    WHEN a.ucracct_draft_acct_status = 'I'
+                         AND b.utrbank_status = 'A'
+                    THEN
+                        '******' ||
+                        SUBSTR(
+                            LPAD(b.utrbank_transit_1, 4, '0') ||
+                            LPAD(b.utrbank_transit_2, 4, '0') ||
+                            b.utrbank_transit_3,
+                            -4
+                        )
+                    ELSE ''
+                END AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status = 'I'
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_CHECKING_ACCOUNT= """
@@ -3965,7 +4012,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 a.ucracct_draft_acct_status IS NOT NULL     -- Account has bank draft configuration
                 AND b.utrbank_status = 'A'                  -- Routing/bank record is ACTIVE
                 AND a.ucracct_bank_acct IS NOT NULL         -- Bank account number exists
-                AND c.ucbcust_last_name IS NOT NULL         -- Bank name exists            
+                AND c.ucbcust_last_name IS NOT NULL         
                 FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -4014,21 +4061,19 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_WITHOUT_BANK_DRAFT= """
             SELECT\s
-                a.ucracct_cust_code      AS customer_code,
-                a.ucracct_prem_code      AS premises_code
-            FROM\s
-                UCRACCT a
-            LEFT JOIN\s
-                UTRBANK b\s
-                    ON a.ucracct_bank_code = b.utrbank_code
-            LEFT JOIN\s
-                UCBCUST c\s
-                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status IS NULL          
-                AND (b.utrbank_status IS NULL\s
-                     OR b.utrbank_status <> 'A')             
-        FETCH FIRST 1 ROWS ONLY
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                NULL AS bankDraftStatus,
+                ''   AS bankDraftRoutingNumber,
+                ''   AS bankDraftAccountNumber,
+                NULL AS bankDraftAccountType,
+                ''   AS bankName
+            FROM UCRACCT a
+            LEFT JOIN UTRBANK b\s
+                ON a.ucracct_bank_code = b.utrbank_code
+            WHERE a.ucracct_draft_acct_status IS NULL
+              AND (b.utrbank_status IS NULL OR b.utrbank_status <> 'A')
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC177= """
@@ -4135,11 +4180,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String GET_MATCHING_ACCOUNTS= """
+    public static final String SELECT_ACCOUNT_INFO2= """
             SELECT
                 a.ucracct_cust_code,
                 a.ucracct_prem_code,
-                s.ucrserv_scls_code,
                 a.ucracct_status_ind,
                 a.ucracct_nick_name,
                 c.ucbcust_first_name,
@@ -4156,8 +4200,34 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 p.ucbprem_stat_code_addr,
                 p.ucbprem_zipc_code
             FROM UCRACCT a
-            JOIN UCRSERV s
-                ON a.ucracct_prem_code = s.ucrserv_prem_code
+            JOIN UCBCUST c
+                ON a.ucracct_cust_code = c.ucbcust_cust_code
+            JOIN UCBPREM p
+                ON a.ucracct_prem_code = p.ucbprem_code
+                WHERE a.ucracct_cust_code = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_MATCHING_ACCOUNTS= """
+            SELECT
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                a.ucracct_status_ind,
+                a.ucracct_nick_name,
+                c.ucbcust_first_name,
+                c.ucbcust_last_name,
+                c.ucbcust_ssn_last_four,
+                p.ucbprem_street_name,
+                p.ucbprem_street_number,
+                p.ucbprem_pdir_code_pre,
+                p.ucbprem_ssfx_code,
+                p.ucbprem_pdir_code_post,
+                p.ucbprem_utyp_code,
+                p.ucbprem_unit,
+                p.ucbprem_city,
+                p.ucbprem_stat_code_addr,
+                p.ucbprem_zipc_code
+            FROM UCRACCT a
             JOIN UCBCUST c
                 ON a.ucracct_cust_code = c.ucbcust_cust_code
             JOIN UCBPREM p

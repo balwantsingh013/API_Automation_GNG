@@ -2874,6 +2874,31 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getTheAccountInfo2(String customerCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_INFO2;
+
+        String loggedQuery = query.replaceFirst(
+                "\\?",
+                "'" + customerCode.replace("'", "''") + "'"
+        );
+
+        logQueryInAllure("get customer code", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, customerCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
 
     public Map<String, Object> getPhoneNumberFromDB() {
         long startTime = System.currentTimeMillis();
