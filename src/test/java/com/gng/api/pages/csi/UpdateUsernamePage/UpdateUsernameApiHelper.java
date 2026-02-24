@@ -254,7 +254,7 @@ public class UpdateUsernameApiHelper {
 
                 int attempts = 0;
 
-                while (attempts < 20) {
+                while (attempts < 80) {
                     attempts++;
 
                     userInfo = ApplicationContext.get().getDbAction().getActiveAccountOnly2();
@@ -280,8 +280,8 @@ public class UpdateUsernameApiHelper {
                 }
 
                 // Optional: handle case where no valid account was found
-                if (attempts >= 20) {
-                    throw new RuntimeException("No unregistered ACTIVE account found after 20 attempts.");
+                if (attempts >= 80) {
+                    throw new RuntimeException("No unregistered ACTIVE account found after 80 attempts.");
                 }
 
                 break;
@@ -293,7 +293,7 @@ public class UpdateUsernameApiHelper {
 
                 int noOfattempts = 0;
 
-                while (noOfattempts < 20) {
+                while (noOfattempts < 30) {
                     noOfattempts++;
 
                     userInfo = ApplicationContext.get().getDbAction().getNewAccountOnly2();
@@ -319,8 +319,8 @@ public class UpdateUsernameApiHelper {
                 }
 
                 // Optional: handle case where no valid account was found
-                if (noOfattempts >= 20) {
-                    throw new RuntimeException("No unregistered account found after 20 attempts.");
+                if (noOfattempts >= 30) {
+                    throw new RuntimeException("No unregistered account found after 30 attempts.");
                 }
 
                 break;
@@ -332,7 +332,7 @@ public class UpdateUsernameApiHelper {
 
                 int retry = 0;
 
-                while (retry < 20) {
+                while (retry < 80) {
                     retry++;
 
                     userInfo = ApplicationContext.get().getDbAction().getFinalAccountOnly2();
@@ -358,8 +358,8 @@ public class UpdateUsernameApiHelper {
                 }
 
                 // Optional: fail if no valid account found
-                if (retry >= 20) {
-                    throw new RuntimeException("No unregistered FINAL account found after 20 attempts.");
+                if (retry >= 80) {
+                    throw new RuntimeException("No unregistered FINAL account found after 80 attempts.");
                 }
 
                 break;
@@ -371,7 +371,7 @@ public class UpdateUsernameApiHelper {
 
                 int retryCount = 0;
 
-                while (retryCount < 20) {
+                while (retryCount < 30) {
                     retryCount++;
 
                     userInfo = ApplicationContext.get().getDbAction().getInactiveAccountOnly2();
@@ -397,8 +397,8 @@ public class UpdateUsernameApiHelper {
                 }
 
                 // Optional: fail if no valid inactive account found
-                if (retryCount >= 20) {
-                    throw new RuntimeException("No unregistered INACTIVE account found after 20 attempts.");
+                if (retryCount >= 30) {
+                    throw new RuntimeException("No unregistered INACTIVE account found after 30 attempts.");
                 }
 
                 break;

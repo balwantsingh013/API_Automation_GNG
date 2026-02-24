@@ -62,6 +62,7 @@ public class TestContext {
     private String customerCode6;
     private String customerCode7;
     private String customerCode8;
+    private String bankAccountNo;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes

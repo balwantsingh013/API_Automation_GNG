@@ -20,12 +20,12 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/csi/phase1/SearchAccountsCSI.feature"
+                "src/test/resources/features/csi/phase2/GetUsageHistory.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-       tags = "@SearchAccounts321",
+//       tags = "@SearchAccountstest01",
         plugin = {
                 "pretty",
                 "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting

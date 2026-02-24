@@ -48,17 +48,26 @@ public enum UpdateMailingAddressLabel {
     TC_112__Negative__Invalid_Attention_To_Length,
     TC_113__Negative__Invalid_Additional_Address_Line_Length,
 
-    TC_114__Positive__Valid_Street_Address___Minimum_parameters_and_No_Existing_Address____,
-    TC_115__Positive__Valid_Street_Address___Maximum_parameters_and_No_Existing_Address____,
-    TC_116__Positive__Valid_Street_Address___Mixed_parameters_and_No_Existing_Address____,
-    TC_117__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Same_Day____,
-    TC_118__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Same_Day____,
-    TC_119__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Same_Day____,
-    TC_120__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Different_Day____,
-    TC_121__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Different_Day____,
-    TC_122__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Different_Day____,
+    // Newly added negative cases
+    TC_114__Negative__Invalid_Rural_Route_Length,
+    TC_115__Negative__Invalid_PO_Box_Length,
+    TC_116__Negative__Invalid_PO_Box_Format,
 
-    TC_123__Positive__Valid_PO_Box_Address,
-    TC_124__Positive__Valid_Rural_Route_Address,
-    TC_125__Positive__LoginID_Saved
+    // Positive cases (shifted to match feature file)
+    TC_117__Positive__Valid_Street_Address___Minimum_parameters_and_No_Existing_Address____,
+    TC_118__Positive__Valid_Street_Address___Maximum_parameters_and_No_Existing_Address____,
+    TC_119__Positive__Valid_Street_Address___Mixed_parameters_and_No_Existing_Address____,
+
+    TC_120__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Same_Day____,
+    TC_121__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Same_Day____,
+    TC_122__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Same_Day____,
+
+    TC_123__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Different_Day____,
+    TC_124__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Different_Day____,
+    TC_125__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Different_Day____,
+
+    TC_126__Positive__Valid_PO_Box_Address,
+    TC_127__Positive__Valid_Rural_Route_Address,
+
+    TC_128__Positive__LoginID_Saved
 }

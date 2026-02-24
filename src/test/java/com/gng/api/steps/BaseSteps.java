@@ -235,6 +235,25 @@ public class BaseSteps {
         Response response = testContext.getResponse();
 
         switch (testCondition) {
+            case "TC_11__Positive__No_BankDraft_Info": {
+                String status = response.jsonPath().getString("data.bankDraftStatus");
+                String routing = response.jsonPath().getString("data.bankDraftRoutingNumber");
+                String acct = response.jsonPath().getString("data.bankDraftAccountNumber");
+                String type = response.jsonPath().getString("data.bankDraftAccountType");
+                String bankName = response.jsonPath().getString("data.bankName");
+
+                // bankDraftStatus must be null
+                assertThat("bankDraftStatus should be null", status, equalTo(null));
+
+                // All other fields must be empty strings
+                assertThat("bankDraftRoutingNumber should be empty", routing, equalTo(""));
+                assertThat("bankDraftAccountNumber should be empty", acct, equalTo(""));
+                assertThat("bankDraftAccountType should be empty", type, equalTo(""));
+                assertThat("bankName should be empty", bankName, equalTo(""));
+
+                break;
+            }
+
 
             case "TC_16__Positive__BankRoutingNumber": {
                 String routing = response.jsonPath().getString("data.bankDraftRoutingNumber");
@@ -261,6 +280,7 @@ public class BaseSteps {
 
                 assertThat("bankDraftAccountNumber last 4 digits should be numeric", last4.matches("\\d{4}"), equalTo(true));
                 assertThat("bankDraftAccountNumber should be masked except last 4 digits", maskedPart.matches("[*]+"), equalTo(true));
+                Assert.assertEquals(testContext.getBankAccountNo(), acct,"Masked bank account number does not match");
                 break;
             }
 

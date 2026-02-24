@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -2849,24 +2850,37 @@ public class DBAction {
         return result;
     }
 
-    public Map<String, Object> getAccountNo(String customerCode, String premCode) {
+    public Map<String, Object> updateAccountNo(String customerCode, String premCode, String accountNo) {
         long startTime = System.currentTimeMillis();
-        String query = DBQuery.SELECT_ACCOUNT_NO;
+        String query = DBQuery.UPDATE_ACCOUNT_NO;
 
-        // Escape single quotes
+        // Escape single quotes for logging
         String safeCustomer = customerCode.replace("'", "''");
         String safePrem = premCode.replace("'", "''");
 
-        // Replace both ? placeholders in order
+        // Masked value for logging only
+        String masked = "****" + accountNo.substring(accountNo.length() - 4);
+
+        // Build logged SQL
         String loggedQuery = query
+                .replaceFirst("\\?", masked)
                 .replaceFirst("\\?", "'" + safeCustomer + "'")
                 .replaceFirst("\\?", "'" + safePrem + "'");
 
-        logQueryInAllure("get customer and premises code", loggedQuery);
+        logQueryInAllure("update account no", loggedQuery);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query, customerCode, premCode);
+        // Execute actual update (raw value)
+        int rows = jdbcTemplate.update(
+                query,
+                Integer.parseInt(accountNo),
+                customerCode,
+                premCode
+        );
 
         long elapsed = System.currentTimeMillis() - startTime;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("rowsUpdated", rows);
 
         SimplifiedExtentReportManager.logDatabaseQuery(
                 loggedQuery,
@@ -2876,6 +2890,7 @@ public class DBAction {
 
         return result;
     }
+
 
 
     public Map<String, Object> getTheAccountInfo(String customerCode) {

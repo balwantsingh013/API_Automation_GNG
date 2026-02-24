@@ -3957,63 +3957,108 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_CHECKING_ACCOUNT= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
+            SELECT
+                a.ucracct_cust_code         AS customer_code,
+                a.ucracct_prem_code         AS premises_code,
+                a.ucracct_draft_acct_status AS draft_status,
+            
+                -- Masked routing number
+                '******' || SUBSTR(
+                    REGEXP_REPLACE(
+                        LPAD(b.utrbank_transit_1, 4, '0') ||
+                        LPAD(b.utrbank_transit_2, 4, '0') ||
+                             b.utrbank_transit_3,
+                        '[^0-9]', ''
+                    ),
+                    -4
+                ) AS masked_routing_number,
+            
+                a.ucracct_check_saving_ind  AS account_type,
+                c.ucbcust_last_name         AS bank_name
+            FROM
                 UCRACCT a
-            JOIN\s
-                UTRBANK b\s
+            JOIN
+                UTRBANK b
                     ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
+            JOIN
+                UCBCUST c
                     ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status IS NOT NULL      -- Account has bank draft configuration
-                AND b.utrbank_status = 'A'                   -- Routing/bank record is ACTIVE
-                AND a.ucracct_bank_acct IS NOT NULL          -- Bank account number exists
-                AND a.ucracct_check_saving_ind = 'C'  -- Bank account type is CHECKING
-                FETCH FIRST 1 ROWS ONLY
+            WHERE
+                a.ucracct_draft_acct_status IS NOT NULL
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                AND a.ucracct_check_saving_ind = 'C'
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_SAVINGS_ACCOUNT= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
+            SELECT
+                a.ucracct_cust_code         AS customer_code,
+                a.ucracct_prem_code         AS premises_code,
+                a.ucracct_draft_acct_status AS draft_status,
+            
+                -- Masked routing number
+                '******' || SUBSTR(
+                    REGEXP_REPLACE(
+                        LPAD(b.utrbank_transit_1, 4, '0') ||
+                        LPAD(b.utrbank_transit_2, 4, '0') ||
+                             b.utrbank_transit_3,
+                        '[^0-9]', ''
+                    ),
+                    -4
+                ) AS masked_routing_number,
+            
+                a.ucracct_check_saving_ind  AS account_type,
+                c.ucbcust_last_name         AS bank_name
+            FROM
                 UCRACCT a
-            JOIN\s
-                UTRBANK b\s
+            JOIN
+                UTRBANK b
                     ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
+            JOIN
+                UCBCUST c
                     ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status IS NOT NULL      -- Account has bank draft configuration
-                AND b.utrbank_status = 'A'                   -- Routing/bank record is ACTIVE
-                AND a.ucracct_bank_acct IS NOT NULL          -- Bank account number exists
-                AND a.ucracct_check_saving_ind = 'S'  -- Bank account type is CHECKING
-                FETCH FIRST 1 ROWS ONLY
+            WHERE
+                a.ucracct_draft_acct_status IS NOT NULL
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                AND a.ucracct_check_saving_ind = 'S'
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_BANK_NAME= """
-            SELECT\s
-                a.ucracct_cust_code   AS customer_code,
-                a.ucracct_prem_code   AS premises_code
-            FROM\s
+            SELECT
+                a.ucracct_cust_code         AS customer_code,
+                a.ucracct_prem_code         AS premises_code,
+                a.ucracct_draft_acct_status AS draft_status,
+            
+                -- Masked routing number
+                '******' || SUBSTR(
+                    REGEXP_REPLACE(
+                        LPAD(b.utrbank_transit_1, 4, '0') ||
+                        LPAD(b.utrbank_transit_2, 4, '0') ||
+                             b.utrbank_transit_3,
+                        '[^0-9]', ''
+                    ),
+                    -4
+                ) AS masked_routing_number,
+            
+                a.ucracct_check_saving_ind  AS account_type,
+                c.ucbcust_last_name         AS bank_name
+            FROM
                 UCRACCT a
-            JOIN\s
-                UTRBANK b\s
+            JOIN
+                UTRBANK b
                     ON a.ucracct_bank_code = b.utrbank_code
-            JOIN\s
-                UCBCUST c\s
+            JOIN
+                UCBCUST c
                     ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            WHERE\s
-                a.ucracct_draft_acct_status IS NOT NULL     -- Account has bank draft configuration
-                AND b.utrbank_status = 'A'                  -- Routing/bank record is ACTIVE
-                AND a.ucracct_bank_acct IS NOT NULL         -- Bank account number exists
-                AND c.ucbcust_last_name IS NOT NULL         
-                FETCH FIRST 1 ROWS ONLY
+            WHERE
+                a.ucracct_draft_acct_status IS NOT NULL
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                AND c.ucbcust_last_name IS NOT NULL
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String SELECT_ACCOUNT_WITH_BANK_DRAFT_AND_ROUTING_NUMBER= """
@@ -4389,16 +4434,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
         WHERE UCBCUST_CUST_CODE= ?
 """;
 
-    public static final String SELECT_ACCOUNT_NO= """
-            SELECT
-                a.ucracct_cust_code AS customer_code,
-                a.ucracct_prem_code AS premises_code,
-                '******' || SUBSTR(REGEXP_REPLACE(a.ucracct_bank_acct, '[^0-9]', ''), -4) AS maskedAccountNumber
-            FROM UCRACCT a
-            WHERE a.ucracct_cust_code = ?
-              AND a.ucracct_prem_code = ?
-              AND a.ucracct_bank_acct IS NOT NULL
-            FETCH FIRST 1 ROWS ONLY
+    public static final String UPDATE_ACCOUNT_NO= """
+            UPDATE ucracct
+            SET ucracct_bank_acct= ?
+            WHERE ucracct_cust_code = ?
+            AND ucracct_prem_code = ?
             """;
 
     public static final String SELECT_ACCOUNT_NUMBER= """

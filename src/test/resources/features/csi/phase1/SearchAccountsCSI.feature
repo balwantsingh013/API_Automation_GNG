@@ -16,8 +16,8 @@ Feature: Verify SearchAccounts Api
       | TC_195__Negative__Invalid_customerCode_Format         | 10015     | Invalid Customer Code Format                                   |
       | TC_196__Negative__Invalid_premisesCode_Length                     | 10005     | Invalid Premises Code Format                                   |
       | TC_197__Negative__Invalid_premisesCode_Format         | 10005     | Invalid Premises Code Format                                   |
-      | TC_198__Negative__Invalid_Last_or_Business_Name_Length            | 10119     | Invalid Last or Business Name Format                           |
-      | TC_199__Negative__Invalid_First_Name_Length                       | 10121     | Invalid First Name Format                                      |
+      | TC_198__Negative__Invalid_Last_or_Business_Name_Length            | 10144     | Invalid Last or Business Name Format                           |
+      | TC_199__Negative__Invalid_First_Name_Length                       | 10145     | Invalid First Name Format                                      |
       | TC_200__Negative__Invalid_Last_Four_SSN_Length_Too_Long           | 10063     | Invalid Last Four SSN Format                                   |
       | TC_201__Negative__Invalid_Last_Four_SSN_Length_Too_Short          | 10063     | Invalid Last Four SSN Format                                   |
       | TC_202__Negative__Invalid_Federal_Tax_ID_Length_Too_Long          | 10069     | Invalid Federal Tax ID Format                                  |
@@ -71,7 +71,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_240__Positive__AccountStatus_Active| 0  |                 |TC_47__Positive__Username_Available___Banner_Active____|
 
-  @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
+  @SearchAccountstest01 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"
@@ -83,7 +83,7 @@ Feature: Verify SearchAccounts Api
       | testCondition                                                     | errorCode | errorMessage    |testCondition1|
       |TC_241__Positive__AccountStatus_Final| 0  |                 |TC_49__Positive__Username_Available___Banner_Final____|
 
-  @SearchAccounts321 @NegativeFlow @CSI  @searchAccountsCSI
+  @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateUsername Api for "<testCondition1>"
     When a request is made to SearchAccounts Api for "<testCondition>"
@@ -322,7 +322,7 @@ Feature: Verify SearchAccounts Api
       |TC_286__Positive__Search_Order__New_______Inactive| 0  |                 |TC_50__Positive__Username_Available___Banner_Inactive____|TC_48__Positive__Username_Available___Banner_New____|
 
 
-  @SearchAccountsSorting12 @NegativeFlow @CSI  @searchAccountsCSI
+  @SearchAccounts321 @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"
     When a request is made to SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
