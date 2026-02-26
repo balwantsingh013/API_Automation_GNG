@@ -48,7 +48,7 @@ Feature: Verify SearchAccounts Api
       | TC_227__Negative__Username_____CustomerCode_____PremisesCode              | 10377     | Insufficient Search Criteria                                   |
       | TC_228__Negative__Username_____FederalTaxID_Number                           | 10377     | Insufficient Search Criteria                                   |
       | TC_229__Negative__CustomerCode_____PremisesCode_____FederalTaxID_Number          | 10377     | Insufficient Search Criteria                                   |
-#      | TC_230__Negative__Too_Many_Matches                                | 10391     | Too Many Matches                                               |
+      | TC_230__Negative__Too_Many_Matches                                | 10391     | Too Many Matches                                               |
       | TC_231__Positive__Last4SSN_____CustomerLastName                       | 0         |                                                                |
       | TC_232__Positive__Last4SSN_____EmailAddress                           | 0         |                                                                |
       | TC_233__Positive__Last4SSN_____PhoneNumber                            | 0         |                                                                |

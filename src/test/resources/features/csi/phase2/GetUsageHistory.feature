@@ -19,8 +19,8 @@ Feature: Verify GetUsageHistory Api
 #      | TC_09__Negative__Invalid_premisesCode__Format                 | 10005     | Invalid Premises Code Format        |
 #      | TC_10__Negative__Invalid_Account_Number                      | 40015     | Invalid Account Number              |
 #      | TC_11__Negative__Missing_Number_of_Months                    | 10393     | Missing Number of Months            |
-#      | TC_12__Negative__Invalid_Number_of_Months__Format__Not_a_Number | 10395 | Missing Number of Months            |
-#      | TC_13__Negative__Invalid_Number_of_Months__Format__Zero_Value   | 10395 | Missing Number of Months            |
+#      | TC_12__Negative__Invalid_Number_of_Months__Format__Not_a_Number | 10000 | The JSON value could not be converted to System.Int32. Path: $.numberOfMonths [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: |
+#      | TC_13__Negative__Invalid_Number_of_Months__Format__Zero_Value   | 10395 | Invalid Number of Months           |
 #      | TC_14__Negative__Invalid_Number_of_Months__Format__Negative_Number | 10395 | Invalid Number of Months        |
 #      | TC_15__Negative__Invalid_Number_of_Months__Length            | 10395     | Invalid Number of Months            |
 
@@ -31,7 +31,7 @@ Feature: Verify GetUsageHistory Api
 #    And the response should have success as true
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
 #    And the response should have data as "<data>"
-#    And usage history response should match database for customer and premises code
+    And usage history response should match database for customer and premises code
 
 
     Examples:
@@ -40,7 +40,7 @@ Feature: Verify GetUsageHistory Api
 #      | TC_17__Positive__Usage_History_Bill_Date_Format                | 0         |              | notNull |
 #      | TC_18__Positive__Usage_History_Usage_From_Date_Format          | 0         |              | notNull |
 #      | TC_19__Positive__Usage_History_Usage_To_Date_Format            | 0         |              | notNull |
-#      | TC_20__Positive__Usage_History_Average_Daily_Actual_Consumption_Format | 0 |          | notNull |
+      | TC_20__Positive__Usage_History_Average_Daily_Actual_Consumption_Format | 0 |          | notNull |
 #      | TC_21__Positive__Usage_History_Average_Daily_Billed_Consumption_Format | 0 |          | notNull |
 #      | TC_22__Positive__Usage_History_Total_Billed_Consumption_Format | 0         |              | notNull |
 #      | TC_23__Positive__Usage_History_Days_Of_Service_Format          | 0         |              | notNull |
@@ -59,4 +59,4 @@ Feature: Verify GetUsageHistory Api
 #      | TC_36__Positive__Usage_History_Too_Old_Valid_Number_of_Months  | 0         |              | notNull |
 #      | TC_37__Positive__Usage_History_Less_Than_Requested_Months      | 0         |              | notNull |
 #      | TC_38__Positive__Usage_History_Equals_Requested_Months         | 0         |              | notNull |
-      | TC_39__Positive__Usage_History_Greater_Than_Requested_Months   | 0         |              | notNull |
+#      | TC_39__Positive__Usage_History_Greater_Than_Requested_Months   | 0         |              | notNull |
