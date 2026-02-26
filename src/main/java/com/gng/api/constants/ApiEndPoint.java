@@ -34,6 +34,7 @@ public final class ApiEndPoint {
     public static final String SEARCH_ACCOUNTS2 = "/CustomerService/SearchAccounts";
     public static final String GET_USAGE_HISTORY="/CustomerService/GetUsageHistory";
     public static final String GET_BANK_DRAFT_INFO="/CustomerService/GetBankDraftInfo";
+    public static final String GET_BILL_HISTORY="/CustomerService/GetBillHistory";
 
 
     private ApiEndPoint() {

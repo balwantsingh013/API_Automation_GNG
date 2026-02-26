@@ -2641,21 +2641,47 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_VALID_USAGE_HISTORY_ACCOUNT= """
-            SELECT\s
-                ua.ucracct_cust_code,
-                ua.ucracct_prem_code,
-                ua.ucracct_status_ind
-            FROM\s
-                ucracct ua
-            WHERE\s
-                LENGTH(ua.ucracct_cust_code) >= 5
-                AND ua.ucracct_status_ind <> 'N'
-                AND EXISTS (
-                    SELECT 1\s
-                    FROM ubbchst ch
-                    WHERE ch.ubbchst_cust_code = ua.ucracct_cust_code
-                      AND ch.ubbchst_prem_code = ua.ucracct_prem_code
-                )
+            SELECT ucracct_cust_code,
+                                           ucracct_prem_code,
+                                           ucracct_status_ind
+                                    FROM (
+                                        SELECT DISTINCT
+                                               bh.ubbbhst_cust_code   AS ucracct_cust_code,
+                                               bh.ubbbhst_prem_code   AS ucracct_prem_code,
+                                               ua.ucracct_status_ind
+                                        FROM ubbbhst bh
+                                        JOIN ucracct ua
+                                          ON ua.ucracct_cust_code = bh.ubbbhst_cust_code
+                                         AND ua.ucracct_prem_code = bh.ubbbhst_prem_code
+                                        WHERE ua.ucracct_status_ind <> 'N'
+                                          AND LENGTH(ua.ucracct_cust_code) >= 5
+                                          AND NVL(bh.ubbbhst_cancel_ind,0) = 0
+                                          AND bh.ubbbhst_printed_date > ADD_MONTHS(TRUNC(SYSDATE), -12)
+                                          AND EXISTS (
+                                                SELECT 1
+                                                FROM urrshis ur
+                                                WHERE ur.urrshis_cust_code = bh.ubbbhst_cust_code
+                                                  AND ur.urrshis_prem_code = bh.ubbbhst_prem_code
+                                                  AND ur.urrshis_actn_code IN ('READ','OUT')
+                                                  AND ur.urrshis_action_date IS NOT NULL
+                                          )
+                                          AND EXISTS (
+                                                SELECT 1
+                                                FROM uabopen op
+                                                WHERE op.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
+                                          )
+                                          AND ROWNUM <= 50   -- EARLY STOP FOR SPEED
+                                    )
+                                    WHERE ROWNUM = 1
+            """;
+
+    public static final String SELECT_VALID_BILL_HISTORY_ACCOUNT= """
+            SELECT UBBBHST_cust_code, UBBBHST_prem_code  FROM UBBBHST
+            JOIN ucracct
+            ON UBBBHST_cust_code= ucracct_cust_code
+            WHERE UBBBHST_PRINTED_DATE > ADD_MONTHS(TRUNC(SYSDATE), -24)
+            AND length(UBBBHST_cust_code)>=4
+            AND ucracct_status_ind<>'N'
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -2678,6 +2704,100 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_USAGE_HISTORY_OLD= """
+            SELECT
+                ubbbhst_cust_code                                              AS customer_code,
+                ubbbhst_prem_code                                              AS premises_code,
+                MAX(ubbbhst_printed_date)                                      AS most_recent_bill,
+                COUNT(*)                                                       AS total_bills,
+                MONTHS_BETWEEN(TRUNC(SYSDATE), MIN(ubbbhst_printed_date))     AS months_of_history
+            FROM UBBBHST SAMPLE(10)
+            WHERE ubbbhst_cancel_ind IS NULL
+            AND length(ubbbhst_cust_code)>=4
+              AND ubbbhst_printed_date <= ADD_MONTHS(TRUNC(SYSDATE), -12)
+            GROUP BY
+                ubbbhst_cust_code,
+                ubbbhst_prem_code
+            HAVING COUNT(*) >= 4
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_USAGE_HISTORY_EQUAL= """
+            SELECT *
+                                                  FROM (
+                                                      SELECT
+                                                          h.ubbbhst_cust_code  AS customer_code,
+                                                          h.ubbbhst_prem_code  AS premises_code,
+                                                          COUNT(*)             AS total_bills
+                                                      FROM UBBBHST SAMPLE(99) h
+                                                      WHERE h.ubbbhst_cancel_ind IS NULL
+                                                        AND LENGTH(h.ubbbhst_cust_code) >= 4
+                                                        AND h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                                                        AND h.ubbbhst_printed_date <  TRUNC(SYSDATE)
+                                                        AND EXISTS (
+                                                              SELECT 1 FROM URRSHIS r
+                                                              WHERE r.urrshis_cust_code = h.ubbbhst_cust_code
+                                                                AND r.urrshis_prem_code = h.ubbbhst_prem_code
+                                                                AND r.urrshis_charge_date = h.ubbbhst_printed_date
+                                                                AND ROWNUM = 1
+                                                        )
+                                                      GROUP BY h.ubbbhst_cust_code, h.ubbbhst_prem_code
+                                                      HAVING COUNT(*) = 4
+                                                  )
+                                                  WHERE ROWNUM = 1
+            """;
+
+    public static final String SELECT_USAGE_HISTORY_LESS= """
+            SELECT *
+            FROM (
+                SELECT
+                    h.ubbbhst_cust_code  AS customer_code,
+                    h.ubbbhst_prem_code  AS premises_code,
+                    COUNT(*)             AS total_bills
+                FROM UBBBHST SAMPLE(99) h
+                WHERE h.ubbbhst_cancel_ind IS NULL
+            	  AND length(h.ubbbhst_cust_code)>=4
+                  AND h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                  AND h.ubbbhst_printed_date <  TRUNC(SYSDATE)
+                GROUP BY h.ubbbhst_cust_code, h.ubbbhst_prem_code
+                HAVING COUNT(*) BETWEEN 1 AND 11
+            )
+            WHERE ROWNUM = 1
+            """;
+
+
+    public static final String SELECT_USAGE_HISTORY_GREATER= """
+            SELECT *
+            FROM (
+                SELECT
+                    h.ubbbhst_cust_code  AS customer_code,
+                    h.ubbbhst_prem_code  AS premises_code,
+                    COUNT(*)             AS total_bills
+                FROM UBBBHST SAMPLE(99) h
+                WHERE h.ubbbhst_cancel_ind IS NULL
+                  AND LENGTH(h.ubbbhst_cust_code) >= 4
+                  AND h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                  AND h.ubbbhst_printed_date <  TRUNC(SYSDATE)
+                  AND EXISTS (
+                        SELECT 1 FROM URRSHIS r
+                        WHERE r.urrshis_cust_code = h.ubbbhst_cust_code
+                          AND r.urrshis_prem_code = h.ubbbhst_prem_code
+                          AND r.urrshis_charge_date = h.ubbbhst_printed_date
+                          AND ROWNUM = 1
+                  )
+                  AND EXISTS (
+                        SELECT 1 FROM UBBBHST older
+                        WHERE older.ubbbhst_cust_code = h.ubbbhst_cust_code
+                          AND older.ubbbhst_prem_code = h.ubbbhst_prem_code
+                          AND older.ubbbhst_cancel_ind IS NULL
+                          AND older.ubbbhst_printed_date < ADD_MONTHS(TRUNC(SYSDATE), -24)
+                          AND ROWNUM = 1
+                  )
+                GROUP BY h.ubbbhst_cust_code, h.ubbbhst_prem_code
+            )
+            WHERE ROWNUM = 1
+            """;
+
     public static final String SELECT_NO_USAGE_HISTORY_FINAL_ACCOUNT= """
             SELECT\s
                 ua.ucracct_cust_code,
@@ -2687,7 +2807,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ucracct ua
             WHERE\s
                 LENGTH(ua.ucracct_cust_code) >= 5
-                AND ua.ucracct_status_ind = 'A'
+                AND ua.ucracct_status_ind = 'F'
                 AND NOT EXISTS (
                     SELECT 1\s
                     FROM ubbchst ch
@@ -2706,7 +2826,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ucracct ua
             WHERE\s
                 LENGTH(ua.ucracct_cust_code) >= 5
-                AND ua.ucracct_status_ind = 'A'
+                AND ua.ucracct_status_ind = 'I'
                 AND NOT EXISTS (
                     SELECT 1\s
                     FROM ubbchst ch
@@ -2751,19 +2871,26 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_ACTUAL_READING= """
-            SELECT *
-            FROM urrshis x
-            WHERE x.urrshis_rtyp_code = 'A'
-            AND x.URRSHIS_ACTION_DATE >= ADD_MONTHS(SYSDATE, -12)
-              AND EXISTS (
-                    SELECT 1
-                    FROM ucracct a
-                    WHERE x.urrshis_cust_code = a.ucracct_cust_code
-                      AND x.urrshis_prem_code = a.ucracct_prem_code
-                      AND a.ucracct_status_ind <> 'N'
-                      AND LENGTH(a.ucracct_cust_code) >= 5
-                )
-            FETCH FIRST 1 ROWS ONLY
+            SELECT cust_code,
+                   prem_code
+            FROM (
+                SELECT DISTINCT
+                       ua.ucracct_cust_code AS cust_code,
+                       ua.ucracct_prem_code AS prem_code
+                FROM ucracct ua
+                JOIN urrshis ur
+                  ON ur.urrshis_cust_code = ua.ucracct_cust_code
+                 AND ur.urrshis_prem_code = ua.ucracct_prem_code
+                WHERE ua.ucracct_status_ind <> 'N'
+                  AND LENGTH(ua.ucracct_cust_code) >= 5
+                  AND ur.urrshis_actn_code IN ('READ','OUT')
+                  AND ur.urrshis_rtyp_code = 'A'
+                  AND ur.urrshis_serv_num = 1
+                  AND ur.urrshis_chrg_calc_num IS NOT NULL
+                  AND ur.urrshis_action_date >= ADD_MONTHS(SYSDATE, -12)
+                  AND ROWNUM <= 50   -- early stop for speed
+            )
+            WHERE ROWNUM = 1
             """;
 
     public static final String SELECT_ACCOUNT_WITH_ACTUAL_READING2= """
@@ -2814,35 +2941,49 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_ACCOUNT_WITH_ZERO_READING= """
-            SELECT *
-            FROM urrshis x
-            WHERE x.urrshis_rtyp_code = 'Z'
-            AND x.URRSHIS_ACTION_DATE >= ADD_MONTHS(SYSDATE, -12)
-              AND EXISTS (
-                    SELECT 1
-                    FROM ucracct a
-                    WHERE x.urrshis_cust_code = a.ucracct_cust_code
-                      AND x.urrshis_prem_code = a.ucracct_prem_code
-                      AND a.ucracct_status_ind <> 'N'
-                      AND LENGTH(a.ucracct_cust_code) >= 5
-                )
-            FETCH FIRST 1 ROWS ONLY
+             SELECT cust_code,
+                   prem_code
+            FROM (
+                SELECT DISTINCT
+                       ua.ucracct_cust_code AS cust_code,
+                       ua.ucracct_prem_code AS prem_code
+                FROM ucracct ua
+                JOIN urrshis ur
+                  ON ur.urrshis_cust_code = ua.ucracct_cust_code
+                 AND ur.urrshis_prem_code = ua.ucracct_prem_code
+                WHERE ua.ucracct_status_ind <> 'N'
+                  AND LENGTH(ua.ucracct_cust_code) >= 5
+                  AND ur.urrshis_actn_code IN ('READ','OUT')
+                  AND ur.urrshis_rtyp_code = 'Z'
+                  AND ur.urrshis_serv_num = 1
+                  AND ur.urrshis_chrg_calc_num IS NOT NULL
+                  AND ur.urrshis_action_date >= ADD_MONTHS(SYSDATE, -12)
+                  AND ROWNUM <= 50   -- early stop for speed
+            )
+            WHERE ROWNUM = 1
             """;
 
     public static final String SELECT_ACCOUNT_WITH_ESTIMATED_READING= """
-            SELECT *
-            FROM urrshis x
-            WHERE x.urrshis_rtyp_code = 'E'
-            AND x.URRSHIS_ACTION_DATE >= ADD_MONTHS(SYSDATE, -12)
-              AND EXISTS (
-                    SELECT 1
-                    FROM ucracct a
-                    WHERE x.urrshis_cust_code = a.ucracct_cust_code
-                      AND x.urrshis_prem_code = a.ucracct_prem_code
-                      AND a.ucracct_status_ind <> 'N'
-                      AND LENGTH(a.ucracct_cust_code) >= 5
-                )
-            FETCH FIRST 1 ROWS ONLY
+           SELECT cust_code,
+                   prem_code
+            FROM (
+                SELECT DISTINCT
+                       ua.ucracct_cust_code AS cust_code,
+                       ua.ucracct_prem_code AS prem_code
+                FROM ucracct ua
+                JOIN urrshis ur
+                  ON ur.urrshis_cust_code = ua.ucracct_cust_code
+                 AND ur.urrshis_prem_code = ua.ucracct_prem_code
+                WHERE ua.ucracct_status_ind <> 'N'
+                  AND LENGTH(ua.ucracct_cust_code) >= 5
+                  AND ur.urrshis_actn_code IN ('READ','OUT')
+                  AND ur.urrshis_rtyp_code = 'E'
+                  AND ur.urrshis_serv_num = 1
+                  AND ur.urrshis_chrg_calc_num IS NOT NULL
+                  AND ur.urrshis_action_date >= ADD_MONTHS(SYSDATE, -24)
+                  AND ROWNUM <= 50   -- early stop for speed
+            )
+            WHERE ROWNUM = 1
             """;
 
 
@@ -5162,6 +5303,1281 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 AND (UCRACCT_NICK_NAME IS NULL OR TRIM(UCRACCT_NICK_NAME) = '')
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    public static final String GET_SERVICE_NUMBER= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                 u.urrshis_serv_num        AS service_number,
+                 TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_BILL_DATE= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                 h.ubbbhst_cust_code       AS customer_code,
+                 TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_FROM_DATE= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                 TO_CHAR(u.from_dt, 'YYYYMMDD')                    AS usage_from_date,
+                 TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_TO_DATE= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                 TO_CHAR(u.to_dt,   'YYYYMMDD')                    AS usage_to_date,
+                 TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_ACTUAL_CONSUMPTION= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                TRUNC(ROUND(ba.actual_consump_sum / NULLIF(ba.days_of_service, 0), 4), 3)    AS avg_daily_actual_consumption,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+
+    public static final String GET_AVERAGE_DAILY_BILLED_CONSUMPTION= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+            TRUNC(ROUND(c.ubbchst_billed_consump / NULLIF(ba.days_of_service, 0), 4), 3) AS avg_daily_billed_consumption,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+
+    public static final String GET_TOTAL_BILLED_CONSUMPTION= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                c.ubbchst_billed_consump                          AS total_billed_consumption,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_DAYS_OF_SERVICE= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                ba.days_of_service                                AS days_of_service,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_READING= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                u.urrshis_reading                                 AS reading,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_READ_DATE= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                TO_CHAR(u.urrshis_action_date, 'YYYYMMDD')        AS read_date,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_AVERAGE_TEMPERATURE= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                wa.weather_mean_avg_temp                          AS average_temperature,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_READ_TYPE= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                u.urrshis_rtyp_code                               AS read_type_code,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_HEATING_DEGREE_DAYS= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                wa.weather_sum_hdd                                AS heating_degree_days,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_BILL_HISTORY_TRANSACTION= """
+             WITH seed_hist AS (
+                 SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                        t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+                 FROM UBBBHST t
+                 WHERE t.ubbbhst_cust_code = ?
+                   AND t.ubbbhst_prem_code = ?
+                 ORDER BY t.ubbbhst_printed_date DESC
+                 FETCH FIRST 1 ROWS ONLY
+             ),
+             all_hist AS (
+                 SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                        h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+                 FROM UBBBHST h2
+                 JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                 WHERE h2.ubbbhst_cancel_ind IS NULL
+                   AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+             ),
+             urr AS (
+                 SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                        r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                        r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                        LAG(r.urrshis_action_date)
+                            OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                                  ORDER BY r.urrshis_action_date) AS prev_action_date
+                 FROM URRSHIS r
+                 JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+             ),
+             urr_ranges AS (
+                 SELECT u.*,
+                        u.urrshis_action_date AS to_dt,
+                        CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                             ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+                 FROM urr u
+             ),
+             urr_with_totals AS (
+                 SELECT ur.*,
+                        SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+                 FROM urr_ranges ur
+             ),
+             weather_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                        NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                        NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+                 FROM urr_with_totals u
+                 LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+                 LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                                    AND w.ocsweat_weather_date > u.from_dt
+                                    AND w.ocsweat_weather_date < u.to_dt
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+             ),
+             bill_agg AS (
+                 SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                        SUM(u.urrshis_consumption) AS actual_consump_sum,
+                        SUM(u.urrshis_dos)         AS days_of_service
+                 FROM urr_with_totals u
+                 GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+             )
+             SELECT
+                h.ubbbhst_tran_num                                                           AS bill_history_transaction_number,
+                TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')       AS bill_date
+             FROM all_hist h
+             LEFT JOIN urr_with_totals u
+               ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN weather_agg wa
+               ON wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+             LEFT JOIN UBBCHST c
+               ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+             LEFT JOIN bill_agg ba
+               ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+             ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date   
+            """;
+
+    public static final String GET_USAGE_HISTORY = """
+        WITH seed_hist AS (
+            SELECT t.ubbbhst_cust_code, t.ubbbhst_prem_code, t.ubbbhst_printed_date,
+                   t.ubbbhst_cancel_ind, t.ubbbhst_tran_num, t.ubbbhst_prev_bal, t.ubbbhst_ending_bal
+            FROM UBBBHST t
+            WHERE t.ubbbhst_cust_code = ?
+              AND t.ubbbhst_prem_code = ?
+            ORDER BY t.ubbbhst_printed_date DESC
+            FETCH FIRST 1 ROWS ONLY
+        ),
+        all_hist AS (
+            SELECT h2.ubbbhst_cust_code, h2.ubbbhst_prem_code, h2.ubbbhst_printed_date,
+                   h2.ubbbhst_cancel_ind, h2.ubbbhst_tran_num, h2.ubbbhst_prev_bal, h2.ubbbhst_ending_bal
+            FROM UBBBHST h2
+            JOIN seed_hist s ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                            AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+            WHERE h2.ubbbhst_cancel_ind IS NULL
+              AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+        ),
+        urr AS (
+            SELECT r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num,
+                   r.urrshis_reading, r.urrshis_rtyp_code, r.urrshis_action_date,
+                   r.urrshis_charge_date, r.urrshis_dos, r.urrshis_consumption,
+                   LAG(r.urrshis_action_date)
+                       OVER (PARTITION BY r.urrshis_cust_code, r.urrshis_prem_code, r.urrshis_serv_num
+                             ORDER BY r.urrshis_action_date) AS prev_action_date
+            FROM URRSHIS r
+            JOIN seed_hist s ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                            AND r.urrshis_prem_code = s.ubbbhst_prem_code
+        ),
+        urr_ranges AS (
+            SELECT u.*,
+                   u.urrshis_action_date AS to_dt,
+                   CASE WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                        ELSE u.urrshis_action_date - u.urrshis_dos END AS from_dt
+            FROM urr u
+        ),
+        urr_with_totals AS (
+            SELECT ur.*,
+                   SUM(ur.urrshis_dos) OVER (PARTITION BY ur.urrshis_cust_code, ur.urrshis_prem_code) AS total_dos
+            FROM urr_ranges ur
+        ),
+        weather_agg AS (
+            SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date,
+                   NVL(ROUND(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
+                   NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
+            FROM urr_with_totals u
+            LEFT JOIN UCBPREM p ON p.ucbprem_code = u.urrshis_prem_code
+            LEFT JOIN OCSWEAT w ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                               AND w.ocsweat_weather_date > u.from_dt
+                               AND w.ocsweat_weather_date < u.to_dt
+            GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_serv_num, u.urrshis_action_date
+        ),
+        bill_agg AS (
+            SELECT u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date,
+                   SUM(u.urrshis_consumption) AS actual_consump_sum,
+                   SUM(u.urrshis_dos)         AS days_of_service
+            FROM urr_with_totals u
+            GROUP BY u.urrshis_cust_code, u.urrshis_prem_code, u.urrshis_charge_date
+        )
+        SELECT
+            u.urrshis_serv_num                                                           AS service_number,
+            TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')                                  AS bill_date,
+            TO_CHAR(u.from_dt, 'YYYYMMDD')                                               AS usage_from_date,
+            TO_CHAR(u.to_dt,   'YYYYMMDD')                                               AS usage_to_date,
+            TRUNC(ROUND(ba.actual_consump_sum / NULLIF(ba.days_of_service, 0), 4), 3)    AS avg_daily_actual_consumption,
+            TRUNC(ROUND(c.ubbchst_billed_consump / NULLIF(ba.days_of_service, 0), 4), 3) AS avg_daily_billed_consumption,
+            c.ubbchst_billed_consump                                                     AS total_billed_consumption,
+            ba.days_of_service                                                           AS days_of_service,
+            u.urrshis_reading                                                            AS reading,
+            u.urrshis_rtyp_code                                                          AS read_type_code,
+            TO_CHAR(u.urrshis_action_date, 'YYYYMMDD')                                   AS read_date,
+            wa.weather_mean_avg_temp                                                     AS average_temperature,
+            wa.weather_sum_hdd                                                           AS heating_degree_days,
+            h.ubbbhst_tran_num                                                           AS bill_history_transaction_number,
+            COUNT(*) OVER ()                                                             AS number_of_matches
+        FROM all_hist h
+        LEFT JOIN urr_with_totals u
+          ON u.urrshis_cust_code   = h.ubbbhst_cust_code
+         AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+         AND u.urrshis_charge_date = h.ubbbhst_printed_date
+        LEFT JOIN weather_agg wa
+          ON wa.urrshis_cust_code   = u.urrshis_cust_code
+         AND wa.urrshis_prem_code   = u.urrshis_prem_code
+         AND wa.urrshis_serv_num    = u.urrshis_serv_num
+         AND wa.urrshis_action_date = u.urrshis_action_date
+        LEFT JOIN UBBCHST c
+          ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+         AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+         AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+        LEFT JOIN bill_agg ba
+          ON ba.urrshis_cust_code   = h.ubbbhst_cust_code
+         AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+         AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+        ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date
+        """;
 
     public static final String GET_PHONE_NUMBERS= """
             SELECT  t.ucrtele_phone_area || t.ucrtele_phone_number AS phone_number,

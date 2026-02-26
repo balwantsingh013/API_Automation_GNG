@@ -13,6 +13,7 @@ import org.testng.Assert;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -216,6 +217,113 @@ public class BaseSteps {
     @And("the response should have bankDraftStatus as {string}")
     public void validateBankDraftStatusStep(String expectedStatus) {
         validateBankDraftStatus(expectedStatus);
+    }
+
+    @And("usage history response should match database for customer and premises code")
+    public void usageHistoryResponseShouldMatchDatabase() {
+        String customerCode= testContext.getCustomerCode();
+        String premisesCode= testContext.getPremisesCode();
+        verifyUsageHistoryAgainstDatabase(customerCode, premisesCode);
+    }
+
+    private void verifyUsageHistoryAgainstDatabase(String customerCode, String premisesCode) {
+        Response response = testContext.getResponse();
+
+        // ── Top-level assertions ──────────────────────────────────────────────
+        assertThat("Response success flag should be true",
+                response.jsonPath().getBoolean("success"),
+                equalTo(true));
+
+        assertThat("Response errorCode should be 0",
+                response.jsonPath().getInt("errorCode"),
+                equalTo(0));
+
+        // ── Extract API response data ─────────────────────────────────────────
+        int apiNumberOfMatches = response.jsonPath().getInt("data.numberOfMatches");
+        List<Map<String, Object>> apiUsageHistory = response.jsonPath().getList("data.usageHistory");
+
+        assertThat("usageHistory list should not be null", apiUsageHistory, notNullValue());
+        assertThat("usageHistory list size should match numberOfMatches",
+                apiUsageHistory.size(), equalTo(apiNumberOfMatches));
+
+        // ── Query DB ──────────────────────────────────────────────────────────
+        List<Map<String, Object>> dbRows = ApplicationContext.get()
+                .getDbAction()
+                .getUsageHistory(customerCode, premisesCode);
+
+        // ── numberOfMatches cross-check ───────────────────────────────────────
+        int dbNumberOfMatches = dbRows.isEmpty() ? 0
+                : ((Number) dbRows.get(0).get("NUMBER_OF_MATCHES")).intValue();
+
+        assertThat("numberOfMatches does not match DB count",
+                apiNumberOfMatches, equalTo(dbNumberOfMatches));
+
+        assertThat("usageHistory list size does not match DB row count",
+                apiUsageHistory.size(), equalTo(dbRows.size()));
+
+        // ── Per-row field assertions ──────────────────────────────────────────
+        for (int i = 0; i < dbRows.size(); i++) {
+            Map<String, Object> dbRow = dbRows.get(i);
+            Map<String, Object> apiRow = apiUsageHistory.get(i);
+            String rowContext = "Row [" + i + "] billDate=" + dbRow.get("BILL_DATE")
+                    + " serviceNumber=" + dbRow.get("SERVICE_NUMBER");
+
+            assertThat(rowContext + " | serviceNumber mismatch",
+                    String.valueOf(apiRow.get("serviceNumber")),
+                    equalTo(String.valueOf(dbRow.get("SERVICE_NUMBER"))));
+
+            assertThat(rowContext + " | billDate mismatch",
+                    String.valueOf(apiRow.get("billDate")),
+                    equalTo(String.valueOf(dbRow.get("BILL_DATE"))));
+
+            assertThat(rowContext + " | usageFromDate mismatch",
+                    String.valueOf(apiRow.get("usageFromDate")),
+                    equalTo(String.valueOf(dbRow.get("USAGE_FROM_DATE"))));
+
+            assertThat(rowContext + " | usageToDate mismatch",
+                    String.valueOf(apiRow.get("usageToDate")),
+                    equalTo(String.valueOf(dbRow.get("USAGE_TO_DATE"))));
+
+            assertThat(rowContext + " | averageDailyActualConsumption mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("averageDailyActualConsumption"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("AVG_DAILY_ACTUAL_CONSUMPTION")))));
+
+            assertThat(rowContext + " | averageDailyBilledConsumption mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("averageDailyBilledConsumption"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("AVG_DAILY_BILLED_CONSUMPTION")))));
+
+            assertThat(rowContext + " | totalBilledConsumption mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("totalBilledConsumption"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("TOTAL_BILLED_CONSUMPTION")))));
+
+            assertThat(rowContext + " | daysOfService mismatch",
+                    ((Number) apiRow.get("daysOfService")).intValue(),
+                    equalTo(((Number) dbRow.get("DAYS_OF_SERVICE")).intValue()));
+
+            assertThat(rowContext + " | reading mismatch",
+                    ((Number) apiRow.get("reading")).intValue(),
+                    equalTo(((Number) dbRow.get("READING")).intValue()));
+
+            assertThat(rowContext + " | readTypeCode mismatch",
+                    String.valueOf(apiRow.get("readTypeCode")),
+                    equalTo(String.valueOf(dbRow.get("READ_TYPE_CODE"))));
+
+            assertThat(rowContext + " | readDate mismatch",
+                    String.valueOf(apiRow.get("readDate")),
+                    equalTo(String.valueOf(dbRow.get("READ_DATE"))));
+
+            assertThat(rowContext + " | averageTemperature mismatch",
+                    ((Number) apiRow.get("averageTemperature")).intValue(),
+                    equalTo(((Number) dbRow.get("AVERAGE_TEMPERATURE")).intValue()));
+
+            assertThat(rowContext + " | heatingDegreeDays mismatch",
+                    ((Number) apiRow.get("heatingDegreeDays")).intValue(),
+                    equalTo(((Number) dbRow.get("HEATING_DEGREE_DAYS")).intValue()));
+
+            assertThat(rowContext + " | billHistoryTransactionNumber mismatch",
+                    ((Number) apiRow.get("billHistoryTransactionNumber")).longValue(),
+                    equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));
+        }
     }
 
     private void validateBankDraftStatus(String expectedStatus) {
@@ -1037,15 +1145,29 @@ public class BaseSteps {
             return;
         }
 
+        // ---- NEW LOGIC: Strip dynamic BytePositionInLine from actual message ----
+        String stableActualMessage = actualErrorMessage;
+        int bytePosIndex = actualErrorMessage.indexOf("BytePositionInLine");
+        if (bytePosIndex > 0) {
+            stableActualMessage = actualErrorMessage.substring(0, bytePosIndex).trim();
+        }
+
+        // ---- Strip BytePositionInLine from expected message if present ----
+        String stableExpectedMessage = normalizedExpectedMessage;
+        int expectedBytePosIndex = normalizedExpectedMessage.indexOf("BytePositionInLine");
+        if (expectedBytePosIndex > 0) {
+            stableExpectedMessage = normalizedExpectedMessage.substring(0, expectedBytePosIndex).trim();
+        }
+
         // Conditional validation based on presence of [PIPE] or specific substrings
         if (containsPipe || containsZipCode || containsStateCode) {
             assertThat("ErrorMessage does not contain expected content",
-                    actualErrorMessage,
-                    containsString(normalizedExpectedMessage));
+                    stableActualMessage,
+                    containsString(stableExpectedMessage));
         } else {
             assertThat("Incorrect ErrorMessage returned",
-                    actualErrorMessage,
-                    equalTo(normalizedExpectedMessage));
+                    stableActualMessage,
+                    equalTo(stableExpectedMessage));
         }
     }
 
