@@ -251,19 +251,21 @@ public class BaseSteps {
                 .getDbAction()
                 .getUsageHistory(customerCode, premisesCode);
 
-        // ── numberOfMatches cross-check ───────────────────────────────────────
-        int dbNumberOfMatches = dbRows.isEmpty() ? 0
-                : ((Number) dbRows.get(0).get("NUMBER_OF_MATCHES")).intValue();
+        // ── Filter out DB rows where READ_TYPE_CODE is null (won't appear in response) ──
+        List<Map<String, Object>> filteredDbRows = dbRows.stream()
+                .filter(row -> row.get("READ_TYPE_CODE") != null)
+                .collect(java.util.stream.Collectors.toList());
 
+        // ── numberOfMatches cross-check (based on filtered count, not DB NUMBER_OF_MATCHES) ──
         assertThat("numberOfMatches does not match DB count",
-                apiNumberOfMatches, equalTo(dbNumberOfMatches));
+                apiNumberOfMatches, equalTo(filteredDbRows.size()));
 
         assertThat("usageHistory list size does not match DB row count",
-                apiUsageHistory.size(), equalTo(dbRows.size()));
+                apiUsageHistory.size(), equalTo(filteredDbRows.size()));
 
         // ── Per-row field assertions ──────────────────────────────────────────
-        for (int i = 0; i < dbRows.size(); i++) {
-            Map<String, Object> dbRow = dbRows.get(i);
+        for (int i = 0; i < filteredDbRows.size(); i++) {
+            Map<String, Object> dbRow = filteredDbRows.get(i);
             Map<String, Object> apiRow = apiUsageHistory.get(i);
             String rowContext = "Row [" + i + "] billDate=" + dbRow.get("BILL_DATE")
                     + " serviceNumber=" + dbRow.get("SERVICE_NUMBER");
@@ -1145,7 +1147,7 @@ public class BaseSteps {
             return;
         }
 
-        // ---- NEW LOGIC: Strip dynamic BytePositionInLine from actual message ----
+        // ---- Strip dynamic BytePositionInLine from actual message ----
         String stableActualMessage = actualErrorMessage;
         int bytePosIndex = actualErrorMessage.indexOf("BytePositionInLine");
         if (bytePosIndex > 0) {

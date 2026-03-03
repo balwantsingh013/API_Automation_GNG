@@ -348,8 +348,8 @@ public class SearchAccountsApiHelperCSI {
 
             case TC_230__Negative__Too_Many_Matches:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setEmailAddress("Fernando.Waisfeld@vertexone.net");
-                payload.setLastFourSocialSecurityNumber("7954");
+                payload.setFederalTaxID("111119999");
+                payload.setCustomerLastNameBusiness("AHFR LLC");
                 payload.setUsername(null);
                 payload.setPassword(null);
                 break;

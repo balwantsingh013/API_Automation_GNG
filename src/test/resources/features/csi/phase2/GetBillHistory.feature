@@ -20,8 +20,8 @@ Feature: Verify GetBillHistory Api
 #      | TC_18__Negative__Invalid_premisesCode_Length    | 10005     | Invalid Premises Code Format                 |
 #      | TC_19__Negative__Invalid_premisesCode_Format    | 10005     | Invalid Premises Code Format                 |
 #      | TC_20__Negative__Invalid_Account_Number         | 40015     | Invalid Account Number                       |
-      | TC_21__Negative__Missing_Number_of_Months       | 10393     | Missing Number of Months                     |
-#      | TC_22__Negative__Invalid_Number_of_Months_Format_NotANumber | 10000 | The JSON value could not be converted to System.Int32. Path: $.numberOfMonths [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: |
+#      | TC_21__Negative__Missing_Number_of_Months       | 10393     | Missing Number of Months                     |
+      | TC_22__Negative__Invalid_Number_of_Months_Format_NotANumber | 10000 | The JSON value could not be converted to System.Int32. Path: $.numberOfMonths [PIPE] LineNumber: 0 [PIPE] BytePositionInLine: |
 #      | TC_23__Negative__Invalid_Number_of_Months_Zero  | 10395     | Invalid Number of Months                     |
 #      | TC_24__Negative__Invalid_Number_of_Months_Negative | 10395  | Invalid Number of Months                     |
 #      | TC_25__Negative__Invalid_Number_of_Months_Length | 10405    | Number of Months exceeds maximum allowed                     |

@@ -282,6 +282,9 @@ public class GetUsageHistoryApiHelper {
                 payload.setNumberOfMonths("12");
                 testContext.setCustomerCode(accountInfo.get("CUSTOMER_CODE").toString());
                 testContext.setPremisesCode(accountInfo.get("PREMISES_CODE").toString());
+                List<Map<String, Object>> dbRows3 = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory(accountInfo.get("CUSTOMER_CODE").toString(), accountInfo.get("PREMISES_CODE").toString());
                 break;
 
             case TC_25__Positive__Usage_History_Read_Type_Format__Actual:
@@ -350,6 +353,9 @@ public class GetUsageHistoryApiHelper {
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
                 payload.setNumberOfMonths("12");
+                List<Map<String, Object>> dbRows = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
                 break;
 
             case TC_37__Positive__Usage_History_Less_Than_Requested_Months:
@@ -358,7 +364,10 @@ public class GetUsageHistoryApiHelper {
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
             payload.setNumberOfMonths("24");
-            break;
+                List<Map<String, Object>> dbRows2 = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory2(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
 
             case TC_39__Positive__Usage_History_Greater_Than_Requested_Months:
 
@@ -367,6 +376,9 @@ public class GetUsageHistoryApiHelper {
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
                 payload.setNumberOfMonths("18");
+                List<Map<String, Object>> dbRows4 = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory2(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
                 break;
 
             default:
