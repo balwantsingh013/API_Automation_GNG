@@ -1,11 +1,17 @@
 package com.gng.api.pojo.TestContext;
 
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
+import com.gng.api.pojo.CSIPojo.GetBankDraftInfo.GetBankDraftInfoResponse;
+import com.gng.api.pojo.CSIPojo.GetBillHistory.GetBillHistoryResponse;
+import com.gng.api.pojo.CSIPojo.GetUsageHistory.GetUsageHistoryResponse;
+import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
+
 import com.gng.api.pojo.CSIPojo.GetAccountInfo.GetAccountInformationResponse;
 import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePassword.UpdatePasswordResponse;
+import com.gng.api.pojo.CSIPojo.UpdateUsername.UpdateUsernameResponse;
 import com.gng.api.pojo.CSIPojo.ValidateUsername.ValidateUsernameResponse;
 import com.gng.api.pojo.CommonPojo.GetReasonsForLeaving.Response.GetReasonsForLeavingResponse;
 import com.gng.api.pojo.ServiceOrdersPojo.GetDefaultPlansAndOffers.GetDefaultPlansAndOffersResponse;
@@ -41,6 +47,23 @@ public class TestContext {
     private String suspenseDate;
     private String userIDRemind;
     private Long marketerReferenceData;
+    private String loginId;
+    private String password;
+    private String username;
+    private String accountNickname;
+    private String rewardId;
+    private String activeRewardId;
+    private String pendingRewardId;
+    private String firstName;
+    private String customerCode1;
+    private String customerCode2;
+    private String customerCode3;
+    private String customerCode4;
+    private String customerCode5;
+    private String customerCode6;
+    private String customerCode7;
+    private String customerCode8;
+    private String bankAccountNo;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes
@@ -54,14 +77,26 @@ public class TestContext {
     private Object getAccountInformationApiPage;
     private GetAccountInformationResponse getAccountInformationResponse;
     @Getter @Setter
+    private Object updateUsernameApiPage;
+    private UpdateUsernameResponse updateUsernameResponse;
+    @Getter @Setter
     private Object createAccountNoteApiPage;
     private CreateAccountNoteResponse createAccountNoteResponse;
     @Getter @Setter
     private Object saveEnrollmentApiPage;
     private SaveEnrollmentResponse saveEnrollmentResponse;
     @Getter @Setter
+    private Object getUsageHistoryApiPage;
+    private GetUsageHistoryResponse getUsageHistoryResponse;
+    @Getter @Setter
+    private Object getBillHistoryApiPage;
+    private GetBillHistoryResponse getBillHistoryResponse;
+    @Getter @Setter
     private Object getMarketerReferenceDataApiPage;
     private SaveEnrollmentResponse getMarketerReferenceDataResponse;
+    @Getter @Setter
+    private Object getBankDraftInfoApiPage;
+    private GetBankDraftInfoResponse getBankDraftInfoResponse;
     @Getter @Setter
     private Object getReasonsForLeavingApiPage;
     private GetReasonsForLeavingResponse getReasonsForLeavingResponse;
@@ -103,6 +138,9 @@ public class TestContext {
     @Getter @Setter
     private Object searchAccountsApiPage;
     private SearchAccountsResponse searchAccountsResponse;
+    @Getter @Setter
+    private Object searchAccountsApiPageCSI;
+    private SearchAccountsResponseCSI searchAccountsResponseCSI;
     @Getter @Setter
     private Object getMarketerCodesApiPage;
     private GetMarketerCodesResponse getMarketerCodesResponse;

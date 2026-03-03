@@ -13,8 +13,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateAccountNicknameRequest {
 
-    private String requestID;      // Globally unique identifier for the request
-    private String customerCode;   // Up to 9-digit numeric customer code
-    private String premisesCode;   // Up to 7-digit numeric premises code
-    private String nickname;       // Optional nickname (max 20 characters)
+    private String requestID;    // Required, String(32)
+    private String customerCode; // Required, String(9)
+    private String premisesCode; // Required, String(7)
+    private String nickname;     // Optional, String(20)
+    private String loginID;      // Optional, String(30)
 }

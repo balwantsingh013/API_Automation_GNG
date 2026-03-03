@@ -5,44 +5,69 @@ public enum UpdateMailingAddressLabel {
     update_mailing_address,
     update_mailing_address_mandatory,
 
-    TC_68__Negative__Missing_Request_ID,
-    TC_69__Negative__Invalid_Request_ID__Length,
-    TC_70__Negative__Duplicate_Request_ID,
-    TC_71__Negative__Missing_customerCode,
-    TC_72__Negative__Invalid_customerCode__Length,
-    TC_73__Negative__Invalid_customerCode__Format,
-    TC_74__Negative__Invalid_customerCode,
-    TC_75__Negative__Missing_premisesCode,
-    TC_76__Negative__Invalid_premisesCode__Length,
-    TC_77__Negative__Invalid_premisesCode__Format,
-    TC_78__Negative__Invalid_premisesCode,
-    TC_79__Negative__Invalid_Address_Fields___Missing____,
-    TC_80__Negative__Invalid_Address_Fields___Too_Many____,
-    TC_81__Negative__Invalid_Street_Number__Length,
-    TC_82__Negative__Invalid_Street_Pre__Direction__Length,
-    TC_83__Negative__Invalid_Street_Pre__Direction,
-    TC_84__Negative__Invalid_Street_Name__Length,
-    TC_85__Negative__Missing_StreetName,
-    TC_86__Negative__Invalid_StreetSuffix__Length,
-    TC_87__Negative__Invalid_StreetSuffix,
-    TC_88__Negative__Invalid_Street_Post__Direction__Length,
-    TC_89__Negative__Invalid_Street_Post__Direction,
-    TC_90__Negative__Invalid_Unit_Type__Format,
-    TC_91__Negative__Missing_Unit_Type,
-    TC_92__Negative__Invalid_Unit_Number__Format,
-    TC_93__Negative__Invalid_City__Length,
-    TC_94__Negative__Missing_City,
-    TC_95__Negative__Invalid_Zip_Code__Format___Length__10____,
-    TC_96__Negative__Missing_Zip_Code,
-    TC_97__Negative__Invalid_Zip_Code,
-    TC_98__Negative__Invalid_City_and_Zip_Code__Combination,
-    TC_99__Negative__Invalid_County_Code,
-    TC_100__Negative__Invalid_Delivery_Point__Format,
-    TC_101__Negative__Invalid_Carrier_Route__Length,
-    TC_102__Negative__Invalid_Attention_To__Length,
-    TC_103__Negative__Invalid_Additional_Address_Line__Length,
+    TC_80__Negative__Missing_Request_ID,
+    TC_81__Negative__Invalid_Request_ID_Length,
+    TC_82__Negative__Duplicate_Request_ID,
 
-    TC_104__Positive__Valid_Street_Address,
-    TC_105__Positive__Valid_PO_Box_Address,
-    TC_106__Positive__Valid_Rural_Route_Address
+    TC_83__Negative__Missing_customerCode,
+    TC_84__Negative__Invalid_customerCode_Length,
+    TC_85__Negative__Invalid_customerCode_Format,
+    TC_86__Negative__Invalid_Account_Number,
+
+    TC_87__Negative__Missing_premisesCode,
+    TC_88__Negative__Invalid_premisesCode_Length,
+    TC_89__Negative__Invalid_premisesCode_Format,
+
+    TC_90__Negative__Invalid_Address_Fields_Missing,
+    TC_91__Negative__Invalid_Address_Fields_Too_Many,
+
+    TC_92__Negative__Invalid_Street_Number_Length,
+    TC_93__Negative__Invalid_Street_Pre_Direction_Length,
+    TC_94__Negative__Invalid_Street_Pre_Direction,
+    TC_95__Negative__Invalid_Street_Name_Length,
+    TC_96__Negative__Missing_StreetName,
+    TC_97__Negative__Invalid_StreetSuffix_Length,
+    TC_98__Negative__Invalid_StreetSuffix,
+    TC_99__Negative__Invalid_Street_Post_Direction_Length,
+    TC_100__Negative__Invalid_Street_Post_Direction,
+
+    TC_101__Negative__Invalid_Unit_Type_Format,
+    TC_102__Negative__Invalid_Unit_Type,
+    TC_103__Negative__Invalid_Unit_Number_Format,
+
+    TC_104__Negative__Invalid_City_Length,
+    TC_105__Negative__Missing_City,
+
+    TC_106__Negative__Invalid_Zip_Code_Format_Length,
+    TC_107__Negative__Missing_Zip_Code,
+    TC_108__Negative__Invalid_Zip_Code,
+    TC_109__Negative__Invalid_City_and_Zip_Code_Combination,
+
+    TC_110__Negative__Invalid_Delivery_Point_Format,
+    TC_111__Negative__Invalid_Carrier_Route_Length,
+    TC_112__Negative__Invalid_Attention_To_Length,
+    TC_113__Negative__Invalid_Additional_Address_Line_Length,
+
+    // Newly added negative cases
+    TC_114__Negative__Invalid_Rural_Route_Length,
+    TC_115__Negative__Invalid_PO_Box_Length,
+    TC_116__Negative__Invalid_PO_Box_Format,
+
+    // Positive cases (shifted to match feature file)
+    TC_117__Positive__Valid_Street_Address___Minimum_parameters_and_No_Existing_Address____,
+    TC_118__Positive__Valid_Street_Address___Maximum_parameters_and_No_Existing_Address____,
+    TC_119__Positive__Valid_Street_Address___Mixed_parameters_and_No_Existing_Address____,
+
+    TC_120__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Same_Day____,
+    TC_121__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Same_Day____,
+    TC_122__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Same_Day____,
+
+    TC_123__Positive__Valid_Street_Address___Minimum_parameters_and_Existing_Address_and_Different_Day____,
+    TC_124__Positive__Valid_Street_Address___Maximum_parameters_and_Existing_Address_and_Different_Day____,
+    TC_125__Positive__Valid_Street_Address___Mixed_parameters_and_Existing_Address_and_Different_Day____,
+
+    TC_126__Positive__Valid_PO_Box_Address,
+    TC_127__Positive__Valid_Rural_Route_Address,
+
+    TC_128__Positive__LoginID_Saved
 }

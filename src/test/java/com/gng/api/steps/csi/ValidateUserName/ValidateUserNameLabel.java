@@ -12,9 +12,10 @@ public enum ValidateUserNameLabel {
     TC_5__Negative__Invalid_Username_format__Length___Too_Short____,
     TC_6__Negative__Invalid_Username_format__Length___Too_Long____,
     TC_7__Negative__Invalid_Username_format__Alphanumeric,
-    TC_9__Positive__Username_Available,
+
     TC_8__Positive__Username_Available,
+    TC_9__Positive__Username_Available,
     TC_10__Positive__Username_Active__users_table,
-    TC_12__Positive__Username_Inactive,
-    TC_11__Positive__Username_Active__custadv_pending_registrations_table
+    TC_11__Positive__Username_Inactive,
+    TC_12__Positive__Username_Inactive
 }

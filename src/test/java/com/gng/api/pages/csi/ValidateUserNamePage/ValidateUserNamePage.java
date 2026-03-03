@@ -21,7 +21,7 @@ public class ValidateUserNamePage extends BasePage{
 
     public void validateResponseForNegativeTestConditions(ValidateUserNameLabel apiLabel, ValidateUserNameLabel testCondition) {
         ValidateUsernameRequest payload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForNegativeTestCondition(payload, testCondition);
+        helper.preparePayloadForTestCondition(payload, testCondition);
         setRequestSpecification(payload, testContext.getAuthToken());
         Response response = sendRequest(HttpPost.METHOD_NAME, VALIDATE_USERNAME, 200);
         ValidateUsernameResponse validateUsernameResponse = deserializeResponseToPojo(response, ValidateUsernameResponse.class);

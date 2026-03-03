@@ -61,14 +61,23 @@ public class CommonUtil {
 
     public static void silentlyGenerateAuthToken() {
         try {
+            TestContext context = TestContextHolder.get();
+            // If token already exists, do NOT regenerate it
+            if (context.getAuthToken() != null &&
+                    !context.getAuthToken().isEmpty()) {
+                return; // Token already available — skip generation
+            }
+
             ApplicationContext runContext = ApplicationContext.get();
             runContext.setAuthApiPayload();
             Response response = executeAuthRequest(runContext);
             storeAuthToken(response);
+
         } catch (Exception e) {
             handleException(e);
         }
     }
+
 
     public static Response executeAuthRequest(ApplicationContext runContext) {
         Response response = given()

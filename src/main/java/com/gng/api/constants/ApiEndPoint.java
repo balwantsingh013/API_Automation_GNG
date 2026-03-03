@@ -29,6 +29,13 @@ public final class ApiEndPoint {
     public static final String UPDATE_ACCOUNT_NICKNAME= "/Accounts/UpdateAccountNickname";
     public static final String UPDATE_MAILING_ADDRESS= "/Accounts/UpdateMailingAddress";
     public static final String GET_ACCOUNT_REWARDS= "/Accounts/GetAccountRewards";
+    public static final String UPDATE_USERNAME="/CustomerService/UpdateUsername";
+
+    public static final String SEARCH_ACCOUNTS2 = "/CustomerService/SearchAccounts";
+    public static final String GET_USAGE_HISTORY="/CustomerService/GetUsageHistory";
+    public static final String GET_BANK_DRAFT_INFO="/CustomerService/GetBankDraftInfo";
+    public static final String GET_BILL_HISTORY="/CustomerService/GetBillHistory";
+
 
     private ApiEndPoint() {
     }

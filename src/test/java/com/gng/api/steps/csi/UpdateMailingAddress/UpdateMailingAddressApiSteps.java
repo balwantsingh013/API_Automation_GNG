@@ -36,4 +36,9 @@ public class UpdateMailingAddressApiSteps {
                 UpdateMailingAddressLabel.valueOf(testCondition)
         );
     }
+
+    @When("perform database validation for {string}")
+    public void perform_database_validation(String testCondition){
+        updateMailingAddressPage.databaseValidations(UpdateMailingAddressLabel.valueOf(testCondition));
+    }
 }
