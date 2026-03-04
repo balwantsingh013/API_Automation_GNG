@@ -345,7 +345,7 @@ public class BaseSteps {
         Response response = testContext.getResponse();
 
         switch (testCondition) {
-            case "TC_11__Positive__No_BankDraft_Info": {
+            case "TC_50__Positive__No_BankDraft_Info": {
                 String status = response.jsonPath().getString("data.bankDraftStatus");
                 String routing = response.jsonPath().getString("data.bankDraftRoutingNumber");
                 String acct = response.jsonPath().getString("data.bankDraftAccountNumber");
@@ -365,7 +365,7 @@ public class BaseSteps {
             }
 
 
-            case "TC_16__Positive__BankRoutingNumber": {
+            case "TC_55__Positive__BankRoutingNumber": {
                 String routing = response.jsonPath().getString("data.bankDraftRoutingNumber");
 
                 assertThat("bankDraftRoutingNumber should not be null", routing, notNullValue());
@@ -379,7 +379,7 @@ public class BaseSteps {
                 break;
             }
 
-            case "TC_17__Positive__BankAccountNumber": {
+            case "TC_56__Positive__BankAccountNumber": {
                 String acct = response.jsonPath().getString("data.bankDraftAccountNumber");
 
                 assertThat("bankDraftAccountNumber should not be null", acct, notNullValue());
@@ -394,19 +394,19 @@ public class BaseSteps {
                 break;
             }
 
-            case "TC_18__Positive__BankAccountType_Checking": {
+            case "TC_57__Positive__BankAccountType_Checking": {
                 String type = response.jsonPath().getString("data.bankDraftAccountType");
                 assertThat("bankDraftAccountType mismatch", type, equalTo("CHECKING"));
                 break;
             }
 
-            case "TC_19__Positive__BankAccountType_Savings": {
+            case "TC_58__Positive__BankAccountType_Savings": {
                 String type = response.jsonPath().getString("data.bankDraftAccountType");
                 assertThat("bankDraftAccountType mismatch", type, equalTo("SAVINGS"));
                 break;
             }
 
-            case "TC_20__Positive__BankName": {
+            case "TC_59__Positive__BankName": {
                 String bankName = response.jsonPath().getString("data.bankName");
                 assertThat("bankName should not be null", bankName, notNullValue());
                 assertThat("bankName should not be empty", bankName.trim().isEmpty(), equalTo(false));

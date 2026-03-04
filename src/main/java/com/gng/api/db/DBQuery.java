@@ -4002,6 +4002,43 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACCOUNT_WITH_ACTIVE_BANK_DRAFT_NO_SERVICE= """
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                CASE
+                    WHEN a.ucracct_draft_acct_status = 'A'
+                         AND b.utrbank_status = 'A'
+                    THEN
+                        '******' ||
+                        SUBSTR(
+                            LPAD(b.utrbank_transit_1, 4, '0') ||
+                            LPAD(b.utrbank_transit_2, 4, '0') ||
+                            b.utrbank_transit_3,
+                            -4
+                        )
+                    ELSE ''
+                END AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status = 'A'
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM UCRSERV s
+                    WHERE s.ucrserv_cust_code = a.ucracct_cust_code
+                      AND s.ucrserv_prem_code = a.ucracct_prem_code
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_ACCOUNT_WITH_PRENOTIFICATION_BANK_DRAFT= """
             SELECT
                 a.ucracct_cust_code AS customer_code,
@@ -4132,6 +4169,44 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACCOUNT_WITH_CHECKING_ACCOUNT2= """
+            SELECT
+                a.ucracct_cust_code         AS customer_code,
+                a.ucracct_prem_code         AS premises_code,
+                a.ucracct_draft_acct_status AS draft_status,
+            
+                -- Masked routing number
+                '******' || SUBSTR(
+                    REGEXP_REPLACE(
+                        LPAD(b.utrbank_transit_1, 4, '0') ||
+                        LPAD(b.utrbank_transit_2, 4, '0') ||
+                             b.utrbank_transit_3,
+                        '[^0-9]', ''
+                    ),
+                    -4
+                ) AS masked_routing_number,
+            
+                a.ucracct_check_saving_ind  AS account_type,
+                c.ucbcust_last_name         AS bank_name
+            FROM
+                UCRACCT a
+            JOIN
+                UTRBANK b
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN
+                UCBCUST c
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE
+                a.ucracct_draft_acct_status IS NOT NULL
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                AND a.ucracct_check_saving_ind = 'C'
+                AND a.ucracct_status_ind='A'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+
+
     public static final String SELECT_ACCOUNT_WITH_SAVINGS_ACCOUNT= """
             SELECT
                 a.ucracct_cust_code         AS customer_code,
@@ -4164,6 +4239,48 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 AND b.utrbank_status = 'A'
                 AND a.ucracct_bank_acct IS NOT NULL
                 AND a.ucracct_check_saving_ind = 'S'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_SAVINGS_ACCOUNT2= """
+            SELECT
+                a.ucracct_cust_code         AS customer_code,
+                a.ucracct_prem_code         AS premises_code,
+                a.ucracct_draft_acct_status AS draft_status,
+                -- Masked routing number
+                '******' || SUBSTR(
+                    REGEXP_REPLACE(
+                        LPAD(b.utrbank_transit_1, 4, '0') ||
+                        LPAD(b.utrbank_transit_2, 4, '0') ||
+                             b.utrbank_transit_3,
+                        '[^0-9]', ''
+                    ),
+                    -4
+                ) AS masked_routing_number,
+            
+                a.ucracct_check_saving_ind  AS account_type,
+                c.ucbcust_last_name         AS bank_name
+            FROM
+                UCRACCT a
+            JOIN
+                UTRBANK b
+                    ON a.ucracct_bank_code = b.utrbank_code
+            JOIN
+                UCBCUST c
+                    ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE
+                a.ucracct_draft_acct_status IS NOT NULL
+                AND b.utrbank_status = 'A'
+                AND a.ucracct_bank_acct IS NOT NULL
+                AND a.ucracct_check_saving_ind = 'S'
+                AND a.ucracct_status_ind='A'
+                AND a.ucracct_draft_acct_status='A'
+                AND EXISTS (
+                    SELECT 1
+                    FROM UCRSERV s
+                    WHERE s.ucrserv_cust_code = a.ucracct_cust_code
+                      AND s.ucrserv_prem_code = a.ucracct_prem_code
+                )
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -4283,6 +4400,23 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ON a.ucracct_bank_code = b.utrbank_code
             WHERE a.ucracct_draft_acct_status IS NULL
               AND (b.utrbank_status IS NULL OR b.utrbank_status <> 'A')
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITHOUT_BANK_DRAFT2= """
+            SELECT\s
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                NULL AS bankDraftStatus,
+                ''   AS bankDraftRoutingNumber,
+                ''   AS bankDraftAccountNumber,
+                NULL AS bankDraftAccountType,
+                ''   AS bankName
+            FROM UCRACCT a
+            LEFT JOIN UTRBANK b\s
+                ON a.ucracct_bank_code = b.utrbank_code
+            WHERE a.ucracct_draft_acct_status IS NULL
+              AND b.utrbank_status <> 'A'
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5187,6 +5321,20 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 AND UCRACCT_PREM_CODE=?
             FETCH FIRST 1 ROWS ONLY
             """;
+
+
+    public static final String SELECT_ROUTING_NO= """
+            SELECT\s
+                LPAD(b.utrbank_transit_1, 4, '0') ||
+                LPAD(b.utrbank_transit_2, 4, '0') ||
+                b.utrbank_transit_3 AS routing_number
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            WHERE a.ucracct_cust_code = ?
+              AND a.ucracct_prem_code = ?
+            """;
+
 
     public static final String SELECT_UPDATED_NICKNAME_RECORD2= """
             SELECT UCRACCT_NICK_NAME
@@ -7263,6 +7411,14 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_ACCOUNT_ROUTING_NO = """
+            SELECT *
+            FROM UTRBANK
+            WHERE LPAD(utrbank_transit_1, 4, '0')
+               || LPAD(utrbank_transit_2, 4, '0')
+               || utrbank_transit_3 = ?
+            """;
+
     public static final String GET_PRE_DIRECTION = """
             SELECT UTVPDIR_CODE FROM UTVPDIR
             """;
@@ -7270,6 +7426,63 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String GET_UNIT_TYPE = """
             SELECT UTVUTYP_CODE FROM UTVUTYP
             """;
+
+    public static final String SELECT_ACCOUNT_WITH_ACTIVE_PAYMENT_ARRANGEMENT = """
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                LPAD(b.utrbank_transit_1, 4, '0') ||
+                LPAD(b.utrbank_transit_2, 4, '0') ||
+                b.utrbank_transit_3 AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status = 'A'
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+              AND a.ucracct_pmnt_arr = 'Y'
+              AND EXISTS (
+                    SELECT 1
+                    FROM UCRSERV s
+                    WHERE s.ucrserv_cust_code = a.ucracct_cust_code
+                      AND s.ucrserv_prem_code = a.ucracct_prem_code
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_WITH_NO_PAYMENT_ARRANGEMENT = """
+            SELECT
+                a.ucracct_cust_code AS customer_code,
+                a.ucracct_prem_code AS premises_code,
+                a.ucracct_draft_acct_status AS bankDraftStatus,
+                LPAD(b.utrbank_transit_1, 4, '0') ||
+                LPAD(b.utrbank_transit_2, 4, '0') ||
+                b.utrbank_transit_3 AS bankDraftRoutingNumber,
+                a.ucracct_check_saving_ind AS bankDraftAccountType,
+                NVL(c.ucbcust_last_name, '') AS bankName
+            FROM UCRACCT a
+            JOIN UTRBANK b
+                ON a.ucracct_bank_code = b.utrbank_code
+            JOIN UCBCUST c
+                ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            WHERE a.ucracct_draft_acct_status = 'A'
+              AND b.utrbank_status = 'A'
+              AND a.ucracct_bank_acct IS NOT NULL
+              AND EXISTS (
+                    SELECT 1
+                    FROM UCRSERV s
+                    WHERE s.ucrserv_cust_code = a.ucracct_cust_code
+                      AND s.ucrserv_prem_code = a.ucracct_prem_code
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+
 
     public static final String GET_ZIP = """
             SELECT * FROM GTVZIPC

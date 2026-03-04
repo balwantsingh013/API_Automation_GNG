@@ -9,6 +9,7 @@ import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
 import com.gng.api.pojo.CSIPojo.GetAccountInfo.GetAccountInformationResponse;
 import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
+import com.gng.api.pojo.CSIPojo.UpdateBankDraft.UpdateBankDraftResponse;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePassword.UpdatePasswordResponse;
 import com.gng.api.pojo.CSIPojo.UpdateUsername.UpdateUsernameResponse;
@@ -97,6 +98,9 @@ public class TestContext {
     @Getter @Setter
     private Object getBankDraftInfoApiPage;
     private GetBankDraftInfoResponse getBankDraftInfoResponse;
+    @Getter @Setter
+    private Object updateBankDraftApiPage;
+    private UpdateBankDraftResponse updateBankDraftResponse;
     @Getter @Setter
     private Object getReasonsForLeavingApiPage;
     private GetReasonsForLeavingResponse getReasonsForLeavingResponse;
