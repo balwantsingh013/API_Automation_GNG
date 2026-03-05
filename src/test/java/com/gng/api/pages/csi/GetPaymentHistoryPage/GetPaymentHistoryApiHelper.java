@@ -83,8 +83,10 @@ public class GetPaymentHistoryApiHelper {
 
             case TC_135__Negative__Invalid_Account_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode("9999999");
-                payload.setPremisesCode("8888888");
+                payload.setCustomerCode("9988776");
+                Map<String, Object> userInfo = ApplicationContext.get().getDbAction().getUserAccountInfo("9988776");
+                payload.setCustomerCode("9988776");
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 break;
 
             case TC_136__Negative__Missing_Number_of_Months:

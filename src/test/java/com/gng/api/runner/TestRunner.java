@@ -20,7 +20,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/csi/phase2/GetBankDraftInfo.feature"
+                "src/test/resources/features/csi/phase2/GetPaymentHistory.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
