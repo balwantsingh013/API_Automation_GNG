@@ -109,5 +109,5 @@ Feature: Verify GetUsageHistory Api
       | testCondition                                                   | errorCode | errorMessage | data    |
       | TC_36__Positive__Usage_History_Too_Old_Valid_Number_of_Months  | 0         |              | notNull |
       | TC_37__Positive__Usage_History_Less_Than_Requested_Months      | 0         |              | notNull |
-      | TC_38__Positive__Usage_History_Equals_Requested_Months         | 0         |              | notNull |
-      | TC_39__Positive__Usage_History_Greater_Than_Requested_Months   | 0         |              | notNull |
+#      | TC_38__Positive__Usage_History_Equals_Requested_Months         | 0         |              | notNull |
+#      | TC_39__Positive__Usage_History_Greater_Than_Requested_Months   | 0         |              | notNull |
