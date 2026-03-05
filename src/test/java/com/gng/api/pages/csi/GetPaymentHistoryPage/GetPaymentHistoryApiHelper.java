@@ -1,0 +1,160 @@
+package com.gng.api.pages.csi.GetPaymentHistoryPage;
+
+import com.gng.api.constants.GlobalEnums;
+import com.gng.api.context.ApplicationContext;
+import com.gng.api.pages.BasePage;
+import com.gng.api.pojo.CSIPojo.GetPaymentHistory.GetPaymentHistoryRequest;
+import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.steps.csi.GetPaymentHistory.GetPaymentHistoryLabel;
+import com.gng.api.util.FakerDataGenerator;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+
+@Slf4j
+public class GetPaymentHistoryApiHelper {
+
+    private final TestContext testContext;
+
+    public GetPaymentHistoryApiHelper(TestContext testContext) {
+        this.testContext = testContext;
+    }
+
+    GetPaymentHistoryRequest preparePayload(GetPaymentHistoryLabel apiLabel) {
+        log.info("Preparing payload for {}", apiLabel);
+
+        String jsonFileName = apiLabel.equals(GetPaymentHistoryLabel.get_payment_history)
+                ? GetPaymentHistoryLabel.get_payment_history.toString()
+                : GetPaymentHistoryLabel.get_payment_history_mandatory.toString();
+
+        return BasePage.deserializeJsonToPojo(jsonFileName, GetPaymentHistoryRequest.class);
+    }
+
+    public void preparePayloadForTestCondition(GetPaymentHistoryRequest payload,
+                                               GetPaymentHistoryLabel testCondition) {
+
+        Map<String, Object> accountInfo = null;
+
+        switch (testCondition) {
+
+            // ---------------- NEGATIVE TEST CASES ----------------
+
+            case TC_126__Negative__Missing_Request_ID:
+                payload.setRequestID("");
+                break;
+
+            case TC_127__Negative__Invalid_Request_ID_Length:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(40));
+                break;
+
+            case TC_128__Negative__Duplicate_Request_ID:
+                payload.setRequestID(GlobalEnums.InvalidValues.DUPLICATE_REQUEST_ID.getValue());
+                break;
+
+            case TC_129__Negative__Missing_customerCode:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode("");
+                break;
+
+            case TC_130__Negative__Invalid_customerCode_Length:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode(FakerDataGenerator.generateDigits(12));
+                break;
+
+            case TC_131__Negative__Invalid_customerCode_Format:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode(FakerDataGenerator.generateAlphanumeric(6));
+                break;
+
+            case TC_132__Negative__Missing_premisesCode:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPremisesCode("");
+                break;
+
+            case TC_133__Negative__Invalid_premisesCode_Length:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(10));
+                break;
+
+            case TC_134__Negative__Invalid_premisesCode_Format:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPremisesCode(FakerDataGenerator.generateAlphanumeric(6));
+                break;
+
+            case TC_135__Negative__Invalid_Account_Number:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode("9999999");
+                payload.setPremisesCode("8888888");
+                break;
+
+            case TC_136__Negative__Missing_Number_of_Months:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setNumberOfMonths(null);
+                break;
+
+            case TC_137__Negative__Invalid_Number_of_Months_Format__Not_a_Number:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setNumberOfMonths("ABC");
+                break;
+
+            case TC_138__Negative__Invalid_Number_of_Months_Format__Zero_Value:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setNumberOfMonths("0");
+                break;
+
+            case TC_139__Negative__Invalid_Number_of_Months_Format__Negative_Number:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setNumberOfMonths("-5");
+                break;
+
+            case TC_140__Negative__Invalid_Number_of_Months_Length:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setNumberOfMonths("999");
+                break;
+
+
+            // ---------------- POSITIVE TEST CASES ----------------
+
+            case TC_141__Positive__Payment_Date_Format:
+            case TC_142__Positive__Payment_Amount_Format:
+            case TC_143__Positive__Payment_Code_Format:
+            case TC_144__Positive__Payment_Description_Format:
+            case TC_147__Positive__Valid_NumberOfMonths_PaymentHistory_Too_Old:
+            case TC_148__Positive__Valid_NumberOfMonths_Less_Than_Requested:
+            case TC_149__Positive__Valid_NumberOfMonths_Equals_Requested:
+            case TC_150__Positive__Valid_NumberOfMonths_Greater_Than_Requested:
+            case TC_151__Positive__Posted_Reversal_Payment:
+            case TC_152__Positive__Not_Posted_Reversal_Payment:
+            case TC_153__Positive__Posted_Payments:
+            case TC_154__Positive__Pending_Payments:
+            case TC_155__Positive__Posted_and_Pending_Payments:
+
+//                accountInfo = ApplicationContext.get().getDbAction().getAccountWithPaymentHistory();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+//                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+//                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                break;
+
+            case TC_145__Positive__No_Payment_History_New:
+//                accountInfo = ApplicationContext.get().getDbAction().getNewAccountNoPaymentHistory();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+//                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+//                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                break;
+
+            case TC_146__Positive__No_Payment_History_Active_Final_Inactive:
+//                accountInfo = ApplicationContext.get().getDbAction().getActiveFinalInactiveNoPaymentHistory();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+//                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+//                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                break;
+
+            default:
+                log.warn("Unhandled test condition: {}", testCondition);
+                break;
+        }
+    }
+}
