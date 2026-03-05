@@ -7230,7 +7230,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String GET_BILL_HISTORY = """
         WITH params AS (
-            SELECT ADD_MONTHS(TRUNC(SYSDATE), -?) AS win_start,
+            SELECT ADD_MONTHS(TRUNC(SYSDATE), -24) AS win_start,
                    TRUNC(SYSDATE)                 AS win_end
             FROM dual
         ),
@@ -7243,6 +7243,12 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND h.ubbbhst_printed_date >= p.win_start
               AND h.ubbbhst_printed_date <  p.win_end + 1
               AND NVL(h.ubbbhst_cancel_ind, 0) = 0
+              AND EXISTS (
+                    SELECT /*+ NO_UNNEST */ 1
+                    FROM UABOPEN o
+                    WHERE o.uabopen_bhst_tran_num = h.ubbbhst_tran_num
+                    AND ROWNUM = 1
+              )
         ),
         bhst_cnt AS (
             SELECT COUNT(*) AS no_of_matches FROM bhst
@@ -7328,8 +7334,8 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                    h.ubbbhst_prem_code,
                    h.ubbbhst_printed_date                        AS bill_date,
                    o.uabopen_item_type,
-                   NVL(o.uabopen_discount,        0)             AS discount_raw,
-                   NVL(o.uabopen_balance,         0)             AS balance_raw,
+                   NVL(o.uabopen_discount,       0)              AS discount_raw,
+                   NVL(o.uabopen_balance,        0)              AS balance_raw,
                    UPPER(rt.utrsrat_bill_print_desc)             AS bill_print_desc,
                    TRUNC(NVL(o.uabopen_billed_chg,      0), 2)  AS billed_chg_2dp,
                    TRUNC(NVL(o.uabopen_orig_budget_amt, 0), 2)  AS orig_budget_amt_2dp,
@@ -7370,7 +7376,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                               )
                             THEN e.billed_chg_2dp ELSE 0 END)       AS gas_service_charges,
                    SUM(CASE
-                           WHEN e.bill_print_desc LIKE '%TAX%'     THEN 0
+                           WHEN e.bill_print_desc LIKE '%TAX%'      THEN 0
                            WHEN e.bill_print_desc IN (
                                   'BASE CHARGE',
                                   'CUSTOMER SERVICE CHARGE',
@@ -7378,7 +7384,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                   'INTERSTATE PIPELINE CAPACITY CHARGE',
                                   'INTERSTATE PIPELINE CAPACITY',
                                   'MCF METER CHARGE'
-                              )                                    THEN 0
+                              )                                     THEN 0
                            WHEN e.bill_print_desc LIKE '%DISCOUNT%' THEN 0
                            WHEN e.uabopen_item_type = 'B'           THEN 0
                            ELSE e.amt_for_buckets_2dp
@@ -7432,52 +7438,60 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               ON sd.ocsweat_load_zone_code = p.ucbprem_alternate_location
              AND sd.weather_date           = bwd.weather_date
             GROUP BY bwd.urrshis_cust_code, bwd.urrshis_prem_code, bwd.bill_date
+        ),
+        bill_result AS (
+            SELECT TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')                         AS bill_date,
+                   TO_CHAR(u.bill_from_date,        'YYYYMMDD')                         AS bill_from_date,
+                   TO_CHAR(u.bill_to_date,           'YYYYMMDD')                        AS bill_to_date,
+                   u.days_of_service                                                    AS days_of_service,
+                   w.heating_degree_days                                                AS heating_degree_days,
+                   c.total_billed_consumption                                           AS total_billed_consumption,
+                   TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2) AS balance_brought_forward,
+                   TRUNC(NVL(ua.gas_service_charges,  0), 2)                           AS gas_service_charges,
+                   TRUNC(NVL(ua.other_charges_base,   0), 2)                           AS other_charges,
+                   TRUNC(NVL(ua.promo_discounts,       0), 2)                          AS promotional_discounts,
+                   TRUNC(NVL(ua.taxes,                 0), 2)                          AS taxes,
+                   NULLIF(TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2), 0)           AS budget_billing_amount,
+                   TRUNC(
+                       CASE
+                           WHEN NVL(ua.budget_billing_amount_raw, 0) > 0
+                               THEN TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2)
+                           ELSE
+                               TRUNC(NVL(ua.gas_service_charges,  0), 2)
+                             + TRUNC(NVL(ua.other_charges_base,   0), 2)
+                             + TRUNC(NVL(ua.taxes,                0), 2)
+                             + TRUNC(NVL(ua.promo_discounts,       0), 2)
+                             + TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2)
+                       END
+                   , 2)                                                                 AS total_bill_amount,
+                   h.ubbbhst_tran_num                                                   AS bill_history_transaction_number,
+                   (SELECT no_of_matches FROM bhst_cnt)                                 AS number_of_matches
+            FROM bhst h
+            LEFT JOIN usage_window u
+              ON u.urrshis_cust_code = h.ubbbhst_cust_code
+             AND u.urrshis_prem_code = h.ubbbhst_prem_code
+             AND u.bill_date         = h.ubbbhst_printed_date
+            LEFT JOIN ubbchst_bill c
+              ON c.ubbbhst_cust_code = h.ubbbhst_cust_code
+             AND c.ubbbhst_prem_code = h.ubbbhst_prem_code
+             AND c.bill_date         = h.ubbbhst_printed_date
+            LEFT JOIN uabopen_agg ua
+              ON ua.ubbbhst_cust_code = h.ubbbhst_cust_code
+             AND ua.ubbbhst_prem_code = h.ubbbhst_prem_code
+             AND ua.bill_date         = h.ubbbhst_printed_date
+            LEFT JOIN hdd_agg w
+              ON w.urrshis_cust_code = h.ubbbhst_cust_code
+             AND w.urrshis_prem_code = h.ubbbhst_prem_code
+             AND w.bill_date         = h.ubbbhst_printed_date
         )
-        SELECT TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')                     AS bill_date,
-               TO_CHAR(u.bill_from_date,        'YYYYMMDD')                     AS bill_from_date,
-               TO_CHAR(u.bill_to_date,           'YYYYMMDD')                     AS bill_to_date,
-               u.days_of_service                                                 AS days_of_service,
-               w.heating_degree_days                                             AS heating_degree_days,
-               c.total_billed_consumption                                        AS total_billed_consumption,
-               TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2) AS balance_brought_forward,
-               TRUNC(NVL(ua.gas_service_charges,        0), 2)                  AS gas_service_charges,
-               TRUNC(NVL(ua.other_charges_base,         0), 2)                  AS other_charges,
-               TRUNC(NVL(ua.promo_discounts,            0), 2)                  AS promotional_discounts,
-               TRUNC(NVL(ua.taxes,                      0), 2)                  AS taxes,
-               NULLIF(TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2), 0)        AS budget_billing_amount,
-               TRUNC(
-                   CASE
-                       WHEN NVL(ua.budget_billing_amount_raw, 0) > 0
-                           THEN TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2)
-                       ELSE
-                           TRUNC(NVL(ua.gas_service_charges,  0), 2)
-                         + TRUNC(NVL(ua.other_charges_base,   0), 2)
-                         + TRUNC(NVL(ua.taxes,                0), 2)
-                         + TRUNC(NVL(ua.promo_discounts,      0), 2)
-                         + TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2)
-                   END
-               , 2)                                                              AS total_bill_amount,
-               h.ubbbhst_tran_num                                                AS bill_history_transaction_number,
-               (SELECT no_of_matches FROM bhst_cnt)                              AS number_of_matches
-        FROM bhst h
-        LEFT JOIN usage_window u
-          ON u.urrshis_cust_code = h.ubbbhst_cust_code
-         AND u.urrshis_prem_code = h.ubbbhst_prem_code
-         AND u.bill_date         = h.ubbbhst_printed_date
-        LEFT JOIN ubbchst_bill c
-          ON c.ubbbhst_cust_code = h.ubbbhst_cust_code
-         AND c.ubbbhst_prem_code = h.ubbbhst_prem_code
-         AND c.bill_date         = h.ubbbhst_printed_date
-        LEFT JOIN uabopen_agg ua
-          ON ua.ubbbhst_cust_code = h.ubbbhst_cust_code
-         AND ua.ubbbhst_prem_code = h.ubbbhst_prem_code
-         AND ua.bill_date         = h.ubbbhst_printed_date
-        LEFT JOIN hdd_agg w
-          ON w.urrshis_cust_code = h.ubbbhst_cust_code
-         AND w.urrshis_prem_code = h.ubbbhst_prem_code
-         AND w.bill_date         = h.ubbbhst_printed_date
-        ORDER BY h.ubbbhst_printed_date DESC
+        SELECT *
+        FROM bill_result
+        WHERE total_bill_amount <> 0
+        ORDER BY bill_date DESC
         """;
+
+
+
 
     public static final String GET_USAGE_HISTORY2 = """
         WITH seed_hist AS (

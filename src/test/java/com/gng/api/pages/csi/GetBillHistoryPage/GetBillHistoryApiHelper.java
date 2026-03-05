@@ -9,6 +9,7 @@ import com.gng.api.steps.csi.GetBillHistory.GetBillHistoryLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -124,6 +125,12 @@ public class GetBillHistoryApiHelper {
                 payload.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
                 payload.setNumberOfMonths("24");
+                testContext.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
+                List<Map<String, Object>> dbRows4 = ApplicationContext.get()
+                        .getDbAction()
+                        .getBillHistory(accountInfo.get("UBBBHST_cust_code").toString(), accountInfo.get("UBBBHST_prem_code").toString());
+
                 break;
 
             case TC_90__Positive__No_Usage_History_Active:
@@ -156,15 +163,23 @@ public class GetBillHistoryApiHelper {
                 payload.setCustomerCode(accountInfo.get("urrshis_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("urrshis_prem_code").toString());
                 payload.setNumberOfMonths("2");
+                List<Map<String, Object>> dbRows = ApplicationContext.get()
+                        .getDbAction()
+                        .getBillHistory(accountInfo.get("urrshis_cust_code").toString(), accountInfo.get("urrshis_prem_code").toString());
                 break;
 
             case TC_94__Positive__Usage_History_Less_Than_Requested_Months:
-                accountInfo = ApplicationContext.get().getDbAction().getAccountWithActualReading3();
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithActualReading2();
 
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("urrshis_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("urrshis_prem_code").toString());
                 payload.setNumberOfMonths("24");
+                testContext.setCustomerCode(accountInfo.get("urrshis_cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("urrshis_prem_code").toString());
+                List<Map<String, Object>> dbRows2 = ApplicationContext.get()
+                        .getDbAction()
+                        .getBillHistory(accountInfo.get("urrshis_cust_code").toString(), accountInfo.get("urrshis_prem_code").toString());
                 break;
 
             case TC_95__Positive__Usage_History_Equals_Requested_Months:

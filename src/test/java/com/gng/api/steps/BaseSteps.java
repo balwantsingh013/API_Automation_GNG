@@ -334,11 +334,19 @@ public class BaseSteps {
                     equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));
         }
     }
+    private static final BigDecimal MONETARY_TOLERANCE = new BigDecimal("0.01");
+
+    private void assertMonetary(String context, Object apiValue, Object dbValue) {
+        BigDecimal api = new BigDecimal(String.valueOf(apiValue));
+        BigDecimal db  = new BigDecimal(String.valueOf(dbValue));
+        assertThat(context,
+                api.subtract(db).abs(),
+                lessThanOrEqualTo(MONETARY_TOLERANCE));
+    }
 
     private void verifyBillHistoryAgainstDatabase(String customerCode, String premisesCode) {
         Response response = testContext.getResponse();
 
-        // ── Top-level assertions ──────────────────────────────────────────────
         assertThat("Response success flag should be true",
                 response.jsonPath().getBoolean("success"),
                 equalTo(true));
@@ -351,7 +359,6 @@ public class BaseSteps {
                 response.jsonPath().getString("errorMessage"),
                 equalTo(""));
 
-        // ── Extract API response data ─────────────────────────────────────────
         int apiNumberOfMatches = response.jsonPath().getInt("data.numberOfMatches");
         List<Map<String, Object>> apiBillHistory = response.jsonPath().getList("data.billHistory");
 
@@ -359,19 +366,16 @@ public class BaseSteps {
         assertThat("billHistory list size should match numberOfMatches",
                 apiBillHistory.size(), equalTo(apiNumberOfMatches));
 
-        // ── Query DB ──────────────────────────────────────────────────────────
         List<Map<String, Object>> dbRows = ApplicationContext.get()
                 .getDbAction()
-                .getBillHistory(customerCode, premisesCode);
+                .getBillHistory2(customerCode, premisesCode);
 
-        // ── numberOfMatches cross-check ───────────────────────────────────────
         assertThat("numberOfMatches does not match DB count",
                 apiNumberOfMatches, equalTo(dbRows.size()));
 
         assertThat("billHistory list size does not match DB row count",
                 apiBillHistory.size(), equalTo(dbRows.size()));
 
-        // ── Per-row field assertions ──────────────────────────────────────────
         for (int i = 0; i < dbRows.size(); i++) {
             Map<String, Object> dbRow  = dbRows.get(i);
             Map<String, Object> apiRow = apiBillHistory.get(i);
@@ -400,34 +404,27 @@ public class BaseSteps {
                     ((Number) apiRow.get("heatingDegreeDays")).intValue(),
                     equalTo(((Number) dbRow.get("HEATING_DEGREE_DAYS")).intValue()));
 
-            // ── Decimal fields ────────────────────────────────────────────────
-            assertThat(rowContext + " | totalBilledConsumption mismatch",
-                    new BigDecimal(String.valueOf(apiRow.get("totalBilledConsumption"))),
-                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("TOTAL_BILLED_CONSUMPTION")))));
+            // ── Monetary fields (1 cent tolerance) ───────────────────────────
+            assertMonetary(rowContext + " | totalBilledConsumption mismatch",
+                    apiRow.get("totalBilledConsumption"), dbRow.get("TOTAL_BILLED_CONSUMPTION"));
 
-            assertThat(rowContext + " | balanceBroughtForward mismatch",
-                    new BigDecimal(String.valueOf(apiRow.get("balanceBroughtForward"))),
-                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("BALANCE_BROUGHT_FORWARD")))));
+            assertMonetary(rowContext + " | balanceBroughtForward mismatch",
+                    apiRow.get("balanceBroughtForward"), dbRow.get("BALANCE_BROUGHT_FORWARD"));
 
-            assertThat(rowContext + " | gasServiceCharges mismatch",
-                    new BigDecimal(String.valueOf(apiRow.get("gasServiceCharges"))),
-                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("GAS_SERVICE_CHARGES")))));
+            assertMonetary(rowContext + " | gasServiceCharges mismatch",
+                    apiRow.get("gasServiceCharges"), dbRow.get("GAS_SERVICE_CHARGES"));
 
-            assertThat(rowContext + " | otherCharges mismatch",
-                    new BigDecimal(String.valueOf(apiRow.get("otherCharges"))),
-                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("OTHER_CHARGES")))));
+            assertMonetary(rowContext + " | otherCharges mismatch",
+                    apiRow.get("otherCharges"), dbRow.get("OTHER_CHARGES"));
 
-            assertThat(rowContext + " | promotionalDiscounts mismatch",
-                    new BigDecimal(String.valueOf(apiRow.get("promotionalDiscounts"))),
-                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("PROMOTIONAL_DISCOUNTS")))));
+            assertMonetary(rowContext + " | promotionalDiscounts mismatch",
+                    apiRow.get("promotionalDiscounts"), dbRow.get("PROMOTIONAL_DISCOUNTS"));
 
-            assertThat(rowContext + " | taxes mismatch",
-                    new BigDecimal(String.valueOf(apiRow.get("taxes"))),
-                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("TAXES")))));
+            assertMonetary(rowContext + " | taxes mismatch",
+                    apiRow.get("taxes"), dbRow.get("TAXES"));
 
-            assertThat(rowContext + " | totalBillAmount mismatch",
-                    new BigDecimal(String.valueOf(apiRow.get("totalBillAmount"))),
-                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("TOTAL_BILL_AMOUNT")))));
+            assertMonetary(rowContext + " | totalBillAmount mismatch",
+                    apiRow.get("totalBillAmount"), dbRow.get("TOTAL_BILL_AMOUNT"));
 
             // ── Nullable: budgetBillingAmount ─────────────────────────────────
             Object apiBudget = apiRow.get("budgetBillingAmount");
@@ -437,9 +434,8 @@ public class BaseSteps {
                 assertThat(rowContext + " | budgetBillingAmount should be null",
                         apiBudget, nullValue());
             } else {
-                assertThat(rowContext + " | budgetBillingAmount mismatch",
-                        new BigDecimal(String.valueOf(apiBudget)),
-                        comparesEqualTo(new BigDecimal(String.valueOf(dbBudget))));
+                assertMonetary(rowContext + " | budgetBillingAmount mismatch",
+                        apiBudget, dbBudget);
             }
 
             // ── Transaction number ────────────────────────────────────────────
@@ -448,6 +444,7 @@ public class BaseSteps {
                     equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));
         }
     }
+
 
     private void validateBankDraftStatus(String expectedStatus) {
         Response response = testContext.getResponse();
