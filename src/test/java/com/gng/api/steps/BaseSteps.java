@@ -226,6 +226,13 @@ public class BaseSteps {
         verifyUsageHistoryAgainstDatabase(customerCode, premisesCode);
     }
 
+    @And("bill history response should match database for customer and premises code")
+    public void billHistoryResponseShouldMatchDatabase() {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        verifyBillHistoryAgainstDatabase(customerCode, premisesCode);
+    }
+
     private void verifyUsageHistoryAgainstDatabase(String customerCode, String premisesCode) {
         Response response = testContext.getResponse();
 
@@ -322,6 +329,120 @@ public class BaseSteps {
                     ((Number) apiRow.get("heatingDegreeDays")).intValue(),
                     equalTo(((Number) dbRow.get("HEATING_DEGREE_DAYS")).intValue()));
 
+            assertThat(rowContext + " | billHistoryTransactionNumber mismatch",
+                    ((Number) apiRow.get("billHistoryTransactionNumber")).longValue(),
+                    equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));
+        }
+    }
+
+    private void verifyBillHistoryAgainstDatabase(String customerCode, String premisesCode) {
+        Response response = testContext.getResponse();
+
+        // ── Top-level assertions ──────────────────────────────────────────────
+        assertThat("Response success flag should be true",
+                response.jsonPath().getBoolean("success"),
+                equalTo(true));
+
+        assertThat("Response errorCode should be 0",
+                response.jsonPath().getInt("errorCode"),
+                equalTo(0));
+
+        assertThat("Response errorMessage should be empty",
+                response.jsonPath().getString("errorMessage"),
+                equalTo(""));
+
+        // ── Extract API response data ─────────────────────────────────────────
+        int apiNumberOfMatches = response.jsonPath().getInt("data.numberOfMatches");
+        List<Map<String, Object>> apiBillHistory = response.jsonPath().getList("data.billHistory");
+
+        assertThat("billHistory list should not be null", apiBillHistory, notNullValue());
+        assertThat("billHistory list size should match numberOfMatches",
+                apiBillHistory.size(), equalTo(apiNumberOfMatches));
+
+        // ── Query DB ──────────────────────────────────────────────────────────
+        List<Map<String, Object>> dbRows = ApplicationContext.get()
+                .getDbAction()
+                .getBillHistory(customerCode, premisesCode);
+
+        // ── numberOfMatches cross-check ───────────────────────────────────────
+        assertThat("numberOfMatches does not match DB count",
+                apiNumberOfMatches, equalTo(dbRows.size()));
+
+        assertThat("billHistory list size does not match DB row count",
+                apiBillHistory.size(), equalTo(dbRows.size()));
+
+        // ── Per-row field assertions ──────────────────────────────────────────
+        for (int i = 0; i < dbRows.size(); i++) {
+            Map<String, Object> dbRow  = dbRows.get(i);
+            Map<String, Object> apiRow = apiBillHistory.get(i);
+            String rowContext = "Row [" + i + "] billDate=" + dbRow.get("BILL_DATE")
+                    + " tranNum=" + dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER");
+
+            // ── Dates ─────────────────────────────────────────────────────────
+            assertThat(rowContext + " | billDate mismatch",
+                    String.valueOf(apiRow.get("billDate")),
+                    equalTo(String.valueOf(dbRow.get("BILL_DATE"))));
+
+            assertThat(rowContext + " | billFromDate mismatch",
+                    String.valueOf(apiRow.get("billFromDate")),
+                    equalTo(String.valueOf(dbRow.get("BILL_FROM_DATE"))));
+
+            assertThat(rowContext + " | billToDate mismatch",
+                    String.valueOf(apiRow.get("billToDate")),
+                    equalTo(String.valueOf(dbRow.get("BILL_TO_DATE"))));
+
+            // ── Integer fields ────────────────────────────────────────────────
+            assertThat(rowContext + " | daysOfService mismatch",
+                    ((Number) apiRow.get("daysOfService")).intValue(),
+                    equalTo(((Number) dbRow.get("DAYS_OF_SERVICE")).intValue()));
+
+            assertThat(rowContext + " | heatingDegreeDays mismatch",
+                    ((Number) apiRow.get("heatingDegreeDays")).intValue(),
+                    equalTo(((Number) dbRow.get("HEATING_DEGREE_DAYS")).intValue()));
+
+            // ── Decimal fields ────────────────────────────────────────────────
+            assertThat(rowContext + " | totalBilledConsumption mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("totalBilledConsumption"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("TOTAL_BILLED_CONSUMPTION")))));
+
+            assertThat(rowContext + " | balanceBroughtForward mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("balanceBroughtForward"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("BALANCE_BROUGHT_FORWARD")))));
+
+            assertThat(rowContext + " | gasServiceCharges mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("gasServiceCharges"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("GAS_SERVICE_CHARGES")))));
+
+            assertThat(rowContext + " | otherCharges mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("otherCharges"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("OTHER_CHARGES")))));
+
+            assertThat(rowContext + " | promotionalDiscounts mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("promotionalDiscounts"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("PROMOTIONAL_DISCOUNTS")))));
+
+            assertThat(rowContext + " | taxes mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("taxes"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("TAXES")))));
+
+            assertThat(rowContext + " | totalBillAmount mismatch",
+                    new BigDecimal(String.valueOf(apiRow.get("totalBillAmount"))),
+                    comparesEqualTo(new BigDecimal(String.valueOf(dbRow.get("TOTAL_BILL_AMOUNT")))));
+
+            // ── Nullable: budgetBillingAmount ─────────────────────────────────
+            Object apiBudget = apiRow.get("budgetBillingAmount");
+            Object dbBudget  = dbRow.get("BUDGET_BILLING_AMOUNT");
+
+            if (dbBudget == null) {
+                assertThat(rowContext + " | budgetBillingAmount should be null",
+                        apiBudget, nullValue());
+            } else {
+                assertThat(rowContext + " | budgetBillingAmount mismatch",
+                        new BigDecimal(String.valueOf(apiBudget)),
+                        comparesEqualTo(new BigDecimal(String.valueOf(dbBudget))));
+            }
+
+            // ── Transaction number ────────────────────────────────────────────
             assertThat(rowContext + " | billHistoryTransactionNumber mismatch",
                     ((Number) apiRow.get("billHistoryTransactionNumber")).longValue(),
                     equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));

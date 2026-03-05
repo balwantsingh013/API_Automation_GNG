@@ -7228,6 +7228,257 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                  u.urrshis_action_date
         """;
 
+    public static final String GET_BILL_HISTORY = """
+        WITH params AS (
+            SELECT ADD_MONTHS(TRUNC(SYSDATE), -?) AS win_start,
+                   TRUNC(SYSDATE)                 AS win_end
+            FROM dual
+        ),
+        bhst AS (
+            SELECT h.*
+            FROM UBBBHST h
+            CROSS JOIN params p
+            WHERE h.ubbbhst_cust_code    = ?
+              AND h.ubbbhst_prem_code    = ?
+              AND h.ubbbhst_printed_date >= p.win_start
+              AND h.ubbbhst_printed_date <  p.win_end + 1
+              AND NVL(h.ubbbhst_cancel_ind, 0) = 0
+        ),
+        bhst_cnt AS (
+            SELECT COUNT(*) AS no_of_matches FROM bhst
+        ),
+        urr_cycle_date AS (
+            SELECT h.ubbbhst_cust_code,
+                   h.ubbbhst_prem_code,
+                   h.ubbbhst_printed_date     AS bill_date,
+                   MAX(r.urrshis_charge_date) AS cycle_charge_date
+            FROM bhst h
+            JOIN URRSHIS r
+              ON r.urrshis_cust_code   = h.ubbbhst_cust_code
+             AND r.urrshis_prem_code   = h.ubbbhst_prem_code
+             AND r.urrshis_charge_date <= h.ubbbhst_printed_date
+             AND NVL(r.urrshis_dos, 0) > 0
+             AND r.urrshis_action_date IS NOT NULL
+            GROUP BY h.ubbbhst_cust_code, h.ubbbhst_prem_code, h.ubbbhst_printed_date
+        ),
+        urr_rows AS (
+            SELECT r.*, c.bill_date
+            FROM urr_cycle_date c
+            JOIN URRSHIS r
+              ON r.urrshis_cust_code   = c.ubbbhst_cust_code
+             AND r.urrshis_prem_code   = c.ubbbhst_prem_code
+             AND r.urrshis_charge_date = c.cycle_charge_date
+             AND NVL(r.urrshis_dos, 0) > 0
+             AND r.urrshis_action_date IS NOT NULL
+        ),
+        urr_bill AS (
+            SELECT r.urrshis_cust_code,
+                   r.urrshis_prem_code,
+                   r.bill_date,
+                   TRUNC(MAX(r.urrshis_action_date)) AS bill_to_date,
+                   SUM(r.urrshis_dos)                AS days_of_service
+            FROM urr_rows r
+            GROUP BY r.urrshis_cust_code, r.urrshis_prem_code, r.bill_date
+        ),
+        usage_window AS (
+            SELECT u.urrshis_cust_code,
+                   u.urrshis_prem_code,
+                   u.bill_date,
+                   (u.bill_to_date - u.days_of_service) AS bill_from_date,
+                   u.bill_to_date,
+                   u.days_of_service
+            FROM urr_bill u
+        ),
+        ubbchst_bill AS (
+            SELECT h.ubbbhst_cust_code,
+                   h.ubbbhst_prem_code,
+                   h.ubbbhst_printed_date                 AS bill_date,
+                   SUM(NVL(c.ubbchst_billed_consump, 0)) AS total_billed_consumption
+            FROM bhst h
+            LEFT JOIN usage_window u
+              ON u.urrshis_cust_code = h.ubbbhst_cust_code
+             AND u.urrshis_prem_code = h.ubbbhst_prem_code
+             AND u.bill_date         = h.ubbbhst_printed_date
+            LEFT JOIN urr_cycle_date cd
+              ON cd.ubbbhst_cust_code = h.ubbbhst_cust_code
+             AND cd.ubbbhst_prem_code = h.ubbbhst_prem_code
+             AND cd.bill_date         = h.ubbbhst_printed_date
+            LEFT JOIN UBBCHST c
+              ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
+             AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+             AND c.ubbchst_charge_date IN ( h.ubbbhst_printed_date,
+                                            u.bill_to_date,
+                                            cd.cycle_charge_date )
+            GROUP BY h.ubbbhst_cust_code, h.ubbbhst_prem_code, h.ubbbhst_printed_date
+        ),
+        rt_match AS (
+            SELECT t.utrsrat_srat_code,
+                   t.utrsrat_scat_code,
+                   t.utrsrat_bill_print_desc,
+                   h.ubbbhst_tran_num,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY t.utrsrat_srat_code, t.utrsrat_scat_code, h.ubbbhst_tran_num
+                       ORDER BY t.utrsrat_effect_date DESC
+                   ) AS rn
+            FROM UTRSRAT t
+            JOIN bhst h ON t.utrsrat_effect_date <= h.ubbbhst_printed_date
+        ),
+        uabopen_enriched AS (
+            SELECT h.ubbbhst_cust_code,
+                   h.ubbbhst_prem_code,
+                   h.ubbbhst_printed_date                        AS bill_date,
+                   o.uabopen_item_type,
+                   NVL(o.uabopen_discount,        0)             AS discount_raw,
+                   NVL(o.uabopen_balance,         0)             AS balance_raw,
+                   UPPER(rt.utrsrat_bill_print_desc)             AS bill_print_desc,
+                   TRUNC(NVL(o.uabopen_billed_chg,      0), 2)  AS billed_chg_2dp,
+                   TRUNC(NVL(o.uabopen_orig_budget_amt, 0), 2)  AS orig_budget_amt_2dp,
+                   CASE
+                       WHEN NVL(o.uabopen_discount, 0) <> 0
+                           THEN TRUNC(-ABS(o.uabopen_discount), 2)
+                       ELSE 0
+                   END                                           AS promo_disc_2dp,
+                   CASE
+                       WHEN NVL(o.uabopen_discount, 0) <> 0 THEN 0
+                       WHEN NVL(o.uabopen_balance,  0) <> 0 THEN 0
+                       ELSE TRUNC(NVL(o.uabopen_billed_chg, 0), 2)
+                   END                                           AS amt_for_buckets_2dp
+            FROM UABOPEN o
+            JOIN bhst h
+              ON h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+            LEFT JOIN rt_match rt
+              ON rt.utrsrat_srat_code = o.uabopen_srat_code
+             AND rt.utrsrat_scat_code = o.uabopen_scat_code
+             AND rt.ubbbhst_tran_num  = h.ubbbhst_tran_num
+             AND rt.rn = 1
+        ),
+        uabopen_agg AS (
+            SELECT e.ubbbhst_cust_code,
+                   e.ubbbhst_prem_code,
+                   e.bill_date,
+                   SUM(CASE WHEN e.uabopen_item_type = 'B'
+                            THEN e.orig_budget_amt_2dp ELSE 0 END)  AS budget_billing_amount_raw,
+                   SUM(CASE WHEN e.bill_print_desc LIKE '%TAX%'
+                            THEN e.billed_chg_2dp ELSE 0 END)       AS taxes,
+                   SUM(CASE WHEN e.bill_print_desc IN (
+                                  'BASE CHARGE',
+                                  'CUSTOMER SERVICE CHARGE',
+                                  'GAS CHARGE',
+                                  'INTERSTATE PIPELINE CAPACITY CHARGE',
+                                  'INTERSTATE PIPELINE CAPACITY',
+                                  'MCF METER CHARGE'
+                              )
+                            THEN e.billed_chg_2dp ELSE 0 END)       AS gas_service_charges,
+                   SUM(CASE
+                           WHEN e.bill_print_desc LIKE '%TAX%'     THEN 0
+                           WHEN e.bill_print_desc IN (
+                                  'BASE CHARGE',
+                                  'CUSTOMER SERVICE CHARGE',
+                                  'GAS CHARGE',
+                                  'INTERSTATE PIPELINE CAPACITY CHARGE',
+                                  'INTERSTATE PIPELINE CAPACITY',
+                                  'MCF METER CHARGE'
+                              )                                    THEN 0
+                           WHEN e.bill_print_desc LIKE '%DISCOUNT%' THEN 0
+                           WHEN e.uabopen_item_type = 'B'           THEN 0
+                           ELSE e.amt_for_buckets_2dp
+                       END)                                         AS other_charges_base,
+                   SUM(e.promo_disc_2dp)
+                   + SUM(CASE
+                             WHEN e.bill_print_desc LIKE '%DISCOUNT%'
+                              AND NVL(e.discount_raw, 0) = 0
+                                 THEN e.billed_chg_2dp
+                             ELSE 0
+                         END)                                       AS promo_discounts
+            FROM uabopen_enriched e
+            GROUP BY e.ubbbhst_cust_code, e.ubbbhst_prem_code, e.bill_date
+        ),
+        num_seq AS (
+            SELECT LEVEL AS n FROM dual CONNECT BY LEVEL <= 400
+        ),
+        hdd_window AS (
+            SELECT u.urrshis_cust_code,
+                   u.urrshis_prem_code,
+                   u.bill_date,
+                   (u.bill_to_date - u.days_of_service) AS hdd_from_date,
+                   u.bill_to_date                       AS hdd_to_date
+            FROM usage_window u
+        ),
+        bill_window_days AS (
+            SELECT hw.urrshis_cust_code,
+                   hw.urrshis_prem_code,
+                   hw.bill_date,
+                   (TRUNC(hw.hdd_from_date) + s.n - 1) AS weather_date
+            FROM hdd_window hw
+            JOIN num_seq s
+              ON s.n <= (TRUNC(hw.hdd_to_date) - TRUNC(hw.hdd_from_date) + 1)
+        ),
+        sweat_day AS (
+            SELECT w.ocsweat_load_zone_code,
+                   TRUNC(w.ocsweat_weather_date)              AS weather_date,
+                   SUM(NVL(w.ocsweat_heating_degree_days, 0)) AS hdd_day
+            FROM OCSWEAT w
+            GROUP BY w.ocsweat_load_zone_code, TRUNC(w.ocsweat_weather_date)
+        ),
+        hdd_agg AS (
+            SELECT bwd.urrshis_cust_code,
+                   bwd.urrshis_prem_code,
+                   bwd.bill_date,
+                   TRUNC(SUM(sd.hdd_day)) AS heating_degree_days
+            FROM bill_window_days bwd
+            LEFT JOIN UCBPREM p
+              ON p.ucbprem_code = bwd.urrshis_prem_code
+            LEFT JOIN sweat_day sd
+              ON sd.ocsweat_load_zone_code = p.ucbprem_alternate_location
+             AND sd.weather_date           = bwd.weather_date
+            GROUP BY bwd.urrshis_cust_code, bwd.urrshis_prem_code, bwd.bill_date
+        )
+        SELECT TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')                     AS bill_date,
+               TO_CHAR(u.bill_from_date,        'YYYYMMDD')                     AS bill_from_date,
+               TO_CHAR(u.bill_to_date,           'YYYYMMDD')                     AS bill_to_date,
+               u.days_of_service                                                 AS days_of_service,
+               w.heating_degree_days                                             AS heating_degree_days,
+               c.total_billed_consumption                                        AS total_billed_consumption,
+               TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2) AS balance_brought_forward,
+               TRUNC(NVL(ua.gas_service_charges,        0), 2)                  AS gas_service_charges,
+               TRUNC(NVL(ua.other_charges_base,         0), 2)                  AS other_charges,
+               TRUNC(NVL(ua.promo_discounts,            0), 2)                  AS promotional_discounts,
+               TRUNC(NVL(ua.taxes,                      0), 2)                  AS taxes,
+               NULLIF(TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2), 0)        AS budget_billing_amount,
+               TRUNC(
+                   CASE
+                       WHEN NVL(ua.budget_billing_amount_raw, 0) > 0
+                           THEN TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2)
+                       ELSE
+                           TRUNC(NVL(ua.gas_service_charges,  0), 2)
+                         + TRUNC(NVL(ua.other_charges_base,   0), 2)
+                         + TRUNC(NVL(ua.taxes,                0), 2)
+                         + TRUNC(NVL(ua.promo_discounts,      0), 2)
+                         + TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2)
+                   END
+               , 2)                                                              AS total_bill_amount,
+               h.ubbbhst_tran_num                                                AS bill_history_transaction_number,
+               (SELECT no_of_matches FROM bhst_cnt)                              AS number_of_matches
+        FROM bhst h
+        LEFT JOIN usage_window u
+          ON u.urrshis_cust_code = h.ubbbhst_cust_code
+         AND u.urrshis_prem_code = h.ubbbhst_prem_code
+         AND u.bill_date         = h.ubbbhst_printed_date
+        LEFT JOIN ubbchst_bill c
+          ON c.ubbbhst_cust_code = h.ubbbhst_cust_code
+         AND c.ubbbhst_prem_code = h.ubbbhst_prem_code
+         AND c.bill_date         = h.ubbbhst_printed_date
+        LEFT JOIN uabopen_agg ua
+          ON ua.ubbbhst_cust_code = h.ubbbhst_cust_code
+         AND ua.ubbbhst_prem_code = h.ubbbhst_prem_code
+         AND ua.bill_date         = h.ubbbhst_printed_date
+        LEFT JOIN hdd_agg w
+          ON w.urrshis_cust_code = h.ubbbhst_cust_code
+         AND w.urrshis_prem_code = h.ubbbhst_prem_code
+         AND w.bill_date         = h.ubbbhst_printed_date
+        ORDER BY h.ubbbhst_printed_date DESC
+        """;
+
     public static final String GET_USAGE_HISTORY2 = """
         WITH seed_hist AS (
             SELECT t.ubbbhst_cust_code,
