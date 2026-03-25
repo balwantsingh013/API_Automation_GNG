@@ -155,7 +155,7 @@ public class UpdateUsernameApiHelper {
                 break;
 
             case TC_38__Negative__Invalid_credentials___Password____:
-                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActiveETC();
+                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActive();
                 custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                 premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                 payload.setCustomerCode(custCode);

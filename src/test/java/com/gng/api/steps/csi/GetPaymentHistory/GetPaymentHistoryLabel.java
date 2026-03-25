@@ -18,7 +18,7 @@ public enum GetPaymentHistoryLabel {
     TC_133__Negative__Invalid_premisesCode_Length,
     TC_134__Negative__Invalid_premisesCode_Format,
 
-    TC_135__Negative__Invalid_Account_Number,
+    TC_135__Negative__Invalid_Account_Number_,
 
     TC_136__Negative__Missing_Number_of_Months,
     TC_137__Negative__Invalid_Number_of_Months_Format__Not_a_Number,

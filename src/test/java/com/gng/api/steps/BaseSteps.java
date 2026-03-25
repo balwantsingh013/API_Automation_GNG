@@ -233,6 +233,111 @@ public class BaseSteps {
         verifyBillHistoryAgainstDatabase(customerCode, premisesCode);
     }
 
+    @And("payment history response should match database for customer and premises code")
+    public void paymentHistoryResponseShouldMatchDatabase() {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        verifyPaymentHistoryAgainstDatabase(customerCode, premisesCode);
+    }
+
+    @And("the Banner database should be updated with the provided bank draft information")
+    public void theBannerDatabaseShouldBeUpdatedWithBankDraftInformation() {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        verifyBankDraftAgainstDatabase(customerCode, premisesCode);
+    }
+
+    private void verifyBankDraftAgainstDatabase(String customerCode, String premisesCode) {
+        Response response = testContext.getResponse();
+
+        assertThat("Response success flag should be true",
+                response.jsonPath().getBoolean("success"),
+                equalTo(true));
+
+        assertThat("Response errorCode should be 0",
+                response.jsonPath().getInt("errorCode"),
+                equalTo(0));
+
+        assertThat("Response errorMessage should be empty",
+                response.jsonPath().getString("errorMessage"),
+                equalTo(""));
+
+        String apiBankName = response.jsonPath().getString("data.bankName");
+
+        assertThat("bankName should not be null", apiBankName, notNullValue());
+
+        Map<String, Object> dbRow = ApplicationContext.get()
+                .getDbAction()
+                .getBankDraftInfo(customerCode, premisesCode);
+
+        assertThat("DB result should not be empty", dbRow, notNullValue());
+
+        assertThat("bankName mismatch",
+                apiBankName,
+                equalTo(String.valueOf(dbRow.get("BANK_NAME"))));
+    }
+
+    private void verifyPaymentHistoryAgainstDatabase(String customerCode, String premisesCode) {
+        Response response = testContext.getResponse();
+
+        assertThat("Response success flag should be true",
+                response.jsonPath().getBoolean("success"),
+                equalTo(true));
+
+        assertThat("Response errorCode should be 0",
+                response.jsonPath().getInt("errorCode"),
+                equalTo(0));
+
+        assertThat("Response errorMessage should be empty",
+                response.jsonPath().getString("errorMessage"),
+                equalTo(""));
+
+        int apiNumberOfMatches = response.jsonPath().getInt("data.numberOfMatches");
+        List<Map<String, Object>> apiPaymentHistory = response.jsonPath().getList("data.paymentHistory");
+
+        assertThat("paymentHistory list should not be null", apiPaymentHistory, notNullValue());
+        assertThat("paymentHistory list size should match numberOfMatches",
+                apiPaymentHistory.size(), equalTo(apiNumberOfMatches));
+
+        List<Map<String, Object>> dbRows = ApplicationContext.get()
+                .getDbAction()
+                .getPaymentHistory2(customerCode, premisesCode);
+
+        assertThat("numberOfMatches does not match DB count",
+                apiNumberOfMatches, equalTo(dbRows.size()));
+
+        assertThat("paymentHistory list size does not match DB row count",
+                apiPaymentHistory.size(), equalTo(dbRows.size()));
+
+        for (int i = 0; i < dbRows.size(); i++) {
+            Map<String, Object> dbRow  = dbRows.get(i);
+            Map<String, Object> apiRow = apiPaymentHistory.get(i);
+
+            String rowContext = "Row [" + i + "] paymentDate=" + dbRow.get("PAYMENTDATE")
+                    + " paymentCode=" + dbRow.get("PAYMENTCODE");
+
+            // --- FIX: Normalize DB date to API format (YYYYMMDD) ---
+            String apiDate = String.valueOf(apiRow.get("paymentDate"));
+            String dbDateRaw = String.valueOf(dbRow.get("PAYMENTDATE"));
+            String dbDate = dbDateRaw.substring(0, 10).replace("-", "");
+
+            assertThat(rowContext + " | paymentDate mismatch",
+                    apiDate,
+                    equalTo(dbDate));
+
+            assertMonetary(rowContext + " | paymentAmount mismatch",
+                    apiRow.get("paymentAmount"), dbRow.get("PAYMENTAMOUNT"));
+
+            assertThat(rowContext + " | paymentCode mismatch",
+                    String.valueOf(apiRow.get("paymentCode")),
+                    equalTo(String.valueOf(dbRow.get("PAYMENTCODE"))));
+
+            assertThat(rowContext + " | paymentDescription mismatch",
+                    String.valueOf(apiRow.get("paymentDescription")),
+                    equalTo(String.valueOf(dbRow.get("PAYMENTDESCRIPTION"))));
+        }
+    }
+
     private void verifyUsageHistoryAgainstDatabase(String customerCode, String premisesCode) {
         Response response = testContext.getResponse();
 

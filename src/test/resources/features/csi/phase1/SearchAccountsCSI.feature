@@ -48,8 +48,28 @@ Feature: Verify SearchAccounts Api
       | TC_227__Negative__Username_____CustomerCode_____PremisesCode              | 10377     | Insufficient Search Criteria                                   |
       | TC_228__Negative__Username_____FederalTaxID_Number                           | 10377     | Insufficient Search Criteria                                   |
       | TC_229__Negative__CustomerCode_____PremisesCode_____FederalTaxID_Number          | 10377     | Insufficient Search Criteria                                   |
+
+  @SearchAccounts987 @NegativeFlow @CSI @searchAccountsCSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And perform rollback for maxlimit
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage                                                   |
       | TC_230__Negative__Too_Many_Matches                                | 10391     | Too Many Matches                                               |
-      | TC_231__Positive__Last4SSN_____CustomerLastName                       | 0         |                                                                |
+
+
+  @SearchAccounts987 @NegativeFlow @CSI @searchAccountsCSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to SearchAccounts Api for "<testCondition>"
+    Then verify response code of "SearchAccounts" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage                                                   |
+            | TC_231__Positive__Last4SSN_____CustomerLastName                       | 0         |                                                                |
       | TC_232__Positive__Last4SSN_____EmailAddress                           | 0         |                                                                |
       | TC_233__Positive__Last4SSN_____PhoneNumber                            | 0         |                                                                |
       | TC_234__Positive__Password_____Username                               | 0         |                                                                |
@@ -58,6 +78,9 @@ Feature: Verify SearchAccounts Api
       | TC_237__Positive__Password_____EmailAddress                           | 0         |                                                                |
       | TC_238__Positive__Password_____PhoneNumber                            | 0         |                                                                |
       | TC_239__Positive__BusinessName_____FederalTaxID                       | 0         |                                                                |
+
+
+
 
   @SearchAccounts @NegativeFlow @CSI  @searchAccountsCSI
   Scenario Outline: "<testCondition>"

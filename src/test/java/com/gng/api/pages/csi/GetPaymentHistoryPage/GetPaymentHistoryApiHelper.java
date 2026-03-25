@@ -9,6 +9,7 @@ import com.gng.api.steps.csi.GetPaymentHistory.GetPaymentHistoryLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -81,7 +82,7 @@ public class GetPaymentHistoryApiHelper {
                 payload.setPremisesCode(FakerDataGenerator.generateAlphanumeric(6));
                 break;
 
-            case TC_135__Negative__Invalid_Account_Number:
+            case TC_135__Negative__Invalid_Account_Number_:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode("9988776");
                 Map<String, Object> userInfo = ApplicationContext.get().getDbAction().getUserAccountInfo("9988776");
@@ -121,37 +122,159 @@ public class GetPaymentHistoryApiHelper {
             case TC_142__Positive__Payment_Amount_Format:
             case TC_143__Positive__Payment_Code_Format:
             case TC_144__Positive__Payment_Description_Format:
-            case TC_147__Positive__Valid_NumberOfMonths_PaymentHistory_Too_Old:
-            case TC_148__Positive__Valid_NumberOfMonths_Less_Than_Requested:
-            case TC_149__Positive__Valid_NumberOfMonths_Equals_Requested:
-            case TC_150__Positive__Valid_NumberOfMonths_Greater_Than_Requested:
-            case TC_151__Positive__Posted_Reversal_Payment:
-            case TC_152__Positive__Not_Posted_Reversal_Payment:
-            case TC_153__Positive__Posted_Payments:
-            case TC_154__Positive__Pending_Payments:
-            case TC_155__Positive__Posted_and_Pending_Payments:
-
-//                accountInfo = ApplicationContext.get().getDbAction().getAccountWithPaymentHistory();
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithPaymentHistory();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
-//                payload.setCustomerCode(accountInfo.get("customer_code").toString());
-//                payload.setPremisesCode(accountInfo.get("premises_code").toString());
-                payload.setNumberOfMonths("12");
+                payload.setCustomerCode(accountInfo.get("cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("prem_code").toString());
+                payload.setNumberOfMonths("24");
+                testContext.setCustomerCode(accountInfo.get("cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("prem_code").toString());
+                List<Map<String, Object>> dbRows1 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("cust_code").toString(), accountInfo.get("prem_code").toString());
                 break;
 
             case TC_145__Positive__No_Payment_History_New:
-//                accountInfo = ApplicationContext.get().getDbAction().getNewAccountNoPaymentHistory();
+                accountInfo = ApplicationContext.get().getDbAction().getNewAccountNoPaymentHistory();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
-//                payload.setCustomerCode(accountInfo.get("customer_code").toString());
-//                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setCustomerCode(accountInfo.get("cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("prem_code").toString());
                 payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("prem_code").toString());
+                List<Map<String, Object>> dbRows2 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("cust_code").toString(), accountInfo.get("prem_code").toString());
                 break;
 
             case TC_146__Positive__No_Payment_History_Active_Final_Inactive:
-//                accountInfo = ApplicationContext.get().getDbAction().getActiveFinalInactiveNoPaymentHistory();
+                accountInfo = ApplicationContext.get().getDbAction().getActiveAccountNoPaymentHistory();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
-//                payload.setCustomerCode(accountInfo.get("customer_code").toString());
-//                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setCustomerCode(accountInfo.get("cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("prem_code").toString());
                 payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("prem_code").toString());
+                List<Map<String, Object>> dbRows3 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("cust_code").toString(), accountInfo.get("prem_code").toString());
+                break;
+
+            case TC_147__Positive__Valid_NumberOfMonths_PaymentHistory_Too_Old:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryTooOld();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("prem_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("prem_code").toString());
+                List<Map<String, Object>> dbRows4 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("cust_code").toString(), accountInfo.get("prem_code").toString());
+                break;
+
+            case TC_149__Positive__Valid_NumberOfMonths_Equals_Requested:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryEqual();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows5 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
+            case TC_148__Positive__Valid_NumberOfMonths_Less_Than_Requested:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryLess();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows6 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
+            case TC_150__Positive__Valid_NumberOfMonths_Greater_Than_Requested:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryEqual();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("8");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows7 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
+            case TC_151__Positive__Posted_Reversal_Payment:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryReversal();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows8 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
+            case TC_152__Positive__Not_Posted_Reversal_Payment:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryNoReversal();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows9 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
+            case TC_153__Positive__Posted_Payments:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryPostedPayments();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows10 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
+            case TC_154__Positive__Pending_Payments:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryPendingPayments();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows11 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
+            case TC_155__Positive__Posted_and_Pending_Payments:
+                accountInfo = ApplicationContext.get().getDbAction().getPaymentHistoryPostedAndPendingPayments();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths("12");
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows12 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
                 break;
 
             default:

@@ -5,8 +5,6 @@ Feature: Verify GetBillHistory Api
     When a request is made to GetBillHistory Api for "<testCondition>"
     Then verify response code of "GetBillHistory" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-#    And the response should have data as null
-#    And the response should have success as false
 
     Examples:
       | testCondition                                   | errorCode | errorMessage                                |
@@ -33,8 +31,7 @@ Feature: Verify GetBillHistory Api
     Then verify response code of "GetBillHistory" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     And bill history response should match database for customer and premises code
-#    And the response should have success as true
-#    And the response should have data as "<data>"
+
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | data    |
@@ -80,5 +77,5 @@ Feature: Verify GetBillHistory Api
       | testCondition                                            | errorCode | errorMessage | data    |
       | TC_93__Positive__Valid_NumberOfMonths_BillHistory_Too_Old          | 0 |              | notNull |
       | TC_94__Positive__Usage_History_Less_Than_Requested_Months          | 0 |              | notNull |
-#      | TC_95__Positive__Usage_History_Equals_Requested_Months             | 0 |              | notNull |
-#      | TC_96__Positive__Usage_History_Greater_Than_Requested_Months       | 0 |              | notNull |
+      | TC_95__Positive__Usage_History_Equals_Requested_Months             | 0 |              | notNull |
+      | TC_96__Positive__Usage_History_Greater_Than_Requested_Months       | 0 |              | notNull |
