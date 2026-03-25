@@ -3,6 +3,7 @@ package com.gng.api.pojo.TestContext;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.CSIPojo.GetBankDraftInfo.GetBankDraftInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetBillHistory.GetBillHistoryResponse;
+import com.gng.api.pojo.CSIPojo.GetPaymentArrangementInfo.GetPaymentArrangementInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetPaymentHistory.GetPaymentHistoryResponse;
 import com.gng.api.pojo.CSIPojo.GetUsageHistory.GetUsageHistoryResponse;
 import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
@@ -96,6 +97,9 @@ public class TestContext {
     @Getter @Setter
     private Object getPaymentHistoryApiPage;
     private GetPaymentHistoryResponse getPaymentHistoryResponse;
+    @Getter @Setter
+    private Object getPaymentArrangementInfoApiPage;
+    private GetPaymentArrangementInfoResponse getPaymentArrangementInfoResponse;
     @Getter @Setter
     private Object getMarketerReferenceDataApiPage;
     private SaveEnrollmentResponse getMarketerReferenceDataResponse;
