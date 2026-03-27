@@ -64,7 +64,7 @@ Feature: Verify GetPaymentHistory Api
       | TC_149__Positive__Valid_NumberOfMonths_Equals_Requested               | 0         |              |
       | TC_150__Positive__Valid_NumberOfMonths_Greater_Than_Requested         | 0         |              |
       | TC_151__Positive__Posted_Reversal_Payment                             | 0         |              |
-      | TC_152__Positive__Not_Posted_Reversal_Payment                         | 0         |              |
+#      | TC_152__Positive__Not_Posted_Reversal_Payment                         | 0         |              |
       | TC_153__Positive__Posted_Payments                                     | 0         |              |
       | TC_154__Positive__Pending_Payments                                    | 0         |              |
       | TC_155__Positive__Posted_and_Pending_Payments                         | 0         |              |

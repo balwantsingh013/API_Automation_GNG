@@ -114,10 +114,7 @@ public class GetBillHistoryApiHelper {
             case TC_80__Positive__Usage_History_TotalBilledConsumption_Format:
             case TC_81__Positive__Usage_History_BalanceBroughtForward_Format:
             case TC_82__Positive__Usage_History_GasServiceCharges_Format:
-            case TC_83__Positive__Usage_History_OtherCharges_Format:
-            case TC_84__Positive__Usage_History_PromotionalDiscounts_Format:
             case TC_85__Positive__Usage_History_Taxes_Format:
-            case TC_86__Positive__Usage_History_BudgetBillingAmount_Format:
             case TC_87__Positive__Usage_History_NotBudgetBillingAccount:
             case TC_88__Positive__Usage_History_TotalBillAmount_Format:
             case TC_89__Positive__Usage_History_BillHistoryTransactionNumber_Format:
@@ -130,6 +127,55 @@ public class GetBillHistoryApiHelper {
                 List<Map<String, Object>> dbRows4 = ApplicationContext.get()
                         .getDbAction()
                         .getBillHistory(accountInfo.get("UBBBHST_cust_code").toString(), accountInfo.get("UBBBHST_prem_code").toString());
+
+                break;
+
+            case TC_86__Positive__Usage_History_BudgetBillingAmount_Format:
+//                List<Map<String, Object>> accountList =
+//                        ApplicationContext.get().getDbAction().getBudgetBillingAccount();
+//
+//                // Get the first row
+//                accountInfo = accountList.get(0);
+
+                payload.setCustomerCode("2955");
+                payload.setPremisesCode("2568");
+                payload.setNumberOfMonths("24");
+
+                testContext.setCustomerCode("2955");
+                testContext.setPremisesCode("2568");
+
+                List<Map<String, Object>> dbRows10 = ApplicationContext.get()
+                        .getDbAction()
+                        .getBillHistory(
+                                "2955",
+                                "2568"
+                        );
+
+                break;
+
+
+            case TC_83__Positive__Usage_History_OtherCharges_Format:
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithActualReading2();
+                payload.setCustomerCode(accountInfo.get("urrshis_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("urrshis_prem_code").toString());
+                payload.setNumberOfMonths("24");
+                testContext.setCustomerCode(accountInfo.get("urrshis_cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("urrshis_prem_code").toString());
+                List<Map<String, Object>> dbRows5 = ApplicationContext.get()
+                        .getDbAction()
+                        .getBillHistory(accountInfo.get("urrshis_cust_code").toString(), accountInfo.get("urrshis_prem_code").toString());
+
+                break;
+
+            case TC_84__Positive__Usage_History_PromotionalDiscounts_Format:
+                accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryGreater();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
+                payload.setNumberOfMonths("8");
+                List<Map<String, Object>> dbRows8 = ApplicationContext.get()
+                        .getDbAction()
+                        .getBillHistory(accountInfo.get("ubbbhst_cust_code").toString(), accountInfo.get("ubbbhst_prem_code").toString());
 
                 break;
 

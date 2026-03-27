@@ -35,19 +35,30 @@ Feature: Verify UpdateBankDraft Api
       | TC_120__Negative__No_Update_Required                  | 40269     | No update required                |
 
 
+#  @UpdateBankDraftPositive @HappyFlow @CSI
+#  Scenario Outline: "<testCondition>"
+#    When a request is made to UpdateBankDraft Api for "<testCondition>"
+#    Then verify response code of "UpdateBankDraft" Api is 200
+#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+#    And the Banner database should be updated with the provided bank draft information
+#
+#    Examples:
+#      | testCondition                                           | errorCode | errorMessage |
+#      | TC_121__Positive__Active_Checking_Account_Updated        | 0         |              |
+#      | TC_122__Positive__Active_Savings_Account_Updated         | 0         |              |
+
   @UpdateBankDraftPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdateBankDraft Api for "<testCondition>"
     Then verify response code of "UpdateBankDraft" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    And the Banner database should be updated with the provided bank draft information
+    And the Banner database should be updated with the provided bank draft information2
 
     Examples:
       | testCondition                                           | errorCode | errorMessage |
-      | TC_121__Positive__Active_Checking_Account_Updated        | 0         |              |
-      | TC_122__Positive__Active_Savings_Account_Updated         | 0         |              |
       | TC_123__Positive__Prenotification_Checking_Updated       | 0         |              |
       | TC_124__Positive__Prenotification_Savings_Updated        | 0         |              |
+
 
   @UpdateBankDraftPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"

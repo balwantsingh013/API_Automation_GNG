@@ -25,21 +25,30 @@ Feature: Verify GetPaymentArrangementInfo Api
     When a request is made to GetPaymentArrangementInfo Api for "<testCondition>"
     Then verify response code of "GetPaymentArrangementInfo" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-#    And GetPaymentArrangementInfo response should match database for customer and premises code
 
     Examples:
       | testCondition                                                     | errorCode | errorMessage |
       | TC_166__Positive__No_Payment_Arrangement                          | 0         |              |
       | TC_167__Positive__Has_Inactive_Payment_Arrangement                | 0         |              |
       | TC_168__Positive__Has_Active_Payment_Arrangement                  | 0         |              |
+
+
+  @GetPaymentArrangementInfoPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetPaymentArrangementInfo Api for "<testCondition>"
+    Then verify response code of "GetPaymentArrangementInfo" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And GetPaymentArrangementInfo response should match database for customer and premises code
+
+    Examples:
+      | testCondition                                                     | errorCode | errorMessage |
       | TC_169__Positive__Payment_Arrangement_Number_Format               | 0         |              |
       | TC_170__Positive__Payment_Arrangement_Type_Code_Format            | 0         |              |
-      | TC_171__Positive__Payment_Arrangement_Type_Code_Format            | 0         |              |
-      | TC_172__Positive__Payment_Arrangement_Total_Amount_Format         | 0         |              |
-      | TC_173__Positive__Payment_Arrangement_Date_Created_Format         | 0         |              |
-      | TC_174__Positive__Payment_Arrangement_Number_Of_Installments_Format | 0       |              |
-      | TC_175__Positive__Payment_Arrangement_Amount_Due_Format           | 0         |              |
-      | TC_176__Positive__Payment_Arrangement_Balance_Format              | 0         |              |
-      | TC_177__Positive__Payment_Arrangement_Date_Due_Format             | 0         |              |
-      | TC_178__Positive__Payment_Arrangement_Date_Paid_Format            | 0         |              |
-      | TC_179__Positive__Payment_Arrangement_Number_Of_Installments_GT_1 | 0         |              |
+      | TC_171__Positive__Payment_Arrangement_Total_Amount_Format         | 0         |              |
+      | TC_172__Positive__Payment_Arrangement_Date_Created_Format         | 0         |              |
+      | TC_173__Positive__Payment_Arrangement_Number_Of_Installments_Format | 0       |              |
+      | TC_174__Positive__Payment_Arrangement_Amount_Due_Format           | 0         |              |
+      | TC_175__Positive__Payment_Arrangement_Balance_Format              | 0         |              |
+      | TC_176__Positive__Payment_Arrangement_Date_Due_Format             | 0         |              |
+      | TC_177__Positive__Payment_Arrangement_Date_Paid_Format            | 0         |              |
+      | TC_178__Positive__Payment_Arrangement_No_Of_Installments_Greater_than_1 | 0         |              |

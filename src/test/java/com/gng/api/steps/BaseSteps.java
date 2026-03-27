@@ -247,6 +247,105 @@ public class BaseSteps {
         verifyBankDraftAgainstDatabase(customerCode, premisesCode);
     }
 
+    @And("the Banner database should be updated with the provided bank draft information2")
+    public void theBannerDatabaseShouldBeUpdatedWithBankDraftInformation2() {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        verifyBankDraftAgainstDatabase2(customerCode, premisesCode);
+    }
+
+    @And("GetPaymentArrangementInfo response should match database for customer and premises code")
+    public void getPaymentArrangementInfoResponseShouldMatchDatabase() {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        verifyPaymentArrangementInfoAgainstDatabase(customerCode, premisesCode);
+    }
+
+    private void verifyPaymentArrangementInfoAgainstDatabase(String customerCode, String premisesCode) {
+        Response response = testContext.getResponse();
+
+        assertThat("Response success flag should be true",
+                response.jsonPath().getBoolean("success"),
+                equalTo(true));
+
+        assertThat("Response errorCode should be 0",
+                response.jsonPath().getInt("errorCode"),
+                equalTo(0));
+
+        assertThat("Response errorMessage should be empty",
+                response.jsonPath().getString("errorMessage"),
+                equalTo(""));
+
+        List<Map<String, Object>> dbRows = ApplicationContext.get()
+                .getDbAction()
+                .getPaymentArrangementInfo(customerCode, premisesCode);
+
+        assertThat("DB rows should not be null", dbRows, notNullValue());
+        assertThat("DB rows should not be empty", dbRows.isEmpty(), equalTo(false));
+
+        // ── Header fields (from first row — same for all installments) ────────
+        Map<String, Object> firstRow = dbRows.get(0);
+
+        assertThat("paNumber mismatch",
+                ((Number) response.jsonPath().getInt("data.paNumber")).longValue(),
+                equalTo(((Number) firstRow.get("PANUMBER")).longValue()));
+
+        assertThat("paTypeCode mismatch",
+                response.jsonPath().getString("data.paTypeCode"),
+                equalTo(String.valueOf(firstRow.get("PATYPECODE"))));
+
+        assertMonetary("paTotalAmount mismatch",
+                response.jsonPath().getFloat("data.paTotalAmount"),
+                firstRow.get("PATOTALAMOUNT"));
+
+        assertThat("paDateCreated mismatch",
+                response.jsonPath().getString("data.paDateCreated"),
+                equalTo(String.valueOf(firstRow.get("PADATECREATED"))));
+
+        assertThat("numberOfInstallments mismatch",
+                response.jsonPath().getInt("data.numberOfInstallments"),
+                equalTo(((Number) firstRow.get("NUMBEROFINSTALLMENTS")).intValue()));
+
+        // ── Installment detail fields ──────────────────────────────────────────
+        List<Map<String, Object>> apiInstallments = response.jsonPath().getList("data.paInstallments");
+
+        assertThat("paInstallments list should not be null", apiInstallments, notNullValue());
+
+        assertThat("paInstallments count should match DB row count",
+                apiInstallments.size(),
+                equalTo(dbRows.size()));
+
+        for (int i = 0; i < dbRows.size(); i++) {
+            Map<String, Object> dbRow  = dbRows.get(i);
+            Map<String, Object> apiRow = apiInstallments.get(i);
+            String rowContext = "Row [" + i + "] dateDue=" + dbRow.get("DATEDUE");
+
+            assertMonetary(rowContext + " | amountDue mismatch",
+                    apiRow.get("amountDue"), dbRow.get("AMOUNTDUE"));
+
+            assertMonetary(rowContext + " | balance mismatch",
+                    apiRow.get("balance"), dbRow.get("BALANCE"));
+
+            assertThat(rowContext + " | dateDue mismatch",
+                    String.valueOf(apiRow.get("dateDue")),
+                    equalTo(String.valueOf(dbRow.get("DATEDUE"))));
+
+            // ── Nullable: datePaid ─────────────────────────────────────────────
+            Object apiDatePaid = apiRow.get("datePaid");
+            Object dbDatePaid  = dbRow.get("DATEPAID");
+
+            if (dbDatePaid == null) {
+                assertThat(rowContext + " | datePaid should be empty",
+                        String.valueOf(apiDatePaid),
+                        equalTo(""));
+            } else {
+                assertThat(rowContext + " | datePaid mismatch",
+                        String.valueOf(apiDatePaid),
+                        equalTo(String.valueOf(dbDatePaid)));
+            }
+        }
+    }
+
     private void verifyBankDraftAgainstDatabase(String customerCode, String premisesCode) {
         Response response = testContext.getResponse();
 
@@ -269,6 +368,36 @@ public class BaseSteps {
         Map<String, Object> dbRow = ApplicationContext.get()
                 .getDbAction()
                 .getBankDraftInfo(customerCode, premisesCode);
+
+        assertThat("DB result should not be empty", dbRow, notNullValue());
+
+        assertThat("bankName mismatch",
+                apiBankName,
+                equalTo(String.valueOf(dbRow.get("BANK_NAME"))));
+    }
+
+    private void verifyBankDraftAgainstDatabase2(String customerCode, String premisesCode) {
+        Response response = testContext.getResponse();
+
+        assertThat("Response success flag should be true",
+                response.jsonPath().getBoolean("success"),
+                equalTo(true));
+
+        assertThat("Response errorCode should be 0",
+                response.jsonPath().getInt("errorCode"),
+                equalTo(0));
+
+        assertThat("Response errorMessage should be empty",
+                response.jsonPath().getString("errorMessage"),
+                equalTo(""));
+
+        String apiBankName = response.jsonPath().getString("data.bankName");
+
+        assertThat("bankName should not be null", apiBankName, notNullValue());
+
+        Map<String, Object> dbRow = ApplicationContext.get()
+                .getDbAction()
+                .getBankDraftInfo2(customerCode, premisesCode);
 
         assertThat("DB result should not be empty", dbRow, notNullValue());
 

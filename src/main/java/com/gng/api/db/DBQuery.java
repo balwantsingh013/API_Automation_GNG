@@ -2685,6 +2685,47 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_BUDGET_BILLING_ACCOUNT= """
+            WITH params AS (
+                SELECT ADD_MONTHS(TRUNC(SYSDATE), -24) AS win_start,
+                       TRUNC(SYSDATE)                 AS win_end
+                FROM dual
+            ),
+            valid_bills AS (
+                SELECT h.ubbbhst_cust_code,
+                       h.ubbbhst_prem_code,
+                       h.ubbbhst_tran_num
+                FROM UBBBHST h
+                CROSS JOIN params p
+                WHERE h.ubbbhst_printed_date >= p.win_start
+                  AND h.ubbbhst_printed_date <  p.win_end + 1
+                  AND NVL(h.ubbbhst_cancel_ind, 0) = 0
+                  AND EXISTS (
+                        SELECT 1
+                        FROM UABOPEN o
+                        WHERE o.uabopen_bhst_tran_num = h.ubbbhst_tran_num
+                  )
+            ),
+            budget_accounts AS (
+                SELECT DISTINCT
+                       v.ubbbhst_cust_code,
+                       v.ubbbhst_prem_code
+                FROM valid_bills v
+                JOIN UABOPEN o
+                  ON o.uabopen_bhst_tran_num = v.ubbbhst_tran_num
+                WHERE o.uabopen_item_type = 'B'
+                  AND NVL(o.uabopen_orig_budget_amt, 0) > 0
+            )
+            SELECT *
+            FROM (
+                SELECT /*+ ALL_ROWS */
+                       b.ubbbhst_cust_code,
+                       b.ubbbhst_prem_code
+                FROM budget_accounts b
+                ORDER BY b.ubbbhst_cust_code, b.ubbbhst_prem_code
+            )
+            """;
+
     public static final String SELECT_NO_PAYMENT_HISTORY_ACCOUNT= """
             SELECT\s
                 a.ucracct_cust_code AS cust_code,
@@ -2716,56 +2757,100 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                     FETCH FIRST 1 ROWS ONLY
 """;
 
-    public static final String SELECT_ACTIVE_PAYMENT_HISTORY_REVERSAL= """
-    SELECT
-                    p_neg.UABPYMT_CUST_CODE         AS customer_code,
-                    p_neg.UABPYMT_PREM_CODE         AS premises_code,
-                    p_neg.UABPYMT_AR_TRANS          AS reversal_ar_trans,
-                    p_neg.UABPYMT_CANCEL_TRANS      AS cancel_trans,
-                    p_neg.UABPYMT_AMOUNT            AS reversal_amount,
-                    p_neg.UABPYMT_PYMT_DATE         AS reversal_date,
-                    p_pos.UABPYMT_AR_TRANS          AS original_ar_trans,
-                    p_pos.UABPYMT_AMOUNT            AS original_amount,
-                    p_pos.UABPYMT_PYMT_DATE         AS original_payment_date,
-                    o.UABOPEN_SRAT_CODE             AS reversal_srat_code,
-                    o.UABOPEN_CHARGE_DATE           AS reversal_charge_date
-                FROM UABPYMT p_neg
-                JOIN UABPYMT p_pos
-                    ON  p_pos.UABPYMT_CUST_CODE     = p_neg.UABPYMT_CUST_CODE
-                    AND p_pos.UABPYMT_PREM_CODE     = p_neg.UABPYMT_PREM_CODE
-                    AND p_pos.UABPYMT_AR_TRANS      = p_neg.UABPYMT_CANCEL_TRANS
-                    AND p_pos.UABPYMT_AMOUNT        > 0
-                JOIN UABOPEN o
-                    ON  o.UABOPEN_CUST_CODE         = p_neg.UABPYMT_CUST_CODE
-                    AND o.UABOPEN_PREM_CODE         = p_neg.UABPYMT_PREM_CODE
-                    AND o.UABOPEN_CHARGE_DATE       = p_neg.UABPYMT_PYMT_DATE
-                    AND o.UABOPEN_SRAT_CODE         = 'NSF'
-                WHERE p_neg.UABPYMT_AMOUNT          < 0
-                  AND p_neg.UABPYMT_PYMT_DATE       >= ADD_MONTHS(TRUNC(SYSDATE), -12)  -- last 12 months
-                  AND LENGTH(p_neg.UABPYMT_CUST_CODE) >= 4
-                FETCH FIRST 1 ROWS ONLY
+    public static final String SELECT_ACTIVE_PAYMENT_HISTORY_NOT_POSTED_REVERSAL= """
+            SELECT
+                g.GZBRTPP_CUST_CODE             AS customer_code,
+                g.GZBRTPP_PREM_CODE             AS premises_code,
+                g.GZBRTPP_ORIG_DATE             AS payment_date,
+                g.GZBRTPP_AMOUNT                AS amount,
+                g.GZBRTPP_PYCD_CODE             AS payment_code,
+                g.GZBRTPP_PAYMENT_REF           AS payment_ref,
+                g.GZBRTPP_AR_TRANS              AS ar_trans,
+                g.GZBRTPP_CANCEL_TRANS          AS cancel_trans,
+                g.GZBRTPP_CANCEL_IND            AS cancel_ind,
+                g.GZBRTPP_ERROR_IND             AS error_ind,
+                'NOT POSTED'                    AS payment_status,
+                'GZBRTPP'                       AS source_table
+            FROM GZBRTPP g
+            WHERE g.GZBRTPP_CUST_CODE           = ?                   -- ← pass customer_code from Pre-Query 1
+              AND g.GZBRTPP_PREM_CODE           = ?                   -- ← pass premises_code from Pre-Query 1
+              AND g.GZBRTPP_ORIG_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+              AND g.GZBRTPP_AMOUNT               < 0
+              AND g.GZBRTPP_AR_TRANS             IS NULL
+              AND g.GZBRTPP_CANCEL_TRANS         IS NULL
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM UABPYMT p
+                    WHERE p.UABPYMT_CUST_CODE        = g.GZBRTPP_CUST_CODE
+                      AND p.UABPYMT_PREM_CODE        = g.GZBRTPP_PREM_CODE
+                      AND TRUNC(p.UABPYMT_PYMT_DATE) = TRUNC(g.GZBRTPP_ORIG_DATE)
+                      AND p.UABPYMT_AMOUNT           < 0
+              )
+            FETCH FIRST 5 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_PAYMENT_HISTORY_POSTED_REVERSAL= """
+   SELECT
+                   p_neg.UABPYMT_CUST_CODE         AS customer_code,
+                   p_neg.UABPYMT_PREM_CODE         AS premises_code,
+                   p_neg.UABPYMT_AR_TRANS          AS reversal_ar_trans,
+                   p_neg.UABPYMT_CANCEL_TRANS      AS cancel_trans,
+                   p_neg.UABPYMT_AMOUNT            AS reversal_amount,
+                   p_neg.UABPYMT_PYMT_DATE         AS reversal_date,
+                   p_pos.UABPYMT_AR_TRANS          AS original_ar_trans,
+                   p_pos.UABPYMT_AMOUNT            AS original_amount,
+                   p_pos.UABPYMT_PYMT_DATE         AS original_payment_date,
+                   o.UABOPEN_SRAT_CODE             AS reversal_srat_code,
+                   o.UABOPEN_CHARGE_DATE           AS reversal_charge_date,
+                   'POSTED'                        AS payment_status,    -- ← from UABPYMT = posted
+                   'UABPYMT'                       AS source_table       -- ← matches API source_table
+               FROM UABPYMT p_neg
+               JOIN UABPYMT p_pos
+                   ON  p_pos.UABPYMT_CUST_CODE     = p_neg.UABPYMT_CUST_CODE
+                   AND p_pos.UABPYMT_PREM_CODE     = p_neg.UABPYMT_PREM_CODE
+                   AND p_pos.UABPYMT_AR_TRANS      = p_neg.UABPYMT_CANCEL_TRANS
+                   AND p_pos.UABPYMT_AMOUNT        > 0
+               JOIN UABOPEN o
+                   ON  o.UABOPEN_CUST_CODE         = p_neg.UABPYMT_CUST_CODE
+                   AND o.UABOPEN_PREM_CODE         = p_neg.UABPYMT_PREM_CODE
+                   AND o.UABOPEN_CHARGE_DATE       = p_neg.UABPYMT_PYMT_DATE
+                   AND o.UABOPEN_SRAT_CODE         = 'NSF'
+               WHERE p_neg.UABPYMT_AMOUNT          < 0
+                 AND p_neg.UABPYMT_PYMT_DATE       >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                 AND LENGTH(p_neg.UABPYMT_CUST_CODE) >= 4
+               FETCH FIRST 1 ROWS ONLY
 """;
 
     public static final String SELECT_ACTIVE_PAYMENT_HISTORY_PENDING_PAYMENTS= """
     SELECT
                     g.GZBRTPP_CUST_CODE             AS customer_code,
-                    g.GZBRTPP_PREM_CODE             AS premises_code
+                    g.GZBRTPP_PREM_CODE             AS premises_code,
+                    g.GZBRTPP_ORIG_DATE             AS payment_date,
+                    g.GZBRTPP_AMOUNT                AS amount,
+                    g.GZBRTPP_PYCD_CODE             AS payment_code,
+                    g.GZBRTPP_PAYMENT_REF           AS payment_ref,
+                    g.GZBRTPP_AR_TRANS              AS ar_trans,
+                    g.GZBRTPP_CANCEL_TRANS          AS cancel_trans,
+                    g.GZBRTPP_CANCEL_IND            AS cancel_ind,
+                    g.GZBRTPP_ERROR_IND             AS error_ind,
+                    'NOT POSTED'                    AS payment_status,    -- ← from GZBRTPP = not posted
+                    'GZBRTPP'                       AS source_table       -- ← matches API source_table
                 FROM GZBRTPP g
                 JOIN UCRACCT a
                     ON  a.UCRACCT_CUST_CODE         = g.GZBRTPP_CUST_CODE
                     AND a.UCRACCT_PREM_CODE         = g.GZBRTPP_PREM_CODE
-                    AND a.UCRACCT_STATUS_IND            IN ('A', 'N', 'F', 'I')
+                    AND a.UCRACCT_STATUS_IND        IN ('A', 'N', 'F', 'I')
                 WHERE g.GZBRTPP_AR_TRANS            IS NULL
                   AND NVL(g.GZBRTPP_CANCEL_IND,'N') = 'N'
                   AND NVL(g.GZBRTPP_ERROR_IND, 'N') = 'N'
-                  AND g.GZBRTPP_ORIG_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -12)  -- last 12 months
+                  AND g.GZBRTPP_ORIG_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -12)
                   AND NOT EXISTS (
-                      SELECT 1 FROM UABPYMT p
-                      WHERE p.UABPYMT_CUST_CODE      = g.GZBRTPP_CUST_CODE
-                        AND p.UABPYMT_PREM_CODE      = g.GZBRTPP_PREM_CODE
-                        AND p.UABPYMT_AMOUNT         > 0
-                        AND p.UABPYMT_CANCEL_TRANS   IS NULL
-                        AND p.UABPYMT_PYMT_DATE      >= ADD_MONTHS(TRUNC(SYSDATE), -12) -- no posted payments in last 12 months
+                        SELECT 1 FROM UABPYMT p
+                        WHERE p.UABPYMT_CUST_CODE      = g.GZBRTPP_CUST_CODE
+                          AND p.UABPYMT_PREM_CODE      = g.GZBRTPP_PREM_CODE
+                          AND p.UABPYMT_AMOUNT         > 0
+                          AND p.UABPYMT_CANCEL_TRANS   IS NULL
+                          AND p.UABPYMT_PYMT_DATE      >= ADD_MONTHS(TRUNC(SYSDATE), -12)
                   )
                 FETCH FIRST 1 ROWS ONLY
 """;
@@ -2773,25 +2858,30 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_ACTIVE_PAYMENT_HISTORY_POSTED_AND_PENDING_PAYMENTS= """
     SELECT
                     p.UABPYMT_CUST_CODE             AS customer_code,
-                    p.UABPYMT_PREM_CODE             AS premises_code
+                    p.UABPYMT_PREM_CODE             AS premises_code,
+                    p.UABPYMT_AR_TRANS              AS ar_trans,
+                    p.UABPYMT_AMOUNT                AS amount,
+                    p.UABPYMT_PYMT_DATE             AS payment_date,
+                    p.UABPYMT_PYCD_CODE             AS payment_code,
+                    'POSTED'                        AS payment_status,    -- ← from UABPYMT = posted
+                    'UABPYMT'                       AS source_table
                 FROM UABPYMT p
                 JOIN UCRACCT a
                     ON  a.UCRACCT_CUST_CODE         = p.UABPYMT_CUST_CODE
                     AND a.UCRACCT_PREM_CODE         = p.UABPYMT_PREM_CODE
-                    AND a.UCRACCT_STATUS_IND            IN ('A', 'N', 'F', 'I')
+                    AND a.UCRACCT_STATUS_IND        IN ('A', 'N', 'F', 'I')
                 WHERE p.UABPYMT_AMOUNT              > 0
                   AND p.UABPYMT_CANCEL_TRANS        IS NULL
                   AND p.UABPYMT_PYMT_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -12)
                   AND LENGTH(p.UABPYMT_CUST_CODE)   >= 4
                   AND EXISTS (
-                      -- must also have a pending gateway payment in last 12 months
-                      SELECT 1 FROM GZBRTPP g
-                      WHERE g.GZBRTPP_CUST_CODE          = p.UABPYMT_CUST_CODE
-                        AND g.GZBRTPP_PREM_CODE          = p.UABPYMT_PREM_CODE
-                        AND g.GZBRTPP_AR_TRANS           IS NULL
-                        AND NVL(g.GZBRTPP_CANCEL_IND,'N') = 'N'
-                        AND NVL(g.GZBRTPP_ERROR_IND, 'N') = 'N'
-                        AND g.GZBRTPP_ORIG_DATE          >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                        SELECT 1 FROM GZBRTPP g
+                        WHERE g.GZBRTPP_CUST_CODE          = p.UABPYMT_CUST_CODE
+                          AND g.GZBRTPP_PREM_CODE          = p.UABPYMT_PREM_CODE
+                          AND g.GZBRTPP_AR_TRANS           IS NULL
+                          AND NVL(g.GZBRTPP_CANCEL_IND,'N') = 'N'
+                          AND NVL(g.GZBRTPP_ERROR_IND, 'N') = 'N'
+                          AND g.GZBRTPP_ORIG_DATE          >= ADD_MONTHS(TRUNC(SYSDATE), -12)
                   )
                 FETCH FIRST 1 ROWS ONLY
 """;
@@ -2799,59 +2889,152 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     public static final String SELECT_ACTIVE_PAYMENT_HISTORY_POSTED_PAYMENTS= """
    SELECT
                    p.UABPYMT_CUST_CODE             AS customer_code,
-                   p.UABPYMT_PREM_CODE             AS premises_code
+                   p.UABPYMT_PREM_CODE             AS premises_code,
+                   p.UABPYMT_AR_TRANS              AS ar_trans,
+                   p.UABPYMT_AMOUNT                AS amount,
+                   p.UABPYMT_PYMT_DATE             AS payment_date,
+                   p.UABPYMT_PYCD_CODE             AS payment_code,
+                   'POSTED'                        AS payment_status,    -- ← from UABPYMT = posted
+                   'UABPYMT'                       AS source_table
                FROM UABPYMT p
                JOIN UCRACCT a
                    ON  a.UCRACCT_CUST_CODE         = p.UABPYMT_CUST_CODE
                    AND a.UCRACCT_PREM_CODE         = p.UABPYMT_PREM_CODE
-                   AND a.UCRACCT_STATUS_IND            IN ('A', 'N', 'F', 'I')
+                   AND a.UCRACCT_STATUS_IND        IN ('A', 'N', 'F', 'I')
                WHERE p.UABPYMT_AMOUNT              > 0
                  AND p.UABPYMT_CANCEL_TRANS        IS NULL
-                 AND p.UABPYMT_PYMT_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -12)  -- last 12 months on posted payments
+                 AND p.UABPYMT_PYMT_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -12)
                  AND LENGTH(p.UABPYMT_CUST_CODE)   >= 4
                  AND NOT EXISTS (
-                     SELECT 1 FROM GZBRTPP g
-                     WHERE g.GZBRTPP_CUST_CODE          = p.UABPYMT_CUST_CODE
-                       AND g.GZBRTPP_PREM_CODE          = p.UABPYMT_PREM_CODE
-                       AND g.GZBRTPP_AR_TRANS           IS NULL
-                       AND NVL(g.GZBRTPP_CANCEL_IND,'N') = 'N'
-                       AND NVL(g.GZBRTPP_ERROR_IND, 'N') = 'N'
-                       AND g.GZBRTPP_ORIG_DATE          >= ADD_MONTHS(TRUNC(SYSDATE), -12)  -- last 12 months on pending payments
+                       SELECT 1 FROM GZBRTPP g
+                       WHERE g.GZBRTPP_CUST_CODE          = p.UABPYMT_CUST_CODE
+                         AND g.GZBRTPP_PREM_CODE          = p.UABPYMT_PREM_CODE
+                         AND g.GZBRTPP_AR_TRANS           IS NULL
+                         AND NVL(g.GZBRTPP_CANCEL_IND,'N') = 'N'
+                         AND NVL(g.GZBRTPP_ERROR_IND, 'N') = 'N'
+                         AND g.GZBRTPP_ORIG_DATE          >= ADD_MONTHS(TRUNC(SYSDATE), -12)
                  )
                FETCH FIRST 1 ROWS ONLY
 """;
 
+    public static final String SELECT_ACTIVE_PAYMENT_HISTORY_NOT_POSTED2= """
+    SELECT
+                    g.GZBRTPP_CUST_CODE             AS customer_code,
+                    g.GZBRTPP_PREM_CODE             AS premises_code,
+                    g.GZBRTPP_ORIG_DATE             AS payment_date,
+                    g.GZBRTPP_AMOUNT                AS amount,
+                    g.GZBRTPP_PYCD_CODE             AS payment_code,
+                    g.GZBRTPP_PAYMENT_REF           AS payment_ref,
+                    g.GZBRTPP_AR_TRANS              AS ar_trans,
+                    g.GZBRTPP_CANCEL_TRANS          AS cancel_trans,
+                    g.GZBRTPP_CANCEL_IND            AS cancel_ind,
+                    g.GZBRTPP_ERROR_IND             AS error_ind,
+                    'NOT POSTED'                    AS payment_status,    -- ← from GZBRTPP = not posted
+                    'GZBRTPP'                       AS source_table
+                FROM GZBRTPP g
+                WHERE g.GZBRTPP_CUST_CODE           = ?                   -- ← customer_code from Pre-Query 1
+                  AND g.GZBRTPP_PREM_CODE           = ?                   -- ← premises_code from Pre-Query 1
+                  AND g.GZBRTPP_AR_TRANS            IS NULL
+                  AND NVL(g.GZBRTPP_CANCEL_IND,'N') = 'N'
+                  AND NVL(g.GZBRTPP_ERROR_IND, 'N') = 'N'
+                  AND g.GZBRTPP_ORIG_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                ORDER BY g.GZBRTPP_ORIG_DATE DESC
+                FETCH FIRST 5 ROWS ONLY
+""";
+    public static final String SELECT_ACTIVE_PAYMENT_HISTORY_POSTED2= """
+            SELECT
+                p.UABPYMT_CUST_CODE             AS customer_code,
+                p.UABPYMT_PREM_CODE             AS premises_code,
+                p.UABPYMT_AR_TRANS              AS ar_trans,
+                p.UABPYMT_AMOUNT                AS amount,
+                p.UABPYMT_PYMT_DATE             AS payment_date,
+                p.UABPYMT_PYCD_CODE             AS payment_code,
+                p.UABPYMT_CANCEL_TRANS          AS cancel_trans,
+                'POSTED'                        AS payment_status,    -- ← from UABPYMT = posted
+                'UABPYMT'                       AS source_table       -- ← matches API source_table
+            FROM UABPYMT p
+            WHERE p.UABPYMT_CUST_CODE           = ?                   -- ← customer_code from Pre-Query 1
+              AND p.UABPYMT_PREM_CODE           = ?                   -- ← premises_code from Pre-Query 1
+              AND p.UABPYMT_AMOUNT              > 0
+              AND p.UABPYMT_CANCEL_TRANS        IS NULL
+              AND p.UABPYMT_PYMT_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+            ORDER BY p.UABPYMT_PYMT_DATE DESC
+            FETCH FIRST 5 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_PAYMENT_HISTORY_NON_POSTED_PAYMENTS= """
+    SELECT
+                    g.GZBRTPP_CUST_CODE             AS customer_code,
+                    g.GZBRTPP_PREM_CODE             AS premises_code,
+                    g.GZBRTPP_ORIG_DATE             AS payment_date,
+                    g.GZBRTPP_AMOUNT                AS amount,
+                    g.GZBRTPP_PYCD_CODE             AS payment_code,
+                    g.GZBRTPP_PAYMENT_REF           AS payment_ref,
+                    g.GZBRTPP_AR_TRANS              AS ar_trans,
+                    g.GZBRTPP_CANCEL_TRANS          AS cancel_trans,
+                    g.GZBRTPP_CANCEL_IND            AS cancel_ind,
+                    g.GZBRTPP_ERROR_IND             AS error_ind,
+                    'NOT POSTED'                    AS payment_status,    -- ← from GZBRTPP = not posted
+                    'GZBRTPP'                       AS source_table
+                FROM GZBRTPP g
+                WHERE g.GZBRTPP_CUST_CODE           = ?                   -- ← customer_code from Pre-Query 1
+                  AND g.GZBRTPP_PREM_CODE           = ?                   -- ← premises_code from Pre-Query 1
+                  AND g.GZBRTPP_ORIG_DATE           >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                  AND g.GZBRTPP_AR_TRANS            IS NULL               -- never posted to AR
+                  AND g.GZBRTPP_CANCEL_TRANS        IS NULL               -- no cancel linkage
+                  AND NVL(g.GZBRTPP_CANCEL_IND,'N') = 'N'
+                  AND NVL(g.GZBRTPP_ERROR_IND, 'N') = 'N'
+                FETCH FIRST 5 ROWS ONLY
+""";
 
     public static final String SELECT_ACTIVE_PAYMENT_HISTORY_NO_REVERSAL= """
-    SELECT
-                    p.UABPYMT_CUST_CODE         AS customer_code,
-                    p.UABPYMT_PREM_CODE         AS premises_code,
-                    p.UABPYMT_AR_TRANS          AS ar_trans,
-                    p.UABPYMT_AMOUNT            AS amount,
-                    p.UABPYMT_PYMT_DATE         AS payment_date
-                FROM UABPYMT p
-                WHERE p.UABPYMT_AMOUNT          > 0                                     -- positive payments only
-                  AND p.UABPYMT_CANCEL_TRANS    IS NULL                                 -- not paired to any reversal
-                  AND p.UABPYMT_PYMT_DATE       >= ADD_MONTHS(TRUNC(SYSDATE), -12)     -- last 12 months
-                  AND LENGTH(p.UABPYMT_CUST_CODE) >= 4
-                  AND NOT EXISTS (
-                      -- no matching negative reversal paired to this payment
-                      SELECT 1
-                      FROM UABPYMT p_neg
-                      WHERE p_neg.UABPYMT_CUST_CODE      = p.UABPYMT_CUST_CODE
-                        AND p_neg.UABPYMT_PREM_CODE      = p.UABPYMT_PREM_CODE
-                        AND p_neg.UABPYMT_CANCEL_TRANS   = p.UABPYMT_AR_TRANS          -- no reversal pointing to this payment
-                        AND p_neg.UABPYMT_AMOUNT         < 0
-                  )
-                  AND NOT EXISTS (
-                      -- no same-date UABOPEN NSF charge
-                      SELECT 1
-                      FROM UABOPEN o
-                      WHERE o.UABOPEN_CUST_CODE          = p.UABPYMT_CUST_CODE
-                        AND o.UABOPEN_PREM_CODE          = p.UABPYMT_PREM_CODE
-                        AND o.UABOPEN_CHARGE_DATE        = p.UABPYMT_PYMT_DATE         -- no same-date reversal charge
-                        AND o.UABOPEN_SRAT_CODE          = 'NSF'
-                  )
+    WITH win AS (
+                    SELECT ADD_MONTHS(TRUNC(SYSDATE), -24) AS start_dt,
+                           DATE '2026-03-01' AS snapshot_cutoff
+                    FROM dual
+                ),
+                valid_accts AS (
+                    SELECT u.ucracct_cust_code AS cust_code,
+                           u.ucracct_prem_code AS prem_code,
+                           u.ucracct_status_ind AS accountstatus
+                    FROM UCRACCT u
+                ),
+                gw_raw AS (
+                    SELECT g.gzbrtpp_cust_code AS cust_code,
+                           g.gzbrtpp_prem_code AS prem_code,
+                           g.gzbrtpp_orig_date AS paymentdate,
+                           g.gzbrtpp_amount AS amount,
+                           g.gzbrtpp_pycd_code AS paymentcode,
+                           va.accountstatus
+                    FROM GZBRTPP g
+                    JOIN valid_accts va
+                      ON va.cust_code = g.gzbrtpp_cust_code
+                     AND va.prem_code = g.gzbrtpp_prem_code
+                    CROSS JOIN win w
+                    WHERE g.gzbrtpp_orig_date BETWEEN w.start_dt AND (w.snapshot_cutoff - 14)
+                ),
+                posted AS (
+                    SELECT p.uabpymt_cust_code AS cust_code,
+                           p.uabpymt_prem_code AS prem_code,
+                           p.uabpymt_pymt_date AS paymentdate,
+                           p.uabpymt_amount AS amount
+                    FROM UABPYMT p
+                )
+                SELECT g.cust_code,
+                       g.prem_code,
+                       g.paymentdate,
+                       g.amount,
+                       g.paymentcode,
+                       g.accountstatus,
+                       'TRUE_NON_POSTED_REVERSAL' AS status
+                FROM gw_raw g
+                LEFT JOIN posted p
+                  ON p.cust_code = g.cust_code
+                 AND p.prem_code = g.prem_code
+                 AND p.amount = g.amount
+                 AND p.paymentdate BETWEEN g.paymentdate - 14 AND g.paymentdate + 14
+                WHERE p.cust_code IS NULL
+                ORDER BY g.paymentdate DESC
                 FETCH FIRST 1 ROWS ONLY
 """;
 
@@ -4404,43 +4587,33 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_WITH_CHECKING_ACCOUNT2= """
             SELECT
-                a.ucracct_cust_code         AS customer_code,
-                a.ucracct_prem_code         AS premises_code,
-                a.ucracct_draft_acct_status AS draft_status,
-                '******' || SUBSTR(
-                    REGEXP_REPLACE(
-                        LPAD(b.utrbank_transit_1, 4, '0') ||
-                        LPAD(b.utrbank_transit_2, 4, '0') ||
-                             b.utrbank_transit_3,
-                        '[^0-9]', ''
-                    ),
-                    -4
-                ) AS masked_routing_number,
-                a.ucracct_check_saving_ind  AS account_type,
-                c.ucbcust_last_name         AS bank_name
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                a.ucracct_draft_acct_status,
+                d.uardrft_cust_code,
+                d.uardrft_prem_code,
+                d.uardrft_file_date,
+                d.uardrft_amount,
+                d.uardrft_hold_until_date
             FROM UCRACCT a
             JOIN UTRBANK b
                 ON a.ucracct_bank_code = b.utrbank_code
             JOIN UCBCUST c
                 ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+            LEFT JOIN UARDRFT d
+                ON  d.uardrft_cust_code = a.ucracct_cust_code
+                AND d.uardrft_prem_code = a.ucracct_prem_code
+                AND d.uardrft_file_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
             WHERE a.ucracct_draft_acct_status IS NOT NULL
+              AND a.ucracct_draft_acct_status != 'P'
               AND b.utrbank_status            = 'A'
               AND a.ucracct_bank_acct         IS NOT NULL
               AND a.ucracct_check_saving_ind  = 'C'
               AND a.ucracct_status_ind        = 'A'
-              AND a.ucracct_pmnt_arr          != 'Y'                -- no active payment arrangement
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM UARDRFT d
-                  WHERE d.uardrft_cust_code      = a.ucracct_cust_code
-                    AND d.uardrft_prem_code      = a.ucracct_prem_code
-                    AND d.uardrft_hold_until_date > TRUNC(SYSDATE)  -- no future dated payment arrangement
-                    AND d.uardrft_amount         <> 0
-                    AND d.uardrft_file_date      = DATE '2099-12-31'
-              )
-              ORDER BY a.ucracct_cust_code DESC
+              AND a.ucracct_pmnt_arr          != 'Y'
+              AND a.ucracct_cust_code= '6232380'
             FETCH FIRST 1 ROWS ONLY
-            """;
+        """;
 
 
 
@@ -7363,138 +7536,140 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
         """;
 
     public static final String GET_USAGE_HISTORY = """
-          WITH seed_hist AS (
-                      SELECT t.ubbbhst_cust_code,
-                             t.ubbbhst_prem_code,
-                             t.ubbbhst_printed_date,
-                             t.ubbbhst_cancel_ind,
-                             t.ubbbhst_tran_num,
-                             t.ubbbhst_prev_bal,
-                             t.ubbbhst_ending_bal
-                      FROM UBBBHST t
-                      WHERE t.ubbbhst_cust_code = ?
-                        AND t.ubbbhst_prem_code = ?
-                      ORDER BY t.ubbbhst_printed_date DESC
-                      FETCH FIRST 1 ROWS ONLY
-                  ),
-                  all_hist AS (
-                      SELECT h2.ubbbhst_cust_code,
-                             h2.ubbbhst_prem_code,
-                             h2.ubbbhst_printed_date,
-                             h2.ubbbhst_cancel_ind,
-                             h2.ubbbhst_tran_num,
-                             h2.ubbbhst_prev_bal,
-                             h2.ubbbhst_ending_bal
-                      FROM UBBBHST h2
-                      JOIN seed_hist s
-                        ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
-                       AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
-                      WHERE h2.ubbbhst_cancel_ind IS NULL
-                        AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
-                  ),
-                  urr AS (
-                      SELECT r.urrshis_cust_code,
-                             r.urrshis_prem_code,
-                             r.urrshis_serv_num,
-                             r.urrshis_reading,
-                             r.urrshis_rtyp_code,
-                             r.urrshis_action_date,
-                             r.urrshis_charge_date,
-                             r.urrshis_dos,
-                             r.urrshis_consumption,
-                             LAG(r.urrshis_action_date)
-                                 OVER (PARTITION BY r.urrshis_cust_code,
-                                                    r.urrshis_prem_code,
-                                                    r.urrshis_serv_num
-                                       ORDER BY r.urrshis_action_date) AS prev_action_date
-                      FROM URRSHIS r
-                      JOIN seed_hist s
-                        ON r.urrshis_cust_code = s.ubbbhst_cust_code
-                       AND r.urrshis_prem_code = s.ubbbhst_prem_code
-                  ),
-                  urr_ranges AS (
-                      SELECT u.*,
-                             u.urrshis_action_date AS to_dt,
-                             CASE
-                                 WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
-                                 ELSE u.urrshis_action_date - u.urrshis_dos
-                             END AS from_dt
-                      FROM urr u
-                  ),
-                  urr_with_totals AS (
-                      SELECT ur.*,
-                             SUM(ur.urrshis_dos) OVER (
-                                 PARTITION BY ur.urrshis_cust_code,
-                                              ur.urrshis_prem_code
-                             ) AS total_dos
-                      FROM urr_ranges ur
-                  ),
-                  weather_agg AS (
-                      SELECT u.urrshis_cust_code,
-                             u.urrshis_prem_code,
-                             u.urrshis_serv_num,
-                             u.urrshis_action_date,
-                             NVL(TRUNC(AVG(w.ocsweat_avg_temp)), 0)            AS weather_mean_avg_temp,
-                             NVL(TRUNC(SUM(w.ocsweat_heating_degree_days)), 0) AS weather_sum_hdd
-                      FROM urr_with_totals u
-                      LEFT JOIN UCBPREM p
-                        ON p.ucbprem_code = u.urrshis_prem_code
-                      LEFT JOIN OCSWEAT w
-                        ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
-                       AND w.ocsweat_weather_date   > u.from_dt
-                       AND w.ocsweat_weather_date   < u.to_dt
-                      GROUP BY u.urrshis_cust_code,
-                               u.urrshis_prem_code,
-                               u.urrshis_serv_num,
-                               u.urrshis_action_date
-                  ),
-                  bill_agg AS (
-                      SELECT u.urrshis_cust_code,
-                             u.urrshis_prem_code,
-                             u.urrshis_charge_date,
-                             SUM(u.urrshis_consumption) AS actual_consump_sum,
-                             SUM(u.urrshis_dos)         AS days_of_service
-                      FROM urr_with_totals u
-                      GROUP BY u.urrshis_cust_code,
-                               u.urrshis_prem_code,
-                               u.urrshis_charge_date
-                  )
-                  SELECT u.urrshis_serv_num                                                             AS service_number,
-                         TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')                                   AS bill_date,
-                         TO_CHAR(u.from_dt, 'YYYYMMDD')                                                AS usage_from_date,
-                         TO_CHAR(u.to_dt,   'YYYYMMDD')                                                AS usage_to_date,
-                         TRUNC(ba.actual_consump_sum / NULLIF(ba.days_of_service, 0), 3)               AS avg_daily_actual_consumption,
-                         TRUNC(ROUND(c.ubbchst_billed_consump / NULLIF(ba.days_of_service, 0), 4), 3) AS avg_daily_billed_consumption,
-                         c.ubbchst_billed_consump                                                      AS total_billed_consumption,
-                         ba.days_of_service                                                            AS days_of_service,
-                         u.urrshis_reading                                                             AS reading,
-                         u.urrshis_rtyp_code                                                           AS read_type_code,
-                         TO_CHAR(u.urrshis_action_date, 'YYYYMMDD')                                    AS read_date,
-                         wa.weather_mean_avg_temp                                                      AS average_temperature,
-                         wa.weather_sum_hdd                                                            AS heating_degree_days,
-                         h.ubbbhst_tran_num                                                            AS bill_history_transaction_number,
-                         COUNT(*) OVER ()                                                              AS number_of_matches
-                  FROM all_hist h
-                  LEFT JOIN urr_with_totals u
-                    ON  u.urrshis_cust_code   = h.ubbbhst_cust_code
-                    AND u.urrshis_prem_code   = h.ubbbhst_prem_code
-                    AND u.urrshis_charge_date = h.ubbbhst_printed_date
-                  LEFT JOIN weather_agg wa
-                    ON  wa.urrshis_cust_code   = u.urrshis_cust_code
-                    AND wa.urrshis_prem_code   = u.urrshis_prem_code
-                    AND wa.urrshis_serv_num    = u.urrshis_serv_num
-                    AND wa.urrshis_action_date = u.urrshis_action_date
-                  LEFT JOIN UBBCHST c
-                    ON  c.ubbchst_cust_code   = h.ubbbhst_cust_code
-                    AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
-                    AND c.ubbchst_charge_date = h.ubbbhst_printed_date
-                  LEFT JOIN bill_agg ba
-                    ON  ba.urrshis_cust_code   = h.ubbbhst_cust_code
-                    AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
-                    AND ba.urrshis_charge_date = h.ubbbhst_printed_date
-                  ORDER BY h.ubbbhst_printed_date DESC,
-                           u.urrshis_serv_num,
-                           u.urrshis_action_date
+            WITH seed_hist AS (
+                SELECT t.ubbbhst_cust_code,
+                       t.ubbbhst_prem_code,
+                       t.ubbbhst_printed_date,
+                       t.ubbbhst_cancel_ind,
+                       t.ubbbhst_tran_num,
+                       t.ubbbhst_prev_bal,
+                       t.ubbbhst_ending_bal
+                FROM UBBBHST t
+                WHERE t.ubbbhst_cust_code = ?
+                  AND t.ubbbhst_prem_code = ?
+                ORDER BY t.ubbbhst_printed_date DESC
+                FETCH FIRST 1 ROWS ONLY
+            ),
+            all_hist AS (
+                SELECT h2.ubbbhst_cust_code,
+                       h2.ubbbhst_prem_code,
+                       h2.ubbbhst_printed_date,
+                       h2.ubbbhst_cancel_ind,
+                       h2.ubbbhst_tran_num,
+                       h2.ubbbhst_prev_bal,
+                       h2.ubbbhst_ending_bal
+                FROM UBBBHST h2
+                JOIN seed_hist s
+                  ON h2.ubbbhst_cust_code = s.ubbbhst_cust_code
+                 AND h2.ubbbhst_prem_code = s.ubbbhst_prem_code
+                WHERE h2.ubbbhst_cancel_ind IS NULL
+                  AND h2.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+            ),
+            urr AS (
+                SELECT r.urrshis_cust_code,
+                       r.urrshis_prem_code,
+                       r.urrshis_serv_num,
+                       r.urrshis_reading,
+                       r.urrshis_rtyp_code,
+                       r.urrshis_action_date,
+                       r.urrshis_charge_date,
+                       r.urrshis_dos,
+                       r.urrshis_consumption,
+                       LAG(r.urrshis_action_date)
+                           OVER (PARTITION BY r.urrshis_cust_code,
+                                              r.urrshis_prem_code,
+                                              r.urrshis_serv_num
+                                 ORDER BY r.urrshis_action_date) AS prev_action_date
+                FROM URRSHIS r
+                JOIN seed_hist s
+                  ON r.urrshis_cust_code = s.ubbbhst_cust_code
+                 AND r.urrshis_prem_code = s.ubbbhst_prem_code
+            ),
+            urr_ranges AS (
+                SELECT\s
+                    u.*,
+                    u.urrshis_action_date AS to_dt,
+                    CASE
+                        WHEN u.prev_action_date IS NOT NULL THEN u.prev_action_date
+                        ELSE u.urrshis_action_date - u.urrshis_dos
+                    END AS from_dt
+                FROM urr u
+            ),
+            urr_with_totals AS (
+                SELECT\s
+                    ur.*,
+                    SUM(ur.urrshis_dos) OVER (
+                        PARTITION BY ur.urrshis_cust_code,
+                                     ur.urrshis_prem_code
+                    ) AS total_dos
+                FROM urr_ranges ur
+            ),
+            weather_agg AS (
+                SELECT u.urrshis_cust_code,
+                       u.urrshis_prem_code,
+                       u.urrshis_serv_num,
+                       u.urrshis_action_date,
+                       ROUND(SUM(ocsweat_avg_temp)/COUNT(1),1)              AS weather_mean_avg_temp,
+                       ROUND(SUM(NVL(ocsweat_heating_degree_days,0)),1)     AS weather_sum_hdd
+                FROM urr_with_totals u
+                LEFT JOIN UCBPREM p
+                  ON p.ucbprem_code = u.urrshis_prem_code
+                LEFT JOIN OCSWEAT w
+                  ON w.ocsweat_load_zone_code = p.ucbprem_alternate_location
+                 AND w.ocsweat_weather_date   > u.from_dt
+                 AND w.ocsweat_weather_date   < u.to_dt
+                GROUP BY u.urrshis_cust_code,
+                         u.urrshis_prem_code,
+                         u.urrshis_serv_num,
+                         u.urrshis_action_date
+            ),
+            bill_agg AS (
+                SELECT u.urrshis_cust_code,
+                       u.urrshis_prem_code,
+                       u.urrshis_charge_date,
+                       SUM(u.urrshis_consumption) AS actual_consump_sum,
+                       SUM(u.urrshis_dos)         AS days_of_service
+                FROM urr_with_totals u
+                GROUP BY u.urrshis_cust_code,
+                         u.urrshis_prem_code,
+                         u.urrshis_charge_date
+            )
+            SELECT u.urrshis_serv_num                                                             AS service_number,
+                   TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')                                   AS bill_date,
+                   TO_CHAR(u.from_dt, 'YYYYMMDD')                                                AS usage_from_date,
+                   TO_CHAR(u.to_dt,   'YYYYMMDD')                                                AS usage_to_date,
+                   TRUNC(ba.actual_consump_sum / NULLIF(ba.days_of_service, 0), 3)               AS avg_daily_actual_consumption,
+                   TRUNC(ROUND(c.ubbchst_billed_consump / NULLIF(ba.days_of_service, 0), 4), 3) AS avg_daily_billed_consumption,
+                   c.ubbchst_billed_consump                                                      AS total_billed_consumption,
+                   ba.days_of_service                                                            AS days_of_service,
+                   u.urrshis_reading                                                             AS reading,
+                   u.urrshis_rtyp_code                                                           AS read_type_code,
+                   TO_CHAR(u.urrshis_action_date, 'YYYYMMDD')                                    AS read_date,
+                   wa.weather_mean_avg_temp                                                      AS average_temperature,
+                   wa.weather_sum_hdd                                                            AS heating_degree_days,
+                   h.ubbbhst_tran_num                                                            AS bill_history_transaction_number,
+                   COUNT(*) OVER ()                                                              AS number_of_matches
+            FROM all_hist h
+            LEFT JOIN urr_with_totals u
+              ON  u.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND u.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND u.urrshis_charge_date = h.ubbbhst_printed_date
+            LEFT JOIN weather_agg wa
+              ON  wa.urrshis_cust_code   = u.urrshis_cust_code
+              AND wa.urrshis_prem_code   = u.urrshis_prem_code
+              AND wa.urrshis_serv_num    = u.urrshis_serv_num
+              AND wa.urrshis_action_date = u.urrshis_action_date
+            LEFT JOIN UBBCHST c
+              ON  c.ubbchst_cust_code   = h.ubbbhst_cust_code
+              AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
+              AND c.ubbchst_charge_date = h.ubbbhst_printed_date
+            LEFT JOIN bill_agg ba
+              ON  ba.urrshis_cust_code   = h.ubbbhst_cust_code
+              AND ba.urrshis_prem_code   = h.ubbbhst_prem_code
+              AND ba.urrshis_charge_date = h.ubbbhst_printed_date
+            ORDER BY h.ubbbhst_printed_date DESC,
+                     u.urrshis_serv_num,
+                     u.urrshis_action_date
           """;
 
     public static final String GET_BANK_DRAFT_INFO = """
@@ -7516,6 +7691,60 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
           AND a.ucracct_bank_acct       IS NOT NULL
         FETCH FIRST 1 ROWS ONLY
         """;
+
+    public static final String GET_BANK_DRAFT_INFO2 = """
+        SELECT
+            a.ucracct_cust_code         AS customer_code,
+            a.ucracct_prem_code         AS premises_code,
+            a.ucracct_draft_acct_status AS draft_status,
+            a.ucracct_check_saving_ind  AS account_type,
+            c.ucbcust_last_name         AS bank_name
+        FROM UCRACCT a
+        JOIN UTRBANK b
+            ON a.ucracct_bank_code      = b.utrbank_code
+        JOIN UCBCUST c
+            ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
+        WHERE a.ucracct_cust_code       = ?
+          AND a.ucracct_prem_code       = ?
+          AND a.ucracct_draft_acct_status IS NOT NULL
+          AND b.utrbank_status          = 'A'
+          AND a.ucracct_draft_acct_status = 'P'
+          AND a.ucracct_bank_acct       IS NOT NULL
+        FETCH FIRST 1 ROWS ONLY
+        """;
+
+    public static final String GET_PAYMENT_ARRANGEMENT_INFO= """
+            SELECT
+                h.UABPYAR_CUST_CODE                              AS custCode,
+                h.UABPYAR_PREM_CODE                              AS premCode,
+                h.UABPYAR_ARRNG_NUM                              AS paNumber,
+                h.UABPYAR_PYAR_CODE                              AS paTypeCode,
+                h.UABPYAR_TOTAL_AMT                              AS paTotalAmount,
+                TO_CHAR(h.UABPYAR_DATE_CREATED, 'YYYYMMDD')      AS paDateCreated,
+                COUNT(*) OVER (
+                    PARTITION BY h.UABPYAR_CUST_CODE,
+                                 h.UABPYAR_PREM_CODE,
+                                 h.UABPYAR_ARRNG_NUM
+                )                                                AS numberOfInstallments,
+                h.UABPYAR_STATUS                                 AS status,
+                d.UARPYAR_AMT_DUE                                AS amountDue,
+                d.UARPYAR_BALANCE                                AS balance,
+                TO_CHAR(d.UARPYAR_DATE_DUE, 'YYYYMMDD')          AS dateDue,
+                TO_CHAR(d.UARPYAR_DATE_PAID_IN_FULL, 'YYYYMMDD') AS datePaid
+            FROM UABPYAR h
+            JOIN UARPYAR d
+                ON  d.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                AND d.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                AND d.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+            WHERE h.UABPYAR_CUST_CODE  = ?
+              AND h.UABPYAR_PREM_CODE  = ?
+              AND h.UABPYAR_STATUS     = 'A'
+            ORDER BY
+                h.UABPYAR_CUST_CODE,
+                h.UABPYAR_PREM_CODE,
+                h.UABPYAR_ARRNG_NUM,
+                d.UARPYAR_DATE_DUE NULLS LAST
+            """;
 
     public static final String GET_PAYMENT_HISTORY = """
             WITH
@@ -8228,6 +8457,230 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                     WHERE s.ucrserv_cust_code = a.ucracct_cust_code
                       AND s.ucrserv_prem_code = a.ucracct_prem_code
                 )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_INACTIVE_PAYMENT_ARRANGEMENT= """
+    SELECT
+                    h.UABPYAR_CUST_CODE                              AS custCode,
+                    h.UABPYAR_PREM_CODE                              AS premCode,
+                    h.UABPYAR_ARRNG_NUM                              AS paNumber,
+                    h.UABPYAR_PYAR_CODE                              AS paTypeCode,
+                    h.UABPYAR_TOTAL_AMT                              AS paTotalAmount,
+                    TO_CHAR(h.UABPYAR_DATE_CREATED, 'YYYYMMDD')      AS paDateCreated,
+                    COUNT(*) OVER (
+                        PARTITION BY h.UABPYAR_CUST_CODE,
+                                     h.UABPYAR_PREM_CODE,
+                                     h.UABPYAR_ARRNG_NUM
+                    )                                                AS numberOfInstallments,
+                    h.UABPYAR_STATUS                                 AS status,
+                    'INACTIVE ARRANGEMENT'                           AS arrangementStatus,
+                    d.UARPYAR_AMT_DUE                                AS amountDue,
+                    d.UARPYAR_BALANCE                                AS balance,
+                    TO_CHAR(d.UARPYAR_DATE_DUE, 'YYYYMMDD')          AS dateDue,
+                    TO_CHAR(d.UARPYAR_DATE_PAID_IN_FULL, 'YYYYMMDD') AS datePaid
+                FROM UABPYAR h
+                JOIN UARPYAR d
+                    ON  d.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                    AND d.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                    AND d.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+                WHERE h.UABPYAR_STATUS     <> 'A'
+                  AND h.UABPYAR_DATE_CREATED >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                  AND EXISTS (
+                        SELECT 1
+                        FROM UCRACCT u
+                        WHERE u.UCRACCT_CUST_CODE  = h.UABPYAR_CUST_CODE
+                          AND u.UCRACCT_PREM_CODE  = h.UABPYAR_PREM_CODE
+                          AND u.UCRACCT_STATUS_IND = 'A'
+                  )
+                  AND NOT EXISTS (
+                        SELECT 1
+                        FROM UABPYAR active
+                        WHERE active.UABPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                          AND active.UABPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                          AND active.UABPYAR_STATUS    = 'A'
+                  )
+                ORDER BY
+                    h.UABPYAR_CUST_CODE,
+                    h.UABPYAR_PREM_CODE,
+                    h.UABPYAR_ARRNG_NUM,
+                    d.UARPYAR_DATE_DUE NULLS LAST
+                FETCH FIRST 1 ROWS ONLY
+""";
+
+
+    public static final String SELECT_ACCOUNT_ACTIVE_PAYMENT_ARRANGEMENT1= """
+    SELECT
+                    h.UABPYAR_CUST_CODE                              AS custCode,
+                    h.UABPYAR_PREM_CODE                              AS premCode,
+                    h.UABPYAR_ARRNG_NUM                              AS paNumber,
+                    h.UABPYAR_PYAR_CODE                              AS paTypeCode,
+                    h.UABPYAR_TOTAL_AMT                              AS paTotalAmount,
+                    TO_CHAR(h.UABPYAR_DATE_CREATED, 'YYYYMMDD')      AS paDateCreated,
+                    COUNT(*) OVER (
+                        PARTITION BY h.UABPYAR_CUST_CODE,
+                                     h.UABPYAR_PREM_CODE,
+                                     h.UABPYAR_ARRNG_NUM
+                    )                                                AS numberOfInstallments,
+                    h.UABPYAR_STATUS                                 AS status,
+                    'ACTIVE ARRANGEMENT'                             AS arrangementStatus,
+                    d.UARPYAR_AMT_DUE                                AS amountDue,
+                    d.UARPYAR_BALANCE                                AS balance,
+                    TO_CHAR(d.UARPYAR_DATE_DUE, 'YYYYMMDD')          AS dateDue,
+                    TO_CHAR(d.UARPYAR_DATE_PAID_IN_FULL, 'YYYYMMDD') AS datePaid
+                FROM UABPYAR h
+                JOIN UARPYAR d
+                    ON  d.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                    AND d.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                    AND d.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+                WHERE h.UABPYAR_STATUS      = 'A'
+                  AND h.UABPYAR_DATE_CREATED >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                  AND EXISTS (
+                        SELECT 1
+                        FROM UCRACCT u
+                        WHERE u.UCRACCT_CUST_CODE  = h.UABPYAR_CUST_CODE
+                          AND u.UCRACCT_PREM_CODE  = h.UABPYAR_PREM_CODE
+                          AND u.UCRACCT_STATUS_IND = 'A'
+                  )
+                  AND (
+                        SELECT COUNT(*)
+                        FROM UARPYAR d2
+                        WHERE d2.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                          AND d2.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                          AND d2.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+                  ) = 1
+                ORDER BY
+                    h.UABPYAR_CUST_CODE,
+                    h.UABPYAR_PREM_CODE,
+                    h.UABPYAR_ARRNG_NUM,
+                    d.UARPYAR_DATE_DUE NULLS LAST
+                FETCH FIRST 1 ROWS ONLY
+""";
+
+    public static final String SELECT_ACCOUNT_ACTIVE_PAYMENT_ARRANGEMENT_MORE= """
+    SELECT
+                    h.UABPYAR_CUST_CODE                              AS custCode,
+                    h.UABPYAR_PREM_CODE                              AS premCode,
+                    h.UABPYAR_ARRNG_NUM                              AS paNumber,
+                    h.UABPYAR_PYAR_CODE                              AS paTypeCode,
+                    h.UABPYAR_TOTAL_AMT                              AS paTotalAmount,
+                    TO_CHAR(h.UABPYAR_DATE_CREATED, 'YYYYMMDD')      AS paDateCreated,
+                    COUNT(*) OVER (
+                        PARTITION BY h.UABPYAR_CUST_CODE,
+                                     h.UABPYAR_PREM_CODE,
+                                     h.UABPYAR_ARRNG_NUM
+                    )                                                AS numberOfInstallments,
+                    h.UABPYAR_STATUS                                 AS status,
+                    'ACTIVE ARRANGEMENT'                             AS arrangementStatus,
+                    d.UARPYAR_AMT_DUE                                AS amountDue,
+                    d.UARPYAR_BALANCE                                AS balance,
+                    TO_CHAR(d.UARPYAR_DATE_DUE, 'YYYYMMDD')          AS dateDue,
+                    TO_CHAR(d.UARPYAR_DATE_PAID_IN_FULL, 'YYYYMMDD') AS datePaid
+                FROM UABPYAR h
+                JOIN UARPYAR d
+                    ON  d.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                    AND d.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                    AND d.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+                WHERE h.UABPYAR_STATUS      = 'A'
+                  AND h.UABPYAR_DATE_CREATED >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                  AND EXISTS (
+                        SELECT 1
+                        FROM UCRACCT u
+                        WHERE u.UCRACCT_CUST_CODE  = h.UABPYAR_CUST_CODE
+                          AND u.UCRACCT_PREM_CODE  = h.UABPYAR_PREM_CODE
+                          AND u.UCRACCT_STATUS_IND = 'A'
+                  )
+                  AND (
+                        SELECT COUNT(*)
+                        FROM UARPYAR d2
+                        WHERE d2.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                          AND d2.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                          AND d2.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+                  ) > 1
+                ORDER BY
+                    h.UABPYAR_CUST_CODE,
+                    h.UABPYAR_PREM_CODE,
+                    h.UABPYAR_ARRNG_NUM,
+                    d.UARPYAR_DATE_DUE NULLS LAST
+                FETCH FIRST 1 ROWS ONLY
+""";
+
+    public static final String SELECT_ACCOUNT_ACTIVE_PAYMENT_ARRANGEMENT_MORE2= """
+    SELECT
+                    h.UABPYAR_CUST_CODE                              AS custCode,
+                    h.UABPYAR_PREM_CODE                              AS premCode,
+                    h.UABPYAR_ARRNG_NUM                              AS paNumber,
+                    h.UABPYAR_PYAR_CODE                              AS paTypeCode,
+                    h.UABPYAR_TOTAL_AMT                              AS paTotalAmount,
+                    TO_CHAR(h.UABPYAR_DATE_CREATED, 'YYYYMMDD')      AS paDateCreated,
+                    COUNT(*) OVER (
+                        PARTITION BY h.UABPYAR_CUST_CODE,
+                                     h.UABPYAR_PREM_CODE,
+                                     h.UABPYAR_ARRNG_NUM
+                    )                                                AS numberOfInstallments,
+                    h.UABPYAR_STATUS                                 AS status,
+                    'ACTIVE ARRANGEMENT'                             AS arrangementStatus,
+                    d.UARPYAR_AMT_DUE                                AS amountDue,
+                    d.UARPYAR_BALANCE                                AS balance,
+                    TO_CHAR(d.UARPYAR_DATE_DUE, 'YYYYMMDD')          AS dateDue,
+                    TO_CHAR(d.UARPYAR_DATE_PAID_IN_FULL, 'YYYYMMDD') AS datePaid
+                FROM UABPYAR h
+                JOIN UARPYAR d
+                    ON  d.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                    AND d.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                    AND d.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+                WHERE h.UABPYAR_STATUS      = 'A'
+                  AND h.UABPYAR_DATE_CREATED >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+                  AND d.UARPYAR_DATE_PAID_IN_FULL IS NOT NULL
+                  AND EXISTS (
+                        SELECT 1
+                        FROM UCRACCT u
+                        WHERE u.UCRACCT_CUST_CODE  = h.UABPYAR_CUST_CODE
+                          AND u.UCRACCT_PREM_CODE  = h.UABPYAR_PREM_CODE
+                          AND u.UCRACCT_STATUS_IND = 'A'
+                  )
+                  AND (
+                        SELECT COUNT(*)
+                        FROM UARPYAR d2
+                        WHERE d2.UARPYAR_CUST_CODE = h.UABPYAR_CUST_CODE
+                          AND d2.UARPYAR_PREM_CODE = h.UABPYAR_PREM_CODE
+                          AND d2.UARPYAR_ARRNG_NUM = h.UABPYAR_ARRNG_NUM
+                  ) > 1
+                ORDER BY DBMS_RANDOM.VALUE
+                FETCH FIRST 1 ROWS ONLY
+""";
+
+    public static final String SELECT_ACCOUNT_NO_PAYMENT_ARRANGEMENT= """
+            SELECT
+                u.UCRACCT_CUST_CODE             AS customer_code,
+                u.UCRACCT_PREM_CODE             AS premises_code,
+                u.UCRACCT_STATUS_IND            AS account_status,
+                'NO ARRANGEMENT'                AS arrangement_status  -- ← confirms no active arrangement
+            FROM UCRACCT u
+            WHERE u.UCRACCT_STATUS_IND          IN ('A', 'N', 'F', 'I')
+              AND NOT EXISTS (
+                    -- no active payment arrangement in UABPYAR
+                    SELECT 1
+                    FROM UABPYAR ar
+                    WHERE ar.UABPYAR_CUST_CODE  = u.UCRACCT_CUST_CODE
+                      AND ar.UABPYAR_PREM_CODE  = u.UCRACCT_PREM_CODE
+                      AND ar.UABPYAR_STATUS     = 'A'             -- no active arrangement
+              )
+              AND NOT EXISTS (
+                    -- no arrangement detail rows in UARPYAR either
+                    SELECT 1
+                    FROM UARPYAR d
+                    WHERE d.UARPYAR_CUST_CODE   = u.UCRACCT_CUST_CODE
+                      AND d.UARPYAR_PREM_CODE   = u.UCRACCT_PREM_CODE
+              )
+              AND EXISTS (
+                    -- account must have at least one posted payment to be meaningful
+                    SELECT 1
+                    FROM UABPYMT p
+                    WHERE p.UABPYMT_CUST_CODE   = u.UCRACCT_CUST_CODE
+                      AND p.UABPYMT_PREM_CODE   = u.UCRACCT_PREM_CODE
+                      AND p.UABPYMT_PYMT_DATE   >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+              )
             FETCH FIRST 1 ROWS ONLY
             """;
 

@@ -43,10 +43,32 @@ Feature: Verify GetBillHistory Api
       | TC_80__Positive__Usage_History_TotalBilledConsumption_Format | 0        |              | notNull |
       | TC_81__Positive__Usage_History_BalanceBroughtForward_Format  | 0        |              | notNull |
       | TC_82__Positive__Usage_History_GasServiceCharges_Format      | 0        |              | notNull |
+
+
+  @GetBillHistoryPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetBillHistory Api for "<testCondition>"
+    Then verify response code of "GetBillHistory" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+
+    Examples:
+      | testCondition                                            | errorCode | errorMessage | data    |
       | TC_83__Positive__Usage_History_OtherCharges_Format           | 0        |              | notNull |
       | TC_84__Positive__Usage_History_PromotionalDiscounts_Format   | 0        |              | notNull |
       | TC_85__Positive__Usage_History_Taxes_Format                  | 0        |              | notNull |
       | TC_86__Positive__Usage_History_BudgetBillingAmount_Format    | 0        |              | notNull |
+
+  @GetBillHistoryPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetBillHistory Api for "<testCondition>"
+    Then verify response code of "GetBillHistory" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And bill history response should match database for customer and premises code
+
+
+    Examples:
+      | testCondition                                            | errorCode | errorMessage | data    |
       | TC_87__Positive__Usage_History_NotBudgetBillingAccount       | 0        |              | notNull |
       | TC_88__Positive__Usage_History_TotalBillAmount_Format        | 0        |              | notNull |
       | TC_89__Positive__Usage_History_BillHistoryTransactionNumber_Format | 0 |              | notNull |

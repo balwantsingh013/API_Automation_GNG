@@ -10,6 +10,7 @@ import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -34,7 +35,8 @@ public class GetPaymentArrangementInfoApiHelper {
                                                GetPaymentArrangementInfoLabel testCondition) {
 
         Map<String, Object> accountData = null;
-
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(7));
+        Map<String, Object> accountInfo = null;
         switch (testCondition) {
 
             // ---------------- NEGATIVE TEST CASES ----------------
@@ -76,36 +78,79 @@ public class GetPaymentArrangementInfoApiHelper {
                 break;
 
             case TC_165__Negative__Invalid_Account_Number:
-                payload.setCustomerCode("999999999");
-                payload.setPremisesCode("9999999");
+                payload.setCustomerCode("9988776");
+                Map<String, Object> userInfo = ApplicationContext.get().getDbAction().getUserAccountInfo("9988776");
+                payload.setCustomerCode("9988776");
+                payload.setPremisesCode(FakerDataGenerator.generateDigits(6));
                 break;
 
-
-            // ---------------- POSITIVE TEST CASES ----------------
-
             case TC_166__Positive__No_Payment_Arrangement:
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithNoPaymentArrangement();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
+                List<Map<String, Object>> dbRows1 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentArrangementInfo(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
+
             case TC_167__Positive__Has_Inactive_Payment_Arrangement:
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithInactivePaymentArrangement();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("custCode").toString());
+                payload.setPremisesCode(accountInfo.get("premCode").toString());
+                testContext.setCustomerCode(accountInfo.get("custCode").toString());
+                testContext.setPremisesCode(accountInfo.get("premCode").toString());
+                List<Map<String, Object>> dbRows2 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentArrangementInfo(accountInfo.get("custCode").toString(), accountInfo.get("premCode").toString());
+                break;
+
             case TC_168__Positive__Has_Active_Payment_Arrangement:
             case TC_169__Positive__Payment_Arrangement_Number_Format:
             case TC_170__Positive__Payment_Arrangement_Type_Code_Format:
-            case TC_171__Positive__Payment_Arrangement_Type_Code_Format:
-            case TC_172__Positive__Payment_Arrangement_Total_Amount_Format:
-            case TC_173__Positive__Payment_Arrangement_Date_Created_Format:
-            case TC_174__Positive__Payment_Arrangement_Number_Of_Installments_Format:
-            case TC_175__Positive__Payment_Arrangement_Amount_Due_Format:
-            case TC_176__Positive__Payment_Arrangement_Balance_Format:
-            case TC_177__Positive__Payment_Arrangement_Date_Due_Format:
-            case TC_178__Positive__Payment_Arrangement_Date_Paid_Format:
-            case TC_179__Positive__Payment_Arrangement_Number_Of_Installments_GT_1:
-
-                // Fetch valid Banner account for all positive tests
-               // accountData = ApplicationContext.get().getDbAction("banner").getValidPaymentArrangementAccount();
-
-                Assert.assertNotNull(accountData, "Expected valid Banner account data");
-
+            case TC_171__Positive__Payment_Arrangement_Total_Amount_Format:
+            case TC_172__Positive__Payment_Arrangement_Date_Created_Format:
+            case TC_173__Positive__Payment_Arrangement_Number_Of_Installments_Format:
+            case TC_174__Positive__Payment_Arrangement_Amount_Due_Format:
+            case TC_175__Positive__Payment_Arrangement_Balance_Format:
+            case TC_176__Positive__Payment_Arrangement_Date_Due_Format:
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithActivePaymentArrangement1();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
-                payload.setCustomerCode(accountData.get("customer_code").toString());
-                payload.setPremisesCode(accountData.get("premises_code").toString());
+                payload.setCustomerCode(accountInfo.get("custCode").toString());
+                payload.setPremisesCode(accountInfo.get("premCode").toString());
+                testContext.setCustomerCode(accountInfo.get("custCode").toString());
+                testContext.setPremisesCode(accountInfo.get("premCode").toString());
+                List<Map<String, Object>> dbRows3 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentArrangementInfo(accountInfo.get("custCode").toString(), accountInfo.get("premCode").toString());
+                break;
+
+
+            case TC_177__Positive__Payment_Arrangement_Date_Paid_Format:
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithActivePaymentArrangementMore2();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("custCode").toString());
+                payload.setPremisesCode(accountInfo.get("premCode").toString());
+                testContext.setCustomerCode(accountInfo.get("custCode").toString());
+                testContext.setPremisesCode(accountInfo.get("premCode").toString());
+                List<Map<String, Object>> dbRows4 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentArrangementInfo(accountInfo.get("custCode").toString(), accountInfo.get("premCode").toString());
+                break;
+
+            case TC_178__Positive__Payment_Arrangement_No_Of_Installments_Greater_than_1:
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithActivePaymentArrangementMore();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+                payload.setCustomerCode(accountInfo.get("custCode").toString());
+                payload.setPremisesCode(accountInfo.get("premCode").toString());
+                testContext.setCustomerCode(accountInfo.get("custCode").toString());
+                testContext.setPremisesCode(accountInfo.get("premCode").toString());
+                List<Map<String, Object>> dbRows5 = ApplicationContext.get()
+                        .getDbAction()
+                        .getPaymentArrangementInfo(accountInfo.get("custCode").toString(), accountInfo.get("premCode").toString());
                 break;
 
 

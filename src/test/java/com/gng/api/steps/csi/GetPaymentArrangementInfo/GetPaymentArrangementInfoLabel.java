@@ -27,13 +27,12 @@ public enum GetPaymentArrangementInfoLabel {
 
     TC_169__Positive__Payment_Arrangement_Number_Format,
     TC_170__Positive__Payment_Arrangement_Type_Code_Format,
-    TC_171__Positive__Payment_Arrangement_Type_Code_Format,
-    TC_172__Positive__Payment_Arrangement_Total_Amount_Format,
-    TC_173__Positive__Payment_Arrangement_Date_Created_Format,
-    TC_174__Positive__Payment_Arrangement_Number_Of_Installments_Format,
-    TC_175__Positive__Payment_Arrangement_Amount_Due_Format,
-    TC_176__Positive__Payment_Arrangement_Balance_Format,
-    TC_177__Positive__Payment_Arrangement_Date_Due_Format,
-    TC_178__Positive__Payment_Arrangement_Date_Paid_Format,
-    TC_179__Positive__Payment_Arrangement_Number_Of_Installments_GT_1
+    TC_171__Positive__Payment_Arrangement_Total_Amount_Format,
+    TC_172__Positive__Payment_Arrangement_Date_Created_Format,
+    TC_173__Positive__Payment_Arrangement_Number_Of_Installments_Format,
+    TC_174__Positive__Payment_Arrangement_Amount_Due_Format,
+    TC_175__Positive__Payment_Arrangement_Balance_Format,
+    TC_176__Positive__Payment_Arrangement_Date_Due_Format,
+    TC_177__Positive__Payment_Arrangement_Date_Paid_Format,
+    TC_178__Positive__Payment_Arrangement_No_Of_Installments_Greater_than_1
 }

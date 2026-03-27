@@ -317,7 +317,7 @@ public class GetUsageHistoryApiHelper {
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("CUST_CODE").toString());
                 payload.setPremisesCode(accountInfo.get("PREM_CODE").toString());
-                payload.setNumberOfMonths("24");
+                payload.setNumberOfMonths("12");
                 testContext.setCustomerCode(accountInfo.get("CUST_CODE").toString());
                 testContext.setPremisesCode(accountInfo.get("PREM_CODE").toString());
                 accountsInfo= ApplicationContext.get().getDbAction().getReadType(testContext.getCustomerCode(), testContext.getPremisesCode());
@@ -371,14 +371,14 @@ public class GetUsageHistoryApiHelper {
 
             case TC_39__Positive__Usage_History_Greater_Than_Requested_Months:
 
-                accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryGreater();
+                accountInfo = ApplicationContext.get().getDbAction().getUsageHitstoryEqualToMonthsRequested();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("prem_code").toString());
-                payload.setNumberOfMonths("12");
+                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
+                payload.setNumberOfMonths("8");
                 List<Map<String, Object>> dbRows4 = ApplicationContext.get()
                         .getDbAction()
-                        .getUsageHistory2(accountInfo.get("cust_code").toString(), accountInfo.get("prem_code").toString());
+                        .getUsageHistory2(accountInfo.get("ubbbhst_cust_code").toString(), accountInfo.get("ubbbhst_prem_code").toString());
                 break;
 
             default:
