@@ -221,7 +221,7 @@ public class UpdateBankDraftApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getBankDetails();
                 payload.setBankDraftAccountType("C");
                 payload.setBankDraftRoutingNumber(accountInfo.get("ROUTING_NUM").toString());
-                payload.setBankDraftAccountNumber(FakerDataGenerator.generateDigits(8));
+                payload.setBankDraftAccountNumber("10151810");
                 break;
 
             case TC_124__Positive__Prenotification_Savings_Updated:

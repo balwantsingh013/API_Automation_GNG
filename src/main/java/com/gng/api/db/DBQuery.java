@@ -2681,7 +2681,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ON UBBBHST_cust_code= ucracct_cust_code
             WHERE UBBBHST_PRINTED_DATE > ADD_MONTHS(TRUNC(SYSDATE), -24)
             AND length(UBBBHST_cust_code)>=4
-            AND ucracct_status_ind<>'N'
+            AND ucracct_status_ind='A'
             FETCH FIRST 1 ROWS ONLY
             """;
 
