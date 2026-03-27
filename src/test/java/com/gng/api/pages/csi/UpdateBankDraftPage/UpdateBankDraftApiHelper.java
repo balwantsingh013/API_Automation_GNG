@@ -188,10 +188,10 @@ public class UpdateBankDraftApiHelper {
             case TC_121__Positive__Active_Checking_Account_Updated:
                 accountInfo = ApplicationContext.get().getDbAction().getBankDraftCheckingAccount2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("ucracct_prem_code").toString());
-                testContext.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
-                testContext.setPremisesCode(accountInfo.get("ucracct_prem_code").toString());
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
                 payload.setBankDraftAccountType("C");
                 accountInfo = ApplicationContext.get().getDbAction().getBankDetails();
                 payload.setBankDraftRoutingNumber(accountInfo.get("ROUTING_NUM").toString());
@@ -199,6 +199,7 @@ public class UpdateBankDraftApiHelper {
                 break;
 
             case TC_122__Positive__Active_Savings_Account_Updated:
+                ApplicationContext.get().getDbAction().updateDraftStaus();
                 accountInfo = ApplicationContext.get().getDbAction().getBankDraftSavingsAccount2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
@@ -238,6 +239,7 @@ public class UpdateBankDraftApiHelper {
                 break;
 
             case TC_125__Positive__Login_ID_Saved:
+                ApplicationContext.get().getDbAction().updateDraftStaus();
                 accountInfo = ApplicationContext.get().getDbAction().getBankDraftSavingsAccount2();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());

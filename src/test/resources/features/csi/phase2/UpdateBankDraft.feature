@@ -32,20 +32,31 @@ Feature: Verify UpdateBankDraft Api
       | TC_117__Negative__Invalid_Service_Number              | 40043     | Invalid Service Number            |
       | TC_118__Negative__Active_Payment_Arrangement          | 40265     | Active Payment Arrangement found  |
       | TC_119__Negative__Account_Ineligible_Future_Payment   | 40267     | Account ineligible for Bank Draft update |
+
+  @UpdateBankDraft @NegativeFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateBankDraft Api for "<testCondition>"
+    When a request is made to UpdateBankDraft Api for "<testCondition>"
+    Then verify response code of "UpdateBankDraft" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+
+
+    Examples:
+      | testCondition                                        | errorCode | errorMessage                      |
       | TC_120__Negative__No_Update_Required                  | 40269     | No update required                |
 
 
-#  @UpdateBankDraftPositive @HappyFlow @CSI
-#  Scenario Outline: "<testCondition>"
-#    When a request is made to UpdateBankDraft Api for "<testCondition>"
-#    Then verify response code of "UpdateBankDraft" Api is 200
-#    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-#    And the Banner database should be updated with the provided bank draft information
-#
-#    Examples:
-#      | testCondition                                           | errorCode | errorMessage |
-#      | TC_121__Positive__Active_Checking_Account_Updated        | 0         |              |
-#      | TC_122__Positive__Active_Savings_Account_Updated         | 0         |              |
+  @UpdateBankDraftPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to UpdateBankDraft Api for "<testCondition>"
+    Then verify response code of "UpdateBankDraft" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the Banner database should be updated with the provided bank draft information
+
+    Examples:
+      | testCondition                                           | errorCode | errorMessage |
+      | TC_121__Positive__Active_Checking_Account_Updated        | 0         |              |
+      | TC_122__Positive__Active_Savings_Account_Updated         | 0         |              |
 
   @UpdateBankDraftPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"

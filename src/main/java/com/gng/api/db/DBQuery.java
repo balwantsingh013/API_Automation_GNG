@@ -2989,50 +2989,61 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACTIVE_PAYMENT_HISTORY_NO_REVERSAL= """
     WITH win AS (
-                    SELECT ADD_MONTHS(TRUNC(SYSDATE), -24) AS start_dt,
-                           DATE '2026-03-01' AS snapshot_cutoff
+                    SELECT
+                        ADD_MONTHS(TRUNC(SYSDATE), -24) AS start_dt,
+                        DATE '2026-03-01'              AS snapshot_cutoff,
+                        DATE '2026-03-01' - 14         AS cutoff_minus_lag
                     FROM dual
                 ),
                 valid_accts AS (
-                    SELECT u.ucracct_cust_code AS cust_code,
-                           u.ucracct_prem_code AS prem_code,
-                           u.ucracct_status_ind AS accountstatus
+                    SELECT
+                        u.ucracct_cust_code  AS cust_code,
+                        u.ucracct_prem_code  AS prem_code,
+                        u.ucracct_status_ind AS accountstatus
                     FROM UCRACCT u
                 ),
-                gw_raw AS (
-                    SELECT g.gzbrtpp_cust_code AS cust_code,
-                           g.gzbrtpp_prem_code AS prem_code,
-                           g.gzbrtpp_orig_date AS paymentdate,
-                           g.gzbrtpp_amount AS amount,
-                           g.gzbrtpp_pycd_code AS paymentcode,
-                           va.accountstatus
+                gw_attempts AS (
+                    SELECT
+                        g.gzbrtpp_cust_code AS cust_code,
+                        g.gzbrtpp_prem_code AS prem_code,
+                        g.gzbrtpp_orig_date AS paymentdate,
+                        g.gzbrtpp_amount    AS amount,
+                        g.gzbrtpp_pycd_code AS paymentcode
                     FROM GZBRTPP g
-                    JOIN valid_accts va
-                      ON va.cust_code = g.gzbrtpp_cust_code
-                     AND va.prem_code = g.gzbrtpp_prem_code
                     CROSS JOIN win w
-                    WHERE g.gzbrtpp_orig_date BETWEEN w.start_dt AND (w.snapshot_cutoff - 14)
+                    JOIN valid_accts va
+                        ON  va.cust_code = g.gzbrtpp_cust_code
+                        AND va.prem_code = g.gzbrtpp_prem_code
+                    WHERE g.gzbrtpp_amount   > 0
+                      AND g.gzbrtpp_orig_date BETWEEN w.start_dt AND w.cutoff_minus_lag
                 ),
-                posted AS (
-                    SELECT p.uabpymt_cust_code AS cust_code,
-                           p.uabpymt_prem_code AS prem_code,
-                           p.uabpymt_pymt_date AS paymentdate,
-                           p.uabpymt_amount AS amount
+                posted_pos AS (
+                    SELECT
+                        p.uabpymt_cust_code AS cust_code,
+                        p.uabpymt_prem_code AS prem_code,
+                        p.uabpymt_pymt_date AS paymentdate,
+                        p.uabpymt_amount    AS amount
                     FROM UABPYMT p
+                    WHERE p.uabpymt_amount > 0
                 )
-                SELECT g.cust_code,
-                       g.prem_code,
-                       g.paymentdate,
-                       g.amount,
-                       g.paymentcode,
-                       g.accountstatus,
-                       'TRUE_NON_POSTED_REVERSAL' AS status
-                FROM gw_raw g
-                LEFT JOIN posted p
-                  ON p.cust_code = g.cust_code
-                 AND p.prem_code = g.prem_code
-                 AND p.amount = g.amount
-                 AND p.paymentdate BETWEEN g.paymentdate - 14 AND g.paymentdate + 14
+                SELECT
+                    g.cust_code,
+                    g.prem_code,
+                    g.paymentdate,
+                    g.amount,
+                    g.paymentcode,
+                    va.accountstatus,
+                    'NON_POSTED_GATEWAY_FAILURE' AS status
+                FROM gw_attempts g
+                JOIN valid_accts va
+                    ON  va.cust_code = g.cust_code
+                    AND va.prem_code = g.prem_code
+                LEFT JOIN posted_pos p
+                    ON  p.cust_code   = g.cust_code
+                    AND p.prem_code   = g.prem_code
+                    AND p.amount      = g.amount
+                    AND p.paymentdate BETWEEN g.paymentdate - 14
+                                          AND g.paymentdate + 14
                 WHERE p.cust_code IS NULL
                 ORDER BY g.paymentdate DESC
                 FETCH FIRST 1 ROWS ONLY
@@ -4587,31 +4598,41 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_WITH_CHECKING_ACCOUNT2= """
             SELECT
-                a.ucracct_cust_code,
-                a.ucracct_prem_code,
-                a.ucracct_draft_acct_status,
-                d.uardrft_cust_code,
-                d.uardrft_prem_code,
-                d.uardrft_file_date,
-                d.uardrft_amount,
-                d.uardrft_hold_until_date
+                a.ucracct_cust_code         AS customer_code,
+                a.ucracct_prem_code         AS premises_code,
+                a.ucracct_draft_acct_status AS draft_status,
+                '******' || SUBSTR(
+                    REGEXP_REPLACE(
+                        LPAD(b.utrbank_transit_1, 4, '0') ||
+                        LPAD(b.utrbank_transit_2, 4, '0') ||
+                             b.utrbank_transit_3,
+                        '[^0-9]', ''
+                    ),
+                    -4
+                ) AS masked_routing_number,
+                a.ucracct_check_saving_ind  AS account_type,
+                c.ucbcust_last_name         AS bank_name
             FROM UCRACCT a
             JOIN UTRBANK b
                 ON a.ucracct_bank_code = b.utrbank_code
             JOIN UCBCUST c
                 ON b.utrbank_cust_code_bank = c.ucbcust_cust_code
-            LEFT JOIN UARDRFT d
-                ON  d.uardrft_cust_code = a.ucracct_cust_code
-                AND d.uardrft_prem_code = a.ucracct_prem_code
-                AND d.uardrft_file_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
             WHERE a.ucracct_draft_acct_status IS NOT NULL
-              AND a.ucracct_draft_acct_status != 'P'
               AND b.utrbank_status            = 'A'
               AND a.ucracct_bank_acct         IS NOT NULL
               AND a.ucracct_check_saving_ind  = 'C'
               AND a.ucracct_status_ind        = 'A'
-              AND a.ucracct_pmnt_arr          != 'Y'
-              AND a.ucracct_cust_code= '6232380'
+              AND a.ucracct_pmnt_arr          != 'Y'                -- no active payment arrangement
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM UARDRFT d
+                  WHERE d.uardrft_cust_code      = a.ucracct_cust_code
+                    AND d.uardrft_prem_code      = a.ucracct_prem_code
+                    AND d.uardrft_hold_until_date > TRUNC(SYSDATE)  -- no future dated payment arrangement
+                    AND d.uardrft_amount         <> 0
+                    AND d.uardrft_file_date      = DATE '2099-12-31'
+              )
+              ORDER BY a.ucracct_cust_code DESC
             FETCH FIRST 1 ROWS ONLY
         """;
 
@@ -4666,6 +4687,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 FETCH FIRST 1 ROWS ONLY
 """;
 
+    public static final String UPDATE_ACCOUNT_WITH_SAVINGS_ACCOUNT2= """
+    UPDATE ucracct
+    SET ucracct_draft_acct_status='A'
+    WHERE ucracct_cust_code = '6212561'""";
+
     public static final String SELECT_ACCOUNT_WITH_SAVINGS_ACCOUNT2= """
             SELECT
                 a.ucracct_cust_code         AS customer_code,
@@ -4699,13 +4725,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 AND a.ucracct_check_saving_ind = 'S'
                 AND a.ucracct_status_ind='A'
                 AND a.ucracct_draft_acct_status='A'
-                AND EXISTS (
+                AND a.ucracct_cust_code = '6212561'
+                 AND EXISTS (
                     SELECT 1
                     FROM UCRSERV s
                     WHERE s.ucrserv_cust_code = a.ucracct_cust_code
                       AND s.ucrserv_prem_code = a.ucracct_prem_code
                 )
-              ORDER BY a.ucracct_cust_code DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 

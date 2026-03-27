@@ -3246,6 +3246,18 @@ public class DBAction {
         return result;
     }
 
+    public int updateDraftStaus() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.UPDATE_ACCOUNT_WITH_SAVINGS_ACCOUNT2;
+        logQueryInAllure("delete registered account", query);
+
+        int rowsAffected = jdbcTemplate.update(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        return rowsAffected;
+    }
+
     public Map<String, Object> getBankDetails() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_BANK_DETAILS;
