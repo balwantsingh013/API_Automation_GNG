@@ -141,10 +141,8 @@ public class GetBankDraftInfoApiHelper {
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
                 String custCode= accountInfo.get("customer_code").toString();
-
                 String premCode= accountInfo.get("premises_code").toString();
-                accountInfo = ApplicationContext.get().getDbAction().updateAccountNo(custCode, premCode, "12345678");
-                testContext.setBankAccountNo("****5678");
+                testContext.setBankAccountNo("****"+accountInfo.get("bankDraftAccountNumberLast4"));
                 break;
 
             case TC_57__Positive__BankAccountType_Checking:

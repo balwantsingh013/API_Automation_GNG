@@ -4810,6 +4810,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code AS customer_code,
                 a.ucracct_prem_code AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS bankDraftStatus,
                 CASE
                     WHEN a.ucracct_draft_acct_status IS NOT NULL
