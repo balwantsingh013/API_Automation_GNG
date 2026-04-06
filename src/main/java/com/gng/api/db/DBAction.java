@@ -870,6 +870,27 @@ public class DBAction {
         return result;
     }
 
+
+    public Map<String, Object> getValidUsageHistoryAccountNew() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_VALID_USAGE_HISTORY_ACCOUNT_NEW;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getAccountWithBillHistory() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_VALID_BILL_HISTORY_ACCOUNT;

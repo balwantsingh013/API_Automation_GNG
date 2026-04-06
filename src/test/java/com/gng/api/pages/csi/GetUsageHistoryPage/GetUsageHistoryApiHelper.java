@@ -166,24 +166,24 @@ public class GetUsageHistoryApiHelper {
                 break;
 
             case TC_20__Positive__Usage_History_Average_Daily_Actual_Consumption_Format:
-                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccount();
+                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccountNew();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                payload.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 payload.setNumberOfMonths("12");
-                testContext.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                testContext.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                testContext.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                testContext.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 accountsInfo= ApplicationContext.get().getDbAction().getActualConsumption(testContext.getCustomerCode(), testContext.getPremisesCode());
                 break;
 
             case TC_21__Positive__Usage_History_Average_Daily_Billed_Consumption_Format:
-                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccount();
+                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccountNew();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                payload.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 payload.setNumberOfMonths("12");
-                testContext.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                testContext.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                testContext.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                testContext.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 accountsInfo= ApplicationContext.get().getDbAction().getAverageDailyBilledConsumption(testContext.getCustomerCode(), testContext.getPremisesCode());
                 break;
 

@@ -2640,6 +2640,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_VALID_USAGE_HISTORY_ACCOUNT_NEW = """
+            SELECT h.urrshis_consumption, h.*
+                FROM urrshis h
+                WHERE h.urrshis_consumption = 0.000
+                AND h.urrshis_actn_code = 'READ'
+                AND h.urrshis_action_date >= TRUNC(sysdate - 365)
+                FETCH FIRST 1 ROWS ONLY
+
+""";
+
     public static final String SELECT_VALID_USAGE_HISTORY_ACCOUNT = """
         SELECT ucracct_cust_code,
                ucracct_prem_code,
@@ -4388,6 +4398,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code AS customer_code,
                 a.ucracct_prem_code AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS bankDraftStatus,
                 CASE
                     WHEN a.ucracct_draft_acct_status = 'A'
@@ -4457,6 +4468,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                        a.ucracct_cust_code AS customer_code,
                        a.ucracct_prem_code AS premises_code,
+                       a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                        a.ucracct_draft_acct_status AS bankDraftStatus,
                        CASE
                            WHEN a.ucracct_draft_acct_status = 'P'
@@ -4502,6 +4514,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code AS customer_code,
                 a.ucracct_prem_code AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS bankDraftStatus,
                 CASE
                     WHEN a.ucracct_draft_acct_status = 'C'
@@ -4534,6 +4547,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code AS customer_code,
                 a.ucracct_prem_code AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS bankDraftStatus,
                 CASE
                     WHEN a.ucracct_draft_acct_status = 'I'
@@ -4565,6 +4579,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code         AS customer_code,
                 a.ucracct_prem_code         AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS draft_status,
             
                 -- Masked routing number
@@ -4642,6 +4657,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code         AS customer_code,
                 a.ucracct_prem_code         AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS draft_status,
             
                 -- Masked routing number
@@ -4739,6 +4755,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code         AS customer_code,
                 a.ucracct_prem_code         AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS draft_status,
             
                 -- Masked routing number
@@ -4774,6 +4791,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             SELECT
                 a.ucracct_cust_code AS customer_code,
                 a.ucracct_prem_code AS premises_code,
+                a.ucracct_bank_last_four    AS bankDraftAccountNumberLast4,
                 a.ucracct_draft_acct_status AS bankDraftStatus,
                 CASE
                     WHEN a.ucracct_draft_acct_status IS NOT NULL
