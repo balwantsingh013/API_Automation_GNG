@@ -20,7 +20,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/csi/phase2/GetUsageHistory.feature"
+                "src/test/resources/features/csi/phase3/GetBillingInfo.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,

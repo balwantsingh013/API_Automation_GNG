@@ -38,6 +38,7 @@ public final class ApiEndPoint {
     public static final String UPDATE_BANK_DRAFT="/CustomerService/UpdateBankDraft";
     public static final String GET_PAYMENT_HISTORY="/CustomerService/GetPaymentHistory";
     public static final String GET_PAYMENT_ARRANGEMENT_INFO="/CustomerService/GetPaymentArrangementInfo";
+    public static final String GET_BILLING_INFO="/CustomerService/GetBillingInfo";
 
 
     private ApiEndPoint() {

@@ -2636,6 +2636,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                    T1.UCRACCT_PREM_CODE
             FROM UCRACCT T1
             WHERE T1.UCRACCT_STATUS_IND = 'N'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM UCRACCT T2
+                  WHERE T2.UCRACCT_CUST_CODE = T1.UCRACCT_CUST_CODE
+                    AND T2.UCRACCT_PREM_CODE = T1.UCRACCT_PREM_CODE
+                    AND T2.UCRACCT_STATUS_IND != 'N'
+              )
             ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
