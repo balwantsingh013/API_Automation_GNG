@@ -3228,6 +3228,61 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_BILL_HISTORY_ONE= """
+            SELECT
+                b.ubbbhst_cust_code,
+                b.ubbbhst_prem_code,
+                COUNT(DISTINCT b.ubbbhst_printed_date) AS total_bills
+            FROM ubbbhst b
+            INNER JOIN ucracct a
+                ON  a.ucracct_cust_code = b.ubbbhst_cust_code
+                AND a.ucracct_prem_code = b.ubbbhst_prem_code
+                AND a.ucracct_status_ind NOT IN ('N')
+            WHERE b.ubbbhst_printed_date > ADD_MONTHS(TRUNC(SYSDATE), -24)
+              AND LENGTH(b.ubbbhst_cust_code) >= 4
+              AND NVL(b.ubbbhst_cancel_ind, 0) = 0
+            GROUP BY
+                b.ubbbhst_cust_code,
+                b.ubbbhst_prem_code
+            HAVING COUNT(DISTINCT b.ubbbhst_printed_date) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_BILL_HISTORY_MORE_THAN_ONE= """
+            SELECT
+                b.ubbbhst_cust_code,
+                b.ubbbhst_prem_code,
+                COUNT(DISTINCT b.ubbbhst_printed_date) AS total_bills
+            FROM ubbbhst b
+            INNER JOIN ucracct a
+                ON  a.ucracct_cust_code = b.ubbbhst_cust_code
+                AND a.ucracct_prem_code = b.ubbbhst_prem_code
+                AND a.ucracct_status_ind NOT IN ('N')
+            WHERE b.ubbbhst_printed_date > ADD_MONTHS(TRUNC(SYSDATE), -24)
+              AND LENGTH(b.ubbbhst_cust_code) >= 4
+              AND NVL(b.ubbbhst_cancel_ind, 0) = 0
+            GROUP BY
+                b.ubbbhst_cust_code,
+                b.ubbbhst_prem_code
+            HAVING COUNT(DISTINCT b.ubbbhst_printed_date) > 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_BILL_INFO= """
+            SELECT
+                b.ubbbhst_cust_code,
+                b.ubbbhst_prem_code,
+                COUNT(DISTINCT b.ubbbhst_printed_date) AS total_bills
+            FROM ubbbhst b
+            INNER JOIN ucracct a
+                ON  a.ucracct_cust_code = b.ubbbhst_cust_code
+                AND a.ucracct_prem_code = b.ubbbhst_prem_code
+                AND a.ucracct_status_ind NOT IN ('N')
+            WHERE b.ubbbhst_cust_code= ?
+            AND b.ubbbhst_prem_code= ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_NO_USAGE_HISTORY_FINAL_ACCOUNT= """
             SELECT\s
                 ua.ucracct_cust_code,

@@ -1375,6 +1375,47 @@ public class DBAction {
     }
 
 
+    public Map<String, Object> getUsageHistoryOne() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_ONE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getUsageHistoryMoreThanOne() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_MORE_THAN_ONE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
     public Map<String, Object> getNoUsageHistoryInactiveAccount() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_NO_USAGE_HISTORY_INACTIVE_ACCOUNT;
@@ -2204,6 +2245,32 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.SELECT_UPDATED_NICKNAME_RECORD2;
+
+        // Replace ? placeholders with actual escaped values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + custCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get nickname for account", loggedQuery);
+
+        // Execute parameterized query safely
+        Map<String, Object> result = jdbcTemplate.queryForMap(queryTemplate, custCode, premCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // log expanded SQL
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountForBillInfo( String custCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_BILL_INFO;
 
         // Replace ? placeholders with actual escaped values for logging
         String loggedQuery = queryTemplate
