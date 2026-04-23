@@ -3268,6 +3268,44 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_BILL_INFO_WITH_REWARDS= """
+            SELECT
+                w.gzbrwds_cust_code,
+                w.gzbrwds_prem_code
+            FROM gzbrwds w
+            WHERE w.gzbrwds_cncl_date IS NULL
+              AND w.gzbrwds_fulfill_date IS NULL
+              AND w.gzbrwds_REWARD_ID IS NOT NULL
+              AND EXISTS (
+                    SELECT 1
+                    FROM ubbbhst b
+                    WHERE b.ubbbhst_cust_code = w.gzbrwds_cust_code
+                      AND b.ubbbhst_prem_code = w.gzbrwds_prem_code
+                      AND b.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_BILL_HISTORY_PREV_BILL_0= """
+            SELECT
+                b.ubbbhst_cust_code,
+                b.ubbbhst_prem_code
+            FROM ubbbhst b
+            WHERE b.ubbbhst_printed_date IS NOT NULL
+              AND b.ubbbhst_printed_date > SYSDATE - 300
+              AND b.ubbbhst_ending_bal > 0
+              AND b.ubbbhst_prev_bal = 0
+              AND b.ubbbhst_printed_date = (
+                    SELECT MAX(b2.ubbbhst_printed_date)
+                    FROM ubbbhst b2
+                    WHERE b2.ubbbhst_cust_code = b.ubbbhst_cust_code
+                      AND b2.ubbbhst_prem_code = b.ubbbhst_prem_code
+                )
+            GROUP BY b.ubbbhst_cust_code, b.ubbbhst_prem_code
+            HAVING COUNT(1) = 1
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_BILL_INFO= """
             SELECT
                 b.ubbbhst_cust_code,
@@ -3278,8 +3316,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ON  a.ucracct_cust_code = b.ubbbhst_cust_code
                 AND a.ucracct_prem_code = b.ubbbhst_prem_code
                 AND a.ucracct_status_ind NOT IN ('N')
-            WHERE b.ubbbhst_cust_code= ?
-            AND b.ubbbhst_prem_code= ?
+            WHERE b.ubbbhst_cust_code = ?
+              AND b.ubbbhst_prem_code = ?
+            GROUP BY b.ubbbhst_cust_code, b.ubbbhst_prem_code
+            ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
 

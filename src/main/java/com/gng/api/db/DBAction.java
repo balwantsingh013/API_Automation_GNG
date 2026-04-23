@@ -1415,6 +1415,46 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getBillInfoWithRewards() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_INFO_WITH_REWARDS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getUsageHistoryPreviousBill0() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_PREV_BILL_0;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
 
     public Map<String, Object> getNoUsageHistoryInactiveAccount() {
         long startTime = System.currentTimeMillis();
