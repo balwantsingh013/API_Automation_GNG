@@ -870,9 +870,370 @@ public class DBAction {
         return result;
     }
 
+
+    public Map<String, Object> getValidUsageHistoryAccountNew() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_VALID_USAGE_HISTORY_ACCOUNT_NEW;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getAccountWithBillHistory() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_VALID_BILL_HISTORY_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getBudgetBillingAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BUDGET_BILLING_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getAccountWithPaymentHistory() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_VALID_PAYMENT_HISTORY_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithNoPaymentArrangement() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_NO_PAYMENT_ARRANGEMENT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithInactivePaymentArrangement() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_INACTIVE_PAYMENT_ARRANGEMENT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithActivePaymentArrangement1() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_ACTIVE_PAYMENT_ARRANGEMENT1;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithActivePaymentArrangementMore() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_ACTIVE_PAYMENT_ARRANGEMENT_MORE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithActivePaymentArrangementMore2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_ACTIVE_PAYMENT_ARRANGEMENT_MORE2;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getNewAccountNoPaymentHistory() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_NO_PAYMENT_HISTORY_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getActiveAccountNoPaymentHistory() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_NO_PAYMENT_HISTORY_ACCOUNT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryTooOld() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_TOO_OLD;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryEqual() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_EQUAL;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryPostedReversal() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_POSTED_REVERSAL;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryNoReversal() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_NO_REVERSAL;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryPostedPayments() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_POSTED_PAYMENTS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryPendingPayments() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_PENDING_PAYMENTS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryPostedAndPendingPayments() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_POSTED_AND_PENDING_PAYMENTS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryLess() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_LESS;
 
         logQueryInAllure("get customer code", query);
 
@@ -996,6 +1357,87 @@ public class DBAction {
     public Map<String, Object> getUsageHistoryGreater() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_USAGE_HISTORY_GREATER;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getUsageHistoryOne() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_ONE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getUsageHistoryMoreThanOne() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_MORE_THAN_ONE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getBillInfoWithRewards() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_INFO_WITH_REWARDS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getUsageHistoryPreviousBill0() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_PREV_BILL_0;
 
         logQueryInAllure("get customer code", query);
 
@@ -1865,6 +2307,60 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getAccountForBillInfo( String custCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_BILL_INFO;
+
+        // Replace ? placeholders with actual escaped values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + custCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get nickname for account", loggedQuery);
+
+        // Execute parameterized query safely
+        Map<String, Object> result = jdbcTemplate.queryForMap(queryTemplate, custCode, premCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // log expanded SQL
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getRoutingNo( String custCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_ROUTING_NO;
+
+        // Replace ? placeholders with actual escaped values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + custCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get nickname for account", loggedQuery);
+
+        // Execute parameterized query safely
+        Map<String, Object> result = jdbcTemplate.queryForMap(queryTemplate, custCode, premCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // log expanded SQL
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
 
     public Map<String, Object> getActiveAccountWithoutNickname() {
         long startTime = System.currentTimeMillis();
@@ -2573,6 +3069,107 @@ public class DBAction {
     }
 
 
+    public Map<String, Object> getAccountWithActivePaymentArrangement() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_ACTIVE_PAYMENT_ARRANGEMENT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithActiveNoPaymentArrangement() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_NO_PAYMENT_ARRANGEMENT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithFuturePaymentArrangement() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_FUTURE_PAYMENT_ARRANGEMENT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountInfoForNoUpdate() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_NO_UPDATE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getActiveBankDraftAccountNoService() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_ACTIVE_BANK_DRAFT_NO_SERVICE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+
     public Map<String, Object> getActiveBankDraftAccount() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_WITH_ACTIVE_BANK_DRAFT;
@@ -2696,6 +3293,26 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getBankDraftCheckingAccount2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_CHECKING_ACCOUNT2;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getBankDraftWithBankName() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_WITH_BANK_NAME;
@@ -2737,6 +3354,58 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getBankDraftSavingsAccount2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITH_SAVINGS_ACCOUNT2;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public int updateDraftStaus() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.UPDATE_ACCOUNT_WITH_SAVINGS_ACCOUNT2;
+        logQueryInAllure("delete registered account", query);
+
+        int rowsAffected = jdbcTemplate.update(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        return rowsAffected;
+    }
+
+    public Map<String, Object> getBankDetails() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BANK_DETAILS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getBankDraftWithAccountNumber() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_WITH_BANK_DRAFT_AND_ACCOUNT_NUMBER;
@@ -2761,6 +3430,26 @@ public class DBAction {
     public Map<String, Object> getAccountWithoutBankDraft() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_WITHOUT_BANK_DRAFT;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getAccountWithoutBankDraft2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_WITHOUT_BANK_DRAFT2;
 
         logQueryInAllure("get customer code", query);
 
@@ -2846,6 +3535,30 @@ public class DBAction {
         logQueryInAllure("delete registered account", query);
 
         int rowsAffected = jdbcTemplate.update(query, accountNumber);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        return rowsAffected;
+    }
+
+    public int updateTheMaxLimit() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.UPDATE_MAX_LIMIT;
+        logQueryInAllure("delete registered account", query);
+
+        int rowsAffected = jdbcTemplate.update(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        return rowsAffected;
+    }
+
+    public int updateTheMaxLimit2() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.UPDATE_MAX_LIMIT2;
+        logQueryInAllure("delete registered account", query);
+
+        int rowsAffected = jdbcTemplate.update(query);
 
         long elapsed = System.currentTimeMillis() - startTime;
 
@@ -3476,6 +4189,378 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.GET_USAGE_HISTORY;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        List<Map<String, Object>> result;
+
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getBillHistory(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_BILL_HISTORY;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        List<Map<String, Object>> result;
+
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getPaymentHistory(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_PAYMENT_HISTORY;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        List<Map<String, Object>> result;
+
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public List<Map<String, Object>> getPaymentArrangementInfo(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_PAYMENT_ARRANGEMENT_INFO;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        List<Map<String, Object>> result;
+
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryNotPostedReversal(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_NOT_POSTED_REVERSAL;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        Map<String, Object> result;
+
+        try {
+            result = jdbcTemplate.queryForMap(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryNonPosted(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_NON_POSTED_PAYMENTS;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        Map<String, Object> result;
+
+        try {
+            result = jdbcTemplate.queryForMap(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryPosted2(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_POSTED2;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        Map<String, Object> result;
+
+        try {
+            result = jdbcTemplate.queryForMap(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPaymentHistoryNotPosted2(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.SELECT_ACTIVE_PAYMENT_HISTORY_NOT_POSTED2;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        Map<String, Object> result;
+
+        try {
+            result = jdbcTemplate.queryForMap(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getBankDraftInfo(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_BANK_DRAFT_INFO;
+
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get bank draft info", loggedQuery);
+
+        Map<String, Object> result;
+
+        try {
+            result = jdbcTemplate.queryForMap(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getBankDraftInfo2(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_BANK_DRAFT_INFO2;
+
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get bank draft info", loggedQuery);
+
+        Map<String, Object> result;
+
+        try {
+            result = jdbcTemplate.queryForMap(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public List<Map<String, Object>> getPaymentHistory2(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_PAYMENT_HISTORY;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        List<Map<String, Object>> result;
+
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+//        SimplifiedExtentReportManager.logDatabaseQuery(
+//                loggedQuery,
+//                String.valueOf(result),
+//                elapsed
+//        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getBillHistory2(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_BILL_HISTORY;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        List<Map<String, Object>> result;
+
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+//        SimplifiedExtentReportManager.logDatabaseQuery(
+//                loggedQuery,
+//                String.valueOf(result),
+//                elapsed
+//        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getUsageHistory2(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_USAGE_HISTORY2;
 
         // Replace ? placeholders with quoted values for logging
         String loggedQuery = queryTemplate
@@ -4228,6 +5313,41 @@ public class DBAction {
         try {
             // Execute parameterized query (safe)
             result = jdbcTemplate.queryForMap(queryTemplate, accountNo);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // <-- use expanded query here
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+
+    public Map<String, Object> getUserAccountWithRoutingNo(String custCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_ACCOUNT_ROUTING_NO;
+
+        // Replace ? with quoted and escaped custCode for logging
+        String loggedQuery = queryTemplate.replaceFirst(
+                "\\?",
+                "'" + custCode.replace("'", "''") + "'"
+        );
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, custCode);
         } catch (EmptyResultDataAccessException e) {
             result = null;
         }

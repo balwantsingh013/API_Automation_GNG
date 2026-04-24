@@ -32,6 +32,12 @@ public class SearchAccountsApiHelperCSI {
         return BasePage.deserializeJsonToPojo(jsonFileName, SearchAccountsRequestCSI.class);
     }
 
+    public void performRollbackOperationMaxLimit() {
+        int updateLimit2 =
+                ApplicationContext.get().getDbAction().updateTheMaxLimit2();
+
+    }
+
     public void performRollbackOperation() {
 
         String customerCode1 = testContext.getCustomerCode1();
@@ -347,9 +353,11 @@ public class SearchAccountsApiHelperCSI {
                 break;
 
             case TC_230__Negative__Too_Many_Matches:
+                int updateLimit =
+                        ApplicationContext.get().getDbAction().updateTheMaxLimit();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setEmailAddress("Fernando.Waisfeld@vertexone.net");
-                payload.setLastFourSocialSecurityNumber("7954");
+                payload.setFederalTaxID("111119999");
+                payload.setCustomerLastNameBusiness("AHFR LLC");
                 payload.setUsername(null);
                 payload.setPassword(null);
                 break;

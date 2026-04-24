@@ -38,6 +38,11 @@ public class SearchAccountsApiStepsCSI {
         );
     }
 
+    @When("perform rollback for maxlimit")
+    public void perform_rollback_operation_maxlimit(){
+        searchAccountsPageCSI.performRollbackMaxlimit();
+    }
+
     @When("performs rollback operation")
     public void perform_rollback_operation(){
         searchAccountsPageCSI.performRollback();

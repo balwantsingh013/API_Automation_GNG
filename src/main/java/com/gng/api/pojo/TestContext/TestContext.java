@@ -3,12 +3,16 @@ package com.gng.api.pojo.TestContext;
 import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.CSIPojo.GetBankDraftInfo.GetBankDraftInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetBillHistory.GetBillHistoryResponse;
+import com.gng.api.pojo.CSIPojo.GetBillingInfo.GetBillingInfoResponse;
+import com.gng.api.pojo.CSIPojo.GetPaymentArrangementInfo.GetPaymentArrangementInfoResponse;
+import com.gng.api.pojo.CSIPojo.GetPaymentHistory.GetPaymentHistoryResponse;
 import com.gng.api.pojo.CSIPojo.GetUsageHistory.GetUsageHistoryResponse;
 import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
 
 import com.gng.api.pojo.CSIPojo.GetAccountInfo.GetAccountInformationResponse;
 import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
+import com.gng.api.pojo.CSIPojo.UpdateBankDraft.UpdateBankDraftResponse;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePassword.UpdatePasswordResponse;
 import com.gng.api.pojo.CSIPojo.UpdateUsername.UpdateUsernameResponse;
@@ -92,11 +96,23 @@ public class TestContext {
     private Object getBillHistoryApiPage;
     private GetBillHistoryResponse getBillHistoryResponse;
     @Getter @Setter
+    private Object getBillingInfoApiPage;
+    private GetBillingInfoResponse getBillingInfoResponse;
+    @Getter @Setter
+    private Object getPaymentHistoryApiPage;
+    private GetPaymentHistoryResponse getPaymentHistoryResponse;
+    @Getter @Setter
+    private Object getPaymentArrangementInfoApiPage;
+    private GetPaymentArrangementInfoResponse getPaymentArrangementInfoResponse;
+    @Getter @Setter
     private Object getMarketerReferenceDataApiPage;
     private SaveEnrollmentResponse getMarketerReferenceDataResponse;
     @Getter @Setter
     private Object getBankDraftInfoApiPage;
     private GetBankDraftInfoResponse getBankDraftInfoResponse;
+    @Getter @Setter
+    private Object updateBankDraftApiPage;
+    private UpdateBankDraftResponse updateBankDraftResponse;
     @Getter @Setter
     private Object getReasonsForLeavingApiPage;
     private GetReasonsForLeavingResponse getReasonsForLeavingResponse;

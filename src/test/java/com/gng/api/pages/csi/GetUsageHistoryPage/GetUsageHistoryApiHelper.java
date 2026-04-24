@@ -166,24 +166,24 @@ public class GetUsageHistoryApiHelper {
                 break;
 
             case TC_20__Positive__Usage_History_Average_Daily_Actual_Consumption_Format:
-                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccount();
+                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccountNew();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                payload.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 payload.setNumberOfMonths("12");
-                testContext.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                testContext.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                testContext.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                testContext.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 accountsInfo= ApplicationContext.get().getDbAction().getActualConsumption(testContext.getCustomerCode(), testContext.getPremisesCode());
                 break;
 
             case TC_21__Positive__Usage_History_Average_Daily_Billed_Consumption_Format:
-                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccount();
+                accountInfo = ApplicationContext.get().getDbAction().getValidUsageHistoryAccountNew();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                payload.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 payload.setNumberOfMonths("12");
-                testContext.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
-                testContext.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                testContext.setCustomerCode(accountInfo.get("URRSHIS_CUST_CODE").toString());
+                testContext.setPremisesCode(accountInfo.get("URRSHIS_PREM_CODE").toString());
                 accountsInfo= ApplicationContext.get().getDbAction().getAverageDailyBilledConsumption(testContext.getCustomerCode(), testContext.getPremisesCode());
                 break;
 
@@ -277,11 +277,14 @@ public class GetUsageHistoryApiHelper {
             case TC_38__Positive__Usage_History_Equals_Requested_Months:
                 accountInfo = ApplicationContext.get().getDbAction().getUsageHitstoryEqualToMonthsRequested();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("CUSTOMER_CODE").toString());
-                payload.setPremisesCode(accountInfo.get("PREMISES_CODE").toString());
+                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
                 payload.setNumberOfMonths("12");
-                testContext.setCustomerCode(accountInfo.get("CUSTOMER_CODE").toString());
-                testContext.setPremisesCode(accountInfo.get("PREMISES_CODE").toString());
+                testContext.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
+                List<Map<String, Object>> dbRows3 = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory(accountInfo.get("ubbbhst_cust_code").toString(), accountInfo.get("ubbbhst_prem_code").toString());
                 break;
 
             case TC_25__Positive__Usage_History_Read_Type_Format__Actual:
@@ -314,7 +317,7 @@ public class GetUsageHistoryApiHelper {
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("CUST_CODE").toString());
                 payload.setPremisesCode(accountInfo.get("PREM_CODE").toString());
-                payload.setNumberOfMonths("24");
+                payload.setNumberOfMonths("12");
                 testContext.setCustomerCode(accountInfo.get("CUST_CODE").toString());
                 testContext.setPremisesCode(accountInfo.get("PREM_CODE").toString());
                 accountsInfo= ApplicationContext.get().getDbAction().getReadType(testContext.getCustomerCode(), testContext.getPremisesCode());
@@ -350,6 +353,9 @@ public class GetUsageHistoryApiHelper {
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
                 payload.setNumberOfMonths("12");
+                List<Map<String, Object>> dbRows = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
                 break;
 
             case TC_37__Positive__Usage_History_Less_Than_Requested_Months:
@@ -358,15 +364,21 @@ public class GetUsageHistoryApiHelper {
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
             payload.setNumberOfMonths("24");
-            break;
+                List<Map<String, Object>> dbRows2 = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory2(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                break;
 
             case TC_39__Positive__Usage_History_Greater_Than_Requested_Months:
 
-                accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryGreater();
+                accountInfo = ApplicationContext.get().getDbAction().getUsageHitstoryEqualToMonthsRequested();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("customer_code").toString());
-                payload.setPremisesCode(accountInfo.get("premises_code").toString());
-                payload.setNumberOfMonths("18");
+                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
+                payload.setNumberOfMonths("8");
+                List<Map<String, Object>> dbRows4 = ApplicationContext.get()
+                        .getDbAction()
+                        .getUsageHistory2(accountInfo.get("ubbbhst_cust_code").toString(), accountInfo.get("ubbbhst_prem_code").toString());
                 break;
 
             default:

@@ -23,6 +23,10 @@ public class SearchAccountsPageCSI extends BasePage {
         helper.performRollbackOperation();
     }
 
+    public void performRollbackMaxlimit(){
+        helper.performRollbackOperationMaxLimit();
+    }
+
     public void validateResponseForTestConditions(SearchAccountsLabelCSI apiLabel, SearchAccountsLabelCSI testCondition) {
         // Build base payload
         SearchAccountsRequestCSI payload = helper.preparePayload(apiLabel);
