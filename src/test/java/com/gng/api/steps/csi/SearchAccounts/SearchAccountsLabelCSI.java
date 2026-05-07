@@ -108,5 +108,15 @@ public enum SearchAccountsLabelCSI {
     TC_287__Positive__Search_Order__Active_Name_order,
     TC_288__Positive__Search_Order__Final_Name_order,
     TC_289__Positive__Search_Order__New_Name_order,
-    TC_290__Positive__Search_Order__Inactive_Name_order
+    TC_290__Positive__Search_Order__Inactive_Name_order,
+
+    TC_291__Positive__Last_4_SSN_And_Customer_Last_Name_Username_Present,
+    TC_292__Positive__Last_4_SSN_And_Email_Address_Username_Present,
+    TC_293__Positive__Last_4_SSN_And_Phone_Number_Username_Present,
+    TC_294__Positive__Password_And_Customer_Last_Name_Username_Present,
+    TC_295__Positive__Mixed_Username_Population_in_Multi_Result_Response,
+    TC_296__Positive__No_Username_Exact_Empty_String_Contract_Validation,
+    TC_297__Positive__Username_Consistency_Across_Search_Paths,
+    TC_298__Positive__Username_Record_to_Record_Mapping_Validation
+
 }

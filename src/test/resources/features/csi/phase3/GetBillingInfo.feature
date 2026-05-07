@@ -34,13 +34,13 @@ Feature: Verify GetBillingInfo Api
       | TC_14__Positive__Billing_Info_Bill_Date_Format                                                          | 0         |              | true    | notNull |
       | TC_15__Positive__Billing_Info_Bill_From_Date_Format                                                     | 0         |              | true    | notNull |
       | TC_16__Positive__Billing_Info_Bill_To_Date_Format                                                       | 0         |              | true    | notNull |
-      | TC_17__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Greater_Than_0__                  | 0         |              | true    | notNull |
-      | TC_18__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Equals_0__                        | 0         |              | true    | notNull |
+      | TC_17__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Greater_Than_0                  | 0         |              | true    | notNull |
+      | TC_18__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Equals_0                        | 0         |              | true    | notNull |
       | TC_19__Positive__Billing_Info_Past_Due_Date_Format                                                      | 0         |              | true    | notNull |
-      | TC_20__Positive__Billing_Info_Previous_Bill_Amount_Format__Previous_Bill_Amount_Greater_Than_0__        | 0         |              | true    | notNull |
-      | TC_21__Positive__Billing_Info_Previous_Bill_Amount_Format__Previous_Bill_Amount_Equals_0__              | 0         |              | true    | notNull |
-      | TC_22__Positive__Billing_Info_Payments_Applied_Amount_Format__Payments_Applied_Amount_Greater_Than_0__  | 0         |              | true    | notNull |
-      | TC_23__Positive__Billing_Info_Payments_Applied_Amount_Format__Payments_Applied_Amount_Equals_0__        | 0         |              | true    | notNull |
+      | TC_20__Positive__Billing_Info_Previous_Bill_Amount_Format__Previous_Bill_Amount_Greater_Than_0       | 0         |              | true    | notNull |
+      | TC_21__Positive__Billing_Info_Previous_Bill_Amount_Format__Previous_Bill_Amount_Equals_0              | 0         |              | true    | notNull |
+      | TC_22__Positive__Billing_Info_Payments_Applied_Amount_Format__Payments_Applied_Amount_Greater_Than_0  | 0         |              | true    | notNull |
+      | TC_23__Positive__Billing_Info_Payments_Applied_Amount_Format__Payments_Applied_Amount_Equals_0        | 0         |              | true    | notNull |
       | TC_24__Positive__Balance_Brought_Forward_Greater_Than_0_Format                                          | 0         |              | true    | notNull |
       | TC_25__Positive__Balance_Brought_Forward_Equals_0_Format                                                | 0         |              | true    | notNull |
       | TC_26__Positive__Balance_Brought_Forward_Less_Than_0_Format                                             | 0         |              | true    | notNull |

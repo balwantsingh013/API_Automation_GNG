@@ -356,10 +356,39 @@ public class SearchAccountsApiHelperCSI {
                 int updateLimit =
                         ApplicationContext.get().getDbAction().updateTheMaxLimit();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setFederalTaxID("111119999");
-                payload.setCustomerLastNameBusiness("AHFR LLC");
-                payload.setUsername(null);
                 payload.setPassword(null);
+                payload.setUsername(null);
+
+                while (true) {
+                    // Fetch customer with Email + SSN
+                    userInfo = ApplicationContext.get().getDbAction().getCustomerWithEmailAndSSN();
+
+                    String custCode3 = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode3 = userInfo.get("UCRACCT_PREM_CODE").toString();
+                    String ssn2 = userInfo.get("ucbcust_ssn_last_four").toString();
+                    String email2 = userInfo.get("GZBEMCP_EMAIL_ADDR").toString();
+
+                    // Check if username exists in MariaDB
+                    Map<String, Object> registeredAccount3 =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode3 + premCode3);
+
+                    if (registeredAccount3 != null) {
+                        // Fetch username from MariaDB user account table
+                        Map<String, Object> mariaUserInfo =
+                                ApplicationContext.get()
+                                        .getDbAction("mariadb")
+                                        .getUserAccountInfoNew(custCode3 + premCode3);
+
+                        // Populate payload
+                        payload.setLastFourSocialSecurityNumber(ssn2);
+                        payload.setEmailAddress(email2);
+                        break;
+                    }
+
+                    break;
+                }
                 break;
 
             // ---------------- POSITIVE CASES (TC_231 - TC_233) ----------------
@@ -414,13 +443,21 @@ public class SearchAccountsApiHelperCSI {
                         ApplicationContext.get().getDbAction().getTheAccountInfo(custCode);
                 break;
 
-            case TC_235__Positive__Password_____CustomerLastNameBusiness:
+            case TC_235__Positive__Password_____CustomerLastNameBusiness, TC_294__Positive__Password_And_Customer_Last_Name_Username_Present:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 userInfo =
                         ApplicationContext.get().getDbAction("mariadb").getRequiredAccountDetails2();
 
-                accountNo= userInfo.get("account_number").toString();
+                accountNo = userInfo.get("account_number").toString();
+
+// First 9 digits → Customer Code
                 customerCode = accountNo.substring(0, 9);
+                testContext.setCustomerCode(customerCode);
+
+// Remaining digits → Premises Code
+                premisesCode = accountNo.substring(9);
+                testContext.setPremisesCode(premisesCode);
+
 
                 userInfo =
                         ApplicationContext.get().getDbAction().getTheAccountInfo(customerCode);
@@ -428,6 +465,7 @@ public class SearchAccountsApiHelperCSI {
                 payload.setCustomerLastNameBusiness(userInfo.get("ucbcust_last_name").toString());
                 payload.setUsername(null);
                 payload.setPassword("TestingUsr91");
+                testContext.setPassword("TestingUsr91");
                 break;
 
             case TC_236__Positive__Password_____CustomerCode_____PremisesCode:
@@ -467,7 +505,7 @@ public class SearchAccountsApiHelperCSI {
                 userInfo =
                         ApplicationContext.get().getDbAction().getPhoneNumberFromDB();
                 payload.setPhoneNumber(userInfo.get("phone_number").toString());
-                payload.setPassword("UAT2@CustomerPass");
+                payload.setPassword("Random@001");
                 payload.setUsername(null);
                 break;
 
@@ -1084,6 +1122,170 @@ public class SearchAccountsApiHelperCSI {
                 payload.setCustomerLastNameBusiness("ANDERSON");
                 payload.setUsername(null);
                 break;
+
+            case TC_291__Positive__Last_4_SSN_And_Customer_Last_Name_Username_Present:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+
+               while (true) {
+                   userInfo = ApplicationContext.get().getDbAction().getCustomerWithLastNameAndSSN();
+                   String custCode1 = userInfo.get("UCRACCT_CUST_CODE").toString();
+                   String premCode1 = userInfo.get("UCRACCT_PREM_CODE").toString();
+                   String ssn= userInfo.get("ucbcust_ssn_last_four").toString();
+                   String lastName=userInfo.get("ucbcust_last_name").toString();
+                   Map<String, Object> registeredAccount1 =
+                           ApplicationContext.get().getDbAction("mariadb").getRegisteredAccount(custCode1 + premCode1);
+                   if (registeredAccount1 != null) {
+                       userInfo =
+                               ApplicationContext.get()
+                                       .getDbAction("mariadb")
+                                       .getUserAccountInfoNew(custCode1 + premCode1);
+
+                       ///userInfo = ApplicationContext.get().getDbAction().getUserAccountInfo(custCode);
+                       payload.setLastFourSocialSecurityNumber(ssn);
+                       payload.setCustomerLastNameBusiness(lastName);
+                       break;
+                   }
+                   break;
+               }
+               break;
+
+            case TC_292__Positive__Last_4_SSN_And_Email_Address_Username_Present, TC_295__Positive__Mixed_Username_Population_in_Multi_Result_Response:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPassword(null);
+                payload.setUsername(null);
+
+                while (true) {
+                    // Fetch customer with Email + SSN
+                    userInfo = ApplicationContext.get().getDbAction().getCustomerWithEmailAndSSN();
+
+                    String custCode3 = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode3 = userInfo.get("UCRACCT_PREM_CODE").toString();
+                    String ssn2 = userInfo.get("ucbcust_ssn_last_four").toString();
+                    String email2 = userInfo.get("GZBEMCP_EMAIL_ADDR").toString();
+
+                    // Check if username exists in MariaDB
+                    Map<String, Object> registeredAccount3 =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode3 + premCode3);
+
+                    if (registeredAccount3 != null) {
+                        // Fetch username from MariaDB user account table
+                        Map<String, Object> mariaUserInfo =
+                                ApplicationContext.get()
+                                        .getDbAction("mariadb")
+                                        .getUserAccountInfoNew(custCode3 + premCode3);
+
+                        // Populate payload
+                        payload.setLastFourSocialSecurityNumber(ssn2);
+                        payload.setEmailAddress(email2);
+                        break;
+                    }
+
+                    break;
+                }
+                break;
+
+
+            case TC_293__Positive__Last_4_SSN_And_Phone_Number_Username_Present:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPassword(null);
+                payload.setUsername(null);
+
+                while (true) {
+                    // Fetch customer with Phone + SSN
+                    userInfo = ApplicationContext.get().getDbAction().getCustomerWithPhoneAndSSN();
+
+                    String custCode4 = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode4 = userInfo.get("UCRACCT_PREM_CODE").toString();
+                    String ssn4 = userInfo.get("ucbcust_ssn_last_four").toString();
+
+                    // Build phone number (area + number)
+                    String phoneArea = userInfo.get("ucrtele_phone_area").toString();
+                    String phoneNum = userInfo.get("ucrtele_phone_number").toString();
+                    String fullPhone = phoneArea + phoneNum;
+
+                    // Check if username exists in MariaDB
+                    Map<String, Object> registeredAccount4 =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode4 + premCode4);
+
+                    if (registeredAccount4 != null) {
+                        // Fetch username from MariaDB user account table
+                        Map<String, Object> mariaUserInfo =
+                                ApplicationContext.get()
+                                        .getDbAction("mariadb")
+                                        .getUserAccountInfoNew(custCode4 + premCode4);
+
+                        // Populate payload
+                        payload.setLastFourSocialSecurityNumber(ssn4);
+                        payload.setPhoneNumber(fullPhone);
+                        break;
+                    }
+
+                    break;
+                }
+                break;
+
+            case TC_296__Positive__No_Username_Exact_Empty_String_Contract_Validation:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setPassword(null);
+                payload.setUsername(null);
+
+                while (true) {
+                    // Fetch customer with Phone + SSN
+                    userInfo = ApplicationContext.get().getDbAction().getCustomerWithPhoneAndSSN();
+
+                    String custCode4 = userInfo.get("UCRACCT_CUST_CODE").toString();
+                    String premCode4 = userInfo.get("UCRACCT_PREM_CODE").toString();
+                    String ssn4 = userInfo.get("ucbcust_ssn_last_four").toString();
+
+                    // Build phone number (area + number)
+                    String phoneArea = userInfo.get("ucrtele_phone_area").toString();
+                    String phoneNum = userInfo.get("ucrtele_phone_number").toString();
+                    String fullPhone = phoneArea + phoneNum;
+
+                    // Check if username exists in MariaDB
+                    Map<String, Object> registeredAccount4 =
+                            ApplicationContext.get()
+                                    .getDbAction("mariadb")
+                                    .getRegisteredAccount(custCode4 + premCode4);
+
+                    // Only break when NO username exists
+                    if (registeredAccount4 == null) {
+
+                        payload.setLastFourSocialSecurityNumber(ssn4);
+                        payload.setPhoneNumber(fullPhone);
+                        payload.setUsername(""); // exact empty string per contract
+                        break; // <-- break ONLY here
+                    }
+
+                    // If username exists, loop again and fetch another customer
+                }
+                break;
+
+
+
+            case TC_297__Positive__Username_Consistency_Across_Search_Paths:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername("");
+                payload.setPassword(testContext.getPassword());
+                payload.setCustomerCode(testContext.getCustomerCode());
+                payload.setPremisesCode(testContext.getPremisesCode());
+                break;
+
+            case TC_298__Positive__Username_Record_to_Record_Mapping_Validation:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setUsername("");
+                payload.setPassword("");
+                payload.setLastFourSocialSecurityNumber("8597");
+                payload.setPhoneNumber("9376810356");
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew("53151225292277");
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew("48253634830796");
+
+                break;
+
 
             default:
                 log.warn("Unhandled test condition: {}", testCondition);
