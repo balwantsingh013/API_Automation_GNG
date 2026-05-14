@@ -8,16 +8,16 @@ Feature: Verify GetBillingInfo Api
 
     Examples:
       | testCondition                                                                    | errorCode | errorMessage                  | success | data |
-      | TC_001__Negative__Missing_Request_ID                                             | 10001     | Missing Request ID            | false   | null |
-      | TC_002__Negative__Invalid_Request_ID_Length                                      | 10002     | Invalid Request ID            | false   | null |
-      | TC_003__Negative__Duplicate_Request_ID                                           | 10003     | Duplicate Request ID          | false   | null |
-      | TC_004__Negative__Missing_customerCode                                           | 10011     | Missing Customer Code         | false   | null |
-      | TC_005__Negative__Invalid_customerCode_Length                                    | 10015     | Invalid Customer Code Format  | false   | null |
-      | TC_006__Negative__Invalid_customerCode_Format                                    | 10015     | Invalid Customer Code Format  | false   | null |
-      | TC_007__Negative__Missing_premisesCode                                           | 10013     | Missing Premises Code         | false   | null |
-      | TC_008__Negative__Invalid_premisesCode_Length                                    | 10005     | Invalid Premises Code Format  | false   | null |
-      | TC_009__Negative__Invalid_premisesCode_Format                                    | 10005     | Invalid Premises Code Format  | false   | null |
-      | TC_010__Negative__Invalid_Account_Number__Invalid_Account__                      | 40015     | Invalid Account Number        | false   | null |
+      | TC_1__Negative__Missing_Request_ID_                                             | 10001     | Missing Request ID            | false   | null |
+      | TC_2__Negative__Invalid_Request_ID_Length_                                      | 10002     | Invalid Request ID            | false   | null |
+      | TC_3__Negative__Duplicate_Request_ID_                                           | 10003     | Duplicate Request ID          | false   | null |
+      | TC_4__Negative__Missing_customerCode_                                           | 10011     | Missing Customer Code         | false   | null |
+      | TC_5__Negative__Invalid_customerCode_Length_                                    | 10015     | Invalid Customer Code Format  | false   | null |
+      | TC_6__Negative__Invalid_customerCode_Format_                                    | 10015     | Invalid Customer Code Format  | false   | null |
+      | TC_7__Negative__Missing_premisesCode_                                           | 10013     | Missing Premises Code         | false   | null |
+      | TC_8__Negative__Invalid_premisesCode_Length_                                    | 10005     | Invalid Premises Code Format  | false   | null |
+      | TC_9__Negative__Invalid_premisesCode_Format_                                    | 10005     | Invalid Premises Code Format  | false   | null |
+      | TC_10__Negative__Invalid_Account_Number__Invalid_Account_                      | 40015     | Invalid Account Number        | false   | null |
 
 
   @GetBillingInfoPositive @HappyFlow @CSI
@@ -60,13 +60,13 @@ Feature: Verify GetBillingInfo Api
       | TC_40__Positive__Bill_Line_Items_Description_Format                                                     | 0         |              | true    | notNull |
       | TC_41__Positive__Bill_Line_Items_Amount_Format                                                          | 0         |              | true    | notNull |
       | TC_42__Positive__Bill_Line_Items_Category_Format                                                        | 0         |              | true    | notNull |
-      | TC_43__Positive__Bill_Line_Items_Reward_Order                                                           | 0         |              | true    | notNull |
-      | TC_44__Positive__Bill_Line_Items_Base_Charge_Order                                                      | 0         |              | true    | notNull |
-      | TC_45__Positive__Bill_Line_Items_Customer_Service_Charge_Order                                          | 0         |              | true    | notNull |
-      | TC_46__Positive__Bill_Line_Items_Natural_Gas_Charge_Order                                               | 0         |              | true    | notNull |
-      | TC_47__Positive__Bill_Line_Items_Bill_Guarantee_Order                                                   | 0         |              | true    | notNull |
-      | TC_48__Positive__Bill_Line_Items_Interstate_Pipeline_Capacity_Charge_Order                              | 0         |              | true    | notNull |
-      | TC_49__Positive__Bill_Line_Items_Promotional_Discount_Charge_Order                                      | 0         |              | true    | notNull |
+      | TC_43__Positive__Bill_Line_Items_Base_Charge_Order                                                      | 0         |              | true    | notNull |
+      | TC_44__Positive__Bill_Line_Items_Customer_Service_Charge_Order                                          | 0         |              | true    | notNull |
+      | TC_45__Positive__Bill_Line_Items_Natural_Gas_Charge_Order                                               | 0         |              | true    | notNull |
+      | TC_46__Positive__Bill_Line_Items_Bill_Guarantee_Order                                                   | 0         |              | true    | notNull |
+      | TC_47__Positive__Bill_Line_Items_Interstate_Pipeline_Capacity_Charge_Order                              | 0         |              | true    | notNull |
+      | TC_48__Positive__Bill_Line_Items_Promotional_Discount_Charge_Order                                      | 0         |              | true    | notNull |
+      | TC_49__Positive__Bill_Line_Items_Reward_Order                                                           | 0         |              | true    | notNull |
       | TC_50__Positive__Bill_Line_Items_Miscellaneous_Charge_Order                                             | 0         |              | true    | notNull |
       | TC_51__Positive__Bill_Line_Items_Miscellaneous_Credit_Order                                             | 0         |              | true    | notNull |
       | TC_52__Positive__Bill_Line_Items_Taxes_Order                                                            | 0         |              | true    | notNull |
