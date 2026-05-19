@@ -14,6 +14,7 @@ import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
 import com.gng.api.pojo.CSIPojo.UpdateBankDraft.UpdateBankDraftResponse;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
+import com.gng.api.pojo.CSIPojo.UpdatePaperlessCommunications.UpdatePaperlessCommunicationsResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePassword.UpdatePasswordResponse;
 import com.gng.api.pojo.CSIPojo.UpdateUsername.UpdateUsernameResponse;
 import com.gng.api.pojo.CSIPojo.ValidateUsername.ValidateUsernameResponse;
@@ -128,6 +129,9 @@ public class TestContext {
     @Getter @Setter
     private Object validateUsernameApiPage;
     private ValidateUsernameResponse validateUsernameResponse;
+    @Getter @Setter
+    private Object updatePaperlessCommunicationsApiPage;
+    private UpdatePaperlessCommunicationsResponse updatePaperlessCommunicationsResponse;
     @Getter @Setter
     private Object updatePasswordApiPage;
     private UpdatePasswordResponse updatePasswordResponse;

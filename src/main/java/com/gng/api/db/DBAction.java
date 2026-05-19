@@ -1415,6 +1415,66 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getActivePaperlessEligibleAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAPERLESS_ELIGIBLE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getActiveAccountEnrolledInPaperlessBill() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ENROLLED_PAPERLESS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getNewPaperlessEligibleAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_NEW_PAPERLESS_ELIGIBLE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getUsageHistoryINTERSTATE() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_BILL_HISTORY_INTERSTATE;

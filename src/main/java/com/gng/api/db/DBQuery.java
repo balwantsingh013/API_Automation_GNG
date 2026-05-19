@@ -3262,6 +3262,265 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String SELECT_ACTIVE_PAPERLESS_ELIGIBLE= """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    g.GZBEMCP_ACCOUNT_IND,
+                    g.GZBEMCP_EFFECTIVE_DATE,
+                    g.GZBEMCP_EXPIRATION_DATE,
+                    g.GZBEMCP_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY\s
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ),
+            latest_email AS (
+                SELECT
+                    GZBEMCP_CUST_CODE,
+                    GZBEMCP_EMAIL_ADDR,
+                    GZBEMCP_EFFECTIVE_DATE,
+                    GZBEMCP_EXPIRATION_DATE,
+                    GZBEMCP_ACTIVITY_DATE
+                FROM active_email
+                WHERE rn = 1
+            ),
+            latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_ID,
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_ADDR,
+                    p.OCSEPCI_BILL_PRES_TYPE,
+                    p.OCSEPCI_CORR_DEL_TYPE,
+                    p.OCSEPCI_EMAIL_SENT_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_CONF_STATUS,
+                    p.OCSEPCI_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE              AS customerCode,
+                a.UCRACCT_PREM_CODE              AS premisesCode,
+                a.UCRACCT_STATUS_IND             AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_ID                     AS latestTokenIdentifier,
+                o.OCSEPCI_EMAIL_EXP_DATE         AS latestTokenExpirationDate,
+                o.OCSEPCI_EMAIL_ADDR             AS latestPendingEmail,
+                o.OCSEPCI_BILL_PRES_TYPE         AS latestPendingBillType,
+                o.OCSEPCI_CORR_DEL_TYPE          AS latestPendingCorrType,
+                o.OCSEPCI_EMAIL_SENT_DATE        AS latestEmailSentDate,
+                o.OCSEPCI_EMAIL_COMP_DATE        AS latestEmailCompletedDate,
+                o.OCSEPCI_CONF_STATUS            AS latestConfStatus,
+                o.OCSEPCI_ACTIVITY_DATE          AS latestPendingActivityDate
+            FROM UCRACCT a
+            JOIN latest_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+            LEFT JOIN latest_ocsepci o
+                ON o.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND o.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+               AND o.rn = 1
+            WHERE a.UCRACCT_STATUS_IND IN ('A')
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ENROLLED_PAPERLESS= """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    g.GZBEMCP_ACCOUNT_IND,
+                    g.GZBEMCP_EFFECTIVE_DATE,
+                    g.GZBEMCP_EXPIRATION_DATE,
+                    g.GZBEMCP_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ),
+            latest_email AS (
+                SELECT
+                    GZBEMCP_CUST_CODE,
+                    GZBEMCP_EMAIL_ADDR,
+                    GZBEMCP_EFFECTIVE_DATE,
+                    GZBEMCP_EXPIRATION_DATE,
+                    GZBEMCP_ACTIVITY_DATE
+                FROM active_email
+                WHERE rn = 1
+            ),
+            latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_ID,
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_ADDR,
+                    p.OCSEPCI_BILL_PRES_TYPE,
+                    p.OCSEPCI_CORR_DEL_TYPE,
+                    p.OCSEPCI_EMAIL_SENT_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_CONF_STATUS,
+                    p.OCSEPCI_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE              AS customerCode,
+                a.UCRACCT_PREM_CODE              AS premisesCode,
+                a.UCRACCT_STATUS_IND             AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_ID                     AS latestTokenIdentifier,
+                o.OCSEPCI_EMAIL_EXP_DATE         AS latestTokenExpirationDate,
+                o.OCSEPCI_EMAIL_ADDR             AS latestPendingEmail,
+                o.OCSEPCI_BILL_PRES_TYPE         AS latestPendingBillType,
+                o.OCSEPCI_CORR_DEL_TYPE          AS latestPendingCorrType,
+                o.OCSEPCI_EMAIL_SENT_DATE        AS latestEmailSentDate,
+                o.OCSEPCI_EMAIL_COMP_DATE        AS latestEmailCompletedDate,
+                o.OCSEPCI_CONF_STATUS            AS latestConfStatus,
+                o.OCSEPCI_ACTIVITY_DATE          AS latestPendingActivityDate
+            FROM UCRACCT a
+            JOIN latest_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+            LEFT JOIN latest_ocsepci o
+                ON o.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND o.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+               AND o.rn = 1
+            WHERE
+                a.UCRACCT_STATUS_IND = 'A'
+                AND a.UCRACCT_BILL_PRES_TYPE = 'E'
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM OCSEPCI p
+                    WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                      AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                      AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'E') = 'P'
+                      AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NEW_PAPERLESS_ELIGIBLE= """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    g.GZBEMCP_ACCOUNT_IND,
+                    g.GZBEMCP_EFFECTIVE_DATE,
+                    g.GZBEMCP_EXPIRATION_DATE,
+                    g.GZBEMCP_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY\s
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ),
+            latest_email AS (
+                SELECT
+                    GZBEMCP_CUST_CODE,
+                    GZBEMCP_EMAIL_ADDR,
+                    GZBEMCP_EFFECTIVE_DATE,
+                    GZBEMCP_EXPIRATION_DATE,
+                    GZBEMCP_ACTIVITY_DATE
+                FROM active_email
+                WHERE rn = 1
+            ),
+            latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_ID,
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_ADDR,
+                    p.OCSEPCI_BILL_PRES_TYPE,
+                    p.OCSEPCI_CORR_DEL_TYPE,
+                    p.OCSEPCI_EMAIL_SENT_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_CONF_STATUS,
+                    p.OCSEPCI_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE              AS customerCode,
+                a.UCRACCT_PREM_CODE              AS premisesCode,
+                a.UCRACCT_STATUS_IND             AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_ID                     AS latestTokenIdentifier,
+                o.OCSEPCI_EMAIL_EXP_DATE         AS latestTokenExpirationDate,
+                o.OCSEPCI_EMAIL_ADDR             AS latestPendingEmail,
+                o.OCSEPCI_BILL_PRES_TYPE         AS latestPendingBillType,
+                o.OCSEPCI_CORR_DEL_TYPE          AS latestPendingCorrType,
+                o.OCSEPCI_EMAIL_SENT_DATE        AS latestEmailSentDate,
+                o.OCSEPCI_EMAIL_COMP_DATE        AS latestEmailCompletedDate,
+                o.OCSEPCI_CONF_STATUS            AS latestConfStatus,
+                o.OCSEPCI_ACTIVITY_DATE          AS latestPendingActivityDate
+            FROM UCRACCT a
+            JOIN latest_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+            LEFT JOIN latest_ocsepci o
+                ON o.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND o.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+               AND o.rn = 1
+            WHERE a.UCRACCT_STATUS_IND IN ('N')
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static final String SELECT_BILL_HISTORY_MORE_THAN_ONE= """
             SELECT
                 b.ubbbhst_cust_code,
