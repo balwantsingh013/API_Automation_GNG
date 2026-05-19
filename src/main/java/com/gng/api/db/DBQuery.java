@@ -3229,22 +3229,295 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_BILL_HISTORY_ONE= """
+            select * from ubbbhst a,         \s
+                          (select bh.ubbbhst_cust_code, bh.ubbbhst_prem_code, max(bh.ubbbhst_tran_num) tranNum
+                          from ubbbhst bh
+                          where bh.ubbbhst_ending_bal <> 0
+                          group by bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
+                          having count(1) = 1) b
+            where a.ubbbhst_cust_code = b.ubbbhst_cust_code
+            and a.ubbbhst_prem_code = b.ubbbhst_prem_code
+            and a.ubbbhst_tran_num = b.trannum
+            and TRUNC(a.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_BILL_HISTORY_INTERSTATE= """
             SELECT
-                b.ubbbhst_cust_code,
-                b.ubbbhst_prem_code,
-                COUNT(DISTINCT b.ubbbhst_printed_date) AS total_bills
-            FROM ubbbhst b
-            INNER JOIN ucracct a
-                ON  a.ucracct_cust_code = b.ubbbhst_cust_code
-                AND a.ucracct_prem_code = b.ubbbhst_prem_code
-                AND a.ucracct_status_ind NOT IN ('N')
-            WHERE b.ubbbhst_printed_date > ADD_MONTHS(TRUNC(SYSDATE), -24)
-              AND LENGTH(b.ubbbhst_cust_code) >= 4
-              AND NVL(b.ubbbhst_cancel_ind, 0) = 0
-            GROUP BY
-                b.ubbbhst_cust_code,
-                b.ubbbhst_prem_code
-            HAVING COUNT(DISTINCT b.ubbbhst_printed_date) = 1
+                h.ubbbhst_cust_code,
+                h.ubbbhst_prem_code,
+                h.ubbbhst_printed_date,
+                o.uabopen_srat_code
+            FROM (
+                SELECT DISTINCT utrsrat_srat_code
+                FROM UTRSRAT
+                WHERE UPPER(utrsrat_bill_print_desc) LIKE '%INTERSTATE%'
+            ) s
+            JOIN UABOPEN o
+              ON o.uabopen_srat_code = s.utrsrat_srat_code
+            JOIN UBBBHST h
+              ON h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+            WHERE NVL(h.ubbbhst_cancel_ind,0) = 0
+              AND h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+              FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACTIVE_PAPERLESS_ELIGIBLE= """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    g.GZBEMCP_ACCOUNT_IND,
+                    g.GZBEMCP_EFFECTIVE_DATE,
+                    g.GZBEMCP_EXPIRATION_DATE,
+                    g.GZBEMCP_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY\s
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ),
+            latest_email AS (
+                SELECT
+                    GZBEMCP_CUST_CODE,
+                    GZBEMCP_EMAIL_ADDR,
+                    GZBEMCP_EFFECTIVE_DATE,
+                    GZBEMCP_EXPIRATION_DATE,
+                    GZBEMCP_ACTIVITY_DATE
+                FROM active_email
+                WHERE rn = 1
+            ),
+            latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_ID,
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_ADDR,
+                    p.OCSEPCI_BILL_PRES_TYPE,
+                    p.OCSEPCI_CORR_DEL_TYPE,
+                    p.OCSEPCI_EMAIL_SENT_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_CONF_STATUS,
+                    p.OCSEPCI_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE              AS customerCode,
+                a.UCRACCT_PREM_CODE              AS premisesCode,
+                a.UCRACCT_STATUS_IND             AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_ID                     AS latestTokenIdentifier,
+                o.OCSEPCI_EMAIL_EXP_DATE         AS latestTokenExpirationDate,
+                o.OCSEPCI_EMAIL_ADDR             AS latestPendingEmail,
+                o.OCSEPCI_BILL_PRES_TYPE         AS latestPendingBillType,
+                o.OCSEPCI_CORR_DEL_TYPE          AS latestPendingCorrType,
+                o.OCSEPCI_EMAIL_SENT_DATE        AS latestEmailSentDate,
+                o.OCSEPCI_EMAIL_COMP_DATE        AS latestEmailCompletedDate,
+                o.OCSEPCI_CONF_STATUS            AS latestConfStatus,
+                o.OCSEPCI_ACTIVITY_DATE          AS latestPendingActivityDate
+            FROM UCRACCT a
+            JOIN latest_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+            LEFT JOIN latest_ocsepci o
+                ON o.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND o.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+               AND o.rn = 1
+            WHERE a.UCRACCT_STATUS_IND IN ('A')
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ENROLLED_PAPERLESS= """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    g.GZBEMCP_ACCOUNT_IND,
+                    g.GZBEMCP_EFFECTIVE_DATE,
+                    g.GZBEMCP_EXPIRATION_DATE,
+                    g.GZBEMCP_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ),
+            latest_email AS (
+                SELECT
+                    GZBEMCP_CUST_CODE,
+                    GZBEMCP_EMAIL_ADDR,
+                    GZBEMCP_EFFECTIVE_DATE,
+                    GZBEMCP_EXPIRATION_DATE,
+                    GZBEMCP_ACTIVITY_DATE
+                FROM active_email
+                WHERE rn = 1
+            ),
+            latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_ID,
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_ADDR,
+                    p.OCSEPCI_BILL_PRES_TYPE,
+                    p.OCSEPCI_CORR_DEL_TYPE,
+                    p.OCSEPCI_EMAIL_SENT_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_CONF_STATUS,
+                    p.OCSEPCI_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE              AS customerCode,
+                a.UCRACCT_PREM_CODE              AS premisesCode,
+                a.UCRACCT_STATUS_IND             AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_ID                     AS latestTokenIdentifier,
+                o.OCSEPCI_EMAIL_EXP_DATE         AS latestTokenExpirationDate,
+                o.OCSEPCI_EMAIL_ADDR             AS latestPendingEmail,
+                o.OCSEPCI_BILL_PRES_TYPE         AS latestPendingBillType,
+                o.OCSEPCI_CORR_DEL_TYPE          AS latestPendingCorrType,
+                o.OCSEPCI_EMAIL_SENT_DATE        AS latestEmailSentDate,
+                o.OCSEPCI_EMAIL_COMP_DATE        AS latestEmailCompletedDate,
+                o.OCSEPCI_CONF_STATUS            AS latestConfStatus,
+                o.OCSEPCI_ACTIVITY_DATE          AS latestPendingActivityDate
+            FROM UCRACCT a
+            JOIN latest_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+            LEFT JOIN latest_ocsepci o
+                ON o.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND o.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+               AND o.rn = 1
+            WHERE
+                a.UCRACCT_STATUS_IND = 'A'
+                AND a.UCRACCT_BILL_PRES_TYPE = 'E'
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM OCSEPCI p
+                    WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                      AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                      AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'E') = 'P'
+                      AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_NEW_PAPERLESS_ELIGIBLE= """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    g.GZBEMCP_ACCOUNT_IND,
+                    g.GZBEMCP_EFFECTIVE_DATE,
+                    g.GZBEMCP_EXPIRATION_DATE,
+                    g.GZBEMCP_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY\s
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ),
+            latest_email AS (
+                SELECT
+                    GZBEMCP_CUST_CODE,
+                    GZBEMCP_EMAIL_ADDR,
+                    GZBEMCP_EFFECTIVE_DATE,
+                    GZBEMCP_EXPIRATION_DATE,
+                    GZBEMCP_ACTIVITY_DATE
+                FROM active_email
+                WHERE rn = 1
+            ),
+            latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_ID,
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_ADDR,
+                    p.OCSEPCI_BILL_PRES_TYPE,
+                    p.OCSEPCI_CORR_DEL_TYPE,
+                    p.OCSEPCI_EMAIL_SENT_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_CONF_STATUS,
+                    p.OCSEPCI_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE              AS customerCode,
+                a.UCRACCT_PREM_CODE              AS premisesCode,
+                a.UCRACCT_STATUS_IND             AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_ID                     AS latestTokenIdentifier,
+                o.OCSEPCI_EMAIL_EXP_DATE         AS latestTokenExpirationDate,
+                o.OCSEPCI_EMAIL_ADDR             AS latestPendingEmail,
+                o.OCSEPCI_BILL_PRES_TYPE         AS latestPendingBillType,
+                o.OCSEPCI_CORR_DEL_TYPE          AS latestPendingCorrType,
+                o.OCSEPCI_EMAIL_SENT_DATE        AS latestEmailSentDate,
+                o.OCSEPCI_EMAIL_COMP_DATE        AS latestEmailCompletedDate,
+                o.OCSEPCI_CONF_STATUS            AS latestConfStatus,
+                o.OCSEPCI_ACTIVITY_DATE          AS latestPendingActivityDate
+            FROM UCRACCT a
+            JOIN latest_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+            LEFT JOIN latest_ocsepci o
+                ON o.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND o.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+               AND o.rn = 1
+            WHERE a.UCRACCT_STATUS_IND IN ('N')
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -3258,7 +3531,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ON  a.ucracct_cust_code = b.ubbbhst_cust_code
                 AND a.ucracct_prem_code = b.ubbbhst_prem_code
                 AND a.ucracct_status_ind NOT IN ('N')
-            WHERE b.ubbbhst_printed_date > ADD_MONTHS(TRUNC(SYSDATE), -24)
+            WHERE b.ubbbhst_printed_date > ADD_MONTHS(TRUNC(SYSDATE), -4)
               AND LENGTH(b.ubbbhst_cust_code) >= 4
               AND NVL(b.ubbbhst_cancel_ind, 0) = 0
             GROUP BY
@@ -3286,25 +3559,21 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_BILL_HISTORY_PREV_BILL_0= """
-            SELECT
-                b.ubbbhst_cust_code,
-                b.ubbbhst_prem_code
+    public static final String SELECT_BILL_HISTORY_PREV_BILL_0 = """
+        SELECT ubbbhst_cust_code, ubbbhst_prem_code
+        FROM (
+            SELECT b.ubbbhst_cust_code, b.ubbbhst_prem_code
             FROM ubbbhst b
             WHERE b.ubbbhst_printed_date IS NOT NULL
               AND b.ubbbhst_printed_date > SYSDATE - 300
               AND b.ubbbhst_ending_bal > 0
-              AND b.ubbbhst_prev_bal = 0
-              AND b.ubbbhst_printed_date = (
-                    SELECT MAX(b2.ubbbhst_printed_date)
-                    FROM ubbbhst b2
-                    WHERE b2.ubbbhst_cust_code = b.ubbbhst_cust_code
-                      AND b2.ubbbhst_prem_code = b.ubbbhst_prem_code
-                )
+              AND NVL(b.ubbbhst_prev_bal, 0) = 0
             GROUP BY b.ubbbhst_cust_code, b.ubbbhst_prem_code
             HAVING COUNT(1) = 1
-            FETCH FIRST 1 ROWS ONLY
-            """;
+            ORDER BY b.ubbbhst_cust_code
+        )
+        FETCH FIRST 1 ROWS ONLY
+        """;
 
     public static final String SELECT_BILL_INFO= """
             SELECT
@@ -3618,6 +3887,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                              WHERE
                              b.ucbprem_street_name IS NOT NULL\s
                              AND LENGTH(a.ucracct_cust_code) >= 5
+                             AND a.UCRACCT_CUST_CODE <> '97557'
                         FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -3631,6 +3901,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                                     WHERE
                                                     b.ucbprem_ssfx_code IS NOT NULL\s
                                                     AND LENGTH(a.ucracct_cust_code) >= 5
+                                                    AND a.UCRACCT_CUST_CODE <> '97557'
                                                FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -3851,6 +4122,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                              WHERE
                              b.ucbprem_pdir_code_pre IS NULL
                              AND LENGTH(a.ucracct_cust_code) >= 5
+                             AND a.UCRACCT_CUST_CODE <> '97557'
                         FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5061,8 +5333,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ON a.ucracct_cust_code = c.ucbcust_cust_code
             JOIN UCBPREM p
                 ON a.ucracct_prem_code = p.ucbprem_code
-                WHERE ucbcust_last_name IS NOT NULL\s
-                AND ucbcust_ssn_last_four IS NOT NULL\s
+            WHERE c.ucbcust_last_name IS NOT NULL
+              AND c.ucbcust_ssn_last_four IS NOT NULL
+            ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5154,36 +5427,37 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_EMAIL_AND_SSN= """
             SELECT
-                    a.ucracct_cust_code,
-                    a.ucracct_prem_code,
-                    s.ucrserv_scls_code,
-                    a.ucracct_status_ind,
-                    a.ucracct_nick_name,
-                    c.ucbcust_first_name,
-                    c.ucbcust_last_name,
-                    c.ucbcust_ssn_last_four,
-                    p.ucbprem_street_name,
-                    p.ucbprem_street_number,
-                    p.ucbprem_pdir_code_pre,
-                    p.ucbprem_ssfx_code,
-                    p.ucbprem_pdir_code_post,
-                    p.ucbprem_utyp_code,
-                    p.ucbprem_unit,
-                    p.ucbprem_city,
-                    p.ucbprem_stat_code_addr,
-                    p.ucbprem_zipc_code,
-                    d.gzbemcp_email_addr
-                FROM UCRACCT a
-                JOIN UCRSERV s
-                    ON a.ucracct_prem_code = s.ucrserv_prem_code
-                JOIN UCBCUST c
-                    ON a.ucracct_cust_code = c.ucbcust_cust_code
-                JOIN gzbemcp d
-                    ON d.gzbemcp_cust_code = c.ucbcust_cust_code
-                JOIN UCBPREM p
-                    ON a.ucracct_prem_code = p.ucbprem_code
-                    WHERE d.gzbemcp_email_addr= 'uzair.shafi@vertexone.net'
-                    AND ucbcust_ssn_last_four IS NOT NULL
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                s.ucrserv_scls_code,
+                a.ucracct_status_ind,
+                a.ucracct_nick_name,
+                c.ucbcust_first_name,
+                c.ucbcust_last_name,
+                c.ucbcust_ssn_last_four,
+                p.ucbprem_street_name,
+                p.ucbprem_street_number,
+                p.ucbprem_pdir_code_pre,
+                p.ucbprem_ssfx_code,
+                p.ucbprem_pdir_code_post,
+                p.ucbprem_utyp_code,
+                p.ucbprem_unit,
+                p.ucbprem_city,
+                p.ucbprem_stat_code_addr,
+                p.ucbprem_zipc_code,
+                d.gzbemcp_email_addr
+            FROM UCRACCT a
+            JOIN UCRSERV s
+                ON a.ucracct_prem_code = s.ucrserv_prem_code
+            JOIN UCBCUST c
+                ON a.ucracct_cust_code = c.ucbcust_cust_code
+            JOIN gzbemcp d
+                ON d.gzbemcp_cust_code = c.ucbcust_cust_code
+            JOIN UCBPREM p
+                ON a.ucracct_prem_code = p.ucbprem_code
+            WHERE d.gzbemcp_email_addr IS NOT NULL
+              AND c.ucbcust_ssn_last_four IS NOT NULL
+            ORDER BY DBMS_RANDOM.VALUE
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5220,6 +5494,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                      ON a.ucracct_prem_code = p.ucbprem_code
                      WHERE d.ucrtele_phone_number IS NOT NULL\s
                      AND ucbcust_ssn_last_four IS NOT NULL
+                     AND a.ucracct_status_ind= 'A'
                  FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5232,7 +5507,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String UPDATE_MAX_LIMIT= """
             update uzrpsto
-            set uzrpsto_parm_value = 4400
+            set uzrpsto_parm_value = 100
             where uzrpsto_object = 'SPK_ACCT_SEARCH_UTIL'
             and uzrpsto_parm_name = 'MAX_SEARCH_COUNT'
             """;
@@ -5349,7 +5624,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             JOIN UCRTELE t
                 ON t.ucrtele_cust_code = a.ucracct_cust_code
             WHERE t.ucrtele_primary_ind = 'Y'
-              AND LENGTH(t.ucrtele_cust_code) >= 5            
+              AND t.ucrtele_cust_code = '4955074'
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5392,7 +5667,6 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                 JOIN UCBPREM p
                                     ON a.ucracct_prem_code = p.ucbprem_code
                                     WHERE a.ucracct_cust_code= ?
-                                    AND d.gzbemcp_email_addr <> 'Fernando.Waisfeld@vertexone.net'
                                 FETCH FIRST 1 ROWS ONLY
 """;
 
@@ -7681,6 +7955,168 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND ba.urrshis_charge_date = h.ubbbhst_printed_date
         ORDER BY h.ubbbhst_printed_date DESC, u.urrshis_serv_num, u.urrshis_action_date
         """;
+
+    public static final String GET_BILL_INFO = """
+            WITH
+            params AS (
+              SELECT ? AS cust_code, ? AS prem_code FROM dual
+            ),
+            current_bill AS (
+              SELECT *
+              FROM (
+                SELECT
+                  h.ubbbhst_tran_num,
+                  h.ubbbhst_cust_code,
+                  h.ubbbhst_prem_code,
+                  h.ubbbhst_printed_date,
+                  h.ubbbhst_prev_bal,
+                  h.ubbbhst_payments,
+                  h.ubbbhst_ending_bal,
+                  ROW_NUMBER() OVER (
+                    PARTITION BY h.ubbbhst_cust_code, h.ubbbhst_prem_code
+                    ORDER BY h.ubbbhst_printed_date DESC
+                  ) rn
+                FROM UBBBHST h
+                JOIN params p
+                  ON p.cust_code = h.ubbbhst_cust_code
+                 AND p.prem_code = h.ubbbhst_prem_code
+                WHERE NVL(h.ubbbhst_cancel_ind,0) = 0
+                  AND EXISTS (
+                    SELECT 1 FROM UABOPEN o
+                    WHERE o.uabopen_bhst_tran_num = h.ubbbhst_tran_num
+                  )
+              )
+              WHERE rn = 1
+            ),
+            latest_charge AS (
+              SELECT
+                r.urrshis_cust_code,
+                r.urrshis_prem_code,
+                MAX(r.urrshis_charge_date) AS charge_date
+              FROM URRSHIS r
+              JOIN current_bill cb
+                ON cb.ubbbhst_cust_code = r.urrshis_cust_code
+               AND cb.ubbbhst_prem_code = r.urrshis_prem_code
+              GROUP BY r.urrshis_cust_code, r.urrshis_prem_code
+            ),
+            billing_window AS (
+              SELECT
+                TRUNC(MAX(r.urrshis_action_date)) AS billToDate,
+                SUM(r.urrshis_dos) AS daysOfService
+              FROM URRSHIS r
+              JOIN latest_charge lc
+                ON lc.charge_date = r.urrshis_charge_date
+               AND lc.urrshis_cust_code = r.urrshis_cust_code
+               AND lc.urrshis_prem_code = r.urrshis_prem_code
+            ),
+            bill_due AS (
+              SELECT MAX(o.uabopen_due_date) AS billDueDate
+              FROM UABOPEN o
+              JOIN current_bill cb
+                ON cb.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+            ),
+            past_due AS (
+              SELECT GCISMGR.F_GET_PAST_DUE_AMT(p.cust_code,p.prem_code) AS pastDueAmount
+              FROM params p
+            ),
+            bill_line_items AS (
+              SELECT
+                o.uabopen_srat_code AS code,
+                r.utrsrat_bill_print_desc AS description,
+                SUM(o.uabopen_billed_chg) AS amount,
+                CASE
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%base%' THEN 'BASE'
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%service%' THEN 'SERVICE'
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%gas%' THEN 'GAS'
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%guarantee%' THEN 'GUARANTEE'
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%interstate%' THEN 'INTERSTATE'
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%discount%' THEN 'DISCOUNT'
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%reward%' THEN 'REWARD'
+                  WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%tax%' THEN 'TAX'
+                  WHEN SIGN(SUM(o.uabopen_billed_chg)) >= 0 THEN 'MISCCHARGE'
+                  ELSE 'MISCCREDIT'
+                END AS category
+              FROM UABOPEN o
+              JOIN current_bill cb
+                ON cb.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+              JOIN (
+                SELECT t.utrsrat_srat_code, t.utrsrat_bill_print_desc
+                FROM UTRSRAT t
+                WHERE (t.utrsrat_srat_code,t.utrsrat_effect_date) IN (
+                  SELECT t2.utrsrat_srat_code, MAX(t2.utrsrat_effect_date)
+                  FROM UTRSRAT t2
+                  GROUP BY t2.utrsrat_srat_code
+                )
+              ) r
+                ON r.utrsrat_srat_code = o.uabopen_srat_code
+              WHERE o.uabopen_printed_ind = 'Y'
+              GROUP BY
+                o.uabopen_srat_code,
+                r.utrsrat_bill_print_desc,
+                CASE WHEN LOWER(r.utrsrat_bill_print_desc) LIKE '%tax%' THEN 'TAX'
+                     ELSE o.uabopen_srat_code END
+            )
+            SELECT
+              TO_CHAR(cb.ubbbhst_printed_date,'YYYYMMDD') AS billDate,
+              TO_CHAR(bw.billToDate - bw.daysOfService,'YYYYMMDD') AS billFromDate,
+              TO_CHAR(bw.billToDate,'YYYYMMDD') AS billToDate,
+              pd.pastDueAmount,
+              CASE WHEN pd.pastDueAmount > 0 THEN TO_CHAR(bd.billDueDate,'YYYYMMDD') END AS pastDueDate,
+              cb.ubbbhst_prev_bal AS previousBillAmount,
+              cb.ubbbhst_payments AS paymentsApplied,
+              (cb.ubbbhst_prev_bal - cb.ubbbhst_payments) AS balanceBroughtForward,
+              (SELECT SUM(o.uabopen_billed_chg)
+               FROM UABOPEN o
+               WHERE o.uabopen_bhst_tran_num = cb.ubbbhst_tran_num) AS currentCharges,
+              (cb.ubbbhst_ending_bal + (cb.ubbbhst_prev_bal - cb.ubbbhst_payments)) AS totalAmountDue,
+              TO_CHAR(bd.billDueDate,'YYYYMMDD') AS billDueDate,
+              0 AS paymentsSinceLastBill,
+              (cb.ubbbhst_ending_bal + (cb.ubbbhst_prev_bal - cb.ubbbhst_payments)) AS currentBalance,
+              (SELECT b.uabbudg_bdgt_bill_amt
+               FROM UABBUDG b
+               WHERE b.uabbudg_cust_code = cb.ubbbhst_cust_code
+                 AND b.uabbudg_prem_code = cb.ubbbhst_prem_code
+                 AND b.uabbudg_bdgt_start_date <= cb.ubbbhst_printed_date
+               ORDER BY b.uabbudg_bdgt_start_date DESC
+               FETCH FIRST 1 ROW ONLY) AS budgetBillingAmount,
+              (SELECT SUM(o.uabopen_budget_variance)
+               FROM UABOPEN o
+               WHERE o.uabopen_bhst_tran_num = cb.ubbbhst_tran_num
+                 AND o.uabopen_item_type = 'B') AS budgetBillingTotalVariance,
+              (SELECT b.uabbudg_bdgt_start_date
+               FROM UABBUDG b
+               WHERE b.uabbudg_cust_code = cb.ubbbhst_cust_code
+                 AND b.uabbudg_prem_code = cb.ubbbhst_prem_code
+                 AND b.uabbudg_bdgt_start_date <= cb.ubbbhst_printed_date
+               ORDER BY b.uabbudg_bdgt_start_date DESC
+               FETCH FIRST 1 ROW ONLY) AS budgetBillingStartDate,
+              li.code,
+              li.description,
+              li.amount,
+              li.category,
+              bw.daysOfService
+            FROM current_bill cb
+            JOIN billing_window bw ON 1=1
+            JOIN bill_due bd ON 1=1
+            JOIN past_due pd ON 1=1
+            LEFT JOIN bill_line_items li ON 1=1
+            ORDER BY
+              CASE li.category
+                WHEN 'BASE' THEN 1
+                WHEN 'SERVICE' THEN 2
+                WHEN 'GAS' THEN 3
+                WHEN 'GUARANTEE' THEN 4
+                WHEN 'INTERSTATE' THEN 5
+                WHEN 'DISCOUNT' THEN 6
+                WHEN 'REWARD' THEN 7
+                WHEN 'MISCCHARGE' THEN 8
+                WHEN 'MISCCREDIT' THEN 9
+                WHEN 'TAX' THEN 10
+                ELSE 99
+              END,
+              li.description
+    """;
+
 
     public static final String GET_USAGE_HISTORY = """
             WITH seed_hist AS (

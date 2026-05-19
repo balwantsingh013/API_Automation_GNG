@@ -1415,6 +1415,86 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getActivePaperlessEligibleAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PAPERLESS_ELIGIBLE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getActiveAccountEnrolledInPaperlessBill() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ENROLLED_PAPERLESS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getNewPaperlessEligibleAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_NEW_PAPERLESS_ELIGIBLE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getUsageHistoryINTERSTATE() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_INTERSTATE;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        // Log SQL, result, and execution time
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getBillInfoWithRewards() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_BILL_INFO_WITH_REWARDS;
@@ -4189,6 +4269,37 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.GET_USAGE_HISTORY;
+
+        // Replace ? placeholders with quoted values for logging
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+
+        logQueryInAllure("get usage history", loggedQuery);
+
+        List<Map<String, Object>> result;
+
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getBillInfo(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_BILL_INFO;
 
         // Replace ? placeholders with quoted values for logging
         String loggedQuery = queryTemplate
