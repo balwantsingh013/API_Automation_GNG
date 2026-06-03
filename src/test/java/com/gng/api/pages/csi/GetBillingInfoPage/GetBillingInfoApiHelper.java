@@ -147,7 +147,7 @@ public class GetBillingInfoApiHelper {
 //
             case TC_17__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Greater_Than_0:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("5208", "4821");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("147670", "151572");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows6 = ApplicationContext.get()
@@ -167,7 +167,7 @@ public class GetBillingInfoApiHelper {
 //
             case TC_19__Positive__Billing_Info_Past_Due_Date_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("5208", "4821");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("147670", "151572");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows8 = ApplicationContext.get()
@@ -217,7 +217,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_24__Positive__Balance_Brought_Forward_Greater_Than_0_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("7905", "8393");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("99342", "101785");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows13 = ApplicationContext.get()
@@ -237,7 +237,7 @@ public class GetBillingInfoApiHelper {
 //
             case TC_26__Positive__Balance_Brought_Forward_Less_Than_0_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("3114", "2727");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("116057", "118649");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows15 = ApplicationContext.get()
@@ -297,7 +297,7 @@ public class GetBillingInfoApiHelper {
 //
             case TC_32__Positive__Current_Balance_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("5208", "4821");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("147670", "151572");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows21 = ApplicationContext.get()
@@ -337,7 +337,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_36__Positive__Budget_Billing_Amount_Budget_Billing_Account_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("3114", "2727");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2984", "2597");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows25 = ApplicationContext.get()
@@ -347,7 +347,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_37__Positive__Budget_Billing_TotalVariance_Budget_Billing_Account_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("3114", "2727");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2984", "2597");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows26 = ApplicationContext.get()
@@ -357,7 +357,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_38__Positive__Budget_Billing_Start_Date_Budget_Billing_Account_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("3114", "2727");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2984", "2597");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows27 = ApplicationContext.get()
@@ -408,12 +408,12 @@ public class GetBillingInfoApiHelper {
 
             case TC_49__Positive__Bill_Line_Items_Reward_Order:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getBillInfoWithRewards();
-                payload.setCustomerCode(accountData.get("gzbrwds_cust_code").toString());
-                payload.setPremisesCode(accountData.get("gzbrwds_prem_code").toString());
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2984", "2597");
+                payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows32 = ApplicationContext.get()
                         .getDbAction()
-                        .getBillInfo(accountData.get("gzbrwds_cust_code").toString(), accountData.get("gzbrwds_prem_code").toString());
+                        .getBillInfo(accountData.get("ubbbhst_cust_code").toString(), accountData.get("ubbbhst_prem_code").toString());
                 break;
 
             case TC_43__Positive__Bill_Line_Items_Base_Charge_Order:
@@ -448,7 +448,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_46__Positive__Bill_Line_Items_Bill_Guarantee_Order:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("5208", "4821");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2968", "2581");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows36 = ApplicationContext.get()
@@ -478,7 +478,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_50__Positive__Bill_Line_Items_Miscellaneous_Charge_Order:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("1334333", "1356596");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2984", "2597");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows39 = ApplicationContext.get()
@@ -488,7 +488,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_51__Positive__Bill_Line_Items_Miscellaneous_Credit_Order:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("10238", "10726");
+                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2215558", "2237254");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows40 = ApplicationContext.get()
