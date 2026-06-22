@@ -5875,49 +5875,49 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC184= """
-            SELECT \s
-                t1.ucracct_cust_code, \s
-                t1.ucracct_prem_code, \s
-                t3.ucrserv_scls_code,\s
-                t4.ucrscmp_scty_code,\s
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_scty_code,
                 t4.ucrscmp_plan_code,
                 t1.ucracct_bill_pres_type,
                 t1.ucracct_corr_del_type,
                 t4.ucrscmp_acr_ind
-            FROM\s
+            FROM
                 ucracct t1
-            JOIN\s
-                ucbcust t2\s
+            JOIN
+                ucbcust t2
                     ON t1.ucracct_cust_code = t2.ucbcust_cust_code
-            JOIN\s
-                ucrserv t3\s
+            JOIN
+                ucrserv t3
                     ON t1.ucracct_cust_code = t3.ucrserv_cust_code
                    AND t1.ucracct_prem_code = t3.ucrserv_prem_code
-            JOIN\s
+            JOIN
                 ucrscmp t4
                     ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
                    AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
-            WHERE\s
+            WHERE
                 t1.ucracct_status_ind = 'A'
                 AND t1.ucracct_cycl_code NOT IN ('DEPO')
                 AND t3.ucrserv_scls_code = 'RS'
                 AND t4.ucrscmp_end_date > SYSDATE
                 AND t4.ucrscmp_scty_code IN ('PPTDISC', 'FLATDISC', 'CSCDISC')
                 AND (t1.ucracct_cust_code, t1.ucracct_prem_code) IN (
-                    SELECT\s
+                    SELECT
                         ucrscmp_cust_code,
                         ucrscmp_prem_code
-                    FROM\s
+                    FROM
                         ucrscmp
-                    WHERE\s
+                    WHERE
                         ucrscmp_end_date > SYSDATE
                         AND ucrscmp_scty_code IN ('PPTDISC', 'FLATDISC', 'CSCDISC')
-                    GROUP BY\s
+                    GROUP BY
                         ucrscmp_cust_code,
                         ucrscmp_prem_code
-                    HAVING COUNT(*) > 1   -- multiple discounts
+                    HAVING COUNT(DISTINCT ucrscmp_scty_code) > 1   -- 2+ different discount types
                 )
-            ORDER BY\s
+            ORDER BY
                 t1.ucracct_cust_code DESC
             FETCH FIRST 1 ROWS ONLY
     """;
