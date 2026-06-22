@@ -862,6 +862,21 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 FETCH FIRST 1 ROWS ONLY
             """;
 
+    public static final String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_ACTIVE= """
+            SELECT
+                T1.UCRACCT_CUST_CODE,
+                T1.UCRACCT_PREM_CODE
+            FROM UCRACCT T1
+            JOIN UCBCUST T2 ON T1.UCRACCT_CUST_CODE = T2.UCBCUST_CUST_CODE
+            JOIN UCRSERV T3 ON T1.UCRACCT_CUST_CODE = T3.UCRSERV_CUST_CODE
+                           AND T1.UCRACCT_PREM_CODE = T3.UCRSERV_PREM_CODE
+            JOIN UCRSCMP T5 ON T1.UCRACCT_CUST_CODE = T5.UCRSCMP_CUST_CODE
+                           AND T1.UCRACCT_PREM_CODE = T5.UCRSCMP_PREM_CODE
+            WHERE T1.UCRACCT_STATUS_IND = 'A'
+              AND T3.UCRSERV_SCLS_CODE IN ('RS')
+                FETCH FIRST 1 ROWS ONLY
+            """;
+
     public static String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_SSP_WITHOUT_ETC_TC105B= """
             SELECT
                 UZ.UZBENRO_CUST_CODE,
@@ -4044,7 +4059,6 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                          ON a.ucracct_prem_code=b.ucbprem_code
                                          WHERE
                                          b.ucbprem_city IS null
-                                         AND LENGTH(a.ucracct_cust_code) >= 5
                                     FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -4167,7 +4181,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                  SELECT gzbemcp_cust_code
                  FROM gzbemcp
                  GROUP BY gzbemcp_cust_code
-                 HAVING COUNT(*) = 1
+                 HAVING COUNT(*) >= 1
                  )
                         FETCH FIRST 1 ROWS ONLY
             """;
@@ -5462,40 +5476,37 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     public static final String SELECT_PHONE_AND_SSN= """
-                   SELECT
-                     a.ucracct_cust_code,
-                     a.ucracct_prem_code,
-                     s.ucrserv_scls_code,
-                     a.ucracct_status_ind,
-                     a.ucracct_nick_name,
-                     c.ucbcust_first_name,
-                     c.ucbcust_last_name,
-                     c.ucbcust_ssn_last_four,
-                     p.ucbprem_street_name,
-                     p.ucbprem_street_number,
-                     p.ucbprem_pdir_code_pre,
-                     p.ucbprem_ssfx_code,
-                     p.ucbprem_pdir_code_post,
-                     p.ucbprem_utyp_code,
-                     p.ucbprem_unit,
-                     p.ucbprem_city,
-                     p.ucbprem_stat_code_addr,
-                     p.ucbprem_zipc_code,
-                     d.ucrtele_phone_area,
-                     d.ucrtele_phone_number
-                 FROM UCRACCT a
-                 JOIN UCRSERV s
-                     ON a.ucracct_prem_code = s.ucrserv_prem_code
-                 JOIN UCBCUST c
-                     ON a.ucracct_cust_code = c.ucbcust_cust_code
-                 JOIN ucrtele d
-                     ON d.ucrtele_cust_code = c.ucbcust_cust_code
-                 JOIN UCBPREM p
-                     ON a.ucracct_prem_code = p.ucbprem_code
-                     WHERE d.ucrtele_phone_number IS NOT NULL\s
-                     AND ucbcust_ssn_last_four IS NOT NULL
-                     AND a.ucracct_status_ind= 'A'
-                 FETCH FIRST 1 ROWS ONLY
+            SELECT
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                s.ucrserv_scls_code,
+                a.ucracct_status_ind,
+                a.ucracct_nick_name,
+                c.ucbcust_first_name,
+                c.ucbcust_last_name,
+                c.ucbcust_ssn_last_four,
+                p.ucbprem_street_name,
+                p.ucbprem_street_number,
+                p.ucbprem_pdir_code_pre,
+                p.ucbprem_ssfx_code,
+                p.ucbprem_pdir_code_post,
+                p.ucbprem_utyp_code,
+                p.ucbprem_unit,
+                p.ucbprem_city,
+                p.ucbprem_stat_code_addr,
+                p.ucbprem_zipc_code,
+                d.ucrtele_phone_area,
+                d.ucrtele_phone_number
+            FROM UCRACCT a
+            JOIN UCRSERV s  ON a.ucracct_prem_code = s.ucrserv_prem_code
+            JOIN UCBCUST c  ON a.ucracct_cust_code = c.ucbcust_cust_code
+            JOIN ucrtele d  ON d.ucrtele_cust_code = c.ucbcust_cust_code
+            JOIN UCBPREM p  ON a.ucracct_prem_code = p.ucbprem_code
+            WHERE d.ucrtele_phone_number IS NOT NULL
+              AND c.ucbcust_ssn_last_four IS NOT NULL
+              AND a.ucracct_status_ind = 'A'
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 1 ROWS ONLY
             """;
 
     public static final String DELETE_REGISTERED_ACCOUNT= """
@@ -9147,6 +9158,17 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             JOIN custadv_registered_accounts ra
                 ON u.user_id = ra.user_id
             WHERE ra.account_number LIKE CONCAT('%', ?, '%')
+            AND u.domain_id = 2
+            AND u.user_name REGEXP '^[A-Za-z0-9]+$'
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String GET_USER_ACCOUNT_INFO_NEW2 = """
+            SELECT u.user_name, ra.account_number
+            FROM users u
+            JOIN custadv_registered_accounts ra
+                ON u.user_id = ra.user_id
+            WHERE ra.account_number LIKE CONCAT('%', ?, '%', ? , '%')
             AND u.domain_id = 2
             AND u.user_name REGEXP '^[A-Za-z0-9]+$'
             FETCH FIRST 1 ROWS ONLY

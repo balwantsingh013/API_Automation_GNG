@@ -155,12 +155,12 @@ public class UpdateUsernameApiHelper {
                 break;
 
             case TC_38__Negative__Invalid_credentials___Password____:
-                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeRSActive();
+                userInfo = ApplicationContext.get().getDbAction().getCustPremCodeActive();
                 custCode = userInfo.get("UCRACCT_CUST_CODE").toString();
                 premCode = userInfo.get("UCRACCT_PREM_CODE").toString();
                 payload.setCustomerCode(custCode);
                 payload.setPremisesCode(premCode);
-                userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew(custCode+premCode);
+                userInfo = ApplicationContext.get().getDbAction("mariadb").getUserAccountInfoNew2(custCode, premCode);
                 payload.setUsername(userInfo.get("user_name").toString());
                 payload.setPassword(FakerDataGenerator.generateAlphanumeric(8));
                 break;
