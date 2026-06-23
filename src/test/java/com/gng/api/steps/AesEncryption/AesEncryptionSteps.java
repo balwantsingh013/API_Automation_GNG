@@ -17,12 +17,25 @@ public class AesEncryptionSteps {
 
     @Step("Encrypting data using AES Encryption API")
     public static String encryptData(String data) {
-        return processAesRequest(data, ApiEndPoint.AES_ENCRYPTION, "Encryption");
+        return processAesRequest(data, resolveAesPath("encrypt"), "Encryption");
     }
 
     @Step("Decrypting data using AES Decryption API")
     public static String decryptData(String encryptedData) {
-        return processAesRequest(encryptedData, ApiEndPoint.AES_DECRYPTION, "Decryption");
+        return processAesRequest(encryptedData, resolveAesPath("decrypt"), "Decryption");
+    }
+
+    private static String resolveAesPath(String operation) {
+        var envConfig = ApplicationContext.get().getEnvConfig();
+        String configured = "encrypt".equals(operation)
+                ? envConfig.getAesEncryptPath()
+                : envConfig.getAesDecryptPath();
+        if (configured != null && !configured.isBlank()) {
+            return configured;
+        }
+        return "encrypt".equals(operation)
+                ? ApiEndPoint.AES_ENCRYPTION
+                : ApiEndPoint.AES_DECRYPTION;
     }
 
     /**
@@ -31,7 +44,16 @@ public class AesEncryptionSteps {
     private static String processAesRequest(String data, String endPoint, String action) {
         log.info("{} data using AES {} API...", action, action);
 
-        String uri = ApplicationContext.get().getEnvConfig().getAesBaseUri() + endPoint;
+        String aesBaseUri = ApplicationContext.get().getEnvConfig().getAesBaseUri();
+        if (aesBaseUri == null || aesBaseUri.isBlank()) {
+            throw new IllegalStateException(
+                    "aesBaseUri is not configured in envconfig for environment '"
+                            + ApplicationContext.get().getEnvironment()
+                            + "'. Add aesBaseUri (e.g. https://wapi-uat1.gng.vertexna.net for UAT1) to enable "
+                            + "ConfirmPaperlessEnrollment and other AES-dependent tests.");
+        }
+
+        String uri = aesBaseUri + endPoint;
 
         Map<String, String> payload = new HashMap<>();
         payload.put("DataToEncryptOrDecrypt", data);

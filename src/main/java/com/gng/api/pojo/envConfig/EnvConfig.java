@@ -15,6 +15,8 @@ public class EnvConfig {
     private Boolean enableLogsOnPass;
     private Boolean enableLogsOnFail;
     private String aesBaseUri;
+    private String aesEncryptPath;
+    private String aesDecryptPath;
 
     // 👇 New fields for multi-database support
     private String defaultDatabase; // e.g., "oracle" or "mariadb"

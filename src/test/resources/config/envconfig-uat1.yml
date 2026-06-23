@@ -1,4 +1,8 @@
 baseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
+# AES is on the same UAT1 API gateway under /api/v1 (encryption-uat1.* does not resolve on corporate DNS)
+aesBaseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
+aesEncryptPath: "/AesEncryption/Encrypt"
+aesDecryptPath: "/AesEncryption/Decrypt"
 authUri: "/Authentication/GetToken"
 vendorId: "vertex.auto.apitest.gng.com"
 vendorSecret: "HAXxeK86Q7omh4rCPeuX"
