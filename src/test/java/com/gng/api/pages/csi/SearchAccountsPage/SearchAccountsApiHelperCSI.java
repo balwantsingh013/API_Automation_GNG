@@ -464,8 +464,8 @@ public class SearchAccountsApiHelperCSI {
 
                 payload.setCustomerLastNameBusiness(userInfo.get("ucbcust_last_name").toString());
                 payload.setUsername(null);
-                payload.setPassword("TestingUsr91");
-                testContext.setPassword("TestingUsr91");
+                payload.setPassword("TestingUsr92");
+                testContext.setPassword("TestingUsr92");
                 break;
 
             case TC_236__Positive__Password_____CustomerCode_____PremisesCode:
@@ -1118,7 +1118,7 @@ public class SearchAccountsApiHelperCSI {
 
             case TC_290__Positive__Search_Order__Inactive_Name_order:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setPassword("InactiveAccount");
+                payload.setPassword("InactiveAccount1");
                 payload.setCustomerLastNameBusiness("ANDERSON");
                 payload.setUsername(null);
                 break;
@@ -1145,7 +1145,9 @@ public class SearchAccountsApiHelperCSI {
                        payload.setCustomerLastNameBusiness(lastName);
                        break;
                    }
-                   break;
+                   else{
+                       continue;
+                   }
                }
                break;
 
@@ -1181,8 +1183,9 @@ public class SearchAccountsApiHelperCSI {
                         payload.setEmailAddress(email2);
                         break;
                     }
-
-                    break;
+                    else{
+                        continue;
+                    }
                 }
                 break;
 
@@ -1223,8 +1226,9 @@ public class SearchAccountsApiHelperCSI {
                         payload.setPhoneNumber(fullPhone);
                         break;
                     }
-
-                    break;
+                    else{
+                        continue;
+                    }
                 }
                 break;
 
@@ -1246,11 +1250,13 @@ public class SearchAccountsApiHelperCSI {
                     String phoneNum = userInfo.get("ucrtele_phone_number").toString();
                     String fullPhone = phoneArea + phoneNum;
 
-                    // Check if username exists in MariaDB
+                    // Check if account exists in MariaDB using a wildcard LIKE pattern
+                    String searchPattern = "%" + custCode4 + "%" + premCode4 + "%";
+
                     Map<String, Object> registeredAccount4 =
                             ApplicationContext.get()
                                     .getDbAction("mariadb")
-                                    .getRegisteredAccount(custCode4 + premCode4);
+                                    .getRegisteredAccount(searchPattern);
 
                     // Only break when NO username exists
                     if (registeredAccount4 == null) {

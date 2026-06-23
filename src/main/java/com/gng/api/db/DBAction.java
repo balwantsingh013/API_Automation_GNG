@@ -5405,6 +5405,40 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getUserAccountInfoNew2(String custCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+
+        String queryTemplate = DBQuery.GET_USER_ACCOUNT_INFO_NEW2;
+
+        // Replace the two ? placeholders (custCode, premCode) with quoted+escaped
+        // values, in order, for logging only
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + custCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premCode.replace("'", "''") + "'");
+
+        // Log expanded SQL
+        logQueryInAllure("check account number registered", loggedQuery);
+
+        Map<String, Object> result = null;
+
+        try {
+            // Execute parameterized query (safe)
+            result = jdbcTemplate.queryForMap(queryTemplate, custCode, premCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = null;
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,          // expanded query
+                String.valueOf(result),
+                elapsed
+        );
+
+        return result;
+    }
+
     public Map<String, Object> getUserAccountInfoNewInactive(String accountNo) {
         long startTime = System.currentTimeMillis();
 
@@ -6462,6 +6496,12 @@ public class DBAction {
 
     public Map<String, Object> getCustPremCodeRSActive() {
         String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_RS_ACTIVE;
+        logQueryInAllure("Get Active Customer Details", query);
+        return jdbcTemplate.queryForMap(query);
+    }
+
+    public Map<String, Object> getCustPremCodeActive() {
+        String query = DBQuery.GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE_ACTIVE;
         logQueryInAllure("Get Active Customer Details", query);
         return jdbcTemplate.queryForMap(query);
     }

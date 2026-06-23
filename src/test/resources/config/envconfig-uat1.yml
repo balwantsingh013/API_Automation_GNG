@@ -10,7 +10,7 @@ databases:
     driverClassName: "oracle.jdbc.OracleDriver"
     serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
     userName: "KJADHAV"
-    password: "vrt20240602"
+    password: "Bibhavi@2022"
 
   mariadb:
     driverClassName: "org.mariadb.jdbc.Driver"

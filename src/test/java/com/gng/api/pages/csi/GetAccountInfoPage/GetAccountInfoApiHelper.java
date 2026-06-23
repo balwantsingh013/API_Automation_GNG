@@ -330,7 +330,7 @@ public class GetAccountInfoApiHelper {
 
             case TC_186__Positive__Account_Info_Returned___Transferable_Discount____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC186();
+                accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC184();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
