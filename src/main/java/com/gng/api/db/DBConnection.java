@@ -35,7 +35,7 @@ public class DBConnection {
     /**
      * Resolve the correct database config based on connectionKey
      */
-    private DriverManagerDataSource getDataSource(EnvConfig envConfig, String connectionKey) {
+    public DriverManagerDataSource getDataSource(EnvConfig envConfig, String connectionKey) {
         String key = connectionKey.equals("default") ? envConfig.getDefaultDatabase() : connectionKey;
         EnvConfig.DatabaseConfig dbConfig = envConfig.getDatabases().get(key);
 

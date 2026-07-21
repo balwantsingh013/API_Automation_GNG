@@ -1,0 +1,10 @@
+{
+  "acctSearchType": "email",
+  "actions": "VerifyAccount",
+  "custCode": "6196554",
+  "premCode": "6169365",
+  "emailAddress": "iesha.gray1991@outlook.com",
+  "Module": "PEW",
+  "authenticationToken": "",
+  "requestID": "00000000-0000-0000-0000-000000000000"
+}

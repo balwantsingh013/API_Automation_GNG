@@ -2554,6 +2554,14 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROW ONLY
             """;
 
+    public static final String SELECT_LOGIN_ID_BY_VALUE = """
+            SELECT gzrapil_login_id
+            FROM gcismgr.gzrapil
+            WHERE gzrapil_login_id = ?
+            ORDER BY gzrapil_activity_date DESC
+            FETCH FIRST 1 ROW ONLY
+            """;
+
     public static final String SELECT_ACTIVE_ACCOUNT_ONLY= """
             SELECT T1.UCRACCT_CUST_CODE,
                    T1.UCRACCT_PREM_CODE
@@ -4833,16 +4841,108 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    /**
+     * TC_124: account whose <em>latest</em> OCSEPCI row is expired and unused (not a stale expired row
+     * when a newer valid OCSEPCI exists on the same account).
+     */
     public static final String SELECT_CONFIRM_EXPIRED_TOKEN = """
+            WITH latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    p.OCSEPCI_ACTIVITY_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
             SELECT
-                p.OCSEPCI_ID         AS tokenIdentifier,
-                p.OCSEPCI_CUST_CODE  AS customerCode,
-                p.OCSEPCI_PREM_CODE  AS premisesCode
-            FROM OCSEPCI p
-            WHERE p.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
-              AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
-            ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                l.OCSEPCI_CUST_CODE  AS customerCode,
+                l.OCSEPCI_PREM_CODE  AS premisesCode
+            FROM latest_ocsepci l
+            WHERE l.rn = 1
+              AND l.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              AND l.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+            ORDER BY l.OCSEPCI_EMAIL_EXP_DATE ASC
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * TC_124: accounts whose <em>latest</em> OCSEPCI is expired and unused (one Oracle query, multiple rows).
+     */
+    public static final String SELECT_CONFIRM_EXPIRED_TOKEN_ACCOUNTS = """
+            WITH latest_ocsepci AS (
+                SELECT
+                    p.OCSEPCI_CUST_CODE,
+                    p.OCSEPCI_PREM_CODE,
+                    p.OCSEPCI_EMAIL_EXP_DATE,
+                    p.OCSEPCI_EMAIL_COMP_DATE,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.OCSEPCI_CUST_CODE, p.OCSEPCI_PREM_CODE
+                        ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM OCSEPCI p
+            )
+            SELECT
+                l.OCSEPCI_CUST_CODE  AS customerCode,
+                l.OCSEPCI_PREM_CODE  AS premisesCode
+            FROM latest_ocsepci l
+            WHERE l.rn = 1
+              AND l.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              AND l.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+            ORDER BY l.OCSEPCI_EMAIL_EXP_DATE ASC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    /** MariaDB (custadv): latest expired unused token via {@code date_time_link_expired} (UAT1). */
+    public static final String SELECT_CUSTADV_EXPIRED_BY_LINK_EXPIRED = """
+            SELECT *,
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
+            FROM custadv_email_verification_status
+            WHERE email_verification_type = 0
+              AND date_time_link_confirmed IS NULL
+              AND date_time_link_expired IS NOT NULL
+              AND date_time_link_expired < NOW()
+            ORDER BY email_verification_status_id DESC
+            LIMIT 1
+            """;
+
+    /** MariaDB (custadv): recent rows expired by {@code date_time_link_expired} — TC_124 probe source. */
+    public static final String SELECT_CUSTADV_RECENT_EXPIRED_BY_LINK_EXPIRED = """
+            SELECT *,
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
+            FROM custadv_email_verification_status
+            WHERE email_verification_type = 0
+              AND date_time_link_confirmed IS NULL
+              AND date_time_link_expired IS NOT NULL
+              AND date_time_link_expired < NOW()
+            ORDER BY email_verification_status_id DESC
+            LIMIT ?
+            """;
+
+    /** MariaDB (custadv): mark unused token expired via {@code date_time_link_expired} (UAT1 TC_124 bootstrap). */
+    public static final String UPDATE_CUSTADV_SET_LINK_EXPIRED_PAST = """
+            UPDATE custadv_email_verification_status
+            SET date_time_link_expired = DATE_SUB(NOW(), INTERVAL 1 DAY)
+            WHERE email_verification_type = 0
+              AND account_number = ?
+              AND date_time_link_confirmed IS NULL
+            """;
+
+    /** MariaDB (custadv): latest expired, not-yet-confirmed paperless token (single-query TC_124 when column exists). */
+    public static final String SELECT_CUSTADV_EXPIRED_PAPERLESS_EMAIL_VERIFICATION_TOKEN = """
+            SELECT *,
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
+            FROM custadv_email_verification_status
+            WHERE email_verification_type = 0
+              AND date_time_link_confirmed IS NULL
+              AND expired IS NOT NULL
+              AND expired < NOW()
+            ORDER BY email_verification_status_id DESC
+            LIMIT 1
             """;
 
     public static final String SELECT_CONFIRM_USED_TOKEN = """
@@ -4887,6 +4987,49 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    /** TC_125: accounts with valid pending OCSEPCI email ≠ current Banner email (passive invalidation). */
+    public static final String SELECT_CONFIRM_EMAIL_MISMATCH_ACCOUNTS = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                p.OCSEPCI_CUST_CODE  AS customerCode,
+                p.OCSEPCI_PREM_CODE  AS premisesCode
+            FROM OCSEPCI p
+            JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = p.OCSEPCI_CUST_CODE
+               AND e.rn = 1
+            WHERE p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+              AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              AND LOWER(TRIM(p.OCSEPCI_EMAIL_ADDR)) <> LOWER(TRIM(e.GZBEMCP_EMAIL_ADDR))
+            ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    /**
+     * TC_125 / TC_117: simulate Banner email change outside UpdatePaperlessCommunications
+     * (PPER/OCSEPCI pending email unchanged → passive invalidation on confirm).
+     */
+    public static final String UPDATE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER = """
+            UPDATE GZBEMCP g
+            SET g.GZBEMCP_EMAIL_ADDR = ?
+            WHERE g.GZBEMCP_CUST_CODE = ?
+              AND g.GZBEMCP_ACCOUNT_IND = 'Y'
+              AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            """;
+
     public static final String SELECT_CONFIRM_TOKEN_ACCOUNT_MISMATCH = """
             SELECT
                 p.OCSEPCI_ID         AS tokenIdentifier,
@@ -4902,11 +5045,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     /**
      * MariaDB (custadv): latest valid unused paperless confirmation token for ConfirmPaperlessEnrollment.
      * email_verification_type = 0 is paperless enrollment; account_number is the custadv composite key.
-     * Unused = {@code date_time_link_confirmed IS NULL} (developer-confirmed).
+     * Token from last path segment then query value — {@code SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1)}.
      */
     public static final String SELECT_CUSTADV_LATEST_PAPERLESS_EMAIL_VERIFICATION_TOKEN = """
             SELECT *,
-                   SUBSTRING_INDEX(email_link, '/', -1) AS Token
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
             FROM custadv_email_verification_status
             WHERE email_verification_type = 0
               AND account_number = ?
@@ -4915,10 +5058,53 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             LIMIT 1
             """;
 
+    /** MariaDB (custadv): baseline max row id before enroll (detect new token row after enroll). */
+    public static final String SELECT_CUSTADV_MAX_PAPERLESS_VERIFICATION_ID = """
+            SELECT COALESCE(MAX(email_verification_status_id), 0) AS maxVerificationId
+            FROM custadv_email_verification_status
+            WHERE email_verification_type = 0
+              AND account_number = ?
+            """;
+
+    /** MariaDB (custadv): unused token row created after a specific verification id. */
+    public static final String SELECT_CUSTADV_UNUSED_PAPERLESS_TOKEN_AFTER_ID = """
+            SELECT *,
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
+            FROM custadv_email_verification_status
+            WHERE email_verification_type = 0
+              AND account_number = ?
+              AND date_time_link_confirmed IS NULL
+              AND email_verification_status_id > ?
+            ORDER BY email_verification_status_id DESC
+            LIMIT 1
+            """;
+
+    /** MariaDB (custadv): recent unused paperless tokens — not used for TC_124 (see per-account query). */
+    public static final String SELECT_CUSTADV_RECENT_UNUSED_PAPERLESS_TOKENS = """
+            SELECT *,
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
+            FROM custadv_email_verification_status
+            WHERE email_verification_type = 0
+              AND date_time_link_confirmed IS NULL
+            ORDER BY email_verification_status_id DESC
+            LIMIT ?
+            """;
+
+    /** MariaDB (custadv): latest unused paperless token across all accounts — TC_124 fallback. */
+    public static final String SELECT_CUSTADV_LATEST_UNUSED_PAPERLESS_TOKEN_ANY_ACCOUNT = """
+            SELECT *,
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
+            FROM custadv_email_verification_status
+            WHERE email_verification_type = 0
+              AND date_time_link_confirmed IS NULL
+            ORDER BY email_verification_status_id DESC
+            LIMIT 1
+            """;
+
     /** MariaDB (custadv): latest already-confirmed (used) paperless token. */
     public static final String SELECT_CUSTADV_USED_PAPERLESS_EMAIL_VERIFICATION_TOKEN = """
             SELECT *,
-                   SUBSTRING_INDEX(email_link, '/', -1) AS Token
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
             FROM custadv_email_verification_status
             WHERE email_verification_type = 0
               AND date_time_link_confirmed IS NOT NULL
@@ -4929,23 +5115,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     /** MariaDB (custadv): latest paperless token row for an account (any confirmation state). */
     public static final String SELECT_CUSTADV_ANY_LATEST_PAPERLESS_TOKEN_FOR_ACCOUNT = """
             SELECT *,
-                   SUBSTRING_INDEX(email_link, '/', -1) AS Token
+                   SUBSTRING_INDEX(SUBSTRING_INDEX(email_link, '/', -1), '?', -1) AS Token
             FROM custadv_email_verification_status
             WHERE email_verification_type = 0
               AND account_number = ?
-            ORDER BY email_verification_status_id DESC
-            LIMIT 1
-            """;
-
-    /** MariaDB (custadv): latest expired, not-yet-confirmed paperless token. */
-    public static final String SELECT_CUSTADV_EXPIRED_PAPERLESS_EMAIL_VERIFICATION_TOKEN = """
-            SELECT *,
-                   SUBSTRING_INDEX(email_link, '/', -1) AS Token
-            FROM custadv_email_verification_status
-            WHERE email_verification_type = 0
-              AND date_time_link_confirmed IS NULL
-              AND expired IS NOT NULL
-              AND expired < NOW()
             ORDER BY email_verification_status_id DESC
             LIMIT 1
             """;
@@ -5103,10 +5276,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 a.UCRACCT_PREM_CODE              AS premisesCode,
                 a.UCRACCT_STATUS_IND             AS accountStatus,
                 a.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
-                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption
+                a.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail
             FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
             WHERE a.UCRACCT_BILL_PRES_TYPE = 'F'
               AND a.UCRACCT_STATUS_IND IN ('A', 'F', 'I')
+              AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+              AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+              AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -5133,23 +5312,91 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    /** TC_73: bill ineligible (NULL bill pref), corr already enrolled (E), active Banner email. */
     public static final String SELECT_ONE_CHANNEL_INELIGIBLE = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
             SELECT
-                u.UCRACCT_CUST_CODE              AS customerCode,
-                u.UCRACCT_PREM_CODE              AS premisesCode,
-                u.UCRACCT_STATUS_IND             AS accountStatus,
-                u.UCRACCT_BILL_PRES_TYPE         AS currentBillDeliveryOption,
-                u.UCRACCT_CORR_DEL_TYPE          AS currentCorrDeliveryOption
-            FROM UCRACCT u
-            WHERE u.UCRACCT_STATUS_IND IN ('A', 'F', 'I')
-              AND (u.UCRACCT_BILL_PRES_TYPE = 'P' OR u.UCRACCT_BILL_PRES_TYPE IS NULL)
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail,
+                'BILL'                   AS ineligibleChannel
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND a.UCRACCT_BILL_PRES_TYPE IS NULL
+              AND a.UCRACCT_CORR_DEL_TYPE = 'E'
               AND NOT EXISTS (
                   SELECT 1
-                  FROM GZBEMCP e
-                  WHERE e.GZBEMCP_CUST_CODE = u.UCRACCT_CUST_CODE
-                    AND (e.GZBEMCP_EXPIRATION_DATE IS NULL
-                         OR e.GZBEMCP_EXPIRATION_DATE > SYSDATE)
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
               )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** TC_73 fallback: bill channel ineligible (NULL bill pref), corr eligible, active Banner email. */
+    public static final String SELECT_ONE_CHANNEL_INELIGIBLE_BILL = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail,
+                'BILL'                   AS ineligibleChannel
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND a.UCRACCT_BILL_PRES_TYPE IS NULL
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') IN ('P', 'E')
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5212,10 +5459,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 a.UCRACCT_PREM_CODE      AS premisesCode,
                 a.UCRACCT_STATUS_IND     AS accountStatus,
                 a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
-                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
             FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
             WHERE a.UCRACCT_STATUS_IND = 'A'
               AND a.UCRACCT_BILL_PRES_TYPE = 'F'
+              AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+              AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+              AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -5297,10 +5550,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 a.UCRACCT_PREM_CODE      AS premisesCode,
                 a.UCRACCT_STATUS_IND     AS accountStatus,
                 a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
-                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
             FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
             WHERE a.UCRACCT_STATUS_IND = 'A'
               AND a.UCRACCT_BILL_PRES_TYPE = 'F'
+              AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+              AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+              AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
               AND EXISTS (
                   SELECT 1
                   FROM OCSEPCI p
@@ -5345,6 +5604,125 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    /** NEW account where Banner bill preference is NULL (TC_130 confirm preference update failure). */
+    public static final String SELECT_NEW_ACCOUNT_NULL_BILL_PREFERENCE = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND a.UCRACCT_BILL_PRES_TYPE IS NULL
+              AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+              AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+              AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** ACTIVE accounts with valid unused pending bill enrollment (for TC_129 probing). */
+    public static final String SELECT_LIST_ACTIVE_ACCOUNTS_PENDING_BILL_ENROLLMENT = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+            FROM UCRACCT a
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    /** NEW accounts with valid unused pending bill enrollment (for TC_130 probing). */
+    public static final String SELECT_LIST_NEW_ACCOUNTS_PENDING_BILL_ENROLLMENT = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+            FROM UCRACCT a
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    public static final String UPDATE_UCRACCT_BILL_PRES_TYPE_FOR_ACCOUNT = """
+            UPDATE UCRACCT
+            SET UCRACCT_BILL_PRES_TYPE = ?
+            WHERE UCRACCT_CUST_CODE = ?
+              AND UCRACCT_PREM_CODE = ?
+            """;
+
+    public static final String UPDATE_UCRACCT_CORR_DEL_TYPE_FOR_ACCOUNT = """
+            UPDATE UCRACCT
+            SET UCRACCT_CORR_DEL_TYPE = ?
+            WHERE UCRACCT_CUST_CODE = ?
+              AND UCRACCT_PREM_CODE = ?
+            """;
+
+    public static final String UPDATE_EXPIRE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER = """
+            UPDATE GZBEMCP g
+            SET g.GZBEMCP_EXPIRATION_DATE = TRUNC(SYSDATE) - 1
+            WHERE g.GZBEMCP_CUST_CODE = ?
+              AND g.GZBEMCP_ACCOUNT_IND = 'Y'
+              AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            """;
+
+    public static final String SELECT_UCRACCT_ACCOUNT_SUMMARY = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+            FROM UCRACCT a
+            WHERE a.UCRACCT_CUST_CODE = ?
+              AND a.UCRACCT_PREM_CODE = ?
+            """;
+
+    /** MariaDB (custadv): remap token row account_number for account-mismatch negative setup. */
+    public static final String UPDATE_CUSTADV_PAPERLESS_TOKEN_ACCOUNT_NUMBER = """
+            UPDATE custadv_email_verification_status
+            SET account_number = ?
+            WHERE email_verification_status_id = ?
+              AND email_verification_type = 0
+            """;
+
+    /** MariaDB (custadv): expire unused paperless tokens for an account (TC_105/106 bootstrap). */
+    public static final String UPDATE_CUSTADV_EXPIRE_UNUSED_PAPERLESS_TOKENS_FOR_ACCOUNT = """
+            UPDATE custadv_email_verification_status
+            SET expired = DATE_SUB(NOW(), INTERVAL 1 DAY)
+            WHERE email_verification_type = 0
+              AND account_number = ?
+              AND date_time_link_confirmed IS NULL
+              AND (expired IS NULL OR expired >= NOW())
+            """;
+
     /** NEW account with unconfirmed electronic bill preference (pending enrollment). */
     public static final String SELECT_NEW_ACCOUNT_UNCONFIRMED_BILL_PREFERENCE = """
             SELECT
@@ -5369,6 +5747,73 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    /**
+     * NEW account with unconfirmed electronic bill preference and no active PPER row.
+     * Preference E is present on an expired/unused OCSEPCI row (confirmation date not populated).
+     */
+    public static final String SELECT_NEW_ACCOUNT_EXPIRED_UNCONFIRMED_BILL_PREFERENCE = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+            FROM UCRACCT a
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+                    AND p.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** NEW accounts with expired unconfirmed bill preference and no active PPER (TC_201 probing). */
+    public static final String SELECT_LIST_NEW_ACCOUNTS_EXPIRED_UNCONFIRMED_BILL = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+            FROM UCRACCT a
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+                    AND p.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
     /** NEW account with confirmed electronic bill preference. */
     public static final String SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE = """
             SELECT
@@ -5380,6 +5825,781 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FROM UCRACCT a
             WHERE a.UCRACCT_STATUS_IND = 'N'
               AND a.UCRACCT_BILL_PRES_TYPE = 'E'
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount: account with active UCRADDR street fields + Banner email for email verify. */
+    public static final String SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_STREET = """
+            SELECT
+                a.UCRACCT_CUST_CODE           AS customerCode,
+                a.UCRACCT_PREM_CODE           AS premisesCode,
+                a.UCRACCT_STATUS_IND          AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE      AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE       AS corrDeliveryOption,
+                addr.UCRADDR_STREET_NUMBER    AS billingStreetNumber,
+                addr.UCRADDR_PDIR_CODE_PRE    AS billingStreetPreDirection,
+                addr.UCRADDR_STREET_NAME      AS billingStreetName,
+                addr.UCRADDR_CITY             AS billingCity,
+                addr.UCRADDR_STAT_CODE        AS billingStateCode,
+                addr.UCRADDR_ZIP              AS billingZipCode,
+                addr.UCRADDR_STREET_LINE2     AS billingPoBox,
+                e.GZBEMCP_EMAIL_ADDR          AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND addr.UCRADDR_STREET_NUMBER IS NOT NULL
+              AND addr.UCRADDR_PDIR_CODE_PRE IS NOT NULL
+              AND addr.UCRADDR_STREET_NAME IS NOT NULL
+              AND addr.UCRADDR_CITY IS NOT NULL
+              AND addr.UCRADDR_STAT_CODE IS NOT NULL
+              AND addr.UCRADDR_ZIP IS NOT NULL
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** Multiple street+email candidates so Preferences probe can skip ErrorCode 302 accounts. */
+    public static final String SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_STREET_CANDIDATES = """
+            SELECT
+                a.UCRACCT_CUST_CODE           AS customerCode,
+                a.UCRACCT_PREM_CODE           AS premisesCode,
+                a.UCRACCT_STATUS_IND          AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE      AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE       AS corrDeliveryOption,
+                a.UCRACCT_BILL_PRES_TYPE      AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE       AS correspondencePreference,
+                addr.UCRADDR_STREET_NUMBER    AS billingStreetNumber,
+                addr.UCRADDR_PDIR_CODE_PRE    AS billingStreetPreDirection,
+                addr.UCRADDR_STREET_NAME      AS billingStreetName,
+                addr.UCRADDR_CITY             AS billingCity,
+                addr.UCRADDR_STAT_CODE        AS billingStateCode,
+                addr.UCRADDR_ZIP              AS billingZipCode,
+                addr.UCRADDR_STREET_LINE2     AS billingPoBox,
+                e.GZBEMCP_EMAIL_ADDR          AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND IN ('A', 'N', 'P')
+              AND addr.UCRADDR_STREET_NUMBER IS NOT NULL
+              AND addr.UCRADDR_STREET_NAME IS NOT NULL
+              AND addr.UCRADDR_CITY IS NOT NULL
+              AND addr.UCRADDR_STAT_CODE IS NOT NULL
+              AND addr.UCRADDR_ZIP IS NOT NULL
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** VerifyAccount: account with PO BOX on active UCRADDR + Banner email. */
+    public static final String SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_PO_BOX = """
+            SELECT
+                a.UCRACCT_CUST_CODE           AS customerCode,
+                a.UCRACCT_PREM_CODE           AS premisesCode,
+                a.UCRACCT_STATUS_IND          AS accountStatus,
+                addr.UCRADDR_STREET_LINE2     AS billingPoBox,
+                addr.UCRADDR_CITY             AS billingCity,
+                addr.UCRADDR_STAT_CODE        AS billingStateCode,
+                addr.UCRADDR_ZIP              AS billingZipCode,
+                e.GZBEMCP_EMAIL_ADDR          AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND UPPER(TRIM(addr.UCRADDR_STREET_LINE2)) LIKE 'PO BOX%'
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * ACTIVE account with confirmed electronic bill (API VerifyAccount requires Active for SP_VERIFY_ACCOUNT).
+     * Used as fallback when NEW confirmed-bill rows are unavailable.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_CONFIRMED_BILL = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                TO_CHAR(
+                    (SELECT MAX(p.OCSEPCI_EMAIL_COMP_DATE)
+                     FROM OCSEPCI p
+                     WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                       AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                       AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                       AND p.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL),
+                    'YYYYMMDD')          AS billDeliveryConfirmDate,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND a.UCRACCT_BILL_PRES_TYPE = 'E'
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_CONFIRMED_CORR = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                TO_CHAR(
+                    (SELECT MAX(p.OCSEPCI_EMAIL_COMP_DATE)
+                     FROM OCSEPCI p
+                     WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                       AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                       AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                       AND p.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL),
+                    'YYYYMMDD')          AS corrDeliveryConfirmDate,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND a.UCRACCT_CORR_DEL_TYPE = 'E'
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_PENDING_BILL = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            INNER JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+               AND addr.UCRADDR_STREET_NUMBER IS NOT NULL
+               AND addr.UCRADDR_STREET_NAME IS NOT NULL
+               AND addr.UCRADDR_CITY IS NOT NULL
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_PENDING_CORR = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            INNER JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+               AND addr.UCRADDR_STREET_NUMBER IS NOT NULL
+               AND addr.UCRADDR_STREET_NAME IS NOT NULL
+               AND addr.UCRADDR_CITY IS NOT NULL
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * ACTIVE paper bill + verifiable Banner email.
+     * Requires complete UCRADDR street (same pool as TC_206) so SP_VERIFY_ACCOUNT succeeds.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_PAPER_BILL = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            INNER JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+               AND addr.UCRADDR_STREET_NUMBER IS NOT NULL
+               AND addr.UCRADDR_PDIR_CODE_PRE IS NOT NULL
+               AND addr.UCRADDR_STREET_NAME IS NOT NULL
+               AND addr.UCRADDR_CITY IS NOT NULL
+               AND addr.UCRADDR_STAT_CODE IS NOT NULL
+               AND addr.UCRADDR_ZIP IS NOT NULL
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_PAPER_CORR = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            INNER JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+               AND addr.UCRADDR_STREET_NUMBER IS NOT NULL
+               AND addr.UCRADDR_PDIR_CODE_PRE IS NOT NULL
+               AND addr.UCRADDR_STREET_NAME IS NOT NULL
+               AND addr.UCRADDR_CITY IS NOT NULL
+               AND addr.UCRADDR_STAT_CODE IS NOT NULL
+               AND addr.UCRADDR_ZIP IS NOT NULL
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** Primary Banner email for a customer (active GZBEMCP account email). */
+    public static final String SELECT_ACTIVE_BANNER_EMAIL_BY_CUST = """
+            SELECT g.GZBEMCP_EMAIL_ADDR AS bannerEmail
+            FROM GZBEMCP g
+            WHERE g.GZBEMCP_CUST_CODE = ?
+              AND g.GZBEMCP_ACCOUNT_IND = 'Y'
+              AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+              AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            ORDER BY
+                NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                g.GZBEMCP_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount: NEW account with confirmed bill preference + confirm date + email. */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_BILL = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                TO_CHAR(
+                    (SELECT MAX(p.OCSEPCI_EMAIL_COMP_DATE)
+                     FROM OCSEPCI p
+                     WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                       AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                       AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                       AND p.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL),
+                    'YYYYMMDD')          AS billDeliveryConfirmDate,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND a.UCRACCT_BILL_PRES_TYPE = 'E'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount: NEW account with confirmed correspondence preference + confirm date + email. */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_CORR = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                TO_CHAR(
+                    (SELECT MAX(p.OCSEPCI_EMAIL_COMP_DATE)
+                     FROM OCSEPCI p
+                     WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                       AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                       AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                       AND p.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL),
+                    'YYYYMMDD')          AS corrDeliveryConfirmDate,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND a.UCRACCT_CORR_DEL_TYPE = 'E'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount: NEW account with pending bill enrollment (expect BillPresType=I). */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_PENDING_BILL = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount: NEW account with pending correspondence enrollment (expect CorrespondencePreference=I). */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_PENDING_CORR = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount: NEW account not enrolled in paperless bill (expect BillPresType=P). */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_PAPER_BILL = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount: NEW account not enrolled in paperless correspondence (expect CorrespondencePreference=P). */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_PAPER_CORR = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * VerifyAccount TC_230: NEW account with expired (unconfirmed) bill PPER → expect BillPresType=P.
+     * Has OCSEPCI bill=E with COMP null and EXP &lt;= SYSDATE; no active non-expired unused PPER.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_BILL = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+                    AND p.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** VerifyAccount TC_230 fallback: ACTIVE expired unconfirmed bill PPER → BillPresType=P. */
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_EXPIRED_BILL = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE  AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+                    AND p.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * VerifyAccount TC_231: NEW account with expired (unconfirmed) corr PPER → CorrespondencePreference=P.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_CORR = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            WHERE a.UCRACCT_STATUS_IND = 'N'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+                    AND p.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_ACTIVE_EXPIRED_CORR = """
+            WITH active_email AS (
+                SELECT
+                    g.GZBEMCP_CUST_CODE,
+                    g.GZBEMCP_EMAIL_ADDR,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.GZBEMCP_CUST_CODE
+                        ORDER BY
+                            NVL(g.GZBEMCP_EXPIRATION_DATE, DATE '2099-12-31') DESC,
+                            g.GZBEMCP_ACTIVITY_DATE DESC
+                    ) AS rn
+                FROM GZBEMCP g
+                WHERE g.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND g.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (g.GZBEMCP_EXPIRATION_DATE IS NULL OR g.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            )
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billPresType,
+                NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR     AS bannerEmail
+            FROM UCRACCT a
+            INNER JOIN active_email e
+                ON e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND e.rn = 1
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+              AND EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND NVL(p.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+                    AND p.OCSEPCI_EMAIL_EXP_DATE <= SYSDATE
+              )
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
@@ -5505,6 +6725,27 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FROM custadv_registered_accounts
             WHERE account_number LIKE CONCAT('%', ?, '%')
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * MariaDB: online Preferences-capable accounts (domain_id=2) with registered account_number.
+     * Used by FTD05 VerifyAccount — Preferences rejects Banner-only emails (ErrorCode 302).
+     */
+    public static final String SELECT_PREFERENCES_REGISTERED_ACCOUNTS = """
+            SELECT
+                u.user_name AS loginOrEmail,
+                ra.account_number AS accountNumber
+            FROM users u
+            INNER JOIN custadv_registered_accounts ra
+                ON u.user_id = ra.user_id
+            WHERE u.domain_id = 2
+              AND u.active = 1
+              AND IFNULL(u.deleted, 0) = 0
+              AND ra.account_number IS NOT NULL
+              AND LENGTH(ra.account_number) >= 16
+              AND u.user_name LIKE '%@%'
+            ORDER BY u.user_id DESC
+            LIMIT ?
             """;
 
 
@@ -7379,6 +8620,44 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             and uzrpsto_parm_name = 'MAX_SEARCH_COUNT'
             """;
 
+    /** Banner non-prod test email override (UAT1 typically uattestemail@test.com). */
+    public static final String SELECT_BANNER_NEW_TEST_EMAIL_ADDR = """
+            SELECT uzrpsto_parm_value
+            FROM uzrpsto
+            WHERE uzrpsto_object = 'WHTCNTS_TEST_WEB_SERV_ACCESS'
+              AND uzrpsto_parm_name = 'NEW_TEST_EMAIL_ADDR'
+            """;
+
+    /**
+     * Oracle treats {@code ''} as NULL (ORA-01407). Use a non-empty sentinel so Banner has no
+     * usable test-email override (same effect as "removing" the configured address).
+     */
+    public static final String CLEAR_BANNER_NEW_TEST_EMAIL_ADDR = """
+            UPDATE uzrpsto
+            SET uzrpsto_parm_value = ' '
+            WHERE uzrpsto_object IN ( 'WHTCNTS_TEST_WEB_SERV_ACCESS','UZPSEND')
+              AND uzrpsto_parm_name In ( 'NEW_TEST_EMAIL_ADDR', 'TEST_EMAIL_ADDR')
+            """;
+
+    public static final String RESTORE_BANNER_NEW_TEST_EMAIL_ADDR = """
+            UPDATE uzrpsto
+            SET uzrpsto_parm_value = ?
+            WHERE uzrpsto_object IN ( 'WHTCNTS_TEST_WEB_SERV_ACCESS','UZPSEND')
+              AND uzrpsto_parm_name In ( 'NEW_TEST_EMAIL_ADDR', 'TEST_EMAIL_ADDR')
+            """;
+
+    /**
+     * TC_131/132: hold GZBEMCP email row(s) with FOR UPDATE so Banner preference/confirmation-date
+     * update cannot complete (→ 40293). On UAT1 Confirm often waits until gateway HTTP 504.
+     * Release via connection rollback/close.
+     */
+    public static final String LOCK_UCRACCT_ROW_FOR_UPDATE = """
+            SELECT GZBEMCP_CUST_CODE, GZBEMCP_EMAIL_ADDR
+            FROM GZBEMCP
+            WHERE GZBEMCP_CUST_CODE = ?
+            FOR UPDATE
+            """;
+
     public static final String UPDATE_PASSWORD= """
             update users
             set password='UAT2@CustomerPass'
@@ -7902,6 +9181,257 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                                                    t1.ucracct_cust_code DESC
                                                                FETCH FIRST 1 ROWS ONLY
     """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC203 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_scty_code = 'COMM'
+                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC204 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            JOIN
+                uzrplan p ON p.uzrplan_short_code = t4.ucrscmp_plan_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_scty_code = 'COMM'
+                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+                AND p.uzrplan_effective_date <= SYSDATE
+                AND p.uzrplan_expiration_date >= SYSDATE
+                AND p.uzrplan_toff_term_days > 0
+                AND (TRUNC(SYSDATE) + p.uzrplan_toff_term_days) > t4.ucrscmp_end_date
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC205 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_plan_code IN ('RGB', 'GB6', 'CGB')
+                AND t4.ucrscmp_scty_code = 'COMM'
+                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC206 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_plan_code IN ('MVS', '24M', '24B', 'FIX')
+                AND t4.ucrscmp_scty_code = 'COMM'
+                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM ucrscmp other
+                    WHERE other.ucrscmp_cust_code = t1.ucracct_cust_code
+                      AND other.ucrscmp_prem_code = t1.ucracct_prem_code
+                      AND other.ucrscmp_scty_code = 'COMM'
+                      AND TRUNC(SYSDATE) BETWEEN other.ucrscmp_start_date AND other.ucrscmp_end_date
+                      AND other.ucrscmp_plan_code NOT IN ('MVS', '24M', '24B', 'FIX')
+                )
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC207 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_scty_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_plan_code IN ('RGB', 'CGB', 'GB6', 'PGB')
+                AND t4.ucrscmp_scty_code = 'COMM'
+                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM ucrscmp disc
+                    WHERE disc.ucrscmp_cust_code = t1.ucracct_cust_code
+                      AND disc.ucrscmp_prem_code = t1.ucracct_prem_code
+                      AND disc.ucrscmp_end_date > SYSDATE
+                      AND disc.ucrscmp_scty_code IN ('PPTDISC', 'FLATDISC', 'CSCDISC')
+                )
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC208 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_scty_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_end_date > SYSDATE
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM ucrscmp gbp
+                    WHERE gbp.ucrscmp_cust_code = t1.ucracct_cust_code
+                      AND gbp.ucrscmp_prem_code = t1.ucracct_prem_code
+                      AND gbp.ucrscmp_end_date > SYSDATE
+                      AND gbp.ucrscmp_plan_code IN ('RGB', 'CGB', 'GB6', 'PGB')
+                )
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC209 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_scty_code = 'COMM'
+                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC210 = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code,
+                t3.ucrserv_scls_code,
+                t4.ucrscmp_plan_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_scty_code = 'COMM'
+                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+            ORDER BY
+                t1.ucracct_cust_code DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
 
     public static final String SELECT_ACCOUNT_WITHOUT_ADDRESS= """
             SELECT

@@ -20,12 +20,16 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/csi/phase1"
+//                "src/test/resources/features/csi/phase1/GetAccountInfo.feature",
+//                "src/test/resources/features/csi/phase3/GetPaperlessEnrollmentEligibility.feature"
+                "src/test/resources/features/csi/phase3/UpdatePaperlessCommunications.feature"
+                //"src/test/resources/features/csi/phase3/ConfirmPaperlessEnrollment.feature"
+//                "src/test/resources/features/csi/phase1/UpdateMailingAddress.feature"
+//                "src/test/resources/features/csi/phase3/VerifyAccount.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
         monochrome = true,
-       //tags = "@CSI099",
         plugin = {
                 "pretty",
                 "json:target/cucumberJson/cucumber.json", // ✅ Required for maven-cucumber-reporting
@@ -39,7 +43,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @Override
-    @DataProvider(parallel = true)
+    @DataProvider(parallel = false)
     public Object[][] scenarios() {
         return super.scenarios();
     }

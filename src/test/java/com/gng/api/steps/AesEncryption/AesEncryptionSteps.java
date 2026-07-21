@@ -66,10 +66,7 @@ public class AesEncryptionSteps {
                 .relaxedHTTPSValidation()
                 .contentType(ContentType.JSON)
                 .body(payload)
-                .post(uri)
-                .then()
-                .extract()
-                .response();
+                .post(uri);
 
 
         // Log API request and response details

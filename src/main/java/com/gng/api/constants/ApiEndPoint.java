@@ -42,6 +42,8 @@ public final class ApiEndPoint {
     public static final String UPDATE_PAPERLESS_COMMUNICATIONS="/CustomerService/UpdatePaperlessCommunications";
     public static final String CONFIRM_PAPERLESS_ENROLLMENT="/CustomerService/ConfirmPaperlessEnrollment";
     public static final String GET_PAPERLESS_ENROLLMENT_ELIGIBILITY="/CustomerService/GetPaperlessEnrollmentEligibility";
+    /** FTD05 VerifyAccount — Preferences requestbroker (not WAPI Accounts/VerifyAccount). */
+    public static final String VERIFY_ACCOUNT = "api/requestbroker";
 
 
     private ApiEndPoint() {

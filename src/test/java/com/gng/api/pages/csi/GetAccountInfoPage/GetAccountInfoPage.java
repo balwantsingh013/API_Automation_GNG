@@ -16,7 +16,7 @@ public class GetAccountInfoPage extends BasePage {
 
     public GetAccountInfoPage(TestContext testContext) {
         super(testContext);
-        this.helper = new GetAccountInfoApiHelper(testContext);
+        this.helper = new GetAccountInfoApiHelper();
     }
 
     public void validateResponseForTestConditions(GetAccountInfoLabel apiLabel, GetAccountInfoLabel testCondition) {

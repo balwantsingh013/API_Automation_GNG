@@ -1,5 +1,6 @@
 package com.gng.api.db;
 
+import com.gng.api.context.ApplicationContext;
 import com.gng.api.report.SimplifiedExtentReportManager;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
@@ -571,6 +572,26 @@ public class DBAction {
         // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getStoredLoginId(String loginId) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_LOGIN_ID_BY_VALUE;
+        String loggedQuery = query.replace("?", "'" + loginId + "'");
+
+        logQueryInAllure("get stored login id", loggedQuery);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, loginId);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
                 result.toString(),
                 elapsed
         );
@@ -2182,23 +2203,17 @@ public class DBAction {
         }
     }
 
+    /** TC_73: one channel ineligible for enrollment, other eligible, with Banner email on file. */
     public Map<String, Object> getOneChannelIneligibleAccount() {
-        long startTime = System.currentTimeMillis();
-        String query = DBQuery.SELECT_ONE_CHANNEL_INELIGIBLE;
-
-        logQueryInAllure("get one channel ineligible account", query);
-
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
-
-        long elapsed = System.currentTimeMillis() - startTime;
-
-        SimplifiedExtentReportManager.logDatabaseQuery(
-                query,
-                result.toString(),
-                elapsed
-        );
-
-        return result;
+        try {
+            return querySinglePaperlessAccount(
+                    DBQuery.SELECT_ONE_CHANNEL_INELIGIBLE,
+                    "get one channel ineligible account (corr ineligible, bill eligible)");
+        } catch (IllegalStateException ex) {
+            return querySinglePaperlessAccount(
+                    DBQuery.SELECT_ONE_CHANNEL_INELIGIBLE_BILL,
+                    "get one channel ineligible account (bill ineligible, corr eligible)");
+        }
     }
 
     public Map<String, Object> getFiservBillAccount() {
@@ -2218,6 +2233,45 @@ public class DBAction {
         );
 
         return result;
+    }
+
+    /** TC_69: bill enrollment ineligible (Banner bill preference NULL, not Fiserv F). */
+    public Map<String, Object> getBillEnrollmentIneligibleAccount() {
+        return getActiveAccountWithNullBillPreference();
+    }
+
+    /** TC_71: correspondence enrollment ineligible (Banner corr preference NULL). */
+    public Map<String, Object> getCorrEnrollmentIneligibleAccount() {
+        return getActiveAccountWithNullCorrPreference();
+    }
+
+    /** TC_72: both channels ineligible (no active Banner email on file). */
+    public Map<String, Object> getBothChannelsIneligibleAccount() {
+        return getActiveAccountWithNoBannerEmail();
+    }
+
+    /** TC_76: bill channel only in Initiated pending state (not fully enrolled). */
+    public Map<String, Object> getAccountInInitiatedPaperlessState() {
+        return getActiveAccountWithPendingBillEnrollment();
+    }
+
+    /** TC_76 bootstrap: returns null when no pending bill enrollment exists in UAT1. */
+    public Map<String, Object> tryGetAccountInInitiatedPaperlessState() {
+        try {
+            return getActiveAccountWithPendingBillEnrollment();
+        } catch (IllegalStateException ex) {
+            return null;
+        }
+    }
+
+    /** TC_77: ACTIVE account eligible except confirmation email must fail at SMTP. */
+    public Map<String, Object> getActivePaperlessEligibleAccountWithEmailFailure() {
+        return getActiveAccountForFreshBillEnrollmentStrict();
+    }
+
+    /** TC_78: NEW account eligible except confirmation email must fail at SMTP. */
+    public Map<String, Object> getNewPaperlessEligibleAccountWithEmailFailure() {
+        return getNewPaperlessEligibleAccountWithNoToken();
     }
 
     public Map<String, Object> getActiveAccountWithNoBannerEmail() {
@@ -2273,10 +2327,22 @@ public class DBAction {
                 "get ACTIVE account with pending correspondence enrollment");
     }
 
+    public Map<String, Object> tryGetActiveAccountWithPendingCorrEnrollment() {
+        return tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_ACTIVE_ACCOUNT_PENDING_CORR_ENROLLMENT,
+                "get ACTIVE account with pending correspondence enrollment", false);
+    }
+
     public Map<String, Object> getActiveAccountWithPendingBillEnrollment() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_ACTIVE_ACCOUNT_PENDING_BILL_ENROLLMENT,
                 "get ACTIVE account with pending bill enrollment");
+    }
+
+    public Map<String, Object> tryGetActiveAccountWithPendingBillEnrollment() {
+        return tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_ACTIVE_ACCOUNT_PENDING_BILL_ENROLLMENT,
+                "get ACTIVE account with pending bill enrollment", false);
     }
 
     public Map<String, Object> getActiveAccountWithPendingCorrAndBannerCorrEnrolled() {
@@ -2285,16 +2351,85 @@ public class DBAction {
                 "get ACTIVE account with pending correspondence enrollment and Banner corr=E");
     }
 
+    public Map<String, Object> tryGetActiveAccountWithPendingCorrAndBannerCorrEnrolled() {
+        return tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_ACTIVE_ACCOUNT_PENDING_CORR_WITH_BANNER_CORR_ENROLLED,
+                "get ACTIVE account with pending correspondence enrollment and Banner corr=E", false);
+    }
+
     public Map<String, Object> getActiveAccountWithPendingBillAndFiservBill() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_ACTIVE_ACCOUNT_PENDING_BILL_WITH_FISERV_BILL,
                 "get ACTIVE account with pending bill enrollment and Fiserv bill delivery");
     }
 
+    public Map<String, Object> tryGetActiveAccountWithPendingBillAndFiservBill() {
+        return tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_ACTIVE_ACCOUNT_PENDING_BILL_WITH_FISERV_BILL,
+                "get ACTIVE account with pending bill enrollment and Fiserv bill delivery", false);
+    }
+
     public Map<String, Object> getActiveAccountWithNoEmailAndPendingBillEnrollment() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_ACTIVE_ACCOUNT_NO_EMAIL_PENDING_BILL_ENROLLMENT,
                 "get ACTIVE account with no Banner email and pending bill enrollment");
+    }
+
+    public Map<String, Object> tryGetActiveAccountWithNoEmailAndPendingBillEnrollment() {
+        return tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_ACTIVE_ACCOUNT_NO_EMAIL_PENDING_BILL_ENROLLMENT,
+                "get ACTIVE account with no Banner email and pending bill enrollment", false);
+    }
+
+    public Map<String, Object> tryGetNewAccountWithUnconfirmedBillPreference() {
+        String query = DBQuery.SELECT_NEW_ACCOUNT_UNCONFIRMED_BILL_PREFERENCE;
+        try {
+            return jdbcTemplate.queryForMap(query);
+        } catch (EmptyResultDataAccessException ex) {
+            return tryGetNewAccountWithEnrolledPendingBillPrefQuiet();
+        }
+    }
+
+    private Map<String, Object> tryGetNewAccountWithEnrolledPendingBillPrefQuiet() {
+        String[][] queryChain = {
+                {DBQuery.SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT},
+                {DBQuery.SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT_SIMPLE}
+        };
+        for (String[] step : queryChain) {
+            try {
+                return jdbcTemplate.queryForMap(step[0]);
+            } catch (EmptyResultDataAccessException ex) {
+                // try next fallback
+            }
+        }
+        return null;
+    }
+
+    private Map<String, Object> tryGetNewAccountWithEnrolledPendingBillPref() {
+        String[][] queryChain = {
+                {
+                        "try get NEW account with pending bill enrollment (TC_100 strict)",
+                        DBQuery.SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT
+                },
+                {
+                        "try get NEW account with pending bill enrollment (TC_100 simple)",
+                        DBQuery.SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT_SIMPLE
+                }
+        };
+        for (String[] step : queryChain) {
+            String label = step[0];
+            String query = step[1];
+            logQueryInAllure(label, query);
+            try {
+                long startTime = System.currentTimeMillis();
+                Map<String, Object> result = jdbcTemplate.queryForMap(query);
+                logPaperlessDbResult(query, result, startTime);
+                return result;
+            } catch (EmptyResultDataAccessException ex) {
+                log.warn("{} returned no rows", label);
+            }
+        }
+        return null;
     }
 
     public Map<String, Object> getNewAccountWithUnconfirmedBillPreference() {
@@ -2311,10 +2446,381 @@ public class DBAction {
         }
     }
 
+    public Map<String, Object> getNewAccountWithNullBillPreference() {
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_NEW_ACCOUNT_NULL_BILL_PREFERENCE,
+                "get NEW account with NULL bill preference");
+    }
+
+    /**
+     * Quiet custadv update for TC_127 account-mismatch bootstrap (not logged to Extent report).
+     */
+    public void updateCustAdvPaperlessTokenAccountNumberQuiet(long verificationStatusId, String accountNumber) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_CUSTADV_PAPERLESS_TOKEN_ACCOUNT_NUMBER, accountNumber, verificationStatusId);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No custadv paperless token row updated for verification id " + verificationStatusId);
+        }
+        log.debug("Remapped custadv token row {} to account_number {}", verificationStatusId, accountNumber);
+    }
+
+    public List<Map<String, Object>> listActiveAccountsWithPendingBillEnrollment(int maxRows, boolean logToReport) {
+        return listPaperlessAccounts(DBQuery.SELECT_LIST_ACTIVE_ACCOUNTS_PENDING_BILL_ENROLLMENT,
+                maxRows, logToReport, "list ACTIVE accounts with pending bill enrollment");
+    }
+
+    public List<Map<String, Object>> listNewAccountsWithPendingBillEnrollment(int maxRows, boolean logToReport) {
+        return listPaperlessAccounts(DBQuery.SELECT_LIST_NEW_ACCOUNTS_PENDING_BILL_ENROLLMENT,
+                maxRows, logToReport, "list NEW accounts with pending bill enrollment");
+    }
+
+    public List<Map<String, Object>> listNewAccountsWithExpiredUnconfirmedBillEnrollment(int maxRows,
+                                                                                         boolean logToReport) {
+        return listPaperlessAccounts(DBQuery.SELECT_LIST_NEW_ACCOUNTS_EXPIRED_UNCONFIRMED_BILL,
+                maxRows, logToReport, "list NEW accounts with expired unconfirmed bill preference");
+    }
+
+    public Map<String, Object> tryGetNewAccountWithExpiredUnconfirmedBillPreference() {
+        return tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_NEW_ACCOUNT_EXPIRED_UNCONFIRMED_BILL_PREFERENCE,
+                "get NEW account with expired unconfirmed bill preference");
+    }
+
+    private List<Map<String, Object>> listPaperlessAccounts(String query,
+                                                            int maxRows,
+                                                            boolean logToReport,
+                                                            String label) {
+        long startTime = System.currentTimeMillis();
+        if (logToReport) {
+            logQueryInAllure(label, query);
+        }
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        if (result.size() > maxRows) {
+            result = result.subList(0, maxRows);
+        }
+        if (logToReport) {
+            logPaperlessDbResult(query, Map.of("accountCount", result.size()), startTime);
+        }
+        return result;
+    }
+
+    /** Quiet Banner update for TC_129/130 — block paperless bill preference apply on confirm. */
+    public void updateAccountBillPresentationTypeQuiet(String customerCode, String premisesCode, String billType) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_UCRACCT_BILL_PRES_TYPE_FOR_ACCOUNT, billType, customerCode, premisesCode);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No UCRACCT bill preference updated for " + customerCode + "/" + premisesCode);
+        }
+        log.debug("Updated bill presentation type to {} for {}/{}", billType, customerCode, premisesCode);
+    }
+
+    /** Quiet Banner update — set correspondence delivery type without API side effects. */
+    public void updateAccountCorrDeliveryTypeQuiet(String customerCode, String premisesCode, String corrType) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_UCRACCT_CORR_DEL_TYPE_FOR_ACCOUNT, corrType, customerCode, premisesCode);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No UCRACCT correspondence preference updated for " + customerCode + "/" + premisesCode);
+        }
+        log.debug("Updated correspondence delivery type to {} for {}/{}", corrType, customerCode, premisesCode);
+    }
+
+    /** Quiet Banner update — expire active account emails (simulate no email on file). */
+    public void expireActiveBannerEmailsQuiet(String customerCode) {
+        int updated = jdbcTemplate.update(DBQuery.UPDATE_EXPIRE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER, customerCode);
+        if (updated == 0) {
+            throw new IllegalStateException("No active GZBEMCP email rows expired for customer " + customerCode);
+        }
+        log.debug("Expired {} active Banner email row(s) for customer {}", updated, customerCode);
+    }
+
+    public Map<String, Object> tryLookupUcracctAccount(String customerCode, String premisesCode) {
+        try {
+            return jdbcTemplate.queryForMap(
+                    DBQuery.SELECT_UCRACCT_ACCOUNT_SUMMARY, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
+    public boolean hasActiveBannerEmail(String customerCode) {
+        Integer count = jdbcTemplate.queryForObject(
+                """
+                SELECT COUNT(1)
+                FROM GZBEMCP e
+                WHERE e.GZBEMCP_CUST_CODE = ?
+                  AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+                  AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                  AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+                """,
+                Integer.class,
+                customerCode);
+        return count != null && count > 0;
+    }
+
+    public boolean hasUnusedCustAdvPaperlessToken(String customerCode, String premisesCode) {
+        return hasUnusedCustAdvPaperlessToken(customerCode, premisesCode, false);
+    }
+
+    public boolean hasUnusedCustAdvPaperlessToken(String customerCode, String premisesCode, boolean logToReport) {
+        return ApplicationContext.get().getDbAction("mariadb")
+                .tryGetLatestConfirmPaperlessTokenFromCustAdv(customerCode, premisesCode, logToReport) != null;
+    }
+
     public Map<String, Object> getNewAccountWithConfirmedBillPreference() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE,
                 "get NEW account with confirmed electronic bill preference");
+    }
+
+    public Map<String, Object> getVerifyAccountWithUcraddrStreet() {
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_STREET,
+                "get VerifyAccount account with UCRADDR street fields");
+    }
+
+    public List<Map<String, Object>> listVerifyAccountStreetCandidates(int limit) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_STREET_CANDIDATES;
+        logQueryInAllure("list VerifyAccount street candidates (limit " + limit + ")", query);
+        try {
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
+            if (rows.size() > limit) {
+                rows = rows.subList(0, limit);
+            }
+            logPaperlessDbResult(query, rows.isEmpty() ? Map.of() : rows.get(0), startTime);
+            return rows;
+        } catch (EmptyResultDataAccessException ex) {
+            return List.of();
+        }
+    }
+
+    /**
+     * MariaDB online-registered accounts for Preferences VerifyAccount probing.
+     * Call via {@code ApplicationContext.get().getDbAction("mariadb")}.
+     */
+    public List<Map<String, Object>> listPreferencesRegisteredAccounts(int limit) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PREFERENCES_REGISTERED_ACCOUNTS;
+        logQueryInAllure("list Preferences registered accounts (limit " + limit + ")", query);
+        try {
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList(query, Math.max(1, limit));
+            log.info("Found {} Preferences registered account candidates", rows.size());
+            long elapsed = System.currentTimeMillis() - startTime;
+            SimplifiedExtentReportManager.logDatabaseQuery(
+                    query, "rows=" + rows.size(), elapsed);
+            return rows;
+        } catch (EmptyResultDataAccessException ex) {
+            return List.of();
+        } catch (Exception ex) {
+            log.warn("listPreferencesRegisteredAccounts failed: {}", ex.getMessage());
+            return List.of();
+        }
+    }
+
+    /**
+     * Parses custadv {@code 00}+7+7 account_number into customerCode / premisesCode.
+     */
+    public static String[] parseCustAdvAccountNumber(String accountNumber) {
+        if (accountNumber == null || accountNumber.isBlank()) {
+            throw new IllegalArgumentException("accountNumber is blank");
+        }
+        String digits = accountNumber.replaceAll("\\D", "");
+        if (digits.length() < 14) {
+            throw new IllegalArgumentException("accountNumber too short: " + accountNumber);
+        }
+        String cust = String.valueOf(Long.parseLong(digits.substring(digits.length() - 14, digits.length() - 7)));
+        String prem = String.valueOf(Long.parseLong(digits.substring(digits.length() - 7)));
+        return new String[]{cust, prem};
+    }
+
+    public Map<String, Object> getVerifyAccountWithUcraddrPoBox() {
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_PO_BOX,
+                "get VerifyAccount account with UCRADDR PO Box");
+    }
+
+    public Map<String, Object> getVerifyAccountNewConfirmedBill() {
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_BILL,
+                "get VerifyAccount NEW account with confirmed bill preference", false);
+        if (account != null) {
+            return account;
+        }
+        // SP_VERIFY_ACCOUNT requires Active — fall back so suite can still run
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_CONFIRMED_BILL,
+                "get VerifyAccount ACTIVE account with confirmed bill preference (NEW fallback)");
+    }
+
+    public Map<String, Object> getVerifyAccountNewConfirmedCorr() {
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_CORR,
+                "get VerifyAccount NEW account with confirmed correspondence preference", false);
+        if (account != null) {
+            return account;
+        }
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_CONFIRMED_CORR,
+                "get VerifyAccount ACTIVE account with confirmed correspondence preference (NEW fallback)");
+    }
+
+    public Map<String, Object> getVerifyAccountNewPendingBill() {
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PENDING_BILL,
+                "get VerifyAccount NEW account with pending bill preference (I)", false);
+        if (account != null) {
+            return account;
+        }
+        account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PENDING_BILL,
+                "get VerifyAccount ACTIVE account with pending bill preference (I) (NEW fallback)", false);
+        if (account != null) {
+            return account;
+        }
+        // Pending rows may lack street/email join — use generic pending + enrich email
+        account = tryGetActiveAccountWithPendingBillEnrollment();
+        if (account != null) {
+            enrichBannerEmail(account);
+            if (account.get("bannerEmail") != null
+                    && !account.get("bannerEmail").toString().isBlank()) {
+                return account;
+            }
+        }
+        throw new IllegalStateException(
+                "No account found for: get VerifyAccount pending bill preference (I)");
+    }
+
+    public Map<String, Object> getVerifyAccountNewPendingCorr() {
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PENDING_CORR,
+                "get VerifyAccount NEW account with pending correspondence preference (I)", false);
+        if (account != null) {
+            return account;
+        }
+        account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PENDING_CORR,
+                "get VerifyAccount ACTIVE account with pending correspondence preference (I) (NEW fallback)",
+                false);
+        if (account != null) {
+            return account;
+        }
+        account = tryGetActiveAccountWithPendingCorrEnrollment();
+        if (account != null) {
+            enrichBannerEmail(account);
+            if (account.get("bannerEmail") != null
+                    && !account.get("bannerEmail").toString().isBlank()) {
+                return account;
+            }
+        }
+        throw new IllegalStateException(
+                "No account found for: get VerifyAccount pending correspondence preference (I)");
+    }
+
+    public Map<String, Object> getVerifyAccountNewPaperBill() {
+        // QRE: NEW not-enrolled bill → BillPresType=P; ACTIVE fallback when NEW fails SP_VERIFY
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PAPER_BILL,
+                "get VerifyAccount NEW account with paper bill preference (P)", false);
+        if (account != null) {
+            return account;
+        }
+        account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PAPER_BILL,
+                "get VerifyAccount ACTIVE account with paper bill preference (P) (NEW fallback)", false);
+        if (account != null) {
+            return account;
+        }
+        account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_TC_86_ACTIVE_BILL_NO_VALID_TOKEN,
+                "get VerifyAccount ACTIVE paper bill via TC_86 pool", false);
+        if (account != null) {
+            if (account.get("billPresType") == null && account.get("billDeliveryOption") != null) {
+                account.put("billPresType", account.get("billDeliveryOption"));
+            }
+            return account;
+        }
+        throw new IllegalStateException(
+                "No account found for: get VerifyAccount paper bill preference (P)");
+    }
+
+    public Map<String, Object> getVerifyAccountNewPaperCorr() {
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PAPER_CORR,
+                "get VerifyAccount NEW account with paper correspondence preference (P)", false);
+        if (account != null) {
+            return account;
+        }
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PAPER_CORR,
+                "get VerifyAccount ACTIVE account with paper correspondence preference (P) (NEW fallback)");
+    }
+
+    /** TC_230: NEW expired unconfirmed bill PPER → expect BillPresType=P. */
+    public Map<String, Object> getVerifyAccountNewExpiredBill() {
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_BILL,
+                "get VerifyAccount NEW account with expired bill preference (P)", false);
+        if (account != null) {
+            return account;
+        }
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_EXPIRED_BILL,
+                "get VerifyAccount ACTIVE account with expired bill preference (P) (NEW fallback)");
+    }
+
+    /** TC_231: NEW expired unconfirmed corr PPER → expect CorrespondencePreference=P. */
+    public Map<String, Object> getVerifyAccountNewExpiredCorr() {
+        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_CORR,
+                "get VerifyAccount NEW account with expired correspondence preference (P)", false);
+        if (account != null) {
+            return account;
+        }
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_EXPIRED_CORR,
+                "get VerifyAccount ACTIVE account with expired correspondence preference (P) (NEW fallback)");
+    }
+
+    /** Active Banner GZBEMCP email for customer, or null if none. */
+    public String getActiveBannerEmailForCustomer(String customerCode) {
+        if (customerCode == null || customerCode.isBlank()) {
+            return null;
+        }
+        try {
+            return jdbcTemplate.queryForObject(
+                    DBQuery.SELECT_ACTIVE_BANNER_EMAIL_BY_CUST, String.class, customerCode.trim());
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
+    public void enrichBannerEmail(Map<String, Object> account) {
+        if (account == null) {
+            return;
+        }
+        Object existing = account.get("bannerEmail");
+        if (existing != null && !existing.toString().isBlank()) {
+            return;
+        }
+        Object customerCode = account.get("customerCode");
+        if (customerCode == null) {
+            for (Map.Entry<String, Object> entry : account.entrySet()) {
+                if ("customerCode".equalsIgnoreCase(entry.getKey()) && entry.getValue() != null) {
+                    customerCode = entry.getValue();
+                    break;
+                }
+            }
+        }
+        if (customerCode == null) {
+            return;
+        }
+        String email = getActiveBannerEmailForCustomer(customerCode.toString());
+        if (email != null) {
+            account.put("bannerEmail", email);
+        }
     }
 
     private Map<String, Object> querySinglePaperlessAccount(String query, String allureLabel) {
@@ -2326,6 +2832,29 @@ public class DBAction {
             return result;
         } catch (EmptyResultDataAccessException ex) {
             throw new IllegalStateException("No account found for: " + allureLabel);
+        }
+    }
+
+    private Map<String, Object> tryQuerySinglePaperlessAccount(String query, String allureLabel) {
+        return tryQuerySinglePaperlessAccount(query, allureLabel, true);
+    }
+
+    private Map<String, Object> tryQuerySinglePaperlessAccount(String query, String allureLabel, boolean logToReport) {
+        long startTime = System.currentTimeMillis();
+        if (logToReport) {
+            logQueryInAllure(allureLabel, query);
+        }
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(query);
+            if (logToReport) {
+                logPaperlessDbResult(query, result, startTime);
+            }
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            if (logToReport) {
+                log.warn("No account found for: {}", allureLabel);
+            }
+            return null;
         }
     }
 
@@ -2368,27 +2897,88 @@ public class DBAction {
      * Use via {@code ApplicationContext.get().getDbAction("mariadb")}.
      */
     public Map<String, Object> getLatestConfirmPaperlessTokenFromCustAdv(String customerCode, String premisesCode) {
+        return getLatestConfirmPaperlessTokenFromCustAdv(customerCode, premisesCode, true);
+    }
+
+    public Map<String, Object> getLatestConfirmPaperlessTokenFromCustAdv(String customerCode,
+                                                                  String premisesCode,
+                                                                  boolean logToReport) {
         long startTime = System.currentTimeMillis();
         String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
         String query = DBQuery.SELECT_CUSTADV_LATEST_PAPERLESS_EMAIL_VERIFICATION_TOKEN;
 
-        logQueryInAllure("get latest paperless confirm token from custadv for account " + accountNumber, query);
+        if (logToReport) {
+            logQueryInAllure("get latest paperless confirm token from custadv for account " + accountNumber, query);
+        }
 
         Map<String, Object> result = jdbcTemplate.queryForMap(query, accountNumber);
         normalizeCustAdvTokenRow(result, customerCode, premisesCode, accountNumber);
 
-        long elapsed = System.currentTimeMillis() - startTime;
-        SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
+        if (logToReport) {
+            long elapsed = System.currentTimeMillis() - startTime;
+            SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
+        }
         return result;
     }
 
     public String tryGetLatestConfirmPaperlessTokenFromCustAdv(String customerCode, String premisesCode) {
+        return tryGetLatestConfirmPaperlessTokenFromCustAdv(customerCode, premisesCode, true);
+    }
+
+    public String tryGetLatestConfirmPaperlessTokenFromCustAdv(String customerCode,
+                                                               String premisesCode,
+                                                               boolean logToReport) {
         try {
-            Map<String, Object> row = getLatestConfirmPaperlessTokenFromCustAdv(customerCode, premisesCode);
+            Map<String, Object> row = getLatestConfirmPaperlessTokenFromCustAdv(
+                    customerCode, premisesCode, logToReport);
             return resolveTokenIdentifierFromRow(row);
         } catch (EmptyResultDataAccessException ex) {
             return null;
         }
+    }
+
+    public long getMaxCustAdvPaperlessVerificationId(String customerCode, String premisesCode) {
+        String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
+        String query = DBQuery.SELECT_CUSTADV_MAX_PAPERLESS_VERIFICATION_ID;
+        Number maxId = jdbcTemplate.queryForObject(query, Number.class, accountNumber);
+        return maxId == null ? 0L : maxId.longValue();
+    }
+
+    public String tryGetUnusedConfirmPaperlessTokenAfterId(String customerCode,
+                                                           String premisesCode,
+                                                           long minVerificationId) {
+        try {
+            Map<String, Object> row = getUnusedConfirmPaperlessTokenAfterId(
+                    customerCode, premisesCode, minVerificationId, false);
+            return resolveTokenIdentifierFromRow(row);
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
+    public Map<String, Object> getUnusedConfirmPaperlessTokenAfterId(String customerCode,
+                                                                     String premisesCode,
+                                                                     long minVerificationId) {
+        return getUnusedConfirmPaperlessTokenAfterId(customerCode, premisesCode, minVerificationId, true);
+    }
+
+    public Map<String, Object> getUnusedConfirmPaperlessTokenAfterId(String customerCode,
+                                                                     String premisesCode,
+                                                                     long minVerificationId,
+                                                                     boolean logToReport) {
+        long startTime = System.currentTimeMillis();
+        String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
+        String query = DBQuery.SELECT_CUSTADV_UNUSED_PAPERLESS_TOKEN_AFTER_ID;
+        if (logToReport) {
+            logQueryInAllure("get unused custadv paperless token after id " + minVerificationId
+                    + " for account " + accountNumber, query);
+        }
+        Map<String, Object> result = jdbcTemplate.queryForMap(query, accountNumber, minVerificationId);
+        normalizeCustAdvTokenRow(result, customerCode, premisesCode, accountNumber);
+        if (logToReport) {
+            logPaperlessDbResult(query, result, startTime);
+        }
+        return result;
     }
 
     /**
@@ -2435,6 +3025,41 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> tryGetCustAdvExpiredByLinkExpiredToken() {
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(
+                    DBQuery.SELECT_CUSTADV_EXPIRED_BY_LINK_EXPIRED);
+            enrichCustAdvTokenRow(result);
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        } catch (RuntimeException ex) {
+            log.debug("custadv date_time_link_expired query unavailable: {}", ex.getMessage());
+            return null;
+        }
+    }
+
+    public List<Map<String, Object>> listCustAdvExpiredByLinkExpiredTokens(int limit, boolean logToReport) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_CUSTADV_RECENT_EXPIRED_BY_LINK_EXPIRED;
+        if (logToReport) {
+            logQueryInAllure("list custadv tokens expired by date_time_link_expired (limit " + limit + ")", query);
+        }
+        try {
+            List<Map<String, Object>> result = jdbcTemplate.queryForList(query, limit);
+            for (Map<String, Object> row : result) {
+                enrichCustAdvTokenRow(row);
+            }
+            if (logToReport) {
+                logPaperlessDbResult(query, Map.of("rowCount", result.size()), startTime);
+            }
+            return result;
+        } catch (RuntimeException ex) {
+            log.debug("custadv date_time_link_expired list query unavailable: {}", ex.getMessage());
+            return List.of();
+        }
+    }
+
     /**
      * MariaDB (custadv): latest expired, unused paperless confirmation token.
      */
@@ -2447,6 +3072,21 @@ public class DBAction {
         Map<String, Object> result = jdbcTemplate.queryForMap(query);
         enrichCustAdvTokenRow(result);
 
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
+        return result;
+    }
+
+    /**
+     * MariaDB (custadv): latest unused paperless token across all accounts (no account filter).
+     * TC_124: row may be expired while {@code date_time_link_confirmed IS NULL} — Confirm returns 10413.
+     */
+    public Map<String, Object> getCustAdvLatestUnusedPaperlessTokenAnyAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_CUSTADV_LATEST_UNUSED_PAPERLESS_TOKEN_ANY_ACCOUNT;
+        logQueryInAllure("get latest unused paperless token from custadv (any account)", query);
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        enrichCustAdvTokenRow(result);
         long elapsed = System.currentTimeMillis() - startTime;
         SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
         return result;
@@ -2534,12 +3174,75 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_CONFIRM_EXPIRED_TOKEN;
 
-        logQueryInAllure("get expired confirmation token", query);
+        logQueryInAllure("get expired confirmation token account (latest OCSEPCI expired+unused)", query);
 
         Map<String, Object> result = jdbcTemplate.queryForMap(query);
 
         long elapsed = System.currentTimeMillis() - startTime;
         SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
+        return result;
+    }
+
+    public Map<String, Object> getExpiredConfirmationTokenQuiet() {
+        return jdbcTemplate.queryForMap(DBQuery.SELECT_CONFIRM_EXPIRED_TOKEN);
+    }
+
+    /**
+     * Accounts whose latest OCSEPCI is expired and unused.
+     */
+    public List<Map<String, Object>> listExpiredConfirmationTokenAccounts(int maxRows) {
+        return listExpiredConfirmationTokenAccounts(maxRows, true);
+    }
+
+    public List<Map<String, Object>> listExpiredConfirmationTokenAccounts(int maxRows, boolean logToReport) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_CONFIRM_EXPIRED_TOKEN_ACCOUNTS;
+        if (logToReport) {
+            logQueryInAllure("list expired OCSEPCI confirmation token accounts (latest row expired+unused)", query);
+        }
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        if (result.size() > maxRows) {
+            result = result.subList(0, maxRows);
+        }
+        if (logToReport) {
+            logPaperlessDbResult(query, Map.of("accountCount", result.size()), startTime);
+        }
+        return result;
+    }
+
+    /**
+     * Logs custadv unused-token lookup using the same format as {@link #getLatestConfirmPaperlessTokenFromCustAdv}.
+     */
+    public void logConfirmPaperlessTokenLookupResult(String customerCode,
+                                                     String premisesCode,
+                                                     Map<String, Object> result) {
+        long startTime = System.currentTimeMillis();
+        String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
+        String query = DBQuery.SELECT_CUSTADV_LATEST_PAPERLESS_EMAIL_VERIFICATION_TOKEN;
+        logQueryInAllure("get latest paperless confirm token from custadv for account " + accountNumber, query);
+        logPaperlessDbResult(query, result, startTime);
+    }
+
+    /**
+     * Latest unused paperless tokens across accounts (no account filter).
+     */
+    public List<Map<String, Object>> listRecentUnusedPaperlessTokensFromCustAdv(int limit) {
+        return listRecentUnusedPaperlessTokensFromCustAdv(limit, true);
+    }
+
+    public List<Map<String, Object>> listRecentUnusedPaperlessTokensFromCustAdv(int limit, boolean logToReport) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_CUSTADV_RECENT_UNUSED_PAPERLESS_TOKENS;
+        if (logToReport) {
+            logQueryInAllure("list recent unused paperless tokens from custadv (limit " + limit + ")", query);
+        }
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query, limit);
+        for (Map<String, Object> row : result) {
+            enrichCustAdvTokenRow(row);
+        }
+        if (logToReport) {
+            logPaperlessDbResult(query, Map.of("rowCount", result.size()), startTime);
+        }
         return result;
     }
 
@@ -2567,6 +3270,36 @@ public class DBAction {
         long elapsed = System.currentTimeMillis() - startTime;
         SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
         return result;
+    }
+
+    public List<Map<String, Object>> listEmailMismatchConfirmationTokenAccounts(int maxRows) {
+        return listEmailMismatchConfirmationTokenAccounts(maxRows, true);
+    }
+
+    public List<Map<String, Object>> listEmailMismatchConfirmationTokenAccounts(int maxRows, boolean logToReport) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_CONFIRM_EMAIL_MISMATCH_ACCOUNTS;
+        if (logToReport) {
+            logQueryInAllure("list email-mismatch confirmation token accounts (PPER email != Banner email)", query);
+        }
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        if (result.size() > maxRows) {
+            result = result.subList(0, maxRows);
+        }
+        if (logToReport) {
+            logPaperlessDbResult(query, Map.of("accountCount", result.size()), startTime);
+        }
+        return result;
+    }
+
+    public void updateActiveBannerEmailForCustomer(String customerCode, String newEmailAddress) {
+        String query = DBQuery.UPDATE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER;
+        int updated = jdbcTemplate.update(query, newEmailAddress, customerCode);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No active Banner email row updated for customer " + customerCode);
+        }
+        log.debug("Updated active Banner email for customer {} (rows={})", customerCode, updated);
     }
 
     public Map<String, Object> getActiveAccountForTc105() {
@@ -2617,6 +3350,45 @@ public class DBAction {
         logQueryInAllure("expire valid unused confirmation tokens for " + customerCode + "/" + premisesCode, query);
         int updated = jdbcTemplate.update(query, customerCode, premisesCode);
         logPaperlessDbResult(query, Map.of("rowsUpdated", updated), startTime);
+
+        try {
+            ApplicationContext.get().getDbAction("mariadb")
+                    .expireUnusedCustAdvPaperlessTokensForAccount(customerCode, premisesCode);
+        } catch (RuntimeException ex) {
+            log.warn("Could not expire custadv tokens for {}/{}: {}",
+                    customerCode, premisesCode, ex.getMessage());
+        }
+    }
+
+    /** MariaDB (custadv): mark unused paperless tokens expired for account (TC_105/106, TC_124 bootstrap). */
+    public void expireUnusedCustAdvPaperlessTokensForAccount(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+        String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
+        int updated = expireUnusedCustAdvPaperlessTokensQuiet(accountNumber);
+        logQueryInAllure("expire unused custadv paperless tokens for account " + accountNumber,
+                DBQuery.UPDATE_CUSTADV_SET_LINK_EXPIRED_PAST + " / "
+                        + DBQuery.UPDATE_CUSTADV_EXPIRE_UNUSED_PAPERLESS_TOKENS_FOR_ACCOUNT);
+        logPaperlessDbResult(
+                "expire unused custadv paperless tokens for " + accountNumber,
+                Map.of("rowsUpdated", updated),
+                startTime);
+    }
+
+    /** Quiet custadv expiry for TC_124 bootstrap — tries UAT1 link-expired column then legacy {@code expired} column. */
+    public int expireUnusedCustAdvPaperlessTokensQuiet(String accountNumber) {
+        int updated = 0;
+        try {
+            updated += jdbcTemplate.update(DBQuery.UPDATE_CUSTADV_SET_LINK_EXPIRED_PAST, accountNumber);
+        } catch (RuntimeException ex) {
+            log.debug("date_time_link_expired update unavailable for {}: {}", accountNumber, ex.getMessage());
+        }
+        try {
+            updated += jdbcTemplate.update(
+                    DBQuery.UPDATE_CUSTADV_EXPIRE_UNUSED_PAPERLESS_TOKENS_FOR_ACCOUNT, accountNumber);
+        } catch (RuntimeException ex) {
+            log.debug("expired column update unavailable for {}: {}", accountNumber, ex.getMessage());
+        }
+        return updated;
     }
 
     public Map<String, Object> getConfirmationTokenForAccountMismatch() {
@@ -4802,6 +5574,35 @@ public class DBAction {
         return rowsAffected;
     }
 
+    /**
+     * Current Banner non-prod {@code NEW_TEST_EMAIL_ADDR} override (may be null/blank if already cleared).
+     */
+    public String getBannerNewTestEmailAddr() {
+        String query = DBQuery.SELECT_BANNER_NEW_TEST_EMAIL_ADDR;
+        logQueryInAllure("Get Banner NEW_TEST_EMAIL_ADDR", query);
+        try {
+            String value = jdbcTemplate.queryForObject(query, String.class);
+            return value == null ? null : value.trim();
+        } catch (EmptyResultDataAccessException ex) {
+            log.warn("Banner NEW_TEST_EMAIL_ADDR row not found on uzrpsto");
+            return null;
+        }
+    }
+
+    /** Clears Banner test-email override so paperless notification create/send can fail (40281). */
+    public int clearBannerNewTestEmailAddr() {
+        String query = DBQuery.CLEAR_BANNER_NEW_TEST_EMAIL_ADDR;
+        logQueryInAllure("Clear Banner NEW_TEST_EMAIL_ADDR", query);
+        return jdbcTemplate.update(query);
+    }
+
+    /** Restores Banner test-email override after 40281 failure scenarios. */
+    public int restoreBannerNewTestEmailAddr(String emailAddress) {
+        String query = DBQuery.RESTORE_BANNER_NEW_TEST_EMAIL_ADDR;
+        logQueryInAllure("Restore Banner NEW_TEST_EMAIL_ADDR to " + emailAddress, query);
+        return jdbcTemplate.update(query, emailAddress);
+    }
+
     public int rollbackPasswordToPrev(String username) {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.UPDATE_PASSWORD;
@@ -5298,6 +6099,47 @@ public class DBAction {
                 elapsed
         );
 
+        return result;
+    }
+
+    public Map<String, Object> getAccountDetailsTC203() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC203);
+    }
+
+    public Map<String, Object> getAccountDetailsTC204() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC204);
+    }
+
+    public Map<String, Object> getAccountDetailsTC205() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC205);
+    }
+
+    public Map<String, Object> getAccountDetailsTC206() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC206);
+    }
+
+    public Map<String, Object> getAccountDetailsTC207() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC207);
+    }
+
+    public Map<String, Object> getAccountDetailsTC208() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC208);
+    }
+
+    public Map<String, Object> getAccountDetailsTC209() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC209);
+    }
+
+    public Map<String, Object> getAccountDetailsTC210() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC210);
+    }
+
+    private Map<String, Object> queryAccountDetails(String query) {
+        long startTime = System.currentTimeMillis();
+        logQueryInAllure("get customer code", query);
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
         return result;
     }
 

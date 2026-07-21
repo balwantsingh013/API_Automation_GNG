@@ -1499,6 +1499,11 @@ public class BaseSteps {
             return;
         }
 
+        // Banner eligibility tests (TC_69–72): errorMessage is dynamic — verify errorCode only
+        if (normalizedExpectedMessage.trim().isEmpty()) {
+            return;
+        }
+
         // ---- Strip dynamic BytePositionInLine from actual message ----
         String stableActualMessage = actualErrorMessage;
         int bytePosIndex = actualErrorMessage.indexOf("BytePositionInLine");
@@ -1511,6 +1516,19 @@ public class BaseSteps {
         int expectedBytePosIndex = normalizedExpectedMessage.indexOf("BytePositionInLine");
         if (expectedBytePosIndex > 0) {
             stableExpectedMessage = normalizedExpectedMessage.substring(0, expectedBytePosIndex).trim();
+        }
+
+        // Semicolon-separated Banner eligibility fragments (e.g. TC_73 atomic failure)
+        if (stableExpectedMessage.contains(";")) {
+            for (String part : stableExpectedMessage.split(";")) {
+                String trimmedPart = part.trim();
+                if (!trimmedPart.isEmpty()) {
+                    assertThat("ErrorMessage missing expected fragment: " + trimmedPart,
+                            stableActualMessage,
+                            containsString(trimmedPart));
+                }
+            }
+            return;
         }
 
         // Conditional validation based on presence of [PIPE] or specific substrings

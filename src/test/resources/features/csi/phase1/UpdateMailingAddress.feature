@@ -72,7 +72,7 @@ Feature: Verify UpdateMailingAddress Api
     When a request is made to UpdateMailingAddress Api for "<testCondition>"
     Then verify response code of "UpdateMailingAddress" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-    And verify if login id is saved
+    And verify if UpdateMailingAddress login id is saved
 
     Examples:
       | testCondition                           | errorCode | errorMessage |

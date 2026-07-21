@@ -59,6 +59,18 @@ public class ApplicationContext {
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read config file: " + getEnvConfigFile(), e);
         }
+        String paperlessEmailFailureOverride = System.getProperty("paperlessEmailFailureAddress");
+        if (paperlessEmailFailureOverride != null && !paperlessEmailFailureOverride.isBlank()) {
+            envConfig.setPaperlessEmailFailureAddress(paperlessEmailFailureOverride.trim());
+        }
+        String preferencesBaseUriOverride = System.getProperty("preferencesBaseUri");
+        if (preferencesBaseUriOverride != null && !preferencesBaseUriOverride.isBlank()) {
+            envConfig.setPreferencesBaseUri(preferencesBaseUriOverride.trim());
+        }
+        String preferencesAuthTokenOverride = System.getProperty("preferencesAuthToken");
+        if (preferencesAuthTokenOverride != null && !preferencesAuthTokenOverride.isBlank()) {
+            envConfig.setPreferencesAuthToken(preferencesAuthTokenOverride.trim());
+        }
         log.debug("Loaded environment configuration: {}", envConfig);
     }
 

@@ -53,5 +53,13 @@ public enum GetAccountInfoLabel {
     TC_184__Positive__Account_Info_Returned___Multiple_Discounts____,
     TC_185__Positive__Account_Info_Returned___No_Discounts____,
     TC_186__Positive__Account_Info_Returned___Transferable_Discount____,
-    TC_187__Positive__Account_Info_Returned___Non__Transferable_Discount____
+    TC_187__Positive__Account_Info_Returned___Non__Transferable_Discount____,
+    TC_203__Positive__Account_Info_Returned___Renewal_Indicator_Format____,
+    TC_204__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____,
+    TC_205__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____,
+    TC_206__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____,
+    TC_207__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____,
+    TC_208__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____,
+    TC_209__Positive__Account_Info_Returned___Plan_Description_Format____,
+    TC_210__Positive__Account_Info_Returned___Plan_Description_Value____
 }

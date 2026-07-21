@@ -30,6 +30,7 @@ public class GetAccountInformationResponse {
         private String greenerLifeRate;
         private String billDeliveryOption;
         private String correspondenceDeliveryOption;
+        private String planRenewalWindowIndicator;
         private List<PricePlan> pricePlans;
         private List<Discount> discounts;
     }
@@ -51,6 +52,7 @@ public class GetAccountInformationResponse {
         private Double priceProtectionGuaranteeCeiling;
         private String rolloverPlanIndicator;
         private String restrictedPlanIndicator;
+        private String planDescription;
     }
 
     @Data

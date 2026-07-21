@@ -5,6 +5,7 @@ import com.gng.api.pojo.CSIPojo.GetBankDraftInfo.GetBankDraftInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetBillHistory.GetBillHistoryResponse;
 import com.gng.api.pojo.CSIPojo.GetBillingInfo.GetBillingInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetPaperlessEnrollmentEligibility.GetPaperlessEnrollmentEligibilityResponse;
+import com.gng.api.pojo.CSIPojo.VerifyAccount.VerifyAccountResponse;
 import com.gng.api.pojo.CSIPojo.GetPaymentArrangementInfo.GetPaymentArrangementInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetPaymentHistory.GetPaymentHistoryResponse;
 import com.gng.api.pojo.CSIPojo.GetUsageHistory.GetUsageHistoryResponse;
@@ -104,6 +105,11 @@ public class TestContext {
     @Getter @Setter
     private Object getPaperlessEnrollmentEligibilityApiPage;
     private GetPaperlessEnrollmentEligibilityResponse getPaperlessEnrollmentEligibilityResponse;
+    @Getter @Setter
+    private Object verifyAccountApiPage;
+    private VerifyAccountResponse verifyAccountResponse;
+    @Getter @Setter
+    private java.util.Map<String, String> verifyAccountExpectedData;
     @Getter @Setter
     private Object getPaymentHistoryApiPage;
     private GetPaymentHistoryResponse getPaymentHistoryResponse;

@@ -55,6 +55,13 @@ public class UpdateMailingAddressApiHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, UpdateMailingAddressRequest.class);
     }
 
+    public void validateIfLoginIdIsSaved() {
+        String expectedLoginId = testContext.getLoginId();
+        Map<String, Object> accountData = ApplicationContext.get().getDbAction().getStoredLoginId(expectedLoginId);
+        Assert.assertNotNull(accountData, "Expected GZRAPIL row for loginID but got null: " + expectedLoginId);
+        Assert.assertEquals(accountData.get("gzrapil_login_id").toString(), expectedLoginId);
+    }
+
     public void databaseValidationsForPositiveTCs(UpdateMailingAddressLabel testCondition){
         Map<String, Object> accountData=null;
         String customerCode= testContext.getCustomerCode();
@@ -477,7 +484,7 @@ public class UpdateMailingAddressApiHelper {
                 String loginID=FakerDataGenerator.generateString(6);
                 payload.setLoginID(loginID);
                 testContext.setLoginId(loginID);
-                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                accountData = ApplicationContext.get().getDbAction().getAccountWithoutAddress();
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
                 break;

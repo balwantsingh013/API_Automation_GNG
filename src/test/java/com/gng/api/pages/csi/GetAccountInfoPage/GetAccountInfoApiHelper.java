@@ -4,23 +4,14 @@ import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.CSIPojo.GetAccountInfo.GetAccountInfoRequest;
-import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.csi.GetAccountInfo.GetAccountInfoLabel;
 import com.gng.api.util.FakerDataGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.testng.Assert;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public class GetAccountInfoApiHelper {
-
-    private final TestContext testContext;
-
-    public GetAccountInfoApiHelper(TestContext testContext) {
-        this.testContext = testContext;
-    }
 
     GetAccountInfoRequest preparePayload(GetAccountInfoLabel apiLabel) {
         log.info("Preparing payload for {}", apiLabel);
@@ -31,8 +22,7 @@ public class GetAccountInfoApiHelper {
     }
 
     public void preparePayloadForTestCondition(GetAccountInfoRequest payload, GetAccountInfoLabel testCondition) {
-        Map<String, Object> accountInfo = null;
-        List<Map<String, Object>> accountsInfo = null;
+        Map<String, Object> accountInfo;
         switch (testCondition) {
             case TC_142__Negative__Missing_Request_ID:
                 payload.setRequestID("");
@@ -69,7 +59,6 @@ public class GetAccountInfoApiHelper {
             case TC_149__Negative__Invalid_Account_Number:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode("9988776");
-                Map<String, Object> userInfo = ApplicationContext.get().getDbAction().getUserAccountInfo("9988776");
                 break;
 
             case TC_150__Positive__Account_Info_Returned___Email_Address____:
@@ -154,7 +143,6 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC160();
                 payload.setCustomerCode(accountInfo.get("ucrtele_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
-                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_162__Positive__Account_Info_Returned___Primary_Phone_is_Work____:
@@ -162,7 +150,6 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC161();
                 payload.setCustomerCode(accountInfo.get("ucrtele_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
-                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_163__Positive__Account_Info_Returned___Primary_Phone_is_both_Home_and_Work____:
@@ -170,7 +157,6 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC162();
                 payload.setCustomerCode(accountInfo.get("ucrtele_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
-                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_164__Positive__Account_Info_Returned___No_Phone_Number____:
@@ -178,7 +164,6 @@ public class GetAccountInfoApiHelper {
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC163();
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
-                accountsInfo = ApplicationContext.get().getDbAction().getPhoneNumbers(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
             case TC_165__Positive__Account_Info_Returned___Greener_Life_Rate____:
@@ -342,10 +327,45 @@ public class GetAccountInfoApiHelper {
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
+            case TC_203__Positive__Account_Info_Returned___Renewal_Indicator_Format____:
+            case TC_204__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____:
+            case TC_205__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____:
+            case TC_206__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____:
+            case TC_207__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____:
+            case TC_208__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____:
+            case TC_209__Positive__Account_Info_Returned___Plan_Description_Format____:
+            case TC_210__Positive__Account_Info_Returned___Plan_Description_Value____:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                accountInfo = getAccountDetailsForPlanTestCondition(testCondition);
+                payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("ucracct_prem_code").toString());
+                break;
 
             default:
                 // Handle unknown test condition
                 break;
         }
+    }
+
+    private Map<String, Object> getAccountDetailsForPlanTestCondition(GetAccountInfoLabel testCondition) {
+        return switch (testCondition) {
+            case TC_203__Positive__Account_Info_Returned___Renewal_Indicator_Format____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC203();
+            case TC_204__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC204();
+            case TC_205__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC205();
+            case TC_206__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC206();
+            case TC_207__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC207();
+            case TC_208__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC208();
+            case TC_209__Positive__Account_Info_Returned___Plan_Description_Format____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC209();
+            case TC_210__Positive__Account_Info_Returned___Plan_Description_Value____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC210();
+            default -> throw new IllegalArgumentException("Unsupported plan test condition: " + testCondition);
+        };
     }
 }
