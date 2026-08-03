@@ -446,8 +446,7 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
 
     /**
      * TC_131: unused Confirm token for an ACTIVE account with pending bill PPER.
-     * Confirm page locks GZBEMCP email row(s) FOR UPDATE so Banner preference apply fails → 40293
-     * (UAT often returns HTTP 504 instead). Do not probe Confirm here (keeps unused token).
+     * Do not probe Confirm here (keeps unused token). Confirm page locks GZBEMCP → 40293.
      */
     String getActivePreferenceUpdateFailedToken() {
         DBAction custAdvDb = ApplicationContext.get().getDbAction("mariadb");
@@ -474,8 +473,7 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
 
     /**
      * TC_132: unused Confirm token for a NEW account with pending bill preference.
-     * Confirm page locks GZBEMCP email row(s) FOR UPDATE so confirmation-date apply fails → 40293
-     * (UAT often returns HTTP 504 instead).
+     * Confirm page locks GZBEMCP → 40293.
      */
     String getNewPreferenceUpdateFailedToken() {
         DBAction custAdvDb = ApplicationContext.get().getDbAction("mariadb");

@@ -13,11 +13,16 @@ import static com.gng.api.steps.csi.GetPaperlessEnrollmentEligibility.GetPaperle
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 @Slf4j
 public class GetPaperlessEnrollmentEligibilityApiSteps {
+
+    private static final String EMAIL_NOT_PRESENT = "Email Address is Not Present";
+    private static final String ENROLLED_PAPERLESS = "Account is Enrolled on Paperless";
+    private static final String ENROLLED_FISERV = "Account is Enrolled on Fiserv eBill";
 
     @Before
     public void setupToken() {
@@ -87,63 +92,47 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 break;
 
             case TC_170__Positive__Corr_Reason_Desc_Format_:
-                assertThat("paperlessCorrIneligReasonCode mismatch",
-                        testContext.getResponse().jsonPath().getInt("data.paperlessCorrIneligReasonCode"),
-                        equalTo(2));
-                assertThat("paperlessCorrIneligReasonDesc mismatch",
-                        testContext.getResponse().jsonPath().getString("data.paperlessCorrIneligReasonDesc"),
-                        equalTo("Account is Enrolled on Paperless"));
+                assertPopulatedStringMaxLength("data.paperlessCorrIneligReasonDesc", 50);
                 break;
 
             case TC_171__Positive__Bill_Reason_Desc_Format_:
                 assertThat("paperlessBillIneligReasonCode mismatch",
                         testContext.getResponse().jsonPath().getInt("data.paperlessBillIneligReasonCode"),
-                        equalTo(4));
+                        equalTo(3));
                 assertThat("paperlessBillIneligReasonDesc mismatch",
                         testContext.getResponse().jsonPath().getString("data.paperlessBillIneligReasonDesc"),
-                        equalTo("Account is Enrolled on Fiserv eBill"));
+                        equalTo(ENROLLED_FISERV));
+                assertThat("paperlessBillIneligReasonDesc length",
+                        testContext.getResponse().jsonPath().getString("data.paperlessBillIneligReasonDesc").length(),
+                        lessThanOrEqualTo(50));
                 break;
 
             case TC_172__Positive__Correspondence_NULL_Defaults_to_P_:
-                assertThat("correspondenceDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.correspondenceDeliveryOption"),
-                        equalTo("P"));
+                assertDeliveryOption("correspondenceDeliveryOption", "P");
                 break;
 
             case TC_173__Positive__Correspondence_P_Mapping_:
-                assertThat("correspondenceDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.correspondenceDeliveryOption"),
-                        equalTo("P"));
+                assertDeliveryOption("correspondenceDeliveryOption", "P");
                 break;
 
             case TC_174__Positive__Correspondence_E_Mapping_:
-                assertThat("correspondenceDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.correspondenceDeliveryOption"),
-                        equalTo("E"));
+                assertDeliveryOption("correspondenceDeliveryOption", "E");
                 break;
 
             case TC_175__Positive__Bill_NULL_Defaults_to_P_:
-                assertThat("billDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.billDeliveryOption"),
-                        equalTo("P"));
+                assertDeliveryOption("billDeliveryOption", "P");
                 break;
 
             case TC_176__Positive__Bill_P_Mapping_:
-                assertThat("billDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.billDeliveryOption"),
-                        equalTo("P"));
+                assertDeliveryOption("billDeliveryOption", "P");
                 break;
 
             case TC_177__Positive__Bill_E_Mapping_:
-                assertThat("billDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.billDeliveryOption"),
-                        equalTo("E"));
+                assertDeliveryOption("billDeliveryOption", "E");
                 break;
 
             case TC_178__Positive__Bill_F_Mapping_:
-                assertThat("billDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.billDeliveryOption"),
-                        equalTo("F"));
+                assertDeliveryOption("billDeliveryOption", "F");
                 break;
 
             case TC_179__Positive__Corr_Ineligible_No_Email_:
@@ -164,10 +153,22 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                         equalTo(1));
                 break;
 
+            case TC_181A__Positive__Corr_Reason_Desc_1_:
+                assertThat("paperlessCorrIneligReasonDesc mismatch",
+                        testContext.getResponse().jsonPath().getString("data.paperlessCorrIneligReasonDesc"),
+                        equalTo(EMAIL_NOT_PRESENT));
+                break;
+
             case TC_182__Positive__Bill_Reason_Code_1_:
                 assertThat("paperlessBillIneligReasonCode mismatch",
                         testContext.getResponse().jsonPath().getInt("data.paperlessBillIneligReasonCode"),
                         equalTo(1));
+                break;
+
+            case TC_182A__Positive__Bill_Reason_Desc_1_:
+                assertThat("paperlessBillIneligReasonDesc mismatch",
+                        testContext.getResponse().jsonPath().getString("data.paperlessBillIneligReasonDesc"),
+                        equalTo(EMAIL_NOT_PRESENT));
                 break;
 
             case TC_183__Positive__Corr_Eligible_:
@@ -204,16 +205,34 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                         equalTo(2));
                 break;
 
+            case TC_188A__Positive__Corr_Reason_Desc_2_:
+                assertThat("paperlessCorrIneligReasonDesc mismatch",
+                        testContext.getResponse().jsonPath().getString("data.paperlessCorrIneligReasonDesc"),
+                        equalTo(ENROLLED_PAPERLESS));
+                break;
+
             case TC_189__Positive__Bill_Reason_Code_2_:
                 assertThat("paperlessBillIneligReasonCode mismatch",
                         testContext.getResponse().jsonPath().getInt("data.paperlessBillIneligReasonCode"),
                         equalTo(2));
                 break;
 
-            case TC_190__Positive__Bill_Reason_Code_4_:
+            case TC_189A__Positive__Bill_Reason_Desc_2_:
+                assertThat("paperlessBillIneligReasonDesc mismatch",
+                        testContext.getResponse().jsonPath().getString("data.paperlessBillIneligReasonDesc"),
+                        equalTo(ENROLLED_PAPERLESS));
+                break;
+
+            case TC_190__Positive__Bill_Reason_Code_3_:
                 assertThat("paperlessBillIneligReasonCode mismatch",
                         testContext.getResponse().jsonPath().getInt("data.paperlessBillIneligReasonCode"),
-                        equalTo(4));
+                        equalTo(3));
+                break;
+
+            case TC_190A__Positive__Bill_Reason_Desc_3_:
+                assertThat("paperlessBillIneligReasonDesc mismatch",
+                        testContext.getResponse().jsonPath().getString("data.paperlessBillIneligReasonDesc"),
+                        equalTo(ENROLLED_FISERV));
                 break;
 
             case TC_191__Positive__Corr_Reason_Description_:
@@ -234,64 +253,64 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 assertIneligReasonFieldNull("paperlessBillIneligReasonDesc");
                 break;
 
-            case TC_195__Positive__Corr_Override_I_:
-                assertThat("correspondenceDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.correspondenceDeliveryOption"),
-                        equalTo("I"));
+            case TC_195__Positive__Corr_PPER_I_:
+                assertDeliveryOption("correspondenceDeliveryOption", "I");
                 break;
 
-            case TC_196__Positive__Corr_Override_Ineligible_:
-                assertThat("paperlessCorrespondenceEligible mismatch",
-                        testContext.getResponse().jsonPath().getBoolean("data.paperlessCorrespondenceEligible"),
-                        is(false));
+            case TC_196__Positive__Corr_PPER_Eligible_:
+                assertBooleanFieldTrue("data.paperlessCorrespondenceEligible", "paperlessCorrespondenceEligible");
                 break;
 
-            case TC_197__Positive__Corr_Override_Reason_3_:
-                assertThat("paperlessCorrIneligReasonCode mismatch",
-                        testContext.getResponse().jsonPath().getInt("data.paperlessCorrIneligReasonCode"),
-                        equalTo(3));
+            case TC_197__Positive__Corr_PPER_Reason_Null_:
+                assertIneligReasonFieldNull("paperlessCorrIneligReasonCode");
                 break;
 
-            case TC_198__Positive__Bill_Override_I_:
-                assertThat("billDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.billDeliveryOption"),
-                        equalTo("I"));
+            case TC_197A__Positive__Corr_PPER_Reason_Desc_Null_:
+                assertIneligReasonFieldNull("paperlessCorrIneligReasonDesc");
                 break;
 
-            case TC_199__Positive__Bill_Override_Ineligible_:
-                assertThat("paperlessBillEligible mismatch",
-                        testContext.getResponse().jsonPath().getBoolean("data.paperlessBillEligible"),
-                        is(false));
+            case TC_198__Positive__Bill_PPER_I_:
+                assertDeliveryOption("billDeliveryOption", "I");
                 break;
 
-            case TC_200__Positive__Bill_Override_Reason_3_:
-                assertThat("paperlessBillIneligReasonCode mismatch",
-                        testContext.getResponse().jsonPath().getInt("data.paperlessBillIneligReasonCode"),
-                        equalTo(3));
+            case TC_199__Positive__Bill_PPER_Eligible_:
+                assertBooleanFieldTrue("data.paperlessBillEligible", "paperlessBillEligible");
+                break;
+
+            case TC_200__Positive__Bill_PPER_Reason_Null_:
+                assertIneligReasonFieldNull("paperlessBillIneligReasonCode");
+                break;
+
+            case TC_200A__Positive__Bill_PPER_Reason_Desc_Null_:
+                assertIneligReasonFieldNull("paperlessBillIneligReasonDesc");
                 break;
 
             case TC_201__Positive__Corr_Override_Precedence_:
                 assertDeliveryOption("correspondenceDeliveryOption", "I");
                 break;
 
+            case TC_201A__Positive__Corr_Override_Eligible_:
+                assertBooleanFieldTrue("data.paperlessCorrespondenceEligible", "paperlessCorrespondenceEligible");
+                break;
+
             case TC_202__Positive__Bill_Override_Precedence_:
                 assertDeliveryOption("billDeliveryOption", "I");
                 break;
 
-            case TC_203__Positive__PPER_Overrides_Email_Rule_:
-                assertThat("paperlessBillIneligReasonCode mismatch",
-                        testContext.getResponse().jsonPath().getInt("data.paperlessBillIneligReasonCode"),
-                        equalTo(3));
+            case TC_202A__Positive__Bill_Override_Eligible_:
+                assertBooleanFieldTrue("data.paperlessBillEligible", "paperlessBillEligible");
                 break;
 
-            case TC_204__Positive__New_Unconfirmed_Bill_:
+            case TC_203__Positive__New_Unconfirmed_Bill_:
                 assertDeliveryOption("billDeliveryOption", "P");
                 break;
 
-            case TC_205__Positive__New_Confirmed_Bill_:
-                assertThat("billDeliveryOption mismatch",
-                        testContext.getResponse().jsonPath().getString("data.billDeliveryOption"),
-                        equalTo("E"));
+            case TC_204__Positive__New_Confirmed_Bill_:
+                assertDeliveryOption("billDeliveryOption", "E");
+                break;
+
+            case TC_205__Positive__New_Paper_Bill_:
+                assertDeliveryOption("billDeliveryOption", "P");
                 break;
 
             default:
@@ -309,6 +328,13 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
         String value = testContext.getResponse().jsonPath().getString(jsonPath);
         assertThat(jsonPath + " should be populated", value, notNullValue());
         assertThat(jsonPath + " should not be blank", value.isBlank(), is(false));
+    }
+
+    private void assertPopulatedStringMaxLength(String jsonPath, int maxLength) {
+        assertPopulatedString(jsonPath);
+        assertThat(jsonPath + " length",
+                testContext.getResponse().jsonPath().getString(jsonPath).length(),
+                lessThanOrEqualTo(maxLength));
     }
 
     private void assertBooleanFieldTrue(String jsonPath, String label) {

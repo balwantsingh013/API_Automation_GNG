@@ -2044,7 +2044,7 @@ console.log('✅ Timeline highlighting with keyboard navigation (↑↓), intell
         logger.pass(successLog.toString());
     }
 
-    private static void logSkipDetails(ExtentTest logger, long executionTime, String threadName) {
+    private static void logSkipDetails(ExtentTest logger, ITestResult result, long executionTime, String threadName) {
         StringBuilder skipLog = new StringBuilder();
 
         // Thread information
@@ -2054,9 +2054,16 @@ console.log('✅ Timeline highlighting with keyboard navigation (↑↓), intell
 
         skipLog.append("<div class='warning-log'>");
         skipLog.append("⏭️ <strong>Test Skipped</strong>");
+        if (result != null && result.getThrowable() != null
+                && result.getThrowable().getMessage() != null
+                && !result.getThrowable().getMessage().isBlank()) {
+            skipLog.append("<div>").append(result.getThrowable().getMessage()).append("</div>");
+        }
         skipLog.append("</div>");
 
-        // ❌ REMOVED: getAllApiCallsLog() - API calls are already logged during test execution
+        skipLog.append("<div class='response-time-badge'>");
+        skipLog.append("⏱️ Time: ").append(executionTime).append(" ms");
+        skipLog.append("</div>");
 
         logger.skip(skipLog.toString());
     }
@@ -2106,7 +2113,7 @@ console.log('✅ Timeline highlighting with keyboard navigation (↑↓), intell
             logSuccessDetails(logger, executionTime, threadName);
         } else if (result.getStatus() == ITestResult.SKIP) {
             skippedTests.incrementAndGet();
-            logSkipDetails(logger, executionTime, threadName);
+            logSkipDetails(logger, result, executionTime, threadName);
         }
 
         cleanupThreadLocals();

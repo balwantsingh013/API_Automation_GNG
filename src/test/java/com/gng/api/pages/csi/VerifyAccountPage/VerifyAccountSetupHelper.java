@@ -5,11 +5,13 @@ import com.gng.api.context.ApplicationContext;
 import com.gng.api.db.DBAction;
 import com.gng.api.pages.csi.GetPaperlessEnrollmentEligibilityPage.GetPaperlessEnrollmentEligibilitySetupHelper;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.report.DualReportManager;
 import com.gng.api.util.PaperlessEnrollmentUtil;
 import com.gng.api.util.PreferencesVerifyAccountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,12 +21,14 @@ import java.util.function.Predicate;
 
 /**
  * Resolves Preferences-verifiable accounts for FTD05 VerifyAccount.
- * Banner-only emails return Preferences ErrorCode 302 — probe MariaDB registered accounts once per JVM.
+ * Prefers accounts that also exist in Banner (UCRACCT) so reports can show Banner vs API match.
+ * Banner-only emails return Preferences ErrorCode 302 - probe MariaDB registered accounts + Banner street candidates.
  */
 @Slf4j
 public class VerifyAccountSetupHelper {
 
-    private static final int PROBE_LIMIT = 60;
+    private static final int MARIADB_PROBE_LIMIT = 80;
+    private static final int BANNER_STREET_PROBE_LIMIT = 40;
 
     /** Known Postman Preferences account (BillPresType=P) used as last-resort fallback. */
     private static final String FALLBACK_CUST = "6196554";
@@ -56,7 +60,7 @@ public class VerifyAccountSetupHelper {
         if (withPreDir != null) {
             return withPreDir;
         }
-        log.warn("No Preferences account with PreDir — using street account (PreDir optional in UAT)");
+        log.warn("No Preferences account with PreDir - using street account (PreDir optional in UAT)");
         return resolveStreetAddressAccount();
     }
 
@@ -75,7 +79,7 @@ public class VerifyAccountSetupHelper {
             }
             return found;
         }
-        log.warn("No Preferences PO Box / blank-street account — using street account for PO Box TCs");
+        log.warn("No Preferences PO Box / blank-street account - using street account for PO Box TCs");
         Map<String, Object> street = resolveStreetAddressAccount();
         if (!nonBlank(street, "billingPoBox")) {
             street.put("billingPoBox", "PO BOX");
@@ -89,7 +93,7 @@ public class VerifyAccountSetupHelper {
         if (found != null) {
             return found;
         }
-        log.warn("No Preferences billPresType=E — using any verifiable account (assert softens)");
+        log.warn("No Preferences billPresType=E - using any verifiable account (assert softens)");
         return anyVerifiable("bill confirmed");
     }
 
@@ -99,7 +103,7 @@ public class VerifyAccountSetupHelper {
         if (found != null) {
             return found;
         }
-        log.warn("No Preferences correspondencePreference=E — using any verifiable account (assert softens)");
+        log.warn("No Preferences correspondencePreference=E - using any verifiable account (assert softens)");
         return anyVerifiable("corr confirmed");
     }
 
@@ -117,7 +121,7 @@ public class VerifyAccountSetupHelper {
         if (found != null) {
             return found;
         }
-        log.warn("No Preferences bill confirm date — using any verifiable account (assert softens)");
+        log.warn("No Preferences bill confirm date - using any verifiable account (assert softens)");
         return anyVerifiable("bill confirm date");
     }
 
@@ -126,17 +130,17 @@ public class VerifyAccountSetupHelper {
         if (found != null) {
             return found;
         }
-        log.warn("No Preferences corr confirm date — using any verifiable account (assert softens)");
+        log.warn("No Preferences corr confirm date - using any verifiable account (assert softens)");
         return anyVerifiable("corr confirm date");
     }
 
     private Map<String, Object> anyVerifiable(String label) {
-        List<Map<String, Object>> probed = loadProbedAccounts();
-        if (!probed.isEmpty()) {
-            Map<String, Object> account = new HashMap<>(probed.get(0));
-            log.info("Using first Preferences-verifiable account {}/{} for {}",
-                    account.get("customerCode"), account.get("premisesCode"), label);
-            return account;
+        Map<String, Object> bannerBacked = findMatchingOptional(a -> true);
+        if (bannerBacked != null) {
+            log.info("Using Preferences-verifiable account {}/{} bannerPresent={} for {}",
+                    bannerBacked.get("customerCode"), bannerBacked.get("premisesCode"),
+                    bannerBacked.get("bannerPresent"), label);
+            return bannerBacked;
         }
         return findMatching(label, a -> true);
     }
@@ -155,10 +159,15 @@ public class VerifyAccountSetupHelper {
             probed.put("billPresType", "I");
             probed.put("billDeliveryOption", "I");
             log.info("Using Preferences billPresType=P (null confirm) as initiated bill stand-in");
+            DualReportManager.logInfo(
+                    "VerifyAccount — no UpdatePaperless update performed; Preferences billPresType=P "
+                            + "(null confirm) used as initiated bill stand-in for "
+                            + probed.get("customerCode") + "/" + probed.get("premisesCode")
+                            + " bannerPresent=" + probed.get("bannerPresent"));
             return probed;
         }
-        log.info("No Preferences initiated bill account — bootstrapping via UpdatePaperless");
-        Map<String, Object> bootstrapped = eligibilitySetup.ensureActivePendingBillEnrollment();
+        log.info("No Preferences initiated bill account - bootstrapping via UpdatePaperless");
+        Map<String, Object> bootstrapped = eligibilitySetup.ensureActivePendingBillEnrollment(true);
         Map<String, Object> finalized = finalizePendingAccount(bootstrapped, "billPresType");
         Optional<ObjectNode> data = PreferencesVerifyAccountUtil.tryVerifyAccount(
                 String.valueOf(finalized.get("customerCode")),
@@ -166,6 +175,7 @@ public class VerifyAccountSetupHelper {
                 String.valueOf(finalized.get("bannerEmail")));
         if (data.isPresent()) {
             Map<String, Object> merged = mergeProbeData(finalized, data.get());
+            markBannerPresence(merged);
             merged.put("billPresType", "I");
             merged.put("billDeliveryOption", "I");
             return merged;
@@ -188,10 +198,15 @@ public class VerifyAccountSetupHelper {
             probed.put("correspondencePreference", "I");
             probed.put("corrDeliveryOption", "I");
             log.info("Using Preferences correspondencePreference=P (null confirm) as initiated corr stand-in");
+            DualReportManager.logInfo(
+                    "VerifyAccount — no UpdatePaperless update performed; Preferences correspondencePreference=P "
+                            + "(null confirm) used as initiated corr stand-in for "
+                            + probed.get("customerCode") + "/" + probed.get("premisesCode")
+                            + " bannerPresent=" + probed.get("bannerPresent"));
             return probed;
         }
-        log.info("No Preferences initiated corr account — bootstrapping via UpdatePaperless");
-        Map<String, Object> bootstrapped = eligibilitySetup.ensureActivePendingCorrEnrollment();
+        log.info("No Preferences initiated corr account - bootstrapping via UpdatePaperless");
+        Map<String, Object> bootstrapped = eligibilitySetup.ensureActivePendingCorrEnrollment(true);
         Map<String, Object> finalized = finalizePendingAccount(bootstrapped, "correspondencePreference");
         Optional<ObjectNode> data = PreferencesVerifyAccountUtil.tryVerifyAccount(
                 String.valueOf(finalized.get("customerCode")),
@@ -199,6 +214,7 @@ public class VerifyAccountSetupHelper {
                 String.valueOf(finalized.get("bannerEmail")));
         if (data.isPresent()) {
             Map<String, Object> merged = mergeProbeData(finalized, data.get());
+            markBannerPresence(merged);
             merged.put("correspondencePreference", "I");
             merged.put("corrDeliveryOption", "I");
             return merged;
@@ -233,23 +249,46 @@ public class VerifyAccountSetupHelper {
                 FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL);
         if (fallback.isPresent()) {
             Map<String, Object> account = toAccountMap(FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL, fallback.get());
+            markBannerPresence(account);
             if (matcher.test(account)) {
-                log.warn("Using Postman fallback Preferences account for {}", label);
+                log.warn("Using Postman fallback Preferences account for {} (bannerPresent={})",
+                        label, account.get("bannerPresent"));
                 return account;
             }
         }
         throw new IllegalStateException(
                 "No Preferences-verifiable account for " + label
-                        + " after probing MariaDB registered accounts (and Postman fallback)");
+                        + " after probing MariaDB registered + Banner street candidates (and Postman fallback)");
     }
 
+    /**
+     * Prefer Banner-backed Preferences accounts so Extent can show real Banner vs API match.
+     */
     private Map<String, Object> findMatchingOptional(Predicate<Map<String, Object>> matcher) {
+        Map<String, Object> nonBannerMatch = null;
         for (Map<String, Object> account : loadProbedAccounts()) {
-            if (matcher.test(account)) {
-                log.info("Selected Preferences account {}/{} email={}",
+            if (!matcher.test(account)) {
+                continue;
+            }
+            if (Boolean.TRUE.equals(account.get("bannerPresent"))) {
+                log.info("Selected Banner-backed Preferences account {}/{} email={}",
                         account.get("customerCode"), account.get("premisesCode"), account.get("bannerEmail"));
+                DualReportManager.logInfo(
+                        "VerifyAccount account selection — Banner-backed "
+                                + account.get("customerCode") + "/" + account.get("premisesCode"));
                 return new HashMap<>(account);
             }
+            if (nonBannerMatch == null) {
+                nonBannerMatch = account;
+            }
+        }
+        if (nonBannerMatch != null) {
+            log.warn("No Banner-backed Preferences match - using Preferences-only {}/{}",
+                    nonBannerMatch.get("customerCode"), nonBannerMatch.get("premisesCode"));
+            DualReportManager.logInfo(
+                    "VerifyAccount account selection — Preferences-only (no Banner UCRACCT) "
+                            + nonBannerMatch.get("customerCode") + "/" + nonBannerMatch.get("premisesCode"));
+            return new HashMap<>(nonBannerMatch);
         }
         return null;
     }
@@ -264,41 +303,174 @@ public class VerifyAccountSetupHelper {
                 return probedAccountsCache;
             }
             List<Map<String, Object>> probed = new ArrayList<>();
-            List<Map<String, Object>> rows = ApplicationContext.get().getDbAction("mariadb")
-                    .listPreferencesRegisteredAccounts(PROBE_LIMIT);
-            log.info("Probing Preferences VerifyAccount against {} MariaDB registered accounts", rows.size());
-            for (Map<String, Object> row : rows) {
-                String email = firstNonBlank(asString(row.get("loginOrEmail")), asString(row.get("LOGINOREMAIL")));
-                if (email == null || !email.contains("@")) {
-                    continue;
-                }
-                String accountNumber = firstNonBlank(
-                        asString(row.get("accountNumber")), asString(row.get("ACCOUNTNUMBER")));
-                if (accountNumber == null) {
-                    continue;
-                }
-                String cust;
-                String prem;
-                try {
-                    String[] parsed = DBAction.parseCustAdvAccountNumber(accountNumber);
-                    cust = parsed[0];
-                    prem = parsed[1];
-                } catch (Exception ex) {
-                    continue;
-                }
-                Optional<ObjectNode> data = PreferencesVerifyAccountUtil.tryVerifyAccount(cust, prem, email);
-                if (data.isEmpty()) {
-                    continue;
-                }
-                probed.add(toAccountMap(cust, prem, email, data.get()));
-            }
-            // Always include Postman fallback if probeable
+            probeMariaDbRegisteredAccounts(probed);
+            probeBannerStreetCandidates(probed);
+            // Always include Postman fallback if probeable and not already present
             PreferencesVerifyAccountUtil.tryVerifyAccount(FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL)
-                    .ifPresent(data -> probed.add(
-                            toAccountMap(FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL, data)));
-            log.info("Preferences probe completed: {} verifiable accounts cached", probed.size());
+                    .ifPresent(data -> addUnique(probed,
+                            toAccountMap(FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL, data), false));
+
+            probed.sort(Comparator
+                    .comparing((Map<String, Object> a) -> !Boolean.TRUE.equals(a.get("bannerPresent")))
+                    .thenComparing(a -> asString(a.get("customerCode")), Comparator.nullsLast(String::compareTo)));
+
+            long bannerCount = probed.stream().filter(a -> Boolean.TRUE.equals(a.get("bannerPresent"))).count();
+            log.info("Preferences probe completed: {} verifiable accounts ({} Banner-backed)",
+                    probed.size(), bannerCount);
+            DualReportManager.logInfo(
+                    "VerifyAccount probe pool — total=" + probed.size()
+                            + ", bannerBacked=" + bannerCount
+                            + " (pool discovery only; scenario request/DB evidence use the selected account below)");
             probedAccountsCache = List.copyOf(probed);
             return probedAccountsCache;
+        }
+    }
+
+    private static void probeMariaDbRegisteredAccounts(List<Map<String, Object>> probed) {
+        List<Map<String, Object>> rows = ApplicationContext.get().getDbAction("mariadb")
+                .listPreferencesRegisteredAccounts(MARIADB_PROBE_LIMIT, false);
+        log.info("Probing Preferences VerifyAccount against {} MariaDB registered accounts", rows.size());
+        for (Map<String, Object> row : rows) {
+            String email = firstNonBlank(asString(row.get("loginOrEmail")), asString(row.get("LOGINOREMAIL")));
+            if (email == null || !email.contains("@")) {
+                continue;
+            }
+            String accountNumber = firstNonBlank(
+                    asString(row.get("accountNumber")), asString(row.get("ACCOUNTNUMBER")));
+            if (accountNumber == null) {
+                continue;
+            }
+            String cust;
+            String prem;
+            try {
+                String[] parsed = DBAction.parseCustAdvAccountNumber(accountNumber);
+                cust = parsed[0];
+                prem = parsed[1];
+            } catch (Exception ex) {
+                continue;
+            }
+            Optional<ObjectNode> data = PreferencesVerifyAccountUtil.tryVerifyAccount(cust, prem, email);
+            if (data.isEmpty()) {
+                continue;
+            }
+            addUnique(probed, toAccountMap(cust, prem, email, data.get()), false);
+        }
+    }
+
+    /**
+     * Probe Banner street+email candidates through Preferences so we can get Banner-backed FTD accounts.
+     */
+    private static void probeBannerStreetCandidates(List<Map<String, Object>> probed) {
+        List<Map<String, Object>> candidates;
+        try {
+            candidates = ApplicationContext.get().getDbAction()
+                    .listVerifyAccountStreetCandidates(BANNER_STREET_PROBE_LIMIT, false);
+        } catch (Exception ex) {
+            log.warn("Banner street candidate list failed: {}", ex.getMessage());
+            return;
+        }
+        log.info("Probing Preferences VerifyAccount against {} Banner street candidates", candidates.size());
+        int added = 0;
+        for (Map<String, Object> candidate : candidates) {
+            String cust = firstNonBlank(asString(candidate.get("customerCode")),
+                    asString(candidate.get("CUSTOMERCODE")));
+            String prem = firstNonBlank(asString(candidate.get("premisesCode")),
+                    asString(candidate.get("PREMISESCODE")));
+            String email = firstNonBlank(asString(candidate.get("bannerEmail")),
+                    asString(candidate.get("BANNEREMAIL")));
+            if (cust == null || prem == null || email == null) {
+                continue;
+            }
+            Optional<ObjectNode> data = PreferencesVerifyAccountUtil.tryVerifyAccount(cust, prem, email);
+            if (data.isEmpty()) {
+                continue;
+            }
+            Map<String, Object> account = toAccountMap(cust, prem, email, data.get());
+            // Candidate came from Banner — force bannerPresent and keep Banner street fields as backup
+            account.put("bannerPresent", true);
+            copyIfMissing(account, candidate, "billingStreetNumber");
+            copyIfMissing(account, candidate, "billingStreetPreDirection");
+            copyIfMissing(account, candidate, "billingStreetName");
+            copyIfMissing(account, candidate, "billingCity");
+            copyIfMissing(account, candidate, "billingStateCode");
+            copyIfMissing(account, candidate, "billingZipCode");
+            copyIfMissing(account, candidate, "billingPoBox");
+            copyIfMissing(account, candidate, "billPresType");
+            copyIfMissing(account, candidate, "correspondencePreference");
+            if (addUnique(probed, account, false)) {
+                added++;
+            }
+        }
+        log.info("Added {} Preferences-verifiable Banner street candidates", added);
+    }
+
+    private static boolean addUnique(List<Map<String, Object>> probed, Map<String, Object> account) {
+        return addUnique(probed, account, true);
+    }
+
+    private static boolean addUnique(List<Map<String, Object>> probed,
+                                     Map<String, Object> account,
+                                     boolean logBannerLookupToReport) {
+        markBannerPresence(account, logBannerLookupToReport);
+        String key = accountKey(account);
+        for (Map<String, Object> existing : probed) {
+            if (key.equals(accountKey(existing))) {
+                if (Boolean.TRUE.equals(account.get("bannerPresent"))) {
+                    existing.put("bannerPresent", true);
+                }
+                return false;
+            }
+        }
+        probed.add(account);
+        return true;
+    }
+
+    private static String accountKey(Map<String, Object> account) {
+        return asString(account.get("customerCode")) + "/" + asString(account.get("premisesCode"));
+    }
+
+    private static void markBannerPresence(Map<String, Object> account) {
+        markBannerPresence(account, true);
+    }
+
+    private static void markBannerPresence(Map<String, Object> account, boolean logToReport) {
+        if (Boolean.TRUE.equals(account.get("bannerPresent"))) {
+            return;
+        }
+        String cust = asString(account.get("customerCode"));
+        String prem = asString(account.get("premisesCode"));
+        Map<String, Object> banner = ApplicationContext.get().getDbAction()
+                .tryGetVerifyAccountBannerEvidence(cust, prem);
+        boolean present = banner != null;
+        account.put("bannerPresent", present);
+        if (present) {
+            // Align stored codes to Banner row keys when variants matched
+            Object bannerCust = banner.get("customerCode");
+            Object bannerPrem = banner.get("premisesCode");
+            if (bannerCust != null) {
+                account.put("customerCode", bannerCust.toString().trim());
+            }
+            if (bannerPrem != null) {
+                account.put("premisesCode", bannerPrem.toString().trim());
+            }
+            if (logToReport) {
+                DualReportManager.logInfo(
+                        "VerifyAccount Banner UCRACCT found for " + account.get("customerCode")
+                                + "/" + account.get("premisesCode"));
+            }
+        }
+    }
+
+    private static void copyIfMissing(Map<String, Object> target, Map<String, Object> source, String key) {
+        if (nonBlank(target, key)) {
+            return;
+        }
+        Object value = source.get(key);
+        if (value == null) {
+            value = source.get(key.toUpperCase(Locale.ROOT));
+        }
+        if (value != null && !value.toString().isBlank()) {
+            target.put(key, value.toString().trim());
         }
     }
 

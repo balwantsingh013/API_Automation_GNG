@@ -48,27 +48,36 @@ Feature: Verify GetPaperlessEnrollmentEligibility Api
       | TC_179__Positive__Corr_Ineligible_No_Email_        | 0         |              | true    | notNull |
       | TC_180__Positive__Bill_Ineligible_No_Email_        | 0         |              | true    | notNull |
       | TC_181__Positive__Corr_Reason_Code_1_              | 0         |              | true    | notNull |
+      | TC_181A__Positive__Corr_Reason_Desc_1_             | 0         |              | true    | notNull |
       | TC_182__Positive__Bill_Reason_Code_1_              | 0         |              | true    | notNull |
+      | TC_182A__Positive__Bill_Reason_Desc_1_             | 0         |              | true    | notNull |
       | TC_183__Positive__Corr_Eligible_                   | 0         |              | true    | notNull |
       | TC_184__Positive__Corr_Ineligible_Enrolled_        | 0         |              | true    | notNull |
       | TC_185__Positive__Bill_Eligible_                   | 0         |              | true    | notNull |
       | TC_186__Positive__Bill_Ineligible_Enrolled_        | 0         |              | true    | notNull |
       | TC_187__Positive__Bill_Ineligible_Fiserv_          | 0         |              | true    | notNull |
       | TC_188__Positive__Corr_Reason_Code_2_              | 0         |              | true    | notNull |
+      | TC_188A__Positive__Corr_Reason_Desc_2_             | 0         |              | true    | notNull |
       | TC_189__Positive__Bill_Reason_Code_2_              | 0         |              | true    | notNull |
-      | TC_190__Positive__Bill_Reason_Code_4_              | 0         |              | true    | notNull |
+      | TC_189A__Positive__Bill_Reason_Desc_2_             | 0         |              | true    | notNull |
+      | TC_190__Positive__Bill_Reason_Code_3_              | 0         |              | true    | notNull |
+      | TC_190A__Positive__Bill_Reason_Desc_3_             | 0         |              | true    | notNull |
       | TC_191__Positive__Corr_Reason_Description_         | 0         |              | true    | notNull |
       | TC_192__Positive__Bill_Reason_Description_         | 0         |              | true    | notNull |
       | TC_193__Positive__Corr_Reason_Description_NULL_    | 0         |              | true    | notNull |
       | TC_194__Positive__Bill_Reason_Description_NULL_    | 0         |              | true    | notNull |
-      | TC_195__Positive__Corr_Override_I_                 | 0         |              | true    | notNull |
-      | TC_196__Positive__Corr_Override_Ineligible_        | 0         |              | true    | notNull |
-      | TC_197__Positive__Corr_Override_Reason_3_          | 0         |              | true    | notNull |
-      | TC_198__Positive__Bill_Override_I_                 | 0         |              | true    | notNull |
-      | TC_199__Positive__Bill_Override_Ineligible_        | 0         |              | true    | notNull |
-      | TC_200__Positive__Bill_Override_Reason_3_          | 0         |              | true    | notNull |
+      | TC_195__Positive__Corr_PPER_I_                     | 0         |              | true    | notNull |
+      | TC_196__Positive__Corr_PPER_Eligible_              | 0         |              | true    | notNull |
+      | TC_197__Positive__Corr_PPER_Reason_Null_           | 0         |              | true    | notNull |
+      | TC_197A__Positive__Corr_PPER_Reason_Desc_Null_     | 0         |              | true    | notNull |
+      | TC_198__Positive__Bill_PPER_I_                     | 0         |              | true    | notNull |
+      | TC_199__Positive__Bill_PPER_Eligible_              | 0         |              | true    | notNull |
+      | TC_200__Positive__Bill_PPER_Reason_Null_           | 0         |              | true    | notNull |
+      | TC_200A__Positive__Bill_PPER_Reason_Desc_Null_     | 0         |              | true    | notNull |
       | TC_201__Positive__Corr_Override_Precedence_        | 0         |              | true    | notNull |
+      | TC_201A__Positive__Corr_Override_Eligible_         | 0         |              | true    | notNull |
       | TC_202__Positive__Bill_Override_Precedence_        | 0         |              | true    | notNull |
-      | TC_203__Positive__PPER_Overrides_Email_Rule_       | 0         |              | true    | notNull |
-      | TC_204__Positive__New_Unconfirmed_Bill_            | 0         |              | true    | notNull |
-      | TC_205__Positive__New_Confirmed_Bill_              | 0         |              | true    | notNull |
+      | TC_202A__Positive__Bill_Override_Eligible_         | 0         |              | true    | notNull |
+      | TC_203__Positive__New_Unconfirmed_Bill_            | 0         |              | true    | notNull |
+      | TC_204__Positive__New_Confirmed_Bill_              | 0         |              | true    | notNull |
+      | TC_205__Positive__New_Paper_Bill_                  | 0         |              | true    | notNull |

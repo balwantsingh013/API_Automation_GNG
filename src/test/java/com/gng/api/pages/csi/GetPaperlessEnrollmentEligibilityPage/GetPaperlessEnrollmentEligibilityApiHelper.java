@@ -190,10 +190,12 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_181__Positive__Corr_Reason_Code_1_:
+            case TC_181A__Positive__Corr_Reason_Desc_1_:
                 applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail());
                 break;
 
             case TC_182__Positive__Bill_Reason_Code_1_:
+            case TC_182A__Positive__Bill_Reason_Desc_1_:
                 applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail());
                 break;
 
@@ -218,14 +220,17 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_188__Positive__Corr_Reason_Code_2_:
+            case TC_188A__Positive__Corr_Reason_Desc_2_:
                 applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountEnrolledInPaperlessCorr());
                 break;
 
             case TC_189__Positive__Bill_Reason_Code_2_:
+            case TC_189A__Positive__Bill_Reason_Desc_2_:
                 applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountEnrolledInPaperlessBill());
                 break;
 
-            case TC_190__Positive__Bill_Reason_Code_4_:
+            case TC_190__Positive__Bill_Reason_Code_3_:
+            case TC_190A__Positive__Bill_Reason_Desc_3_:
                 applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithFiservBillDelivery());
                 break;
 
@@ -245,50 +250,40 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithPaperBillDeliveryAndBannerEmail());
                 break;
 
-            case TC_195__Positive__Corr_Override_I_:
+            case TC_195__Positive__Corr_PPER_I_:
+            case TC_196__Positive__Corr_PPER_Eligible_:
+            case TC_197__Positive__Corr_PPER_Reason_Null_:
+            case TC_197A__Positive__Corr_PPER_Reason_Desc_Null_:
                 applyAccount(payload, setupHelper.ensureActivePendingCorrEnrollment());
                 break;
 
-            case TC_196__Positive__Corr_Override_Ineligible_:
-                applyAccount(payload, setupHelper.ensureActivePendingCorrEnrollment());
-                break;
-
-            case TC_197__Positive__Corr_Override_Reason_3_:
-                applyAccount(payload, setupHelper.ensureActivePendingCorrEnrollment());
-                break;
-
-            case TC_198__Positive__Bill_Override_I_:
-                applyAccount(payload, setupHelper.ensureActivePendingBillEnrollment());
-                break;
-
-            case TC_199__Positive__Bill_Override_Ineligible_:
-                applyAccount(payload, setupHelper.ensureActivePendingBillEnrollment());
-                break;
-
-            case TC_200__Positive__Bill_Override_Reason_3_:
+            case TC_198__Positive__Bill_PPER_I_:
+            case TC_199__Positive__Bill_PPER_Eligible_:
+            case TC_200__Positive__Bill_PPER_Reason_Null_:
+            case TC_200A__Positive__Bill_PPER_Reason_Desc_Null_:
                 applyAccount(payload, setupHelper.ensureActivePendingBillEnrollment());
                 break;
 
             case TC_201__Positive__Corr_Override_Precedence_:
-                // Pending corr PPER → correspondenceDeliveryOption=I
-                applyAccount(payload, setupHelper.ensureActivePendingCorrEnrollment());
+            case TC_201A__Positive__Corr_Override_Eligible_:
+                applyAccount(payload, setupHelper.ensureActivePendingCorrWithBannerCorrEnrolled());
                 break;
 
             case TC_202__Positive__Bill_Override_Precedence_:
-                // Pending bill PPER → billDeliveryOption=I
-                applyAccount(payload, setupHelper.ensureActivePendingBillEnrollment());
+            case TC_202A__Positive__Bill_Override_Eligible_:
+                applyAccount(payload, setupHelper.ensureActivePendingBillWithFiservBill());
                 break;
 
-            case TC_203__Positive__PPER_Overrides_Email_Rule_:
-                applyAccount(payload, setupHelper.ensureActiveNoEmailPendingBillEnrollment());
-                break;
-
-            case TC_204__Positive__New_Unconfirmed_Bill_:
+            case TC_203__Positive__New_Unconfirmed_Bill_:
                 applyAccount(payload, setupHelper.ensureNewUnconfirmedBillPreference());
                 break;
 
-            case TC_205__Positive__New_Confirmed_Bill_:
+            case TC_204__Positive__New_Confirmed_Bill_:
                 applyAccount(payload, ApplicationContext.get().getDbAction().getNewAccountWithConfirmedBillPreference());
+                break;
+
+            case TC_205__Positive__New_Paper_Bill_:
+                applyAccount(payload, setupHelper.ensureNewPaperBillPreference());
                 break;
 
             default:

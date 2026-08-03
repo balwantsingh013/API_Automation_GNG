@@ -15,6 +15,7 @@ import com.gng.api.util.FakerDataGenerator;
 import com.gng.api.util.PaperlessConfirmationTokenUtil;
 import com.gng.api.util.PaperlessEnrollmentUtil;
 import com.gng.api.util.PaperlessSideEffectStateUtil;
+import com.gng.api.util.PaperlessTokenPperEvidenceUtil;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpPost;
@@ -261,8 +262,19 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                         + "the account still has a pending OCSEPCI token from a prior corr enrollment run");
     }
 
+    /** Documented FTD format: YYYY-MM-DDTHH:MM:SSZ (ISO 8601 UTC). Z is required. */
     private static final Pattern LINK_EXPIRY_DATE_TIME_PATTERN =
-            Pattern.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z)?$");
+            Pattern.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$");
+
+    private static void assertLinkExpiryDateTimeFormat(String linkExpiryDateTime) {
+        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated");
+        Assert.assertFalse(linkExpiryDateTime.isEmpty(), "Expected linkExpiryDateTime to be populated, not empty");
+        Assert.assertTrue(
+                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
+                "Expected linkExpiryDateTime in YYYY-MM-DDTHH:MM:SSZ (ISO 8601 UTC) but was: "
+                        + linkExpiryDateTime
+                        + " — missing trailing Z is a format defect per FTD");
+    }
 
     /** UAT1 returns ACTIVE/NEW; FTD also allows A/N. */
     private static void assertActiveAccountType(String accountType, String context) {
@@ -305,11 +317,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 response.jsonPath().getString("data.corrDeliveryOptionStatus"),
                 "NO_CHANGE",
                 "Expected corrDeliveryOptionStatus=NO_CHANGE when updateCorrDeliveryOption is null");
-        String linkExpiryDateTime = response.jsonPath().getString("data.linkExpiryDateTime");
-        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated");
-        Assert.assertTrue(
-                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
-                "Expected linkExpiryDateTime in YYYY-MM-DDTHH:MM:SS format but was: " + linkExpiryDateTime);
+        assertLinkExpiryDateTimeFormat(response.jsonPath().getString("data.linkExpiryDateTime"));
         Assert.assertTrue(
                 response.jsonPath().getBoolean("data.linkCreated"),
                 "Expected linkCreated=true when a new confirmation token is created");
@@ -352,11 +360,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         Assert.assertNotNull(
                 response.jsonPath().get("data"),
                 "Expected data to contain an UpdatePaperlessCommunications object");
-        String linkExpiryDateTime = response.jsonPath().getString("data.linkExpiryDateTime");
-        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated");
-        Assert.assertTrue(
-                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
-                "Expected linkExpiryDateTime in YYYY-MM-DDTHH:MM:SS format but was: " + linkExpiryDateTime);
+        assertLinkExpiryDateTimeFormat(response.jsonPath().getString("data.linkExpiryDateTime"));
     }
 
     private void assertTc89LinkCreatedTrueResponse(Response response) {
@@ -664,12 +668,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         Assert.assertFalse(
                 response.jsonPath().getBoolean("data.emailUpdated"),
                 "Expected emailUpdated=false when reusing an existing valid token with matching Banner email");
-        String linkExpiryDateTime = response.jsonPath().getString("data.linkExpiryDateTime");
-        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated when reusing valid token");
-        Assert.assertFalse(linkExpiryDateTime.isEmpty(), "Expected linkExpiryDateTime to be populated, not empty");
-        Assert.assertTrue(
-                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
-                "Expected linkExpiryDateTime in YYYY-MM-DDTHH:MM:SS format but was: " + linkExpiryDateTime);
+        assertLinkExpiryDateTimeFormat(response.jsonPath().getString("data.linkExpiryDateTime"));
     }
 
     private void validateTc94EmailIgnoredForEnrolledUnenrollment(UpdatePaperlessCommunicationsLabel apiLabel) {
@@ -750,11 +749,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 response.jsonPath().getString("data.corrDeliveryOptionStatus"),
                 "INITIATED",
                 "Expected corrDeliveryOptionStatus=INITIATED on first-time corr enrollment");
-        String linkExpiryDateTime = response.jsonPath().getString("data.linkExpiryDateTime");
-        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated");
-        Assert.assertTrue(
-                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
-                "Expected linkExpiryDateTime in YYYY-MM-DDTHH:MM:SS format but was: " + linkExpiryDateTime);
+        assertLinkExpiryDateTimeFormat(response.jsonPath().getString("data.linkExpiryDateTime"));
         Assert.assertTrue(
                 response.jsonPath().getBoolean("data.linkCreated"),
                 "Expected linkCreated=true when a new confirmation token is created");
@@ -796,11 +791,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 response.jsonPath().getString("data.corrDeliveryOptionStatus"),
                 "NO_CHANGE",
                 "Expected corrDeliveryOptionStatus=NO_CHANGE when updateCorrDeliveryOption is null");
-        String linkExpiryDateTime = response.jsonPath().getString("data.linkExpiryDateTime");
-        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated");
-        Assert.assertTrue(
-                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
-                "Expected linkExpiryDateTime in ISO 8601 format, got: " + linkExpiryDateTime);
+        assertLinkExpiryDateTimeFormat(response.jsonPath().getString("data.linkExpiryDateTime"));
         Assert.assertTrue(
                 response.jsonPath().getBoolean("data.linkCreated"),
                 "Expected linkCreated=true when bill=E, email matches Banner, "
@@ -830,11 +821,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 "INITIATED",
                 "Expected corrDeliveryOptionStatus=INITIATED when ACTIVE account has bill=E, corr=E, "
                         + "matching Banner email, and no non-expired unused confirmation token");
-        String linkExpiryDateTime = response.jsonPath().getString("data.linkExpiryDateTime");
-        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated");
-        Assert.assertTrue(
-                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
-                "Expected linkExpiryDateTime in ISO 8601 format, got: " + linkExpiryDateTime);
+        assertLinkExpiryDateTimeFormat(response.jsonPath().getString("data.linkExpiryDateTime"));
         Assert.assertTrue(
                 response.jsonPath().getBoolean("data.linkCreated"),
                 "Expected linkCreated=true when bill=E, corr=E, email matches Banner, "
@@ -864,11 +851,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 "INITIATED",
                 "Expected corrDeliveryOptionStatus=INITIATED when NEW account has bill=E, corr=E, "
                         + "matching Banner email, and no non-expired unused confirmation token");
-        String linkExpiryDateTime = response.jsonPath().getString("data.linkExpiryDateTime");
-        Assert.assertNotNull(linkExpiryDateTime, "Expected linkExpiryDateTime to be populated");
-        Assert.assertTrue(
-                LINK_EXPIRY_DATE_TIME_PATTERN.matcher(linkExpiryDateTime).matches(),
-                "Expected linkExpiryDateTime in ISO 8601 format, got: " + linkExpiryDateTime);
+        assertLinkExpiryDateTimeFormat(response.jsonPath().getString("data.linkExpiryDateTime"));
         Assert.assertTrue(
                 response.jsonPath().getBoolean("data.linkCreated"),
                 "Expected linkCreated=true when bill=E, corr=E, email matches Banner, "
@@ -1135,8 +1118,27 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
     /** TC_110: enroll with non-Banner email → emailUpdated=true. */
     private void validateTc110EmailUpdatedDuringEnrollment(UpdatePaperlessCommunicationsLabel apiLabel,
                                                            UpdatePaperlessCommunicationsLabel testCondition) {
-        executeUpdatePaperlessCommunications(apiLabel, testCondition);
-        assertEnrollmentSuccessWithEmailUpdate(testContext.getResponse());
+        UpdatePaperlessCommunicationsRequest payload = helper.preparePayload(apiLabel);
+        helper.preparePayloadForTestCondition(payload, testCondition);
+        String customerCode = payload.getCustomerCode();
+        String premisesCode = payload.getPremisesCode();
+
+        String beforeToken = PaperlessTokenPperEvidenceUtil.tryAnyCustAdvToken(customerCode, premisesCode);
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+
+        setRequestSpecification(payload, testContext.getAuthToken());
+        Response response = sendRequest(HttpPost.METHOD_NAME, UPDATE_PAPERLESS_COMMUNICATIONS, 200);
+        testContext.setResponse(response);
+        assertEnrollmentSuccessWithEmailUpdate(response);
+
+        String afterToken = PaperlessTokenPperEvidenceUtil.tryUnusedCustAdvToken(customerCode, premisesCode);
+        if (afterToken == null) {
+            afterToken = PaperlessTokenPperEvidenceUtil.tryAnyCustAdvToken(customerCode, premisesCode);
+        }
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logTokenBeforeAfter("TC_110", beforeToken, afterToken);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_110", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_110", customerCode, premisesCode);
     }
 
     private void enrollBillOnAccount(UpdatePaperlessCommunicationsLabel apiLabel,
@@ -1188,9 +1190,21 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                     .expireValidConfirmationTokensForAccount(customerCode, premisesCode);
         }
 
+        String beforeToken = PaperlessTokenPperEvidenceUtil.tryAnyCustAdvToken(customerCode, premisesCode);
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+
         executeUpdatePaperlessCommunications(apiLabel,
                 UpdatePaperlessCommunicationsLabel.TC_108__Positive__Active_Account_New_Token_When_Existing_Token_Invalid_);
         assertEnrollmentSuccessWithNewToken(testContext.getResponse());
+
+        String afterToken = PaperlessTokenPperEvidenceUtil.tryUnusedCustAdvToken(customerCode, premisesCode);
+        if (afterToken == null) {
+            afterToken = PaperlessTokenPperEvidenceUtil.tryAnyCustAdvToken(customerCode, premisesCode);
+        }
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logTokenBeforeAfter("TC_108", beforeToken, afterToken);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_108", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_108", customerCode, premisesCode);
     }
 
     private void validateTc106NewTokenWhenExistingTokenInvalid(UpdatePaperlessCommunicationsLabel apiLabel) {
@@ -1209,10 +1223,23 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
 
         helper.configureTc106Account(account, false);
 
+        String beforeToken = PaperlessTokenPperEvidenceUtil.tryAnyCustAdvToken(customerCode, premisesCode);
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+
         executeUpdatePaperlessCommunications(apiLabel,
                 UpdatePaperlessCommunicationsLabel.TC_109__Positive__New_Account_New_Token_When_Existing_Token_Invalid_);
         assertTc107EnrollmentAfterExpiredToken(testContext.getResponse(), customerCode, premisesCode,
                 baselineAfterFirstEnroll);
+
+        String afterToken = PaperlessConfirmationTokenUtil.waitForTokenCreatedAfterEnroll(
+                customerCode, premisesCode, baselineAfterFirstEnroll);
+        if (afterToken == null) {
+            afterToken = PaperlessTokenPperEvidenceUtil.tryUnusedCustAdvToken(customerCode, premisesCode);
+        }
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logTokenBeforeAfter("TC_109", beforeToken, afterToken);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_109", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_109", customerCode, premisesCode);
     }
 
     private void assertTc107EnrollmentAfterExpiredToken(Response response,
@@ -1271,6 +1298,7 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 "TC_111 expected a prior custadv confirmation token for "
                         + customerCode + "/" + premisesCode);
 
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
         long baselineVerificationId = PaperlessConfirmationTokenUtil.getBaselineVerificationId(
                 customerCode, premisesCode);
 
@@ -1290,6 +1318,10 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         Assert.assertNotEquals(priorToken, newToken,
                 "TC_111 expected a different confirmation token after email change for "
                         + customerCode + "/" + premisesCode);
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logTokenBeforeAfter("TC_111", priorToken, newToken);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_111", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_111", customerCode, premisesCode);
         DualReportManager.logInfo(
                 "TC_111 — new token created after email change for " + customerCode + "/" + premisesCode);
 
@@ -1318,8 +1350,13 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
 
     private void validateTc109CrossChannelAggregation(UpdatePaperlessCommunicationsLabel apiLabel) {
         Map<String, Object> account = helper.reserveActiveAccountForCrossChannelEnrollment();
+        String customerCode = getDbString(account, "customerCode");
+        String premisesCode = getDbString(account, "premisesCode");
+
         enrollBillOnAccount(apiLabel, account);
         assertTc109FirstBillEnrollResponse(testContext.getResponse());
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_112 AFTER bill-only enroll", customerCode, premisesCode);
 
         UpdatePaperlessCommunicationsRequest secondPayload = helper.preparePayload(apiLabel);
         helper.populateCorrOnlyEnrollmentPayload(secondPayload, account);
@@ -1327,6 +1364,10 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         Response secondResponse = sendRequest(HttpPost.METHOD_NAME, UPDATE_PAPERLESS_COMMUNICATIONS, 200);
         testContext.setResponse(secondResponse);
         assertTc109CrossChannelAggregationResponse(secondResponse);
+
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_112", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_112 AFTER cross-channel aggregation", customerCode, premisesCode);
     }
 
     private void assertTc109FirstBillEnrollResponse(Response response) {
@@ -1590,6 +1631,11 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         testContext.setResponse(firstResponse);
         Assert.assertEquals(firstResponse.jsonPath().getInt("errorCode"), 0, "First bill enrollment must succeed");
 
+        String customerCode = firstPayload.getCustomerCode();
+        String premisesCode = firstPayload.getPremisesCode();
+        String beforeToken = PaperlessTokenPperEvidenceUtil.tryAnyCustAdvToken(customerCode, premisesCode);
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+
         UpdatePaperlessCommunicationsRequest secondPayload = helper.preparePayload(apiLabel);
         helper.populateBillEnrollmentPayload(
                 secondPayload, UpdatePaperlessCommunicationsApiHelper.accountFromPayload(firstPayload));
@@ -1601,12 +1647,23 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         Assert.assertNotNull(
                 secondResponse.jsonPath().getString("data.linkExpiryDateTime"),
                 "Expected linkExpiryDateTime populated when confirmation window is extended");
+
+        String afterToken = PaperlessTokenPperEvidenceUtil.tryAnyCustAdvToken(customerCode, premisesCode);
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logTokenBeforeAfter("TC_113", beforeToken, afterToken);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_113", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_113", customerCode, premisesCode);
     }
 
     private void validateTc113LatestAggregatedStateWins(UpdatePaperlessCommunicationsLabel apiLabel) {
         Map<String, Object> account = helper.reserveActiveAccountForCrossChannelEnrollment();
+        String customerCode = getDbString(account, "customerCode");
+        String premisesCode = getDbString(account, "premisesCode");
+
         enrollBillOnAccount(apiLabel, account);
         assertTc109FirstBillEnrollResponse(testContext.getResponse());
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_116 AFTER bill-only enroll", customerCode, premisesCode);
 
         UpdatePaperlessCommunicationsRequest secondPayload = helper.preparePayload(apiLabel);
         helper.populateBothChannelsEnrollmentPayload(secondPayload, account);
@@ -1614,6 +1671,10 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         Response secondResponse = sendRequest(HttpPost.METHOD_NAME, UPDATE_PAPERLESS_COMMUNICATIONS, 200);
         testContext.setResponse(secondResponse);
         assertTc113AggregatedEnrollmentResponse(secondResponse);
+
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_116", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_116 AFTER aggregated both-channel enroll", customerCode, premisesCode);
     }
 
     private void assertTc113AggregatedEnrollmentResponse(Response response) {
@@ -1673,11 +1734,17 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 enrollResponse.jsonPath().getBoolean("data.linkCreated"),
                 "TC_117 expected linkCreated=true before confirmation");
 
+        var beforePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_117 BEFORE Confirm", customerCode, premisesCode);
+
         String confirmationToken = PaperlessConfirmationTokenUtil.waitForTokenCreatedAfterEnroll(
                 customerCode, premisesCode, baselineVerificationId);
         Assert.assertNotNull(confirmationToken,
                 "TC_117 expected a custadv confirmation token after enrollment for "
                         + customerCode + "/" + premisesCode);
+        DualReportManager.logInfo(
+                "TC_117 — confirmation token before finalize: "
+                        + PaperlessTokenPperEvidenceUtil.displayToken(confirmationToken));
 
         Response confirmResponse = confirmPaperlessEnrollmentAndGetResponse(
                 confirmationToken, "TC_117 confirm enrollment");
@@ -1704,6 +1771,10 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 "TC_117 expected confirmationDateTime populated after successful Confirm");
         Assert.assertFalse(confirmationDateTime.isBlank(),
                 "TC_117 expected confirmationDateTime populated after successful Confirm");
+
+        var afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_117", beforePper, afterPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords("TC_117 AFTER Confirm", customerCode, premisesCode);
 
         DualReportManager.logInfo(
                 "TC_117 — enrollment finalized on Confirm for " + customerCode + "/" + premisesCode

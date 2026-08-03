@@ -68,16 +68,24 @@ public final class PaperlessSideEffectStateUtil {
         Snapshot snapshot = new Snapshot(customerCode, premisesCode, maxId, custAdvFields, enrollmentFields);
 
         DualReportManager.logInfo(phaseLabel + " — " + snapshot.summary());
+
+        String accountNumber = DBAction.buildCustAdvAccountNumber(customerCode, premisesCode);
         DualReportManager.logDatabaseQuery(
-                DBQuery.SELECT_CUSTADV_ANY_LATEST_PAPERLESS_TOKEN_FOR_ACCOUNT
-                        + "\n-- phase=" + phaseLabel
-                        + ", account=" + customerCode + "/" + premisesCode,
+                annotateSqlForReport(
+                        DBQuery.SELECT_CUSTADV_ANY_LATEST_PAPERLESS_TOKEN_FOR_ACCOUNT,
+                        phaseLabel,
+                        "account_number = '" + accountNumber + "' "
+                                + "(customerCode='" + customerCode + "', premisesCode='" + premisesCode + "')",
+                        "The '?' inside SUBSTRING_INDEX(..., '?', -1) is a URL delimiter used to extract Token "
+                                + "from email_link (e.g. .../confirm?<token>). It is not a bind parameter."),
                 custAdvRow == null ? "(no custadv_email_verification_status row)" : custAdvRow.toString(),
                 0L);
         DualReportManager.logDatabaseQuery(
-                DBQuery.SELECT_UCRACCT_ACCOUNT_SUMMARY
-                        + "\n-- phase=" + phaseLabel
-                        + ", enrollment state for " + customerCode + "/" + premisesCode,
+                annotateSqlForReport(
+                        DBQuery.SELECT_UCRACCT_ACCOUNT_SUMMARY,
+                        phaseLabel,
+                        "UCRACCT_CUST_CODE = '" + customerCode + "', UCRACCT_PREM_CODE = '" + premisesCode + "'",
+                        null),
                 "bill=" + enrollmentFields.get("billDeliveryOption")
                         + ", corr=" + enrollmentFields.get("corrDeliveryOption")
                         + ", bannerEmail=" + enrollmentFields.get("bannerEmail")
@@ -89,6 +97,24 @@ public final class PaperlessSideEffectStateUtil {
 
         log.info("{} state for {}/{}: {}", phaseLabel, customerCode, premisesCode, snapshot.summary());
         return snapshot;
+    }
+
+    /**
+     * Report-only annotation: keeps JDBC {@code ?} placeholders in the SQL text and documents bound values
+     * for GNG reviewers. Does not change how the query is executed.
+     */
+    private static String annotateSqlForReport(String sql,
+                                               String phaseLabel,
+                                               String boundValues,
+                                               String extraNote) {
+        StringBuilder annotated = new StringBuilder(sql.trim());
+        annotated.append("\n-- phase=").append(phaseLabel);
+        annotated.append("\n-- Bound values (JDBC '?' placeholders above are filled at runtime): ");
+        annotated.append(boundValues);
+        if (extraNote != null && !extraNote.isBlank()) {
+            annotated.append("\n-- Note: ").append(extraNote);
+        }
+        return annotated.toString();
     }
 
     public static void assertUnchanged(Snapshot before, Snapshot after, String context) {
@@ -131,11 +157,44 @@ public final class PaperlessSideEffectStateUtil {
                         + "BEFORE=[" + before.summary() + "] AFTER=[" + after.summary() + "]");
     }
 
+    /**
+     * Report-only BEFORE/AFTER comparison for ConfirmPaperlessEnrollment (and similar).
+     * When {@code expectUnchanged} is true, also hard-asserts no side effects.
+     */
+    public static void logBeforeAfter(Snapshot before,
+                                      Snapshot after,
+                                      String context,
+                                      boolean expectUnchanged) {
+        Assert.assertNotNull(before, context + ": missing BEFORE snapshot");
+        Assert.assertNotNull(after, context + ": missing AFTER snapshot");
+        DualReportManager.logInfo(context + " — PRE: " + before.summary());
+        DualReportManager.logInfo(context + " — POST: " + after.summary());
+
+        boolean sameCustAdv = Objects.equals(before.custAdvFields, after.custAdvFields)
+                && before.maxVerificationId == after.maxVerificationId;
+        boolean sameEnrollment = Objects.equals(before.enrollmentFields, after.enrollmentFields);
+        DualReportManager.logInfo(context + " — PRE vs POST: custadvUnchanged=" + sameCustAdv
+                + ", enrollmentUnchanged=" + sameEnrollment
+                + (expectUnchanged
+                ? " (expected unchanged — no email/token/PPER update)"
+                : " (update/rollback expected — compare PRE vs POST fields)"));
+
+        if (expectUnchanged) {
+            assertUnchanged(before, after, context);
+        }
+    }
+
+    /** Explicit DURING snapshot for rollback scenarios (before/during/after). */
+    public static void logDuring(Snapshot during, String context) {
+        Assert.assertNotNull(during, context + ": missing DURING snapshot");
+        DualReportManager.logInfo(context + " — DURING: " + during.summary());
+    }
+
     private static Map<String, Object> tryAnyLatestCustAdvRow(DBAction custAdvDb,
                                                               String customerCode,
                                                               String premisesCode) {
         try {
-            return custAdvDb.getAnyLatestConfirmPaperlessTokenFromCustAdv(customerCode, premisesCode);
+            return custAdvDb.getAnyLatestConfirmPaperlessTokenFromCustAdv(customerCode, premisesCode, false);
         } catch (EmptyResultDataAccessException ex) {
             return null;
         }

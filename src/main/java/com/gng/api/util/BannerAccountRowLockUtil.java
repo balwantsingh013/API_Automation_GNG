@@ -16,7 +16,6 @@ import java.sql.SQLException;
 /**
  * Holds a transactional {@code SELECT ... FOR UPDATE} lock on Banner {@code GZBEMCP} email row(s)
  * so ConfirmPaperlessEnrollment preference / confirmation-date update fails (TC_131/132 → 40293).
- * On UAT1 this often results in HTTP 504 (gateway wait) instead of 40293.
  * Always pair {@link #lockAccountRow(String, String)} with {@link #release()} in {@code finally}.
  */
 @Slf4j

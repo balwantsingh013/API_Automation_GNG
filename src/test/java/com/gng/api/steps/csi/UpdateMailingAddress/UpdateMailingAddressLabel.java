@@ -69,5 +69,10 @@ public enum UpdateMailingAddressLabel {
     TC_126__Positive__Valid_PO_Box_Address,
     TC_127__Positive__Valid_Rural_Route_Address,
 
-    TC_128__Positive__LoginID_Saved
+    TC_128__Positive__LoginID_Saved,
+
+    TC_9__Positive__Valid_Street_Address___Minimum_Parameters_NEW_Account____,
+    TC_10__Positive__Valid_Street_Address___Maximum_Parameters_NEW_Account____,
+    TC_11__Positive__Valid_PO_Box_Address___NEW_Account____,
+    TC_12__Positive__Valid_Rural_Route_Address___NEW_Account____
 }

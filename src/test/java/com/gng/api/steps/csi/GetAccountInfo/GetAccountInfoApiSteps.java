@@ -40,21 +40,21 @@ public class GetAccountInfoApiSteps {
     @And("validate GetAccountInfo price plan response for {string}")
     public void validateGetAccountInfoPricePlanResponseFor(String testCondition) {
         switch (GetAccountInfoLabel.valueOf(testCondition)) {
-            case TC_203__Positive__Account_Info_Returned___Renewal_Indicator_Format____ ->
+            case TC_1__Positive__Account_Info_Returned___Renewal_Indicator_Format____ ->
                     GetAccountInfoPlanValidationHelper.validateRenewalIndicatorFormat(testContext.getResponse());
-            case TC_204__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____ ->
+            case TC_2__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____ ->
                     GetAccountInfoPlanValidationHelper.validateRenewalIndicatorValue(testContext.getResponse(), "Y");
-            case TC_205__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____ ->
+            case TC_3__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____ ->
                     GetAccountInfoPlanValidationHelper.validateRenewalIndicatorValue(testContext.getResponse(), "N");
-            case TC_206__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____ ->
+            case TC_4__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____ ->
                     GetAccountInfoPlanValidationHelper.validateRenewalIndicatorValue(testContext.getResponse(), "-");
-            case TC_207__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____ ->
+            case TC_5__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____ ->
                     GetAccountInfoPlanValidationHelper.validateGuaranteedPlanPricingModel(testContext.getResponse());
-            case TC_208__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____ ->
+            case TC_6__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____ ->
                     GetAccountInfoPlanValidationHelper.validateNonGuaranteedPlanPricingModel(testContext.getResponse());
-            case TC_209__Positive__Account_Info_Returned___Plan_Description_Format____ ->
+            case TC_7__Positive__Account_Info_Returned___Plan_Description_Format____ ->
                     GetAccountInfoPlanValidationHelper.validatePlanDescriptionFormat(testContext.getResponse());
-            case TC_210__Positive__Account_Info_Returned___Plan_Description_Value____ ->
+            case TC_8__Positive__Account_Info_Returned___Plan_Description_Value____ ->
                     GetAccountInfoPlanValidationHelper.validatePlanDescriptionValue(testContext.getResponse());
             default -> throw new IllegalArgumentException("Unsupported price plan test condition: " + testCondition);
         }

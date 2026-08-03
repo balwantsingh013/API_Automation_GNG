@@ -327,14 +327,14 @@ public class GetAccountInfoApiHelper {
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_203__Positive__Account_Info_Returned___Renewal_Indicator_Format____:
-            case TC_204__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____:
-            case TC_205__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____:
-            case TC_206__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____:
-            case TC_207__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____:
-            case TC_208__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____:
-            case TC_209__Positive__Account_Info_Returned___Plan_Description_Format____:
-            case TC_210__Positive__Account_Info_Returned___Plan_Description_Value____:
+            case TC_1__Positive__Account_Info_Returned___Renewal_Indicator_Format____:
+            case TC_2__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____:
+            case TC_3__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____:
+            case TC_4__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____:
+            case TC_5__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____:
+            case TC_6__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____:
+            case TC_7__Positive__Account_Info_Returned___Plan_Description_Format____:
+            case TC_8__Positive__Account_Info_Returned___Plan_Description_Value____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = getAccountDetailsForPlanTestCondition(testCondition);
                 payload.setCustomerCode(accountInfo.get("ucracct_cust_code").toString());
@@ -349,22 +349,22 @@ public class GetAccountInfoApiHelper {
 
     private Map<String, Object> getAccountDetailsForPlanTestCondition(GetAccountInfoLabel testCondition) {
         return switch (testCondition) {
-            case TC_203__Positive__Account_Info_Returned___Renewal_Indicator_Format____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC203();
-            case TC_204__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC204();
-            case TC_205__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC205();
-            case TC_206__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC206();
-            case TC_207__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC207();
-            case TC_208__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC208();
-            case TC_209__Positive__Account_Info_Returned___Plan_Description_Format____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC209();
-            case TC_210__Positive__Account_Info_Returned___Plan_Description_Value____ ->
-                    ApplicationContext.get().getDbAction().getAccountDetailsTC210();
+            case TC_1__Positive__Account_Info_Returned___Renewal_Indicator_Format____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC1();
+            case TC_2__Positive__Account_Info_Returned___Renewal_Indicator_equals_Y____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC2();
+            case TC_3__Positive__Account_Info_Returned___Renewal_Indicator_equals_N____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC3();
+            case TC_4__Positive__Account_Info_Returned___Renewal_Indicator_equals_Dash____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC4();
+            case TC_5__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC5();
+            case TC_6__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC6();
+            case TC_7__Positive__Account_Info_Returned___Plan_Description_Format____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC7();
+            case TC_8__Positive__Account_Info_Returned___Plan_Description_Value____ ->
+                    ApplicationContext.get().getDbAction().getAccountDetailsTC8();
             default -> throw new IllegalArgumentException("Unsupported plan test condition: " + testCondition);
         };
     }

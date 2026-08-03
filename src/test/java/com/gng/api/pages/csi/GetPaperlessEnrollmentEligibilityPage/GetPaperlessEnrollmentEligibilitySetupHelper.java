@@ -33,17 +33,39 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
     }
 
     public Map<String, Object> ensureActivePendingCorrEnrollment() {
+        return ensureActivePendingCorrEnrollment(false);
+    }
+
+    public Map<String, Object> ensureActivePendingCorrEnrollment(boolean logEnrollmentEvidence) {
         DBAction dbAction = ApplicationContext.get().getDbAction();
         Map<String, Object> account = dbAction.tryGetActiveAccountWithPendingCorrEnrollment();
         if (account != null && probeDeliveryOption(account, "correspondenceDeliveryOption", "I")) {
             log.info("Using ACTIVE pending corr PPER account {}/{}",
                     account.get("customerCode"), account.get("premisesCode"));
+            if (logEnrollmentEvidence) {
+                logNoUpdateReuse(account, "pending corr");
+            }
             return account;
         }
 
         for (int attempt = 1; attempt <= BOOTSTRAP_MAX_ATTEMPTS; attempt++) {
             account = reserveFreshCorrAccount(dbAction);
+            Map<String, String> before = null;
+            if (logEnrollmentEvidence) {
+                before = com.gng.api.util.VerifyAccountEvidenceUtil.captureBannerAndPper(
+                        readDbString(account, "customerCode"),
+                        readDbString(account, "premisesCode"),
+                        "BEFORE UpdatePaperless corr bootstrap");
+            }
             initiateCorrEnrollment(account);
+            if (logEnrollmentEvidence) {
+                Map<String, String> after = com.gng.api.util.VerifyAccountEvidenceUtil.captureBannerAndPper(
+                        readDbString(account, "customerCode"),
+                        readDbString(account, "premisesCode"),
+                        "AFTER UpdatePaperless corr bootstrap");
+                com.gng.api.util.VerifyAccountEvidenceUtil.logBeforeAfter(
+                        "VerifyAccount corr bootstrap attempt " + attempt, before, after);
+            }
             if (probeDeliveryOption(account, "correspondenceDeliveryOption", "I")) {
                 log.info("Bootstrapped ACTIVE pending corr PPER for {}/{} (attempt {})",
                         account.get("customerCode"), account.get("premisesCode"), attempt);
@@ -57,17 +79,39 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
     }
 
     public Map<String, Object> ensureActivePendingBillEnrollment() {
+        return ensureActivePendingBillEnrollment(false);
+    }
+
+    public Map<String, Object> ensureActivePendingBillEnrollment(boolean logEnrollmentEvidence) {
         DBAction dbAction = ApplicationContext.get().getDbAction();
         Map<String, Object> account = dbAction.tryGetActiveAccountWithPendingBillEnrollment();
         if (account != null && probeDeliveryOption(account, "billDeliveryOption", "I")) {
             log.info("Using ACTIVE pending bill PPER account {}/{}",
                     account.get("customerCode"), account.get("premisesCode"));
+            if (logEnrollmentEvidence) {
+                logNoUpdateReuse(account, "pending bill");
+            }
             return account;
         }
 
         for (int attempt = 1; attempt <= BOOTSTRAP_MAX_ATTEMPTS; attempt++) {
             account = reserveFreshBillAccount(dbAction);
+            Map<String, String> before = null;
+            if (logEnrollmentEvidence) {
+                before = com.gng.api.util.VerifyAccountEvidenceUtil.captureBannerAndPper(
+                        readDbString(account, "customerCode"),
+                        readDbString(account, "premisesCode"),
+                        "BEFORE UpdatePaperless bill bootstrap");
+            }
             initiateBillEnrollment(account);
+            if (logEnrollmentEvidence) {
+                Map<String, String> after = com.gng.api.util.VerifyAccountEvidenceUtil.captureBannerAndPper(
+                        readDbString(account, "customerCode"),
+                        readDbString(account, "premisesCode"),
+                        "AFTER UpdatePaperless bill bootstrap");
+                com.gng.api.util.VerifyAccountEvidenceUtil.logBeforeAfter(
+                        "VerifyAccount bill bootstrap attempt " + attempt, before, after);
+            }
             if (probeDeliveryOption(account, "billDeliveryOption", "I")) {
                 log.info("Bootstrapped ACTIVE pending bill PPER for {}/{} (attempt {})",
                         account.get("customerCode"), account.get("premisesCode"), attempt);
@@ -80,11 +124,21 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
                 "Could not resolve ACTIVE account with pending bill PPER returning billDeliveryOption=I.");
     }
 
+    private void logNoUpdateReuse(Map<String, Object> account, String label) {
+        String customerCode = readDbString(account, "customerCode");
+        String premisesCode = readDbString(account, "premisesCode");
+        com.gng.api.report.DualReportManager.logInfo(
+                "VerifyAccount — no UpdatePaperless update performed; reusing existing " + label
+                        + " account " + customerCode + "/" + premisesCode);
+        com.gng.api.util.VerifyAccountEvidenceUtil.captureBannerAndPper(
+                customerCode, premisesCode, "CURRENT (no update) " + label);
+    }
+
     Map<String, Object> ensureActiveNoEmailPendingBillEnrollment() {
         DBAction dbAction = ApplicationContext.get().getDbAction();
 
         Map<String, Object> account = dbAction.tryGetActiveAccountWithNoEmailAndPendingBillEnrollment();
-        if (account != null && probeReasonCode(account, "paperlessBillIneligReasonCode", 3)) {
+        if (account != null && probeDeliveryOption(account, "billDeliveryOption", "I")) {
             return account;
         }
 
@@ -92,17 +146,67 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
             account = reserveFreshBillAccount(dbAction);
             initiateBillEnrollment(account);
             dbAction.expireActiveBannerEmailsQuiet(readDbString(account, "customerCode"));
-            if (probeReasonCode(account, "paperlessBillIneligReasonCode", 3)) {
+            if (probeDeliveryOption(account, "billDeliveryOption", "I")) {
                 log.info("Bootstrapped no-email ACTIVE pending bill PPER for {}/{} (attempt {})",
                         account.get("customerCode"), account.get("premisesCode"), attempt);
                 return account;
             }
-            log.warn("No-email pending bill bootstrap attempt {}: expected paperlessBillIneligReasonCode=3 for {}/{}",
+            log.warn("No-email pending bill bootstrap attempt {}: expected billDeliveryOption=I for {}/{}",
                     attempt, account.get("customerCode"), account.get("premisesCode"));
         }
         throw new IllegalStateException(
-                "Could not resolve ACTIVE no-email account with pending bill PPER returning "
-                        + "paperlessBillIneligReasonCode=3.");
+                "Could not resolve ACTIVE no-email account with pending bill PPER returning billDeliveryOption=I.");
+    }
+
+    /**
+     * TC_201/201A: Banner corr already E + active corr PPER → delivery I and still eligible.
+     */
+    Map<String, Object> ensureActivePendingCorrWithBannerCorrEnrolled() {
+        DBAction dbAction = ApplicationContext.get().getDbAction();
+        Map<String, Object> account = dbAction.tryGetActiveAccountWithPendingCorrAndBannerCorrEnrolled();
+        if (account != null && probeDeliveryOption(account, "correspondenceDeliveryOption", "I")) {
+            log.info("Using Banner corr=E + pending corr PPER account {}/{}",
+                    account.get("customerCode"), account.get("premisesCode"));
+            return account;
+        }
+        // Fallback: pending corr PPER still yields I (Banner may be P). Prefer seeded E+PPER when available.
+        log.warn("No Banner corr=E + pending corr PPER seed found; falling back to pending corr PPER account");
+        return ensureActivePendingCorrEnrollment();
+    }
+
+    /**
+     * TC_202/202A: Banner bill=F + active bill PPER → delivery I and still eligible.
+     * Cannot bootstrap Fiserv via UpdatePaperless; fall back to pending bill PPER if no seed.
+     */
+    Map<String, Object> ensureActivePendingBillWithFiservBill() {
+        DBAction dbAction = ApplicationContext.get().getDbAction();
+        Map<String, Object> account = dbAction.tryGetActiveAccountWithPendingBillAndFiservBill();
+        if (account != null && probeDeliveryOption(account, "billDeliveryOption", "I")) {
+            log.info("Using Fiserv bill=F + pending bill PPER account {}/{}",
+                    account.get("customerCode"), account.get("premisesCode"));
+            return account;
+        }
+        log.warn("No Banner bill=F + pending bill PPER seed found; falling back to pending bill PPER account");
+        return ensureActivePendingBillEnrollment();
+    }
+
+    /** TC_205: NEW account with paper bill preference (P / null → P). */
+    Map<String, Object> ensureNewPaperBillPreference() {
+        DBAction dbAction = ApplicationContext.get().getDbAction();
+        Map<String, Object> account = dbAction.getNewAccountWithNullBillPreference();
+        if (account != null && probeDeliveryOption(account, "billDeliveryOption", "P")) {
+            log.info("Using NEW paper/null bill preference account {}/{}",
+                    account.get("customerCode"), account.get("premisesCode"));
+            return account;
+        }
+        account = dbAction.getNewPaperlessEligibleAccountWithNoToken();
+        if (account != null && probeDeliveryOption(account, "billDeliveryOption", "P")) {
+            log.info("Using NEW paperless-eligible paper bill account {}/{}",
+                    account.get("customerCode"), account.get("premisesCode"));
+            return account;
+        }
+        throw new IllegalStateException(
+                "Could not resolve NEW account with billDeliveryOption=P for TC_205.");
     }
 
     Map<String, Object> ensureNewUnconfirmedBillPreference() {

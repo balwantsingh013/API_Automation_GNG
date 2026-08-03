@@ -4804,6 +4804,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 p.OCSEPCI_ID              AS tokenIdentifier,
                 p.OCSEPCI_BILL_PRES_TYPE  AS pendingBillType,
                 p.OCSEPCI_CORR_DEL_TYPE   AS pendingCorrType,
+                p.OCSEPCI_EMAIL_ADDR      AS pendingEmail,
                 p.OCSEPCI_EMAIL_EXP_DATE  AS tokenExpirationDate,
                 p.OCSEPCI_EMAIL_COMP_DATE AS tokenCompletedDate,
                 p.OCSEPCI_CONF_STATUS     AS confStatus
@@ -4812,6 +4813,24 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND p.OCSEPCI_PREM_CODE = ?
             ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** Recent OCSEPCI/PPER rows for an account (review evidence: old vs new pending state). */
+    public static final String SELECT_RECENT_OCSEPCI_FOR_ACCOUNT = """
+            SELECT
+                p.OCSEPCI_ID              AS tokenIdentifier,
+                p.OCSEPCI_BILL_PRES_TYPE  AS pendingBillType,
+                p.OCSEPCI_CORR_DEL_TYPE   AS pendingCorrType,
+                p.OCSEPCI_EMAIL_ADDR      AS pendingEmail,
+                p.OCSEPCI_EMAIL_EXP_DATE  AS tokenExpirationDate,
+                p.OCSEPCI_EMAIL_COMP_DATE AS tokenCompletedDate,
+                p.OCSEPCI_CONF_STATUS     AS confStatus,
+                p.OCSEPCI_ACTIVITY_DATE   AS activityDate
+            FROM OCSEPCI p
+            WHERE p.OCSEPCI_CUST_CODE = ?
+              AND p.OCSEPCI_PREM_CODE = ?
+            ORDER BY p.OCSEPCI_ACTIVITY_DATE DESC
+            FETCH FIRST %d ROWS ONLY
             """;
 
     /** Unused OCSEPCI token for account without expiry filter (UAT fallback when SYSDATE comparison misses rows). */
@@ -5926,6 +5945,54 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND UPPER(TRIM(addr.UCRADDR_STREET_LINE2)) LIKE 'PO BOX%'
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * Banner evidence snapshot for Preferences VerifyAccount review:
+     * UCRACCT prefs + active UCRADDR billing address + premises street + OCSEPCI confirm dates.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_BANNER_EVIDENCE = """
+            SELECT
+                a.UCRACCT_CUST_CODE           AS customerCode,
+                a.UCRACCT_PREM_CODE           AS premisesCode,
+                a.UCRACCT_STATUS_IND          AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE      AS billPresType,
+                a.UCRACCT_CORR_DEL_TYPE       AS correspondencePreference,
+                addr.UCRADDR_STREET_NUMBER    AS billingStreetNumber,
+                addr.UCRADDR_PDIR_CODE_PRE    AS billingStreetPreDirection,
+                addr.UCRADDR_STREET_NAME      AS billingStreetName,
+                addr.UCRADDR_CITY             AS billingCity,
+                addr.UCRADDR_STAT_CODE        AS billingStateCode,
+                addr.UCRADDR_ZIP              AS billingZipCode,
+                addr.UCRADDR_STREET_LINE2     AS billingPoBox,
+                p.UCBPREM_STREET_NUMBER       AS premisesStreetNumber,
+                p.UCBPREM_CITY                AS premisesCity,
+                p.UCBPREM_STAT_CODE_ADDR      AS premisesStateCode,
+                p.UCBPREM_ZIPC_CODE           AS premisesZipCode,
+                TO_CHAR(
+                    (SELECT MAX(oc.OCSEPCI_EMAIL_COMP_DATE)
+                     FROM OCSEPCI oc
+                     WHERE oc.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                       AND oc.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                       AND NVL(oc.OCSEPCI_BILL_PRES_TYPE, 'P') = 'E'
+                       AND oc.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL),
+                    'YYYYMMDD')               AS billDeliveryConfirmDate,
+                TO_CHAR(
+                    (SELECT MAX(oc.OCSEPCI_EMAIL_COMP_DATE)
+                     FROM OCSEPCI oc
+                     WHERE oc.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                       AND oc.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                       AND NVL(oc.OCSEPCI_CORR_DEL_TYPE, 'P') = 'E'
+                       AND oc.OCSEPCI_EMAIL_COMP_DATE IS NOT NULL),
+                    'YYYYMMDD')               AS corrDeliveryConfirmDate
+            FROM UCRACCT a
+            LEFT JOIN UCRADDR addr
+                ON addr.UCRADDR_CUST_CODE = a.UCRACCT_CUST_CODE
+               AND addr.UCRADDR_STATUS_IND = 'A'
+            LEFT JOIN UCBPREM p
+                ON p.UCBPREM_CODE = a.UCRACCT_PREM_CODE
+            WHERE a.UCRACCT_CUST_CODE = ?
+              AND a.UCRACCT_PREM_CODE = ?
             """;
 
     /**
@@ -8648,14 +8715,26 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     /**
      * TC_131/132: hold GZBEMCP email row(s) with FOR UPDATE so Banner preference/confirmation-date
-     * update cannot complete (→ 40293). On UAT1 Confirm often waits until gateway HTTP 504.
-     * Release via connection rollback/close.
+     * update cannot complete (→ 40293). Release via connection rollback/close.
      */
     public static final String LOCK_UCRACCT_ROW_FOR_UPDATE = """
             SELECT GZBEMCP_CUST_CODE, GZBEMCP_EMAIL_ADDR
             FROM GZBEMCP
             WHERE GZBEMCP_CUST_CODE = ?
             FOR UPDATE
+            """;
+
+    /** Alternate/unused: snapshot GZBEMCP rows before delete (restore after Confirm). */
+    public static final String SELECT_GZBEMCP_ROWS_FOR_CUSTOMER = """
+            SELECT *
+            FROM GZBEMCP
+            WHERE GZBEMCP_CUST_CODE = ?
+            """;
+
+    /** Alternate/unused: delete GZBEMCP path (returns 10413 on Confirm, not 40293). */
+    public static final String DELETE_GZBEMCP_ROWS_FOR_CUSTOMER = """
+            DELETE FROM GZBEMCP
+            WHERE GZBEMCP_CUST_CODE = ?
             """;
 
     public static final String UPDATE_PASSWORD= """
@@ -8844,32 +8923,67 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     public static final String SELECT_ACCOUNT_DETAILS_TC179= """
             SELECT
-                                                       a.ucracct_cust_code,
-                                                       a.ucracct_prem_code,
-                                                       s.ucrserv_scls_code,
-                                                       c.ucrscmp_scty_code,
-                                                       c.ucrscmp_plan_code,
-                                                       a.ucracct_bill_pres_type,
-                                                       a.ucracct_corr_del_type,
-                                                       c.ucrscmp_acr_ind,
-                                                       p.uztppuc_rollover,
-                                                       p.uztppuc_restrict_ind
-                                                   FROM ucracct a
-                                                   JOIN ucrserv s
-                                                       ON s.ucrserv_cust_code = a.ucracct_cust_code
-                                                      AND s.ucrserv_prem_code = a.ucracct_prem_code
-                                                   JOIN ucrscmp c
-                                                       ON c.ucrscmp_cust_code = a.ucracct_cust_code
-                                                      AND c.ucrscmp_prem_code = a.ucracct_prem_code
-                                                   JOIN uztppuc p
-                                                       ON p.uztppuc_plan_code = c.ucrscmp_plan_code
-                                                   WHERE  c.ucrscmp_end_date > SYSDATE
-                                                     AND p.uztppuc_rollover = 'N'
-                                                     AND c.ucrscmp_plan_code= 'CFM'
-                                                   FETCH FIRST 1 ROWS ONLY
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                s.ucrserv_scls_code,
+                c.ucrscmp_scty_code,
+                c.ucrscmp_plan_code,
+                a.ucracct_bill_pres_type,
+                a.ucracct_corr_del_type,
+                c.ucrscmp_acr_ind,
+                p.uztppuc_rollover,
+                p.uztppuc_restrict_ind
+            FROM ucracct a
+            JOIN ucrserv s
+                ON s.ucrserv_cust_code = a.ucracct_cust_code
+               AND s.ucrserv_prem_code = a.ucracct_prem_code
+            JOIN ucrscmp c
+                ON c.ucrscmp_cust_code = a.ucracct_cust_code
+               AND c.ucrscmp_prem_code = a.ucracct_prem_code
+            JOIN uztppuc p
+                ON p.uztppuc_plan_code = c.ucrscmp_plan_code
+            WHERE c.ucrscmp_end_date > SYSDATE
+              AND NVL(p.uztppuc_rollover, 'N') = 'N'
+              AND c.ucrscmp_plan_code = 'CFM'
+            FETCH FIRST 1 ROWS ONLY
     """;
 
     public static final String SELECT_ACCOUNT_DETAILS_TC180= """
+            SELECT
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                s.ucrserv_scls_code,
+                c.ucrscmp_scty_code,
+                c.ucrscmp_plan_code,
+                a.ucracct_bill_pres_type,
+                a.ucracct_corr_del_type,
+                c.ucrscmp_acr_ind,
+                p.uztppuc_rollover,
+                p.uztppuc_restrict_ind
+            FROM ucracct a
+            JOIN ucrserv s
+                ON s.ucrserv_cust_code = a.ucracct_cust_code
+               AND s.ucrserv_prem_code = a.ucracct_prem_code
+            JOIN ucrscmp c
+                ON c.ucrscmp_cust_code = a.ucracct_cust_code
+               AND c.ucrscmp_prem_code = a.ucracct_prem_code
+            JOIN uztppuc p
+                ON p.uztppuc_plan_code = c.ucrscmp_plan_code
+            WHERE a.ucracct_cust_code = '5814879'
+              AND a.ucracct_prem_code = '5789992'
+              AND c.ucrscmp_end_date > SYSDATE
+              AND p.uztppuc_rollover = 'Y'
+            FETCH FIRST 1 ROWS ONLY
+    """;
+
+    public static final String SELECT_PLAN_ROLLOVER_INDICATOR = """
+            SELECT NVL(uztppuc_rollover, 'N') AS uztppuc_rollover
+            FROM uztppuc
+            WHERE uztppuc_plan_code = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC181= """
             SELECT
                 a.ucracct_cust_code,
                 a.ucracct_prem_code,
@@ -8894,36 +9008,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND a.ucracct_cycl_code <> 'DEPO'
               AND s.ucrserv_scls_code = 'RS'
               AND c.ucrscmp_end_date > SYSDATE
-              AND p.uztppuc_rollover = 'Y'
-            FETCH FIRST 1 ROWS ONLY
-    """;
-
-    public static final String SELECT_ACCOUNT_DETAILS_TC181= """
-     SELECT
-                a.ucracct_cust_code,
-                a.ucracct_prem_code,
-                s.ucrserv_scls_code,
-                c.ucrscmp_scty_code,
-                c.ucrscmp_plan_code,
-                a.ucracct_bill_pres_type,
-                a.ucracct_corr_del_type,
-                c.ucrscmp_acr_ind,
-                p.uztppuc_rollover,
-                p.uztppuc_restrict_ind
-            FROM ucracct a
-            JOIN ucrserv s
-                ON s.ucrserv_cust_code = a.ucracct_cust_code
-               AND s.ucrserv_prem_code = a.ucracct_prem_code
-            JOIN ucrscmp c
-                ON c.ucrscmp_cust_code = a.ucracct_cust_code
-               AND c.ucrscmp_prem_code = a.ucracct_prem_code
-            JOIN uztppuc p
-                ON p.uztppuc_plan_code = c.ucrscmp_plan_code
-            WHERE a.ucracct_status_ind = 'A'
-              AND a.ucracct_cycl_code <> 'DEPO'
-              AND s.ucrserv_scls_code = 'RS'
-              AND c.ucrscmp_end_date > SYSDATE
-              AND p.uztppuc_restrict_ind = 'N'
+              AND NVL(p.uztppuc_restrict_ind, 'N') = 'N'
             FETCH FIRST 1 ROWS ONLY
     """;
 
@@ -9182,7 +9267,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                                                FETCH FIRST 1 ROWS ONLY
     """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC203 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC1 = """
             SELECT
                 t1.ucracct_cust_code,
                 t1.ucracct_prem_code,
@@ -9209,40 +9294,72 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC204 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC2 = """
             SELECT
-                t1.ucracct_cust_code,
-                t1.ucracct_prem_code,
-                t3.ucrserv_scls_code,
-                t4.ucrscmp_plan_code
-            FROM
-                ucracct t1
-            JOIN
-                ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
-            JOIN
-                ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
-                           AND t1.ucracct_prem_code = t3.ucrserv_prem_code
-            JOIN
-                ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
-                           AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
-            JOIN
-                uzrplan p ON p.uzrplan_short_code = t4.ucrscmp_plan_code
-            WHERE
-                t1.ucracct_status_ind = 'A'
-                AND t1.ucracct_cycl_code NOT IN ('DEPO')
-                AND t3.ucrserv_scls_code = 'RS'
-                AND t4.ucrscmp_scty_code = 'COMM'
-                AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
-                AND p.uzrplan_effective_date <= SYSDATE
-                AND p.uzrplan_expiration_date >= SYSDATE
-                AND p.uzrplan_toff_term_days > 0
-                AND (TRUNC(SYSDATE) + p.uzrplan_toff_term_days) > t4.ucrscmp_end_date
+                ucracct_cust_code,
+                ucracct_prem_code,
+                ucrserv_scls_code,
+                ucrscmp_plan_code
+            FROM (
+                SELECT
+                    t1.ucracct_cust_code,
+                    t1.ucracct_prem_code,
+                    t3.ucrserv_scls_code,
+                    t4.ucrscmp_plan_code,
+                    1 AS pick_priority
+                FROM
+                    ucracct t1
+                JOIN
+                    ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+                JOIN
+                    ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                               AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+                JOIN
+                    ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                               AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+                WHERE
+                    t1.ucracct_cust_code = '6114996'
+                    AND t1.ucracct_prem_code = '6088083'
+                    AND t1.ucracct_status_ind = 'A'
+                    AND t3.ucrserv_scls_code = 'RS'
+                    AND t4.ucrscmp_scty_code = 'COMM'
+                    AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+
+                UNION ALL
+
+                SELECT
+                    t1.ucracct_cust_code,
+                    t1.ucracct_prem_code,
+                    t3.ucrserv_scls_code,
+                    t4.ucrscmp_plan_code,
+                    2 AS pick_priority
+                FROM
+                    ucracct t1
+                JOIN
+                    ucbcust t2 ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+                JOIN
+                    ucrserv t3 ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                               AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+                JOIN
+                    ucrscmp t4 ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                               AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+                WHERE
+                    t1.ucracct_status_ind = 'A'
+                    AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                    AND t3.ucrserv_scls_code = 'RS'
+                    AND t4.ucrscmp_scty_code = 'COMM'
+                    AND t4.ucrscmp_plan_code = 'GPP'
+                    AND TRUNC(SYSDATE) BETWEEN t4.ucrscmp_start_date AND t4.ucrscmp_end_date
+                    AND t4.ucrscmp_end_date > TRUNC(SYSDATE)
+                    AND t4.ucrscmp_end_date <= TRUNC(SYSDATE) + 45
+            )
             ORDER BY
-                t1.ucracct_cust_code DESC
+                pick_priority,
+                ucracct_cust_code DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC205 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC3 = """
             SELECT
                 t1.ucracct_cust_code,
                 t1.ucracct_prem_code,
@@ -9270,7 +9387,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC206 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC4 = """
             SELECT
                 t1.ucracct_cust_code,
                 t1.ucracct_prem_code,
@@ -9307,7 +9424,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC207 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC5 = """
             SELECT
                 t1.ucracct_cust_code,
                 t1.ucracct_prem_code,
@@ -9344,7 +9461,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC208 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC6 = """
             SELECT
                 t1.ucracct_cust_code,
                 t1.ucracct_prem_code,
@@ -9379,7 +9496,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC209 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC7 = """
             SELECT
                 t1.ucracct_cust_code,
                 t1.ucracct_prem_code,
@@ -9406,7 +9523,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_ACCOUNT_DETAILS_TC210 = """
+    public static final String SELECT_ACCOUNT_DETAILS_TC8 = """
             SELECT
                 t1.ucracct_cust_code,
                 t1.ucracct_prem_code,
@@ -9449,6 +9566,56 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                         A.UCRACCT_CUST_CODE = B.UCRADDR_CUST_CODE
                 )
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_PENDING_ENROLLMENT_NEW_ACCOUNT_ONLY = """
+            SELECT
+                e.GTBENRL_CUST_CODE,
+                e.GTBENRL_PREM_CODE
+            FROM
+                GTBENRL e
+            WHERE
+                e.GTBENRL_PROC_FLAG = 'N'
+                AND e.GTBENRL_CUST_CODE IS NOT NULL
+                AND e.GTBENRL_PREM_CODE IS NOT NULL
+                AND NOT EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        UCRACCT a
+                    WHERE
+                        a.UCRACCT_CUST_CODE = e.GTBENRL_CUST_CODE
+                )
+            ORDER BY
+                DBMS_RANDOM.VALUE
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_PENDING_ENROLLMENT_MAILING_ADDRESS = """
+            SELECT
+                GTBENRL_CUST_CODE,
+                GTBENRL_PREM_CODE,
+                GTBENRL_BILL_ADDR1,
+                GTBENRL_BILL_ADDR2,
+                GTBENRL_BILL_ADDR3,
+                GTBENRL_BILL_CITY,
+                GTBENRL_BILL_STATE,
+                GTBENRL_BILL_ZIP
+            FROM
+                GTBENRL
+            WHERE
+                GTBENRL_CUST_CODE = ?
+                AND TO_CHAR(GTBENRL_PREM_CODE) = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    public static final String SELECT_MAILING_ADDRESS_ROW_COUNT_BY_CUSTOMER = """
+            SELECT
+                COUNT(*) AS ADDRESS_COUNT
+            FROM
+                UCRADDR
+            WHERE
+                UCRADDR_CUST_CODE = ?
             """;
 
     public static final String SELECT_ACCOUNT_TC_113= """

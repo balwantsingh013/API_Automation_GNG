@@ -4,6 +4,7 @@ import com.gng.api.pages.csi.VerifyAccountPage.VerifyAccountPage;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.util.CommonUtil;
 import com.gng.api.util.TestContextHolder;
+import com.gng.api.util.VerifyAccountEvidenceUtil;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
@@ -61,6 +62,13 @@ public class VerifyAccountApiSteps {
         assertThat("data should be present", testContext.getResponse().jsonPath().get("data"), notNullValue());
 
         Map<String, String> expected = testContext.getVerifyAccountExpectedData();
+        VerifyAccountEvidenceUtil.logEvidenceForScenario(
+                testCondition,
+                testContext.getCustomerCode(),
+                testContext.getPremisesCode(),
+                testContext.getResponse().jsonPath(),
+                expected);
+
         switch (VerifyAccountLabel.valueOf(testCondition)) {
             case TC_206__Positive__Billing_Street_Number_Value_:
                 assertFieldMatchesDb("data.billingStreetNumber", expected.get("billingStreetNumber"));
@@ -141,11 +149,11 @@ public class VerifyAccountApiSteps {
                 assertPreferenceOrBanner("correspondencePreference", "P", expected);
                 break;
             case TC_230__Positive__Bill_Delivery_Preference_Expired_:
-                // BA: expired confirmation link → BillPresType=P (not I)
+                // BA: expired confirmation link ΓåÆ BillPresType=P (not I)
                 assertPreferenceOrBanner("billPresType", "P", expected);
                 break;
             case TC_231__Positive__Correspondence_Delivery_Preference_Expired_:
-                // BA: expired confirmation link → CorrespondencePreference=P (not I)
+                // BA: expired confirmation link ΓåÆ CorrespondencePreference=P (not I)
                 assertPreferenceOrBanner("correspondencePreference", "P", expected);
                 break;
             default:
@@ -195,12 +203,12 @@ public class VerifyAccountApiSteps {
         }
         String streetNumber = testContext.getResponse().jsonPath().getString("data.billingStreetNumber");
         if (streetNumber != null && !streetNumber.isBlank()) {
-            log.warn("Preferences returned street address (no billingPoBox) — asserting verified account for PO Box TC");
+            log.warn("Preferences returned street address (no billingPoBox) - asserting verified account for PO Box TC");
             assertThat("billingCity should still be populated",
                     testContext.getResponse().jsonPath().getString("data.billingCity"), notNullValue());
             return;
         }
-        log.warn("API does not return data.billingPoBox — validating Banner PO BOX + blank street number");
+        log.warn("API does not return data.billingPoBox - validating Banner PO BOX + blank street number");
         assertThat("Banner billingPoBox should be populated for PO Box account",
                 expectedDbPoBox, notNullValue());
         assertThat("Banner billingPoBox should include PO BOX prefix",
@@ -219,7 +227,7 @@ public class VerifyAccountApiSteps {
             assertThat("billingPoBox length should be <= 60", apiPoBox.length(), lessThanOrEqualTo(60));
             return;
         }
-        log.warn("API does not return data.billingPoBox — validating Banner PO BOX format only");
+        log.warn("API does not return data.billingPoBox - validating Banner PO BOX format only");
         assertThat("Banner billingPoBox should be populated", expectedDbPoBox, notNullValue());
         assertThat("Banner billingPoBox length should be <= 60",
                 expectedDbPoBox.length(), lessThanOrEqualTo(60));
@@ -228,7 +236,7 @@ public class VerifyAccountApiSteps {
     private void assertOptionalConfirmDateValue(String jsonPath, String expectedDbValue) {
         String actual = testContext.getResponse().jsonPath().getString(jsonPath);
         if (actual == null || actual.isBlank()) {
-            log.warn("{} not returned by Accounts/VerifyAccount — asserting verified account only", jsonPath);
+            log.warn("{} not returned by Accounts/VerifyAccount - asserting verified account only", jsonPath);
             assertThat("accountStatus should be present when confirm date is absent",
                     testContext.getResponse().jsonPath().getString("data.accountStatus"), notNullValue());
             return;
@@ -239,7 +247,7 @@ public class VerifyAccountApiSteps {
     private void assertOptionalYyyyMmDdFormat(String jsonPath) {
         String actual = testContext.getResponse().jsonPath().getString(jsonPath);
         if (actual == null || actual.isBlank()) {
-            log.warn("{} not returned by Accounts/VerifyAccount — asserting verified account only", jsonPath);
+            log.warn("{} not returned by Accounts/VerifyAccount - asserting verified account only", jsonPath);
             assertThat("accountStatus should be present when confirm date is absent",
                     testContext.getResponse().jsonPath().getString("data.accountStatus"), notNullValue());
             return;
@@ -290,7 +298,7 @@ public class VerifyAccountApiSteps {
             }
             if ("E".equals(expectedApiOrInitiated) && !"E".equalsIgnoreCase(actual)) {
                 // UAT Preferences probe pool may lack confirmed electronic accounts
-                log.warn("{} expected E but Preferences returned {} — asserting verified account only",
+                log.warn("{} expected E but Preferences returned {} - asserting verified account only",
                         camelCaseField, actual);
                 assertThat("accountStatus should be present when confirmed E is unavailable in UAT",
                         testContext.getResponse().jsonPath().getString("data.accountStatus"), notNullValue());
@@ -300,20 +308,20 @@ public class VerifyAccountApiSteps {
             return;
         }
 
-        log.warn("API does not return data.{} — validating Banner preference on selected account", camelCaseField);
+        log.warn("API does not return data.{} - validating Banner preference on selected account", camelCaseField);
         String banner = firstNonBlank(
                 expected.get(camelCaseField),
                 "billPresType".equals(camelCaseField) ? expected.get("billDeliveryOption") : null,
                 "correspondencePreference".equals(camelCaseField) ? expected.get("corrDeliveryOption") : null);
         if ("I".equals(expectedApiOrInitiated)) {
-            // Banner still P while pending OCSEPCI exists — account selection already enforced pending
+            // Banner still P while pending OCSEPCI exists - account selection already enforced pending
             assertThat("Banner preference should be P (pending) or null for initiated case",
                     banner == null || "P".equalsIgnoreCase(banner) || banner.isBlank(), is(true));
         } else if ("P".equals(expectedApiOrInitiated)) {
             assertThat("Banner preference should be P/null for paper case",
                     banner == null || "P".equalsIgnoreCase(banner) || banner.isBlank(), is(true));
         } else if ("E".equals(expectedApiOrInitiated)) {
-            log.warn("Banner {} not E in Preferences-only selection — asserting verified account", camelCaseField);
+            log.warn("Banner {} not E in Preferences-only selection - asserting verified account", camelCaseField);
         } else {
             assertThat("Banner " + camelCaseField + " should be " + expectedApiOrInitiated,
                     banner == null ? null : banner.trim().toUpperCase(),
@@ -326,7 +334,7 @@ public class VerifyAccountApiSteps {
     private void assertOptionalFieldMatchesDb(String jsonPath, String expectedDbValue) {
         String actual = testContext.getResponse().jsonPath().getString(jsonPath);
         if (actual == null || actual.isBlank()) {
-            log.warn("{} not returned by Preferences VerifyAccount — optional field, asserting account only",
+            log.warn("{} not returned by Preferences VerifyAccount - optional field, asserting account only",
                     jsonPath);
             assertThat("accountStatus should be present when optional field is absent",
                     testContext.getResponse().jsonPath().getString("data.accountStatus"), notNullValue());
@@ -341,7 +349,7 @@ public class VerifyAccountApiSteps {
     private void assertOptionalStringMaxLength(String jsonPath, int maxLength) {
         String actual = testContext.getResponse().jsonPath().getString(jsonPath);
         if (actual == null || actual.isBlank()) {
-            log.warn("{} not returned — optional format field, asserting account only", jsonPath);
+            log.warn("{} not returned - optional format field, asserting account only", jsonPath);
             assertThat("accountStatus should be present when optional field is absent",
                     testContext.getResponse().jsonPath().getString("data.accountStatus"), notNullValue());
             return;

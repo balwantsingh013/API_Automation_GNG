@@ -12,8 +12,10 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -2545,6 +2547,59 @@ public class DBAction {
         }
     }
 
+    /**
+     * Banner UCRACCT/UCRADDR/UCBPREM + OCSEPCI confirm-date evidence for VerifyAccount review logs.
+     * Tries common cust/prem code formats (as-is, zero-stripped, 7-digit padded) because
+     * Preferences MariaDB account_number parsing may not match Banner VARCHAR storage.
+     * Returns null when no UCRACCT row exists for the Preferences account.
+     */
+    public Map<String, Object> tryGetVerifyAccountBannerEvidence(String customerCode, String premisesCode) {
+        for (String[] pair : verifyAccountCodeVariants(customerCode, premisesCode)) {
+            try {
+                Map<String, Object> row = jdbcTemplate.queryForMap(
+                        DBQuery.SELECT_VERIFY_ACCOUNT_BANNER_EVIDENCE, pair[0], pair[1]);
+                if (row != null) {
+                    return row;
+                }
+            } catch (EmptyResultDataAccessException ignored) {
+                // try next code format
+            }
+        }
+        return null;
+    }
+
+    /** Cust/prem variants used when joining Preferences account numbers to Banner UCRACCT. */
+    public static List<String[]> verifyAccountCodeVariants(String customerCode, String premisesCode) {
+        LinkedHashSet<String> custs = new LinkedHashSet<>();
+        LinkedHashSet<String> prems = new LinkedHashSet<>();
+        addCodeVariants(custs, customerCode);
+        addCodeVariants(prems, premisesCode);
+        List<String[]> pairs = new ArrayList<>();
+        for (String cust : custs) {
+            for (String prem : prems) {
+                pairs.add(new String[]{cust, prem});
+            }
+        }
+        return pairs;
+    }
+
+    private static void addCodeVariants(LinkedHashSet<String> target, String raw) {
+        if (raw == null || raw.isBlank()) {
+            return;
+        }
+        String trimmed = raw.trim();
+        target.add(trimmed);
+        String digits = trimmed.replaceAll("\\D", "");
+        if (!digits.isBlank()) {
+            target.add(digits);
+            String stripped = digits.replaceFirst("^0+(?!$)", "");
+            target.add(stripped);
+            if (stripped.length() <= 7) {
+                target.add(String.format("%7s", stripped).replace(' ', '0'));
+            }
+        }
+    }
+
     public boolean hasActiveBannerEmail(String customerCode) {
         Integer count = jdbcTemplate.queryForObject(
                 """
@@ -2582,15 +2637,33 @@ public class DBAction {
     }
 
     public List<Map<String, Object>> listVerifyAccountStreetCandidates(int limit) {
+        return listVerifyAccountStreetCandidates(limit, true);
+    }
+
+    /**
+     * @param logToReport when false, probe-only (avoids leaking first-candidate cust/prem into the active TC report)
+     */
+    public List<Map<String, Object>> listVerifyAccountStreetCandidates(int limit, boolean logToReport) {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_STREET_CANDIDATES;
-        logQueryInAllure("list VerifyAccount street candidates (limit " + limit + ")", query);
+        if (logToReport) {
+            logQueryInAllure("list VerifyAccount street candidates (limit " + limit + ")", query);
+        }
         try {
             List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
             if (rows.size() > limit) {
                 rows = rows.subList(0, limit);
             }
-            logPaperlessDbResult(query, rows.isEmpty() ? Map.of() : rows.get(0), startTime);
+            if (logToReport) {
+                long elapsed = System.currentTimeMillis() - startTime;
+                SimplifiedExtentReportManager.logDatabaseQuery(
+                        query,
+                        "candidateRows=" + rows.size() + " (probe pool only; not the executed VerifyAccount account)",
+                        elapsed);
+            } else {
+                log.info("VerifyAccount Banner street candidates (probe-only, not logged to Extent): {}",
+                        rows.size());
+            }
             return rows;
         } catch (EmptyResultDataAccessException ex) {
             return List.of();
@@ -2602,15 +2675,26 @@ public class DBAction {
      * Call via {@code ApplicationContext.get().getDbAction("mariadb")}.
      */
     public List<Map<String, Object>> listPreferencesRegisteredAccounts(int limit) {
+        return listPreferencesRegisteredAccounts(limit, true);
+    }
+
+    /**
+     * @param logToReport when false, probe-only (keeps MariaDB candidate SQL out of the active TC report)
+     */
+    public List<Map<String, Object>> listPreferencesRegisteredAccounts(int limit, boolean logToReport) {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_PREFERENCES_REGISTERED_ACCOUNTS;
-        logQueryInAllure("list Preferences registered accounts (limit " + limit + ")", query);
+        if (logToReport) {
+            logQueryInAllure("list Preferences registered accounts (limit " + limit + ")", query);
+        }
         try {
             List<Map<String, Object>> rows = jdbcTemplate.queryForList(query, Math.max(1, limit));
             log.info("Found {} Preferences registered account candidates", rows.size());
-            long elapsed = System.currentTimeMillis() - startTime;
-            SimplifiedExtentReportManager.logDatabaseQuery(
-                    query, "rows=" + rows.size(), elapsed);
+            if (logToReport) {
+                long elapsed = System.currentTimeMillis() - startTime;
+                SimplifiedExtentReportManager.logDatabaseQuery(
+                        query, "rows=" + rows.size(), elapsed);
+            }
             return rows;
         } catch (EmptyResultDataAccessException ex) {
             return List.of();
@@ -2985,17 +3069,27 @@ public class DBAction {
      * MariaDB (custadv): latest paperless token for account regardless of used/expired state.
      */
     public Map<String, Object> getAnyLatestConfirmPaperlessTokenFromCustAdv(String customerCode, String premisesCode) {
+        return getAnyLatestConfirmPaperlessTokenFromCustAdv(customerCode, premisesCode, true);
+    }
+
+    public Map<String, Object> getAnyLatestConfirmPaperlessTokenFromCustAdv(String customerCode,
+                                                                           String premisesCode,
+                                                                           boolean logToReport) {
         long startTime = System.currentTimeMillis();
         String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
         String query = DBQuery.SELECT_CUSTADV_ANY_LATEST_PAPERLESS_TOKEN_FOR_ACCOUNT;
 
-        logQueryInAllure("get any latest paperless token from custadv for account " + accountNumber, query);
+        if (logToReport) {
+            logQueryInAllure("get any latest paperless token from custadv for account " + accountNumber, query);
+        }
 
         Map<String, Object> result = jdbcTemplate.queryForMap(query, accountNumber);
         normalizeCustAdvTokenRow(result, customerCode, premisesCode, accountNumber);
 
-        long elapsed = System.currentTimeMillis() - startTime;
-        SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
+        if (logToReport) {
+            long elapsed = System.currentTimeMillis() - startTime;
+            SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(), elapsed);
+        }
         return result;
     }
 
@@ -3168,6 +3262,19 @@ public class DBAction {
         } catch (EmptyResultDataAccessException ex) {
             return null;
         }
+    }
+
+    /** Recent OCSEPCI/PPER rows for review evidence (does not change enrollment behavior). */
+    public List<Map<String, Object>> listRecentOcsepciForAccount(String customerCode,
+                                                                 String premisesCode,
+                                                                 int maxRows) {
+        long startTime = System.currentTimeMillis();
+        int limit = Math.max(1, Math.min(maxRows, 10));
+        String query = String.format(DBQuery.SELECT_RECENT_OCSEPCI_FOR_ACCOUNT, limit);
+        logQueryInAllure("list recent OCSEPCI/PPER rows for " + customerCode + "/" + premisesCode, query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query, customerCode, premisesCode);
+        logPaperlessDbResult(query, Map.of("rowCount", result.size()), startTime);
+        return result;
     }
 
     public Map<String, Object> getExpiredConfirmationToken() {
@@ -4553,6 +4660,71 @@ public class DBAction {
         );
 
         return result;
+    }
+
+    public Map<String, Object> getPendingEnrollmentNewAccountOnly() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PENDING_ENROLLMENT_NEW_ACCOUNT_ONLY;
+
+        logQueryInAllure("get pending enrollment NEW account only", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public Map<String, Object> getPendingEnrollmentMailingAddress(String custCode, String premCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PENDING_ENROLLMENT_MAILING_ADDRESS;
+        String loggedQuery = query.replaceFirst("\\?", "'" + custCode + "'")
+                .replaceFirst("\\?", "'" + premCode + "'");
+
+        logQueryInAllure("get pending enrollment mailing address", loggedQuery);
+
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(query, custCode, premCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyMap();
+        }
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public int getMailingAddressRowCountByCustomer(String custCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_MAILING_ADDRESS_ROW_COUNT_BY_CUSTOMER;
+        String loggedQuery = query.replace("?", "'" + custCode + "'");
+
+        logQueryInAllure("get mailing address row count by customer", loggedQuery);
+
+        Integer count = jdbcTemplate.queryForObject(query, Integer.class, custCode);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                String.valueOf(count),
+                elapsed
+        );
+
+        return count == null ? 0 : count;
     }
 
     public Map<String, Object> getAccountDetails() {
@@ -5962,6 +6134,22 @@ public class DBAction {
         return result;
     }
 
+    public String getPlanRolloverIndicator(String planCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_PLAN_ROLLOVER_INDICATOR;
+
+        logQueryInAllure("get plan rollover indicator", query);
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(query, planCode);
+        String value = rows.isEmpty() || rows.get(0).get("uztppuc_rollover") == null
+                ? "N"
+                : rows.get(0).get("uztppuc_rollover").toString().trim();
+
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(query, value, elapsed);
+        return value;
+    }
+
     public Map<String, Object> getAccountDetailsTC181() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC181;
@@ -6102,36 +6290,36 @@ public class DBAction {
         return result;
     }
 
-    public Map<String, Object> getAccountDetailsTC203() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC203);
+    public Map<String, Object> getAccountDetailsTC1() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC1);
     }
 
-    public Map<String, Object> getAccountDetailsTC204() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC204);
+    public Map<String, Object> getAccountDetailsTC2() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC2);
     }
 
-    public Map<String, Object> getAccountDetailsTC205() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC205);
+    public Map<String, Object> getAccountDetailsTC3() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC3);
     }
 
-    public Map<String, Object> getAccountDetailsTC206() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC206);
+    public Map<String, Object> getAccountDetailsTC4() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC4);
     }
 
-    public Map<String, Object> getAccountDetailsTC207() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC207);
+    public Map<String, Object> getAccountDetailsTC5() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC5);
     }
 
-    public Map<String, Object> getAccountDetailsTC208() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC208);
+    public Map<String, Object> getAccountDetailsTC6() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC6);
     }
 
-    public Map<String, Object> getAccountDetailsTC209() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC209);
+    public Map<String, Object> getAccountDetailsTC7() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC7);
     }
 
-    public Map<String, Object> getAccountDetailsTC210() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC210);
+    public Map<String, Object> getAccountDetailsTC8() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC8);
     }
 
     private Map<String, Object> queryAccountDetails(String query) {

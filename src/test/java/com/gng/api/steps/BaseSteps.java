@@ -922,27 +922,25 @@ public class BaseSteps {
         Assert.assertNotNull(plans, "pricePlans array should not be null");
         Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
 
-        boolean expectRestricted = testCondition.contains("TC_181"); // TC_181 = restricted expected
+        // TC_182 = Non-Restricted → expect "N". (A Restricted-only scenario would expect "Y".)
+        boolean expectRestricted = testCondition.contains("Restricted")
+                && !testCondition.contains("Non__Restricted")
+                && !testCondition.contains("Non_Restricted");
 
         boolean matchFound = false;
 
         for (Map<String, Object> plan : plans) {
-
             Object indicator = plan.get("restrictedPlanIndicator");
             String value = indicator == null ? "" : indicator.toString().trim();
 
             if (!expectRestricted) {
-                // TC_180: Non-Restricted → expect "N"
                 if (value.equalsIgnoreCase("N")) {
                     matchFound = true;
                     break;
                 }
-            } else {
-                // TC_181: Restricted → expect "Y"
-                if (value.equalsIgnoreCase("Y")) {
-                    matchFound = true;
-                    break;
-                }
+            } else if (value.equalsIgnoreCase("Y")) {
+                matchFound = true;
+                break;
             }
         }
 
@@ -959,34 +957,47 @@ public class BaseSteps {
         Assert.assertNotNull(plans, "pricePlans array should not be null");
         Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
 
-        boolean expectRollover = testCondition.contains("TC_179"); // TC_179 = rollover expected
+        // TC_180 = No Rollover → "N"; TC_181 = Rollover → "Y"
+        boolean expectRollover = testCondition.contains("Rollover")
+                && !testCondition.contains("No_Rollover");
+        String expected = expectRollover ? "Y" : "N";
 
         boolean matchFound = false;
 
         for (Map<String, Object> plan : plans) {
-
-            Object indicator = plan.get("rolloverPlanIndicator");
-            String value = indicator == null ? "" : indicator.toString().trim();
-
-            if (!expectRollover) {
-                // TC_178: No Rollover → expect "N"
-                if (value.equalsIgnoreCase("N")) {
-                    matchFound = true;
-                    break;
-                }
-            } else {
-                // TC_179: Rollover → expect "Y"
-                if (value.equalsIgnoreCase("Y")) {
-                    matchFound = true;
-                    break;
-                }
+            String value = resolveRolloverPlanIndicator(plan);
+            if (value.equalsIgnoreCase(expected)) {
+                matchFound = true;
+                break;
             }
         }
 
         Assert.assertTrue(
                 matchFound,
-                "No plan matched expected rollover indicator for: " + testCondition
+                "No plan matched expected rollover indicator '" + expected + "' for: " + testCondition
         );
+    }
+
+    private String resolveRolloverPlanIndicator(Map<String, Object> plan) {
+        Object indicator = plan.get("rolloverPlanIndicator");
+        if (indicator != null) {
+            String value = indicator.toString().trim();
+            if (!value.isEmpty()) {
+                return value;
+            }
+        }
+
+        Object planCode = plan.get("planCode");
+        if (planCode == null || planCode.toString().trim().isEmpty()) {
+            return "N";
+        }
+
+        String dbValue = ApplicationContext.get().getDbAction()
+                .getPlanRolloverIndicator(planCode.toString().trim());
+        if (dbValue == null || dbValue.trim().isEmpty()) {
+            return "N";
+        }
+        return dbValue.trim();
     }
 
 
@@ -997,7 +1008,9 @@ public class BaseSteps {
         Assert.assertNotNull(plans, "pricePlans array should not be null");
         Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
 
-        boolean expectPPG = testCondition.contains("TC_177"); // TC_177 = PPG plan expected
+        // TC_178 = No PPG; TC_179 = PPG
+        boolean expectPPG = testCondition.contains("Price_Protection_Guarantee_Plan")
+                && !testCondition.contains("No_Price_Protection");
 
         boolean matchFound = false;
 
@@ -1010,13 +1023,11 @@ public class BaseSteps {
             boolean ceilingEmpty = isEmptyOrZero(ceiling);
 
             if (!expectPPG) {
-                // TC_176: No Price Protection Guarantee Plan
                 if (feeEmpty && ceilingEmpty) {
                     matchFound = true;
                     break;
                 }
             } else {
-                // TC_177: Price Protection Guarantee Plan
                 if (!feeEmpty && !ceilingEmpty) {
                     matchFound = true;
                     break;
@@ -1052,7 +1063,9 @@ public class BaseSteps {
         Assert.assertNotNull(plans, "pricePlans array should not be null");
         Assert.assertTrue(plans.size() > 0, "pricePlans array should contain at least one plan");
 
-        boolean isGuaranteedPlan = testCondition.contains("TC_175");
+        // TC_176 = No Guaranteed Bill Plan; TC_177 = Guaranteed Bill Plan
+        boolean isGuaranteedPlan = testCondition.contains("Guaranteed_Bill_Plan")
+                && !testCondition.contains("No_Guaranteed_Bill_Plan");
 
         boolean matchFound = false;
 
