@@ -1,7 +1,22 @@
 baseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
+# AES is on the same UAT1 API gateway under /api/v1
+aesBaseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
+aesEncryptPath: "/AesEncryption/Encrypt"
+aesDecryptPath: "/AesEncryption/Decrypt"
 authUri: "/Authentication/GetToken"
 vendorId: "vertex.auto.apitest.gng.com"
 vendorSecret: "HAXxeK86Q7omh4rCPeuX"
+
+# FTD05 VerifyAccount — Preferences (Postman PreferencesBaseUrl + AuthenticatePreferences)
+# Base: https://pref-uat1.gng.vertexna.net/api/requestbroker
+# Token: SOAP GetAuthenticationToken (auto-fetched when preferencesAuthToken is blank)
+preferencesBaseUri: "https://pref-uat1.gng.vertexna.net/"
+preferencesAuthToken: ""
+preferencesTokenUri: "https://token-uat1.gng.vertexna.net/VertexTokenGeneratorService.svc"
+preferencesTokenUsername: "gagassave"
+preferencesTokenPassword: "gagsaveT0612"
+preferencesVendorSource: "GAGASSAVE"
+preferencesApplication: "Preferences"
 
 defaultDatabase: "oracle"  # 👈 Controls what "default" means
 
@@ -10,7 +25,7 @@ databases:
     driverClassName: "oracle.jdbc.OracleDriver"
     serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
     userName: "KJADHAV"
-    password: "Bibhavi@2022"
+    password: "vrt20260810"
 
   mariadb:
     driverClassName: "org.mariadb.jdbc.Driver"
@@ -20,3 +35,6 @@ databases:
 
 enableLogsOnPass: true
 enableLogsOnFail: true
+
+# TC_77/78 / Confirm TC_150: known undeliverable address used to force paperless confirmation-email send failure
+paperlessEmailFailureAddress: "confirm-email-fail@invalid.test"

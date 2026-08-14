@@ -55,6 +55,13 @@ public class UpdateMailingAddressApiHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, UpdateMailingAddressRequest.class);
     }
 
+    public void validateIfLoginIdIsSaved() {
+        String expectedLoginId = testContext.getLoginId();
+        Map<String, Object> accountData = ApplicationContext.get().getDbAction().getStoredLoginId(expectedLoginId);
+        Assert.assertNotNull(accountData, "Expected GZRAPIL row for loginID but got null: " + expectedLoginId);
+        Assert.assertEquals(accountData.get("gzrapil_login_id").toString(), expectedLoginId);
+    }
+
     public void databaseValidationsForPositiveTCs(UpdateMailingAddressLabel testCondition){
         Map<String, Object> accountData=null;
         String customerCode= testContext.getCustomerCode();
@@ -93,9 +100,189 @@ public class UpdateMailingAddressApiHelper {
                 accountData = ApplicationContext.get().getDbAction().performDatabaseValidationsTC119_2(customerCode);
                 Assert.assertNotNull(accountData, "accountData should not be null");
                 break;
+
+            case TC_9__Positive__Valid_Street_Address___Minimum_Parameters_NEW_Account____:
+                validatePendingEnrollmentStreetAddressPersisted(
+                        formatPendingEnrollmentStreetAddress("", "", STREET_NAME_VALID, "", "", "", ""),
+                        CITY_VALID,
+                        ZIPCODE_VALID
+                );
+                break;
+
+            case TC_10__Positive__Valid_Street_Address___Maximum_Parameters_NEW_Account____:
+                validatePendingEnrollmentStreetAddressPersisted(
+                        formatPendingEnrollmentStreetAddress(
+                                STREET_NUMBER_VALID, "N", STREET_NAME_VALID, "", "NW", "APT", "12B"),
+                        CITY_VALID,
+                        ZIPCODE_VALID
+                );
+                break;
+
+            case TC_11__Positive__Valid_PO_Box_Address___NEW_Account____:
+                validatePendingEnrollmentPoBoxAddressPersisted();
+                break;
+
+            case TC_12__Positive__Valid_Rural_Route_Address___NEW_Account____:
+                validatePendingEnrollmentRuralRouteAddressPersisted();
+                break;
         }
 
 
+    }
+
+    private void validateNoMailingAddressRowCreatedInUcraddr(String customerCode) {
+        int addressCountAfter = ApplicationContext.get().getDbAction().getMailingAddressRowCountByCustomer(customerCode);
+        int addressCountBefore = Integer.parseInt(testContext.getNoteSequenceNumber());
+        Assert.assertEquals(
+                addressCountAfter,
+                addressCountBefore,
+                "No UCRADDR row should be created when persistence target is GTBENRL"
+        );
+    }
+
+    private void validatePendingEnrollmentStreetAddressPersisted(
+            String expectedAddr1,
+            String expectedCity,
+            String expectedZip
+    ) {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        Map<String, Object> enrollmentData = ApplicationContext.get().getDbAction()
+                .getPendingEnrollmentMailingAddress(customerCode, premisesCode);
+
+        Assert.assertFalse(enrollmentData == null || enrollmentData.isEmpty(),
+                "GTBENRL mailing address row should exist for NEW enrollment account");
+        Assert.assertEquals(
+                normalizePendingEnrollmentAddress(stringVal(enrollmentData.get("GTBENRL_BILL_ADDR1"))).toUpperCase(),
+                normalizePendingEnrollmentAddress(expectedAddr1).toUpperCase(),
+                "GTBENRL_BILL_ADDR1"
+        );
+        Assert.assertEquals(
+                stringVal(enrollmentData.get("GTBENRL_BILL_CITY")).toUpperCase(),
+                expectedCity.toUpperCase(),
+                "GTBENRL_BILL_CITY"
+        );
+        Assert.assertEquals(stringVal(enrollmentData.get("GTBENRL_BILL_ZIP")), expectedZip, "GTBENRL_BILL_ZIP");
+        validateNoMailingAddressRowCreatedInUcraddr(customerCode);
+    }
+
+    private void validatePendingEnrollmentPoBoxAddressPersisted() {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        Map<String, Object> enrollmentData = ApplicationContext.get().getDbAction()
+                .getPendingEnrollmentMailingAddress(customerCode, premisesCode);
+
+        Assert.assertFalse(enrollmentData == null || enrollmentData.isEmpty(),
+                "GTBENRL mailing address row should exist for NEW enrollment account");
+        // Per SP_UPDATE_MAILING_ADDRESS: PO~~BOX~~~~<PO Box Number>~
+        String expectedAddr1 = "PO~~BOX~~~~" + POBOX_VALID + "~";
+        String addr1 = stringVal(enrollmentData.get("GTBENRL_BILL_ADDR1"));
+        String addr2 = stringVal(enrollmentData.get("GTBENRL_BILL_ADDR2"));
+
+        Assert.assertEquals(
+                normalizePendingEnrollmentAddress(addr1).toUpperCase(),
+                normalizePendingEnrollmentAddress(expectedAddr1).toUpperCase(),
+                "GTBENRL_BILL_ADDR1"
+        );
+        Assert.assertEquals(addr2, POBOX_VALID, "GTBENRL_BILL_ADDR2");
+        Assert.assertEquals(stringVal(enrollmentData.get("GTBENRL_BILL_CITY")), CITY_VALID, "GTBENRL_BILL_CITY");
+        Assert.assertEquals(stringVal(enrollmentData.get("GTBENRL_BILL_ZIP")), ZIPCODE_VALID, "GTBENRL_BILL_ZIP");
+        validateNoMailingAddressRowCreatedInUcraddr(customerCode);
+    }
+
+    private void validatePendingEnrollmentRuralRouteAddressPersisted() {
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        Map<String, Object> enrollmentData = ApplicationContext.get().getDbAction()
+                .getPendingEnrollmentMailingAddress(customerCode, premisesCode);
+
+        Assert.assertFalse(enrollmentData == null || enrollmentData.isEmpty(),
+                "GTBENRL mailing address row should exist for NEW enrollment account");
+        String addr1 = stringVal(enrollmentData.get("GTBENRL_BILL_ADDR1"));
+        String addr2 = stringVal(enrollmentData.get("GTBENRL_BILL_ADDR2"));
+
+        // Per SP_UPDATE_MAILING_ADDRESS: Rural Route is stored in both ADDR1 and ADDR2
+        Assert.assertTrue(
+                addr1.equalsIgnoreCase(RURAL_ROUTE_VALID)
+                        || addr1.toUpperCase().contains("RR")
+                        || addr1.contains("8"),
+                "GTBENRL_BILL_ADDR1 should contain Rural Route but was: " + addr1
+        );
+        Assert.assertTrue(
+                addr2.equalsIgnoreCase(RURAL_ROUTE_VALID)
+                        || addr2.toUpperCase().contains("RR")
+                        || addr2.contains("8"),
+                "GTBENRL_BILL_ADDR2 should contain Rural Route but was: " + addr2
+        );
+        Assert.assertEquals(stringVal(enrollmentData.get("GTBENRL_BILL_CITY")), CITY_VALID, "GTBENRL_BILL_CITY");
+        Assert.assertEquals(stringVal(enrollmentData.get("GTBENRL_BILL_ZIP")), ZIPCODE_VALID, "GTBENRL_BILL_ZIP");
+        validateNoMailingAddressRowCreatedInUcraddr(customerCode);
+    }
+
+    private void assignPendingEnrollmentNewAccount(UpdateMailingAddressRequest payload) {
+        Map<String, Object> accountData = ApplicationContext.get().getDbAction().getPendingEnrollmentNewAccountOnly();
+        String customerCode = normalizeCode(accountData.get("GTBENRL_CUST_CODE"));
+        String premisesCode = normalizeCode(accountData.get("GTBENRL_PREM_CODE"));
+        payload.setCustomerCode(customerCode);
+        payload.setPremisesCode(premisesCode);
+        testContext.setCustomerCode(customerCode);
+        testContext.setPremisesCode(premisesCode);
+        int addressCountBefore = ApplicationContext.get().getDbAction().getMailingAddressRowCountByCustomer(customerCode);
+        testContext.setNoteSequenceNumber(String.valueOf(addressCountBefore));
+    }
+
+    private static String normalizeCode(Object value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof Number number) {
+            return String.valueOf(number.longValue());
+        }
+        String text = value.toString().trim();
+        if (text.endsWith(".0")) {
+            return text.substring(0, text.length() - 2);
+        }
+        return text;
+    }
+
+    private static String formatPendingEnrollmentStreetAddress(
+            String streetNumber,
+            String streetPreDirection,
+            String streetName,
+            String streetSuffix,
+            String streetPostDirection,
+            String unitType,
+            String unitNumber
+    ) {
+        return String.join(
+                "~",
+                nullToEmpty(streetNumber),
+                nullToEmpty(streetPreDirection),
+                nullToEmpty(streetName),
+                nullToEmpty(streetSuffix),
+                nullToEmpty(streetPostDirection),
+                nullToEmpty(unitType),
+                nullToEmpty(unitNumber)
+        );
+    }
+
+    private static String normalizePendingEnrollmentAddress(String value) {
+        if (value == null) {
+            return "";
+        }
+        String trimmed = value.trim();
+        while (trimmed.endsWith("~")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        return trimmed;
+    }
+
+    private static String nullToEmpty(String value) {
+        return value == null ? "" : value;
+    }
+
+    private static String stringVal(Object value) {
+        return value == null ? "" : value.toString().trim();
     }
 
     public void preparePayloadForTestCondition(UpdateMailingAddressRequest payload, UpdateMailingAddressLabel testCondition) {
@@ -477,9 +664,48 @@ public class UpdateMailingAddressApiHelper {
                 String loginID=FakerDataGenerator.generateString(6);
                 payload.setLoginID(loginID);
                 testContext.setLoginId(loginID);
-                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithoutNickname();
+                accountData = ApplicationContext.get().getDbAction().getAccountWithoutAddress();
                 payload.setCustomerCode(accountData.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountData.get("UCRACCT_PREM_CODE").toString());
+                break;
+
+            case TC_9__Positive__Valid_Street_Address___Minimum_Parameters_NEW_Account____:
+                assignPendingEnrollmentNewAccount(payload);
+                payload.setStreetName(STREET_NAME_VALID);
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
+                break;
+
+            case TC_10__Positive__Valid_Street_Address___Maximum_Parameters_NEW_Account____:
+                assignPendingEnrollmentNewAccount(payload);
+                payload.setStreetName(STREET_NAME_VALID);
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
+                payload.setStreetNumber(STREET_NUMBER_VALID);
+                payload.setStreetPreDirection("N");
+                payload.setStreetPostDirection("NW");
+                payload.setUnitType("APT");
+                payload.setUnitNumber("12B");
+                payload.setDeliveryPoint("12");
+                payload.setCarrierRoute("3400");
+                payload.setAttentionTo("JOHN DOE");
+                payload.setAdditionalAddressLine("BUILDING 5");
+                break;
+
+            case TC_11__Positive__Valid_PO_Box_Address___NEW_Account____:
+                assignPendingEnrollmentNewAccount(payload);
+                payload.setPoBox(POBOX_VALID);
+                payload.setStreetName("");
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
+                break;
+
+            case TC_12__Positive__Valid_Rural_Route_Address___NEW_Account____:
+                assignPendingEnrollmentNewAccount(payload);
+                payload.setRuralRoute(RURAL_ROUTE_VALID);
+                payload.setStreetName("");
+                payload.setCity(CITY_VALID);
+                payload.setZipCode(ZIPCODE_VALID);
                 break;
 
             default:

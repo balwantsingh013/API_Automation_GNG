@@ -41,4 +41,9 @@ public class UpdateMailingAddressApiSteps {
     public void perform_database_validation(String testCondition){
         updateMailingAddressPage.databaseValidations(UpdateMailingAddressLabel.valueOf(testCondition));
     }
+
+    @When("verify if UpdateMailingAddress login id is saved")
+    public void verify_if_update_mailing_address_login_id_is_saved() {
+        updateMailingAddressPage.validateLoginId();
+    }
 }

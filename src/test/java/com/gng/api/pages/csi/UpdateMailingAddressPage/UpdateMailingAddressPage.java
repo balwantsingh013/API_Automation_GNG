@@ -32,4 +32,8 @@ public class UpdateMailingAddressPage extends BasePage {
     public void databaseValidations(UpdateMailingAddressLabel testCondition){
         helper.databaseValidationsForPositiveTCs(testCondition);
     }
+
+    public void validateLoginId() {
+        helper.validateIfLoginIdIsSaved();
+    }
 }

@@ -4,6 +4,8 @@ import com.gng.api.pojo.AccountsPojo.SearchAccounts.SearchAccountsResponse;
 import com.gng.api.pojo.CSIPojo.GetBankDraftInfo.GetBankDraftInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetBillHistory.GetBillHistoryResponse;
 import com.gng.api.pojo.CSIPojo.GetBillingInfo.GetBillingInfoResponse;
+import com.gng.api.pojo.CSIPojo.GetPaperlessEnrollmentEligibility.GetPaperlessEnrollmentEligibilityResponse;
+import com.gng.api.pojo.CSIPojo.VerifyAccount.VerifyAccountResponse;
 import com.gng.api.pojo.CSIPojo.GetPaymentArrangementInfo.GetPaymentArrangementInfoResponse;
 import com.gng.api.pojo.CSIPojo.GetPaymentHistory.GetPaymentHistoryResponse;
 import com.gng.api.pojo.CSIPojo.GetUsageHistory.GetUsageHistoryResponse;
@@ -14,6 +16,7 @@ import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
 import com.gng.api.pojo.CSIPojo.UpdateBankDraft.UpdateBankDraftResponse;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
+import com.gng.api.pojo.CSIPojo.ConfirmPaperlessEnrollment.ConfirmPaperlessEnrollmentResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePaperlessCommunications.UpdatePaperlessCommunicationsResponse;
 import com.gng.api.pojo.CSIPojo.UpdatePassword.UpdatePasswordResponse;
 import com.gng.api.pojo.CSIPojo.UpdateUsername.UpdateUsernameResponse;
@@ -100,6 +103,14 @@ public class TestContext {
     private Object getBillingInfoApiPage;
     private GetBillingInfoResponse getBillingInfoResponse;
     @Getter @Setter
+    private Object getPaperlessEnrollmentEligibilityApiPage;
+    private GetPaperlessEnrollmentEligibilityResponse getPaperlessEnrollmentEligibilityResponse;
+    @Getter @Setter
+    private Object verifyAccountApiPage;
+    private VerifyAccountResponse verifyAccountResponse;
+    @Getter @Setter
+    private java.util.Map<String, String> verifyAccountExpectedData;
+    @Getter @Setter
     private Object getPaymentHistoryApiPage;
     private GetPaymentHistoryResponse getPaymentHistoryResponse;
     @Getter @Setter
@@ -132,6 +143,11 @@ public class TestContext {
     @Getter @Setter
     private Object updatePaperlessCommunicationsApiPage;
     private UpdatePaperlessCommunicationsResponse updatePaperlessCommunicationsResponse;
+    @Getter @Setter
+    private Object confirmPaperlessEnrollmentApiPage;
+    private ConfirmPaperlessEnrollmentResponse confirmPaperlessEnrollmentResponse;
+    @Getter @Setter
+    private String paperlessConfirmationToken;
     @Getter @Setter
     private Object updatePasswordApiPage;
     private UpdatePasswordResponse updatePasswordResponse;

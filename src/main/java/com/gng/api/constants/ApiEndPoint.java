@@ -40,6 +40,12 @@ public final class ApiEndPoint {
     public static final String GET_PAYMENT_ARRANGEMENT_INFO="/CustomerService/GetPaymentArrangementInfo";
     public static final String GET_BILLING_INFO="/CustomerService/GetBillingInfo";
     public static final String UPDATE_PAPERLESS_COMMUNICATIONS="/CustomerService/UpdatePaperlessCommunications";
+    public static final String CONFIRM_PAPERLESS_ENROLLMENT="/CustomerService/ConfirmPaperlessEnrollment";
+    public static final String GET_PAPERLESS_ENROLLMENT_ELIGIBILITY="/CustomerService/GetPaperlessEnrollmentEligibility";
+    /** FTD05 TC_206–227 — WAPI Swagger VerifyAccount (UCRADDR billing). */
+    public static final String VERIFY_ACCOUNT_SWAGGER = "/Accounts/VerifyAccount";
+    /** FTD05 TC_228–241 — Preferences requestbroker VerifyAccount (GTBENRL / NEW prefs). */
+    public static final String VERIFY_ACCOUNT = "api/requestbroker";
 
 
     private ApiEndPoint() {
