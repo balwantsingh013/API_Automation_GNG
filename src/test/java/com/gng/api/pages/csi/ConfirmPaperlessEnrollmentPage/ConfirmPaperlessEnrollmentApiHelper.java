@@ -46,6 +46,14 @@ public class ConfirmPaperlessEnrollmentApiHelper {
                 payload.setToken("placeholderToken");
                 break;
 
+            case TC_122A__Negative__Invalid_Origin_:
+                // Valid unused token + non-allowed origin (FTD: Macquarium is valid → expect 10085).
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setToken(tokenSetupHelper.bootstrapEnrollmentAndGetToken(
+                        UpdatePaperlessCommunicationsLabel.TC_98__Positive__Active_Account_Bill_Enrollment_Initiated_));
+                payload.setOrigin(GlobalEnums.InvalidValues.INVALID_ORIGIN.getValue());
+                break;
+
             case TC_123__Negative__Missing_Token_:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setToken("");
@@ -58,7 +66,7 @@ public class ConfirmPaperlessEnrollmentApiHelper {
 
             case TC_125__Negative__Token_Not_Found__No_Stored_Token_Record_:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setToken(tokenSetupHelper.bootstrapEnrollmentEmailChangeAndGetStaleToken(
+                payload.setToken(tokenSetupHelper.getTokenNotFoundNoStoredRecordToken(
                         UpdatePaperlessCommunicationsLabel.TC_98__Positive__Active_Account_Bill_Enrollment_Initiated_));
                 break;
 
@@ -154,13 +162,23 @@ public class ConfirmPaperlessEnrollmentApiHelper {
                 break;
 
             case TC_147__Positive__Account_Transitions_from_NEW_to_ACTIVE_Before_Confirmation_:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setToken(tokenSetupHelper.bootstrapTc147NewToActiveTransitionAndGetToken());
+                break;
+
             case TC_148__Positive__Current_Aggregated_PPER_State_Confirmed_:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setToken(tokenSetupHelper.bootstrapTc148AggregatedPperAndGetToken());
+                break;
+
             case TC_149__Positive__No_Email_on_File_Does_Not_Prevent_Success_:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setToken(tokenSetupHelper.bootstrapTc149ClearBannerEmailBeforeConfirmAndGetToken());
+                break;
+
             case TC_150__Positive__Confirmation_Email_Failure_Does_Not_Prevent_Success_:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setToken(tokenSetupHelper.bootstrapEnrollmentAndGetToken(
-                        UpdatePaperlessCommunicationsLabel.TC_98__Positive__Active_Account_Bill_Enrollment_Initiated_));
-                log.warn("Test condition {} may require additional Banner setup beyond bootstrap enrollment", testCondition);
+                payload.setToken(tokenSetupHelper.bootstrapTc150ConfirmationEmailFailureAndGetToken());
                 break;
 
             default:

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Preferences PEW VerifyAccount inner request (stringified under broker {@code Request}).
- * Postman: actions=VerifyAccount, Module=PEW, acctSearchType=email.
+ * Broker: actions=VerifyAccount, Module=PEW, acctSearchType=email.
  */
 @Data
 @Builder

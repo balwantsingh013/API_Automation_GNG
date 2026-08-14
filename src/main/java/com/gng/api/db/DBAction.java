@@ -1,7 +1,9 @@
 package com.gng.api.db;
 
 import com.gng.api.context.ApplicationContext;
+import com.gng.api.report.DualReportManager;
 import com.gng.api.report.SimplifiedExtentReportManager;
+import com.gng.api.util.PaperlessConfirmationTokenUtil;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -2237,14 +2239,22 @@ public class DBAction {
         return result;
     }
 
-    /** TC_69: bill enrollment ineligible (Banner bill preference NULL, not Fiserv F). */
+    /**
+     * TC_69: bill enrollment ineligible for a non-Fiserv reason.
+     * UAT treats NULL bill preference as paper (P) and allows enrollment — use already-enrolled
+     * paperless bill (E) so Update returns 40287 without creating a confirmation token.
+     */
     public Map<String, Object> getBillEnrollmentIneligibleAccount() {
-        return getActiveAccountWithNullBillPreference();
+        return getActiveAccountEnrolledInPaperlessBill();
     }
 
-    /** TC_71: correspondence enrollment ineligible (Banner corr preference NULL). */
+    /**
+     * TC_71: correspondence enrollment ineligible.
+     * UAT treats NULL corr preference as paper (P) — use already-enrolled paperless corr (E)
+     * so Update returns 40289 without side effects.
+     */
     public Map<String, Object> getCorrEnrollmentIneligibleAccount() {
-        return getActiveAccountWithNullCorrPreference();
+        return getActiveAccountEnrolledInPaperlessCorr();
     }
 
     /** TC_72: both channels ineligible (no active Banner email on file). */
@@ -2454,6 +2464,13 @@ public class DBAction {
                 "get NEW account with NULL bill preference");
     }
 
+    public Map<String, Object> getNewAccountWithPaperBillPreference() {
+        return tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_NEW_ACCOUNT_PAPER_BILL_PREFERENCE,
+                "get NEW account with paper bill preference P",
+                false);
+    }
+
     /**
      * Quiet custadv update for TC_127 account-mismatch bootstrap (not logged to Extent report).
      */
@@ -2465,6 +2482,123 @@ public class DBAction {
                     "No custadv paperless token row updated for verification id " + verificationStatusId);
         }
         log.debug("Remapped custadv token row {} to account_number {}", verificationStatusId, accountNumber);
+    }
+
+    /**
+     * TC_125: delete custadv token row so the issued token identifier no longer matches any stored
+     * record (Confirm → 10411 Token Not Found).
+     */
+    public void deleteCustAdvPaperlessTokenByIdQuiet(long verificationStatusId) {
+        int deleted = jdbcTemplate.update(
+                DBQuery.DELETE_CUSTADV_PAPERLESS_TOKEN_BY_ID, verificationStatusId);
+        if (deleted == 0) {
+            throw new IllegalStateException(
+                    "No custadv paperless token row deleted for verification id " + verificationStatusId);
+        }
+        log.debug("Deleted custadv paperless token row {}", verificationStatusId);
+    }
+
+    /**
+     * TC_125: delete unused custadv row(s) that still contain the issued token hex in email_link.
+     */
+    public int deleteCustAdvUnusedPaperlessTokenByTokenQuiet(String tokenHex) {
+        String normalized = PaperlessConfirmationTokenUtil.normalizeTokenPlaintext(tokenHex);
+        if (normalized == null || normalized.isBlank()) {
+            throw new IllegalArgumentException("tokenHex required to delete custadv token row");
+        }
+        int deleted = jdbcTemplate.update(
+                DBQuery.DELETE_CUSTADV_UNUSED_PAPERLESS_TOKEN_BY_TOKEN, normalized);
+        log.debug("Deleted {} custadv unused row(s) matching token length {}", deleted, normalized.length());
+        return deleted;
+    }
+
+    /**
+     * TC_125: delete all unused paperless custadv rows for the account.
+     */
+    public int deleteCustAdvUnusedPaperlessTokensForAccountQuiet(String customerCode, String premisesCode) {
+        String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
+        int deleted = jdbcTemplate.update(
+                DBQuery.DELETE_CUSTADV_UNUSED_PAPERLESS_TOKENS_FOR_ACCOUNT, accountNumber);
+        log.debug("Deleted {} unused custadv paperless rows for {}", deleted, accountNumber);
+        return deleted;
+    }
+
+    /**
+     * TC_130: clear pending bill/corr channels on an unused custadv token row (token kept).
+     */
+    public void clearCustAdvPendingChannelsQuiet(long verificationStatusId) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_CUSTADV_CLEAR_PENDING_CHANNELS_FOR_ID, verificationStatusId);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No custadv pending channels cleared for verification id " + verificationStatusId);
+        }
+        log.debug("Cleared custadv pending channels for verification id {}", verificationStatusId);
+    }
+
+    /**
+     * TC_130: clear {@code date_time_link_confirmed} so a previously used token is unused again.
+     */
+    public void clearCustAdvLinkConfirmedQuiet(long verificationStatusId) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_CUSTADV_CLEAR_LINK_CONFIRMED_FOR_ID, verificationStatusId);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No custadv link-confirmed cleared for verification id " + verificationStatusId);
+        }
+        log.debug("Cleared custadv date_time_link_confirmed for verification id {}", verificationStatusId);
+    }
+
+    /**
+     * TC_130: demote paperless verification type so the token row remains but is not an active
+     * PendingConfirmation PPER (Confirm → 10411).
+     */
+    public void clearCustAdvPaperlessTypeQuiet(long verificationStatusId) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_CUSTADV_CLEAR_PAPERLESS_TYPE_FOR_ID, verificationStatusId);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No custadv paperless type cleared for verification id " + verificationStatusId);
+        }
+        log.debug("Cleared custadv paperless type for verification id {}", verificationStatusId);
+    }
+
+    /**
+     * TC_130: delete incomplete OCSEPCI/PPER rows for the account when present (0 rows is OK on UAT1).
+     */
+    public int deletePendingOcsepciRowsForAccountQuiet(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.DELETE_OCSEPCI_PENDING_ROWS_FOR_ACCOUNT;
+        logQueryInAllure("delete pending OCSEPCI/PPER rows for " + customerCode + "/" + premisesCode, query);
+        int deleted = jdbcTemplate.update(query, customerCode, premisesCode);
+        logPaperlessDbResult(query, Map.of("rowsDeleted", deleted), startTime);
+        return deleted;
+    }
+
+    /**
+     * TC_125: scramble custadv {@code email_link} so the issued token identifier no longer matches
+     * any stored row (Confirm → 10411 Token Not Found).
+     */
+    public void scrambleCustAdvPaperlessTokenLinkQuiet(long verificationStatusId) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_CUSTADV_SCRAMBLE_EMAIL_LINK_FOR_ID, verificationStatusId);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No custadv paperless token email_link scrambled for verification id " + verificationStatusId);
+        }
+        log.debug("Scrambled custadv email_link for verification id {}", verificationStatusId);
+    }
+
+    /**
+     * TC_130: delete incomplete OCSEPCI/PPER rows for the account so Confirm has no active pending PPER
+     * (→ 10411) while the unused custadv token remains.
+     */
+    public void deletePendingOcsepciRowsForAccount(String customerCode, String premisesCode) {
+        int deleted = deletePendingOcsepciRowsForAccountQuiet(customerCode, premisesCode);
+        if (deleted == 0) {
+            throw new IllegalStateException(
+                    "No pending OCSEPCI rows deleted for " + customerCode + "/" + premisesCode);
+        }
     }
 
     public List<Map<String, Object>> listActiveAccountsWithPendingBillEnrollment(int maxRows, boolean logToReport) {
@@ -2536,6 +2670,31 @@ public class DBAction {
             throw new IllegalStateException("No active GZBEMCP email rows expired for customer " + customerCode);
         }
         log.debug("Expired {} active Banner email row(s) for customer {}", updated, customerCode);
+    }
+
+    /**
+     * TC_149 cleanup: clear expiration on Banner emails expired earlier in the same test
+     * ({@link #expireActiveBannerEmailsQuiet(String)}).
+     */
+    public int unexpireRecentlyExpiredBannerEmailsQuiet(String customerCode) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_UNEXPIRE_RECENTLY_EXPIRED_BANNER_EMAIL_FOR_CUSTOMER, customerCode);
+        log.debug("Unexpired {} recently-expired Banner email row(s) for customer {}", updated, customerCode);
+        return updated;
+    }
+
+    /**
+     * TC_147: set Banner {@code UCRACCT_STATUS_IND} (e.g. {@code N} → {@code A}) for an account.
+     */
+    public void updateUcracctStatusInd(String customerCode, String premisesCode, String statusInd) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_UCRACCT_STATUS_IND_FOR_ACCOUNT, statusInd, customerCode, premisesCode);
+        if (updated == 0) {
+            throw new IllegalStateException(
+                    "No UCRACCT row updated for status " + statusInd + " on " + customerCode + "/" + premisesCode);
+        }
+        log.debug("Updated UCRACCT_STATUS_IND to {} for {}/{} (rows={})",
+                statusInd, customerCode, premisesCode, updated);
     }
 
     public Map<String, Object> tryLookupUcracctAccount(String customerCode, String premisesCode) {
@@ -2636,6 +2795,42 @@ public class DBAction {
                 "get VerifyAccount account with UCRADDR street fields");
     }
 
+    /**
+     * TC_228/229: GTBENRL + GZRPPTH NEW, no UCRACCT, bill vs service address differ.
+     */
+    public List<Map<String, Object>> listVerifyAccountGtbenrlNoUcraddr(int limit) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_VERIFY_ACCOUNT_GTBENRL_NO_UCRADDR;
+        logQueryInAllure("list VerifyAccount GTBENRL candidates (TC_228/229)", query);
+        try {
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
+            if (rows.size() > Math.max(1, limit)) {
+                rows = rows.subList(0, limit);
+            }
+            if (!rows.isEmpty()) {
+                Map<String, Object> first = rows.get(0);
+                log.info("GTBENRL candidate[0] entries={}", first);
+                DualReportManager.logInfo("GTBENRL candidate[0]=" + first);
+            }
+            long elapsed = System.currentTimeMillis() - startTime;
+            SimplifiedExtentReportManager.logDatabaseQuery(
+                    query, "gtbenrlCandidates=" + rows.size(), elapsed);
+            return rows;
+        } catch (EmptyResultDataAccessException ex) {
+            return List.of();
+        }
+    }
+
+    public Map<String, Object> getVerifyAccountGtbenrlNoUcraddr() {
+        List<Map<String, Object>> rows = listVerifyAccountGtbenrlNoUcraddr(1);
+        if (rows == null || rows.isEmpty()) {
+            throw new IllegalStateException(
+                    "No GTBENRL account for TC_228/229 "
+                            + "(PROC_FLAG='N', BILL_ADDR1, GZRPPTH status='N', no UCRACCT, bill vs service differ)");
+        }
+        return rows.get(0);
+    }
+
     public List<Map<String, Object>> listVerifyAccountStreetCandidates(int limit) {
         return listVerifyAccountStreetCandidates(limit, true);
     }
@@ -2727,145 +2922,54 @@ public class DBAction {
     }
 
     public Map<String, Object> getVerifyAccountNewConfirmedBill() {
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_BILL,
-                "get VerifyAccount NEW account with confirmed bill preference", false);
-        if (account != null) {
-            return account;
-        }
-        // SP_VERIFY_ACCOUNT requires Active — fall back so suite can still run
+        // TC_230-231 / TC_234: GZRPPTH NEW + paperless_conf_date
         return querySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_CONFIRMED_BILL,
-                "get VerifyAccount ACTIVE account with confirmed bill preference (NEW fallback)");
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_BILL,
+                "get VerifyAccount GZRPPTH NEW confirmed bill (TC_230-234)");
     }
 
     public Map<String, Object> getVerifyAccountNewConfirmedCorr() {
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_CORR,
-                "get VerifyAccount NEW account with confirmed correspondence preference", false);
-        if (account != null) {
-            return account;
-        }
         return querySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_CONFIRMED_CORR,
-                "get VerifyAccount ACTIVE account with confirmed correspondence preference (NEW fallback)");
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_CORR,
+                "get VerifyAccount GZRPPTH NEW confirmed corr (TC_232-235)");
     }
 
     public Map<String, Object> getVerifyAccountNewPendingBill() {
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+        return querySinglePaperlessAccount(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PENDING_BILL,
-                "get VerifyAccount NEW account with pending bill preference (I)", false);
-        if (account != null) {
-            return account;
-        }
-        account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PENDING_BILL,
-                "get VerifyAccount ACTIVE account with pending bill preference (I) (NEW fallback)", false);
-        if (account != null) {
-            return account;
-        }
-        // Pending rows may lack street/email join — use generic pending + enrich email
-        account = tryGetActiveAccountWithPendingBillEnrollment();
-        if (account != null) {
-            enrichBannerEmail(account);
-            if (account.get("bannerEmail") != null
-                    && !account.get("bannerEmail").toString().isBlank()) {
-                return account;
-            }
-        }
-        throw new IllegalStateException(
-                "No account found for: get VerifyAccount pending bill preference (I)");
+                "get VerifyAccount GZRPPTH NEW pending bill / Initiated I (TC_236)");
     }
 
     public Map<String, Object> getVerifyAccountNewPendingCorr() {
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+        return querySinglePaperlessAccount(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PENDING_CORR,
-                "get VerifyAccount NEW account with pending correspondence preference (I)", false);
-        if (account != null) {
-            return account;
-        }
-        account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PENDING_CORR,
-                "get VerifyAccount ACTIVE account with pending correspondence preference (I) (NEW fallback)",
-                false);
-        if (account != null) {
-            return account;
-        }
-        account = tryGetActiveAccountWithPendingCorrEnrollment();
-        if (account != null) {
-            enrichBannerEmail(account);
-            if (account.get("bannerEmail") != null
-                    && !account.get("bannerEmail").toString().isBlank()) {
-                return account;
-            }
-        }
-        throw new IllegalStateException(
-                "No account found for: get VerifyAccount pending correspondence preference (I)");
+                "get VerifyAccount GZRPPTH NEW pending corr / Initiated I (TC_237)");
     }
 
     public Map<String, Object> getVerifyAccountNewPaperBill() {
-        // QRE: NEW not-enrolled bill → BillPresType=P; ACTIVE fallback when NEW fails SP_VERIFY
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+        return querySinglePaperlessAccount(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PAPER_BILL,
-                "get VerifyAccount NEW account with paper bill preference (P)", false);
-        if (account != null) {
-            return account;
-        }
-        account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PAPER_BILL,
-                "get VerifyAccount ACTIVE account with paper bill preference (P) (NEW fallback)", false);
-        if (account != null) {
-            return account;
-        }
-        account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_TC_86_ACTIVE_BILL_NO_VALID_TOKEN,
-                "get VerifyAccount ACTIVE paper bill via TC_86 pool", false);
-        if (account != null) {
-            if (account.get("billPresType") == null && account.get("billDeliveryOption") != null) {
-                account.put("billPresType", account.get("billDeliveryOption"));
-            }
-            return account;
-        }
-        throw new IllegalStateException(
-                "No account found for: get VerifyAccount paper bill preference (P)");
+                "get VerifyAccount GZRPPTH NEW paper bill P (TC_238)");
     }
 
     public Map<String, Object> getVerifyAccountNewPaperCorr() {
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
+        return querySinglePaperlessAccount(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PAPER_CORR,
-                "get VerifyAccount NEW account with paper correspondence preference (P)", false);
-        if (account != null) {
-            return account;
-        }
-        return querySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_PAPER_CORR,
-                "get VerifyAccount ACTIVE account with paper correspondence preference (P) (NEW fallback)");
+                "get VerifyAccount GZRPPTH NEW paper corr P (TC_239)");
     }
 
-    /** TC_230: NEW expired unconfirmed bill PPER → expect BillPresType=P. */
+    /** TC_240: expired bill (OCSEPCI + GZRPPTH P + GTBENRL, no UCRACCT). */
     public Map<String, Object> getVerifyAccountNewExpiredBill() {
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_BILL,
-                "get VerifyAccount NEW account with expired bill preference (P)", false);
-        if (account != null) {
-            return account;
-        }
         return querySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_EXPIRED_BILL,
-                "get VerifyAccount ACTIVE account with expired bill preference (P) (NEW fallback)");
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_BILL,
+                "get VerifyAccount GZRPPTH expired bill → P (TC_240)");
     }
 
-    /** TC_231: NEW expired unconfirmed corr PPER → expect CorrespondencePreference=P. */
+    /** TC_241: expired correspondence. */
     public Map<String, Object> getVerifyAccountNewExpiredCorr() {
-        Map<String, Object> account = tryQuerySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_CORR,
-                "get VerifyAccount NEW account with expired correspondence preference (P)", false);
-        if (account != null) {
-            return account;
-        }
         return querySinglePaperlessAccount(
-                DBQuery.SELECT_VERIFY_ACCOUNT_ACTIVE_EXPIRED_CORR,
-                "get VerifyAccount ACTIVE account with expired correspondence preference (P) (NEW fallback)");
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_CORR,
+                "get VerifyAccount GZRPPTH expired corr → P (TC_241)");
     }
 
     /** Active Banner GZBEMCP email for customer, or null if none. */
@@ -2876,6 +2980,19 @@ public class DBAction {
         try {
             return jdbcTemplate.queryForObject(
                     DBQuery.SELECT_ACTIVE_BANNER_EMAIL_BY_CUST, String.class, customerCode.trim());
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
+    /** Any Banner GZBEMCP email for customer (prefers currently effective). */
+    public String getAnyBannerEmailForCustomer(String customerCode) {
+        if (customerCode == null || customerCode.isBlank()) {
+            return null;
+        }
+        try {
+            return jdbcTemplate.queryForObject(
+                    DBQuery.SELECT_ANY_BANNER_EMAIL_BY_CUST, String.class, customerCode.trim());
         } catch (EmptyResultDataAccessException ex) {
             return null;
         }
@@ -2902,6 +3019,9 @@ public class DBAction {
             return;
         }
         String email = getActiveBannerEmailForCustomer(customerCode.toString());
+        if (email == null) {
+            email = getAnyBannerEmailForCustomer(customerCode.toString());
+        }
         if (email != null) {
             account.put("bannerEmail", email);
         }
@@ -3066,6 +3186,57 @@ public class DBAction {
     }
 
     /**
+     * Custadv In Progress bill token (not confirmed, not expired, bill type E).
+     * Use via {@code ApplicationContext.get().getDbAction("mariadb")}.
+     */
+    public Map<String, Object> tryGetCustAdvInProgressBillTokenForAccount(String customerCode, String premisesCode) {
+        return tryGetCustAdvInProgressTokenForAccount(
+                customerCode,
+                premisesCode,
+                DBQuery.SELECT_CUSTADV_IN_PROGRESS_BILL_TOKEN_FOR_ACCOUNT,
+                "get custadv In Progress bill confirmation link");
+    }
+
+    /**
+     * Custadv In Progress correspondence token (not confirmed, not expired, corr type E).
+     * Use via {@code ApplicationContext.get().getDbAction("mariadb")}.
+     */
+    public Map<String, Object> tryGetCustAdvInProgressCorrTokenForAccount(String customerCode, String premisesCode) {
+        return tryGetCustAdvInProgressTokenForAccount(
+                customerCode,
+                premisesCode,
+                DBQuery.SELECT_CUSTADV_IN_PROGRESS_CORR_TOKEN_FOR_ACCOUNT,
+                "get custadv In Progress correspondence confirmation link");
+    }
+
+    /** Any unused, not-expired custadv confirmation link for the account (channel-agnostic fallback). */
+    public Map<String, Object> tryGetCustAdvInProgressTokenForAccount(String customerCode, String premisesCode) {
+        return tryGetCustAdvInProgressTokenForAccount(
+                customerCode,
+                premisesCode,
+                DBQuery.SELECT_CUSTADV_IN_PROGRESS_TOKEN_FOR_ACCOUNT,
+                "get custadv In Progress confirmation link (any channel)");
+    }
+
+    private Map<String, Object> tryGetCustAdvInProgressTokenForAccount(String customerCode,
+                                                                       String premisesCode,
+                                                                       String query,
+                                                                       String allureLabel) {
+        long startTime = System.currentTimeMillis();
+        String accountNumber = buildCustAdvAccountNumber(customerCode, premisesCode);
+        logQueryInAllure(allureLabel + " for account " + accountNumber, query);
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(query, accountNumber);
+            normalizeCustAdvTokenRow(result, customerCode, premisesCode, accountNumber);
+            logPaperlessDbResult(query, result, startTime);
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            logPaperlessDbResult(query, Map.of("rowCount", 0, "accountNumber", accountNumber), startTime);
+            return null;
+        }
+    }
+
+    /**
      * MariaDB (custadv): latest paperless token for account regardless of used/expired state.
      */
     public Map<String, Object> getAnyLatestConfirmPaperlessTokenFromCustAdv(String customerCode, String premisesCode) {
@@ -3190,9 +3361,7 @@ public class DBAction {
         if (row == null) {
             return;
         }
-        if (row.get("tokenIdentifier") == null && row.get("Token") != null) {
-            row.put("tokenIdentifier", row.get("Token"));
-        }
+        normalizeCustAdvTokenFields(row);
         Object accountNumberObj = row.get("account_number");
         if (accountNumberObj == null) {
             accountNumberObj = row.get("accountNumber");
@@ -3213,12 +3382,26 @@ public class DBAction {
                                          String customerCode,
                                          String premisesCode,
                                          String accountNumber) {
-        if (row.get("tokenIdentifier") == null && row.get("Token") != null) {
-            row.put("tokenIdentifier", row.get("Token"));
-        }
+        normalizeCustAdvTokenFields(row);
         row.putIfAbsent("customerCode", customerCode);
         row.putIfAbsent("premisesCode", premisesCode);
         row.put("accountNumber", accountNumber);
+    }
+
+    /** Normalizes Token / tokenIdentifier to hex (strips {@code t=} from email_link query). */
+    private static void normalizeCustAdvTokenFields(Map<String, Object> row) {
+        if (row == null) {
+            return;
+        }
+        for (String key : new String[]{"Token", "token", "tokenIdentifier"}) {
+            Object value = row.get(key);
+            if (value != null && !value.toString().isBlank()) {
+                row.put(key, PaperlessConfirmationTokenUtil.normalizeTokenPlaintext(value.toString()));
+            }
+        }
+        if (row.get("tokenIdentifier") == null && row.get("Token") != null) {
+            row.put("tokenIdentifier", row.get("Token"));
+        }
     }
 
     public static String resolveTokenIdentifierFromRow(Map<String, Object> row) {
@@ -3228,7 +3411,8 @@ public class DBAction {
         for (String key : new String[]{"tokenIdentifier", "Token", "token"}) {
             Object value = row.get(key);
             if (value != null && !value.toString().isBlank()) {
-                return value.toString();
+                // Strip confirm?t=<hex> / t=<hex> so Confirm API receives the hex token only.
+                return PaperlessConfirmationTokenUtil.normalizeTokenPlaintext(value.toString());
             }
         }
         return null;
@@ -3260,6 +3444,42 @@ public class DBAction {
         try {
             return getLatestOcsepciForAccount(customerCode, premisesCode);
         } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Active pending bill OCSEPCI row for cust/prem (type E, link not expired, not completed).
+     * Report evidence that GetAccountInfo Initiated (I) is backed by In Progress PPER.
+     */
+    public Map<String, Object> tryGetActivePendingBillPperForAccount(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PENDING_BILL_PPER_FOR_ACCOUNT;
+        logQueryInAllure("get active pending bill PPER (In Progress) for " + customerCode + "/" + premisesCode, query);
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(query, customerCode, premisesCode);
+            logPaperlessDbResult(query, result, startTime);
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            logPaperlessDbResult(query, Map.of("rowCount", 0), startTime);
+            return null;
+        }
+    }
+
+    /**
+     * Active pending correspondence OCSEPCI row for cust/prem (type E, link not expired, not completed).
+     * Report evidence that GetAccountInfo Initiated (I) is backed by In Progress PPER.
+     */
+    public Map<String, Object> tryGetActivePendingCorrPperForAccount(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_PENDING_CORR_PPER_FOR_ACCOUNT;
+        logQueryInAllure("get active pending corr PPER (In Progress) for " + customerCode + "/" + premisesCode, query);
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(query, customerCode, premisesCode);
+            logPaperlessDbResult(query, result, startTime);
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            logPaperlessDbResult(query, Map.of("rowCount", 0), startTime);
             return null;
         }
     }
@@ -6298,16 +6518,110 @@ public class DBAction {
         return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC2);
     }
 
+    /** Candidate accounts for TC_2 probing (planRenewalWindowIndicator = Y). */
+    public List<Map<String, Object>> listAccountDetailsTC2Candidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC2_CANDIDATES;
+        logQueryInAllure("list TC_2 renewal-indicator Y candidates", query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, "candidateCount=" + result.size(), elapsed);
+        return result;
+    }
+
     public Map<String, Object> getAccountDetailsTC3() {
         return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC3);
+    }
+
+    /** Candidate accounts for TC_3 probing (planRenewalWindowIndicator = N). */
+    public List<Map<String, Object>> listAccountDetailsTC3Candidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC3_CANDIDATES;
+        logQueryInAllure("list TC_3 renewal-indicator N candidates", query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, "candidateCount=" + result.size(), elapsed);
+        return result;
     }
 
     public Map<String, Object> getAccountDetailsTC4() {
         return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC4);
     }
 
+    /** Candidate accounts for TC_4 probing (planRenewalWindowIndicator = -). */
+    public List<Map<String, Object>> listAccountDetailsTC4Candidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC4_CANDIDATES;
+        logQueryInAllure("list TC_4 renewal-indicator dash candidates", query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, "candidateCount=" + result.size(), elapsed);
+        return result;
+    }
+
     public Map<String, Object> getAccountDetailsTC5() {
-        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC5);
+        // Prefer Guaranteed Bill + discount (non-transferable/PRICEPRO first) per FTD.
+        try {
+            Map<String, Object> withNonTransferableDiscount =
+                    queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC5);
+            DualReportManager.logInfo(
+                    "TC_5: selected Guaranteed Bill account WITH discount + PRICEPRO (non-transferable path) "
+                            + withNonTransferableDiscount.get("ucracct_cust_code") + "/"
+                            + withNonTransferableDiscount.get("ucracct_prem_code"));
+            return withNonTransferableDiscount;
+        } catch (EmptyResultDataAccessException ignored) {
+            DualReportManager.logInfo(
+                    "TC_5: no Guaranteed + PRICEPRO/discount account; trying Guaranteed + any discount");
+        }
+
+        try {
+            Map<String, Object> withAnyDiscount =
+                    queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC5_WITH_ANY_DISCOUNT);
+            DualReportManager.logInfo(
+                    "TC_5: selected Guaranteed Bill account WITH active discount "
+                            + withAnyDiscount.get("ucracct_cust_code") + "/"
+                            + withAnyDiscount.get("ucracct_prem_code"));
+            return withAnyDiscount;
+        } catch (EmptyResultDataAccessException ignored) {
+            DualReportManager.logInfo(
+                    "TC_5: no Guaranteed + discount account found; falling back to Guaranteed without discount");
+        }
+
+        Map<String, Object> withoutDiscount =
+                queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC5_WITHOUT_DISCOUNT);
+        DualReportManager.logInfo("TC_5: selected Guaranteed Bill account WITHOUT discount "
+                + withoutDiscount.get("ucracct_cust_code") + "/"
+                + withoutDiscount.get("ucracct_prem_code"));
+        return withoutDiscount;
+    }
+
+    public List<Map<String, Object>> listAccountDetailsTC5PriceProCandidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC5_CANDIDATES;
+        logQueryInAllure("list TC_5 Guaranteed+PRICEPRO discount candidates", query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, "candidateCount=" + result.size(), elapsed);
+        return result;
+    }
+
+    public List<Map<String, Object>> listAccountDetailsTC5AnyDiscountCandidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC5_WITH_ANY_DISCOUNT_CANDIDATES;
+        logQueryInAllure("list TC_5 Guaranteed+any-discount candidates", query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, "candidateCount=" + result.size(), elapsed);
+        return result;
+    }
+
+    public Map<String, Object> getAccountDetailsTC5WithoutDiscount() {
+        return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC5_WITHOUT_DISCOUNT);
     }
 
     public Map<String, Object> getAccountDetailsTC6() {

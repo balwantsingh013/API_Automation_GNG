@@ -244,13 +244,13 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 break;
 
             case TC_193__Positive__Corr_Reason_Description_NULL_:
-                assertIneligReasonFieldNull("paperlessCorrIneligReasonCode");
-                assertIneligReasonFieldNull("paperlessCorrIneligReasonDesc");
+                assertJsonNull("data.paperlessCorrIneligReasonCode");
+                assertJsonNull("data.paperlessCorrIneligReasonDesc");
                 break;
 
             case TC_194__Positive__Bill_Reason_Description_NULL_:
-                assertIneligReasonFieldNull("paperlessBillIneligReasonCode");
-                assertIneligReasonFieldNull("paperlessBillIneligReasonDesc");
+                assertJsonNull("data.paperlessBillIneligReasonCode");
+                assertJsonNull("data.paperlessBillIneligReasonDesc");
                 break;
 
             case TC_195__Positive__Corr_PPER_I_:
@@ -262,11 +262,11 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 break;
 
             case TC_197__Positive__Corr_PPER_Reason_Null_:
-                assertIneligReasonFieldNull("paperlessCorrIneligReasonCode");
+                assertJsonNull("data.paperlessCorrIneligReasonCode");
                 break;
 
             case TC_197A__Positive__Corr_PPER_Reason_Desc_Null_:
-                assertIneligReasonFieldNull("paperlessCorrIneligReasonDesc");
+                assertJsonNull("data.paperlessCorrIneligReasonDesc");
                 break;
 
             case TC_198__Positive__Bill_PPER_I_:
@@ -278,11 +278,11 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 break;
 
             case TC_200__Positive__Bill_PPER_Reason_Null_:
-                assertIneligReasonFieldNull("paperlessBillIneligReasonCode");
+                assertJsonNull("data.paperlessBillIneligReasonCode");
                 break;
 
             case TC_200A__Positive__Bill_PPER_Reason_Desc_Null_:
-                assertIneligReasonFieldNull("paperlessBillIneligReasonDesc");
+                assertJsonNull("data.paperlessBillIneligReasonDesc");
                 break;
 
             case TC_201__Positive__Corr_Override_Precedence_:
@@ -343,22 +343,9 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 value, equalTo(true));
     }
 
-    private void assertIneligReasonFieldNull(String fieldName) {
-        Object value = testContext.getResponse().jsonPath().get("data." + fieldName);
-        if (value == null) {
-            return;
-        }
-        if (value instanceof Number && ((Number) value).intValue() == 0) {
-            log.warn("API returned {}=0 instead of null for eligible account — raise FTD mismatch if spec requires null",
-                    fieldName);
-            return;
-        }
-        if (value instanceof String && ((String) value).isBlank()) {
-            log.warn("API returned blank {} instead of null for eligible account — raise FTD mismatch if spec requires null",
-                    fieldName);
-            return;
-        }
-        assertThat(fieldName + " should be null when account is eligible (actual: " + value + ")",
+    private void assertJsonNull(String jsonPath) {
+        Object value = testContext.getResponse().jsonPath().get(jsonPath);
+        assertThat(jsonPath + " should be JSON null (actual: " + value + ")",
                 value, nullValue());
     }
 }

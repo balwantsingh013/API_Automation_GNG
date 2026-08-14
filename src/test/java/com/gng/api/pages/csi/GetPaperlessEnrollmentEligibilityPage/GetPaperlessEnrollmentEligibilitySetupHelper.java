@@ -159,7 +159,8 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
     }
 
     /**
-     * TC_201/201A: Banner corr already E + active corr PPER → delivery I and still eligible.
+     * ACTIVE account with Banner correspondence preference E and pending corr PPER.
+     * Expected: correspondenceDeliveryOption=I and correspondence still eligible.
      */
     Map<String, Object> ensureActivePendingCorrWithBannerCorrEnrolled() {
         DBAction dbAction = ApplicationContext.get().getDbAction();
@@ -169,14 +170,14 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
                     account.get("customerCode"), account.get("premisesCode"));
             return account;
         }
-        // Fallback: pending corr PPER still yields I (Banner may be P). Prefer seeded E+PPER when available.
         log.warn("No Banner corr=E + pending corr PPER seed found; falling back to pending corr PPER account");
         return ensureActivePendingCorrEnrollment();
     }
 
     /**
-     * TC_202/202A: Banner bill=F + active bill PPER → delivery I and still eligible.
-     * Cannot bootstrap Fiserv via UpdatePaperless; fall back to pending bill PPER if no seed.
+     * ACTIVE account with Banner bill preference F and pending bill PPER.
+     * Expected: billDeliveryOption=I and bill still eligible.
+     * Fiserv bill preference cannot be created via UpdatePaperless; fall back to pending bill PPER if no seed.
      */
     Map<String, Object> ensureActivePendingBillWithFiservBill() {
         DBAction dbAction = ApplicationContext.get().getDbAction();
@@ -190,32 +191,43 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
         return ensureActivePendingBillEnrollment();
     }
 
-    /** TC_205: NEW account with paper bill preference (P / null → P). */
     Map<String, Object> ensureNewPaperBillPreference() {
         DBAction dbAction = ApplicationContext.get().getDbAction();
-        Map<String, Object> account = dbAction.getNewAccountWithNullBillPreference();
-        if (account != null && probeDeliveryOption(account, "billDeliveryOption", "P")) {
-            log.info("Using NEW paper/null bill preference account {}/{}",
-                    account.get("customerCode"), account.get("premisesCode"));
-            return account;
+        Map<String, Object> account = dbAction.getNewAccountWithPaperBillPreference();
+        if (account == null) {
+            throw new IllegalStateException(
+                    "Could not resolve NEW GZRPPTH account with explicit bannerBillPreference=P "
+                            + "(no UCRACCT, no active PPER).");
         }
-        account = dbAction.getNewPaperlessEligibleAccountWithNoToken();
-        if (account != null && probeDeliveryOption(account, "billDeliveryOption", "P")) {
-            log.info("Using NEW paperless-eligible paper bill account {}/{}",
-                    account.get("customerCode"), account.get("premisesCode"));
-            return account;
+        Object bannerPref = account.get("bannerBillPreference");
+        if (bannerPref == null) {
+            bannerPref = account.get("billDeliveryOption");
         }
-        throw new IllegalStateException(
-                "Could not resolve NEW account with billDeliveryOption=P for TC_205.");
+        if (bannerPref == null || !"P".equalsIgnoreCase(bannerPref.toString().trim())) {
+            throw new IllegalStateException(
+                    "Resolved NEW account does not have explicit Banner bill preference=P (actual="
+                            + bannerPref + ")");
+        }
+        if (!probeDeliveryOption(account, "billDeliveryOption", "P")) {
+            throw new IllegalStateException(
+                    "NEW account with Banner bill preference=P did not return billDeliveryOption=P for "
+                            + account.get("customerCode") + "/" + account.get("premisesCode"));
+        }
+        com.gng.api.report.DualReportManager.logInfo(
+                "NEW paper bill seed " + account.get("customerCode") + "/" + account.get("premisesCode")
+                        + " — Banner GZRPPTH_BILL_PRES_TYPE=" + bannerPref
+                        + " (explicit P, not NULL default)");
+        log.info("Using NEW GZRPPTH paper bill preference=P account {}/{}",
+                account.get("customerCode"), account.get("premisesCode"));
+        return account;
     }
 
     Map<String, Object> ensureNewUnconfirmedBillPreference() {
         DBAction dbAction = ApplicationContext.get().getDbAction();
 
-        // Prefer expired/unconfirmed over active PPER (active returns billDeliveryOption=I)
         for (Map<String, Object> candidate : dbAction.listNewAccountsWithExpiredUnconfirmedBillEnrollment(25, true)) {
             if (probeDeliveryOption(candidate, "billDeliveryOption", "P")) {
-                log.info("TC_204 using NEW expired unconfirmed bill account {}/{}",
+                log.info("Using NEW expired unconfirmed bill account {}/{}",
                         candidate.get("customerCode"), candidate.get("premisesCode"));
                 return candidate;
             }
@@ -223,7 +235,7 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
 
         Map<String, Object> account = dbAction.tryGetNewAccountWithExpiredUnconfirmedBillPreference();
         if (account != null && probeDeliveryOption(account, "billDeliveryOption", "P")) {
-            log.info("TC_204 using NEW expired unconfirmed bill preference account {}/{}",
+            log.info("Using NEW expired unconfirmed bill preference account {}/{}",
                     account.get("customerCode"), account.get("premisesCode"));
             return account;
         }
@@ -233,18 +245,18 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
             initiateNewUnconfirmedBillEnrollment(account);
             expireActivePaperlessEnrollment(account);
             if (probeDeliveryOption(account, "billDeliveryOption", "P")) {
-                log.info("TC_204 bootstrapped NEW unconfirmed bill preference for {}/{} (attempt {})",
+                log.info("Bootstrapped NEW unconfirmed bill preference for {}/{} (attempt {})",
                         account.get("customerCode"), account.get("premisesCode"), attempt);
                 return account;
             }
-            log.warn("TC_204 bootstrap attempt {}: eligibility probe expected bill=P for {}/{}",
+            log.warn("NEW unconfirmed bill bootstrap attempt {}: eligibility probe expected bill=P for {}/{}",
                     attempt, account.get("customerCode"), account.get("premisesCode"));
         }
 
         throw new IllegalStateException(
                 "Could not resolve NEW account with unconfirmed bill preference returning billDeliveryOption=P. "
-                        + "Active PPER enrollment returns I (reason 3); expire OCSEPCI/custadv after enroll or seed "
-                        + "expired unconfirmed bill preference in UAT.");
+                        + "Active PPER enrollment returns I; expire OCSEPCI/custadv after enroll or seed "
+                        + "expired unconfirmed bill preference.");
     }
 
     private void expireActivePaperlessEnrollment(Map<String, Object> account) {
@@ -263,7 +275,7 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
         UpdatePaperlessCommunicationsRequest payload = buildEnrollmentPayload(accountData);
         payload.setUpdateBillDeliveryOption("E");
         payload.setUpdateCorrDeliveryOption(null);
-        postEnrollment(payload, "Bootstrap NEW unconfirmed bill preference (TC_97 pattern)");
+        postEnrollment(payload, "Bootstrap NEW unconfirmed bill preference");
     }
 
     private boolean probeDeliveryOption(Map<String, Object> account, String fieldName, String expected) {
@@ -351,7 +363,7 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
         Map<String, Object> fallback = dbAction.getNewPaperlessEligibleAccountWithNoToken();
         if (!isNewAccount(fallback)) {
             throw new IllegalStateException(
-                    "TC_204 requires NEW account but resolved status="
+                    "Expected NEW account but resolved status="
                             + readDbStringOptional(fallback, "accountStatus"));
         }
         PaperlessEnrollmentAccountRegistry.tryReserve(fallback);

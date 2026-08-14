@@ -233,3 +233,27 @@ Feature: Verify GetAccountInfo Api
       | TC_6__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____                  | 0         |              | true    |
       | TC_7__Positive__Account_Info_Returned___Plan_Description_Format____                               | 0         |              | true    |
       | TC_8__Positive__Account_Info_Returned___Plan_Description_Value____                                | 0         |              | true    |
+
+  @GetAccountInfoPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetAccountInfo Api for "<testCondition>"
+    Then verify response code of "GetAccountInfo" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the response should have success as "<success>"
+    And response should have bill delivery option as "<billOption>"
+
+    Examples:
+      | testCondition                                                              | errorCode | errorMessage | success | billOption |
+      | TC_13__Positive__Account_Info_Returned___Bill_Delivery_Option_is_Initiated____  | 0 | | true | I |
+
+  @GetAccountInfoPositive @HappyFlow @CSI
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetAccountInfo Api for "<testCondition>"
+    Then verify response code of "GetAccountInfo" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the response should have success as "<success>"
+    And response should have correspondence delivery option as "<corrOption>"
+
+    Examples:
+      | testCondition                                                              | errorCode | errorMessage | success | corrOption |
+      | TC_14__Positive__Account_Info_Returned___Correspondence_Delivery_Option_is_Initiated____ | 0 | | true | I |

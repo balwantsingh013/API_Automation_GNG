@@ -32,8 +32,14 @@ public class VerifyAccountResponse {
         private String billingStreetNumber;
         private String billingStreetPreDirection;
         private String billingStreetName;
+        private String billingStreetSuffix;
+        private String billingStreetPostDirection;
+        private String billingUnitType;
+        private String billingUnitNumber;
         private String billingCity;
+        private String billingState;
         private String billingStateCode;
+        private String billingZip;
         private String billingZipCode;
         private String billingPoBox;
         private String billDeliveryConfirmDate;

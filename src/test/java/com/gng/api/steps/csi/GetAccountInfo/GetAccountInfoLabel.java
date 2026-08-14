@@ -61,5 +61,7 @@ public enum GetAccountInfoLabel {
     TC_5__Positive__Account_Info_Returned___Guaranteed_Plan_Pricing_Model____,
     TC_6__Positive__Account_Info_Returned___Non__Guaranteed_Plan_Pricing_Model____,
     TC_7__Positive__Account_Info_Returned___Plan_Description_Format____,
-    TC_8__Positive__Account_Info_Returned___Plan_Description_Value____
+    TC_8__Positive__Account_Info_Returned___Plan_Description_Value____,
+    TC_13__Positive__Account_Info_Returned___Bill_Delivery_Option_is_Initiated____,
+    TC_14__Positive__Account_Info_Returned___Correspondence_Delivery_Option_is_Initiated____
 }

@@ -100,21 +100,33 @@ public final class PaperlessConfirmationTokenUtil {
     }
 
     /**
-     * Plaintext token id sent to AES encryption (strip {@code confirm?} / URL query segment).
+     * Plaintext confirm token from custadv {@code email_link}.
+     * Links look like {@code .../paperless/confirm?t=&lt;hex&gt;}; SQL may return {@code t=&lt;hex&gt;}.
+     * ConfirmPaperlessEnrollment expects the hex value only (no {@code t=} prefix).
      */
     public static String normalizeTokenPlaintext(String token) {
         if (token == null || token.isBlank()) {
             return token;
         }
         String value = token.trim();
-        if (value.startsWith("confirm?")) {
-            return value.substring("confirm?".length());
+        if (value.regionMatches(true, 0, "confirm?", 0, "confirm?".length())) {
+            value = value.substring("confirm?".length());
         }
         int queryStart = value.lastIndexOf('?');
         if (queryStart >= 0 && queryStart < value.length() - 1) {
-            return value.substring(queryStart + 1);
+            value = value.substring(queryStart + 1);
         }
-        return value;
+        // Query string may be "t=<hex>" or "token=<hex>" (and optionally "&...").
+        int amp = value.indexOf('&');
+        if (amp >= 0) {
+            value = value.substring(0, amp);
+        }
+        if (value.regionMatches(true, 0, "t=", 0, 2)) {
+            value = value.substring(2);
+        } else if (value.regionMatches(true, 0, "token=", 0, 6)) {
+            value = value.substring(6);
+        }
+        return value.trim();
     }
 
     public static boolean isCustAdvTokenIdentifier(String token) {

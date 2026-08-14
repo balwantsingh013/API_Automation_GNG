@@ -14,9 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Temporarily sets Banner {@code uzrpsto.NEW_TEST_EMAIL_ADDR} to a space so paperless
- * notification create/send fails (Update TC_77/78 → 40281; Confirm TC_133 → 40321 on UAT).
- * Always pair {@link #clearForEmailNotificationFailure()} with {@link #restore()} in {@code finally}.
+ * Temporarily sets Banner {@code uzrpsto.NEW_TEST_EMAIL_ADDR} so paperless email behavior can be forced:
+ * <ul>
+ *   <li>{@link #clearForEmailNotificationFailure()} — space sentinel → email <b>creation</b> fails
+ *       (Update TC_77/78 → 40281; Confirm TC_133 → 40321 on UAT)</li>
+ *   <li>{@link #redirectToUndeliverableForSoftDeliveryFailure(String)} — undeliverable address →
+ *       Confirm TC_150 soft delivery failure that must <b>not</b> block success</li>
+ * </ul>
+ * Always pair override methods with {@link #restore()} in {@code finally}.
  */
 @Slf4j
 public final class BannerTestEmailOverrideUtil {
@@ -27,6 +32,9 @@ public final class BannerTestEmailOverrideUtil {
     /** Space sentinel (column is NOT NULL; Oracle treats '' as NULL). */
     public static final String CLEARED_VALUE = " ";
 
+    /** Default undeliverable routing address for Confirm TC_150 soft delivery failure. */
+    public static final String DEFAULT_UNDELIVERABLE_ADDRESS = "confirm-email-fail@invalid.test";
+
     private static final ThreadLocal<String> ORIGINAL_VALUE = new ThreadLocal<>();
     private static final ThreadLocal<Integer> DEPTH = ThreadLocal.withInitial(() -> 0);
 
@@ -35,16 +43,40 @@ public final class BannerTestEmailOverrideUtil {
 
     /** Sets override to a space (nested calls clear once; restore when depth returns to 0). */
     public static void clearForEmailNotificationFailure() {
+        applyOverride(CLEARED_VALUE,
+                "Banner NEW_TEST_EMAIL_ADDR — OVERRIDE CLEAR (force notification/email failure: Update 40281 / Confirm 40321)",
+                true);
+    }
+
+    /**
+     * TC_150: route confirmation email to an undeliverable address so delivery fails after
+     * preference update, without blanking the override (blanking triggers TC_133 / 40321 rollback).
+     */
+    public static void redirectToUndeliverableForSoftDeliveryFailure(String undeliverableAddress) {
+        String address = (undeliverableAddress == null || undeliverableAddress.isBlank())
+                ? DEFAULT_UNDELIVERABLE_ADDRESS
+                : undeliverableAddress.trim();
+        if (!address.contains("@")) {
+            throw new IllegalArgumentException(
+                    "Undeliverable address must look like an email, got: '" + address + "'");
+        }
+        applyOverride(address,
+                "Banner NEW_TEST_EMAIL_ADDR — OVERRIDE REDIRECT to undeliverable '"
+                        + address
+                        + "' (Confirm TC_150: soft confirmation-email delivery failure must not block success)",
+                false);
+    }
+
+    private static void applyOverride(String overrideValue, String reportLabel, boolean requireBlankAfterClear) {
         int depth = DEPTH.get();
         if (depth == 0) {
-            DualReportManager.logInfo(
-                    "Banner NEW_TEST_EMAIL_ADDR — OVERRIDE CLEAR (force notification/email failure: Update 40281 / Confirm 40321)");
+            DualReportManager.logInfo(reportLabel);
 
             long readStart = System.currentTimeMillis();
             String current = readParmValueRaw();
             DualReportManager.logDatabaseQuery(
                     DBQuery.SELECT_BANNER_NEW_TEST_EMAIL_ADDR,
-                    "NEW_TEST_EMAIL_ADDR before clear = '" + displayParm(current) + "'",
+                    "NEW_TEST_EMAIL_ADDR before override = '" + displayParm(current) + "'",
                     System.currentTimeMillis() - readStart);
 
             String toRestore = (current == null || current.isBlank())
@@ -54,24 +86,24 @@ public final class BannerTestEmailOverrideUtil {
 
             long writeStart = System.currentTimeMillis();
             try {
-                writeParmValue(CLEARED_VALUE);
+                writeParmValue(overrideValue);
                 String after = readParmValueRaw();
                 DualReportManager.logDatabaseQuery(
-                        DBQuery.CLEAR_BANNER_NEW_TEST_EMAIL_ADDR,
-                        "NEW_TEST_EMAIL_ADDR cleared to space (raw length="
-                                + (after == null ? -1 : after.length())
-                                + "). Will restore to '" + toRestore + "'",
+                        DBQuery.RESTORE_BANNER_NEW_TEST_EMAIL_ADDR
+                                + "\n-- bind: uzrpsto_parm_value = '" + displayParm(overrideValue) + "'",
+                        "NEW_TEST_EMAIL_ADDR after override = '" + displayParm(after)
+                                + "'. Will restore to '" + toRestore + "'",
                         System.currentTimeMillis() - writeStart);
-                log.info("Set Banner NEW_TEST_EMAIL_ADDR to space (raw length={}, will restore to '{}')",
-                        after == null ? -1 : after.length(), toRestore);
-                if (after != null && after.contains("@")) {
+                log.info("Set Banner NEW_TEST_EMAIL_ADDR to '{}' (will restore to '{}')",
+                        displayParm(after), toRestore);
+                if (requireBlankAfterClear && after != null && after.contains("@")) {
                     throw new IllegalStateException(
                             "NEW_TEST_EMAIL_ADDR still looks like an email after clear: '" + after
                                     + "'. Banner would not see a blank override.");
                 }
             } catch (RuntimeException ex) {
                 DualReportManager.logDatabaseQuery(
-                        DBQuery.CLEAR_BANNER_NEW_TEST_EMAIL_ADDR,
+                        DBQuery.RESTORE_BANNER_NEW_TEST_EMAIL_ADDR,
                         null,
                         System.currentTimeMillis() - writeStart,
                         false,
@@ -128,6 +160,13 @@ public final class BannerTestEmailOverrideUtil {
                     original, original, ex);
             throw ex;
         }
+    }
+
+    /**
+     * Current {@code NEW_TEST_EMAIL_ADDR} value (for TC_150 failed-send evidence before restore).
+     */
+    public static String readCurrentOverrideValue() {
+        return readParmValueRaw();
     }
 
     private static String displayParm(String value) {

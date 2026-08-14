@@ -6,6 +6,7 @@ import com.gng.api.db.DBAction;
 import com.gng.api.pages.csi.GetPaperlessEnrollmentEligibilityPage.GetPaperlessEnrollmentEligibilitySetupHelper;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.report.DualReportManager;
+import com.gng.api.util.GtbenrlBillAddressParser;
 import com.gng.api.util.PaperlessEnrollmentUtil;
 import com.gng.api.util.PreferencesVerifyAccountUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class VerifyAccountSetupHelper {
     private static final int MARIADB_PROBE_LIMIT = 80;
     private static final int BANNER_STREET_PROBE_LIMIT = 40;
 
-    /** Known Postman Preferences account (BillPresType=P) used as last-resort fallback. */
+    /** Known Preferences-verifiable account (BillPresType=P) used as last-resort fallback. */
     private static final String FALLBACK_CUST = "6196554";
     private static final String FALLBACK_PREM = "6169365";
     private static final String FALLBACK_EMAIL = "iesha.gray1991@outlook.com";
@@ -40,7 +41,142 @@ public class VerifyAccountSetupHelper {
     private final GetPaperlessEnrollmentEligibilitySetupHelper eligibilitySetup;
 
     VerifyAccountSetupHelper(TestContext testContext) {
+        this.testContext = testContext;
         this.eligibilitySetup = new GetPaperlessEnrollmentEligibilitySetupHelper(testContext);
+    }
+
+    private final TestContext testContext;
+
+    /**
+     * TC_228/229: GTBENRL NEW (no UCRACCT), bill vs service differ.
+     * Prefers the candidate whose BILL_ADDR1 has a numeric Element 1 so
+     * billingStreetNumber and GTBENRL source fields can be asserted.
+     */
+    Map<String, Object> ensureGtbenrlBillingAccountWithEmail() {
+        List<Map<String, Object>> candidates = ApplicationContext.get().getDbAction()
+                .listVerifyAccountGtbenrlNoUcraddr(5);
+        if (candidates == null || candidates.isEmpty()) {
+            throw new IllegalStateException(
+                    "No GTBENRL account for TC_228/229 "
+                            + "(PROC_FLAG='N', BILL_ADDR1, GZRPPTH status='N', no UCRACCT, bill vs service differ)");
+        }
+
+        Map<String, Object> best = null;
+        int bestScore = -1;
+        for (Map<String, Object> raw : candidates) {
+            Map<String, Object> row = normalizeGtbenrlRow(raw);
+            String cust = asString(row.get("customerCode"));
+            String prem = asString(row.get("premisesCode"));
+            if (cust == null || prem == null || asString(row.get("billAddr1")) == null) {
+                continue;
+            }
+            String email = PaperlessEnrollmentUtil.resolveBannerEmail(row);
+            if (email == null || email.isBlank()) {
+                email = ApplicationContext.get().getDbAction().getAnyBannerEmailForCustomer(cust);
+            }
+            if (email == null || email.isBlank()) {
+                email = ApplicationContext.get().getDbAction().getActiveBannerEmailForCustomer(cust);
+            }
+            if (email == null || email.isBlank()) {
+                DualReportManager.logInfo(
+                        "GTBENRL candidate skipped (no email): " + cust + "/" + prem);
+                continue;
+            }
+            row.put("bannerEmail", email);
+            int score = gtbenrlParseScore(row);
+            DualReportManager.logInfo(
+                    "GTBENRL candidate " + cust + "/" + prem
+                            + " score=" + score
+                            + " billAddr1=" + row.get("billAddr1")
+                            + " email=" + email);
+            if (score > 0 && score > bestScore) {
+                bestScore = score;
+                best = row;
+            }
+        }
+        if (best == null) {
+            throw new IllegalStateException(
+                    "GTBENRL candidates exist for TC_228/229 but none have a numeric "
+                            + "GTBENRL_BILL_ADDR1 Element 1 (required for billingStreetNumber)");
+        }
+        DualReportManager.logInfo(
+                "VerifyAccount GTBENRL account selected — "
+                        + best.get("customerCode") + "/" + best.get("premisesCode")
+                        + " billAddr1=" + best.get("billAddr1"));
+        return finalizeGtbenrlAccount(best);
+    }
+
+    /**
+     * Prefer street-style BILL_ADDR1 (Element 1 numeric) so TC_229 can assert
+     * billingStreetNumber = Element 1. PO-leading lines are deprioritized.
+     */
+    private int gtbenrlParseScore(Map<String, Object> row) {
+        Map<String, String> parsed = GtbenrlBillAddressParser.fromGtbenrlRow(row);
+        String streetNum = asString(parsed.get("billingStreetNumber"));
+        boolean numericStreet = streetNum != null && streetNum.matches("\\d+");
+        if (!numericStreet) {
+            return 0;
+        }
+        int score = 10;
+        for (String key : List.of(
+                "billingStreetPreDirection", "billingStreetName",
+                "billingStreetSuffix", "billingStreetPostDirection", "billingUnitType",
+                "billingUnitNumber", "billingCity", "billingState", "billingZip")) {
+            if (asString(parsed.get(key)) != null) {
+                score++;
+            }
+        }
+        return score;
+    }
+
+    private Map<String, Object> finalizeGtbenrlAccount(Map<String, Object> account) {
+        Map<String, Object> row = normalizeGtbenrlRow(account);
+        if (row.get("billAddr1") != null) {
+            row.put("GTBENRL_BILL_ADDR1", row.get("billAddr1"));
+        }
+        Map<String, String> parsed = GtbenrlBillAddressParser.fromGtbenrlRow(row);
+        for (Map.Entry<String, String> entry : parsed.entrySet()) {
+            row.put(entry.getKey(), entry.getValue());
+        }
+        row.put("gtbenrlPresent", "true");
+        row.put("bannerPresent", "false");
+        row.put("requireBannerMatch", "false");
+        row.put("accountStatus", "N");
+        return row;
+    }
+
+    private Map<String, Object> normalizeGtbenrlRow(Map<String, Object> source) {
+        Map<String, Object> out = new HashMap<>();
+        if (source == null) {
+            return out;
+        }
+        out.putAll(source);
+        putAlias(out, "customerCode", "GTBENRL_CUST_CODE", "CUSTOMERCODE");
+        putAlias(out, "premisesCode", "GTBENRL_PREM_CODE", "PREMISESCODE");
+        putAlias(out, "billAddr1", "GTBENRL_BILL_ADDR1", "BILLADDR1");
+        putAlias(out, "billingCity", "GTBENRL_BILL_CITY", "BILLINGCITY");
+        putAlias(out, "billingState", "GTBENRL_BILL_STATE", "BILLINGSTATE");
+        putAlias(out, "billingStateCode", "GTBENRL_BILL_STATE", "BILLINGSTATE");
+        putAlias(out, "billingZip", "GTBENRL_BILL_ZIP", "BILLINGZIP");
+        putAlias(out, "billingZipCode", "GTBENRL_BILL_ZIP", "BILLINGZIP");
+        putAlias(out, "bannerEmail", "BANNEREMAIL", "GTBENRL_EMAIL");
+        return out;
+    }
+
+    private void putAlias(Map<String, Object> target, String canonical, String... aliases) {
+        Object existing = target.get(canonical);
+        if (existing != null && !existing.toString().isBlank()) {
+            return;
+        }
+        for (String alias : aliases) {
+            for (Map.Entry<String, Object> entry : target.entrySet()) {
+                if (entry.getKey() != null && entry.getKey().equalsIgnoreCase(alias)
+                        && entry.getValue() != null && !entry.getValue().toString().isBlank()) {
+                    target.put(canonical, entry.getValue());
+                    return;
+                }
+            }
+        }
     }
 
     Map<String, Object> resolveStreetAddressAccount() {
@@ -145,82 +281,43 @@ public class VerifyAccountSetupHelper {
         return findMatching(label, a -> true);
     }
 
-    Map<String, Object> ensurePendingBillForVerify() {
-        Map<String, Object> probed = findMatchingOptional(
-                a -> "I".equalsIgnoreCase(asString(a.get("billPresType")))
-                        && !nonBlank(a, "billDeliveryConfirmDate"));
-        if (probed != null) {
-            return probed;
+    /**
+     * Strict pending bill: Banner pending/bootstrap only — no Preferences-only / P-as-I stand-in.
+     * ErrorCode 302 on this Banner account fails the TC (eligibility / Verification Failed).
+     */
+    Map<String, Object> ensurePendingBillForVerifyStrict() {
+        try {
+            Map<String, Object> existing = ApplicationContext.get().getDbAction()
+                    .getVerifyAccountNewPendingBill();
+            ApplicationContext.get().getDbAction().enrichBannerEmail(existing);
+            return finalizePendingAccount(existing, "billPresType");
+        } catch (Exception ex) {
+            log.info("No existing pending bill — bootstrapping Banner UpdatePaperless: {}", ex.getMessage());
         }
-        probed = findMatchingOptional(
-                a -> "P".equalsIgnoreCase(asString(a.get("billPresType")))
-                        && !nonBlank(a, "billDeliveryConfirmDate"));
-        if (probed != null) {
-            probed.put("billPresType", "I");
-            probed.put("billDeliveryOption", "I");
-            log.info("Using Preferences billPresType=P (null confirm) as initiated bill stand-in");
-            DualReportManager.logInfo(
-                    "VerifyAccount — no UpdatePaperless update performed; Preferences billPresType=P "
-                            + "(null confirm) used as initiated bill stand-in for "
-                            + probed.get("customerCode") + "/" + probed.get("premisesCode")
-                            + " bannerPresent=" + probed.get("bannerPresent"));
-            return probed;
-        }
-        log.info("No Preferences initiated bill account - bootstrapping via UpdatePaperless");
         Map<String, Object> bootstrapped = eligibilitySetup.ensureActivePendingBillEnrollment(true);
-        Map<String, Object> finalized = finalizePendingAccount(bootstrapped, "billPresType");
-        Optional<ObjectNode> data = PreferencesVerifyAccountUtil.tryVerifyAccount(
-                String.valueOf(finalized.get("customerCode")),
-                String.valueOf(finalized.get("premisesCode")),
-                String.valueOf(finalized.get("bannerEmail")));
-        if (data.isPresent()) {
-            Map<String, Object> merged = mergeProbeData(finalized, data.get());
-            markBannerPresence(merged);
-            merged.put("billPresType", "I");
-            merged.put("billDeliveryOption", "I");
-            return merged;
+        return finalizePendingAccount(bootstrapped, "billPresType");
+    }
+
+    Map<String, Object> ensurePendingCorrForVerifyStrict() {
+        try {
+            Map<String, Object> existing = ApplicationContext.get().getDbAction()
+                    .getVerifyAccountNewPendingCorr();
+            ApplicationContext.get().getDbAction().enrichBannerEmail(existing);
+            return finalizePendingAccount(existing, "correspondencePreference");
+        } catch (Exception ex) {
+            log.info("No existing pending corr — bootstrapping Banner UpdatePaperless: {}", ex.getMessage());
         }
-        throw new IllegalStateException(
-                "No Preferences-verifiable initiated bill account after probe + bootstrap");
+        Map<String, Object> bootstrapped = eligibilitySetup.ensureActivePendingCorrEnrollment(true);
+        return finalizePendingAccount(bootstrapped, "correspondencePreference");
+    }
+
+    /** @deprecated soft path kept for reference; use {@link #ensurePendingBillForVerifyStrict()} */
+    Map<String, Object> ensurePendingBillForVerify() {
+        return ensurePendingBillForVerifyStrict();
     }
 
     Map<String, Object> ensurePendingCorrForVerify() {
-        Map<String, Object> probed = findMatchingOptional(
-                a -> "I".equalsIgnoreCase(asString(a.get("correspondencePreference")))
-                        && !nonBlank(a, "corrDeliveryConfirmDate"));
-        if (probed != null) {
-            return probed;
-        }
-        probed = findMatchingOptional(
-                a -> "P".equalsIgnoreCase(asString(a.get("correspondencePreference")))
-                        && !nonBlank(a, "corrDeliveryConfirmDate"));
-        if (probed != null) {
-            probed.put("correspondencePreference", "I");
-            probed.put("corrDeliveryOption", "I");
-            log.info("Using Preferences correspondencePreference=P (null confirm) as initiated corr stand-in");
-            DualReportManager.logInfo(
-                    "VerifyAccount — no UpdatePaperless update performed; Preferences correspondencePreference=P "
-                            + "(null confirm) used as initiated corr stand-in for "
-                            + probed.get("customerCode") + "/" + probed.get("premisesCode")
-                            + " bannerPresent=" + probed.get("bannerPresent"));
-            return probed;
-        }
-        log.info("No Preferences initiated corr account - bootstrapping via UpdatePaperless");
-        Map<String, Object> bootstrapped = eligibilitySetup.ensureActivePendingCorrEnrollment(true);
-        Map<String, Object> finalized = finalizePendingAccount(bootstrapped, "correspondencePreference");
-        Optional<ObjectNode> data = PreferencesVerifyAccountUtil.tryVerifyAccount(
-                String.valueOf(finalized.get("customerCode")),
-                String.valueOf(finalized.get("premisesCode")),
-                String.valueOf(finalized.get("bannerEmail")));
-        if (data.isPresent()) {
-            Map<String, Object> merged = mergeProbeData(finalized, data.get());
-            markBannerPresence(merged);
-            merged.put("correspondencePreference", "I");
-            merged.put("corrDeliveryOption", "I");
-            return merged;
-        }
-        throw new IllegalStateException(
-                "No Preferences-verifiable initiated corr account after probe + bootstrap");
+        return ensurePendingCorrForVerifyStrict();
     }
 
     private Map<String, Object> finalizePendingAccount(Map<String, Object> account, String preferenceKey) {
@@ -251,14 +348,14 @@ public class VerifyAccountSetupHelper {
             Map<String, Object> account = toAccountMap(FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL, fallback.get());
             markBannerPresence(account);
             if (matcher.test(account)) {
-                log.warn("Using Postman fallback Preferences account for {} (bannerPresent={})",
+                log.warn("Using known Preferences fallback account for {} (bannerPresent={})",
                         label, account.get("bannerPresent"));
                 return account;
             }
         }
         throw new IllegalStateException(
                 "No Preferences-verifiable account for " + label
-                        + " after probing MariaDB registered + Banner street candidates (and Postman fallback)");
+                        + " after probing MariaDB registered + Banner street candidates (and known Preferences fallback)");
     }
 
     /**
@@ -305,7 +402,7 @@ public class VerifyAccountSetupHelper {
             List<Map<String, Object>> probed = new ArrayList<>();
             probeMariaDbRegisteredAccounts(probed);
             probeBannerStreetCandidates(probed);
-            // Always include Postman fallback if probeable and not already present
+            // Always include known Preferences fallback if probeable and not already present
             PreferencesVerifyAccountUtil.tryVerifyAccount(FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL)
                     .ifPresent(data -> addUnique(probed,
                             toAccountMap(FALLBACK_CUST, FALLBACK_PREM, FALLBACK_EMAIL, data), false));

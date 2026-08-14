@@ -12,9 +12,11 @@ import com.gng.api.steps.csi.ConfirmPaperlessEnrollment.ConfirmPaperlessEnrollme
 import com.gng.api.steps.csi.UpdatePaperlessCommunications.UpdatePaperlessCommunicationsLabel;
 import com.gng.api.steps.AesEncryption.AesEncryptionSteps;
 import com.gng.api.util.FakerDataGenerator;
+import com.gng.api.util.BannerTestEmailOverrideUtil;
 import com.gng.api.util.PaperlessConfirmationTokenUtil;
 import com.gng.api.util.PaperlessEnrollmentAccountRegistry;
 import com.gng.api.util.PaperlessEnrollmentUtil;
+import com.gng.api.util.PaperlessTokenPperEvidenceUtil;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -336,6 +338,87 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
         return tokenFromCustAdvRow(tokenData);
     }
 
+    /**
+     * TC_125: token identifier does not match any stored token record → Confirm 10411.
+     * <p>Prior green Confirm report used email-change stale-token (custadv row still present) and got
+     * 10411. Current UAT1 often returns 10413 for that path — fall back to enroll+delete.
+     */
+    String getTokenNotFoundNoStoredRecordToken(UpdatePaperlessCommunicationsLabel enrollCase) {
+        return resolveTokenNotFound10411(enrollCase, "TC_125");
+    }
+
+    /**
+     * TC_130: otherwise-issued token with no active PendingConfirmation PPER → Confirm 10411.
+     * <p>Same prior-green setup as TC_125 (email-change stale token → 10411 with
+     * {@code rowPresent=true} / {@code newemail_*}). Falls back to enroll+delete when UAT returns 10413.
+     */
+    String getNoActivePendingPperToken(UpdatePaperlessCommunicationsLabel enrollCase) {
+        return resolveTokenNotFound10411(enrollCase, "TC_130");
+    }
+
+    /**
+     * Prefer prior-green email-change stale-token path; if UAT now classifies it as 10413, force
+     * Token Not Found by removing the stored paperless token record for a freshly issued token.
+     */
+    private String resolveTokenNotFound10411(UpdatePaperlessCommunicationsLabel enrollCase, String label) {
+        log.info("{}: trying email-change stale-token flow (prior green Confirm report)", label);
+        String staleToken = bootstrapEnrollmentEmailChangeAndGetStaleToken(enrollCase);
+        int probeErrorCode = probeConfirmErrorCode(staleToken);
+        if (probeErrorCode == 10411) {
+            log.info("{}: email-change stale token returned 10411", label);
+            return staleToken;
+        }
+        log.warn("{}: email-change returned errorCode {} (prior report was 10411); "
+                        + "falling back to enroll+delete stored paperless token for Token Not Found",
+                label, probeErrorCode);
+        return enrollAndDeleteStoredPaperlessToken(enrollCase, label);
+    }
+
+    /** Enroll once, delete stored custadv (+ pending OCSEPCI), probe must be 10411. */
+    private String enrollAndDeleteStoredPaperlessToken(UpdatePaperlessCommunicationsLabel enrollCase,
+                                                       String label) {
+        UpdatePaperlessCommunicationsRequest enrollPayload = BasePage.deserializeJsonToPojo(
+                UpdatePaperlessCommunicationsLabel.update_paperless_communications.toString(),
+                UpdatePaperlessCommunicationsRequest.class);
+        prepareEnrollmentPayload(enrollPayload, enrollCase);
+        long baseline = PaperlessConfirmationTokenUtil.getBaselineVerificationId(
+                enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode());
+        postEnrollment(enrollPayload, label + " enroll before delete-token");
+        String token = PaperlessConfirmationTokenUtil.waitForTokenCreatedAfterEnroll(
+                enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode(), baseline);
+        if (token == null) {
+            throw new IllegalStateException(
+                    "No custadv token after " + label + " enroll for "
+                            + enrollPayload.getCustomerCode() + "/" + enrollPayload.getPremisesCode());
+        }
+
+        String normalizedToken = PaperlessConfirmationTokenUtil.normalizeTokenPlaintext(token);
+        DBAction custAdvDb = ApplicationContext.get().getDbAction("mariadb");
+        int deletedByToken = custAdvDb.deleteCustAdvUnusedPaperlessTokenByTokenQuiet(normalizedToken);
+        if (deletedByToken == 0) {
+            Map<String, Object> tokenData = custAdvDb.getUnusedConfirmPaperlessTokenAfterId(
+                    enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode(), baseline);
+            custAdvDb.deleteCustAdvPaperlessTokenByIdQuiet(readVerificationId(tokenData));
+        }
+        custAdvDb.deleteCustAdvUnusedPaperlessTokensForAccountQuiet(
+                enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode());
+        ApplicationContext.get().getDbAction().deletePendingOcsepciRowsForAccountQuiet(
+                enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode());
+
+        int probeErrorCode = probeConfirmErrorCode(normalizedToken);
+        if (probeErrorCode != 10411) {
+            throw new IllegalStateException(
+                    label + " delete-token setup expected Confirm errorCode 10411, got " + probeErrorCode);
+        }
+
+        testContext.setPaperlessConfirmationToken(normalizedToken);
+        testContext.setCustomerCode(enrollPayload.getCustomerCode());
+        testContext.setPremisesCode(enrollPayload.getPremisesCode());
+        log.info("{}: removed stored paperless token for {}/{} (Confirm probe=10411)",
+                label, enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode());
+        return normalizedToken;
+    }
+
     String bootstrapEnrollmentEmailChangeAndGetStaleToken(UpdatePaperlessCommunicationsLabel enrollCase) {
         UpdatePaperlessCommunicationsRequest firstPayload = BasePage.deserializeJsonToPojo(
                 UpdatePaperlessCommunicationsLabel.update_paperless_communications.toString(),
@@ -343,7 +426,7 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
         prepareEnrollmentPayload(firstPayload, enrollCase);
         long baseline = PaperlessConfirmationTokenUtil.getBaselineVerificationId(
                 firstPayload.getCustomerCode(), firstPayload.getPremisesCode());
-        postEnrollment(firstPayload, "TC_125/127 initial bill enrollment");
+        postEnrollment(firstPayload, "email-change initial bill enrollment");
         String staleToken = PaperlessConfirmationTokenUtil.waitForTokenCreatedAfterEnroll(
                 firstPayload.getCustomerCode(), firstPayload.getPremisesCode(), baseline);
         if (staleToken == null) {
@@ -361,7 +444,7 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
         secondPayload.setUpdateBillDeliveryOption("E");
         secondPayload.setUpdateCorrDeliveryOption(null);
         secondPayload.setEmailAddress(generateNewTestEmail());
-        postEnrollment(secondPayload, "TC_125 stale token after re-enroll with new email");
+        postEnrollment(secondPayload, "email-change re-enroll with new email");
 
         DBAction custAdvDb = ApplicationContext.get().getDbAction("mariadb");
         Map<String, Object> tokenData = Map.of(
@@ -416,19 +499,6 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
         custAdvDb.logConfirmPaperlessTokenLookupResult(
                 enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode(), tokenData);
         return tokenFromCustAdvRow(tokenData);
-    }
-
-    /** TC_130: valid custadv token but no active pending PPER before confirm → 10411. */
-    String getNoActivePendingPperToken(UpdatePaperlessCommunicationsLabel enrollCase) {
-        String token = findProbedTokenAmongCustAdvRows(
-                ApplicationContext.get().getDbAction("mariadb")
-                        .listRecentUnusedPaperlessTokensFromCustAdv(25, false),
-                10411);
-        if (token != null) {
-            return token;
-        }
-        log.info("TC_130: no pre-seeded 10411 token; using stale-token flow (UAT1 cancel-pending still confirms)");
-        return bootstrapEnrollmentEmailChangeAndGetStaleToken(enrollCase);
     }
 
     /**
@@ -698,16 +768,27 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
 
     String resolveUsedTokenForNegativeTest(UpdatePaperlessCommunicationsLabel enrollCase) {
         try {
-            return getUsedTokenFromDatabase();
+            String token = getUsedTokenFromDatabase();
+            int probeErrorCode = probeConfirmErrorCode(token);
+            if (probeErrorCode == 10415) {
+                return token;
+            }
+            log.warn("DB used token returned Confirm errorCode {}; bootstrapping a fresh used token",
+                    probeErrorCode);
         } catch (RuntimeException ex) {
             log.warn("No used custadv token in DB ({}); creating one via bootstrap confirm", ex.getMessage());
-            return bootstrapEnrollmentConfirmOnceAndGetUsedToken(enrollCase);
         }
+        return bootstrapEnrollmentConfirmOnceAndGetUsedToken(enrollCase);
     }
 
     private String bootstrapEnrollmentConfirmOnceAndGetUsedToken(UpdatePaperlessCommunicationsLabel enrollCase) {
         String token = bootstrapEnrollmentAndGetToken(enrollCase);
         postConfirmEnrollment(token, "TC_128 mark token used");
+        int probeErrorCode = probeConfirmErrorCode(token);
+        if (probeErrorCode != 10415) {
+            throw new IllegalStateException(
+                    "TC_128 used-token setup expected Confirm errorCode 10415, got " + probeErrorCode);
+        }
         return token;
     }
 
@@ -878,5 +959,313 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
             return email;
         }
         throw new IllegalStateException("No email found in account data: " + accountData.keySet());
+    }
+
+    private static final ThreadLocal<String> TC147_ORIGINAL_STATUS = new ThreadLocal<>();
+    private static final ThreadLocal<String> TC149_SAVED_BANNER_EMAIL = new ThreadLocal<>();
+    private static final ThreadLocal<String> TC149_CUSTOMER_FOR_RESTORE = new ThreadLocal<>();
+
+    /**
+     * TC_147: enroll while Banner account is NEW, then transition UCRACCT status to ACTIVE
+     * before Confirm so response accountType follows the ACTIVE confirmation path.
+     */
+    String bootstrapTc147NewToActiveTransitionAndGetToken() {
+        DualReportManager.logInfo(
+                "TC_147 — STEP 1: enroll while accountStatus=NEW (token created on NEW account)");
+        String token = bootstrapEnrollmentAndGetToken(
+                UpdatePaperlessCommunicationsLabel.TC_99__Positive__New_Account_Bill_Enrollment_Initiated_);
+        String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
+        DBAction bannerDb = ApplicationContext.get().getDbAction();
+
+        Map<String, Object> before = bannerDb.tryLookupUcracctAccount(customerCode, premisesCode);
+        String statusBefore = readRowString(before, "accountStatus");
+        DualReportManager.logInfo(
+                "TC_147 — STEP 1 evidence: account=" + customerCode + "/" + premisesCode
+                        + " accountStatus at token create = '" + statusBefore + "' (expected N/NEW)");
+        if (statusBefore == null || !(statusBefore.equalsIgnoreCase("N") || statusBefore.equalsIgnoreCase("NEW"))) {
+            throw new IllegalStateException(
+                    "TC_147 requires NEW account at enrollment; got accountStatus='" + statusBefore
+                            + "' for " + customerCode + "/" + premisesCode);
+        }
+
+        TC147_ORIGINAL_STATUS.set(statusBefore);
+        DualReportManager.logInfo(
+                "TC_147 — STEP 2: transition Banner UCRACCT_STATUS_IND from '"
+                        + statusBefore + "' to 'A' (ACTIVE) before Confirm");
+        long start = System.currentTimeMillis();
+        try {
+            bannerDb.updateUcracctStatusInd(customerCode, premisesCode, "A");
+            DualReportManager.logDatabaseQuery(
+                    DBQuery.UPDATE_UCRACCT_STATUS_IND_FOR_ACCOUNT
+                            + "\n-- bind: status='A', customerCode='" + customerCode
+                            + "', premisesCode='" + premisesCode + "'",
+                    "Updated UCRACCT_STATUS_IND to A for " + customerCode + "/" + premisesCode,
+                    System.currentTimeMillis() - start);
+        } catch (RuntimeException ex) {
+            DualReportManager.logDatabaseQuery(
+                    DBQuery.UPDATE_UCRACCT_STATUS_IND_FOR_ACCOUNT,
+                    null,
+                    System.currentTimeMillis() - start,
+                    false,
+                    ex.getMessage());
+            throw ex;
+        }
+
+        Map<String, Object> after = bannerDb.tryLookupUcracctAccount(customerCode, premisesCode);
+        String statusAfter = readRowString(after, "accountStatus");
+        DualReportManager.logInfo(
+                "TC_147 — STEP 2 evidence: accountStatus after transition = '"
+                        + statusAfter + "' (expected A/ACTIVE) before Confirm API call");
+        if (statusAfter == null || !(statusAfter.equalsIgnoreCase("A") || statusAfter.equalsIgnoreCase("ACTIVE"))) {
+            throw new IllegalStateException(
+                    "TC_147 status transition failed; expected A after update, got '" + statusAfter + "'");
+        }
+        DualReportManager.logInfo(
+                "TC_147 — STEP 3: Confirm will run with token from NEW enrollment on now-ACTIVE account "
+                        + "(expect accountType=ACTIVE)");
+        return token;
+    }
+
+    /** Restores TC_147 Banner status if setup flipped N→A. Safe if setup never ran. */
+    static void restoreTc147AccountStatus(String customerCode, String premisesCode) {
+        String original = TC147_ORIGINAL_STATUS.get();
+        TC147_ORIGINAL_STATUS.remove();
+        if (customerCode == null || customerCode.isBlank()
+                || premisesCode == null || premisesCode.isBlank()
+                || original == null || original.isBlank()) {
+            return;
+        }
+        String restoreStatus = original.equalsIgnoreCase("NEW") ? "N" : original;
+        DualReportManager.logInfo(
+                "TC_147 — restore UCRACCT_STATUS_IND for " + customerCode + "/" + premisesCode
+                        + " to '" + restoreStatus + "'");
+        try {
+            ApplicationContext.get().getDbAction()
+                    .updateUcracctStatusInd(customerCode, premisesCode, restoreStatus);
+        } catch (RuntimeException ex) {
+            log.warn("TC_147 could not restore account status for {}/{}: {}",
+                    customerCode, premisesCode, ex.getMessage());
+        }
+    }
+
+    /**
+     * TC_148: multiple Update enrollments on same account — null/null → E/null → E/E —
+     * then Confirm applies the latest aggregated PPER state (last state wins).
+     */
+    String bootstrapTc148AggregatedPperAndGetToken() {
+        DualReportManager.logInfo(
+                "TC_148 — STEP 1: reserve ACTIVE account and capture baseline PPER (expect null/null pending)");
+        Map<String, Object> account = reserveFreshBillEnrollmentAccount();
+        String customerCode = account.get("customerCode").toString();
+        String premisesCode = account.get("premisesCode").toString();
+        String email = resolveEmail(account);
+        testContext.setCustomerCode(customerCode);
+        testContext.setPremisesCode(premisesCode);
+
+        var baselinePper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords(
+                "TC_148 STEP1 baseline (null/null)", customerCode, premisesCode);
+        DualReportManager.logInfo(
+                "TC_148 — STEP 1 evidence: pendingBill=" + baselinePper.get("pendingBillType")
+                        + ", pendingCorr=" + baselinePper.get("pendingCorrType"));
+
+        DualReportManager.logInfo("TC_148 — STEP 2: Update enroll bill-only (null/null → E/null)");
+        UpdatePaperlessCommunicationsRequest billPayload = BasePage.deserializeJsonToPojo(
+                UpdatePaperlessCommunicationsLabel.update_paperless_communications.toString(),
+                UpdatePaperlessCommunicationsRequest.class);
+        billPayload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        billPayload.setCustomerCode(customerCode);
+        billPayload.setPremisesCode(premisesCode);
+        billPayload.setUpdateBillDeliveryOption("E");
+        billPayload.setUpdateCorrDeliveryOption(null);
+        billPayload.setEmailAddress(email);
+        String tokenAfterBill = enrollAndWaitForNewToken(billPayload, "TC_148 bill-only enroll E/null");
+        var afterBillPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_148 STEP2 bill-only", baselinePper, afterBillPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords(
+                "TC_148 STEP2 after E/null", customerCode, premisesCode);
+        DualReportManager.logInfo(
+                "TC_148 — STEP 2 evidence: pendingBill=" + afterBillPper.get("pendingBillType")
+                        + ", pendingCorr=" + afterBillPper.get("pendingCorrType")
+                        + " (expect E/null)");
+
+        DualReportManager.logInfo(
+                "TC_148 — STEP 3: Update enroll both channels on same account (E/null → E/E); last state wins");
+        UpdatePaperlessCommunicationsRequest bothPayload = BasePage.deserializeJsonToPojo(
+                UpdatePaperlessCommunicationsLabel.update_paperless_communications.toString(),
+                UpdatePaperlessCommunicationsRequest.class);
+        bothPayload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        bothPayload.setCustomerCode(customerCode);
+        bothPayload.setPremisesCode(premisesCode);
+        bothPayload.setUpdateBillDeliveryOption("E");
+        bothPayload.setUpdateCorrDeliveryOption("E");
+        bothPayload.setEmailAddress(email);
+        postEnrollment(bothPayload, "TC_148 aggregated both-channels enroll E/E");
+
+        String token = PaperlessConfirmationTokenUtil.tryGetLatestTokenIdentifier(customerCode, premisesCode);
+        if (token == null || token.isBlank()) {
+            token = tokenAfterBill;
+        }
+        testContext.setPaperlessConfirmationToken(token);
+
+        var afterBothPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        PaperlessTokenPperEvidenceUtil.logPperBeforeAfter("TC_148 STEP3 aggregated E/E", afterBillPper, afterBothPper);
+        PaperlessTokenPperEvidenceUtil.logRecentPperRecords(
+                "TC_148 STEP3 after E/E (latest aggregated)", customerCode, premisesCode);
+        DualReportManager.logInfo(
+                "TC_148 — STEP 3 evidence: pendingBill=" + afterBothPper.get("pendingBillType")
+                        + ", pendingCorr=" + afterBothPper.get("pendingCorrType")
+                        + " (expect E/E — Confirm must apply this latest aggregated state)");
+        DualReportManager.logInfo(
+                "TC_148 — STEP 4: Confirm with current token; expect bill+corr confirmation from E/E aggregate");
+        return token;
+    }
+
+    /**
+     * TC_149: Banner email present and matching PPER at token create.
+     * Banner email is cleared mid-Confirm (after token validation) by the page — clearing
+     * before the API call returns 40287 (Email Address is Not Present).
+     */
+    String bootstrapTc149ClearBannerEmailBeforeConfirmAndGetToken() {
+        DualReportManager.logInfo(
+                "TC_149 — STEP 1: enroll ACTIVE bill with Banner email present (token create)");
+        String token = bootstrapEnrollmentAndGetToken(
+                UpdatePaperlessCommunicationsLabel.TC_98__Positive__Active_Account_Bill_Enrollment_Initiated_);
+        String customerCode = testContext.getCustomerCode();
+        DBAction bannerDb = ApplicationContext.get().getDbAction();
+
+        String bannerEmailAtTokenCreate = bannerDb.getActiveBannerEmailForCustomer(customerCode);
+        var pperAtCreate = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(
+                customerCode, testContext.getPremisesCode());
+        String pperEmail = pperAtCreate.get("pendingEmail");
+        DualReportManager.logInfo(
+                "TC_149 — STEP 1 evidence (token create): bannerEmail='" + bannerEmailAtTokenCreate
+                        + "', PPER email='" + pperEmail + "'");
+        if (bannerEmailAtTokenCreate == null || bannerEmailAtTokenCreate.isBlank()) {
+            throw new IllegalStateException(
+                    "TC_149 requires Banner email present when token is created for " + customerCode);
+        }
+        DualReportManager.logInfo(
+                "TC_149 — STEP 2: Banner email exists and matches PPER at token create. "
+                        + "STEP 3 (clear Banner email) runs mid-Confirm after token validation "
+                        + "so confirmation email is skipped without 40287.");
+        TC149_SAVED_BANNER_EMAIL.set(bannerEmailAtTokenCreate);
+        TC149_CUSTOMER_FOR_RESTORE.set(customerCode);
+        return token;
+    }
+
+    /**
+     * TC_149 STEP 3: expire Banner email during Confirm (after token validation).
+     * Returns true when email is absent after expire.
+     */
+    static boolean clearBannerEmailMidConfirm(String customerCode) {
+        if (customerCode == null || customerCode.isBlank()) {
+            return false;
+        }
+        DBAction bannerDb = ApplicationContext.get().getDbAction();
+        String before = bannerDb.getActiveBannerEmailForCustomer(customerCode);
+        DualReportManager.logInfo(
+                "TC_149 — STEP 3: clear Banner email DURING Confirm (after token validation). "
+                        + "bannerEmail before clear='" + before + "'");
+        long start = System.currentTimeMillis();
+        try {
+            bannerDb.expireActiveBannerEmailsQuiet(customerCode);
+            DualReportManager.logDatabaseQuery(
+                    DBQuery.UPDATE_EXPIRE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER
+                            + "\n-- bind: customerCode='" + customerCode + "'",
+                    "Expired active Banner GZBEMCP email(s) mid-Confirm for customer " + customerCode
+                            + " (was '" + before + "')",
+                    System.currentTimeMillis() - start);
+        } catch (RuntimeException ex) {
+            DualReportManager.logDatabaseQuery(
+                    DBQuery.UPDATE_EXPIRE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER,
+                    null,
+                    System.currentTimeMillis() - start,
+                    false,
+                    ex.getMessage());
+            throw ex;
+        }
+        String after = bannerDb.getActiveBannerEmailForCustomer(customerCode);
+        DualReportManager.logInfo(
+                "TC_149 — STEP 3 evidence: bannerEmail after mid-Confirm clear='"
+                        + after + "' (expect null/blank → confirmation email skipped)");
+        return after == null || after.isBlank();
+    }
+
+    /** Restores TC_149 Banner email after expire. Safe if setup never ran. */
+    static void restoreTc149BannerEmail() {
+        String customerCode = TC149_CUSTOMER_FOR_RESTORE.get();
+        String savedEmail = TC149_SAVED_BANNER_EMAIL.get();
+        TC149_CUSTOMER_FOR_RESTORE.remove();
+        TC149_SAVED_BANNER_EMAIL.remove();
+        if (customerCode == null || customerCode.isBlank()) {
+            return;
+        }
+        DualReportManager.logInfo(
+                "TC_149 — restore Banner email for customer " + customerCode
+                        + (savedEmail == null ? "" : " (saved='" + savedEmail + "')"));
+        DBAction bannerDb = ApplicationContext.get().getDbAction();
+        try {
+            int unexpired = bannerDb.unexpireRecentlyExpiredBannerEmailsQuiet(customerCode);
+            DualReportManager.logInfo(
+                    "TC_149 — unexpired " + unexpired + " recently-expired GZBEMCP row(s) for " + customerCode);
+            if (savedEmail != null && !savedEmail.isBlank()
+                    && bannerDb.getActiveBannerEmailForCustomer(customerCode) == null) {
+                bannerDb.updateActiveBannerEmailForCustomer(customerCode, savedEmail);
+                DualReportManager.logInfo(
+                        "TC_149 — re-applied Banner email '" + savedEmail + "' for " + customerCode);
+            }
+        } catch (RuntimeException ex) {
+            log.warn("TC_149 could not restore Banner email for {}: {}", customerCode, ex.getMessage());
+        }
+    }
+
+    /**
+     * TC_150: unused Confirm token for ACTIVE bill enrollment.
+     * Failed confirmation-email send is forced deterministically at Confirm time by setting
+     * {@code NEW_TEST_EMAIL_ADDR} to a known undeliverable address (not blank — blank is TC_133 / 40321).
+     */
+    String bootstrapTc150ConfirmationEmailFailureAndGetToken() {
+        DualReportManager.logInfo(
+                "TC_150 — STEP 1: enroll ACTIVE bill with matching Banner email "
+                        + "(token valid; preference update path must succeed on Confirm)");
+        String token = bootstrapEnrollmentAndGetToken(
+                UpdatePaperlessCommunicationsLabel.TC_98__Positive__Active_Account_Bill_Enrollment_Initiated_);
+        String customerCode = testContext.getCustomerCode();
+        String bannerEmail = ApplicationContext.get().getDbAction().getActiveBannerEmailForCustomer(customerCode);
+        String failureAddress = resolveTc150FailureEmailAddress();
+        TC150_FAILURE_EMAIL.set(failureAddress);
+        DualReportManager.logInfo(
+                "TC_150 — STEP 1 evidence: unused token ready; bannerEmail='" + bannerEmail
+                        + "'; forced failure address for Confirm='" + failureAddress + "'");
+        DualReportManager.logInfo(
+                "TC_150 — STEP 2 (at Confirm): set NEW_TEST_EMAIL_ADDR to '" + failureAddress
+                        + "' so Paperless Enrollment Confirmation email send is forced to fail, "
+                        + "while enrollment must still return success=true / errorCode=0 "
+                        + "(distinct from TC_133 blank override → 40321 rollback)");
+        return token;
+    }
+
+    private static final ThreadLocal<String> TC150_FAILURE_EMAIL = new ThreadLocal<>();
+
+    static String resolveTc150FailureEmailAddress() {
+        String configured = ApplicationContext.get().getEnvConfig().getPaperlessEmailFailureAddress();
+        if (configured != null && !configured.isBlank()) {
+            return configured.trim();
+        }
+        return BannerTestEmailOverrideUtil.DEFAULT_UNDELIVERABLE_ADDRESS;
+    }
+
+    static String getTc150FailureEmailAddress() {
+        String forced = TC150_FAILURE_EMAIL.get();
+        if (forced != null && !forced.isBlank()) {
+            return forced;
+        }
+        return resolveTc150FailureEmailAddress();
+    }
+
+    static void clearTc150FailureEmailAddress() {
+        TC150_FAILURE_EMAIL.remove();
     }
 }

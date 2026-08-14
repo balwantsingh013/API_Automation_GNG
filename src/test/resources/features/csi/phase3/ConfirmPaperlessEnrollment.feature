@@ -19,6 +19,8 @@ Feature: Verify ConfirmPaperlessEnrollment Api
 
       | TC_122__Negative__Duplicate_Request_ID_                                    | 10003     | Duplicate Request ID                  | false   | null |
 
+      | TC_122A__Negative__Invalid_Origin_                                         | 10085     | Invalid Origin                        | false   | null |
+
       | TC_123__Negative__Missing_Token_                                           | 10407     | Missing Token                         | false   | null |
 
       | TC_124__Negative__Token_Validation_Failed_                                 | 10409     | Token Validation Failed               | false   | null |

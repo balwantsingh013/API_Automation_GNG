@@ -25,7 +25,7 @@ databases:
     driverClassName: "oracle.jdbc.OracleDriver"
     serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
     userName: "KJADHAV"
-    password: "Bibhavi@2022"
+    password: "vrt20260810"
 
   mariadb:
     driverClassName: "org.mariadb.jdbc.Driver"
@@ -35,3 +35,6 @@ databases:
 
 enableLogsOnPass: true
 enableLogsOnFail: true
+
+# TC_77/78 / Confirm TC_150: known undeliverable address used to force paperless confirmation-email send failure
+paperlessEmailFailureAddress: "confirm-email-fail@invalid.test"

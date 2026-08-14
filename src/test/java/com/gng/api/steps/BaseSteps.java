@@ -3,6 +3,7 @@ package com.gng.api.steps;
 import com.gng.api.context.ApplicationContext;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.report.DualReportManager;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
@@ -1501,9 +1502,18 @@ public class BaseSteps {
         String normalizedExpectedMessage = errorMessage.replace("[PIPE]", "|");
 
         // Validate error code
-        assertThat("Incorrect ErrorCode returned",
-                response.jsonPath().getInt("errorCode"),
-                equalTo(errorCode));
+        int actualErrorCode = response.jsonPath().getInt("errorCode");
+        String errorCodeAssertMsg = "Incorrect ErrorCode returned";
+        if (errorCode == 0 && actualErrorCode == 302) {
+            errorCodeAssertMsg =
+                    "Incorrect ErrorCode returned — DEFECT: Preferences VerifyAccount ErrorCode 302 "
+                            + "(Verification Failed) for Banner account "
+                            + testContext.getCustomerCode() + "/" + testContext.getPremisesCode()
+                            + ". Customer Service VerifyAccount works for same accounts; Preferences PEW fails. "
+                            + "errorMessage=" + actualErrorMessage;
+            DualReportManager.logInfo(errorCodeAssertMsg);
+        }
+        assertThat(errorCodeAssertMsg, actualErrorCode, equalTo(errorCode));
 
         // Special handling when expected message is literal "null"
         if ("null".equalsIgnoreCase(normalizedExpectedMessage)) {

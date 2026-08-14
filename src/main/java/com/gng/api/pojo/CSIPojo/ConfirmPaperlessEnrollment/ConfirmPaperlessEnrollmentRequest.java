@@ -15,4 +15,5 @@ public class ConfirmPaperlessEnrollmentRequest {
 
     private String requestID;
     private String token;
+    private String origin;
 }

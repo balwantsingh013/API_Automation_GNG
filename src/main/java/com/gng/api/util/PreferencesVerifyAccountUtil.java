@@ -22,7 +22,7 @@ import static io.restassured.RestAssured.given;
 
 /**
  * Preferences / PEW helpers for FTD05 VerifyAccount.
- * Token flow mirrors Postman {@code AuthenticatePreferences}.
+ * Token flow uses SOAP AuthenticatePreferences ({@code GetAuthenticationToken}).
  */
 @Slf4j
 @UtilityClass
@@ -44,7 +44,7 @@ public class PreferencesVerifyAccountUtil {
         String base = env.getPreferencesBaseUri();
         if (base == null || base.isBlank()) {
             throw new IllegalStateException(
-                    "preferencesBaseUri is not set. Expected Postman PreferencesBaseUrl "
+                    "preferencesBaseUri is not set. Expected PreferencesBaseUrl "
                             + "(e.g. https://pref-uat1.gng.vertexna.net/) in envconfig-uat1.yml "
                             + "or -DpreferencesBaseUri=...");
         }
@@ -251,19 +251,31 @@ public class PreferencesVerifyAccountUtil {
         putTextOrNull(data, "accountStatus", text(row, "AcctStatus", "acctStatus", "AccountStatus"));
         putTextOrNull(data, "emailAddress", text(row, "EmailAddress", "emailAddress"));
 
-        // Billing address: prefer Billing* fields; fall back to service Street*/Serv*
+        // Billing address: Billing* only. Do not fall back to service Street*/Serv*/Unit*
+        // (null Billing* must stay blank for TC_228 GTBENRL source checks).
         putTextOrNull(data, "billingStreetNumber",
-                text(row, "BillingStreetNum", "billingStreetNum", "StreetNum", "streetNum"));
+                text(row, "BillingStreetNum", "billingStreetNum", "BillingStreetNumber",
+                        "billingStreetNumber"));
         putTextOrNull(data, "billingStreetPreDirection",
-                text(row, "BillingStreetPreDir", "billingStreetPreDir", "StreetPreDir", "streetPreDir"));
+                text(row, "BillingStreetPreDir", "billingStreetPreDir", "BillingStreetPreDirection",
+                        "billingStreetPreDirection"));
         putTextOrNull(data, "billingStreetName",
-                text(row, "BillingStreetName", "billingStreetName", "StreetName", "streetName"));
-        putTextOrNull(data, "billingCity",
-                text(row, "BillingCity", "billingCity", "ServCity", "servCity"));
-        String state = text(row, "BillingState", "billingState", "ServState", "servState");
+                text(row, "BillingStreetName", "billingStreetName"));
+        putTextOrNull(data, "billingStreetSuffix",
+                text(row, "BillingStreetSuffix", "billingStreetSuffix",
+                        "BillingStreetSfx", "billingStreetSfx"));
+        putTextOrNull(data, "billingStreetPostDirection",
+                text(row, "BillingStreetPostDir", "billingStreetPostDir", "BillingStreetPostDirection",
+                        "billingStreetPostDirection"));
+        putTextOrNull(data, "billingUnitType",
+                text(row, "BillingUnitType", "billingUnitType"));
+        putTextOrNull(data, "billingUnitNumber",
+                text(row, "BillingUnitNum", "billingUnitNum", "BillingUnitNumber", "billingUnitNumber"));
+        putTextOrNull(data, "billingCity", text(row, "BillingCity", "billingCity"));
+        String state = text(row, "BillingState", "billingState");
         putTextOrNull(data, "billingState", state);
         putTextOrNull(data, "billingStateCode", state);
-        String zip = text(row, "BillingZip", "billingZip", "ServZip", "servZip");
+        String zip = text(row, "BillingZip", "billingZip");
         putTextOrNull(data, "billingZip", zip);
         putTextOrNull(data, "billingZipCode", zip);
         putTextOrNull(data, "billingPoBox", text(row, "BillingPoBox", "billingPoBox"));

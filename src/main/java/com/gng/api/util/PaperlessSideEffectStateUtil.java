@@ -76,8 +76,9 @@ public final class PaperlessSideEffectStateUtil {
                         phaseLabel,
                         "account_number = '" + accountNumber + "' "
                                 + "(customerCode='" + customerCode + "', premisesCode='" + premisesCode + "')",
-                        "The '?' inside SUBSTRING_INDEX(..., '?', -1) is a URL delimiter used to extract Token "
-                                + "from email_link (e.g. .../confirm?<token>). It is not a bind parameter."),
+                        "The '?' inside SUBSTRING_INDEX(..., '?', -1) is a URL delimiter; "
+                                + "'t=' is stripped so Token is the hex confirm value (not 't=&lt;hex&gt;'). "
+                                + "JDBC '?' placeholders above are filled at runtime."),
                 custAdvRow == null ? "(no custadv_email_verification_status row)" : custAdvRow.toString(),
                 0L);
         DualReportManager.logDatabaseQuery(
@@ -209,10 +210,10 @@ public final class PaperlessSideEffectStateUtil {
         fields.put("rowPresent", "true");
         fields.put("email_verification_status_id", stringVal(row, "email_verification_status_id"));
         fields.put("verification_status", stringVal(row, "verification_status"));
-        fields.put("tokenIdentifier", firstNonBlank(
+        fields.put("tokenIdentifier", PaperlessConfirmationTokenUtil.normalizeTokenPlaintext(firstNonBlank(
                 stringVal(row, "tokenIdentifier"),
                 stringVal(row, "Token"),
-                stringVal(row, "token")));
+                stringVal(row, "token"))));
         fields.put("date_time_link_confirmed", stringVal(row, "date_time_link_confirmed"));
         fields.put("date_time_link_expired", stringVal(row, "date_time_link_expired"));
         fields.put("bill_delivery_type", stringVal(row, "bill_delivery_type"));

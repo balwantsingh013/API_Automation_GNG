@@ -47,15 +47,23 @@ public final class GetAccountInfoPlanValidationHelper {
 
         List<Map<String, Object>> discounts = response.jsonPath().getList("data.discounts");
         if (discounts == null || discounts.isEmpty()) {
+            com.gng.api.report.DualReportManager.logInfo(
+                    "TC_5: Guaranteed Bill account has no discounts (transferability clause N/A)");
             return;
         }
+
+        com.gng.api.report.DualReportManager.logInfo(
+                "TC_5: Guaranteed Bill account returned discounts=" + discounts);
 
         for (Map<String, Object> discount : discounts) {
             Object indicator = discount.get("discountTransferabilityIndicator");
             String value = indicator == null ? "" : indicator.toString().trim();
             Assert.assertEquals(value, "N",
-                    "Expected non-transferable discount indicator 'N' but found '" + value + "'");
+                    "FTD requires discountTransferabilityIndicator=N for discounts on Guaranteed Bill; "
+                            + "got '" + value + "' for discount=" + discount);
         }
+        com.gng.api.report.DualReportManager.logInfo(
+                "TC_5: confirmed non-transferable discount indicator N on all returned discounts");
     }
 
     public static void validateNonGuaranteedPlanPricingModel(Response response) {

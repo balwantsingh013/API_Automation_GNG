@@ -16,6 +16,8 @@ public enum ConfirmPaperlessEnrollmentLabel {
 
     TC_122__Negative__Duplicate_Request_ID_,
 
+    TC_122A__Negative__Invalid_Origin_,
+
     TC_123__Negative__Missing_Token_,
 
     TC_124__Negative__Token_Validation_Failed_,
