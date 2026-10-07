@@ -2,3 +2,5 @@ target/
 .idea/*
 allure-results/
 .allure/*
+*.class
+javac.*.args

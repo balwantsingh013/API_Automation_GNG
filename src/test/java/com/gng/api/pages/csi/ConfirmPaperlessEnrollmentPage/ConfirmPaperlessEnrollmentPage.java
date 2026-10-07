@@ -16,11 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpPost;
 import org.testng.Assert;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 import static com.gng.api.constants.ApiEndPoint.CONFIRM_PAPERLESS_ENROLLMENT;
 
@@ -30,6 +32,10 @@ import static com.gng.api.constants.ApiEndPoint.CONFIRM_PAPERLESS_ENROLLMENT;
  */
 @Slf4j
 public class ConfirmPaperlessEnrollmentPage extends BasePage {
+
+    /** Expected UTC format: YYYY-MM-DDTHH:MM:SSZ. */
+    private static final Pattern CONFIRMATION_DATE_TIME_ISO8601_UTC =
+            Pattern.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$");
 
     private final ConfirmPaperlessEnrollmentApiHelper helper;
 
@@ -97,26 +103,25 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
                 String failureAddress = ConfirmPaperlessEnrollmentTokenSetupHelper.getTc150FailureEmailAddress();
                 String beforeOverride = BannerTestEmailOverrideUtil.readCurrentOverrideValue();
                 DualReportManager.logInfo(
-                        "TC_150 — FAILED SEND SETUP: NEW_TEST_EMAIL_ADDR before override='"
-                                + beforeOverride + "'");
+                        "TC_150 — REVIEWER NOTE: an invalid/fake email ('" + failureAddress
+                                + "') is used so the confirmation email cannot be sent/delivered. "
+                                + "Confirm must still succeed; a failed email does not fail enrollment.");
                 DualReportManager.logInfo(
-                        "TC_150 — FAILED SEND SETUP: forcing confirmation-email send failure by setting "
-                                + "NEW_TEST_EMAIL_ADDR='" + failureAddress
-                                + "' (NOT blank — blank is TC_133 / 40321 rollback)");
+                        "TC_150 — setup: routing confirmation email to '" + failureAddress
+                                + "' (previous NEW_TEST_EMAIL_ADDR='" + beforeOverride + "')");
                 BannerTestEmailOverrideUtil.redirectToUndeliverableForSoftDeliveryFailure(failureAddress);
                 String activeOverride = BannerTestEmailOverrideUtil.readCurrentOverrideValue();
                 DualReportManager.logInfo(
-                        "TC_150 — FAILED SEND VALIDATION (pre-Confirm): NEW_TEST_EMAIL_ADDR active='"
-                                + activeOverride + "'");
+                        "TC_150 — invalid/fake email now active: '" + activeOverride + "'");
                 Assert.assertEquals(
                         activeOverride == null ? null : activeOverride.trim(),
                         failureAddress,
-                        "TC_150 requires NEW_TEST_EMAIL_ADDR='" + failureAddress
-                                + "' active before Confirm so failed send is forced and visible");
+                        "TC_150 requires invalid/fake email '" + failureAddress
+                                + "' to be active before Confirm");
             }
             if (tc149MidClear) {
-                // FTD: email present during token validation, cleared before confirmation email.
-                // Clearing before the API call returns 40287; clear shortly after Confirm starts.
+                // Banner email must still be present for token validation. Clearing it before
+                // Confirm returns 40287, so it is removed shortly after Confirm starts.
                 final String midClearCustomer = customerCode;
                 tc149ClearExecutor = Executors.newSingleThreadExecutor(r -> {
                     Thread t = new Thread(r, "tc149-banner-email-mid-clear");
@@ -139,8 +144,10 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
                     }
                 });
                 DualReportManager.logInfo(
-                        "TC_149 — scheduled mid-Confirm Banner email clear (~350ms after Confirm start) "
-                                + "so token validates with email present, then confirmation email is skipped");
+                        "TC_149 — REVIEWER NOTE: Banner email is present when the token is validated. "
+                                + "It will then be removed so there is no Banner email on file. "
+                                + "Confirm must still succeed; the confirmation email is skipped and "
+                                + "that does not fail the test.");
             }
             setRequestSpecification(payload, testContext.getAuthToken());
             Response response = sendRequest(HttpPost.METHOD_NAME, CONFIRM_PAPERLESS_ENROLLMENT, 200);
@@ -156,6 +163,8 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
                     DualReportManager.logInfo(
                             "TC_149 — waiting for mid-Confirm clear finished with: " + ex.getMessage());
                 }
+                ConfirmPaperlessEnrollmentTokenSetupHelper.logTc149BannerRemovalEvidence(
+                        customerCode, tc149EmailCleared.get());
             }
 
             if (canCaptureState) {
@@ -186,7 +195,8 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
                         + ", corrStatus=" + response.jsonPath().getString("data.corrDeliveryOptionStatus"));
 
                 assertTcSpecificPostConfirmEvidence(
-                        testCondition, response, afterState, tc149EmailCleared.get());
+                        testCondition, response, afterState, tc149EmailCleared.get(),
+                        customerCode, premisesCode);
             }
         } finally {
             if (preferenceFailAccountLock) {
@@ -212,7 +222,7 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
                 BannerTestEmailOverrideUtil.restore();
                 ConfirmPaperlessEnrollmentTokenSetupHelper.clearTc150FailureEmailAddress();
                 DualReportManager.logInfo(
-                        "TC_150 — restored NEW_TEST_EMAIL_ADDR after failed-send Confirm");
+                        "TC_150 — restored email routing after Confirm");
             }
             if (tc147Restore) {
                 ConfirmPaperlessEnrollmentTokenSetupHelper.restoreTc147AccountStatus(customerCode, premisesCode);
@@ -248,21 +258,28 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
             String bannerEmail = ApplicationContext.get().getDbAction()
                     .getActiveBannerEmailForCustomer(customerCode);
             DualReportManager.logInfo(
-                    "TC_149 — PRE-CONFIRM evidence: Banner email still present for token validation "
-                            + "(bannerEmail='" + bannerEmail
-                            + "'). Mid-Confirm clear will run after validation so confirmation email is skipped.");
+                    "TC_149 — REVIEWER NOTE: Banner email is present when the token is validated "
+                            + "(Banner email='" + bannerEmail + "'). It will then be removed so there "
+                            + "is no Banner email on file. Confirm still succeeds; the confirmation "
+                            + "email is skipped and that does not fail the test.");
         } else if (testCondition == ConfirmPaperlessEnrollmentLabel
                 .TC_150__Positive__Confirmation_Email_Failure_Does_Not_Prevent_Success_) {
             DualReportManager.logInfo(
-                    "TC_150 — PRE-CONFIRM: token unused + Banner email on file (preference path ready). "
-                            + beforeState.summary());
+                    "TC_150 — REVIEWER NOTE: an invalid/fake email is used so the confirmation "
+                            + "email cannot be sent/delivered. Confirm still succeeds; a failed email "
+                            + "does not fail enrollment. Token unused="
+                            + (firstNonBlank(beforeState.custAdv("date_time_link_confirmed")) == null)
+                            + ", pending bill='" + beforeState.enrollment("pendingBillType")
+                            + "', pending corr='" + beforeState.enrollment("pendingCorrType") + "'.");
         }
     }
 
     private static void assertTcSpecificPostConfirmEvidence(ConfirmPaperlessEnrollmentLabel testCondition,
                                                             Response response,
                                                             PaperlessSideEffectStateUtil.Snapshot afterState,
-                                                            boolean tc149EmailCleared) {
+                                                            boolean tc149EmailCleared,
+                                                            String customerCode,
+                                                            String premisesCode) {
         if (testCondition == ConfirmPaperlessEnrollmentLabel
                 .TC_147__Positive__Account_Transitions_from_NEW_to_ACTIVE_Before_Confirmation_) {
             String accountType = response.jsonPath().getString("data.accountType");
@@ -286,48 +303,63 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
                     "TC_148 expects corrDeliveryOptionStatus=CONFIRMED from latest E/E aggregate");
         } else if (testCondition == ConfirmPaperlessEnrollmentLabel
                 .TC_149__Positive__No_Email_on_File_Does_Not_Prevent_Success_) {
+            String confirmationDateTime = response.jsonPath().getString("data.confirmationDateTime");
+            String accountType = response.jsonPath().getString("data.accountType");
+            String billStatus = response.jsonPath().getString("data.billDeliveryOptionStatus");
+            String corrStatus = response.jsonPath().getString("data.corrDeliveryOptionStatus");
             DualReportManager.logInfo(
-                    "TC_149 — STEP 4/5 POST-CONFIRM evidence: midClearSucceeded=" + tc149EmailCleared
-                            + "; enrollment must succeed with confirmation email skipped. AFTER: "
-                            + afterState.summary());
-            Assert.assertTrue(Boolean.TRUE.equals(response.jsonPath().getBoolean("success")),
-                    "TC_149 expects success=true when Banner email cleared after token validation "
-                            + "(mid-Confirm); got errorCode=" + response.jsonPath().get("errorCode")
-                            + " errorMessage=" + response.jsonPath().getString("errorMessage"));
-            Assert.assertEquals(response.jsonPath().getInt("errorCode"), 0,
-                    "TC_149 expects errorCode=0 when Banner email cleared after token validation");
+                    "TC_149 — REVIEWER NOTE: Banner email was present when the token was validated, "
+                            + "then there was no Banner email on file (removed=" + tc149EmailCleared
+                            + "). Confirm succeeded; the confirmation email was skipped and that "
+                            + "does not fail the test. "
+                            + "success=" + response.jsonPath().get("success")
+                            + ", errorCode=" + response.jsonPath().get("errorCode")
+                            + ", errorMessage='" + nullToEmpty(response.jsonPath().getString("errorMessage")) + "'"
+                            + ", accountType='" + accountType
+                            + "', bill='" + billStatus
+                            + "', corr='" + corrStatus
+                            + "', confirmationDateTime='" + confirmationDateTime + "'.");
+            assertSuccessfulConfirmResponse(response, "TC_149");
+            assertActiveAccountType(accountType, "TC_149");
+            assertConfirmedOrNoChange(billStatus, "TC_149 billDeliveryOptionStatus");
+            assertConfirmedOrNoChange(corrStatus, "TC_149 corrDeliveryOptionStatus");
+            assertAtLeastOneChannelConfirmed(billStatus, corrStatus, "TC_149");
+            assertConfirmationDateTimeIso8601(confirmationDateTime, "TC_149");
             Assert.assertTrue(tc149EmailCleared,
-                    "TC_149 expects Banner email cleared mid-Confirm (confirmation email skipped evidence)");
+                    "TC_149 expects no Banner email on file after token validation "
+                            + "(confirmation email skipped)");
         } else if (testCondition == ConfirmPaperlessEnrollmentLabel
                 .TC_150__Positive__Confirmation_Email_Failure_Does_Not_Prevent_Success_) {
             String failureAddress = ConfirmPaperlessEnrollmentTokenSetupHelper.getTc150FailureEmailAddress();
             String overrideAfterConfirm = BannerTestEmailOverrideUtil.readCurrentOverrideValue();
+            String confirmationDateTime = response.jsonPath().getString("data.confirmationDateTime");
+            String accountType = response.jsonPath().getString("data.accountType");
             String billStatus = response.jsonPath().getString("data.billDeliveryOptionStatus");
+            String corrStatus = response.jsonPath().getString("data.corrDeliveryOptionStatus");
             DualReportManager.logInfo(
-                    "TC_150 — FAILED SEND VALIDATION (post-Confirm, before restore):"
-                            + " NEW_TEST_EMAIL_ADDR still='" + overrideAfterConfirm + "'"
-                            + " (forced failure address='" + failureAddress + "');"
-                            + " API success=" + response.jsonPath().get("success")
+                    "TC_150 — REVIEWER NOTE: invalid/fake email '" + failureAddress
+                            + "' was used so the confirmation email cannot be sent/delivered "
+                            + "(still active='" + overrideAfterConfirm + "'). Confirm succeeded; "
+                            + "a failed email does not fail enrollment. "
+                            + "success=" + response.jsonPath().get("success")
                             + ", errorCode=" + response.jsonPath().get("errorCode")
-                            + ", billStatus=" + billStatus
-                            + "; AFTER state: " + afterState.summary());
+                            + ", errorMessage='" + nullToEmpty(response.jsonPath().getString("errorMessage")) + "'"
+                            + ", accountType='" + accountType
+                            + "', bill='" + billStatus
+                            + "', corr='" + corrStatus
+                            + "', confirmationDateTime='" + confirmationDateTime + "'.");
             Assert.assertEquals(
                     overrideAfterConfirm == null ? null : overrideAfterConfirm.trim(),
                     failureAddress,
-                    "TC_150 failed-send validation requires NEW_TEST_EMAIL_ADDR still='"
-                            + failureAddress + "' after Confirm (override must have been active during send)");
-            Assert.assertTrue(Boolean.TRUE.equals(response.jsonPath().getBoolean("success")),
-                    "TC_150 expects success=true despite forced confirmation-email send failure");
-            Assert.assertEquals(response.jsonPath().getInt("errorCode"), 0,
-                    "TC_150 expects errorCode=0 despite forced confirmation-email send failure");
-            Assert.assertEquals(billStatus, "CONFIRMED",
-                    "TC_150 expects enrollment still finalized (bill CONFIRMED) when confirmation email send fails");
-            DualReportManager.logInfo(
-                    "TC_150 — FAILED SEND VALIDATED: confirmation email was forced to undeliverable '"
-                            + failureAddress
-                            + "' via NEW_TEST_EMAIL_ADDR during Confirm; enrollment still succeeded "
-                            + "(success=true, errorCode=0, billDeliveryOptionStatus=CONFIRMED). "
-                            + "This is distinct from TC_133 blank override → 40321 rollback.");
+                    "TC_150 expects invalid/fake email '" + failureAddress
+                            + "' to remain active during Confirm");
+            assertSuccessfulConfirmResponse(response, "TC_150");
+            assertActiveAccountType(accountType, "TC_150");
+            assertConfirmedOrNoChange(billStatus, "TC_150 billDeliveryOptionStatus");
+            assertConfirmedOrNoChange(corrStatus, "TC_150 corrDeliveryOptionStatus");
+            assertAtLeastOneChannelConfirmed(billStatus, corrStatus, "TC_150");
+            assertConfirmationDateTimeIso8601(confirmationDateTime, "TC_150");
+            assertTokenUsedAndPperArchived(afterState, customerCode, premisesCode, "TC_150");
         }
     }
 
@@ -354,6 +386,76 @@ public class ConfirmPaperlessEnrollmentPage extends BasePage {
             case TC_133__Negative__Confirmation_Notification_Failure_Rollback_ -> false;
             default -> false;
         };
+    }
+
+    private static void assertSuccessfulConfirmResponse(Response response, String tcId) {
+        Assert.assertTrue(Boolean.TRUE.equals(response.jsonPath().getBoolean("success")),
+                tcId + " expects success=true; got errorCode="
+                        + response.jsonPath().get("errorCode")
+                        + " errorMessage=" + response.jsonPath().getString("errorMessage"));
+        Assert.assertEquals(response.jsonPath().getInt("errorCode"), 0,
+                tcId + " expects errorCode=0");
+        String errorMessage = nullToEmpty(response.jsonPath().getString("errorMessage"));
+        Assert.assertEquals(errorMessage, "",
+                tcId + " expects empty errorMessage; got '" + errorMessage + "'");
+        Assert.assertNotNull(response.jsonPath().get("data"),
+                tcId + " expects data to contain a ConfirmPaperlessEnrollment object");
+    }
+
+    private static void assertActiveAccountType(String accountType, String tcId) {
+        Assert.assertTrue("ACTIVE".equals(accountType) || "A".equals(accountType),
+                tcId + " expects accountType=ACTIVE; got '" + accountType + "'");
+    }
+
+    private static void assertConfirmedOrNoChange(String status, String fieldLabel) {
+        Assert.assertTrue("CONFIRMED".equals(status) || "NO_CHANGE".equals(status),
+                fieldLabel + " expects CONFIRMED or NO_CHANGE; got '" + status + "'");
+    }
+
+    private static void assertAtLeastOneChannelConfirmed(String billStatus, String corrStatus, String tcId) {
+        Assert.assertTrue("CONFIRMED".equals(billStatus) || "CONFIRMED".equals(corrStatus),
+                tcId + " expects at least one channel CONFIRMED; "
+                        + "bill='" + billStatus + "', corr='" + corrStatus + "'");
+    }
+
+    private static void assertConfirmationDateTimeIso8601(String confirmationDateTime, String tcId) {
+        Assert.assertNotNull(confirmationDateTime,
+                tcId + " expects confirmationDateTime populated");
+        Assert.assertFalse(confirmationDateTime.isBlank(),
+                tcId + " expects confirmationDateTime populated, not blank");
+        Assert.assertTrue(
+                CONFIRMATION_DATE_TIME_ISO8601_UTC.matcher(confirmationDateTime.trim()).matches(),
+                tcId + " expects confirmationDateTime in YYYY-MM-DDTHH:MM:SSZ (UTC); got '"
+                        + confirmationDateTime + "'");
+    }
+
+    private static void assertTokenUsedAndPperArchived(PaperlessSideEffectStateUtil.Snapshot afterState,
+                                                       String customerCode,
+                                                       String premisesCode,
+                                                       String tcId) {
+        String linkConfirmed = firstNonBlank(afterState.custAdv("date_time_link_confirmed"));
+        DualReportManager.logInfo(
+                tcId + " — token marked used: date_time_link_confirmed='" + linkConfirmed + "'");
+        Assert.assertNotNull(linkConfirmed,
+                tcId + " expects the token to be marked used (date_time_link_confirmed populated)");
+
+        Map<String, String> afterPper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(
+                customerCode, premisesCode);
+        Map<String, Object> pendingBill = ApplicationContext.get().getDbAction()
+                .tryGetActivePendingBillPperForAccount(customerCode, premisesCode);
+        String completedDate = firstNonBlank(afterPper.get("tokenCompletedDate"));
+        boolean pendingPperGone = pendingBill == null;
+        DualReportManager.logInfo(
+                tcId + " — PPER archived: completedDate='" + completedDate
+                        + "', pending bill PPER still active=" + !pendingPperGone
+                        + ", pendingBill='" + afterPper.get("pendingBillType")
+                        + "', pendingCorr='" + afterPper.get("pendingCorrType") + "'");
+        Assert.assertTrue(completedDate != null || pendingPperGone,
+                tcId + " expects the associated PPER record to be archived");
+    }
+
+    private static String nullToEmpty(String value) {
+        return value == null ? "" : value;
     }
 
     private static String firstNonBlank(String value) {

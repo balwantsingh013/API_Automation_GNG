@@ -2,15 +2,21 @@ package com.gng.api.pages.csi.GetBillHistoryPage;
 
 import com.gng.api.constants.GlobalEnums;
 import com.gng.api.context.ApplicationContext;
+import com.gng.api.db.DBQuery;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.CSIPojo.GetBillHistory.GetBillHistoryRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.csi.GetBillHistory.GetBillHistoryLabel;
 import com.gng.api.util.FakerDataGenerator;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.gng.api.constants.ApiEndPoint.GET_BILL_HISTORY;
 
 @Slf4j
 public class GetBillHistoryApiHelper {
@@ -168,15 +174,15 @@ public class GetBillHistoryApiHelper {
                 break;
 
             case TC_84__Positive__Usage_History_PromotionalDiscounts_Format:
-                accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryGreater();
+                // Use a known bill-history account; getUsageHistoryGreater often returns no rows
+                // when Banner has no account with exactly 12 distinct printed dates in 12 months.
+                accountInfo = ApplicationContext.get().getDbAction().getAccountWithBillHistory();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
-                payload.setNumberOfMonths("8");
-                List<Map<String, Object>> dbRows8 = ApplicationContext.get()
-                        .getDbAction()
-                        .getBillHistory(accountInfo.get("ubbbhst_cust_code").toString(), accountInfo.get("ubbbhst_prem_code").toString());
-
+                payload.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
+                payload.setNumberOfMonths("24");
+                testContext.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
                 break;
 
             case TC_90__Positive__No_Usage_History_Active:
@@ -228,26 +234,170 @@ public class GetBillHistoryApiHelper {
                         .getBillHistory(accountInfo.get("urrshis_cust_code").toString(), accountInfo.get("urrshis_prem_code").toString());
                 break;
 
-            case TC_95__Positive__Usage_History_Equals_Requested_Months:
-              accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryGreater();
-
+            case TC_95__Positive__Usage_History_Equals_Requested_Months: {
+                // numberOfMonths = lookback window (months), not bill count.
+                Map<String, Object> resolved95 = resolveBillHistoryCandidate(true);
+                String cust95 = resolved95.get("ubbbhst_cust_code").toString();
+                String prem95 = resolved95.get("ubbbhst_prem_code").toString();
+                int lookback95 = ((Number) resolved95.get("requestedMonths")).intValue();
+                int expected95 = ((Number) resolved95.get("expectedMatches")).intValue();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
-                payload.setNumberOfMonths("12");
+                payload.setCustomerCode(cust95);
+                payload.setPremisesCode(prem95);
+                payload.setNumberOfMonths(String.valueOf(lookback95));
+                testContext.setCustomerCode(cust95);
+                testContext.setPremisesCode(prem95);
+                testContext.setRequestedNumberOfMonths(lookback95);
+                testContext.setExpectedNumberOfMatches(expected95);
                 break;
+            }
 
-            case TC_96__Positive__Usage_History_Greater_Than_Requested_Months:
-              accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryGreater();
+            case TC_96__Positive__Usage_History_Greater_Than_Requested_Months: {
+                // Seed a wider lookback, then request a shorter lookback.
+                // Bills in the shorter window != the lookback month value (e.g. 9 months → 4 bills).
+                Map<String, Object> resolved96 = resolveBillHistoryCandidate(false);
+                String cust96 = resolved96.get("ubbbhst_cust_code").toString();
+                String prem96 = resolved96.get("ubbbhst_prem_code").toString();
+                int lookback96 = ((Number) resolved96.get("requestedMonths")).intValue();
+                int expected96 = ((Number) resolved96.get("expectedMatches")).intValue();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
-                payload.setNumberOfMonths("8");
+                payload.setCustomerCode(cust96);
+                payload.setPremisesCode(prem96);
+                payload.setNumberOfMonths(String.valueOf(lookback96));
+                testContext.setCustomerCode(cust96);
+                testContext.setPremisesCode(prem96);
+                testContext.setRequestedNumberOfMonths(lookback96);
+                testContext.setExpectedNumberOfMatches(expected96);
                 break;
+            }
 
             default:
                 log.warn("Unhandled test condition: {}", testCondition);
                 break;
         }
+    }
+
+    /**
+     * Resolves an account for TC_95/TC_96.
+     * {@code numberOfMonths} is a date lookback window ({@code ADD_MONTHS(SYSDATE, -N)}),
+     * not a bill count. Multiple bills can fall in one calendar month, so bill count ≠ months.
+     * {@code expectedMatches} is the bill count returned for that lookback window.
+     */
+    private Map<String, Object> resolveBillHistoryCandidate(boolean equalsMode) {
+        String seedQuery = equalsMode
+                ? DBQuery.SELECT_BILL_HISTORY_TC95_96_ACCOUNT
+                : DBQuery.SELECT_BILL_HISTORY_TC96_ACCOUNT;
+        List<Map<String, Object>> candidates = equalsMode
+                ? ApplicationContext.get().getDbAction().listBillHistoryTc9596Candidates()
+                : ApplicationContext.get().getDbAction().listBillHistoryTc96Candidates();
+        if (candidates == null || candidates.isEmpty()) {
+            throw new IllegalStateException(
+                    equalsMode
+                            ? "TC_95: no SP_GET_BILL_HISTORY candidate accounts in last 12 months."
+                            : "TC_96: no SP_GET_BILL_HISTORY candidate accounts in last 9 months.");
+        }
+
+        final int tc96LookbackMonths = 9;
+
+        for (Map<String, Object> candidate : candidates) {
+            String cust = firstNonNull(candidate, "ubbbhst_cust_code", "UBBBHST_CUST_CODE").toString();
+            String prem = firstNonNull(candidate, "ubbbhst_prem_code", "UBBBHST_PREM_CODE").toString();
+
+            if (equalsMode) {
+                ProbeResult at12 = probeOk(cust, prem, 12);
+                if (at12 == null) {
+                    continue;
+                }
+                log.info("Resolved TC_95 candidate {}/{} lookbackMonths=12 billMatches={}",
+                        cust, prem, at12.matches);
+                ApplicationContext.get().getDbAction()
+                        .logSelectedBillHistoryRequestAccount(seedQuery, cust, prem, at12.matches);
+                return resolvedAccount(cust, prem, at12.matches, 12);
+            }
+
+            ProbeResult at9 = probeOk(cust, prem, tc96LookbackMonths);
+            if (at9 == null) {
+                continue;
+            }
+            ProbeResult at12 = probeOk(cust, prem, 12);
+            if (at12 == null || at12.matches <= at9.matches) {
+                log.info("Skipping TC_96 candidate {}/{}: billsAt9={} billsAt12={}",
+                        cust, prem, at9.matches, at12 == null ? null : at12.matches);
+                continue;
+            }
+
+            log.info("Resolved TC_96 candidate {}/{} lookbackMonths={} billMatches={} billsAt12={}",
+                    cust, prem, tc96LookbackMonths, at9.matches, at12.matches);
+            ApplicationContext.get().getDbAction()
+                    .logSelectedBillHistoryRequestAccount(seedQuery, cust, prem, at9.matches);
+            return resolvedAccount(cust, prem, at9.matches, tc96LookbackMonths);
+        }
+
+        throw new IllegalStateException(
+                equalsMode
+                        ? "TC_95: no candidate returned HTTP 200 with bill history for a lookback window"
+                        : "TC_96: no candidate with bill history beyond a 9-month lookback window");
+    }
+
+    private Map<String, Object> resolvedAccount(String cust, String prem, int expectedMatches, int requestedMonths) {
+        Map<String, Object> resolved = new HashMap<>();
+        resolved.put("ubbbhst_cust_code", cust);
+        resolved.put("ubbbhst_prem_code", prem);
+        resolved.put("expectedMatches", expectedMatches);
+        resolved.put("requestedMonths", requestedMonths);
+        return resolved;
+    }
+
+    private ProbeResult probeOk(String cust, String prem, int numberOfMonths) {
+        Response response = probeGetBillHistory(cust, prem, numberOfMonths);
+        int status = response.statusCode();
+        Object err = response.jsonPath().get("errorCode");
+        if (err == null) {
+            err = response.jsonPath().get("ErrorCode");
+        }
+        Integer errorCode = err instanceof Number ? ((Number) err).intValue() : null;
+        Integer matches = response.jsonPath().get("data.numberOfMatches");
+        if (status != 200 || errorCode == null || errorCode != 0 || matches == null || matches <= 0) {
+            log.info("Skipping bill-history candidate {}/{} months={}: status={} errorCode={} matches={}",
+                    cust, prem, numberOfMonths, status, errorCode, matches);
+            return null;
+        }
+        return new ProbeResult(matches);
+    }
+
+    private static final class ProbeResult {
+        private final int matches;
+
+        private ProbeResult(int matches) {
+            this.matches = matches;
+        }
+    }
+
+    private Response probeGetBillHistory(String customerCode, String premisesCode, int numberOfMonths) {
+        GetBillHistoryRequest probe = BasePage.deserializeJsonToPojo(
+                GetBillHistoryLabel.get_bill_history.toString(),
+                GetBillHistoryRequest.class);
+        probe.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        probe.setCustomerCode(customerCode);
+        probe.setPremisesCode(premisesCode);
+        probe.setNumberOfMonths(String.valueOf(numberOfMonths));
+
+        String uri = ApplicationContext.get().getEnvConfig().getBaseUri() + GET_BILL_HISTORY;
+        return io.restassured.RestAssured.given()
+                .relaxedHTTPSValidation()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + testContext.getAuthToken())
+                .body(probe)
+                .post(uri);
+    }
+
+    private static Object firstNonNull(Map<String, Object> map, String... keys) {
+        for (String key : keys) {
+            Object value = map.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        throw new IllegalStateException("None of keys found in DB result: " + String.join(", ", keys));
     }
 }

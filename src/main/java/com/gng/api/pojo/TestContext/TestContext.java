@@ -72,6 +72,10 @@ public class TestContext {
     private String customerCode7;
     private String customerCode8;
     private String bankAccountNo;
+    /** Expected data.numberOfMatches for GetBillHistory TC_95/TC_96. */
+    private Integer expectedNumberOfMatches;
+    /** Requested numberOfMonths lookback window for GetBillHistory DB validation. */
+    private Integer requestedNumberOfMonths;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes

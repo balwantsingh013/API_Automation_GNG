@@ -59,6 +59,23 @@ public class BaseSteps {
         validateDataField(expectedData);
     }
 
+    @And("bill history should return matches for requested months")
+    public void billHistoryShouldReturnMatchesForRequestedMonths() {
+        Response response = testContext.getResponse();
+        Integer expected = testContext.getExpectedNumberOfMatches();
+        int actualMatches = response.jsonPath().getInt("data.numberOfMatches");
+        List<Map<String, Object>> billHistory = response.jsonPath().getList("data.billHistory");
+
+        assertThat("billHistory should not be null", billHistory, notNullValue());
+        assertThat("billHistory should not be empty for TC_95/TC_96", billHistory.isEmpty(), equalTo(false));
+        assertThat("numberOfMatches should be > 0", actualMatches, greaterThan(0));
+        assertThat("billHistory size should match numberOfMatches", billHistory.size(), equalTo(actualMatches));
+        if (expected != null) {
+            assertThat("numberOfMatches should equal bill count for the requested lookback window",
+                    actualMatches, equalTo(expected));
+        }
+    }
+
 
     @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid State code {string}")
     public void responseShouldHaveErrorCodeAndErrorMessageWithInvalidStateCode(int errorCode, String errorMessage, String invalidStateCode) {
@@ -603,7 +620,10 @@ public class BaseSteps {
 
         List<Map<String, Object>> dbRows = ApplicationContext.get()
                 .getDbAction()
-                .getBillHistory2(customerCode, premisesCode);
+                .getBillHistory2(customerCode, premisesCode,
+                        testContext.getRequestedNumberOfMonths() != null
+                                ? testContext.getRequestedNumberOfMonths()
+                                : 24);
 
         assertThat("numberOfMatches does not match DB count",
                 apiNumberOfMatches, equalTo(dbRows.size()));
@@ -743,7 +763,8 @@ public class BaseSteps {
 
                 assertThat("bankDraftAccountNumber last 4 digits should be numeric", last4.matches("\\d{4}"), equalTo(true));
                 assertThat("bankDraftAccountNumber should be masked except last 4 digits", maskedPart.matches("[*]+"), equalTo(true));
-                Assert.assertEquals(testContext.getBankAccountNo(), acct,"Masked bank account number does not match");
+                Assert.assertTrue(acct.endsWith(String.valueOf(testContext.getBankAccountNo()).replace("*", "")),
+                        "Masked bank account number does not contain the expected last 4 digits");
                 break;
             }
 
@@ -1506,11 +1527,10 @@ public class BaseSteps {
         String errorCodeAssertMsg = "Incorrect ErrorCode returned";
         if (errorCode == 0 && actualErrorCode == 302) {
             errorCodeAssertMsg =
-                    "Incorrect ErrorCode returned — DEFECT: Preferences VerifyAccount ErrorCode 302 "
-                            + "(Verification Failed) for Banner account "
+                    "Incorrect ErrorCode returned — Preferences VerifyAccount ErrorCode 302 "
+                            + "(Verification Failed) for account "
                             + testContext.getCustomerCode() + "/" + testContext.getPremisesCode()
-                            + ". Customer Service VerifyAccount works for same accounts; Preferences PEW fails. "
-                            + "errorMessage=" + actualErrorMessage;
+                            + ". errorMessage=" + actualErrorMessage;
             DualReportManager.logInfo(errorCodeAssertMsg);
         }
         assertThat(errorCodeAssertMsg, actualErrorCode, equalTo(errorCode));

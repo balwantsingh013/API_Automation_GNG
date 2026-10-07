@@ -563,25 +563,9 @@ public class DBAction {
     }
 
 
-    public Map<String, Object> getLatestLoginIdStored() {
-        long startTime = System.currentTimeMillis();
-        String query = DBQuery.SELECT_LATEST_LOGIN_ID;
-
-        logQueryInAllure("get customer code", query);
-
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
-
-        long elapsed = System.currentTimeMillis() - startTime;
-
-        // Log SQL, result, and execution time
-        SimplifiedExtentReportManager.logDatabaseQuery(
-                query,
-                result.toString(),
-                elapsed
-        );
-
-        return result;
-    }
+    // getLatestLoginIdStored(String) removed: its query (SELECT_LATEST_LOGIN_ID) had no bind
+    // placeholder, so passing a login ID threw ORA-17003 on every call, and it returned the newest
+    // GZRAPIL row overall rather than the one under test. Use getStoredLoginId(String) instead.
 
     public Map<String, Object> getStoredLoginId(String loginId) {
         long startTime = System.currentTimeMillis();
@@ -1399,6 +1383,125 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getBillHistoryMaxMonthsLast12() {
+        List<Map<String, Object>> candidates = listBillHistoryTc9596Candidates();
+        if (candidates.isEmpty()) {
+            throw new IllegalStateException(
+                    "TC_95/TC_96: no Active account with SP_GET_BILL_HISTORY-qualifying "
+                            + "bills in the last 12 months.");
+        }
+        return candidates.get(0);
+    }
+
+    public List<Map<String, Object>> listBillHistoryTc9596Candidates() {
+        return listBillHistoryCandidates(DBQuery.SELECT_BILL_HISTORY_TC95_96_ACCOUNT,
+                "get bill history TC95 candidate accounts last 12 months");
+    }
+
+    public List<Map<String, Object>> listBillHistoryTc96Candidates() {
+        return listBillHistoryCandidates(DBQuery.SELECT_BILL_HISTORY_TC96_ACCOUNT,
+                "get bill history TC96 candidate accounts last 9 months");
+    }
+
+    private List<Map<String, Object>> listBillHistoryCandidates(String query, String allureLabel) {
+        logQueryInAllure(allureLabel, query);
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
+        List<Map<String, Object>> candidates = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            Map<String, Object> normalized = new HashMap<>(row);
+            Object cust = normalized.get("ubbbhst_cust_code");
+            if (cust == null) cust = normalized.get("UBBBHST_CUST_CODE");
+            Object prem = normalized.get("ubbbhst_prem_code");
+            if (prem == null) prem = normalized.get("UBBBHST_PREM_CODE");
+            Object totalObj = normalized.get("total");
+            if (totalObj == null) totalObj = normalized.get("TOTAL");
+            int total = totalObj == null ? 0 : ((Number) totalObj).intValue();
+
+            normalized.put("ubbbhst_cust_code", cust);
+            normalized.put("UBBBHST_CUST_CODE", cust);
+            normalized.put("ubbbhst_prem_code", prem);
+            normalized.put("UBBBHST_PREM_CODE", prem);
+            normalized.put("total", total);
+            normalized.put("TOTAL", total);
+            candidates.add(normalized);
+        }
+
+        // Extent logs the selected request account after probe (not the full seed pool).
+        logQueryInAllure(allureLabel + " seedCandidates=" + candidates.size(), query);
+        return candidates;
+    }
+
+    /** Log the account that was selected and placed into the GetBillHistory request body. */
+    public void logSelectedBillHistoryRequestAccount(String seedQuery, String customerCode,
+                                                     String premisesCode, Object total) {
+        String result = "{ UBBBHST_PREM_CODE=" + premisesCode
+                + ", UBBBHST_CUST_CODE=" + customerCode
+                + ", TOTAL=" + total
+                + " }";
+        SimplifiedExtentReportManager.logDatabaseQuery(seedQuery, result, 0L);
+    }
+
+    public Map<String, Object> getUsageHistoryMaxMonths() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_USAGE_HISTORY_MAX_MONTHS;
+
+        logQueryInAllure("get customer code", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    /**
+     * GetUsageHistory TC_38/TC_39: reuse the same valid usage-history account as other
+     * passing TCs, then count months in the 12-month lookback for numberOfMonths.
+     */
+    public Map<String, Object> getUsageHistoryMaxMonthsLast12() {
+        long startTime = System.currentTimeMillis();
+        Map<String, Object> result = new java.util.HashMap<>(getValidUsageHistoryAccount());
+        Object cust = result.get("ucracct_cust_code");
+        if (cust == null) cust = result.get("UCRACCT_CUST_CODE");
+        Object prem = result.get("ucracct_prem_code");
+        if (prem == null) prem = result.get("UCRACCT_PREM_CODE");
+        result.put("customer_code", cust);
+        result.put("premises_code", prem);
+        result.put("ucracct_cust_code", cust);
+        result.put("UCRACCT_CUST_CODE", cust);
+        result.put("ucracct_prem_code", prem);
+        result.put("UCRACCT_PREM_CODE", prem);
+
+        String query = DBQuery.SELECT_BILL_HISTORY_MAX_MONTHS_LAST_12;
+        String loggedQuery = query.replaceFirst("\\?", "'" + cust + "'")
+                .replaceFirst("\\?", "'" + prem + "'");
+        logQueryInAllure("get usage history lookback month count", loggedQuery);
+
+        Integer total = jdbcTemplate.queryForObject(query, Integer.class, cust, prem);
+        if (total == null || total < 1) {
+            total = 1;
+        }
+        result.put("total", total);
+        result.put("TOTAL", total);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
 
     public Map<String, Object> getUsageHistoryOne() {
         long startTime = System.currentTimeMillis();
@@ -1414,6 +1517,24 @@ public class DBAction {
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
+    public List<Map<String, Object>> listUsageHistoryOneCandidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_BILL_HISTORY_ONE_CANDIDATES;
+
+        logQueryInAllure("list one-month billing history candidates", query);
+
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                "candidateCount=" + result.size(),
                 elapsed
         );
 
@@ -2257,9 +2378,17 @@ public class DBAction {
         return getActiveAccountEnrolledInPaperlessCorr();
     }
 
-    /** TC_72: both channels ineligible (no active Banner email on file). */
+    /**
+     * TC_72: both channels ineligible (no active Banner email on file).
+     * <p>
+     * Uses its own query rather than delegating to {@link #getActiveAccountWithNoBannerEmail()} —
+     * that method serves the eligibility suite's reason-code TCs, and sharing it meant a change
+     * tuned for one suite silently altered the seed for the other.
+     */
     public Map<String, Object> getBothChannelsIneligibleAccount() {
-        return getActiveAccountWithNoBannerEmail();
+        return querySinglePaperlessAccount(
+                DBQuery.SELECT_TC_72_BOTH_CHANNELS_INELIGIBLE,
+                "get ACTIVE account ineligible on both channels (TC_72)");
     }
 
     /** TC_76: bill channel only in Initiated pending state (not fully enrolled). */
@@ -2292,16 +2421,58 @@ public class DBAction {
                 "get ACTIVE account with no active Banner email");
     }
 
+    public List<Map<String, Object>> listActiveAccountWithNoBannerEmailCandidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACTIVE_ACCOUNT_NO_BANNER_EMAIL_CANDIDATES;
+        logQueryInAllure("list ACTIVE accounts with no active Banner email", query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        logPaperlessDbResult(query, Map.of("candidateCount", result.size()), startTime);
+        return result;
+    }
+
     public Map<String, Object> getActiveAccountWithNullCorrPreference() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_ACTIVE_ACCOUNT_NULL_CORR_PREFERENCE,
                 "get ACTIVE account with NULL correspondence preference");
     }
 
+    /** TC_172 candidate pool (probe-and-retry). */
+    public List<Map<String, Object>> listActiveAccountWithNullCorrPreferenceCandidates() {
+        return listEligibilityCandidates(
+                DBQuery.SELECT_ACTIVE_ACCOUNT_NULL_CORR_PREFERENCE_CANDIDATES,
+                "list ACTIVE accounts with NULL correspondence preference (TC_172)");
+    }
+
     public Map<String, Object> getActiveAccountWithNullBillPreference() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_ACTIVE_ACCOUNT_NULL_BILL_PREFERENCE,
                 "get ACTIVE account with NULL bill preference");
+    }
+
+    /** TC_175 candidate pool (probe-and-retry). */
+    public List<Map<String, Object>> listActiveAccountWithNullBillPreferenceCandidates() {
+        return listEligibilityCandidates(
+                DBQuery.SELECT_ACTIVE_ACCOUNT_NULL_BILL_PREFERENCE_CANDIDATES,
+                "list ACTIVE accounts with NULL bill preference (TC_175)");
+    }
+
+    /** TC_204 candidate pool (probe-and-retry). */
+    public List<Map<String, Object>> listNewAccountWithConfirmedBillPreferenceCandidates() {
+        return listEligibilityCandidates(
+                DBQuery.SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE_CANDIDATES,
+                "list NEW accounts with confirmed bill preference (TC_204)");
+    }
+
+    private List<Map<String, Object>> listEligibilityCandidates(String query, String allureLabel) {
+        long startTime = System.currentTimeMillis();
+        logQueryInAllure(allureLabel, query);
+        try {
+            List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+            logPaperlessDbResult(query, Map.of("candidateCount", result.size()), startTime);
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            return List.of();
+        }
     }
 
     public Map<String, Object> getActiveAccountWithFiservBillDelivery() {
@@ -2796,12 +2967,12 @@ public class DBAction {
     }
 
     /**
-     * TC_228/229: GTBENRL + GZRPPTH NEW, no UCRACCT, bill vs service address differ.
+     * TC_228/229: NEW GTBENRL with email + BILL_ADDR1, no UCRACCT, no UZBENRO enroll path.
      */
     public List<Map<String, Object>> listVerifyAccountGtbenrlNoUcraddr(int limit) {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_VERIFY_ACCOUNT_GTBENRL_NO_UCRADDR;
-        logQueryInAllure("list VerifyAccount GTBENRL candidates (TC_228/229)", query);
+        logQueryInAllure("list VerifyAccount GTBENRL NEW candidates (TC_228/229)", query);
         try {
             List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
             if (rows.size() > Math.max(1, limit)) {
@@ -2826,9 +2997,170 @@ public class DBAction {
         if (rows == null || rows.isEmpty()) {
             throw new IllegalStateException(
                     "No GTBENRL account for TC_228/229 "
-                            + "(PROC_FLAG='N', BILL_ADDR1, GZRPPTH status='N', no UCRACCT, bill vs service differ)");
+                            + "(PROC_FLAG='N', email, BILL_ADDR1, no UCRACCT, no UZBENRO enroll)");
         }
         return rows.get(0);
+    }
+
+    /** TC_236 only — GTBENRL + no UCRACCT + matching active GZBEMCP + paper bill → UpdatePaperless → I. */
+    public List<Map<String, Object>> listVerifyAccountTc236InitCandidates(int limit) {
+        return listVerifyAccountNamedCandidates(
+                DBQuery.SELECT_VERIFY_ACCOUNT_TC236_INIT_CANDIDATES,
+                "list TC_236 Init candidates (GTBENRL + active GZBEMCP, paper bill, no UCRACCT)",
+                limit);
+    }
+
+    /** TC_237 only — GTBENRL + no UCRACCT + matching active GZBEMCP + paper correspondence. */
+    public List<Map<String, Object>> listVerifyAccountTc237InitCandidates(int limit) {
+        return listVerifyAccountNamedCandidates(
+                DBQuery.SELECT_VERIFY_ACCOUNT_TC237_INIT_CANDIDATES,
+                "list TC_237 Init candidates (GTBENRL + active GZBEMCP, paper corr, no UCRACCT)",
+                limit);
+    }
+
+    /** TC_236/237 fallback — GTBENRL + no UCRACCT + matching active GZBEMCP (no paper filter). */
+    public List<Map<String, Object>> listVerifyAccountTc23xGtbenrlActiveGzbemcp(int limit) {
+        return listVerifyAccountNamedCandidates(
+                DBQuery.SELECT_VERIFY_ACCOUNT_TC23X_GTBENRL_ACTIVE_GZBEMCP,
+                "list TC_23x GTBENRL + matching active GZBEMCP (no UCRACCT)",
+                limit);
+    }
+
+    /** TC_236 only — GTBENRL + GZRPPTH paper bill (row exists to seed Initiated without GZBEMCP). */
+    public List<Map<String, Object>> listVerifyAccountTc236PaperGzrppt(int limit) {
+        return listVerifyAccountNamedCandidates(
+                DBQuery.SELECT_VERIFY_ACCOUNT_TC236_PAPER_GZRPPTH,
+                "list TC_236 paper GZRPPTH (GTBENRL P)",
+                limit);
+    }
+
+    /** TC_237 only — GTBENRL + GZRPPTH paper corr. */
+    public List<Map<String, Object>> listVerifyAccountTc237PaperGzrppt(int limit) {
+        return listVerifyAccountNamedCandidates(
+                DBQuery.SELECT_VERIFY_ACCOUNT_TC237_PAPER_GZRPPTH,
+                "list TC_237 paper GZRPPTH (GTBENRL P)",
+                limit);
+    }
+
+    /**
+     * TC_236/237 only — make any existing GZBEMCP email currently effective so UpdatePaperless
+     * can enroll (avoids 40287/40289 Email Address is Not Present).
+     */
+    public int activateExistingGzbemcpEmailForTc23x(String customerCode) {
+        if (customerCode == null || customerCode.isBlank()) {
+            return 0;
+        }
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_TC23X_ACTIVATE_GZBEMCP_EMAIL_FOR_CUSTOMER, customerCode.trim());
+        log.debug("TC_23x activated {} GZBEMCP row(s) for customer {}", updated, customerCode);
+        return updated;
+    }
+
+    /**
+     * TC_236/237 only — ensure customer has an active GZBEMCP email for UpdatePaperless.
+     * Clones a template GZBEMCP row onto {@code customerCode} with {@code preferredEmail}
+     * when the customer has no GZBEMCP rows at all.
+     */
+    public String ensureActiveGzbemcpEmailForTc23x(String customerCode, String preferredEmail) {
+        if (customerCode == null || customerCode.isBlank()) {
+            return null;
+        }
+        String cust = customerCode.trim();
+        String active = getActiveBannerEmailForCustomer(cust);
+        if (active != null && !active.isBlank()) {
+            return active;
+        }
+        if (activateExistingGzbemcpEmailForTc23x(cust) > 0) {
+            active = getActiveBannerEmailForCustomer(cust);
+            if (active != null && !active.isBlank()) {
+                return active;
+            }
+        }
+        String email = preferredEmail == null || preferredEmail.isBlank()
+                ? null
+                : preferredEmail.trim();
+        if (email == null) {
+            return null;
+        }
+        try {
+            Map<String, Object> template = jdbcTemplate.queryForMap(DBQuery.SELECT_TC23X_GZBEMCP_TEMPLATE_ROW);
+            Map<String, Object> clone = new java.util.LinkedHashMap<>(template);
+            // Normalize keys to uppercase Oracle names
+            Map<String, Object> upper = new java.util.LinkedHashMap<>();
+            for (Map.Entry<String, Object> e : clone.entrySet()) {
+                if (e.getKey() != null) {
+                    upper.put(e.getKey().toUpperCase(java.util.Locale.ROOT), e.getValue());
+                }
+            }
+            upper.put("GZBEMCP_CUST_CODE", cust);
+            upper.put("GZBEMCP_EMAIL_ADDR", email);
+            upper.put("GZBEMCP_ACCOUNT_IND", "Y");
+            if (upper.get("GZBEMCP_USER_ID") == null || upper.get("GZBEMCP_USER_ID").toString().isBlank()) {
+                upper.put("GZBEMCP_USER_ID", "VERTEX_AUTO");
+            }
+            // Drop only true identity/rowid columns — keep GZBEMCP_USER_ID (NOT NULL)
+            upper.entrySet().removeIf(e -> {
+                String k = e.getKey();
+                return "ROWID".equals(k) || k.endsWith("_ROWID") || k.contains("SURROGATE");
+            });
+            StringBuilder cols = new StringBuilder();
+            StringBuilder ph = new StringBuilder();
+            java.util.List<Object> values = new java.util.ArrayList<>();
+            for (Map.Entry<String, Object> e : upper.entrySet()) {
+                if (cols.length() > 0) {
+                    cols.append(", ");
+                    ph.append(", ");
+                }
+                cols.append(e.getKey());
+                ph.append("?");
+                values.add(e.getValue());
+            }
+            String insert = "INSERT INTO GZBEMCP (" + cols + ") VALUES (" + ph + ")";
+            int inserted = jdbcTemplate.update(insert, values.toArray());
+            DualReportManager.logInfo(
+                    "TC_23x cloned GZBEMCP for " + cust + " email=" + email + " rows=" + inserted);
+            return getActiveBannerEmailForCustomer(cust);
+        } catch (Exception ex) {
+            log.warn("TC_23x could not clone GZBEMCP for {}: {}", cust, ex.getMessage());
+            DualReportManager.logInfo("TC_23x GZBEMCP clone failed for " + cust + ": " + ex.getMessage());
+            return null;
+        }
+    }
+
+    /** TC_236 only — set GZRPPTH bill = E / conf null (Initiated) when UpdatePaperless cannot run. */
+    public int seedGzrpptInitiatedBillForTc236(String customerCode, String premisesCode) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_TC236_SEED_GZRPPTH_INITIATED_BILL, customerCode, premisesCode);
+        log.debug("TC_236 seeded GZRPPTH Initiated bill for {}/{} rows={}",
+                customerCode, premisesCode, updated);
+        return updated;
+    }
+
+    /** TC_237 only — set GZRPPTH corr = E / corr conf null (Initiated). */
+    public int seedGzrpptInitiatedCorrForTc237(String customerCode, String premisesCode) {
+        int updated = jdbcTemplate.update(
+                DBQuery.UPDATE_TC237_SEED_GZRPPTH_INITIATED_CORR, customerCode, premisesCode);
+        log.debug("TC_237 seeded GZRPPTH Initiated corr for {}/{} rows={}",
+                customerCode, premisesCode, updated);
+        return updated;
+    }
+
+    private List<Map<String, Object>> listVerifyAccountNamedCandidates(
+            String query, String label, int limit) {
+        long startTime = System.currentTimeMillis();
+        logQueryInAllure(label, query);
+        try {
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
+            if (rows.size() > Math.max(1, limit)) {
+                rows = rows.subList(0, limit);
+            }
+            SimplifiedExtentReportManager.logDatabaseQuery(
+                    query, label + " rows=" + rows.size(),
+                    System.currentTimeMillis() - startTime);
+            return rows;
+        } catch (EmptyResultDataAccessException ex) {
+            return List.of();
+        }
     }
 
     public List<Map<String, Object>> listVerifyAccountStreetCandidates(int limit) {
@@ -2922,40 +3254,80 @@ public class DBAction {
     }
 
     public Map<String, Object> getVerifyAccountNewConfirmedBill() {
-        // TC_230-231 / TC_234: GZRPPTH NEW + paperless_conf_date
-        return querySinglePaperlessAccount(
+        // TC_230-231 / TC_234: GTBENRL-verifiable + GZRPPTH confirmed bill
+        List<Map<String, Object>> rows = listVerifyAccountNewConfirmedBill(1);
+        if (rows.isEmpty()) {
+            throw new IllegalStateException(
+                    "No account found for: get VerifyAccount GTBENRL+GZRPPTH NEW confirmed bill (TC_230-234)");
+        }
+        return rows.get(0);
+    }
+
+    public List<Map<String, Object>> listVerifyAccountNewConfirmedBill(int limit) {
+        return listVerifyAccountNamedCandidates(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_BILL,
-                "get VerifyAccount GZRPPTH NEW confirmed bill (TC_230-234)");
+                "list VerifyAccount NEW confirmed bill candidates (TC_230-234)",
+                limit);
     }
 
     public Map<String, Object> getVerifyAccountNewConfirmedCorr() {
-        return querySinglePaperlessAccount(
+        List<Map<String, Object>> rows = listVerifyAccountNewConfirmedCorr(1);
+        if (rows.isEmpty()) {
+            throw new IllegalStateException(
+                    "No account found for: get VerifyAccount GTBENRL+GZRPPTH NEW confirmed corr (TC_232-235)");
+        }
+        return rows.get(0);
+    }
+
+    public List<Map<String, Object>> listVerifyAccountNewConfirmedCorr(int limit) {
+        return listVerifyAccountNamedCandidates(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_CORR,
-                "get VerifyAccount GZRPPTH NEW confirmed corr (TC_232-235)");
+                "list VerifyAccount NEW confirmed corr candidates (TC_232-235)",
+                limit);
     }
 
     public Map<String, Object> getVerifyAccountNewPendingBill() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PENDING_BILL,
-                "get VerifyAccount GZRPPTH NEW pending bill / Initiated I (TC_236)");
+                "get VerifyAccount GTBENRL+GZRPPTH NEW pending bill / Initiated I (TC_236)");
     }
 
     public Map<String, Object> getVerifyAccountNewPendingCorr() {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PENDING_CORR,
-                "get VerifyAccount GZRPPTH NEW pending corr / Initiated I (TC_237)");
+                "get VerifyAccount GTBENRL+GZRPPTH NEW pending corr / Initiated I (TC_237)");
     }
 
     public Map<String, Object> getVerifyAccountNewPaperBill() {
-        return querySinglePaperlessAccount(
+        List<Map<String, Object>> rows = listVerifyAccountNewPaperBill(1);
+        if (rows.isEmpty()) {
+            throw new IllegalStateException(
+                    "No account found for: get VerifyAccount GZRPPTH NEW paper bill P (TC_238)");
+        }
+        return rows.get(0);
+    }
+
+    public List<Map<String, Object>> listVerifyAccountNewPaperBill(int limit) {
+        return listVerifyAccountNamedCandidates(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PAPER_BILL,
-                "get VerifyAccount GZRPPTH NEW paper bill P (TC_238)");
+                "list VerifyAccount NEW paper bill candidates (TC_238)",
+                limit);
     }
 
     public Map<String, Object> getVerifyAccountNewPaperCorr() {
-        return querySinglePaperlessAccount(
+        List<Map<String, Object>> rows = listVerifyAccountNewPaperCorr(1);
+        if (rows.isEmpty()) {
+            throw new IllegalStateException(
+                    "No account found for: get VerifyAccount GZRPPTH NEW paper corr P (TC_239)");
+        }
+        return rows.get(0);
+    }
+
+    public List<Map<String, Object>> listVerifyAccountNewPaperCorr(int limit) {
+        return listVerifyAccountNamedCandidates(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_PAPER_CORR,
-                "get VerifyAccount GZRPPTH NEW paper corr P (TC_239)");
+                "list VerifyAccount NEW paper corr candidates (TC_239)",
+                limit);
     }
 
     /** TC_240: expired bill (OCSEPCI + GZRPPTH P + GTBENRL, no UCRACCT). */
@@ -2970,6 +3342,77 @@ public class DBAction {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_CORR,
                 "get VerifyAccount GZRPPTH expired corr → P (TC_241)");
+    }
+
+    /** TC_240: expired bill candidate pool (probe-and-retry, email guaranteed). */
+    public List<Map<String, Object>> listVerifyAccountNewExpiredBill(int limit) {
+        return listVerifyAccountNamedCandidates(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_BILL_CANDIDATES,
+                "list VerifyAccount expired bill candidates (TC_240)",
+                limit);
+    }
+
+    /** TC_241: expired correspondence candidate pool (probe-and-retry, email guaranteed). */
+    public List<Map<String, Object>> listVerifyAccountNewExpiredCorr(int limit) {
+        return listVerifyAccountNamedCandidates(
+                DBQuery.SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_CORR_CANDIDATES,
+                "list VerifyAccount expired corr candidates (TC_241)",
+                limit);
+    }
+
+    /**
+     * TC_236/237: snapshot every GZRPPTH row for the account before the Initiated seed runs.
+     * The seed is not row-scoped, so all rows (including historical STATUS_CODE='X') must be
+     * captured per-ROWID to be restorable. Empty list when the account has no GZRPPTH row.
+     */
+    public List<Map<String, Object>> snapshotVerifyAccountGzrppthForTc23x(String customerCode,
+                                                                          String premisesCode) {
+        if (customerCode == null || premisesCode == null) {
+            return List.of();
+        }
+        try {
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList(
+                    DBQuery.SELECT_VERIFY_ACCOUNT_TC23X_GZRPPTH_SNAPSHOT,
+                    customerCode.trim(), premisesCode.trim());
+            log.debug("TC_23x snapshotted {} GZRPPTH row(s) for {}/{}",
+                    rows.size(), customerCode, premisesCode);
+            return rows;
+        } catch (EmptyResultDataAccessException ex) {
+            log.debug("TC_23x no GZRPPTH snapshot row for {}/{}", customerCode, premisesCode);
+            return List.of();
+        }
+    }
+
+    /** TC_236: revert one snapshotted GZRPPTH row to its pres type / conf date. */
+    public int restoreVerifyAccountGzrppthBillForTc23x(String gzrppthRowId,
+                                                       String billPresType,
+                                                       String billConfirmDate) {
+        String query = DBQuery.RESTORE_TC23X_GZRPPTH_BILL;
+        logQueryInAllure("TC_236 restore GZRPPTH bill row " + gzrppthRowId, query);
+        // Explicit VARCHAR types: a snapshotted NULL pres type / conf date must bind as a typed
+        // NULL, or Oracle rejects the untyped bind inside TO_DATE(?, 'YYYYMMDD').
+        int updated = jdbcTemplate.update(
+                query,
+                new Object[]{billPresType, billConfirmDate, gzrppthRowId},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR});
+        log.debug("TC_236 restored GZRPPTH bill row {} presType={} confDate={} rows={}",
+                gzrppthRowId, billPresType, billConfirmDate, updated);
+        return updated;
+    }
+
+    /** TC_237: revert one snapshotted GZRPPTH row to its del type / conf date. */
+    public int restoreVerifyAccountGzrppthCorrForTc23x(String gzrppthRowId,
+                                                       String corrDelType,
+                                                       String corrConfirmDate) {
+        String query = DBQuery.RESTORE_TC23X_GZRPPTH_CORR;
+        logQueryInAllure("TC_237 restore GZRPPTH corr row " + gzrppthRowId, query);
+        int updated = jdbcTemplate.update(
+                query,
+                new Object[]{corrDelType, corrConfirmDate, gzrppthRowId},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR});
+        log.debug("TC_237 restored GZRPPTH corr row {} delType={} confDate={} rows={}",
+                gzrppthRowId, corrDelType, corrConfirmDate, updated);
+        return updated;
     }
 
     /** Active Banner GZBEMCP email for customer, or null if none. */
@@ -4446,13 +4889,22 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACTIVE_REWARDS;
 
-        logQueryInAllure("get customer code", query);
+        logQueryInAllure("TC_139 active reward (GZBRWDS with no cancel/fulfil date)", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(query);
+        } catch (EmptyResultDataAccessException ex) {
+            // Raw EmptyResultDataAccessException reads "Incorrect result size: expected 1,
+            // actual 0", which says nothing about which seed data is missing.
+            throw new IllegalStateException(
+                    "No UAT data for TC_139 active reward (GZBRWDS with no cancel/fulfil date). "
+                            + "This is a test-data gap, not a code defect - the query returned "
+                            + "zero rows.", ex);
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
@@ -4467,13 +4919,22 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_PENDING_REWARDS;
 
-        logQueryInAllure("get customer code", query);
+        logQueryInAllure("TC_140 pending reward (GZBPRWD with no cancel/establish date)", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(query);
+        } catch (EmptyResultDataAccessException ex) {
+            // Raw EmptyResultDataAccessException reads "Incorrect result size: expected 1,
+            // actual 0", which says nothing about which seed data is missing.
+            throw new IllegalStateException(
+                    "No UAT data for TC_140 pending reward (GZBPRWD with no cancel/establish date). "
+                            + "This is a test-data gap, not a code defect - the query returned "
+                            + "zero rows.", ex);
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
@@ -4487,13 +4948,22 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_MIXED_REWARDS;
 
-        logQueryInAllure("get customer code", query);
+        logQueryInAllure("TC_141 account with BOTH a live active and a live pending reward", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(query);
+        } catch (EmptyResultDataAccessException ex) {
+            // Raw EmptyResultDataAccessException reads "Incorrect result size: expected 1,
+            // actual 0", which says nothing about which seed data is missing.
+            throw new IllegalStateException(
+                    "No UAT data for TC_141 account with BOTH a live active and a live pending reward. "
+                            + "This is a test-data gap, not a code defect - the query returned "
+                            + "zero rows.", ex);
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
@@ -4507,13 +4977,22 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_NO_REWARDS;
 
-        logQueryInAllure("get customer code", query);
+        logQueryInAllure("TC_142 account with no reward rows at all", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(query);
+        } catch (EmptyResultDataAccessException ex) {
+            // Raw EmptyResultDataAccessException reads "Incorrect result size: expected 1,
+            // actual 0", which says nothing about which seed data is missing.
+            throw new IllegalStateException(
+                    "No UAT data for TC_142 account with no reward rows at all. "
+                            + "This is a test-data gap, not a code defect - the query returned "
+                            + "zero rows.", ex);
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
@@ -4527,13 +5006,22 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACTIVE_REFER_A_FRIEND_REWARDS;
 
-        logQueryInAllure("get customer code", query);
+        logQueryInAllure("TC_143 live active refer-a-friend reward (GZBRWDS_REWARD_ID=2)", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(query);
+        } catch (EmptyResultDataAccessException ex) {
+            // Raw EmptyResultDataAccessException reads "Incorrect result size: expected 1,
+            // actual 0", which says nothing about which seed data is missing.
+            throw new IllegalStateException(
+                    "No UAT data for TC_143 live active refer-a-friend reward (GZBRWDS_REWARD_ID=2). "
+                            + "This is a test-data gap, not a code defect - the query returned "
+                            + "zero rows.", ex);
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
@@ -4547,13 +5035,22 @@ public class DBAction {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_PENDING_REFER_A_FRIEND_REWARDS;
 
-        logQueryInAllure("get customer code", query);
+        logQueryInAllure("TC_144 live pending refer-a-friend reward (GZBPRWD_REWARD_ID=2)", query);
 
-        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+        Map<String, Object> result;
+        try {
+            result = jdbcTemplate.queryForMap(query);
+        } catch (EmptyResultDataAccessException ex) {
+            // Raw EmptyResultDataAccessException reads "Incorrect result size: expected 1,
+            // actual 0", which says nothing about which seed data is missing.
+            throw new IllegalStateException(
+                    "No UAT data for TC_144 live pending refer-a-friend reward (GZBPRWD_REWARD_ID=2). "
+                            + "This is a test-data gap, not a code defect - the query returned "
+                            + "zero rows.", ex);
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-        // Log SQL, result, and execution time
         SimplifiedExtentReportManager.logDatabaseQuery(
                 query,
                 result.toString(),
@@ -6519,6 +7016,56 @@ public class DBAction {
     }
 
     /** Candidate accounts for TC_2 probing (planRenewalWindowIndicator = Y). */
+    /** TC_154 partner-promotions-null candidates (probe-and-retry). */
+    public List<Map<String, Object>> listAccountDetailsTC153Candidates() {
+        return listAccountDetailsCandidates(
+                DBQuery.SELECT_ACCOUNT_DETAILS_TC153_CANDIDATES,
+                "list TC_154 partner-promotions-null candidates");
+    }
+
+    /** TC_157 marketing-offers-null candidates (probe-and-retry). */
+    public List<Map<String, Object>> listAccountDetailsTC156Candidates() {
+        return listAccountDetailsCandidates(
+                DBQuery.SELECT_ACCOUNT_DETAILS_TC156_CANDIDATES,
+                "list TC_157 marketing-offers-null candidates");
+    }
+
+    /** TC_166 no-greener-life-rate candidates (probe-and-retry). */
+    public List<Map<String, Object>> listAccountDetailsTC165Candidates() {
+        return listAccountDetailsCandidates(
+                DBQuery.SELECT_ACCOUNT_DETAILS_TC165_CANDIDATES,
+                "list TC_166 no-greener-life-rate candidates");
+    }
+
+    /** TC_174 single-price-plan candidates (probe-and-retry). */
+    public List<Map<String, Object>> listAccountDetailsTC173Candidates() {
+        return listAccountDetailsCandidates(
+                DBQuery.SELECT_ACCOUNT_DETAILS_TC173_CANDIDATES,
+                "list TC_174 single-price-plan candidates");
+    }
+
+    private List<Map<String, Object>> listAccountDetailsCandidates(String query, String allureLabel) {
+        long startTime = System.currentTimeMillis();
+        logQueryInAllure(allureLabel, query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, "candidateCount=" + result.size(), elapsed);
+        return result;
+    }
+
+    /** TC_175 multiple-price-plan candidates (probe-and-retry). */
+    public List<Map<String, Object>> listAccountDetailsTC174Candidates() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC174_CANDIDATES;
+        logQueryInAllure("list TC_175 multiple-price-plan candidates", query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, "candidateCount=" + result.size(), elapsed);
+        return result;
+    }
+
     public List<Map<String, Object>> listAccountDetailsTC2Candidates() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_ACCOUNT_DETAILS_TC2_CANDIDATES;
@@ -6634,6 +7181,49 @@ public class DBAction {
 
     public Map<String, Object> getAccountDetailsTC8() {
         return queryAccountDetails(DBQuery.SELECT_ACCOUNT_DETAILS_TC8);
+    }
+
+    public List<Map<String, Object>> listAccountDetailsPlanProbeCandidates() {
+        return listPlanProbeCandidates(
+                "list plan-probe candidates",
+                DBQuery.SELECT_ACCOUNT_DETAILS_PLAN_PROBE_CANDIDATES);
+    }
+
+    /** TC_175: multiple active COMM plan rows; API probe confirms pricePlans size. */
+    public List<Map<String, Object>> listAccountDetailsMultiplePlanProbeCandidates() {
+        return listPlanProbeCandidates(
+                "list multiple-plan probe candidates",
+                DBQuery.SELECT_ACCOUNT_DETAILS_MULTIPLE_PLAN_PROBE_CANDIDATES);
+    }
+
+    /** TC_176 / TC_6: no GBP plan codes; API probe confirms non-guaranteed pricing fields. */
+    public List<Map<String, Object>> listAccountDetailsNonGbpProbeCandidates() {
+        return listPlanProbeCandidates(
+                "list non-GBP probe candidates",
+                DBQuery.SELECT_ACCOUNT_DETAILS_NON_GBP_PROBE_CANDIDATES);
+    }
+
+    /** TC_178: no price-protection plan codes; API probe confirms fee/ceiling empty. */
+    public List<Map<String, Object>> listAccountDetailsNoPriceProtectionProbeCandidates() {
+        return listPlanProbeCandidates(
+                "list no-price-protection probe candidates",
+                DBQuery.SELECT_ACCOUNT_DETAILS_NO_PRICE_PROTECTION_PROBE_CANDIDATES);
+    }
+
+    /**
+     * Candidate fetch for plan FTD probing. Intentionally does <em>not</em> write the full
+     * candidate list to Extent (avoids Run-A style noise). Callers log the single selected
+     * account in Run-B style after API confirmation.
+     */
+    private List<Map<String, Object>> listPlanProbeCandidates(String allureLabel, String query) {
+        logQueryInAllure(allureLabel, query);
+        return jdbcTemplate.queryForList(query);
+    }
+
+    /** Extent evidence for plan TCs: one account row, same style as getAccountDetailsTC*. */
+    public void logSelectedPlanAccount(String query, Map<String, Object> selectedAccount, long elapsedMs) {
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query, selectedAccount.toString(), elapsedMs);
     }
 
     private Map<String, Object> queryAccountDetails(String query) {
@@ -6829,21 +7419,25 @@ public class DBAction {
     }
 
     public List<Map<String, Object>> getBillHistory(String customerCode, String premisesCode) {
+        return getBillHistory(customerCode, premisesCode, 24);
+    }
+
+    public List<Map<String, Object>> getBillHistory(String customerCode, String premisesCode, int numberOfMonths) {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.GET_BILL_HISTORY;
 
-        // Replace ? placeholders with quoted values for logging
         String loggedQuery = queryTemplate
                 .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
-                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", String.valueOf(numberOfMonths));
 
-        logQueryInAllure("get usage history", loggedQuery);
+        logQueryInAllure("get bill history lookbackMonths=" + numberOfMonths, loggedQuery);
 
         List<Map<String, Object>> result;
 
         try {
-            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode, numberOfMonths);
         } catch (EmptyResultDataAccessException e) {
             result = Collections.emptyList();
         }
@@ -6852,7 +7446,9 @@ public class DBAction {
 
         SimplifiedExtentReportManager.logDatabaseQuery(
                 loggedQuery,
-                String.valueOf(result),
+                "requestAccount=" + customerCode + "/" + premisesCode
+                        + " lookbackMonths=" + numberOfMonths
+                        + " rows=" + result.size(),
                 elapsed
         );
 
@@ -7139,32 +7735,38 @@ public class DBAction {
     }
 
     public List<Map<String, Object>> getBillHistory2(String customerCode, String premisesCode) {
+        return getBillHistory2(customerCode, premisesCode, 24);
+    }
+
+    public List<Map<String, Object>> getBillHistory2(String customerCode, String premisesCode, int numberOfMonths) {
         long startTime = System.currentTimeMillis();
 
         String queryTemplate = DBQuery.GET_BILL_HISTORY;
 
-        // Replace ? placeholders with quoted values for logging
         String loggedQuery = queryTemplate
                 .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
-                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", String.valueOf(numberOfMonths));
 
-        logQueryInAllure("get usage history", loggedQuery);
+        logQueryInAllure("get bill history lookbackMonths=" + numberOfMonths, loggedQuery);
 
         List<Map<String, Object>> result;
 
         try {
-            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode, numberOfMonths);
         } catch (EmptyResultDataAccessException e) {
             result = Collections.emptyList();
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
-//        SimplifiedExtentReportManager.logDatabaseQuery(
-//                loggedQuery,
-//                String.valueOf(result),
-//                elapsed
-//        );
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                "requestAccount=" + customerCode + "/" + premisesCode
+                        + " lookbackMonths=" + numberOfMonths
+                        + " rows=" + result.size(),
+                elapsed
+        );
 
         return result;
     }

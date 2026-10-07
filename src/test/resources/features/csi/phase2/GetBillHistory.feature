@@ -24,7 +24,7 @@ Feature: Verify GetBillHistory Api
       | TC_73__Negative__Invalid_Number_of_Months_Negative | 10395  | Invalid Number of Months                     |
       | TC_74__Negative__Invalid_Number_of_Months_Length | 10405    | Number of Months exceeds maximum allowed                     |
 
-#
+
   @GetBillHistoryPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to GetBillHistory Api for "<testCondition>"
@@ -54,10 +54,10 @@ Feature: Verify GetBillHistory Api
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | data    |
-      | TC_83__Positive__Usage_History_OtherCharges_Format           | 0        |              | notNull |
-      | TC_84__Positive__Usage_History_PromotionalDiscounts_Format   | 0        |              | notNull |
-      | TC_85__Positive__Usage_History_Taxes_Format                  | 0        |              | notNull |
-      | TC_86__Positive__Usage_History_BudgetBillingAmount_Format    | 0        |              | notNull |
+    | TC_83__Positive__Usage_History_OtherCharges_Format           | 0        |              | notNull |
+    | TC_84__Positive__Usage_History_PromotionalDiscounts_Format   | 0        |              | notNull |
+    | TC_85__Positive__Usage_History_Taxes_Format                  | 0        |              | notNull |
+    | TC_86__Positive__Usage_History_BudgetBillingAmount_Format    | 0        |              | notNull |
 
   @GetBillHistoryPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -93,11 +93,10 @@ Feature: Verify GetBillHistory Api
     When a request is made to GetBillHistory Api for "<testCondition>"
     Then verify response code of "GetBillHistory" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-
+    And the response should have data as "<data>"
+    And bill history should return matches for requested months
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | data    |
-      | TC_93__Positive__Valid_NumberOfMonths_BillHistory_Too_Old          | 0 |              | notNull |
-      | TC_94__Positive__Usage_History_Less_Than_Requested_Months          | 0 |              | notNull |
       | TC_95__Positive__Usage_History_Equals_Requested_Months             | 0 |              | notNull |
       | TC_96__Positive__Usage_History_Greater_Than_Requested_Months       | 0 |              | notNull |

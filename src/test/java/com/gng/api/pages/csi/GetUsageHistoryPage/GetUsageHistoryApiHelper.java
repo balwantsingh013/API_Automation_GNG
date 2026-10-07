@@ -275,16 +275,16 @@ public class GetUsageHistoryApiHelper {
 
 
             case TC_38__Positive__Usage_History_Equals_Requested_Months:
-                accountInfo = ApplicationContext.get().getDbAction().getUsageHitstoryEqualToMonthsRequested();
+                accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryMaxMonthsLast12();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
-                payload.setNumberOfMonths("12");
-                testContext.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
-                testContext.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths(String.valueOf(Math.min(12, ((Number) accountInfo.get("total")).intValue())));
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
                 List<Map<String, Object>> dbRows3 = ApplicationContext.get()
                         .getDbAction()
-                        .getUsageHistory(accountInfo.get("ubbbhst_cust_code").toString(), accountInfo.get("ubbbhst_prem_code").toString());
+                        .getUsageHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
                 break;
 
             case TC_25__Positive__Usage_History_Read_Type_Format__Actual:
@@ -370,15 +370,14 @@ public class GetUsageHistoryApiHelper {
                 break;
 
             case TC_39__Positive__Usage_History_Greater_Than_Requested_Months:
-
-                accountInfo = ApplicationContext.get().getDbAction().getUsageHitstoryEqualToMonthsRequested();
+                accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryMaxMonthsLast12();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("ubbbhst_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("ubbbhst_prem_code").toString());
-                payload.setNumberOfMonths("8");
+                payload.setCustomerCode(accountInfo.get("customer_code").toString());
+                payload.setPremisesCode(accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths(String.valueOf(((Number) accountInfo.get("total")).intValue() > 8 ? 8 : Math.max(1, ((Number) accountInfo.get("total")).intValue() - 1)));
                 List<Map<String, Object>> dbRows4 = ApplicationContext.get()
                         .getDbAction()
-                        .getUsageHistory2(accountInfo.get("ubbbhst_cust_code").toString(), accountInfo.get("ubbbhst_prem_code").toString());
+                        .getUsageHistory2(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
                 break;
 
             default:

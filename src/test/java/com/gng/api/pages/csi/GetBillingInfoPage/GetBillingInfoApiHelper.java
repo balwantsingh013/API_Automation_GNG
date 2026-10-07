@@ -7,10 +7,14 @@ import com.gng.api.pojo.CSIPojo.GetBillingInfo.GetBillingInfoRequest;
 import com.gng.api.pojo.TestContext.TestContext;
 import com.gng.api.steps.csi.GetBillingInfo.GetBillingInfoLabel;
 import com.gng.api.util.FakerDataGenerator;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.gng.api.constants.ApiEndPoint.GET_BILLING_INFO;
 
 @Slf4j
 public class GetBillingInfoApiHelper {
@@ -95,7 +99,7 @@ public class GetBillingInfoApiHelper {
                 break;
 
             case TC_12__Positive__Valid_Account_with_1_Month_Billing_History:
-                accountData = ApplicationContext.get().getDbAction().getUsageHistoryOne();
+                accountData = resolveOneMonthBillingCandidate(null);
 
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
@@ -157,7 +161,7 @@ public class GetBillingInfoApiHelper {
 //
             case TC_18__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Equals_0:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getUsageHistoryOne();
+                accountData = resolveOneMonthBillingCandidate("data.pastDueAmount");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows7 = ApplicationContext.get()
@@ -187,7 +191,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_21__Positive__Billing_Info_Previous_Bill_Amount_Format__Previous_Bill_Amount_Equals_0:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getUsageHistoryOne();
+                accountData = resolveOneMonthBillingCandidate("data.previousBillAmount");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows10 = ApplicationContext.get()
@@ -207,7 +211,7 @@ public class GetBillingInfoApiHelper {
 
             case TC_23__Positive__Billing_Info_Payments_Applied_Amount_Format__Payments_Applied_Amount_Equals_0:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getUsageHistoryOne();
+                accountData = resolveOneMonthBillingCandidate("data.paymentsApplied");
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows12 = ApplicationContext.get()
@@ -510,5 +514,52 @@ public class GetBillingInfoApiHelper {
                 log.warn("Unhandled test condition: {}", testCondition);
                 break;
         }
+    }
+
+    private Map<String, Object> resolveOneMonthBillingCandidate(String zeroAmountField) {
+        for (Map<String, Object> candidate : ApplicationContext.get().getDbAction().listUsageHistoryOneCandidates()) {
+            if (matchesBillingCandidate(candidate, zeroAmountField)) {
+                log.info("Resolved one-month billing candidate via probe {}/{}",
+                        candidate.get("ubbbhst_cust_code"), candidate.get("ubbbhst_prem_code"));
+                return candidate;
+            }
+        }
+
+        throw new IllegalStateException("Could not resolve one-month billing history candidate for " + zeroAmountField);
+    }
+
+    private boolean matchesBillingCandidate(Map<String, Object> accountData, String zeroAmountField) {
+        if (accountData == null) {
+            return false;
+        }
+        Response response = callGetBillingInfo(accountData);
+        if (response.jsonPath().getInt("errorCode") != 0 || !Boolean.TRUE.equals(response.jsonPath().getBoolean("success"))) {
+            return false;
+        }
+        if (zeroAmountField == null) {
+            return true;
+        }
+        Object value = response.jsonPath().get(zeroAmountField);
+        if (!(value instanceof Number)) {
+            return false;
+        }
+        return Math.abs(((Number) value).doubleValue()) < 0.0001d;
+    }
+
+    private Response callGetBillingInfo(Map<String, Object> accountData) {
+        GetBillingInfoRequest payload = BasePage.deserializeJsonToPojo(
+                GetBillingInfoLabel.get_billing_info.toString(),
+                GetBillingInfoRequest.class);
+        payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
+        payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
+
+        String uri = ApplicationContext.get().getEnvConfig().getBaseUri() + GET_BILLING_INFO;
+        return io.restassured.RestAssured.given()
+                .relaxedHTTPSValidation()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + testContext.getAuthToken())
+                .body(payload)
+                .post(uri);
     }
 }

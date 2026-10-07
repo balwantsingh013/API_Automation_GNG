@@ -2,6 +2,96 @@ package com.gng.api.db;
 
 public final class DBQuery {
 
+    /**
+     * Excludes NEW accounts that are already enrolled on paperless.
+     * <p>
+     * For {@code UCRACCT_STATUS_IND='N'} accounts the preference columns on UCRACCT are not
+     * authoritative — the API reads GZRPPTH. A NEW account can therefore show
+     * {@code UCRACCT_BILL_PRES_TYPE/CORR_DEL_TYPE} NULL (paper) while GZRPPTH already holds
+     * {@code E}, and no OCSEPCI row exists to betray it. Seeds that want a not-yet-enrolled NEW
+     * account must check GZRPPTH too, or the API rejects the enroll/confirm with 40287/40289/40291.
+     * <p>
+     * Historical rows ({@code STATUS_CODE='X'}) are ignored; an account carries several GZRPPTH
+     * rows and only the live one reflects current state.
+     */
+    private static final String NEW_ACCOUNT_NOT_ENROLLED_IN_GZRPPTH =
+            "  AND NOT EXISTS (\n"
+                    + "      SELECT 1\n"
+                    + "      FROM GZRPPTH g_ne\n"
+                    + "      WHERE g_ne.GZRPPTH_CUST_CODE = a.UCRACCT_CUST_CODE\n"
+                    + "        AND g_ne.GZRPPTH_PREM_CODE = a.UCRACCT_PREM_CODE\n"
+                    + "        AND NVL(g_ne.GZRPPTH_STATUS_CODE, 'N') <> 'X'\n"
+                    + "        AND (NVL(g_ne.GZRPPTH_BILL_PRES_TYPE, 'P') = 'E'\n"
+                    + "          OR NVL(g_ne.GZRPPTH_CORR_DEL_TYPE, 'P') = 'E')\n"
+                    + "  )\n";
+
+    /**
+     * Splices {@link #NEW_ACCOUNT_NOT_ENROLLED_IN_GZRPPTH} in ahead of a NEW-account seed query's
+     * top-level ORDER BY.
+     * <p>
+     * Java text blocks strip incidental indentation, so the runtime indent cannot be assumed.
+     * The top-level ORDER BY is identified as the shallowest-indented one (a window function's
+     * ORDER BY inside a CTE is always nested deeper), taking the last such match so the guard
+     * lands after the WHERE clause.
+     */
+    /**
+     * Stricter variant for seeds whose flow is enroll → CONFIRM (TC_101/TC_105 and the
+     * ConfirmPaperlessEnrollment setup): the account must have NO GZRPPTH row at all, not merely
+     * no row currently at 'E'.
+     * <p>
+     * Evidence: across four known outcomes, every account that confirmed successfully had no
+     * GZRPPTH row whatsoever (5603047 from the 05-Aug baseline report, 5990261), and every account
+     * whose confirm returned 40291 carried GZRPPTH history — 6229682's oldest rows date from
+     * 2026-03-03, i.e. long before any test touched it. An enroll against such an account revives
+     * the history into a live row at E/E, and ConfirmPaperlessEnrollment then rejects the state its
+     * own enroll just created. Accounts with no GZRPPTH row never enter that state.
+     * <p>
+     * Deliberately separate from {@link #withNewAccountNotEnrolledGuard}: the other 15 NEW-account
+     * seeds do not confirm, so they keep the looser guard and their larger pools.
+     */
+    private static final String NEW_ACCOUNT_NO_GZRPPTH_HISTORY =
+            "  AND NOT EXISTS (\n"
+                    + "      SELECT 1\n"
+                    + "      FROM GZRPPTH g_nh\n"
+                    + "      WHERE g_nh.GZRPPTH_CUST_CODE = a.UCRACCT_CUST_CODE\n"
+                    + "        AND g_nh.GZRPPTH_PREM_CODE = a.UCRACCT_PREM_CODE\n"
+                    + "  )\n";
+
+    /** Splices {@link #NEW_ACCOUNT_NO_GZRPPTH_HISTORY} in ahead of the top-level ORDER BY. */
+    private static String withNoGzrppthHistoryGuard(String query) {
+        return spliceBeforeTopLevelOrderBy(query, NEW_ACCOUNT_NO_GZRPPTH_HISTORY);
+    }
+
+    private static String withNewAccountNotEnrolledGuard(String query) {
+        return spliceBeforeTopLevelOrderBy(query, NEW_ACCOUNT_NOT_ENROLLED_IN_GZRPPTH);
+    }
+
+    /**
+     * Inserts {@code guard} immediately before a query's top-level ORDER BY.
+     * <p>
+     * Java text blocks strip incidental indentation, so the runtime indent cannot be assumed. The
+     * top-level ORDER BY is the shallowest-indented one (a window function's ORDER BY inside a CTE
+     * is always nested deeper); the last such match is used so the guard lands after the WHERE.
+     */
+    private static String spliceBeforeTopLevelOrderBy(String query, String guard) {
+        java.util.regex.Matcher m =
+                java.util.regex.Pattern.compile("(?m)^([ \\t]*)ORDER BY").matcher(query);
+        int minIndent = Integer.MAX_VALUE;
+        int idx = -1;
+        while (m.find()) {
+            int indent = m.group(1).length();
+            if (indent <= minIndent) {
+                minIndent = indent;
+                idx = m.start();
+            }
+        }
+        if (idx < 0) {
+            throw new IllegalStateException(
+                    "NEW-account seed query has no top-level ORDER BY anchor: " + query);
+        }
+        return query.substring(0, idx) + guard + query.substring(idx);
+    }
+
     public static final String GET_ACTIVE_CUSTOMER_AND_PREMISES_CODE = """
                 SELECT *
                 FROM (
@@ -2547,13 +2637,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                        FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_LATEST_LOGIN_ID= """
-            SELECT gzrapil_login_id
-            FROM gcismgr.gzrapil
-            ORDER BY gzrapil_activity_date DESC
-            FETCH FIRST 1 ROW ONLY
-            """;
-
+    // SELECT_LATEST_LOGIN_ID removed: it had no bind placeholder (callers passing a login ID hit
+    // ORA-17003) and returned the newest GZRAPIL row overall rather than a specific login ID.
+    // SELECT_LOGIN_ID_BY_VALUE below is the correct lookup.
     public static final String SELECT_LOGIN_ID_BY_VALUE = """
             SELECT gzrapil_login_id
             FROM gcismgr.gzrapil
@@ -3250,6 +3336,401 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             HAVING COUNT(DISTINCT ubbbhst_printed_date) = 12
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    public static final String SELECT_BILL_HISTORY_TC95_96_ACCOUNT = """
+            SELECT
+                bh.ubbbhst_cust_code AS ubbbhst_cust_code,
+                bh.ubbbhst_prem_code AS ubbbhst_prem_code,
+                COUNT(DISTINCT TRUNC(bh.ubbbhst_printed_date)) AS total
+            FROM ubbbhst bh
+            JOIN ucracct ua
+                ON ua.ucracct_cust_code = bh.ubbbhst_cust_code
+               AND ua.ucracct_prem_code = bh.ubbbhst_prem_code
+            WHERE ua.ucracct_status_ind = 'A'
+              AND LENGTH(bh.ubbbhst_cust_code) >= 4
+              AND TRUNC(bh.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
+              AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+              AND (
+                    bh.ubbbhst_ending_bal <> 0
+                    OR EXISTS (
+                         SELECT 1
+                         FROM uabopen o
+                         WHERE o.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
+                           AND NVL(o.uabopen_billed_chg, 0) <> 0
+                           AND o.uabopen_chrg_calc_num IS NOT NULL
+                    )
+                  )
+            GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
+            HAVING COUNT(DISTINCT TRUNC(bh.ubbbhst_printed_date)) >= 2
+            ORDER BY total DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    public static final String SELECT_BILL_HISTORY_TC96_ACCOUNT = """
+            SELECT
+                bh.ubbbhst_cust_code AS ubbbhst_cust_code,
+                bh.ubbbhst_prem_code AS ubbbhst_prem_code,
+                COUNT(DISTINCT TRUNC(bh.ubbbhst_printed_date)) AS total
+            FROM ubbbhst bh
+            JOIN ucracct ua
+                ON ua.ucracct_cust_code = bh.ubbbhst_cust_code
+               AND ua.ucracct_prem_code = bh.ubbbhst_prem_code
+            WHERE ua.ucracct_status_ind = 'A'
+              AND LENGTH(bh.ubbbhst_cust_code) >= 4
+              AND TRUNC(bh.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -9)
+              AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+              AND (
+                    bh.ubbbhst_ending_bal <> 0
+                    OR EXISTS (
+                         SELECT 1
+                         FROM uabopen o
+                         WHERE o.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
+                           AND NVL(o.uabopen_billed_chg, 0) <> 0
+                           AND o.uabopen_chrg_calc_num IS NOT NULL
+                    )
+                  )
+            GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
+            HAVING COUNT(DISTINCT TRUNC(bh.ubbbhst_printed_date)) >= 1
+            ORDER BY total DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** Restored compile stubs for working-tree DBAction references after DBQuery wipe recovery. */
+    public static final String SELECT_USAGE_HISTORY_MAX_MONTHS = """
+            SELECT ucracct_cust_code, ucracct_prem_code,
+                   COUNT(DISTINCT TRUNC(ubbbhst_printed_date)) AS total
+            FROM ubbbhst, ucracct
+            WHERE ucracct_cust_code = ubbbhst_cust_code
+              AND ucracct_prem_code = ubbbhst_prem_code
+              AND ucracct_status_ind = 'A'
+              AND NVL(ubbbhst_cancel_ind, 0) = 0
+              AND TRUNC(ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
+            GROUP BY ucracct_cust_code, ucracct_prem_code
+            HAVING COUNT(DISTINCT TRUNC(ubbbhst_printed_date)) >= 2
+            ORDER BY total DESC
+            FETCH FIRST 1 ROW ONLY
+            """;
+
+    public static final String SELECT_BILL_HISTORY_MAX_MONTHS_LAST_12 = """
+            SELECT COUNT(DISTINCT TRUNC(ubbbhst_printed_date))
+            FROM ubbbhst
+            WHERE ubbbhst_cust_code = ?
+              AND ubbbhst_prem_code = ?
+              AND NVL(ubbbhst_cancel_ind, 0) = 0
+              AND TRUNC(ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
+            """;
+
+    public static final String SELECT_BILL_HISTORY_ONE_CANDIDATES = """
+            SELECT a.ubbbhst_cust_code, a.ubbbhst_prem_code, a.ubbbhst_tran_num, a.ubbbhst_printed_date
+            FROM ubbbhst a,
+                 (SELECT bh.ubbbhst_cust_code, bh.ubbbhst_prem_code, MAX(bh.ubbbhst_tran_num) tranNum
+                  FROM ubbbhst bh
+                  WHERE bh.ubbbhst_ending_bal <> 0
+                  GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
+                  HAVING COUNT(1) = 1) b
+            WHERE a.ubbbhst_cust_code = b.ubbbhst_cust_code
+              AND a.ubbbhst_prem_code = b.ubbbhst_prem_code
+              AND a.ubbbhst_tran_num = b.trannum
+              AND TRUNC(a.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /**
+     * TC_72 (UpdatePaperlessCommunications) — ACTIVE account ineligible on BOTH channels, so an
+     * enroll of bill+corr returns 40291.
+     * <p>
+     * Deliberately a separate constant from {@link #SELECT_ACTIVE_ACCOUNT_NO_BANNER_EMAIL} even
+     * though the predicate matches today: that one is tuned for the eligibility suite's reason-code
+     * TCs, and the two were previously sharing a query through
+     * {@code DBAction.getBothChannelsIneligibleAccount()} delegating to
+     * {@code getActiveAccountWithNoBannerEmail()}. A change made for one suite silently moved the
+     * other. Keep them independent.
+     * <p>
+     * Ineligibility comes from having no active Banner email (reason code 1 on both channels);
+     * paper/NULL preferences keep it from being reason 2/3 instead, and the 7-digit customer code
+     * filter avoids legacy short codes the API rejects outright.
+     */
+    public static final String SELECT_TC_72_BOTH_CHANNELS_INELIGIBLE = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+            FROM UCRACCT a
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND LENGTH(a.UCRACCT_CUST_CODE) = 7
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM GZBEMCP e
+                  WHERE e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+                    AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                    AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC,
+                     a.UCRACCT_CUST_CODE,
+                     a.UCRACCT_PREM_CODE
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * Probe-and-retry pool for {@link #SELECT_ACTIVE_ACCOUNT_NO_BANNER_EMAIL}.
+     * <p>
+     * Must carry the same predicate and the same camelCase aliases as the single-row query —
+     * it previously selected any ACTIVE account (no email filter at all) and aliased
+     * {@code customer_code}/{@code premises_code}, which the setup helper's row reader cannot
+     * resolve, so every fallback row aborted the scenario.
+     */
+    public static final String SELECT_ACTIVE_ACCOUNT_NO_BANNER_EMAIL_CANDIDATES = """
+            SELECT
+                a.UCRACCT_CUST_CODE      AS customerCode,
+                a.UCRACCT_PREM_CODE      AS premisesCode,
+                a.UCRACCT_STATUS_IND     AS accountStatus,
+                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
+                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
+            FROM UCRACCT a
+            WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND LENGTH(a.UCRACCT_CUST_CODE) = 7
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM GZBEMCP e
+                  WHERE e.GZBEMCP_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+                    AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+                    AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC,
+                     a.UCRACCT_CUST_CODE,
+                     a.UCRACCT_PREM_CODE
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_TC236_INIT_CANDIDATES = """
+            SELECT
+                g.GTBENRL_CUST_CODE              AS customerCode,
+                g.GTBENRL_PREM_CODE              AS premisesCode,
+                g.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS gzbemcpEmail,
+                e.GZBEMCP_EFFECTIVE_DATE         AS gzbemcpEffectiveDate,
+                e.GZBEMCP_EXPIRATION_DATE        AS gzbemcpExpirationDate,
+                NVL(p.GZRPPTH_STATUS_CODE, 'N')  AS accountStatus,
+                NVL(p.GZRPPTH_BILL_PRES_TYPE, 'P') AS billPresType,
+                p.GZRPPTH_CORR_DEL_TYPE          AS correspondencePreference
+            FROM GTBENRL g
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = g.GTBENRL_CUST_CODE
+            LEFT JOIN GZRPPTH p
+                ON p.GZRPPTH_CUST_CODE = g.GTBENRL_CUST_CODE
+               AND p.GZRPPTH_PREM_CODE = g.GTBENRL_PREM_CODE
+            WHERE g.GTBENRL_PROC_FLAG = 'N'
+              AND LOWER(TRIM(g.GTBENRL_EMAIL)) = LOWER(TRIM(e.GZBEMCP_EMAIL_ADDR))
+              AND SYSDATE BETWEEN e.GZBEMCP_EFFECTIVE_DATE AND e.GZBEMCP_EXPIRATION_DATE
+              AND NOT EXISTS (
+                    SELECT 1
+                      FROM UCRACCT a
+                     WHERE a.UCRACCT_CUST_CODE = g.GTBENRL_CUST_CODE
+                       AND a.UCRACCT_PREM_CODE = g.GTBENRL_PREM_CODE
+                  )
+              AND NOT EXISTS (
+                    SELECT 1
+                      FROM UZBENRO u
+                     WHERE u.UZBENRO_CUST_CODE = g.GTBENRL_CUST_CODE
+                       AND u.UZBENRO_PREM_CODE = g.GTBENRL_PREM_CODE
+                       AND u.UZBENRO_ENRO_STATUS IN
+                           ('UDCS', 'GOOD', 'ENRO', 'ONMD', 'PRPY', 'CRDS')
+                  )
+              AND (p.GZRPPTH_CUST_CODE IS NULL OR p.GZRPPTH_STATUS_CODE = 'N')
+              AND NVL(p.GZRPPTH_BILL_PRES_TYPE, 'P') = 'P'
+              AND (p.GZRPPTH_CUST_CODE IS NULL OR p.GZRPPTH_PAPERLESS_CONF_DATE IS NULL)
+            ORDER BY g.GTBENRL_CUST_CODE DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_TC237_INIT_CANDIDATES = """
+            SELECT
+                g.GTBENRL_CUST_CODE              AS customerCode,
+                g.GTBENRL_PREM_CODE              AS premisesCode,
+                g.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS gzbemcpEmail,
+                e.GZBEMCP_EFFECTIVE_DATE         AS gzbemcpEffectiveDate,
+                e.GZBEMCP_EXPIRATION_DATE        AS gzbemcpExpirationDate,
+                NVL(p.GZRPPTH_STATUS_CODE, 'N')  AS accountStatus,
+                p.GZRPPTH_BILL_PRES_TYPE         AS billPresType,
+                NVL(p.GZRPPTH_CORR_DEL_TYPE, 'P') AS correspondencePreference
+            FROM GTBENRL g
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = g.GTBENRL_CUST_CODE
+            LEFT JOIN GZRPPTH p
+                ON p.GZRPPTH_CUST_CODE = g.GTBENRL_CUST_CODE
+               AND p.GZRPPTH_PREM_CODE = g.GTBENRL_PREM_CODE
+            WHERE g.GTBENRL_PROC_FLAG = 'N'
+              AND LOWER(TRIM(g.GTBENRL_EMAIL)) = LOWER(TRIM(e.GZBEMCP_EMAIL_ADDR))
+              AND SYSDATE BETWEEN e.GZBEMCP_EFFECTIVE_DATE AND e.GZBEMCP_EXPIRATION_DATE
+              AND NOT EXISTS (
+                    SELECT 1
+                      FROM UCRACCT a
+                     WHERE a.UCRACCT_CUST_CODE = g.GTBENRL_CUST_CODE
+                       AND a.UCRACCT_PREM_CODE = g.GTBENRL_PREM_CODE
+                  )
+              AND NOT EXISTS (
+                    SELECT 1
+                      FROM UZBENRO u
+                     WHERE u.UZBENRO_CUST_CODE = g.GTBENRL_CUST_CODE
+                       AND u.UZBENRO_PREM_CODE = g.GTBENRL_PREM_CODE
+                       AND u.UZBENRO_ENRO_STATUS IN
+                           ('UDCS', 'GOOD', 'ENRO', 'ONMD', 'PRPY', 'CRDS')
+                  )
+              AND (p.GZRPPTH_CUST_CODE IS NULL OR p.GZRPPTH_STATUS_CODE = 'N')
+              AND NVL(p.GZRPPTH_CORR_DEL_TYPE, 'P') = 'P'
+              AND (p.GZRPPTH_CUST_CODE IS NULL OR p.GZRPPTH_PAPERLESS_CORR_CONF_DT IS NULL)
+            ORDER BY g.GTBENRL_CUST_CODE DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_TC23X_GTBENRL_ACTIVE_GZBEMCP = """
+            SELECT
+                g.GTBENRL_CUST_CODE              AS customerCode,
+                g.GTBENRL_PREM_CODE              AS premisesCode,
+                g.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS gzbemcpEmail,
+                e.GZBEMCP_EFFECTIVE_DATE         AS gzbemcpEffectiveDate,
+                e.GZBEMCP_EXPIRATION_DATE        AS gzbemcpExpirationDate
+            FROM GTBENRL g
+            INNER JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = g.GTBENRL_CUST_CODE
+            WHERE g.GTBENRL_PROC_FLAG = 'N'
+              AND LOWER(TRIM(g.GTBENRL_EMAIL)) = LOWER(TRIM(e.GZBEMCP_EMAIL_ADDR))
+              AND SYSDATE BETWEEN e.GZBEMCP_EFFECTIVE_DATE AND e.GZBEMCP_EXPIRATION_DATE
+              AND NOT EXISTS (
+                    SELECT 1
+                      FROM UCRACCT a
+                     WHERE a.UCRACCT_CUST_CODE = g.GTBENRL_CUST_CODE
+                       AND a.UCRACCT_PREM_CODE = g.GTBENRL_PREM_CODE
+                  )
+              AND NOT EXISTS (
+                    SELECT 1
+                      FROM UZBENRO u
+                     WHERE u.UZBENRO_CUST_CODE = g.GTBENRL_CUST_CODE
+                       AND u.UZBENRO_PREM_CODE = g.GTBENRL_PREM_CODE
+                       AND u.UZBENRO_ENRO_STATUS IN
+                           ('UDCS', 'GOOD', 'ENRO', 'ONMD', 'PRPY', 'CRDS')
+                  )
+            ORDER BY g.GTBENRL_CUST_CODE DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_TC236_PAPER_GZRPPTH = """
+            SELECT 1 AS ok FROM dual WHERE 1 = 0
+            """;
+
+    public static final String SELECT_VERIFY_ACCOUNT_TC237_PAPER_GZRPPTH = """
+            SELECT 1 AS ok FROM dual WHERE 1 = 0
+            """;
+
+    public static final String UPDATE_TC23X_ACTIVATE_GZBEMCP_EMAIL_FOR_CUSTOMER = """
+            SELECT 1 FROM dual WHERE 1 = 0
+            """;
+
+    public static final String SELECT_TC23X_GZBEMCP_TEMPLATE_ROW = """
+            SELECT 1 AS ok FROM dual WHERE 1 = 0
+            """;
+
+    public static final String UPDATE_TC236_SEED_GZRPPTH_INITIATED_BILL = """
+            UPDATE GZRPPTH g
+            SET g.GZRPPTH_BILL_PRES_TYPE = 'E',
+                g.GZRPPTH_PAPERLESS_CONF_DATE = NULL
+            WHERE g.GZRPPTH_CUST_CODE = ?
+              AND g.GZRPPTH_PREM_CODE = ?
+            """;
+
+    public static final String UPDATE_TC237_SEED_GZRPPTH_INITIATED_CORR = """
+            UPDATE GZRPPTH g
+            SET g.GZRPPTH_CORR_DEL_TYPE = 'E',
+                g.GZRPPTH_PAPERLESS_CORR_CONF_DT = NULL
+            WHERE g.GZRPPTH_CUST_CODE = ?
+              AND g.GZRPPTH_PREM_CODE = ?
+            """;
+
+    /**
+     * TC_236/237 — pre-seed snapshot of EVERY GZRPPTH row for the account.
+     * <p>
+     * An account routinely carries several GZRPPTH rows (historical {@code STATUS_CODE='X'}
+     * alongside the current {@code 'N'}), and the Initiated seed above is not row-scoped — it
+     * rewrites all of them. The snapshot therefore has to be per-ROWID, or the restore would
+     * flatten every row to one row's values. Conf dates come back as YYYYMMDD strings to match
+     * the confirm-date TC pattern.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_TC23X_GZRPPTH_SNAPSHOT = """
+            SELECT
+                ROWIDTOCHAR(g.ROWID)                                 AS gzrppthRowId,
+                g.GZRPPTH_CUST_CODE                                  AS customerCode,
+                g.GZRPPTH_PREM_CODE                                  AS premisesCode,
+                g.GZRPPTH_STATUS_CODE                                AS accountStatus,
+                g.GZRPPTH_BILL_PRES_TYPE                             AS billPresType,
+                g.GZRPPTH_CORR_DEL_TYPE                              AS correspondencePreference,
+                TO_CHAR(g.GZRPPTH_PAPERLESS_CONF_DATE, 'YYYYMMDD')   AS billDeliveryConfirmDate,
+                TO_CHAR(g.GZRPPTH_PAPERLESS_CORR_CONF_DT, 'YYYYMMDD') AS corrDeliveryConfirmDate
+            FROM GZRPPTH g
+            WHERE g.GZRPPTH_CUST_CODE = ?
+              AND g.GZRPPTH_PREM_CODE = ?
+            ORDER BY g.GZRPPTH_STATUS_CODE, ROWIDTOCHAR(g.ROWID)
+            """;
+
+    /** TC_236 — revert one snapshotted row's bill pres type / conf date. */
+    public static final String RESTORE_TC23X_GZRPPTH_BILL = """
+            UPDATE GZRPPTH g
+            SET g.GZRPPTH_BILL_PRES_TYPE = ?,
+                g.GZRPPTH_PAPERLESS_CONF_DATE = TO_DATE(?, 'YYYYMMDD')
+            WHERE g.ROWID = CHARTOROWID(?)
+            """;
+
+    /** TC_237 — revert one snapshotted row's corr del type / conf date. */
+    public static final String RESTORE_TC23X_GZRPPTH_CORR = """
+            UPDATE GZRPPTH g
+            SET g.GZRPPTH_CORR_DEL_TYPE = ?,
+                g.GZRPPTH_PAPERLESS_CORR_CONF_DT = TO_DATE(?, 'YYYYMMDD')
+            WHERE g.ROWID = CHARTOROWID(?)
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_PLAN_PROBE_CANDIDATES = """
+            SELECT ucracct_cust_code AS customer_code, ucracct_prem_code AS premises_code
+            FROM ucracct
+            WHERE ucracct_status_ind = 'A'
+            FETCH FIRST 20 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_MULTIPLE_PLAN_PROBE_CANDIDATES =
+            SELECT_ACCOUNT_DETAILS_PLAN_PROBE_CANDIDATES;
+
+    public static final String SELECT_ACCOUNT_DETAILS_NON_GBP_PROBE_CANDIDATES =
+            SELECT_ACCOUNT_DETAILS_PLAN_PROBE_CANDIDATES;
+
+    public static final String SELECT_ACCOUNT_DETAILS_NO_PRICE_PROTECTION_PROBE_CANDIDATES =
+            SELECT_ACCOUNT_DETAILS_PLAN_PROBE_CANDIDATES;
 
     public static final String SELECT_BILL_HISTORY_ONE= """
             select * from ubbbhst a,         \s
@@ -4015,7 +4496,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 25 ROWS ONLY
             """;
 
-    public static final String SELECT_TC_80_NEW_ACCOUNT = """
+    public static final String SELECT_TC_80_NEW_ACCOUNT = withNewAccountNotEnrolledGuard("""
             SELECT
                 a.UCRACCT_CUST_CODE      AS customerCode,
                 a.UCRACCT_PREM_CODE      AS premisesCode,
@@ -4034,7 +4515,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     public static final String SELECT_ENROLLED_PAPERLESS= """
             WITH active_email AS (
@@ -4275,7 +4756,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     /** TC_96: NEW, bill paper (P), Banner email, never enrolled, no valid unused OCSEPCI token. */
-    public static final String SELECT_TC_96_NEW_NO_VALID_TOKEN = """
+    public static final String SELECT_TC_96_NEW_NO_VALID_TOKEN = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4326,10 +4807,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSTIMESTAMP, 'FF9')),
                      a.UCRACCT_ACTIVITY_DATE ASC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /** TC_98: NEW, both channels paper (P/P), Banner email, never enrolled, no valid unused OCSEPCI token. */
-    public static final String SELECT_TC_98_NEW_BOTH_CHANNELS_ELIGIBLE = """
+    public static final String SELECT_TC_98_NEW_BOTH_CHANNELS_ELIGIBLE = withNoGzrppthHistoryGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4383,10 +4864,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSTIMESTAMP, 'FF9')),
                      a.UCRACCT_ACTIVITY_DATE ASC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /** TC_80 / TC_98: NEW account, both channels paper, no valid unused OCSEPCI token. */
-    public static final String SELECT_TC_80_NEW_BOTH_CHANNELS_NO_VALID_TOKEN_CANDIDATES = """
+    public static final String SELECT_TC_80_NEW_BOTH_CHANNELS_NO_VALID_TOKEN_CANDIDATES = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4431,10 +4912,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSDATE, 'J')),
                 a.UCRACCT_ACTIVITY_DATE ASC
             FETCH FIRST 200 ROWS ONLY
-            """;
+            """);
 
     /** TC_80 strict: NEW both-channels eligible and never had any OCSEPCI row (true first-time enroll). */
-    public static final String SELECT_TC_80_NEW_NEVER_ENROLLED_CANDIDATES = """
+    public static final String SELECT_TC_80_NEW_NEVER_ENROLLED_CANDIDATES = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4479,10 +4960,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               )
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSDATE, 'J')), a.UCRACCT_ACTIVITY_DATE ASC
             FETCH FIRST 100 ROWS ONLY
-            """;
+            """);
 
     /** TC_80 strict single account: same eligibility as SELECT_TC_98_NEW_BOTH_CHANNELS_ELIGIBLE. */
-    public static final String SELECT_TC_80_NEW_NEVER_ENROLLED_STRICT = """
+    public static final String SELECT_TC_80_NEW_NEVER_ENROLLED_STRICT = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4528,10 +5009,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSTIMESTAMP, 'FF9')),
                      a.UCRACCT_ACTIVITY_DATE ASC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /** Same as SELECT_TC_80_NEW_NEVER_ENROLLED_STRICT but skips one customer/premises pair. */
-    public static final String SELECT_TC_80_NEW_NEVER_ENROLLED_EXCLUDING_ACCOUNT = """
+    public static final String SELECT_TC_80_NEW_NEVER_ENROLLED_EXCLUDING_ACCOUNT = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4578,7 +5059,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSTIMESTAMP, 'FF9')),
                      a.UCRACCT_ACTIVITY_DATE ASC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     public static final String SELECT_ANY_OCSEPCI_FOR_ACCOUNT = """
             SELECT
@@ -4602,7 +5083,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
-    public static final String SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT = """
+    public static final String SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4652,9 +5133,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSTIMESTAMP, 'FF9')),
                      t.OCSEPCI_ACTIVITY_DATE ASC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
-    public static final String SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT_SIMPLE = """
+    public static final String SELECT_TC_100_NEW_PENDING_BILL_ENROLLMENT_SIMPLE = withNewAccountNotEnrolledGuard("""
             SELECT
                 a.UCRACCT_CUST_CODE      AS customerCode,
                 a.UCRACCT_PREM_CODE      AS premisesCode,
@@ -4675,9 +5156,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               )
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
-    public static final String SELECT_TC_100_NEW_WITH_VALID_BILL_TOKEN = """
+    public static final String SELECT_TC_100_NEW_WITH_VALID_BILL_TOKEN = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4728,10 +5209,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
             ORDER BY t.OCSEPCI_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /** TC_104 fallback: NEW account with valid unused bill token; Banner email used for API (no token-email match). */
-    public static final String SELECT_TC_104_NEW_WITH_VALID_TOKEN_RELAXED = """
+    public static final String SELECT_TC_104_NEW_WITH_VALID_TOKEN_RELAXED = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -4782,7 +5263,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSTIMESTAMP, 'FF9')),
                      t.OCSEPCI_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     public static final String SELECT_CONFIRM_LATEST_VALID_TOKEN = """
             SELECT
@@ -5344,7 +5825,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     /** TC_106: NEW, bill paper, Banner email, expired or used token, no valid unused token. */
-    public static final String SELECT_TC_106_NEW_EXPIRED_OR_USED_TOKEN = """
+    public static final String SELECT_TC_106_NEW_EXPIRED_OR_USED_TOKEN = withNewAccountNotEnrolledGuard("""
             WITH active_email AS (
                 SELECT
                     g.GZBEMCP_CUST_CODE,
@@ -5391,7 +5872,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY ORA_HASH(a.UCRACCT_CUST_CODE || a.UCRACCT_PREM_CODE || TO_CHAR(SYSTIMESTAMP, 'FF9')),
                      a.UCRACCT_ACTIVITY_DATE ASC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /** TC_116: ACTIVE account with pending token whose OCSEPCI email differs from current Banner email. */
     public static final String SELECT_TC_116_ACTIVE_EMAIL_MISMATCH_PENDING = """
@@ -5664,6 +6145,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     /** ACTIVE account with no active email on file in GZBEMCP. */
+    /**
+     * TC_168/179-182A/191 — ACTIVE account with no active Banner email, so BOTH channels come
+     * back ineligible with reason code 1 ("Email Address is Not Present").
+     * <p>
+     * Preference must be paper/NULL on both channels: an enrolled (E) or Fiserv (F) account
+     * reports reason 2/3 instead of 1. Pending PPER is excluded because it flips the delivery
+     * option to I. Customer code is restricted to the canonical 7-digit format — shorter legacy
+     * codes exist on UAT and the API rejects them as an invalid customer code before eligibility
+     * is ever evaluated.
+     */
     public static final String SELECT_ACTIVE_ACCOUNT_NO_BANNER_EMAIL = """
             SELECT
                 a.UCRACCT_CUST_CODE      AS customerCode,
@@ -5673,6 +6164,9 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
             FROM UCRACCT a
             WHERE a.UCRACCT_STATUS_IND = 'A'
+              AND LENGTH(a.UCRACCT_CUST_CODE) = 7
+              AND NVL(a.UCRACCT_BILL_PRES_TYPE, 'P') = 'P'
+              AND NVL(a.UCRACCT_CORR_DEL_TYPE, 'P') = 'P'
               AND NOT EXISTS (
                   SELECT 1
                   FROM GZBEMCP e
@@ -5681,7 +6175,17 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                     AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
                     AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
               )
-            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC,
+                     a.UCRACCT_CUST_CODE,
+                     a.UCRACCT_PREM_CODE
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5696,7 +6200,22 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FROM UCRACCT a
             WHERE a.UCRACCT_STATUS_IND = 'A'
               AND a.UCRACCT_CORR_DEL_TYPE IS NULL
-            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+              AND LENGTH(a.UCRACCT_CUST_CODE) = 7
+              -- A pending PPER makes the API answer I, not the P this TC asserts. The fresh
+              -- enrollment pool matches NVL(corr,'P')='P', which includes NULL, so TC_195-197A
+              -- can enroll an account out of this very population and bump it to the top of
+              -- ACTIVITY_DATE DESC for the next run.
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC,
+                     a.UCRACCT_CUST_CODE,
+                     a.UCRACCT_PREM_CODE
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -5711,9 +6230,35 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FROM UCRACCT a
             WHERE a.UCRACCT_STATUS_IND = 'A'
               AND a.UCRACCT_BILL_PRES_TYPE IS NULL
-            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+              AND LENGTH(a.UCRACCT_CUST_CODE) = 7
+              -- See the corr variant: a pending PPER answers I, not the asserted P, and
+              -- TC_198-200A can enroll accounts out of this same NULL-preference population.
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = a.UCRACCT_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = a.UCRACCT_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC,
+                     a.UCRACCT_CUST_CODE,
+                     a.UCRACCT_PREM_CODE
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    /**
+     * TC_172 pool — probe-and-retry variant of {@link #SELECT_ACTIVE_ACCOUNT_NULL_CORR_PREFERENCE}.
+     * Declared after its source: these are runtime initializers, not compile-time constants.
+     */
+    public static final String SELECT_ACTIVE_ACCOUNT_NULL_CORR_PREFERENCE_CANDIDATES =
+            SELECT_ACTIVE_ACCOUNT_NULL_CORR_PREFERENCE
+                    .replace("FETCH FIRST 1 ROWS ONLY", "FETCH FIRST 25 ROWS ONLY");
+
+    /** TC_175 pool — probe-and-retry variant of {@link #SELECT_ACTIVE_ACCOUNT_NULL_BILL_PREFERENCE}. */
+    public static final String SELECT_ACTIVE_ACCOUNT_NULL_BILL_PREFERENCE_CANDIDATES =
+            SELECT_ACTIVE_ACCOUNT_NULL_BILL_PREFERENCE
+                    .replace("FETCH FIRST 1 ROWS ONLY", "FETCH FIRST 25 ROWS ONLY");
 
     /** ACTIVE account enrolled on Fiserv eBill (bill preference = F). */
     public static final String SELECT_ACTIVE_ACCOUNT_FISERV_BILL = """
@@ -5868,7 +6413,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     /** NEW account where Banner bill preference is NULL (TC_130 confirm preference update failure). */
-    public static final String SELECT_NEW_ACCOUNT_NULL_BILL_PREFERENCE = """
+    public static final String SELECT_NEW_ACCOUNT_NULL_BILL_PREFERENCE = withNewAccountNotEnrolledGuard("""
             SELECT
                 a.UCRACCT_CUST_CODE      AS customerCode,
                 a.UCRACCT_PREM_CODE      AS premisesCode,
@@ -5886,7 +6431,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /** NEW account where Banner bill preference is explicitly paper ('P') on GZRPPTH (not NULL default). */
     public static final String SELECT_NEW_ACCOUNT_PAPER_BILL_PREFERENCE = """
@@ -6045,7 +6590,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             """;
 
     /** NEW account with unconfirmed electronic bill preference (pending enrollment). */
-    public static final String SELECT_NEW_ACCOUNT_UNCONFIRMED_BILL_PREFERENCE = """
+    public static final String SELECT_NEW_ACCOUNT_UNCONFIRMED_BILL_PREFERENCE = withNewAccountNotEnrolledGuard("""
             SELECT
                 a.UCRACCT_CUST_CODE      AS customerCode,
                 a.UCRACCT_PREM_CODE      AS premisesCode,
@@ -6066,13 +6611,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               )
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /**
      * NEW account with unconfirmed electronic bill preference and no active PPER row.
      * Preference E is present on an expired/unused OCSEPCI row (confirmation date not populated).
      */
-    public static final String SELECT_NEW_ACCOUNT_EXPIRED_UNCONFIRMED_BILL_PREFERENCE = """
+    public static final String SELECT_NEW_ACCOUNT_EXPIRED_UNCONFIRMED_BILL_PREFERENCE = withNewAccountNotEnrolledGuard("""
             SELECT
                 a.UCRACCT_CUST_CODE      AS customerCode,
                 a.UCRACCT_PREM_CODE      AS premisesCode,
@@ -6101,10 +6646,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               )
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 1 ROWS ONLY
-            """;
+            """);
 
     /** NEW accounts with expired unconfirmed bill preference and no active PPER (TC_201 probing). */
-    public static final String SELECT_LIST_NEW_ACCOUNTS_EXPIRED_UNCONFIRMED_BILL = """
+    public static final String SELECT_LIST_NEW_ACCOUNTS_EXPIRED_UNCONFIRMED_BILL = withNewAccountNotEnrolledGuard("""
             SELECT
                 a.UCRACCT_CUST_CODE      AS customerCode,
                 a.UCRACCT_PREM_CODE      AS premisesCode,
@@ -6133,22 +6678,65 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               )
             ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
             FETCH FIRST 25 ROWS ONLY
-            """;
+            """);
 
     /** NEW account with confirmed electronic bill preference. */
+    /**
+     * TC_204 — NEW account whose bill paperless enrollment is CONFIRMED, so the API answers
+     * {@code billDeliveryOption=E}.
+     * <p>
+     * Modelled on GZRPPTH rather than UCRACCT: for a NEW account the UCRACCT preference columns
+     * are not authoritative, so {@code UCRACCT_BILL_PRES_TYPE='E'} neither guarantees nor is
+     * required for the API to report E. This mirrors the sibling
+     * {@link #SELECT_NEW_ACCOUNT_PAPER_BILL_PREFERENCE} (TC_205) so both TCs draw from the same
+     * GZRPPTH-only NEW population and differ only in preference state — previously they read
+     * disjoint populations.
+     * <p>
+     * Confirmed is {@code BILL_PRES_TYPE='E'} WITH a confirmation date; the same flag with a NULL
+     * date is Initiated and the API answers I instead, which is the TC_198 case, not this one.
+     */
     public static final String SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE = """
             SELECT
-                a.UCRACCT_CUST_CODE      AS customerCode,
-                a.UCRACCT_PREM_CODE      AS premisesCode,
-                a.UCRACCT_STATUS_IND     AS accountStatus,
-                a.UCRACCT_BILL_PRES_TYPE AS billDeliveryOption,
-                a.UCRACCT_CORR_DEL_TYPE  AS corrDeliveryOption
-            FROM UCRACCT a
-            WHERE a.UCRACCT_STATUS_IND = 'N'
-              AND a.UCRACCT_BILL_PRES_TYPE = 'E'
-            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+                g.GZRPPTH_CUST_CODE              AS customerCode,
+                g.GZRPPTH_PREM_CODE              AS premisesCode,
+                g.GZRPPTH_STATUS_CODE            AS accountStatus,
+                g.GZRPPTH_BILL_PRES_TYPE         AS billDeliveryOption,
+                g.GZRPPTH_BILL_PRES_TYPE         AS bannerBillPreference,
+                g.GZRPPTH_CORR_DEL_TYPE          AS corrDeliveryOption,
+                TO_CHAR(g.GZRPPTH_PAPERLESS_CONF_DATE, 'YYYYMMDD') AS billDeliveryConfirmDate,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail
+            FROM GZRPPTH g
+            LEFT JOIN UCRACCT a
+                ON a.UCRACCT_CUST_CODE = g.GZRPPTH_CUST_CODE
+               AND a.UCRACCT_PREM_CODE = g.GZRPPTH_PREM_CODE
+            LEFT JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = g.GZRPPTH_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND (e.GZBEMCP_EXPIRATION_DATE IS NULL OR e.GZBEMCP_EXPIRATION_DATE >= SYSDATE)
+            WHERE g.GZRPPTH_STATUS_CODE = 'N'
+              AND g.GZRPPTH_BILL_PRES_TYPE = 'E'
+              AND g.GZRPPTH_PAPERLESS_CONF_DATE IS NOT NULL
+              AND a.UCRACCT_CUST_CODE IS NULL
+              -- A pending PPER would override the confirmed preference back to I.
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = g.GZRPPTH_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = g.GZRPPTH_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY g.GZRPPTH_PAPERLESS_CONF_DATE DESC,
+                     g.GZRPPTH_CUST_CODE DESC,
+                     g.GZRPPTH_PREM_CODE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    /** TC_204 pool — probe-and-retry variant of {@link #SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE}. */
+    public static final String SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE_CANDIDATES =
+            SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE
+                    .replace("FETCH FIRST 1 ROWS ONLY", "FETCH FIRST 25 ROWS ONLY");
 
     /** VerifyAccount: account with active UCRADDR street fields + Banner email for email verify. */
     public static final String SELECT_VERIFY_ACCOUNT_WITH_UCRADDR_STREET = """
@@ -6232,7 +6820,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND addr.UCRADDR_CITY IS NOT NULL
               AND addr.UCRADDR_STAT_CODE IS NOT NULL
               AND addr.UCRADDR_ZIP IS NOT NULL
-            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC
+            -- Stable tie-break: ACTIVITY_DATE alone left the pool order (and therefore the
+            -- selected account + its expected values) drifting between runs on shared UAT.
+            ORDER BY a.UCRACCT_ACTIVITY_DATE DESC,
+                     a.UCRACCT_CUST_CODE,
+                     a.UCRACCT_PREM_CODE,
+                     addr.UCRADDR_STREET_NUMBER,
+                     addr.UCRADDR_STREET_NAME
             FETCH FIRST 40 ROWS ONLY
             """;
 
@@ -6300,7 +6894,14 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                  OR NVL(b.GTBENRL_BILL_STATE, ' ') <> NVL(b.GTBENRL_SERV_STATE, ' ')
                  OR NVL(b.GTBENRL_BILL_ZIP, ' ') <> NVL(b.GTBENRL_SERV_ZIP, ' ')
               )
-            FETCH FIRST 5 ROWS ONLY
+            -- Candidates whose BILL_ADDR1 Element 1 is numeric come first: TC_229 asserts
+            -- billingStreetNumber off that element, so the rest can never satisfy it.
+            -- Deterministic tie-break — this query previously had no ORDER BY at all, so the
+            -- 5 rows it returned were whatever Oracle happened to produce.
+            ORDER BY CASE WHEN REGEXP_LIKE(b.GTBENRL_BILL_ADDR1, '^[0-9]+~') THEN 0 ELSE 1 END,
+                     b.GTBENRL_CUST_CODE,
+                     b.GTBENRL_PREM_CODE
+            FETCH FIRST 40 ROWS ONLY
             """;
 
     /**
@@ -6649,6 +7250,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
     /**
      * TC_230–231 / TC_234 — NEW GZRPPTH with bill PaperlessConfDate
      * (and bill_pres_type='E' for confirmed preference TC_234).
+     * Candidate pool (probe-and-retry): prefer GTBENRL email (PEW-stable) over GZBEMCP.
      */
     public static final String SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_BILL = """
             SELECT
@@ -6659,8 +7261,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 g.GZRPPTH_CORR_DEL_TYPE          AS correspondencePreference,
                 TO_CHAR(g.GZRPPTH_PAPERLESS_CONF_DATE, 'YYYYMMDD') AS billDeliveryConfirmDate,
                 TO_CHAR(g.GZRPPTH_PAPERLESS_CORR_CONF_DT, 'YYYYMMDD') AS corrDeliveryConfirmDate,
-                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail
+                b.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) AS preferredEmail
             FROM GZRPPTH g
+            LEFT JOIN GTBENRL b
+                ON b.GTBENRL_CUST_CODE = g.GZRPPTH_CUST_CODE
+               AND b.GTBENRL_PREM_CODE = g.GZRPPTH_PREM_CODE
             LEFT JOIN GZBEMCP e
                 ON e.GZBEMCP_CUST_CODE = g.GZRPPTH_CUST_CODE
                AND e.GZBEMCP_ACCOUNT_IND = 'Y'
@@ -6669,13 +7276,17 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE g.GZRPPTH_STATUS_CODE = 'N'
               AND g.GZRPPTH_PAPERLESS_CONF_DATE IS NOT NULL
               AND g.GZRPPTH_BILL_PRES_TYPE = 'E'
-            ORDER BY g.GZRPPTH_PAPERLESS_CONF_DATE DESC
-            FETCH FIRST 1 ROWS ONLY
+              AND NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) IS NOT NULL
+            ORDER BY
+                CASE WHEN b.GTBENRL_EMAIL IS NOT NULL THEN 0 ELSE 1 END,
+                g.GZRPPTH_PAPERLESS_CONF_DATE DESC
+            FETCH FIRST 40 ROWS ONLY
             """;
 
     /**
      * TC_232–233 / TC_235 — NEW GZRPPTH with correspondence PaperlessCorrConfDate
      * (and corr_del_type='E' for confirmed preference TC_235).
+     * Candidate pool (probe-and-retry): prefer GTBENRL email (PEW-stable) over GZBEMCP.
      */
     public static final String SELECT_VERIFY_ACCOUNT_NEW_CONFIRMED_CORR = """
             SELECT
@@ -6686,8 +7297,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 g.GZRPPTH_CORR_DEL_TYPE          AS correspondencePreference,
                 TO_CHAR(g.GZRPPTH_PAPERLESS_CONF_DATE, 'YYYYMMDD') AS billDeliveryConfirmDate,
                 TO_CHAR(g.GZRPPTH_PAPERLESS_CORR_CONF_DT, 'YYYYMMDD') AS corrDeliveryConfirmDate,
-                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail
+                b.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) AS preferredEmail
             FROM GZRPPTH g
+            LEFT JOIN GTBENRL b
+                ON b.GTBENRL_CUST_CODE = g.GZRPPTH_CUST_CODE
+               AND b.GTBENRL_PREM_CODE = g.GZRPPTH_PREM_CODE
             LEFT JOIN GZBEMCP e
                 ON e.GZBEMCP_CUST_CODE = g.GZRPPTH_CUST_CODE
                AND e.GZBEMCP_ACCOUNT_IND = 'Y'
@@ -6696,8 +7312,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE g.GZRPPTH_STATUS_CODE = 'N'
               AND g.GZRPPTH_PAPERLESS_CORR_CONF_DT IS NOT NULL
               AND g.GZRPPTH_CORR_DEL_TYPE = 'E'
-            ORDER BY g.GZRPPTH_PAPERLESS_CORR_CONF_DT DESC
-            FETCH FIRST 1 ROWS ONLY
+              AND NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) IS NOT NULL
+            ORDER BY
+                CASE WHEN b.GTBENRL_EMAIL IS NOT NULL THEN 0 ELSE 1 END,
+                g.GZRPPTH_PAPERLESS_CORR_CONF_DT DESC
+            FETCH FIRST 40 ROWS ONLY
             """;
 
     /**
@@ -6753,6 +7372,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
 
     /**
      * TC_238 — NEW GZRPPTH not enrolled for bill paperless ⇒ BillPresType P.
+     * Candidate pool requiring resolvable email (empty-email VerifyAccount → unstable 302).
      */
     public static final String SELECT_VERIFY_ACCOUNT_NEW_PAPER_BILL = """
             SELECT
@@ -6761,8 +7381,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 g.GZRPPTH_STATUS_CODE            AS accountStatus,
                 NVL(g.GZRPPTH_BILL_PRES_TYPE, 'P') AS billPresType,
                 g.GZRPPTH_CORR_DEL_TYPE          AS correspondencePreference,
-                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail
+                b.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) AS preferredEmail
             FROM GZRPPTH g
+            LEFT JOIN GTBENRL b
+                ON b.GTBENRL_CUST_CODE = g.GZRPPTH_CUST_CODE
+               AND b.GTBENRL_PREM_CODE = g.GZRPPTH_PREM_CODE
             LEFT JOIN GZBEMCP e
                 ON e.GZBEMCP_CUST_CODE = g.GZRPPTH_CUST_CODE
                AND e.GZBEMCP_ACCOUNT_IND = 'Y'
@@ -6770,12 +7395,16 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                AND SYSDATE BETWEEN e.GZBEMCP_EFFECTIVE_DATE AND e.GZBEMCP_EXPIRATION_DATE
             WHERE g.GZRPPTH_STATUS_CODE = 'N'
               AND NVL(g.GZRPPTH_BILL_PRES_TYPE, 'P') = 'P'
-            ORDER BY g.GZRPPTH_CUST_CODE DESC
-            FETCH FIRST 1 ROWS ONLY
+              AND NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) IS NOT NULL
+            ORDER BY
+                CASE WHEN b.GTBENRL_EMAIL IS NOT NULL THEN 0 ELSE 1 END,
+                g.GZRPPTH_CUST_CODE DESC
+            FETCH FIRST 40 ROWS ONLY
             """;
 
     /**
      * TC_239 — NEW GZRPPTH not enrolled for correspondence paperless ⇒ CorrespondencePreference P.
+     * Candidate pool requiring resolvable email (empty-email VerifyAccount → unstable 302).
      */
     public static final String SELECT_VERIFY_ACCOUNT_NEW_PAPER_CORR = """
             SELECT
@@ -6784,8 +7413,13 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 g.GZRPPTH_STATUS_CODE            AS accountStatus,
                 g.GZRPPTH_BILL_PRES_TYPE         AS billPresType,
                 NVL(g.GZRPPTH_CORR_DEL_TYPE, 'P') AS correspondencePreference,
-                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail
+                b.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) AS preferredEmail
             FROM GZRPPTH g
+            LEFT JOIN GTBENRL b
+                ON b.GTBENRL_CUST_CODE = g.GZRPPTH_CUST_CODE
+               AND b.GTBENRL_PREM_CODE = g.GZRPPTH_PREM_CODE
             LEFT JOIN GZBEMCP e
                 ON e.GZBEMCP_CUST_CODE = g.GZRPPTH_CUST_CODE
                AND e.GZBEMCP_ACCOUNT_IND = 'Y'
@@ -6793,8 +7427,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                AND SYSDATE BETWEEN e.GZBEMCP_EFFECTIVE_DATE AND e.GZBEMCP_EXPIRATION_DATE
             WHERE g.GZRPPTH_STATUS_CODE = 'N'
               AND NVL(g.GZRPPTH_CORR_DEL_TYPE, 'P') = 'P'
-            ORDER BY g.GZRPPTH_CUST_CODE DESC
-            FETCH FIRST 1 ROWS ONLY
+              AND NVL(b.GTBENRL_EMAIL, e.GZBEMCP_EMAIL_ADDR) IS NOT NULL
+            ORDER BY
+                CASE WHEN b.GTBENRL_EMAIL IS NOT NULL THEN 0 ELSE 1 END,
+                g.GZRPPTH_CUST_CODE DESC
+            FETCH FIRST 40 ROWS ONLY
             """;
 
     /**
@@ -6875,6 +7512,98 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND u.UCRACCT_CUST_CODE IS NULL
             ORDER BY o.OCSEPCI_EMAIL_EXP_DATE DESC
             FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /**
+     * TC_240 — candidate pool for expired unconfirmed bill PPER ⇒ BillPresType P.
+     * Same preconditions as {@link #SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_BILL}, but returns a pool
+     * and requires a resolvable email (empty-email VerifyAccount → unstable 302), so the setup
+     * helper can probe-and-retry instead of betting the TC on one blind row.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_BILL_CANDIDATES = """
+            SELECT
+                o.OCSEPCI_CUST_CODE              AS customerCode,
+                o.OCSEPCI_PREM_CODE              AS premisesCode,
+                g.GZRPPTH_STATUS_CODE            AS accountStatus,
+                NVL(g.GZRPPTH_BILL_PRES_TYPE, 'P') AS billPresType,
+                g.GZRPPTH_CORR_DEL_TYPE          AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_EMAIL_ADDR             AS ocsepciEmail,
+                b.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                NVL(NVL(b.GTBENRL_EMAIL, o.OCSEPCI_EMAIL_ADDR), e.GZBEMCP_EMAIL_ADDR) AS preferredEmail
+            FROM OCSEPCI o
+            INNER JOIN GZRPPTH g
+                ON g.GZRPPTH_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND g.GZRPPTH_PREM_CODE = o.OCSEPCI_PREM_CODE
+            INNER JOIN GTBENRL b
+                ON b.GTBENRL_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND b.GTBENRL_PREM_CODE = o.OCSEPCI_PREM_CODE
+            LEFT JOIN UCRACCT u
+                ON u.UCRACCT_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND u.UCRACCT_PREM_CODE = o.OCSEPCI_PREM_CODE
+            LEFT JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND SYSDATE BETWEEN e.GZBEMCP_EFFECTIVE_DATE AND e.GZBEMCP_EXPIRATION_DATE
+            WHERE o.OCSEPCI_BILL_PRES_TYPE = 'E'
+              AND o.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              AND o.OCSEPCI_EMAIL_EXP_DATE < SYSDATE
+              AND o.OCSEPCI_CONF_STATUS = 0
+              AND g.GZRPPTH_STATUS_CODE = 'N'
+              AND g.GZRPPTH_BILL_PRES_TYPE = 'P'
+              AND u.UCRACCT_CUST_CODE IS NULL
+              AND NVL(NVL(b.GTBENRL_EMAIL, o.OCSEPCI_EMAIL_ADDR), e.GZBEMCP_EMAIL_ADDR) IS NOT NULL
+            ORDER BY
+                CASE WHEN b.GTBENRL_EMAIL IS NOT NULL THEN 0 ELSE 1 END,
+                o.OCSEPCI_CUST_CODE DESC,
+                o.OCSEPCI_PREM_CODE DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /**
+     * TC_241 — candidate pool for expired unconfirmed correspondence PPER ⇒
+     * CorrespondencePreference P. Pool + email guarantee, see the bill variant above.
+     */
+    public static final String SELECT_VERIFY_ACCOUNT_NEW_EXPIRED_CORR_CANDIDATES = """
+            SELECT
+                o.OCSEPCI_CUST_CODE              AS customerCode,
+                o.OCSEPCI_PREM_CODE              AS premisesCode,
+                g.GZRPPTH_STATUS_CODE            AS accountStatus,
+                g.GZRPPTH_BILL_PRES_TYPE         AS billPresType,
+                NVL(g.GZRPPTH_CORR_DEL_TYPE, 'P') AS correspondencePreference,
+                e.GZBEMCP_EMAIL_ADDR             AS bannerEmail,
+                o.OCSEPCI_EMAIL_ADDR             AS ocsepciEmail,
+                b.GTBENRL_EMAIL                  AS gtbenrlEmail,
+                NVL(NVL(b.GTBENRL_EMAIL, o.OCSEPCI_EMAIL_ADDR), e.GZBEMCP_EMAIL_ADDR) AS preferredEmail
+            FROM OCSEPCI o
+            INNER JOIN GZRPPTH g
+                ON g.GZRPPTH_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND g.GZRPPTH_PREM_CODE = o.OCSEPCI_PREM_CODE
+            INNER JOIN GTBENRL b
+                ON b.GTBENRL_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND b.GTBENRL_PREM_CODE = o.OCSEPCI_PREM_CODE
+            LEFT JOIN UCRACCT u
+                ON u.UCRACCT_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND u.UCRACCT_PREM_CODE = o.OCSEPCI_PREM_CODE
+            LEFT JOIN GZBEMCP e
+                ON e.GZBEMCP_CUST_CODE = o.OCSEPCI_CUST_CODE
+               AND e.GZBEMCP_ACCOUNT_IND = 'Y'
+               AND e.GZBEMCP_EMAIL_ADDR IS NOT NULL
+               AND SYSDATE BETWEEN e.GZBEMCP_EFFECTIVE_DATE AND e.GZBEMCP_EXPIRATION_DATE
+            WHERE o.OCSEPCI_CORR_DEL_TYPE = 'E'
+              AND o.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              AND o.OCSEPCI_EMAIL_EXP_DATE < SYSDATE
+              AND o.OCSEPCI_CONF_STATUS = 0
+              AND g.GZRPPTH_STATUS_CODE = 'N'
+              AND g.GZRPPTH_CORR_DEL_TYPE = 'P'
+              AND u.UCRACCT_CUST_CODE IS NULL
+              AND NVL(NVL(b.GTBENRL_EMAIL, o.OCSEPCI_EMAIL_ADDR), e.GZBEMCP_EMAIL_ADDR) IS NOT NULL
+            ORDER BY
+                CASE WHEN b.GTBENRL_EMAIL IS NOT NULL THEN 0 ELSE 1 END,
+                o.OCSEPCI_CUST_CODE DESC,
+                o.OCSEPCI_PREM_CODE DESC
+            FETCH FIRST 40 ROWS ONLY
             """;
 
     /** VerifyAccount TC_230 fallback: ACTIVE expired unconfirmed bill PPER → BillPresType=P. */
@@ -8169,6 +8898,167 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 t1.ucracct_cust_code DESC
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    /**
+     * TC_175 candidate pool (probe-and-retry).
+     * <p>
+     * The single-row variant above guarantees only that the account has more than one active
+     * UCRSCMP row - it does not guarantee GetAccountInfo returns more than one entry in
+     * {@code data.pricePlans}, which is what the TC asserts. Combined with
+     * {@code ORDER BY ucracct_cust_code DESC}, which tracks the newest account code and therefore
+     * moves as accounts are created, one blind pick can hand the TC an account the API reports a
+     * single plan for. Return a pool so the helper can probe until the API agrees.
+     * <p>
+     * DISTINCT because the UCRSCMP join multiplies rows per account.
+     */
+    /**
+     * TC_154 candidate pool (probe-and-retry).
+     * <p>
+     * Predicate is deliberately identical to the single-row seed: UAT currently holds exactly one
+     * account with a null GZBEMCP partner indicator, and every relaxation measured returns FEWER
+     * rows (adding ucracct_status_ind='A' returns zero - the sole qualifying account is INACTIVE).
+     * The pool therefore adds a deterministic ORDER BY plus room to grow; the probe verifies the
+     * API actually answers partnerPromotionsIndicator=N rather than trusting the DB shape.
+     */
+    public static final String SELECT_ACCOUNT_DETAILS_TC153_CANDIDATES = """
+            SELECT
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                a.ucracct_status_ind
+            FROM ucracct a
+            WHERE a.ucracct_cust_code IN (
+                SELECT gzbemcp_cust_code
+                FROM gzbemcp g
+                WHERE g.gzbemcp_partner_ind IS NULL
+                GROUP BY gzbemcp_cust_code
+                HAVING COUNT(*) = 1
+            )
+            ORDER BY a.ucracct_cust_code DESC, a.ucracct_prem_code DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    /**
+     * TC_157 candidate pool (probe-and-retry). Same reasoning as TC_153 above - the sole
+     * qualifying account is INACTIVE and adding a status filter empties the pool.
+     */
+    public static final String SELECT_ACCOUNT_DETAILS_TC156_CANDIDATES = """
+            SELECT
+                a.ucracct_cust_code,
+                a.ucracct_prem_code,
+                a.ucracct_status_ind
+            FROM ucracct a
+            WHERE a.ucracct_cust_code IN (
+                SELECT gzbemcp_cust_code
+                FROM gzbemcp g
+                WHERE g.GZBEMCP_MARKETING_IND IS NULL
+                GROUP BY gzbemcp_cust_code
+                HAVING COUNT(*) >= 1
+            )
+            ORDER BY a.ucracct_cust_code DESC, a.ucracct_prem_code DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    /** TC_166 candidate pool (probe-and-retry): ACTIVE account with no UCRSCMP rows at all. */
+    public static final String SELECT_ACCOUNT_DETAILS_TC165_CANDIDATES = """
+            SELECT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code
+            FROM ucracct t1
+            JOIN ucbcust t2
+                ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN ucrserv t3
+                ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+               AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            WHERE t1.ucracct_status_ind = 'A'
+              AND t1.ucracct_cycl_code NOT IN ('DEPO')
+              AND t3.ucrserv_scls_code = 'RS'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM ucrscmp t4
+                  WHERE t4.ucrscmp_cust_code = t1.ucracct_cust_code
+                    AND t4.ucrscmp_prem_code = t1.ucracct_prem_code
+              )
+            ORDER BY t1.ucracct_cust_code DESC, t1.ucracct_prem_code DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    /**
+     * TC_174 candidate pool (probe-and-retry): exactly one active UCRSCMP row.
+     * DISTINCT because the UCRSCMP join multiplies rows per account.
+     */
+    public static final String SELECT_ACCOUNT_DETAILS_TC173_CANDIDATES = """
+            SELECT DISTINCT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code
+            FROM ucracct t1
+            JOIN ucbcust t2
+                ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN ucrserv t3
+                ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+               AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN ucrscmp t4
+                ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+               AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE t1.ucracct_status_ind = 'A'
+              AND t1.ucracct_cycl_code NOT IN ('DEPO')
+              AND t3.ucrserv_scls_code = 'RS'
+              AND t4.ucrscmp_end_date > SYSDATE
+              AND (
+                    t4.ucrscmp_plan_code IN ('RGB','CGB','GB6','PGB')
+                 OR t4.ucrscmp_plan_code IN ('CCV','CSV')
+              )
+              AND (t1.ucracct_cust_code, t1.ucracct_prem_code) IN (
+                  SELECT ucrscmp_cust_code, ucrscmp_prem_code
+                  FROM ucrscmp
+                  WHERE ucrscmp_end_date > SYSDATE
+                  GROUP BY ucrscmp_cust_code, ucrscmp_prem_code
+                  HAVING COUNT(*) = 1
+              )
+            ORDER BY t1.ucracct_cust_code DESC, t1.ucracct_prem_code DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
+    public static final String SELECT_ACCOUNT_DETAILS_TC174_CANDIDATES = """
+            SELECT DISTINCT
+                t1.ucracct_cust_code,
+                t1.ucracct_prem_code
+            FROM
+                ucracct t1
+            JOIN
+                ucbcust t2
+                    ON t1.ucracct_cust_code = t2.ucbcust_cust_code
+            JOIN
+                ucrserv t3
+                    ON t1.ucracct_cust_code = t3.ucrserv_cust_code
+                   AND t1.ucracct_prem_code = t3.ucrserv_prem_code
+            JOIN
+                ucrscmp t4
+                    ON t1.ucracct_cust_code = t4.ucrscmp_cust_code
+                   AND t1.ucracct_prem_code = t4.ucrscmp_prem_code
+            WHERE
+                t1.ucracct_status_ind = 'A'
+                AND t1.ucracct_cycl_code NOT IN ('DEPO')
+                AND t3.ucrserv_scls_code = 'RS'
+                AND t4.ucrscmp_end_date > SYSDATE
+                AND (t1.ucracct_cust_code, t1.ucracct_prem_code) IN (
+                    SELECT
+                        ucrscmp_cust_code,
+                        ucrscmp_prem_code
+                    FROM
+                        ucrscmp
+                    WHERE
+                        ucrscmp_end_date > SYSDATE
+                    GROUP BY
+                        ucrscmp_cust_code,
+                        ucrscmp_prem_code
+                    HAVING COUNT(*) > 1
+                )
+            ORDER BY
+                t1.ucracct_cust_code DESC,
+                t1.ucracct_prem_code DESC
+            FETCH FIRST 25 ROWS ONLY
+            """;
+
 
     public static final String SELECT_ACCOUNT_DETAILS_TC175= """
             SELECT \s
@@ -10415,6 +11305,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                  FROM GZBRWDS
                  WHERE GZBRWDS_CNCL_DATE IS NULL
                  AND GZBRWDS_FULFILL_DATE IS NULL\s
+                 ORDER BY GZBRWDS_CUST_CODE DESC, GZBRWDS_PREM_CODE DESC, GZBRWDS_REWARD_ID
                 FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -10424,6 +11315,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                              FROM GZBPRWD
                              WHERE GZBPRWD_CNCL_DATE IS NULL
                              AND GZBPRWD_ESTAB_DATE IS NULL\s
+                             ORDER BY GZBPRWD_CUST_CODE DESC, GZBPRWD_PREM_CODE DESC, GZBPRWD_REWARD_ID
                             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -10433,6 +11325,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                  WHERE GZBRWDS_CNCL_DATE IS NULL
                  AND GZBRWDS_FULFILL_DATE IS NULL\s
                  AND GZBRWDS_REWARD_ID=2
+                 ORDER BY GZBRWDS_CUST_CODE DESC, GZBRWDS_PREM_CODE DESC
                 FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -10442,6 +11335,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                              WHERE GZBPRWD_CNCL_DATE IS NULL
                              AND GZBPRWD_ESTAB_DATE IS NULL\s
                              AND GZBPRWD_REWARD_ID= 2
+                             ORDER BY GZBPRWD_CUST_CODE DESC, GZBPRWD_PREM_CODE DESC
                         FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -10470,6 +11364,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                     WHERE p.GZBPRWD_CUST_CODE = a.UCRACCT_CUST_CODE
                       AND p.GZBPRWD_PREM_CODE = a.UCRACCT_PREM_CODE
               )
+            ORDER BY a.UCRACCT_CUST_CODE DESC, a.UCRACCT_PREM_CODE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -10485,6 +11380,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                                           AND A.GZBRWDS_FULFILL_DATE IS NULL
                                           AND P.GZBPRWD_CNCL_DATE IS NULL
                                           AND P.GZBPRWD_ESTAB_DATE IS NULL
+                                        ORDER BY A.GZBRWDS_CUST_CODE DESC, A.GZBRWDS_PREM_CODE DESC
                                         FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -12921,268 +13817,213 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY h.paymentdate DESC
     """;
 
+    /** SP_GET_BILL_HISTORY approximation. numberOfMonths is a lookback window, not a bill count. */
     public static final String GET_BILL_HISTORY = """
-        WITH params AS (
-            SELECT ADD_MONTHS(TRUNC(SYSDATE), -24) AS win_start,
-                   TRUNC(SYSDATE)                 AS win_end
+        WITH
+        params AS (
+            SELECT
+                ? AS cust_code,
+                ? AS prem_code,
+                ? AS v_max_months
             FROM dual
         ),
-        bhst AS (
-            SELECT h.*
-            FROM UBBBHST h
+        bills_data AS (
+            SELECT
+                bh.ubbbhst_tran_num AS billHistoryTransactionNumber,
+                bh.ubbbhst_cust_code,
+                bh.ubbbhst_prem_code,
+                bh.ubbbhst_printed_date AS billDate,
+                NVL(bh.ubbbhst_prev_bal, 0)
+                    - NVL(bh.ubbbhst_payments, 0) AS balanceBroughtForward
+            FROM ubbbhst bh
             CROSS JOIN params p
-            WHERE h.ubbbhst_cust_code    = ?
-              AND h.ubbbhst_prem_code    = ?
-              AND h.ubbbhst_printed_date >= p.win_start
-              AND h.ubbbhst_printed_date <  p.win_end + 1
-              AND NVL(h.ubbbhst_cancel_ind, 0) = 0
-              AND EXISTS (
-                    SELECT /*+ NO_UNNEST */ 1
-                    FROM UABOPEN o
-                    WHERE o.uabopen_bhst_tran_num = h.ubbbhst_tran_num
-                    AND ROWNUM = 1
-              )
+            WHERE bh.ubbbhst_cust_code = p.cust_code
+              AND bh.ubbbhst_prem_code = p.prem_code
+              AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+              AND TRUNC(bh.ubbbhst_printed_date)
+                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
+              AND (
+                    bh.ubbbhst_ending_bal <> 0
+                    OR EXISTS (
+                        SELECT 1
+                        FROM uabopen o
+                        WHERE o.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
+                          AND NVL(o.uabopen_billed_chg, 0) <> 0
+                          AND o.uabopen_chrg_calc_num IS NOT NULL
+                    )
+                  )
         ),
-        bhst_cnt AS (
-            SELECT COUNT(*) AS no_of_matches FROM bhst
+        service_hist AS (
+            SELECT
+                s.urrshis_cust_code,
+                s.urrshis_prem_code,
+                s.urrshis_serv_num,
+                b.ubbbhst_tran_num,
+                MAX(s.urrshis_action_date) AS billToDate_svc,
+                MAX(s.urrshis_action_date)
+                    - SUM(s.urrshis_dos) AS usageFromDate_svc,
+                SUM(s.urrshis_dos) AS daysOfService_svc,
+                SUM(NVL(c.ubbchst_billed_consump, 0)) AS totalBilledConsumption_svc
+            FROM urrshis s,
+                 ubbchst c,
+                 ubbbhst b,
+                 params p
+            WHERE b.ubbbhst_cust_code = s.urrshis_cust_code
+              AND b.ubbbhst_prem_code = s.urrshis_prem_code
+              AND b.ubbbhst_cust_code = c.ubbchst_cust_code
+              AND b.ubbbhst_prem_code = c.ubbchst_prem_code
+              AND s.urrshis_chrg_calc_num = c.ubbchst_chrg_calc_num
+              AND s.urrshis_serv_num = c.ubbchst_serv_num
+              AND (s.urrshis_serv_num, s.urrshis_chrg_calc_num) IN (
+                    SELECT o.uabopen_serv_num, o.uabopen_chrg_calc_num
+                    FROM uabopen o
+                    WHERE o.uabopen_bhst_tran_num = b.ubbbhst_tran_num
+                      AND o.uabopen_serv_num IS NOT NULL
+                  )
+              AND s.urrshis_actn_code IN ('READ','OUT')
+              AND b.ubbbhst_cust_code = p.cust_code
+              AND b.ubbbhst_prem_code = p.prem_code
+              AND NVL(b.ubbbhst_cancel_ind,0) = 0
+              AND TRUNC(b.ubbbhst_printed_date)
+                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
+            GROUP BY
+                s.urrshis_cust_code,
+                s.urrshis_prem_code,
+                b.ubbbhst_tran_num,
+                s.urrshis_serv_num
         ),
-        urr_cycle_date AS (
-            SELECT h.ubbbhst_cust_code,
-                   h.ubbbhst_prem_code,
-                   h.ubbbhst_printed_date     AS bill_date,
-                   MAX(r.urrshis_charge_date) AS cycle_charge_date
-            FROM bhst h
-            JOIN URRSHIS r
-              ON r.urrshis_cust_code   = h.ubbbhst_cust_code
-             AND r.urrshis_prem_code   = h.ubbbhst_prem_code
-             AND r.urrshis_charge_date <= h.ubbbhst_printed_date
-             AND NVL(r.urrshis_dos, 0) > 0
-             AND r.urrshis_action_date IS NOT NULL
-            GROUP BY h.ubbbhst_cust_code, h.ubbbhst_prem_code, h.ubbbhst_printed_date
-        ),
-        urr_rows AS (
-            SELECT r.*, c.bill_date
-            FROM urr_cycle_date c
-            JOIN URRSHIS r
-              ON r.urrshis_cust_code   = c.ubbbhst_cust_code
-             AND r.urrshis_prem_code   = c.ubbbhst_prem_code
-             AND r.urrshis_charge_date = c.cycle_charge_date
-             AND NVL(r.urrshis_dos, 0) > 0
-             AND r.urrshis_action_date IS NOT NULL
-        ),
-        urr_bill AS (
-            SELECT r.urrshis_cust_code,
-                   r.urrshis_prem_code,
-                   r.bill_date,
-                   TRUNC(MAX(r.urrshis_action_date)) AS bill_to_date,
-                   SUM(r.urrshis_dos)                AS days_of_service
-            FROM urr_rows r
-            GROUP BY r.urrshis_cust_code, r.urrshis_prem_code, r.bill_date
-        ),
-        usage_window AS (
-            SELECT u.urrshis_cust_code,
-                   u.urrshis_prem_code,
-                   u.bill_date,
-                   (u.bill_to_date - u.days_of_service) AS bill_from_date,
-                   u.bill_to_date,
-                   u.days_of_service
-            FROM urr_bill u
-        ),
-        ubbchst_bill AS (
-            SELECT h.ubbbhst_cust_code,
-                   h.ubbbhst_prem_code,
-                   h.ubbbhst_printed_date                 AS bill_date,
-                   SUM(NVL(c.ubbchst_billed_consump, 0)) AS total_billed_consumption
-            FROM bhst h
-            LEFT JOIN usage_window u
-              ON u.urrshis_cust_code = h.ubbbhst_cust_code
-             AND u.urrshis_prem_code = h.ubbbhst_prem_code
-             AND u.bill_date         = h.ubbbhst_printed_date
-            LEFT JOIN urr_cycle_date cd
-              ON cd.ubbbhst_cust_code = h.ubbbhst_cust_code
-             AND cd.ubbbhst_prem_code = h.ubbbhst_prem_code
-             AND cd.bill_date         = h.ubbbhst_printed_date
-            LEFT JOIN UBBCHST c
-              ON c.ubbchst_cust_code   = h.ubbbhst_cust_code
-             AND c.ubbchst_prem_code   = h.ubbbhst_prem_code
-             AND c.ubbchst_charge_date IN ( h.ubbbhst_printed_date,
-                                            u.bill_to_date,
-                                            cd.cycle_charge_date )
-            GROUP BY h.ubbbhst_cust_code, h.ubbbhst_prem_code, h.ubbbhst_printed_date
-        ),
-        rt_match AS (
-            SELECT t.utrsrat_srat_code,
-                   t.utrsrat_scat_code,
-                   t.utrsrat_bill_print_desc,
-                   h.ubbbhst_tran_num,
-                   ROW_NUMBER() OVER (
-                       PARTITION BY t.utrsrat_srat_code, t.utrsrat_scat_code, h.ubbbhst_tran_num
-                       ORDER BY t.utrsrat_effect_date DESC
-                   ) AS rn
-            FROM UTRSRAT t
-            JOIN bhst h ON t.utrsrat_effect_date <= h.ubbbhst_printed_date
-        ),
-        uabopen_enriched AS (
-            SELECT h.ubbbhst_cust_code,
-                   h.ubbbhst_prem_code,
-                   h.ubbbhst_printed_date                        AS bill_date,
-                   o.uabopen_item_type,
-                   NVL(o.uabopen_discount,       0)              AS discount_raw,
-                   NVL(o.uabopen_balance,        0)              AS balance_raw,
-                   UPPER(rt.utrsrat_bill_print_desc)             AS bill_print_desc,
-                   TRUNC(NVL(o.uabopen_billed_chg,      0), 2)  AS billed_chg_2dp,
-                   TRUNC(NVL(o.uabopen_orig_budget_amt, 0), 2)  AS orig_budget_amt_2dp,
-                   CASE
-                       WHEN NVL(o.uabopen_discount, 0) <> 0
-                           THEN TRUNC(-ABS(o.uabopen_discount), 2)
-                       ELSE 0
-                   END                                           AS promo_disc_2dp,
-                   CASE
-                       WHEN NVL(o.uabopen_discount, 0) <> 0 THEN 0
-                       WHEN NVL(o.uabopen_balance,  0) <> 0 THEN 0
-                       ELSE TRUNC(NVL(o.uabopen_billed_chg, 0), 2)
-                   END                                           AS amt_for_buckets_2dp
-            FROM UABOPEN o
-            JOIN bhst h
-              ON h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
-            LEFT JOIN rt_match rt
-              ON rt.utrsrat_srat_code = o.uabopen_srat_code
-             AND rt.utrsrat_scat_code = o.uabopen_scat_code
-             AND rt.ubbbhst_tran_num  = h.ubbbhst_tran_num
-             AND rt.rn = 1
+        service_hist_agg AS (
+            SELECT
+                urrshis_cust_code,
+                urrshis_prem_code,
+                ubbbhst_tran_num AS billHistoryTransactionNumber,
+                MIN(usageFromDate_svc) AS usageFromDate,
+                MAX(billToDate_svc) AS billToDate,
+                MAX(daysOfService_svc) AS daysOfService,
+                SUM(totalBilledConsumption_svc) AS totalBilledConsumption
+            FROM service_hist
+            GROUP BY
+                urrshis_cust_code,
+                urrshis_prem_code,
+                ubbbhst_tran_num
         ),
         uabopen_agg AS (
-            SELECT e.ubbbhst_cust_code,
-                   e.ubbbhst_prem_code,
-                   e.bill_date,
-                   SUM(CASE WHEN e.uabopen_item_type = 'B'
-                            THEN e.orig_budget_amt_2dp ELSE 0 END)  AS budget_billing_amount_raw,
-                   SUM(CASE WHEN e.bill_print_desc LIKE '%TAX%'
-                            THEN e.billed_chg_2dp ELSE 0 END)       AS taxes,
-                   SUM(CASE WHEN e.bill_print_desc IN (
-                                  'BASE CHARGE',
-                                  'CUSTOMER SERVICE CHARGE',
-                                  'GAS CHARGE',
-                                  'INTERSTATE PIPELINE CAPACITY CHARGE',
-                                  'INTERSTATE PIPELINE CAPACITY',
-                                  'MCF METER CHARGE'
+            SELECT
+                uabopen_bhst_tran_num AS billHistoryTransactionNumber,
+                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) LIKE '%TAX%'
+                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS taxes,
+                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) LIKE '%PROMO%DISCOUNT%'
+                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS promotionalDiscounts,
+                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) IN (
+                            'BASE CHARGE',
+                            'CUSTOMER SERVICE CHARGE',
+                            'GAS CHARGE',
+                            'INTERSTATE PIPELINE CAPACITY CHARGE',
+                            'INTERSTATE PIPELINE CAPACITY'
+                         ) THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS gasServiceCharges,
+                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) NOT LIKE '%TAX%'
+                          AND UPPER(utrsrat_bill_print_desc) NOT LIKE '%PROMO%DISCOUNT%'
+                          AND UPPER(utrsrat_bill_print_desc) NOT IN (
+                                'BASE CHARGE',
+                                'CUSTOMER SERVICE CHARGE',
+                                'GAS CHARGE',
+                                'INTERSTATE PIPELINE CAPACITY CHARGE',
+                                'INTERSTATE PIPELINE CAPACITY'
                               )
-                            THEN e.billed_chg_2dp ELSE 0 END)       AS gas_service_charges,
-                   SUM(CASE
-                           WHEN e.bill_print_desc LIKE '%TAX%'      THEN 0
-                           WHEN e.bill_print_desc IN (
-                                  'BASE CHARGE',
-                                  'CUSTOMER SERVICE CHARGE',
-                                  'GAS CHARGE',
-                                  'INTERSTATE PIPELINE CAPACITY CHARGE',
-                                  'INTERSTATE PIPELINE CAPACITY',
-                                  'MCF METER CHARGE'
-                              )                                     THEN 0
-                           WHEN e.bill_print_desc LIKE '%DISCOUNT%' THEN 0
-                           WHEN e.uabopen_item_type = 'B'           THEN 0
-                           ELSE e.amt_for_buckets_2dp
-                       END)                                         AS other_charges_base,
-                   SUM(e.promo_disc_2dp)
-                   + SUM(CASE
-                             WHEN e.bill_print_desc LIKE '%DISCOUNT%'
-                              AND NVL(e.discount_raw, 0) = 0
-                                 THEN e.billed_chg_2dp
-                             ELSE 0
-                         END)                                       AS promo_discounts
-            FROM uabopen_enriched e
-            GROUP BY e.ubbbhst_cust_code, e.ubbbhst_prem_code, e.bill_date
+                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS otherCharges,
+                SUM(CASE WHEN uabopen_item_type = 'B'
+                         THEN NVL(uabopen_orig_budget_amt,0) ELSE 0 END) AS uabbudg_bdgt_bill_amt
+            FROM uabopen,
+                 utrsrat,
+                 ubbbhst,
+                 params p
+            WHERE ubbbhst_cust_code = p.cust_code
+              AND ubbbhst_prem_code = p.prem_code
+              AND uabopen_cust_code = ubbbhst_cust_code
+              AND uabopen_prem_code = ubbbhst_prem_code
+              AND utrsrat_srat_code = uabopen_srat_code
+              AND utrsrat_scat_code = uabopen_scat_code
+              AND ubbbhst_tran_num = uabopen_bhst_tran_num
+              AND NVL(ubbbhst_cancel_ind,0) = 0
+              AND TRUNC(ubbbhst_printed_date)
+                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
+              AND uabopen_charge_date BETWEEN utrsrat_effect_date AND utrsrat_nchg_date
+            GROUP BY uabopen_bhst_tran_num
         ),
-        num_seq AS (
-            SELECT LEVEL AS n FROM dual CONNECT BY LEVEL <= 400
+        adj_agg_by_adjm AS (
+            SELECT
+                ubbbhst_tran_num,
+                uabadje_adjm_code,
+                SUM(NVL(uabadje_billed_chg, NVL(uabadje_balance,0))) adjm_amount
+            FROM uabadje a,
+                 ubbbhst h,
+                 uabopen o,
+                 params p
+            WHERE h.ubbbhst_cust_code = p.cust_code
+              AND h.ubbbhst_prem_code = p.prem_code
+              AND a.uabadje_bhst_tran_num = h.ubbbhst_tran_num
+              AND a.uabadje_origin_ar_trans = o.uabopen_ar_trans
+              AND o.uabopen_cust_code = h.ubbbhst_cust_code
+              AND o.uabopen_prem_code = h.ubbbhst_prem_code
+              AND TRUNC(h.ubbbhst_printed_date)
+                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
+              AND NVL(h.ubbbhst_cancel_ind,0) = 0
+              AND a.uabadje_printed_ind = 'Y'
+            GROUP BY uabadje_adjm_code, ubbbhst_tran_num
         ),
-        hdd_window AS (
-            SELECT u.urrshis_cust_code,
-                   u.urrshis_prem_code,
-                   u.bill_date,
-                   (u.bill_to_date - u.days_of_service) AS hdd_from_date,
-                   u.bill_to_date                       AS hdd_to_date
-            FROM usage_window u
-        ),
-        bill_window_days AS (
-            SELECT hw.urrshis_cust_code,
-                   hw.urrshis_prem_code,
-                   hw.bill_date,
-                   (TRUNC(hw.hdd_from_date) + s.n - 1) AS weather_date
-            FROM hdd_window hw
-            JOIN num_seq s
-              ON s.n <= (TRUNC(hw.hdd_to_date) - TRUNC(hw.hdd_from_date) + 1)
-        ),
-        sweat_day AS (
-            SELECT w.ocsweat_load_zone_code,
-                   TRUNC(w.ocsweat_weather_date)              AS weather_date,
-                   SUM(NVL(w.ocsweat_heating_degree_days, 0)) AS hdd_day
-            FROM OCSWEAT w
-            GROUP BY w.ocsweat_load_zone_code, TRUNC(w.ocsweat_weather_date)
-        ),
-        hdd_agg AS (
-            SELECT bwd.urrshis_cust_code,
-                   bwd.urrshis_prem_code,
-                   bwd.bill_date,
-                   TRUNC(SUM(sd.hdd_day)) AS heating_degree_days
-            FROM bill_window_days bwd
-            LEFT JOIN UCBPREM p
-              ON p.ucbprem_code = bwd.urrshis_prem_code
-            LEFT JOIN sweat_day sd
-              ON sd.ocsweat_load_zone_code = p.ucbprem_alternate_location
-             AND sd.weather_date           = bwd.weather_date
-            GROUP BY bwd.urrshis_cust_code, bwd.urrshis_prem_code, bwd.bill_date
-        ),
-        bill_result AS (
-            SELECT TO_CHAR(h.ubbbhst_printed_date, 'YYYYMMDD')                         AS bill_date,
-                   TO_CHAR(u.bill_from_date,        'YYYYMMDD')                         AS bill_from_date,
-                   TO_CHAR(u.bill_to_date,           'YYYYMMDD')                        AS bill_to_date,
-                   u.days_of_service                                                    AS days_of_service,
-                   w.heating_degree_days                                                AS heating_degree_days,
-                   c.total_billed_consumption                                           AS total_billed_consumption,
-                   TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2) AS balance_brought_forward,
-                   TRUNC(NVL(ua.gas_service_charges,  0), 2)                           AS gas_service_charges,
-                   TRUNC(NVL(ua.other_charges_base,   0), 2)                           AS other_charges,
-                   TRUNC(NVL(ua.promo_discounts,       0), 2)                          AS promotional_discounts,
-                   TRUNC(NVL(ua.taxes,                 0), 2)                          AS taxes,
-                   NULLIF(TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2), 0)           AS budget_billing_amount,
-                   TRUNC(
-                       CASE
-                           WHEN NVL(ua.budget_billing_amount_raw, 0) > 0
-                               THEN TRUNC(NVL(ua.budget_billing_amount_raw, 0), 2)
-                           ELSE
-                               TRUNC(NVL(ua.gas_service_charges,  0), 2)
-                             + TRUNC(NVL(ua.other_charges_base,   0), 2)
-                             + TRUNC(NVL(ua.taxes,                0), 2)
-                             + TRUNC(NVL(ua.promo_discounts,       0), 2)
-                             + TRUNC((NVL(h.ubbbhst_prev_bal, 0) - NVL(h.ubbbhst_payments, 0)), 2)
-                       END
-                   , 2)                                                                 AS total_bill_amount,
-                   h.ubbbhst_tran_num                                                   AS bill_history_transaction_number,
-                   (SELECT no_of_matches FROM bhst_cnt)                                 AS number_of_matches
-            FROM bhst h
-            LEFT JOIN usage_window u
-              ON u.urrshis_cust_code = h.ubbbhst_cust_code
-             AND u.urrshis_prem_code = h.ubbbhst_prem_code
-             AND u.bill_date         = h.ubbbhst_printed_date
-            LEFT JOIN ubbchst_bill c
-              ON c.ubbbhst_cust_code = h.ubbbhst_cust_code
-             AND c.ubbbhst_prem_code = h.ubbbhst_prem_code
-             AND c.bill_date         = h.ubbbhst_printed_date
-            LEFT JOIN uabopen_agg ua
-              ON ua.ubbbhst_cust_code = h.ubbbhst_cust_code
-             AND ua.ubbbhst_prem_code = h.ubbbhst_prem_code
-             AND ua.bill_date         = h.ubbbhst_printed_date
-            LEFT JOIN hdd_agg w
-              ON w.urrshis_cust_code = h.ubbbhst_cust_code
-             AND w.urrshis_prem_code = h.ubbbhst_prem_code
-             AND w.bill_date         = h.ubbbhst_printed_date
+        adj_agg AS (
+            SELECT
+                ubbbhst_tran_num AS billHistoryTransactionNumber,
+                SUM(CASE SIGN(adjm_amount) WHEN -1 THEN 0 ELSE adjm_amount END) AS oth_chrg,
+                SUM(CASE SIGN(adjm_amount) WHEN 1 THEN 0 ELSE adjm_amount END) AS bal_forward
+            FROM adj_agg_by_adjm
+            GROUP BY ubbbhst_tran_num
         )
-        SELECT *
-        FROM bill_result
-        WHERE total_bill_amount <> 0
-        ORDER BY bill_date DESC
+        SELECT
+            TO_CHAR(bd.billDate, 'YYYYMMDD') AS bill_date,
+            TO_CHAR(sh.usageFromDate, 'YYYYMMDD') AS bill_from_date,
+            TO_CHAR(sh.billToDate, 'YYYYMMDD') AS bill_to_date,
+            sh.daysOfService AS days_of_service,
+            NVL((
+                SELECT SUM(NVL(ocsweat_heating_degree_days, 0))
+                FROM ocsweat
+                CROSS JOIN params p
+                WHERE ocsweat_load_zone_code = (
+                          SELECT ucbprem_alternate_location
+                          FROM ucbprem
+                          WHERE ucbprem_code = p.prem_code
+                      )
+                  AND ocsweat_weather_date BETWEEN sh.usageFromDate AND sh.billToDate
+            ), 0) AS heating_degree_days,
+            sh.totalBilledConsumption AS total_billed_consumption,
+            bd.balanceBroughtForward + NVL(adj.bal_forward,0) AS balance_brought_forward,
+            ua.gasServiceCharges AS gas_service_charges,
+            ua.otherCharges + NVL(adj.oth_chrg,0) AS other_charges,
+            ua.promotionalDiscounts AS promotional_discounts,
+            ua.taxes AS taxes,
+            DECODE(ua.uabbudg_bdgt_bill_amt, 0, NULL, ua.uabbudg_bdgt_bill_amt) AS budget_billing_amount,
+            CASE
+                WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
+                THEN ua.uabbudg_bdgt_bill_amt
+                ELSE
+                      NVL(ua.gasServiceCharges,0)
+                    + NVL(ua.otherCharges,0)
+                    + NVL(adj.oth_chrg,0)
+                    + NVL(bd.balanceBroughtForward,0)
+                    + NVL(adj.bal_forward,0)
+                    + NVL(ua.promotionalDiscounts,0)
+                    + NVL(ua.taxes,0)
+            END AS total_bill_amount,
+            bd.billHistoryTransactionNumber AS bill_history_transaction_number
+        FROM bills_data bd
+        LEFT JOIN service_hist_agg sh
+            ON sh.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
+        LEFT JOIN uabopen_agg ua
+            ON ua.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
+        LEFT JOIN adj_agg adj
+            ON adj.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
+        ORDER BY bd.billDate DESC
         """;
-
 
 
 

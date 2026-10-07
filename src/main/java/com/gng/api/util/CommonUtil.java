@@ -2,7 +2,7 @@ package com.gng.api.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gng.api.constants.GlobalEnums;
-import com.gng.api.report.SimplifiedExtentReportManager;
+import com.gng.api.report.DualReportManager;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import com.gng.api.context.ApplicationContext;
@@ -137,8 +137,7 @@ public class CommonUtil {
         try {
             String description = GlobalEnums.ScenarioDescriptions.valueOf(testCondition).getValue();
 
-            // Log to Simplified Extent Report
-            SimplifiedExtentReportManager.logTestDescription(description);
+            DualReportManager.logTestDescription(description);
 
             // Set description in Allure report
             io.qameta.allure.Allure.getLifecycle().updateTestCase(testResult -> {

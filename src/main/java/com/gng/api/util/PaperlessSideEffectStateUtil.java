@@ -47,6 +47,14 @@ public final class PaperlessSideEffectStateUtil {
                     + " | custadv={" + custAdvFields + "}"
                     + " | enrollment={" + enrollmentFields + "}";
         }
+
+        public String custAdv(String key) {
+            return custAdvFields == null ? null : custAdvFields.get(key);
+        }
+
+        public String enrollment(String key) {
+            return enrollmentFields == null ? null : enrollmentFields.get(key);
+        }
     }
 
     public static Snapshot capture(String customerCode, String premisesCode, String phaseLabel) {

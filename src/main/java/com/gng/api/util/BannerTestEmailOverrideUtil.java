@@ -16,10 +16,10 @@ import java.sql.SQLException;
 /**
  * Temporarily sets Banner {@code uzrpsto.NEW_TEST_EMAIL_ADDR} so paperless email behavior can be forced:
  * <ul>
- *   <li>{@link #clearForEmailNotificationFailure()} — space sentinel → email <b>creation</b> fails
+ *   <li>{@link #clearForEmailNotificationFailure()} — space sentinel → email creation fails
  *       (Update TC_77/78 → 40281; Confirm TC_133 → 40321 on UAT)</li>
- *   <li>{@link #redirectToUndeliverableForSoftDeliveryFailure(String)} — undeliverable address →
- *       Confirm TC_150 soft delivery failure that must <b>not</b> block success</li>
+ *   <li>{@link #redirectToUndeliverableForSoftDeliveryFailure(String)} — invalid/fake address so
+ *       Confirm TC_150 confirmation email cannot be sent/delivered, without failing enrollment</li>
  * </ul>
  * Always pair override methods with {@link #restore()} in {@code finally}.
  */
@@ -32,7 +32,7 @@ public final class BannerTestEmailOverrideUtil {
     /** Space sentinel (column is NOT NULL; Oracle treats '' as NULL). */
     public static final String CLEARED_VALUE = " ";
 
-    /** Default undeliverable routing address for Confirm TC_150 soft delivery failure. */
+    /** Default invalid/fake address for Confirm TC_150 so the confirmation email cannot be delivered. */
     public static final String DEFAULT_UNDELIVERABLE_ADDRESS = "confirm-email-fail@invalid.test";
 
     private static final ThreadLocal<String> ORIGINAL_VALUE = new ThreadLocal<>();
@@ -49,8 +49,8 @@ public final class BannerTestEmailOverrideUtil {
     }
 
     /**
-     * TC_150: route confirmation email to an undeliverable address so delivery fails after
-     * preference update, without blanking the override (blanking triggers TC_133 / 40321 rollback).
+     * TC_150: route confirmation email to an invalid/fake address so it cannot be delivered,
+     * without blanking the override (blank routing is TC_133 / 40321).
      */
     public static void redirectToUndeliverableForSoftDeliveryFailure(String undeliverableAddress) {
         String address = (undeliverableAddress == null || undeliverableAddress.isBlank())
@@ -58,12 +58,11 @@ public final class BannerTestEmailOverrideUtil {
                 : undeliverableAddress.trim();
         if (!address.contains("@")) {
             throw new IllegalArgumentException(
-                    "Undeliverable address must look like an email, got: '" + address + "'");
+                    "Invalid/fake email must look like an email, got: '" + address + "'");
         }
         applyOverride(address,
-                "Banner NEW_TEST_EMAIL_ADDR — OVERRIDE REDIRECT to undeliverable '"
-                        + address
-                        + "' (Confirm TC_150: soft confirmation-email delivery failure must not block success)",
+                "TC_150 — routing confirmation email to invalid/fake address '" + address
+                        + "' so it cannot be sent/delivered",
                 false);
     }
 
@@ -163,7 +162,7 @@ public final class BannerTestEmailOverrideUtil {
     }
 
     /**
-     * Current {@code NEW_TEST_EMAIL_ADDR} value (for TC_150 failed-send evidence before restore).
+     * Current {@code NEW_TEST_EMAIL_ADDR} value (TC_150 invalid/fake email check before restore).
      */
     public static String readCurrentOverrideValue() {
         return readParmValueRaw();

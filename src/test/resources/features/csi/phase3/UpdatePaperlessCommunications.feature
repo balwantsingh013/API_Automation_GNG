@@ -38,7 +38,6 @@ Feature: Verify UpdatePaperlessCommunications Api
       | TC_80__Negative__Valid_Email_Address_Not_Allowed_on_Unenrollment_               | 10423     | Email Address Not Allowed On Unenrollment       | false   | null |
       | TC_81__Negative__Invalid_Email_Address_Not_Allowed_on_Unenrollment_              | 10423     | Email Address Not Allowed On Unenrollment       | false   | null |
 
-
   @UpdatePaperlessCommunicationsPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to UpdatePaperlessCommunications Api for "<testCondition>"
