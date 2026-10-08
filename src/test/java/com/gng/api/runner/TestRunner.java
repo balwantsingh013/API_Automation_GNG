@@ -23,7 +23,7 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 //                "src/test/resources/features/csi/phase1/UpdateAccountNickname.feature",
 //                "src/test/resources/features/csi/phase2/GetBankDraftInfo.feature",
 //                "src/test/resources/features/csi/phase1/GetAccountInfo.feature",
-//                "src/test/resources/features/csi/phase2/GetUsageHistory.feature",
+                "src/test/resources/features/csi/phase2/GetUsageHistory.feature",
 //                "src/test/resources/features/csi/phase3/GetBillingInfo.feature",
 //                "src/test/resources/features/csi/phase3/VerifyAccount.feature"
 //                "src/test/resources/features/phase1/turnOn/SaveEnrollment.feature"
