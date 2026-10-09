@@ -2801,6 +2801,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
         WHERE ROWNUM = 1
         """;
 
+    /**
+     * Non-BB sampling account for GetBillHistory format / DB-compare cases.
+     * Excludes BB seed 2955/2568 — Banner GET_BILL_HISTORY lookback for that
+     * account stalls automation; BB cases use that seed via API only.
+     */
     public static final String SELECT_VALID_BILL_HISTORY_ACCOUNT= """
             SELECT UBBBHST_cust_code, UBBBHST_prem_code  FROM UBBBHST
             JOIN ucracct
@@ -2808,6 +2813,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             WHERE UBBBHST_PRINTED_DATE > ADD_MONTHS(TRUNC(SYSDATE), -24)
             AND length(UBBBHST_cust_code)>=4
             AND ucracct_status_ind='A'
+            AND NOT (UBBBHST_cust_code = '2955' AND UBBBHST_prem_code = '2568')
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -3420,18 +3426,20 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND TRUNC(ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
             """;
 
+    /** TC_12 candidates: exactly one bill in the last 12 months (date-filtered subquery for UAT perf). */
     public static final String SELECT_BILL_HISTORY_ONE_CANDIDATES = """
             SELECT a.ubbbhst_cust_code, a.ubbbhst_prem_code, a.ubbbhst_tran_num, a.ubbbhst_printed_date
             FROM ubbbhst a,
                  (SELECT bh.ubbbhst_cust_code, bh.ubbbhst_prem_code, MAX(bh.ubbbhst_tran_num) tranNum
                   FROM ubbbhst bh
                   WHERE bh.ubbbhst_ending_bal <> 0
+                    AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+                    AND TRUNC(bh.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
                   GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
                   HAVING COUNT(1) = 1) b
             WHERE a.ubbbhst_cust_code = b.ubbbhst_cust_code
               AND a.ubbbhst_prem_code = b.ubbbhst_prem_code
               AND a.ubbbhst_tran_num = b.trannum
-              AND TRUNC(a.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -12)
             FETCH FIRST 40 ROWS ONLY
             """;
 

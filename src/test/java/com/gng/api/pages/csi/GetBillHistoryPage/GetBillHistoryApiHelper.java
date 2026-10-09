@@ -6,11 +6,13 @@ import com.gng.api.db.DBQuery;
 import com.gng.api.pages.BasePage;
 import com.gng.api.pojo.CSIPojo.GetBillHistory.GetBillHistoryRequest;
 import com.gng.api.pojo.TestContext.TestContext;
+import com.gng.api.report.DualReportManager;
 import com.gng.api.steps.csi.GetBillHistory.GetBillHistoryLabel;
 import com.gng.api.util.FakerDataGenerator;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.SkipException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,8 @@ public class GetBillHistoryApiHelper {
                                                GetBillHistoryLabel testCondition) {
 
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(10));
+        // loginID null — template User20 has hung some UAT accounts.
+        payload.setLoginID(null);
         Map<String, Object> accountInfo;
 
         switch (testCondition) {
@@ -124,39 +128,34 @@ public class GetBillHistoryApiHelper {
             case TC_87__Positive__Usage_History_NotBudgetBillingAccount:
             case TC_88__Positive__Usage_History_TotalBillAmount_Format:
             case TC_89__Positive__Usage_History_BillHistoryTransactionNumber_Format:
+            case SP1_02__Positive__Budget_Billing_Actual_Charges_Null:
+            case SP1_04__Positive__Budget_Billing_Monthly_Variance_Null:
+            case SP1_06__Positive__Budget_Billing_Total_Variance_Null:
+            case SP1_08__Positive__Guaranteed_Bill_Amount_Null:
+                // SELECT_VALID_BILL_HISTORY_ACCOUNT excludes BB seed 2955/2568 (slow Banner lookback).
                 accountInfo = ApplicationContext.get().getDbAction().getAccountWithBillHistory();
                 payload.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
-                payload.setNumberOfMonths("24");
+                payload.setNumberOfMonths(24);
                 testContext.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
                 testContext.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
-                List<Map<String, Object>> dbRows4 = ApplicationContext.get()
-                        .getDbAction()
-                        .getBillHistory(accountInfo.get("UBBBHST_cust_code").toString(), accountInfo.get("UBBBHST_prem_code").toString());
-
                 break;
 
             case TC_86__Positive__Usage_History_BudgetBillingAmount_Format:
-//                List<Map<String, Object>> accountList =
-//                        ApplicationContext.get().getDbAction().getBudgetBillingAccount();
-//
-//                // Get the first row
-//                accountInfo = accountList.get(0);
+            case SP1_01__Positive__Budget_Billing_Actual_Charges_Format:
+            case SP1_03__Positive__Budget_Billing_Monthly_Variance_Format:
+            case SP1_05__Positive__Budget_Billing_Total_Variance_Format:
+            case SP1_09__Positive__Budget_Billing_Historical_Values:
+                // UAT BB seed 2955/2568 (loginID null, numberOfMonths 24).
+                // Do not pre-fetch getBillHistory — unused and previously stalled the suite.
+                applyBudgetBillingBillHistorySeed(payload);
+                break;
 
-                payload.setCustomerCode("2955");
-                payload.setPremisesCode("2568");
-                payload.setNumberOfMonths("24");
-
-                testContext.setCustomerCode("2955");
-                testContext.setPremisesCode("2568");
-
-                List<Map<String, Object>> dbRows10 = ApplicationContext.get()
-                        .getDbAction()
-                        .getBillHistory(
-                                "2955",
-                                "2568"
-                        );
-
+            case SP1_07__Positive__Guaranteed_Bill_Amount_Format:
+            case SP1_10__Positive__Guaranteed_Bill_Historical_Values:
+                skipWhenNoAutomatableSeed(testCondition.name(),
+                        "No automatable Guaranteed Bill GetBillHistory seed; "
+                                + "manual account creation is not permitted for automation.");
                 break;
 
 
@@ -183,6 +182,14 @@ public class GetBillHistoryApiHelper {
                 payload.setNumberOfMonths("24");
                 testContext.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
                 testContext.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
+                break;
+
+            case TC_90__Positive__No_Usage_History_New:
+                accountInfo = ApplicationContext.get().getDbAction().getNewAccountOnly();
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
+                payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
+                payload.setNumberOfMonths("24");
                 break;
 
             case TC_90__Positive__No_Usage_History_Active:
@@ -275,6 +282,30 @@ public class GetBillHistoryApiHelper {
                 log.warn("Unhandled test condition: {}", testCondition);
                 break;
         }
+    }
+
+    /**
+     * Budget-billing GetBillHistory seed for 2955/2568.
+     * Payload: loginID null, numberOfMonths as integer 24 (not a pre-API DB lookback).
+     */
+    private void applyBudgetBillingBillHistorySeed(GetBillHistoryRequest payload) {
+        final String cust = "2955";
+        final String prem = "2568";
+        payload.setLoginID(null);
+        payload.setCustomerCode(cust);
+        payload.setPremisesCode(prem);
+        payload.setNumberOfMonths(24);
+        testContext.setCustomerCode(cust);
+        testContext.setPremisesCode(prem);
+        DualReportManager.logInfo(
+                "GetBillHistory BB seed " + cust + "/" + prem
+                        + " (loginID=null, numberOfMonths=24)");
+    }
+
+    private static void skipWhenNoAutomatableSeed(String testCondition, String reason) {
+        String message = testCondition + " — " + reason;
+        DualReportManager.logInfo("SKIPPED: " + message);
+        throw new SkipException(message);
     }
 
     /**
@@ -378,14 +409,16 @@ public class GetBillHistoryApiHelper {
                 GetBillHistoryLabel.get_bill_history.toString(),
                 GetBillHistoryRequest.class);
         probe.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+        probe.setLoginID(null);
         probe.setCustomerCode(customerCode);
         probe.setPremisesCode(premisesCode);
-        probe.setNumberOfMonths(String.valueOf(numberOfMonths));
+        probe.setNumberOfMonths(numberOfMonths);
 
         String uri = ApplicationContext.get().getEnvConfig().getBaseUri() + GET_BILL_HISTORY;
+        ApplicationContext.setRequestSpec();
         return io.restassured.RestAssured.given()
+                .spec(ApplicationContext.getRequestSpec())
                 .relaxedHTTPSValidation()
-                .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + testContext.getAuthToken())
                 .body(probe)
                 .post(uri);

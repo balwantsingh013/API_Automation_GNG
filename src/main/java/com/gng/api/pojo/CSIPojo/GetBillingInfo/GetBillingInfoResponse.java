@@ -49,6 +49,11 @@ public class GetBillingInfoResponse {
         private Double budgetBillingAmount;
         private Double budgetBillingTotalVariance;
         private String budgetBillingStartDate;
+        private String budgetBillingTrueUpDate;
+        private Double budgetBillingActualCharges;
+        private Double guaranteedBillAmount;
+        private Double adjustmentsApplied;
+        private Double adjustmentsSinceLastBill;
 
         private List<BillLineItem> billLineItems;
     }

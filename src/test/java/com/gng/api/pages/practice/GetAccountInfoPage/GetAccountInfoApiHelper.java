@@ -20,30 +20,30 @@ public class GetAccountInfoApiHelper {
     public void preparePayloadForTestCondition(GetAccountInfoRequest payload, GetAccountInfoLabel testCondition) {
         Map<String, Object> accountInfo;
         switch (testCondition) {
-            case TC_142__Negative__Missing_Request_ID:
+            case TC_145__Negative__Missing_Request_ID:
                 payload.setRequestID("");
                 break;
 
-            case TC_145__Negative__Invalid_customerCode_Length:
+            case TC_148__Negative__Invalid_customerCode_Length:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(FakerDataGenerator.generateDigits(10));
                 break;
 
-            case TC_150__Positive__Account_Info_Returned___Email_Address____:
+            case TC_153__Positive__Account_Info_Returned___Email_Address____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetails();
                 payload.setCustomerCode(accountInfo.get("GZBEMCP_CUST_CODE").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_151__Positive__Account_Info_Returned___No_Email_Address____:
+            case TC_154__Positive__Account_Info_Returned___No_Email_Address____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC150();
                 payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
                 payload.setPremisesCode(accountInfo.get("UCRACCT_PREM_CODE").toString());
                 break;
 
-            case TC_152__Positive__Account_Info_Returned___Partner_Promotions_Indicator__equals_Y____:
+            case TC_155__Positive__Account_Info_Returned___Partner_Promotions_Indicator__equals_Y____:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountInfo = ApplicationContext.get().getDbAction().getAccountDetailsTC151();
                 payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());

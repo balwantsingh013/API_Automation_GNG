@@ -20,18 +20,12 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-//                "src/test/resources/features/csi/phase1/UpdateAccountNickname.feature",
-//                "src/test/resources/features/csi/phase2/GetBankDraftInfo.feature",
-//                "src/test/resources/features/csi/phase1/GetAccountInfo.feature",
-                "src/test/resources/features/csi/phase2/GetUsageHistory.feature",
-//                "src/test/resources/features/csi/phase3/GetBillingInfo.feature",
-//                "src/test/resources/features/csi/phase3/VerifyAccount.feature"
-//                "src/test/resources/features/phase1/turnOn/SaveEnrollment.feature"
+                "src/test/resources/features/csi/phase2/GetBillHistory.feature",
+                "src/test/resources/features/csi/phase3/GetBillingInfo.feature"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
-//        tags = "@GetBillHistoryPositive",
-//        name = ".*TC_95__Positive__Usage_History_Equals_Requested_Months.*",
+        tags = "@GetBillHistory or @GetBillHistoryPositive or @GetBillingInfo or @GetBillingInfoPositive",
         monochrome = true,
         plugin = {
                 "pretty",

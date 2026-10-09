@@ -57,7 +57,7 @@ Feature: Verify GetBillHistory Api
     | TC_83__Positive__Usage_History_OtherCharges_Format           | 0        |              | notNull |
     | TC_84__Positive__Usage_History_PromotionalDiscounts_Format   | 0        |              | notNull |
     | TC_85__Positive__Usage_History_Taxes_Format                  | 0        |              | notNull |
-    | TC_86__Positive__Usage_History_BudgetBillingAmount_Format    | 0        |              | notNull |
+     | TC_86__Positive__Usage_History_BudgetBillingAmount_Format    | 0        |              | notNull |
 
   @GetBillHistoryPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -83,6 +83,7 @@ Feature: Verify GetBillHistory Api
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | data    |
+      | TC_90__Positive__No_Usage_History_New                              | 0 |              | notNull |
       | TC_90__Positive__No_Usage_History_Active                           | 0 |              | notNull |
       | TC_91__Positive__No_Usage_History_Final                            | 0 |              | notNull |
       | TC_92__Positive__No_Usage_History_Inactive                         | 0 |              | notNull |
@@ -100,3 +101,21 @@ Feature: Verify GetBillHistory Api
       | testCondition                                            | errorCode | errorMessage | data    |
       | TC_95__Positive__Usage_History_Equals_Requested_Months             | 0 |              | notNull |
       | TC_96__Positive__Usage_History_Greater_Than_Requested_Months       | 0 |              | notNull |
+
+
+  # Supplemental SP1.*
+   @GetBillHistoryPositive @HappyFlow @CSI
+   Scenario Outline: "<testCondition>"
+     When a request is made to GetBillHistory Api for "<testCondition>"
+     Then verify response code of "GetBillHistory" Api is 200
+     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+     Examples:
+       | testCondition                                            | errorCode | errorMessage | data    |
+       | SP1_01__Positive__Budget_Billing_Actual_Charges_Format             | 0 |              | notNull |
+       | SP1_02__Positive__Budget_Billing_Actual_Charges_Null               | 0 |              | notNull |
+       | SP1_03__Positive__Budget_Billing_Monthly_Variance_Format           | 0 |              | notNull |
+       | SP1_04__Positive__Budget_Billing_Monthly_Variance_Null             | 0 |              | notNull |
+       | SP1_05__Positive__Budget_Billing_Total_Variance_Format             | 0 |              | notNull |
+       | SP1_06__Positive__Budget_Billing_Total_Variance_Null               | 0 |              | notNull |
+       | SP1_08__Positive__Guaranteed_Bill_Amount_Null                      | 0 |              | notNull |
+       | SP1_09__Positive__Budget_Billing_Historical_Values                 | 0 |              | notNull |

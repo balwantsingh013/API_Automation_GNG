@@ -36,11 +36,24 @@ public enum GetBillHistoryLabel {
     TC_87__Positive__Usage_History_NotBudgetBillingAccount,
     TC_88__Positive__Usage_History_TotalBillAmount_Format,
     TC_89__Positive__Usage_History_BillHistoryTransactionNumber_Format,
+    TC_90__Positive__No_Usage_History_New,
     TC_90__Positive__No_Usage_History_Active,
     TC_91__Positive__No_Usage_History_Final,
     TC_92__Positive__No_Usage_History_Inactive,
     TC_93__Positive__Valid_NumberOfMonths_BillHistory_Too_Old,
     TC_94__Positive__Usage_History_Less_Than_Requested_Months,
     TC_95__Positive__Usage_History_Equals_Requested_Months,
-    TC_96__Positive__Usage_History_Greater_Than_Requested_Months
+    TC_96__Positive__Usage_History_Greater_Than_Requested_Months,
+
+    // FTD03 Supplemental 01 (Phase 2 v1.2)
+    SP1_01__Positive__Budget_Billing_Actual_Charges_Format,
+    SP1_02__Positive__Budget_Billing_Actual_Charges_Null,
+    SP1_03__Positive__Budget_Billing_Monthly_Variance_Format,
+    SP1_04__Positive__Budget_Billing_Monthly_Variance_Null,
+    SP1_05__Positive__Budget_Billing_Total_Variance_Format,
+    SP1_06__Positive__Budget_Billing_Total_Variance_Null,
+    SP1_07__Positive__Guaranteed_Bill_Amount_Format,
+    SP1_08__Positive__Guaranteed_Bill_Amount_Null,
+    SP1_09__Positive__Budget_Billing_Historical_Values,
+    SP1_10__Positive__Guaranteed_Bill_Historical_Values
 }
