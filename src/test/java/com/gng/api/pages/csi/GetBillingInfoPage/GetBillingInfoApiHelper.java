@@ -13,6 +13,7 @@ import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.SkipException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -373,17 +374,26 @@ public class GetBillingInfoApiHelper {
                         .getBillInfo(accountData.get("ubbbhst_cust_code").toString(), accountData.get("ubbbhst_prem_code").toString());
                 break;
 
-            // Supplemental adjustments / guaranteed-bill format cases reuse multi-month bill history until dedicated seeds exist
+            // Supplemental adjustments reuse multi-month bill history until dedicated seeds exist
             case SP1_01__Positive__Adjustments_Applied_Amount_Greater_Than_0_Format_:
             case SP1_02__Positive__Adjustments_Applied_Amount_Equals_0_:
             case SP1_03__Positive__Adjustments_Since_Last_Bill_Greater_Than_0_Format_:
             case SP1_04__Positive__Adjustments_Since_Last_Bill_Equals_0_:
-            case SP1_09__Positive__Guaranteed_Bill_Amount_Guaranteed_Bill_Account_Format_:
-            case SP1_12__Positive__Guaranteed_Bill_Current_Values_:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountData = ApplicationContext.get().getDbAction().getUsageHistoryMoreThanOne();
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
+                break;
+
+            // Guaranteed Bill: probe TC_5 GB pools via GetBillingInfo; run if guaranteedBillAmount present, else Skip
+            case SP1_09__Positive__Guaranteed_Bill_Amount_Guaranteed_Bill_Account_Format_:
+            case SP1_12__Positive__Guaranteed_Bill_Current_Values_:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                accountData = resolveGuaranteedBillBillingInfoCandidate(testCondition.name());
+                payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
+                testContext.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
+                testContext.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 break;
 
 
@@ -533,6 +543,96 @@ public class GetBillingInfoApiHelper {
         }
     }
 
+    /**
+     * Probe Guaranteed Bill seeds (same TC_5 pools as GetBillHistory SP1_10).
+     * Returns first account where GetBillingInfo returns non-null {@code data.guaranteedBillAmount};
+     * SkipException only when no candidate probes successfully.
+     */
+    private Map<String, Object> resolveGuaranteedBillBillingInfoCandidate(String testCondition) {
+        List<Map<String, Object>> candidates = new ArrayList<>();
+        try {
+            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5PriceProCandidates());
+        } catch (Exception e) {
+            log.warn("Guaranteed PRICEPRO candidate query failed: {}", e.getMessage());
+        }
+        try {
+            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5AnyDiscountCandidates());
+        } catch (Exception e) {
+            log.warn("Guaranteed any-discount candidate query failed: {}", e.getMessage());
+        }
+        try {
+            Map<String, Object> withoutDiscount = ApplicationContext.get().getDbAction()
+                    .getAccountDetailsTC5WithoutDiscount();
+            if (withoutDiscount != null) {
+                candidates.add(withoutDiscount);
+            }
+        } catch (Exception e) {
+            log.warn("Guaranteed without-discount candidate query failed: {}", e.getMessage());
+        }
+
+        int probed = 0;
+        final int maxProbes = 5;
+        for (Map<String, Object> candidate : candidates) {
+            if (candidate == null) {
+                continue;
+            }
+            if (probed >= maxProbes) {
+                break;
+            }
+            String cust;
+            String prem;
+            try {
+                cust = firstNonNull(candidate,
+                        "ucracct_cust_code", "UCRACCT_CUST_CODE",
+                        "ubbbhst_cust_code", "UBBBHST_CUST_CODE").toString();
+                prem = firstNonNull(candidate,
+                        "ucracct_prem_code", "UCRACCT_PREM_CODE",
+                        "ubbbhst_prem_code", "UBBBHST_PREM_CODE").toString();
+            } catch (Exception e) {
+                continue;
+            }
+            probed++;
+            Map<String, Object> probeAccount = Map.of(
+                    "ubbbhst_cust_code", cust,
+                    "ubbbhst_prem_code", prem);
+            Response response = callGetBillingInfo(probeAccount);
+            if (response.statusCode() != 200) {
+                continue;
+            }
+            Object err = response.jsonPath().get("errorCode");
+            if (err == null) {
+                err = response.jsonPath().get("ErrorCode");
+            }
+            Integer errorCode = err instanceof Number ? ((Number) err).intValue() : null;
+            if (errorCode == null || errorCode != 0) {
+                continue;
+            }
+            Object guaranteedBillAmount = response.jsonPath().get("data.guaranteedBillAmount");
+            if (guaranteedBillAmount == null) {
+                continue;
+            }
+            DualReportManager.logInfo(
+                    testCondition + " Guaranteed Bill seed " + cust + "/" + prem
+                            + " (guaranteedBillAmount=" + guaranteedBillAmount + ")");
+            return probeAccount;
+        }
+
+        String reason = testCondition + " — No automatable Guaranteed Bill GetBillingInfo seed; "
+                + "manual account creation is not permitted for automation.";
+        DualReportManager.logInfo("SKIPPED: " + reason);
+        throw new SkipException(reason);
+    }
+
+    private static Object firstNonNull(Map<String, Object> map, String... keys) {
+        for (String key : keys) {
+            Object value = map.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        throw new IllegalStateException("None of keys found in DB result: " + String.join(", ", keys));
+    }
+
     private Map<String, Object> resolveOneMonthBillingCandidate(String zeroAmountField) {
         List<Map<String, Object>> candidates;
         try {
@@ -586,8 +686,12 @@ public class GetBillingInfoApiHelper {
                 GetBillingInfoLabel.get_billing_info.toString(),
                 GetBillingInfoRequest.class);
         payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-        payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
-        payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
+        payload.setCustomerCode(firstNonNull(accountData,
+                "ubbbhst_cust_code", "UBBBHST_CUST_CODE",
+                "ucracct_cust_code", "UCRACCT_CUST_CODE").toString());
+        payload.setPremisesCode(firstNonNull(accountData,
+                "ubbbhst_prem_code", "UBBBHST_PREM_CODE",
+                "ucracct_prem_code", "UCRACCT_PREM_CODE").toString());
 
         String uri = ApplicationContext.get().getEnvConfig().getBaseUri() + GET_BILLING_INFO;
         return io.restassured.RestAssured.given()

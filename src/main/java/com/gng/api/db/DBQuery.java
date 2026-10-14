@@ -2814,6 +2814,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             AND length(UBBBHST_cust_code)>=4
             AND ucracct_status_ind='A'
             AND NOT (UBBBHST_cust_code = '2955' AND UBBBHST_prem_code = '2568')
+            AND NOT (UBBBHST_cust_code = '2962' AND UBBBHST_prem_code = '2575')
             FETCH FIRST 1 ROWS ONLY
             """;
 
@@ -13940,7 +13941,10 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                               )
                          THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS otherCharges,
                 SUM(CASE WHEN uabopen_item_type = 'B'
-                         THEN NVL(uabopen_orig_budget_amt,0) ELSE 0 END) AS uabbudg_bdgt_bill_amt
+                         THEN NVL(uabopen_orig_budget_amt,0) ELSE 0 END) AS uabbudg_bdgt_bill_amt,
+                SUM(CASE WHEN LOWER(utrsrat_bill_print_desc) LIKE '%guaranteed%'
+                          AND LOWER(utrsrat_bill_print_desc) LIKE '%amount%'
+                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS guaranteed_bill_amt
             FROM uabopen,
                  utrsrat,
                  ubbbhst,
@@ -13986,51 +13990,114 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 SUM(CASE SIGN(adjm_amount) WHEN 1 THEN 0 ELSE adjm_amount END) AS bal_forward
             FROM adj_agg_by_adjm
             GROUP BY ubbbhst_tran_num
+        ),
+        bill_rows AS (
+            SELECT
+                bd.billDate,
+                TO_CHAR(bd.billDate, 'YYYYMMDD') AS bill_date,
+                TO_CHAR(sh.usageFromDate, 'YYYYMMDD') AS bill_from_date,
+                TO_CHAR(sh.billToDate, 'YYYYMMDD') AS bill_to_date,
+                sh.daysOfService AS days_of_service,
+                NVL((
+                    SELECT SUM(NVL(ocsweat_heating_degree_days, 0))
+                    FROM ocsweat
+                    CROSS JOIN params p
+                    WHERE ocsweat_load_zone_code = (
+                              SELECT ucbprem_alternate_location
+                              FROM ucbprem
+                              WHERE ucbprem_code = p.prem_code
+                          )
+                      AND ocsweat_weather_date BETWEEN sh.usageFromDate AND sh.billToDate
+                ), 0) AS heating_degree_days,
+                sh.totalBilledConsumption AS total_billed_consumption,
+                bd.balanceBroughtForward + NVL(adj.bal_forward,0) AS balance_brought_forward,
+                ua.gasServiceCharges AS gas_service_charges,
+                ua.otherCharges + NVL(adj.oth_chrg,0) AS other_charges,
+                ua.promotionalDiscounts AS promotional_discounts,
+                ua.taxes AS taxes,
+                DECODE(ua.uabbudg_bdgt_bill_amt, 0, NULL, ua.uabbudg_bdgt_bill_amt) AS budget_billing_amount,
+                CASE
+                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
+                    THEN NVL(ua.gasServiceCharges,0)
+                       + NVL(ua.otherCharges,0)
+                       + NVL(adj.oth_chrg,0)
+                       + NVL(ua.promotionalDiscounts,0)
+                       + NVL(ua.taxes,0)
+                    ELSE NULL
+                END AS budget_billing_actual_charges,
+                CASE
+                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
+                    THEN (
+                          NVL(ua.gasServiceCharges,0)
+                        + NVL(ua.otherCharges,0)
+                        + NVL(adj.oth_chrg,0)
+                        + NVL(ua.promotionalDiscounts,0)
+                        + NVL(ua.taxes,0)
+                        - ua.uabbudg_bdgt_bill_amt
+                    )
+                    ELSE NULL
+                END AS budget_billing_monthly_variance,
+                CASE
+                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
+                    THEN (
+                        -- Cumulative BB variance through this bill (not lookback-limited).
+                        -- Per-bill uabopen_budget_variance equals monthly variance only.
+                        SELECT SUM(NVL(o.uabopen_budget_variance, 0))
+                        FROM uabopen o
+                        JOIN ubbbhst h
+                          ON h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+                        CROSS JOIN params p
+                        WHERE h.ubbbhst_cust_code = p.cust_code
+                          AND h.ubbbhst_prem_code = p.prem_code
+                          AND NVL(h.ubbbhst_cancel_ind, 0) = 0
+                          AND o.uabopen_item_type = 'B'
+                          AND TRUNC(h.ubbbhst_printed_date) <= TRUNC(bd.billDate)
+                    )
+                    ELSE NULL
+                END AS budget_billing_total_variance,
+                DECODE(ua.guaranteed_bill_amt, 0, NULL, ua.guaranteed_bill_amt) AS guaranteed_bill_amount,
+                CASE
+                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
+                    THEN ua.uabbudg_bdgt_bill_amt
+                    ELSE
+                          NVL(ua.gasServiceCharges,0)
+                        + NVL(ua.otherCharges,0)
+                        + NVL(adj.oth_chrg,0)
+                        + NVL(bd.balanceBroughtForward,0)
+                        + NVL(adj.bal_forward,0)
+                        + NVL(ua.promotionalDiscounts,0)
+                        + NVL(ua.taxes,0)
+                END AS total_bill_amount,
+                bd.billHistoryTransactionNumber AS bill_history_transaction_number
+            FROM bills_data bd
+            LEFT JOIN service_hist_agg sh
+                ON sh.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
+            LEFT JOIN uabopen_agg ua
+                ON ua.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
+            LEFT JOIN adj_agg adj
+                ON adj.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
         )
         SELECT
-            TO_CHAR(bd.billDate, 'YYYYMMDD') AS bill_date,
-            TO_CHAR(sh.usageFromDate, 'YYYYMMDD') AS bill_from_date,
-            TO_CHAR(sh.billToDate, 'YYYYMMDD') AS bill_to_date,
-            sh.daysOfService AS days_of_service,
-            NVL((
-                SELECT SUM(NVL(ocsweat_heating_degree_days, 0))
-                FROM ocsweat
-                CROSS JOIN params p
-                WHERE ocsweat_load_zone_code = (
-                          SELECT ucbprem_alternate_location
-                          FROM ucbprem
-                          WHERE ucbprem_code = p.prem_code
-                      )
-                  AND ocsweat_weather_date BETWEEN sh.usageFromDate AND sh.billToDate
-            ), 0) AS heating_degree_days,
-            sh.totalBilledConsumption AS total_billed_consumption,
-            bd.balanceBroughtForward + NVL(adj.bal_forward,0) AS balance_brought_forward,
-            ua.gasServiceCharges AS gas_service_charges,
-            ua.otherCharges + NVL(adj.oth_chrg,0) AS other_charges,
-            ua.promotionalDiscounts AS promotional_discounts,
-            ua.taxes AS taxes,
-            DECODE(ua.uabbudg_bdgt_bill_amt, 0, NULL, ua.uabbudg_bdgt_bill_amt) AS budget_billing_amount,
-            CASE
-                WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
-                THEN ua.uabbudg_bdgt_bill_amt
-                ELSE
-                      NVL(ua.gasServiceCharges,0)
-                    + NVL(ua.otherCharges,0)
-                    + NVL(adj.oth_chrg,0)
-                    + NVL(bd.balanceBroughtForward,0)
-                    + NVL(adj.bal_forward,0)
-                    + NVL(ua.promotionalDiscounts,0)
-                    + NVL(ua.taxes,0)
-            END AS total_bill_amount,
-            bd.billHistoryTransactionNumber AS bill_history_transaction_number
-        FROM bills_data bd
-        LEFT JOIN service_hist_agg sh
-            ON sh.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
-        LEFT JOIN uabopen_agg ua
-            ON ua.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
-        LEFT JOIN adj_agg adj
-            ON adj.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
-        ORDER BY bd.billDate DESC
+            bill_date,
+            bill_from_date,
+            bill_to_date,
+            days_of_service,
+            heating_degree_days,
+            total_billed_consumption,
+            balance_brought_forward,
+            gas_service_charges,
+            other_charges,
+            promotional_discounts,
+            taxes,
+            budget_billing_amount,
+            budget_billing_actual_charges,
+            budget_billing_monthly_variance,
+            budget_billing_total_variance,
+            guaranteed_bill_amount,
+            total_bill_amount,
+            bill_history_transaction_number
+        FROM bill_rows
+        ORDER BY billDate DESC
         """;
 
 

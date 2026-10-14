@@ -63,17 +63,116 @@ public class BaseSteps {
     public void billHistoryShouldReturnMatchesForRequestedMonths() {
         Response response = testContext.getResponse();
         Integer expected = testContext.getExpectedNumberOfMatches();
+        Integer requested = testContext.getRequestedNumberOfMonths();
+        int lookback = requested != null ? requested : 24;
         int actualMatches = response.jsonPath().getInt("data.numberOfMatches");
         List<Map<String, Object>> billHistory = response.jsonPath().getList("data.billHistory");
 
         assertThat("billHistory should not be null", billHistory, notNullValue());
-        assertThat("billHistory should not be empty for TC_95/TC_96", billHistory.isEmpty(), equalTo(false));
+        assertThat("billHistory should not be empty for TC_94/TC_95/TC_96", billHistory.isEmpty(), equalTo(false));
         assertThat("numberOfMatches should be > 0", actualMatches, greaterThan(0));
         assertThat("billHistory size should match numberOfMatches", billHistory.size(), equalTo(actualMatches));
+
+        List<Map<String, Object>> dbRows = ApplicationContext.get()
+                .getDbAction()
+                .getBillHistory2(
+                        testContext.getCustomerCode(),
+                        testContext.getPremisesCode(),
+                        lookback);
+
+        assertThat("numberOfMatches should match Banner bill-history row count for lookbackMonths="
+                        + lookback,
+                actualMatches, equalTo(dbRows.size()));
+
         if (expected != null) {
-            assertThat("numberOfMatches should equal bill count for the requested lookback window",
+            assertThat("numberOfMatches should equal seeded/expected bill count for the lookback window",
                     actualMatches, equalTo(expected));
         }
+    }
+
+    @And("bill history rows should contain required minimum fields matching database keys")
+    public void billHistoryRowsShouldContainRequiredMinimumFieldsMatchingDatabaseKeys() {
+        Response response = testContext.getResponse();
+        Integer requested = testContext.getRequestedNumberOfMonths();
+        int lookback = requested != null ? requested : 24;
+        List<Map<String, Object>> apiBillHistory = response.jsonPath().getList("data.billHistory");
+        List<Map<String, Object>> dbRows = ApplicationContext.get()
+                .getDbAction()
+                .getBillHistory2(
+                        testContext.getCustomerCode(),
+                        testContext.getPremisesCode(),
+                        lookback);
+
+        assertThat("API billHistory size should match DB row count",
+                apiBillHistory.size(), equalTo(dbRows.size()));
+
+        String[] requiredApiFields = {
+                "billDate", "billFromDate", "billToDate", "daysOfService", "heatingDegreeDays",
+                "totalBilledConsumption", "balanceBroughtForward", "gasServiceCharges", "otherCharges",
+                "promotionalDiscounts", "taxes", "totalBillAmount", "billHistoryTransactionNumber"
+        };
+
+        for (int i = 0; i < dbRows.size(); i++) {
+            Map<String, Object> dbRow = dbRows.get(i);
+            Map<String, Object> apiRow = apiBillHistory.get(i);
+            String rowContext = "Row [" + i + "] billDate=" + dbRow.get("BILL_DATE")
+                    + " tranNum=" + dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER");
+
+            for (String field : requiredApiFields) {
+                assertThat(rowContext + " | required field missing: " + field,
+                        apiRow.get(field), notNullValue());
+            }
+
+            assertThat(rowContext + " | billDate mismatch",
+                    String.valueOf(apiRow.get("billDate")),
+                    equalTo(String.valueOf(dbRow.get("BILL_DATE"))));
+
+            assertThat(rowContext + " | billHistoryTransactionNumber mismatch",
+                    ((Number) apiRow.get("billHistoryTransactionNumber")).longValue(),
+                    equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));
+
+            if (dbRow.get("TOTAL_BILL_AMOUNT") != null) {
+                assertMonetary(rowContext + " | totalBillAmount mismatch",
+                        apiRow.get("totalBillAmount"), dbRow.get("TOTAL_BILL_AMOUNT"));
+            }
+            if (dbRow.get("GAS_SERVICE_CHARGES") != null) {
+                assertMonetary(rowContext + " | gasServiceCharges mismatch",
+                        apiRow.get("gasServiceCharges"), dbRow.get("GAS_SERVICE_CHARGES"));
+            }
+            if (dbRow.get("TAXES") != null) {
+                assertMonetary(rowContext + " | taxes mismatch",
+                        apiRow.get("taxes"), dbRow.get("TAXES"));
+            }
+        }
+    }
+
+    @And("bill history historical values should be populated for {string}")
+    public void billHistoryHistoricalValuesShouldBePopulatedFor(String testCondition) {
+        Response response = testContext.getResponse();
+        List<Map<String, Object>> billHistory = response.jsonPath().getList("data.billHistory");
+        assertThat("billHistory should not be null", billHistory, notNullValue());
+        assertThat("billHistory should not be empty", billHistory.isEmpty(), equalTo(false));
+
+        if (testCondition.contains("Budget_Billing_Historical")) {
+            boolean anyPopulated = billHistory.stream().anyMatch(row ->
+                    row.get("budgetBillingAmount") != null
+                            || row.get("budgetBillingActualCharges") != null
+                            || row.get("budgetBillingMonthlyVariance") != null
+                            || row.get("budgetBillingTotalVariance") != null);
+            assertThat("SP1_09: at least one bill period should have populated BB historical values",
+                    anyPopulated, equalTo(true));
+            return;
+        }
+
+        if (testCondition.contains("Guaranteed_Bill_Historical")) {
+            boolean anyPopulated = billHistory.stream()
+                    .anyMatch(row -> row.get("guaranteedBillAmount") != null);
+            assertThat("SP1_10: at least one bill period should have populated guaranteedBillAmount",
+                    anyPopulated, equalTo(true));
+            return;
+        }
+
+        throw new IllegalArgumentException("Unsupported historical-values condition: " + testCondition);
     }
 
 
@@ -589,6 +688,12 @@ public class BaseSteps {
     private static final BigDecimal MONETARY_TOLERANCE = new BigDecimal("0.01");
 
     private void assertMonetary(String context, Object apiValue, Object dbValue) {
+        if (apiValue == null || dbValue == null
+                || "null".equalsIgnoreCase(String.valueOf(apiValue))
+                || "null".equalsIgnoreCase(String.valueOf(dbValue))) {
+            throw new AssertionError(context + " — cannot compare null monetary values"
+                    + " api=" + apiValue + " db=" + dbValue);
+        }
         BigDecimal api = new BigDecimal(String.valueOf(apiValue));
         BigDecimal db  = new BigDecimal(String.valueOf(dbValue));
         assertThat(context,
@@ -681,23 +786,36 @@ public class BaseSteps {
             assertMonetary(rowContext + " | totalBillAmount mismatch",
                     apiRow.get("totalBillAmount"), dbRow.get("TOTAL_BILL_AMOUNT"));
 
-            // ── Nullable: budgetBillingAmount ─────────────────────────────────
-            Object apiBudget = apiRow.get("budgetBillingAmount");
-            Object dbBudget  = dbRow.get("BUDGET_BILLING_AMOUNT");
-
-            if (dbBudget == null) {
-                assertThat(rowContext + " | budgetBillingAmount should be null",
-                        apiBudget, nullValue());
-            } else {
-                assertMonetary(rowContext + " | budgetBillingAmount mismatch",
-                        apiBudget, dbBudget);
-            }
+            // ── Nullable budget / guaranteed historical fields ────────────────
+            assertNullableMonetary(rowContext + " | budgetBillingAmount",
+                    apiRow.get("budgetBillingAmount"), dbRow.get("BUDGET_BILLING_AMOUNT"));
+            assertNullableMonetary(rowContext + " | budgetBillingActualCharges",
+                    apiRow.get("budgetBillingActualCharges"), dbRow.get("BUDGET_BILLING_ACTUAL_CHARGES"));
+            assertNullableMonetary(rowContext + " | budgetBillingMonthlyVariance",
+                    apiRow.get("budgetBillingMonthlyVariance"), dbRow.get("BUDGET_BILLING_MONTHLY_VARIANCE"));
+            // totalVariance uses SUM(uabopen_budget_variance) for item_type B (same as GetBillingInfo).
+            // If Banner SP uses a different cumulative source, mismatch is reported with both values.
+            assertNullableMonetary(rowContext + " | budgetBillingTotalVariance",
+                    apiRow.get("budgetBillingTotalVariance"), dbRow.get("BUDGET_BILLING_TOTAL_VARIANCE"));
+            assertNullableMonetary(rowContext + " | guaranteedBillAmount",
+                    apiRow.get("guaranteedBillAmount"), dbRow.get("GUARANTEED_BILL_AMOUNT"));
 
             // ── Transaction number ────────────────────────────────────────────
             assertThat(rowContext + " | billHistoryTransactionNumber mismatch",
                     ((Number) apiRow.get("billHistoryTransactionNumber")).longValue(),
                     equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));
         }
+    }
+
+    private void assertNullableMonetary(String context, Object apiValue, Object dbValue) {
+        if (dbValue == null) {
+            assertThat(context + " should be null (api=" + apiValue + ")", apiValue, nullValue());
+            return;
+        }
+        assertThat(context + " should not be null when DB has a value (db=" + dbValue + ")",
+                apiValue, notNullValue());
+        assertMonetary(context + " mismatch (api=" + apiValue + ", db=" + dbValue + ")",
+                apiValue, dbValue);
     }
 
 
@@ -891,11 +1009,11 @@ public class BaseSteps {
 
         int count = discounts.size();
 
-        boolean isSingle = testCondition.contains("TC_183");
-        boolean isMultiple = testCondition.contains("TC_184");
-        boolean isNone = testCondition.contains("TC_185");
-        boolean isTransferable = testCondition.contains("TC_186");
-        boolean isNonTransferable = testCondition.contains("TC_187");
+        boolean isSingle = testCondition.contains("TC_186");
+        boolean isMultiple = testCondition.contains("TC_187");
+        boolean isNone = testCondition.contains("TC_188");
+        boolean isTransferable = testCondition.contains("TC_189");
+        boolean isNonTransferable = testCondition.contains("TC_190");
 
         // --- COUNT VALIDATIONS ---
         if (isSingle) {

@@ -6,14 +6,10 @@ import com.gng.api.db.DBAction;
 import com.gng.api.db.DBConnection;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.config.HttpClientConfig;
-import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClients;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
@@ -104,17 +100,7 @@ public class ApplicationContext {
 
     public static void setRequestSpec() {
         log.info("Setting Request Specification");
-        // Fail hung UAT calls instead of blocking the suite indefinitely.
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(60_000)
-                .setSocketTimeout(120_000)
-                .setConnectionRequestTimeout(60_000)
-                .build();
-        RestAssuredConfig config = RestAssuredConfig.config().httpClient(
-                HttpClientConfig.httpClientConfig().httpClientFactory(
-                        () -> HttpClients.custom().setDefaultRequestConfig(requestConfig).build()));
         requestSpecification.set(RestAssured.given()
-                .config(config)
                 .baseUri(ApplicationContext.get().getEnvConfig().getBaseUri())
                 .contentType(ContentType.JSON));
     }

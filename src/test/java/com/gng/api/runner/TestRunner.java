@@ -20,12 +20,11 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-                "src/test/resources/features/csi/phase2/GetBillHistory.feature",
-                "src/test/resources/features/csi/phase3/GetBillingInfo.feature"
+                "src/test/resources/features/csi/phase2"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
-        tags = "@GetBillHistory or @GetBillHistoryPositive or @GetBillingInfo or @GetBillingInfoPositive",
+//        tags = "@CSI",
         monochrome = true,
         plugin = {
                 "pretty",

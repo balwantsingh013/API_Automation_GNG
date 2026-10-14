@@ -37,7 +37,7 @@ public enum GetBillHistoryLabel {
     TC_88__Positive__Usage_History_TotalBillAmount_Format,
     TC_89__Positive__Usage_History_BillHistoryTransactionNumber_Format,
     TC_90__Positive__No_Usage_History_New,
-    TC_90__Positive__No_Usage_History_Active,
+    TC_90A__Positive__No_Usage_History_Active,
     TC_91__Positive__No_Usage_History_Final,
     TC_92__Positive__No_Usage_History_Inactive,
     TC_93__Positive__Valid_NumberOfMonths_BillHistory_Too_Old,

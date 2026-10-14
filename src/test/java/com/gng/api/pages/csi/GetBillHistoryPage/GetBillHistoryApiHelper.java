@@ -153,9 +153,7 @@ public class GetBillHistoryApiHelper {
 
             case SP1_07__Positive__Guaranteed_Bill_Amount_Format:
             case SP1_10__Positive__Guaranteed_Bill_Historical_Values:
-                skipWhenNoAutomatableSeed(testCondition.name(),
-                        "No automatable Guaranteed Bill GetBillHistory seed; "
-                                + "manual account creation is not permitted for automation.");
+                applyGuaranteedBillHistorySeedOrSkip(payload, testCondition.name());
                 break;
 
 
@@ -192,7 +190,7 @@ public class GetBillHistoryApiHelper {
                 payload.setNumberOfMonths("24");
                 break;
 
-            case TC_90__Positive__No_Usage_History_Active:
+            case TC_90A__Positive__No_Usage_History_Active:
                 accountInfo = ApplicationContext.get().getDbAction().getNoUsageHistoryActiveAccount();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("UCRACCT_CUST_CODE").toString());
@@ -217,29 +215,38 @@ public class GetBillHistoryApiHelper {
                 break;
 
             case TC_93__Positive__Valid_NumberOfMonths_BillHistory_Too_Old:
-             accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryOld();
+                try {
+                    accountInfo = ApplicationContext.get().getDbAction().getUsageHistoryOld();
+                } catch (Exception e) {
+                    skipWhenNoAutomatableSeed(testCondition.name(),
+                            "No automatable too-old bill-history account; "
+                                    + "manual account creation is not permitted for automation.");
+                    break;
+                }
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountInfo.get("customer_code").toString());
                 payload.setPremisesCode(accountInfo.get("premises_code").toString());
-                payload.setNumberOfMonths("12");
-                List<Map<String, Object>> dbRows = ApplicationContext.get()
-                        .getDbAction()
-                        .getBillHistory(accountInfo.get("customer_code").toString(), accountInfo.get("premises_code").toString());
+                payload.setNumberOfMonths(12);
+                testContext.setCustomerCode(accountInfo.get("customer_code").toString());
+                testContext.setPremisesCode(accountInfo.get("premises_code").toString());
                 break;
 
-            case TC_94__Positive__Usage_History_Less_Than_Requested_Months:
-                accountInfo = ApplicationContext.get().getDbAction().getAccountWithActualReading2();
-
+            case TC_94__Positive__Usage_History_Less_Than_Requested_Months: {
+                Map<String, Object> resolved94 = resolveBillHistoryLessThanRequested();
+                String cust94 = resolved94.get("ubbbhst_cust_code").toString();
+                String prem94 = resolved94.get("ubbbhst_prem_code").toString();
+                int lookback94 = ((Number) resolved94.get("requestedMonths")).intValue();
+                int expected94 = ((Number) resolved94.get("expectedMatches")).intValue();
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                payload.setCustomerCode(accountInfo.get("urrshis_cust_code").toString());
-                payload.setPremisesCode(accountInfo.get("urrshis_prem_code").toString());
-                payload.setNumberOfMonths("24");
-                testContext.setCustomerCode(accountInfo.get("urrshis_cust_code").toString());
-                testContext.setPremisesCode(accountInfo.get("urrshis_prem_code").toString());
-                List<Map<String, Object>> dbRows2 = ApplicationContext.get()
-                        .getDbAction()
-                        .getBillHistory(accountInfo.get("urrshis_cust_code").toString(), accountInfo.get("urrshis_prem_code").toString());
+                payload.setCustomerCode(cust94);
+                payload.setPremisesCode(prem94);
+                payload.setNumberOfMonths(lookback94);
+                testContext.setCustomerCode(cust94);
+                testContext.setPremisesCode(prem94);
+                testContext.setRequestedNumberOfMonths(lookback94);
+                testContext.setExpectedNumberOfMatches(expected94);
                 break;
+            }
 
             case TC_95__Positive__Usage_History_Equals_Requested_Months: {
                 // numberOfMonths = lookback window (months), not bill count.
@@ -291,15 +298,129 @@ public class GetBillHistoryApiHelper {
     private void applyBudgetBillingBillHistorySeed(GetBillHistoryRequest payload) {
         final String cust = "2955";
         final String prem = "2568";
+        final int lookbackMonths = 24;
         payload.setLoginID(null);
         payload.setCustomerCode(cust);
         payload.setPremisesCode(prem);
-        payload.setNumberOfMonths(24);
+        payload.setNumberOfMonths(lookbackMonths);
         testContext.setCustomerCode(cust);
         testContext.setPremisesCode(prem);
+        testContext.setRequestedNumberOfMonths(lookbackMonths);
         DualReportManager.logInfo(
                 "GetBillHistory BB seed " + cust + "/" + prem
-                        + " (loginID=null, numberOfMonths=24)");
+                        + " (loginID=null, numberOfMonths=" + lookbackMonths + ")");
+    }
+
+    /**
+     * TC_94: request a lookback wider than available bill history (matches &gt; 0 and &lt; lookback).
+     */
+    private Map<String, Object> resolveBillHistoryLessThanRequested() {
+        List<Map<String, Object>> candidates = ApplicationContext.get().getDbAction()
+                .listBillHistoryTc9596Candidates();
+        if (candidates == null || candidates.isEmpty()) {
+            skipWhenNoAutomatableSeed(
+                    GetBillHistoryLabel.TC_94__Positive__Usage_History_Less_Than_Requested_Months.name(),
+                    "No automatable less-than-requested bill-history account; "
+                            + "manual account creation is not permitted for automation.");
+        }
+        final int lookbackMonths = 24;
+        for (Map<String, Object> candidate : candidates) {
+            String cust = firstNonNull(candidate, "ubbbhst_cust_code", "UBBBHST_CUST_CODE").toString();
+            String prem = firstNonNull(candidate, "ubbbhst_prem_code", "UBBBHST_PREM_CODE").toString();
+            ProbeResult probe = probeOk(cust, prem, lookbackMonths);
+            if (probe != null && probe.matches > 0 && probe.matches < lookbackMonths) {
+                DualReportManager.logInfo(
+                        "TC_94 seed " + cust + "/" + prem
+                                + " lookbackMonths=" + lookbackMonths
+                                + " billMatches=" + probe.matches);
+                return resolvedAccount(cust, prem, probe.matches, lookbackMonths);
+            }
+        }
+        skipWhenNoAutomatableSeed(
+                GetBillHistoryLabel.TC_94__Positive__Usage_History_Less_Than_Requested_Months.name(),
+                "No probe-validated account with bill history less than requested months; "
+                        + "manual account creation is not permitted for automation.");
+        return null;
+    }
+
+    /**
+     * SP1_07 / SP1_10: reuse GetAccountInfo Guaranteed Bill candidate pools; skip if API
+     * never returns a non-null guaranteedBillAmount.
+     */
+    private void applyGuaranteedBillHistorySeedOrSkip(GetBillHistoryRequest payload, String testCondition) {
+        List<Map<String, Object>> candidates = new java.util.ArrayList<>();
+        try {
+            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5PriceProCandidates());
+        } catch (Exception e) {
+            log.warn("Guaranteed PRICEPRO candidate query failed: {}", e.getMessage());
+        }
+        try {
+            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5AnyDiscountCandidates());
+        } catch (Exception e) {
+            log.warn("Guaranteed any-discount candidate query failed: {}", e.getMessage());
+        }
+        try {
+            Map<String, Object> withoutDiscount = ApplicationContext.get().getDbAction()
+                    .getAccountDetailsTC5WithoutDiscount();
+            if (withoutDiscount != null) {
+                candidates.add(withoutDiscount);
+            }
+        } catch (Exception e) {
+            log.warn("Guaranteed without-discount candidate query failed: {}", e.getMessage());
+        }
+
+        int probed = 0;
+        final int maxProbes = 5;
+        for (Map<String, Object> candidate : candidates) {
+            if (candidate == null) {
+                continue;
+            }
+            if (probed >= maxProbes) {
+                break;
+            }
+            String cust;
+            String prem;
+            try {
+                cust = firstNonNull(candidate, "ucracct_cust_code", "UCRACCT_CUST_CODE").toString();
+                prem = firstNonNull(candidate, "ucracct_prem_code", "UCRACCT_PREM_CODE").toString();
+            } catch (Exception e) {
+                continue;
+            }
+            probed++;
+            Response response = probeGetBillHistory(cust, prem, 24);
+            if (response.statusCode() != 200) {
+                continue;
+            }
+            Object err = response.jsonPath().get("errorCode");
+            if (err == null) {
+                err = response.jsonPath().get("ErrorCode");
+            }
+            Integer errorCode = err instanceof Number ? ((Number) err).intValue() : null;
+            if (errorCode == null || errorCode != 0) {
+                continue;
+            }
+            List<Object> amounts = response.jsonPath().getList("data.billHistory.guaranteedBillAmount");
+            boolean hasGuaranteed = amounts != null && amounts.stream().anyMatch(v -> v != null);
+            if (!hasGuaranteed) {
+                continue;
+            }
+            final int lookbackMonths = 24;
+            payload.setLoginID(null);
+            payload.setCustomerCode(cust);
+            payload.setPremisesCode(prem);
+            payload.setNumberOfMonths(lookbackMonths);
+            testContext.setCustomerCode(cust);
+            testContext.setPremisesCode(prem);
+            testContext.setRequestedNumberOfMonths(lookbackMonths);
+            DualReportManager.logInfo(
+                    testCondition + " Guaranteed Bill seed " + cust + "/" + prem
+                            + " (loginID=null, numberOfMonths=" + lookbackMonths + ")");
+            return;
+        }
+
+        skipWhenNoAutomatableSeed(testCondition,
+                "No automatable Guaranteed Bill GetBillHistory seed; "
+                        + "manual account creation is not permitted for automation.");
     }
 
     private static void skipWhenNoAutomatableSeed(String testCondition, String reason) {
@@ -415,10 +536,9 @@ public class GetBillHistoryApiHelper {
         probe.setNumberOfMonths(numberOfMonths);
 
         String uri = ApplicationContext.get().getEnvConfig().getBaseUri() + GET_BILL_HISTORY;
-        ApplicationContext.setRequestSpec();
         return io.restassured.RestAssured.given()
-                .spec(ApplicationContext.getRequestSpec())
                 .relaxedHTTPSValidation()
+                .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + testContext.getAuthToken())
                 .body(probe)
                 .post(uri);
