@@ -1,5 +1,5 @@
 baseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
-# AES is on the same UAT1 API gateway under /api/v1
+#AES is on the same UAT1 API gateway under /api/v1
 aesBaseUri: "https://wapi-uat1.gng.vertexna.net/api/v1"
 aesEncryptPath: "/AesEncryption/Encrypt"
 aesDecryptPath: "/AesEncryption/Decrypt"
@@ -24,13 +24,13 @@ databases:
   oracle:
     driverClassName: "oracle.jdbc.OracleDriver"
     serverName: "jdbc:oracle:thin:@10.204.162.5:20800:GNGBBAN"
-    userName: "KJADHAV"
-    password: "vrt202408"
+    userName: "AUTOTESTGNG"
+    password: "vrt202406012"
 
   mariadb:
     driverClassName: "org.mariadb.jdbc.Driver"
     serverName: "jdbc:mariadb://10.209.34.6:3308/billvantage_gng_uat1"
-    userName: "KJADHAV"
+    userName: "AUTOTESTGNG"
     password: "vrt20240602"
 
 enableLogsOnPass: true

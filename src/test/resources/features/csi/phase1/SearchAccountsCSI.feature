@@ -374,13 +374,19 @@ Feature: Verify SearchAccounts Api
       | TC_295__Positive__Mixed_Username_Population_in_Multi_Result_Response                             | 0         |              |
       | TC_296__Positive__No_Username_Exact_Empty_String_Contract_Validation                             | 0         |              |
 
+  # TC_297 is NOT listed above: it searches by the customerCode/premisesCode/password that TC_294
+  # stores in the TestContext, so it only has search criteria when TC_294 has run first. Standalone
+  # it sent customerCode=null/premisesCode=null/password=null and the API answered
+  # 10377 "Insufficient Search Criteria". It is covered by the paired outline below.
   @SearchAccounts987 @NegativeFlow @CSI @searchAccountsCSI
   Scenario Outline: "<testCondition2>"
     When a request is made to SearchAccounts Api for "<testCondition>"
     Then verify response code of "SearchAccounts" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And capture the SearchAccounts username for the searched account
     When a request is made to SearchAccounts Api for "<testCondition2>"
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the SearchAccounts username should match across both search paths
 
     Examples:
       | testCondition                                                                                   | errorCode | errorMessage |testCondition2|

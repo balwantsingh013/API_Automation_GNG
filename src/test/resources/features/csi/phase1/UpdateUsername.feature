@@ -17,7 +17,7 @@ Feature: Verify UpdateUsername Api
       | TC_31__Negative__Invalid_Username_format__Length___Too_Short____     | 10351     | Invalid Username Length                    | false   |
       | TC_32__Negative__Invalid_Username_format__Length___Too_Long____      | 10351     | Invalid Username Length                    | false   |
       | TC_33__Negative__Invalid_Username_format__Alphanumeric               | 10353     | Invalid Username Format                    | false   |
-      | TC_34__Negative__Missing_Password                                    | 10113     | Missing Password                           | false   |
+      | TC_34__Negative__Missing_Password                                    | 10142     | Missing Password                           | false   |
       | TC_35__Negative__Invalid_Password_Format__Length___Too_Short____     | 10157     | Invalid Password Length. The password must be between 8 and 64 characters. | false |
       | TC_36__Negative__Invalid_Password_Format__Length___Too_Long____      | 10157     | Invalid Password Length. The password must be between 8 and 64 characters. | false |
       | TC_37__Negative__Account_username_already_linked                     | 10361     | The account is already linked to a username| false   |

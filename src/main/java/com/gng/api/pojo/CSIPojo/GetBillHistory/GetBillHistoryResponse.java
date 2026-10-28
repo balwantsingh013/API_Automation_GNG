@@ -52,6 +52,10 @@ public class GetBillHistoryResponse {
         private Double promotionalDiscounts;
         private Double taxes;
         private Double budgetBillingAmount;
+        private Double budgetBillingActualCharges;
+        private Double budgetBillingMonthlyVariance;
+        private Double budgetBillingTotalVariance;
+        private Double guaranteedBillAmount;
         private Double totalBillAmount;
 
         private Long billHistoryTransactionNumber;

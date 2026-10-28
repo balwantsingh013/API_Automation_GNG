@@ -86,15 +86,17 @@ public class VerifyAccountPage extends BasePage {
             log.info("Sending Preferences VerifyAccount to {} (custCode={}, premCode={})",
                     url, inner.getCustCode(), inner.getPremCode());
 
-            Response raw = given()
-                    .relaxedHTTPSValidation()
-                    .contentType(ContentType.JSON)
-                    .body(envelope)
-                    .when()
-                    .post(url)
-                    .then()
-                    .extract()
-                    .response();
+            Response raw = postBroker(url, envelope);
+            if (PreferencesVerifyAccountUtil.isAuthRejection(raw.statusCode())) {
+                // Aged-out broker token: refresh, re-stamp the payload and retry once.
+                log.info("Preferences VerifyAccount HTTP {} — refreshing auth token and retrying once",
+                        raw.statusCode());
+                inner.setAuthenticationToken(PreferencesVerifyAccountUtil.refreshPreferencesAuthToken());
+                envelope = PreferencesBrokerEnvelope.builder()
+                        .request(MAPPER.writeValueAsString(inner))
+                        .build();
+                raw = postBroker(url, envelope);
+            }
 
             SimplifiedExtentReportManager.addRequestDetailsToReport(
                     given().contentType(ContentType.JSON).baseUri(baseUri).body(envelope));
@@ -116,6 +118,18 @@ public class VerifyAccountPage extends BasePage {
             throw new IllegalStateException(
                     "Preferences VerifyAccount call failed for " + url + ": " + e.getMessage(), e);
         }
+    }
+
+    private static Response postBroker(String url, PreferencesBrokerEnvelope envelope) {
+        return given()
+                .relaxedHTTPSValidation()
+                .contentType(ContentType.JSON)
+                .body(envelope)
+                .when()
+                .post(url)
+                .then()
+                .extract()
+                .response();
     }
 
     /**

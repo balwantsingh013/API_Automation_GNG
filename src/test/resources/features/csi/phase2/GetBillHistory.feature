@@ -24,7 +24,7 @@ Feature: Verify GetBillHistory Api
       | TC_73__Negative__Invalid_Number_of_Months_Negative | 10395  | Invalid Number of Months                     |
       | TC_74__Negative__Invalid_Number_of_Months_Length | 10405    | Number of Months exceeds maximum allowed                     |
 
-#
+
   @GetBillHistoryPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
     When a request is made to GetBillHistory Api for "<testCondition>"
@@ -54,10 +54,10 @@ Feature: Verify GetBillHistory Api
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | data    |
-      | TC_83__Positive__Usage_History_OtherCharges_Format           | 0        |              | notNull |
-      | TC_84__Positive__Usage_History_PromotionalDiscounts_Format   | 0        |              | notNull |
-      | TC_85__Positive__Usage_History_Taxes_Format                  | 0        |              | notNull |
-      | TC_86__Positive__Usage_History_BudgetBillingAmount_Format    | 0        |              | notNull |
+    | TC_83__Positive__Usage_History_OtherCharges_Format           | 0        |              | notNull |
+    | TC_84__Positive__Usage_History_PromotionalDiscounts_Format   | 0        |              | notNull |
+    | TC_85__Positive__Usage_History_Taxes_Format                  | 0        |              | notNull |
+     | TC_86__Positive__Usage_History_BudgetBillingAmount_Format    | 0        |              | notNull |
 
   @GetBillHistoryPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -83,7 +83,8 @@ Feature: Verify GetBillHistory Api
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | data    |
-      | TC_90__Positive__No_Usage_History_Active                           | 0 |              | notNull |
+      | TC_90__Positive__No_Usage_History_New                              | 0 |              | notNull |
+      | TC_90A__Positive__No_Usage_History_Active                          | 0 |              | notNull |
       | TC_91__Positive__No_Usage_History_Final                            | 0 |              | notNull |
       | TC_92__Positive__No_Usage_History_Inactive                         | 0 |              | notNull |
 
@@ -93,11 +94,55 @@ Feature: Verify GetBillHistory Api
     When a request is made to GetBillHistory Api for "<testCondition>"
     Then verify response code of "GetBillHistory" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
-
+    And response should return numberOfMatches as 0
 
     Examples:
       | testCondition                                            | errorCode | errorMessage | data    |
       | TC_93__Positive__Valid_NumberOfMonths_BillHistory_Too_Old          | 0 |              | notNull |
+
+
+  @GetBillHistoryPositive @HappyFlow @CSI @BillHistoryDbVerify
+  Scenario Outline: "<testCondition>"
+    When a request is made to GetBillHistory Api for "<testCondition>"
+    Then verify response code of "GetBillHistory" Api is 200
+    And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And the response should have data as "<data>"
+    And bill history should return matches for requested months
+    And bill history rows should contain required minimum fields matching database keys
+
+    Examples:
+      | testCondition                                            | errorCode | errorMessage | data    |
       | TC_94__Positive__Usage_History_Less_Than_Requested_Months          | 0 |              | notNull |
       | TC_95__Positive__Usage_History_Equals_Requested_Months             | 0 |              | notNull |
       | TC_96__Positive__Usage_History_Greater_Than_Requested_Months       | 0 |              | notNull |
+
+
+  # Supplemental SP1.* — format/null checks (presence/shape only)
+   @GetBillHistoryPositive @HappyFlow @CSI
+   Scenario Outline: "<testCondition>"
+     When a request is made to GetBillHistory Api for "<testCondition>"
+     Then verify response code of "GetBillHistory" Api is 200
+     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+     Examples:
+       | testCondition                                            | errorCode | errorMessage | data    |
+       | SP1_01__Positive__Budget_Billing_Actual_Charges_Format             | 0 |              | notNull |
+       | SP1_02__Positive__Budget_Billing_Actual_Charges_Null               | 0 |              | notNull |
+       | SP1_03__Positive__Budget_Billing_Monthly_Variance_Format           | 0 |              | notNull |
+       | SP1_04__Positive__Budget_Billing_Monthly_Variance_Null             | 0 |              | notNull |
+       | SP1_05__Positive__Budget_Billing_Total_Variance_Format             | 0 |              | notNull |
+       | SP1_06__Positive__Budget_Billing_Total_Variance_Null               | 0 |              | notNull |
+       | SP1_07__Positive__Guaranteed_Bill_Amount_Format                     | 0 |              | notNull |
+       | SP1_08__Positive__Guaranteed_Bill_Amount_Null                      | 0 |              | notNull |
+
+  # SP1.09 / SP1.10 — historical values must match Banner-calculated DB values
+   @GetBillHistoryPositive @HappyFlow @CSI @BillHistoryDbVerify
+   Scenario Outline: "<testCondition>"
+     When a request is made to GetBillHistory Api for "<testCondition>"
+     Then verify response code of "GetBillHistory" Api is 200
+     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+     And bill history response should match database for customer and premises code
+     And bill history historical values should be populated for "<testCondition>"
+     Examples:
+       | testCondition                                            | errorCode | errorMessage | data    |
+       | SP1_09__Positive__Budget_Billing_Historical_Values                 | 0 |              | notNull |
+       | SP1_10__Positive__Guaranteed_Bill_Historical_Values                | 0 |              | notNull |

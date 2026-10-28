@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class GetBillHistoryRequest {
 
     private String requestID;
+    /** Include explicit null in JSON (class-level NON_NULL would omit it). */
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private String loginID;
     private String customerCode;
     private String premisesCode;

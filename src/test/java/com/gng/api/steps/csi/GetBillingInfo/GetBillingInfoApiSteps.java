@@ -7,6 +7,7 @@ import com.gng.api.util.TestContextHolder;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
+
 import static com.gng.api.steps.csi.GetBillingInfo.GetBillingInfoLabel.get_billing_info;
 
 @Slf4j
@@ -30,6 +31,7 @@ public class GetBillingInfoApiSteps {
     @When("a request is made to GetBillingInfo Api for {string}")
     public void a_request_is_made_to_the_GetBillingInfo_Api_with_invalid_values(String testCondition) {
         CommonUtil.logTestDescriptionToReports(testCondition);
+        // SP1_09 / SP1_12: probe Guaranteed Bill seeds in helper — run if found, Skip only if none.
         getBillingInfoPage.validateResponseForNegativeTestConditions(get_billing_info, GetBillingInfoLabel.valueOf(testCondition));
     }
 

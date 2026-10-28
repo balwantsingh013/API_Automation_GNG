@@ -89,7 +89,7 @@ public class VerifyAccountApiHelper {
                  TC_213__Positive__Billing_Street_Suffix_Format_ -> resolveBannerStreetWithField(
                     "billingStreetSuffix", "TC_212/213 Street Suffix");
             case TC_214__Positive__Billing_PostDir_Value_,
-                 TC_215__Positive__Billing_PostDir_Format_ -> resolveBannerStreetWithField(
+                 TC_215__Positive__Billing_PostDir_Format_ -> resolveSwaggerStreetWithFieldProbed(
                     "billingStreetPostDirection", "TC_214/215 PostDir");
             case TC_216__Positive__Billing_Unit_Type_Value_,
                  TC_217__Positive__Billing_Unit_Type_Format_ -> resolveBannerStreetWithField(
@@ -117,71 +117,126 @@ public class VerifyAccountApiHelper {
                  TC_231__Positive__Bill_Delivery_Confirmation_Date_Format_,
                  TC_234__Positive__Bill_Delivery_Preference_Confirmed_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewConfirmedBill(),
+                            setupHelper.ensureConfirmedBillForVerify(),
                             testCondition);
 
             case TC_232__Positive__Corr_Delivery_Confirmation_Date_Value_,
                  TC_233__Positive__Corr_Delivery_Confirmation_Date_Format_,
                  TC_235__Positive__Correspondence_Delivery_Preference_Confirmed_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewConfirmedCorr(),
+                            setupHelper.ensureConfirmedCorrForVerify(),
                             testCondition);
 
             case TC_236__Positive__Bill_Delivery_Preference_Initiated_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewPendingBill(),
+                            setupHelper.ensureTc236InitiatedBill(),
                             testCondition);
 
             case TC_237__Positive__Correspondence_Delivery_Preference_Initiated_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewPendingCorr(),
+                            setupHelper.ensureTc237InitiatedCorr(),
                             testCondition);
 
             case TC_238__Positive__Bill_Delivery_Preference_Paper_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewPaperBill(),
+                            setupHelper.ensurePaperBillForVerify(),
                             testCondition);
 
             case TC_239__Positive__Correspondence_Delivery_Preference_Paper_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewPaperCorr(),
+                            setupHelper.ensurePaperCorrForVerify(),
                             testCondition);
 
             case TC_240__Positive__Bill_Delivery_Preference_Expired_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewExpiredBill(),
+                            setupHelper.ensureExpiredBillForVerify(),
                             testCondition);
 
             case TC_241__Positive__Correspondence_Delivery_Preference_Expired_ ->
                     applyBannerAccount(payload,
-                            ApplicationContext.get().getDbAction().getVerifyAccountNewExpiredCorr(),
+                            setupHelper.ensureExpiredCorrForVerify(),
                             testCondition);
 
             default -> log.warn("Unhandled Preferences VerifyAccount test condition: {}", testCondition);
         }
     }
 
+    /**
+     * TC_206/207/210/211/220–225: any street account, but Swagger-verified first —
+     * taking {@code candidates.get(0)} blind meant a pool-order shift could hand the TC an
+     * account that fails Swagger email verify (10073) and fail the whole scenario.
+     */
     private Map<String, Object> resolveBannerStreetAccount() {
-        List<Map<String, Object>> candidates = ApplicationContext.get().getDbAction()
-                .listVerifyAccountStreetCandidates(10, true);
-        if (candidates == null || candidates.isEmpty()) {
-            return ApplicationContext.get().getDbAction().getVerifyAccountWithUcraddrStreet();
-        }
-        return candidates.get(0);
+        return resolveSwaggerStreetWithFieldProbed(null, "street account");
     }
 
     private Map<String, Object> resolveBannerStreetWithField(String field, String label) {
+        return resolveSwaggerStreetWithFieldProbed(field, label);
+    }
+
+    /**
+     * Walks the street pool and keeps the first candidate carrying {@code field} (when given)
+     * that also probes Swagger ErrorCode 0. Falls back to the first field-bearing candidate and
+     * then to the single-row lookup, so this is never stricter than the unprobed selection.
+     */
+    private Map<String, Object> resolveSwaggerStreetWithFieldProbed(String field, String label) {
         List<Map<String, Object>> candidates = ApplicationContext.get().getDbAction()
                 .listVerifyAccountStreetCandidates(40, true);
+        String baseUri = ApplicationContext.get().getEnvConfig().getBaseUri();
+        String token = testContext.getAuthToken();
+        int fieldHits = 0;
+        int probed = 0;
+        Map<String, Object> firstFieldMatch = null;
         for (Map<String, Object> row : candidates) {
-            Object value = firstNonNull(row.get(field), row.get(field.toUpperCase()));
-            if (value != null && !value.toString().isBlank()) {
-                return row;
+            Object value = null;
+            if (field != null) {
+                value = firstNonNull(row.get(field), row.get(field.toUpperCase()));
+                if (value == null || value.toString().isBlank()) {
+                    continue;
+                }
             }
+            fieldHits++;
+            if (firstFieldMatch == null) {
+                firstFieldMatch = row;
+            }
+            ApplicationContext.get().getDbAction().enrichBannerEmail(row);
+            String email = PaperlessEnrollmentUtil.resolveBannerEmail(row);
+            if (email == null || email.isBlank()) {
+                // Run log only: a 40-row pool would otherwise flood the Extent report.
+                log.info("{} candidate skipped (no email): {}/{}", label,
+                        asString(row, "customerCode"), asString(row, "premisesCode"));
+                continue;
+            }
+            probed++;
+            String cust = asString(row, "customerCode");
+            String prem = asString(row, "premisesCode");
+            if (PreferencesVerifyAccountUtil.trySwaggerVerifyAccount(
+                    baseUri, token, cust, prem, email).isEmpty()) {
+                log.info("{} candidate skipped (Swagger verify failed): {}/{} email={}",
+                        label, cust, prem, email);
+                continue;
+            }
+            DualReportManager.logInfo(
+                    label + " selected after Swagger probe — "
+                            + cust + "/" + prem + " email=" + email
+                            + (field == null ? "" : " " + field + "=" + value)
+                            + " (probe " + probed + " of " + candidates.size() + " candidates)");
+            return row;
+        }
+
+        if (firstFieldMatch != null) {
+            DualReportManager.logInfo(
+                    label + " — no Swagger-verifiable candidate (fieldHits=" + fieldHits
+                            + ", probed=" + probed + "); using first matching candidate");
+            return firstFieldMatch;
+        }
+        if (field == null) {
+            return ApplicationContext.get().getDbAction().getVerifyAccountWithUcraddrStreet();
         }
         throw new IllegalStateException(
                 "TC " + label + " requires Banner UCRADDR " + field
-                        + " — no street candidate with that field found");
+                        + " with Swagger-verifiable email — fieldHits=" + fieldHits
+                        + " probed=" + probed + " of " + candidates.size() + " street candidates");
     }
 
     private Map<String, Object> normalizeAccountKeys(Map<String, Object> source) {
@@ -277,33 +332,35 @@ public class VerifyAccountApiHelper {
                                     Map<String, Object> accountData,
                                     VerifyAccountLabel testCondition) {
         accountData = normalizeAccountKeys(accountData);
-        ApplicationContext.get().getDbAction().enrichBannerEmail(accountData);
-        String email = PaperlessEnrollmentUtil.resolveBannerEmail(accountData);
+        // Prefer GTBENRL/PPER email for Preferences NEW path — GZBEMCP on UCRACCT-backed
+        // rows returns PEW ErrorCode 302; GTBENRL-only accounts verify successfully.
+        String email = firstNonBlank(
+                asString(accountData, "preferredEmail"),
+                asString(accountData, "gtbenrlEmail"),
+                asString(accountData, "GTBENRLEMAIL"),
+                asString(accountData, "ocsepciEmail"),
+                asString(accountData, "OCSEPCIEMAIL"),
+                asString(accountData, "bannerEmail"),
+                asString(accountData, "BANNEREMAIL"));
+        if (email == null || email.isBlank()) {
+            ApplicationContext.get().getDbAction().enrichBannerEmail(accountData);
+            email = PaperlessEnrollmentUtil.resolveBannerEmail(accountData);
+        }
         if (email == null || email.isBlank()) {
             String cust = asString(accountData, "customerCode");
             if (cust != null) {
                 email = ApplicationContext.get().getDbAction().getAnyBannerEmailForCustomer(cust);
             }
         }
-        // Preference-state accounts may lack GZBEMCP; use PPER/GTBENRL email when present,
-        // otherwise still call VerifyAccount and report the API result.
-        if (email == null || email.isBlank()) {
-            email = firstNonBlank(
-                    asString(accountData, "ocsepciEmail"),
-                    asString(accountData, "OCSEPCIEMAIL"),
-                    asString(accountData, "gtbenrlEmail"),
-                    asString(accountData, "GTBENRLEMAIL"));
-        }
-        boolean missingGzbemcp = email == null || email.isBlank();
-        if (missingGzbemcp) {
-            DualReportManager.logInfo(
-                    testCondition + " — no GZBEMCP/PPER/GTBENRL email on seed "
+        boolean missingEmail = email == null || email.isBlank();
+        if (missingEmail) {
+            throw new IllegalStateException(
+                    testCondition + " Preferences seed has no GTBENRL/PPER/GZBEMCP email for "
                             + asString(accountData, "customerCode") + "/"
                             + asString(accountData, "premisesCode")
-                            + "; calling Preferences VerifyAccount without Banner email");
-            email = "";
+                            + " — refusing empty-email VerifyAccount (unstable / 302).");
         }
-        accountData.put("bannerEmail", missingGzbemcp ? null : email);
+        accountData.put("bannerEmail", email);
         accountData.put("bannerPresent", true);
         // GZRPPTH NEW — Preferences pref TCs do not require UCRADDR match
         accountData.put("requireBannerMatch", "false");
@@ -314,7 +371,7 @@ public class VerifyAccountApiHelper {
                 "VerifyAccount GZRPPTH account (Preferences) for " + testCondition + " — "
                         + asString(accountData, "customerCode") + "/"
                         + asString(accountData, "premisesCode")
-                        + " email=" + (missingGzbemcp ? "(none)" : email)
+                        + " email=" + email
                         + " billPresType=" + asString(accountData, "billPresType")
                         + " billConfirmDate=" + asString(accountData, "billDeliveryConfirmDate"));
 

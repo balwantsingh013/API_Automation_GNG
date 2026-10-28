@@ -39,6 +39,7 @@ public final class ApiEndPoint {
     public static final String GET_PAYMENT_HISTORY="/CustomerService/GetPaymentHistory";
     public static final String GET_PAYMENT_ARRANGEMENT_INFO="/CustomerService/GetPaymentArrangementInfo";
     public static final String GET_BILLING_INFO="/CustomerService/GetBillingInfo";
+    public static final String REPORT_PAYMENT="/CustomerService/ReportPayment";
     public static final String UPDATE_PAPERLESS_COMMUNICATIONS="/CustomerService/UpdatePaperlessCommunications";
     public static final String CONFIRM_PAPERLESS_ENROLLMENT="/CustomerService/ConfirmPaperlessEnrollment";
     public static final String GET_PAPERLESS_ENROLLMENT_ELIGIBILITY="/CustomerService/GetPaperlessEnrollmentEligibility";

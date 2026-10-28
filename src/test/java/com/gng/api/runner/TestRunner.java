@@ -20,15 +20,11 @@ import static com.gng.api.context.ApplicationContext.setRequestSpec;
 
 @CucumberOptions(
         features = {
-//                "src/test/resources/features/csi/phase1/GetAccountInfo.feature",
-//                "src/test/resources/features/csi/phase3/GetPaperlessEnrollmentEligibility.feature"
-//                "src/test/resources/features/csi/phase3/UpdatePaperlessCommunications.feature"
-//                "src/test/resources/features/csi/phase3/ConfirmPaperlessEnrollment.feature"
-//                "src/test/resources/features/csi/phase1/UpdateMailingAddress.feature"
-                "src/test/resources/features/csi/phase3/VerifyAccount.feature"
+                "src/test/resources/features/csi/phase2"
         },
         glue = {"com.gng.api.steps"},
         dryRun = false,
+//        tags = "@CSI",
         monochrome = true,
         plugin = {
                 "pretty",

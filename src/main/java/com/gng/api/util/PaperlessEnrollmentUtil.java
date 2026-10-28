@@ -42,7 +42,8 @@ public final class PaperlessEnrollmentUtil {
 
         }
 
-        for (String key : new String[]{"bannerEmail", "BANNEREMAIL", "emailAddress", "EMAILADDRESS"}) {
+        for (String key : new String[]{"bannerEmail", "BANNEREMAIL", "emailAddress", "EMAILADDRESS",
+                "gtbenrlEmail", "GTBENRLEMAIL", "gzbemcpEmail", "GZBEMCPEMAIL"}) {
 
             Object value = accountData.get(key);
 
@@ -56,7 +57,8 @@ public final class PaperlessEnrollmentUtil {
 
         for (Map.Entry<String, Object> entry : accountData.entrySet()) {
 
-            for (String key : new String[]{"bannerEmail", "BANNEREMAIL", "emailAddress", "EMAILADDRESS"}) {
+            for (String key : new String[]{"bannerEmail", "BANNEREMAIL", "emailAddress", "EMAILADDRESS",
+                "gtbenrlEmail", "GTBENRLEMAIL", "gzbemcpEmail", "GZBEMCPEMAIL"}) {
 
                 if (entry.getKey().equalsIgnoreCase(key) && entry.getValue() != null
 

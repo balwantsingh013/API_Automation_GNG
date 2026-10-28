@@ -57,5 +57,19 @@ public enum GetBillingInfoLabel {
     TC_49__Positive__Bill_Line_Items_Reward_Order,
     TC_50__Positive__Bill_Line_Items_Miscellaneous_Charge_Order,
     TC_51__Positive__Bill_Line_Items_Miscellaneous_Credit_Order,
-    TC_52__Positive__Bill_Line_Items_Taxes_Order
+    TC_52__Positive__Bill_Line_Items_Taxes_Order,
+
+    // FTD01 Supplemental 01 (Phase 3 v1.2)
+    SP1_01__Positive__Adjustments_Applied_Amount_Greater_Than_0_Format_,
+    SP1_02__Positive__Adjustments_Applied_Amount_Equals_0_,
+    SP1_03__Positive__Adjustments_Since_Last_Bill_Greater_Than_0_Format_,
+    SP1_04__Positive__Adjustments_Since_Last_Bill_Equals_0_,
+    SP1_05__Positive__Budget_Billing_True_Up_Date_Budget_Billing_Account_Format_,
+    SP1_06__Positive__Budget_Billing_True_Up_Date_not_Budget_Billing_Account_Format_,
+    SP1_07__Positive__Budget_Billing_Actual_Charges_Budget_Billing_Account_Format_,
+    SP1_08__Positive__Budget_Billing_Actual_Charges_not_Budget_Billing_Account_Format_,
+    SP1_09__Positive__Guaranteed_Bill_Amount_Guaranteed_Bill_Account_Format_,
+    SP1_10__Positive__Guaranteed_Bill_Amount_not_Guaranteed_Bill_Account_Format_,
+    SP1_11__Positive__Budget_Billing_Current_Values_,
+    SP1_12__Positive__Guaranteed_Bill_Current_Values_
 }

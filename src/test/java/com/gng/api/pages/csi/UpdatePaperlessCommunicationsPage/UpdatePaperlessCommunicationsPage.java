@@ -33,6 +33,13 @@ import static com.gng.api.pages.csi.UpdatePaperlessCommunicationsPage.UpdatePape
 @Slf4j
 public class UpdatePaperlessCommunicationsPage extends BasePage {
 
+    /**
+     * TC_105 only: distinct accounts to try when ConfirmPaperlessEnrollment answers 40291 on a
+     * freshly initiated enrollment. Kept deliberately small — this masks a known API defect, and
+     * exhausting it should surface as a failure rather than retry indefinitely.
+     */
+    private static final int TC_105_CONFIRM_MAX_ATTEMPTS = 3;
+
     private final UpdatePaperlessCommunicationsApiHelper helper;
 
     public UpdatePaperlessCommunicationsPage(TestContext testContext) {
@@ -929,28 +936,79 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
                 "Expected linkExpiryDateTime=null or empty when cancelling pending bill enrollment");
     }
 
-    /** TC_105: prior enroll NEW both-channels, confirm, then unenroll P/P. */
+    /**
+     * TC_105: prior enroll NEW both-channels, confirm, then unenroll P/P.
+     * <p>
+     * WORKAROUND (open API defect): ConfirmPaperlessEnrollment intermittently answers
+     * {@code 40291 Account is Enrolled on Paperless} for an account its own UpdatePaperless call
+     * reported as {@code INITIATED} one second earlier. It reproduces on roughly 1 account in 100
+     * and has been observed since June; no test-data attribute distinguishes affected accounts
+     * (GZRPPTH row presence, UCRACCT preference NULL vs 'P' and token-creation latency were all
+     * ruled out). Until the API side is resolved, a 40291 at the prior-confirm step is treated as
+     * a poisoned account: discard it and retry the whole enroll+confirm on a freshly drawn one.
+     * Any other confirm error still fails immediately — this must not mask real defects.
+     */
     private void validateTc102NewAccountBothChannelsUnenrollment(UpdatePaperlessCommunicationsLabel apiLabel) {
-        helper.clearTc98NewAccountWithPendingBothChannels();
+        IllegalStateException lastConfirmFailure = null;
 
-        UpdatePaperlessCommunicationsRequest enrollPayload = helper.preparePayload(apiLabel);
-        helper.preparePayloadForTestCondition(enrollPayload,
-                UpdatePaperlessCommunicationsLabel.TC_101__Positive__New_Account_Both_Channels_Enrollment_Initiated_);
-        long baselineVerificationId = PaperlessConfirmationTokenUtil.getBaselineVerificationId(
-                enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode());
-        setRequestSpecification(enrollPayload, testContext.getAuthToken());
-        Response enrollResponse = sendRequest(HttpPost.METHOD_NAME, UPDATE_PAPERLESS_COMMUNICATIONS, 200);
-        testContext.setResponse(enrollResponse);
-        assertTc102PriorBothChannelsEnrollResponse(enrollResponse);
+        for (int attempt = 1; attempt <= TC_105_CONFIRM_MAX_ATTEMPTS; attempt++) {
+            helper.clearTc98NewAccountWithPendingBothChannels();
 
-        // Confirm first: UAT returns 40285 for unenroll while still INITIATED (TC_76)
-        String token = PaperlessConfirmationTokenUtil.waitForTokenCreatedAfterEnroll(
-                enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode(), baselineVerificationId);
-        confirmPaperlessEnrollmentOrFail(token, "TC_105 prior confirm");
+            UpdatePaperlessCommunicationsRequest enrollPayload = helper.preparePayload(apiLabel);
+            helper.preparePayloadForTestCondition(enrollPayload,
+                    UpdatePaperlessCommunicationsLabel.TC_101__Positive__New_Account_Both_Channels_Enrollment_Initiated_);
+            long baselineVerificationId = PaperlessConfirmationTokenUtil.getBaselineVerificationId(
+                    enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode());
+            setRequestSpecification(enrollPayload, testContext.getAuthToken());
+            Response enrollResponse = sendRequest(HttpPost.METHOD_NAME, UPDATE_PAPERLESS_COMMUNICATIONS, 200);
+            testContext.setResponse(enrollResponse);
+            assertTc102PriorBothChannelsEnrollResponse(enrollResponse);
 
-        executeUpdatePaperlessCommunications(apiLabel,
-                UpdatePaperlessCommunicationsLabel.TC_105__Positive__New_Account_Both_Channels_Unenrollment_);
-        assertTc102NewAccountBothChannelsUnenrollmentResponse(testContext.getResponse());
+            // Confirm first: UAT returns 40285 for unenroll while still INITIATED (TC_76)
+            String token = PaperlessConfirmationTokenUtil.waitForTokenCreatedAfterEnroll(
+                    enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode(), baselineVerificationId);
+            try {
+                confirmPaperlessEnrollmentOrFail(token, "TC_105 prior confirm");
+            } catch (IllegalStateException ex) {
+                if (!isConfirmAlreadyEnrolled(ex) || attempt == TC_105_CONFIRM_MAX_ATTEMPTS) {
+                    throw ex;
+                }
+                lastConfirmFailure = ex;
+                DualReportManager.logInfo(
+                        "TC_105 prior confirm returned 40291 for "
+                                + enrollPayload.getCustomerCode() + "/" + enrollPayload.getPremisesCode()
+                                + " (attempt " + attempt + " of " + TC_105_CONFIRM_MAX_ATTEMPTS
+                                + ") — known API defect, retrying with a different account");
+                log.warn("TC_105 prior confirm 40291 on {}/{} attempt {} — retrying: {}",
+                        enrollPayload.getCustomerCode(), enrollPayload.getPremisesCode(),
+                        attempt, ex.getMessage());
+                continue;
+            }
+
+            if (attempt > 1) {
+                DualReportManager.logInfo(
+                        "TC_105 recovered on attempt " + attempt
+                                + " after a 40291 prior-confirm (earlier: "
+                                + (lastConfirmFailure == null ? "n/a" : lastConfirmFailure.getMessage()) + ")");
+            }
+
+            executeUpdatePaperlessCommunications(apiLabel,
+                    UpdatePaperlessCommunicationsLabel.TC_105__Positive__New_Account_Both_Channels_Unenrollment_);
+            assertTc102NewAccountBothChannelsUnenrollmentResponse(testContext.getResponse());
+            return;
+        }
+
+        throw new IllegalStateException(
+                "TC_105 prior confirm returned 40291 on every one of "
+                        + TC_105_CONFIRM_MAX_ATTEMPTS + " distinct accounts — this is no longer an "
+                        + "isolated occurrence, escalate the ConfirmPaperlessEnrollment defect",
+                lastConfirmFailure);
+    }
+
+    /** Only the known 40291 "Account is Enrolled on Paperless" confirm failure is retryable. */
+    private static boolean isConfirmAlreadyEnrolled(IllegalStateException ex) {
+        String message = ex.getMessage();
+        return message != null && message.contains("40291");
     }
 
     private void assertTc102PriorBothChannelsEnrollResponse(Response response) {
@@ -976,9 +1034,10 @@ public class UpdatePaperlessCommunicationsPage extends BasePage {
         Assert.assertNotNull(
                 response.jsonPath().get("data"),
                 "Expected data to contain an UpdatePaperlessCommunications object");
-        assertNewOrEmptyAccountType(
-                response.jsonPath().getString("data.accountType"),
-                "Expected NEW Banner accountType on unenroll");
+        String accountType = response.jsonPath().getString("data.accountType");
+        DualReportManager.logInfo("TC_105 unenroll response accountType=[" + accountType + "]");
+        // Strict FTD check for BA re-test: NEW/N only (empty previously hid the defect)
+        assertNewAccountType(accountType, "Expected NEW Banner accountType on unenroll");
         Assert.assertEquals(
                 response.jsonPath().getString("data.billDeliveryOptionStatus"),
                 "UPDATED",

@@ -245,12 +245,12 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
 
             case TC_193__Positive__Corr_Reason_Description_NULL_:
                 assertJsonNull("data.paperlessCorrIneligReasonCode");
-                assertJsonNull("data.paperlessCorrIneligReasonDesc");
+                assertEmptyString("data.paperlessCorrIneligReasonDesc");
                 break;
 
             case TC_194__Positive__Bill_Reason_Description_NULL_:
                 assertJsonNull("data.paperlessBillIneligReasonCode");
-                assertJsonNull("data.paperlessBillIneligReasonDesc");
+                assertEmptyString("data.paperlessBillIneligReasonDesc");
                 break;
 
             case TC_195__Positive__Corr_PPER_I_:
@@ -266,7 +266,7 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 break;
 
             case TC_197A__Positive__Corr_PPER_Reason_Desc_Null_:
-                assertJsonNull("data.paperlessCorrIneligReasonDesc");
+                assertEmptyString("data.paperlessCorrIneligReasonDesc");
                 break;
 
             case TC_198__Positive__Bill_PPER_I_:
@@ -282,7 +282,7 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 break;
 
             case TC_200A__Positive__Bill_PPER_Reason_Desc_Null_:
-                assertJsonNull("data.paperlessBillIneligReasonDesc");
+                assertEmptyString("data.paperlessBillIneligReasonDesc");
                 break;
 
             case TC_201__Positive__Corr_Override_Precedence_:
@@ -347,5 +347,11 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
         Object value = testContext.getResponse().jsonPath().get(jsonPath);
         assertThat(jsonPath + " should be JSON null (actual: " + value + ")",
                 value, nullValue());
+    }
+
+    private void assertEmptyString(String jsonPath) {
+        Object value = testContext.getResponse().jsonPath().get(jsonPath);
+        assertThat(jsonPath + " should be empty string (actual: " + value + ")",
+                value, equalTo(""));
     }
 }

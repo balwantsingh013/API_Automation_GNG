@@ -14,6 +14,7 @@ import com.gng.api.pojo.CSIPojo.SearchAccounts.SearchAccountsResponseCSI;
 import com.gng.api.pojo.CSIPojo.GetAccountInfo.GetAccountInformationResponse;
 import com.gng.api.pojo.CSIPojo.GetAccountRewards.GetAccountRewardsResponse;
 import com.gng.api.pojo.CSIPojo.UpdateAccountNickname.UpdateAccountNicknameResponse;
+import com.gng.api.pojo.CSIPojo.ReportPayment.ReportPaymentResponse;
 import com.gng.api.pojo.CSIPojo.UpdateBankDraft.UpdateBankDraftResponse;
 import com.gng.api.pojo.CSIPojo.UpdateMailingAddress.UpdateMailingAddressResponse;
 import com.gng.api.pojo.CSIPojo.ConfirmPaperlessEnrollment.ConfirmPaperlessEnrollmentResponse;
@@ -72,6 +73,10 @@ public class TestContext {
     private String customerCode7;
     private String customerCode8;
     private String bankAccountNo;
+    /** Expected data.numberOfMatches for GetBillHistory TC_95/TC_96. */
+    private Integer expectedNumberOfMatches;
+    /** Requested numberOfMonths lookback window for GetBillHistory DB validation. */
+    private Integer requestedNumberOfMonths;
 
     // Add type-safe getters and setters
     // Use Object type to avoid direct dependency on test classes
@@ -125,6 +130,9 @@ public class TestContext {
     @Getter @Setter
     private Object updateBankDraftApiPage;
     private UpdateBankDraftResponse updateBankDraftResponse;
+    @Getter @Setter
+    private Object reportPaymentApiPage;
+    private ReportPaymentResponse reportPaymentResponse;
     @Getter @Setter
     private Object getReasonsForLeavingApiPage;
     private GetReasonsForLeavingResponse getReasonsForLeavingResponse;

@@ -36,27 +36,63 @@ public class GetAccountRewardsApiHelper {
 
             case TC_139__Positive__Rewards_Response_Returned_with_Active_Rewards:
                 accountData = ApplicationContext.get().getDbAction().getRewardDetails(testContext.getRewardId());
+                validateOccurrenceStringContract();
                 break;
 
             case TC_140__Positive__Rewards_Response_Returned_with_Pending_Rewards:
-            accountData = ApplicationContext.get().getDbAction().getRewardDetails(testContext.getRewardId());
-            Assert.assertEquals(testContext.getGetAccountRewardsResponse().getData().getRewards().getFirst().getRemainingOccurrences(),"","Incorrect count for remainingOccurrences returned for Pending rewards");
-            break;
+                accountData = ApplicationContext.get().getDbAction().getRewardDetails(testContext.getRewardId());
+                Assert.assertEquals(
+                        testContext.getGetAccountRewardsResponse().getData().getRewards().getFirst().getRemainingOccurrences(),
+                        "",
+                        "Incorrect count for remainingOccurrences returned for Pending rewards");
+                validateOccurrenceStringContract();
+                break;
 
             case TC_143__Positive__Active_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards,
                  TC_144__Positive__Pending_Rewards_Response_Returned_with_RewardsRefer_A_Friend_Rewards:
                 accountData = ApplicationContext.get().getDbAction().getRewardDetails("2");
+                validateOccurrenceStringContract();
                 break;
 
             case TC_141__Positive__Rewards_Response_Returned_with_Active_and_Pending_Rewards:
                 accountData = ApplicationContext.get().getDbAction().getRewardDetails(testContext.getActiveRewardId());
                 accountData = ApplicationContext.get().getDbAction().getRewardDetails(testContext.getPendingRewardId());
+                validateOccurrenceStringContract();
                 break;
 
             default:
                 break;
         }
 
+        if (accountData != null) {
+            log.info("Reward definition loaded for occurrence validation: {}", accountData.keySet());
+        }
+    }
+
+    /**
+     * QRE Phase 1 v1.1: remainingOccurrences / totalOccurrences are Strings.
+     * Underlying Banner value 9999 must surface as "Unlimited" (never the literal "9999").
+     */
+    private void validateOccurrenceStringContract() {
+        var data = testContext.getGetAccountRewardsResponse().getData();
+        if (data == null || data.getRewards() == null || data.getRewards().isEmpty()) {
+            return;
+        }
+
+        for (var reward : data.getRewards()) {
+            assertOccurrenceIsNotRawUnlimitedSentinel(reward.getRemainingOccurrences(), "remainingOccurrences");
+            assertOccurrenceIsNotRawUnlimitedSentinel(reward.getTotalOccurrences(), "totalOccurrences");
+        }
+    }
+
+    private void assertOccurrenceIsNotRawUnlimitedSentinel(String actual, String fieldName) {
+        if (actual == null || actual.isEmpty()) {
+            return;
+        }
+        Assert.assertNotEquals(
+                actual,
+                "9999",
+                fieldName + " must return \"Unlimited\" when underlying value is 9999");
     }
 
     public void preparePayloadForTestCondition(GetAccountRewardsRequest payload, GetAccountRewardsLabel testCondition) {

@@ -11,6 +11,9 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.Locale;
@@ -37,7 +40,15 @@ public class PreferencesVerifyAccountUtil {
     private static final String DEFAULT_TOKEN_URI =
             "https://token-uat1.gng.vertexna.net/VertexTokenGeneratorService.svc";
 
+    /**
+     * Re-fetch the SOAP token after this long. The broker token outlives a single API call but
+     * not a full suite run, and nothing in the flow detects an aged-out token — a proactive TTL
+     * keeps long runs from failing every remaining Preferences TC on a stale token.
+     */
+    private static final long TOKEN_TTL_MILLIS = 15L * 60L * 1000L;
+
     private static volatile String cachedToken;
+    private static volatile long cachedTokenAtMillis;
 
     public static String requirePreferencesBaseUri() {
         EnvConfig env = ApplicationContext.get().getEnvConfig();
@@ -57,25 +68,51 @@ public class PreferencesVerifyAccountUtil {
     public static String requirePreferencesAuthToken() {
         EnvConfig env = ApplicationContext.get().getEnvConfig();
         String configured = env.getPreferencesAuthToken();
-        if (configured != null && !configured.isBlank()) {
+        // A token we published back to EnvConfig ourselves must still honour the TTL below;
+        // only an operator-supplied PreferencesAuthToken short-circuits the refresh.
+        if (configured != null && !configured.isBlank() && !configured.trim().equals(cachedToken)) {
             return configured.trim();
         }
         String cached = cachedToken;
-        if (cached != null && !cached.isBlank()) {
+        if (cached != null && !cached.isBlank() && !isTokenStale()) {
             return cached;
         }
         synchronized (PreferencesVerifyAccountUtil.class) {
-            if (cachedToken != null && !cachedToken.isBlank()) {
+            if (cachedToken != null && !cachedToken.isBlank() && !isTokenStale()) {
                 return cachedToken;
             }
             cachedToken = fetchPreferencesAuthToken(env);
+            cachedTokenAtMillis = System.currentTimeMillis();
             env.setPreferencesAuthToken(cachedToken);
             return cachedToken;
         }
     }
 
+    private static boolean isTokenStale() {
+        return System.currentTimeMillis() - cachedTokenAtMillis > TOKEN_TTL_MILLIS;
+    }
+
+    /**
+     * Drops the cached token and fetches a fresh one. Used when a Preferences call comes back
+     * HTTP 401/403, so an aged-out token costs one retry instead of the rest of the run.
+     */
+    public static String refreshPreferencesAuthToken() {
+        synchronized (PreferencesVerifyAccountUtil.class) {
+            clearCachedPreferencesAuthToken();
+            EnvConfig env = ApplicationContext.get().getEnvConfig();
+            env.setPreferencesAuthToken(null);
+            return requirePreferencesAuthToken();
+        }
+    }
+
     public static void clearCachedPreferencesAuthToken() {
         cachedToken = null;
+        cachedTokenAtMillis = 0L;
+    }
+
+    /** HTTP statuses that mean "token rejected", as opposed to a business ErrorCode. */
+    public static boolean isAuthRejection(int statusCode) {
+        return statusCode == 401 || statusCode == 403;
     }
 
     private static String fetchPreferencesAuthToken(EnvConfig env) {
@@ -157,30 +194,15 @@ public class PreferencesVerifyAccountUtil {
             return java.util.Optional.empty();
         }
         try {
-            String token = requirePreferencesAuthToken();
             String baseUri = requirePreferencesBaseUri();
-            ObjectNode inner = MAPPER.createObjectNode();
-            inner.put("acctSearchType", "email");
-            inner.put("actions", "VerifyAccount");
-            inner.put("custCode", customerCode.trim());
-            inner.put("premCode", premisesCode.trim());
-            inner.put("emailAddress", emailAddress.trim());
-            inner.put("Module", "PEW");
-            inner.put("authenticationToken", token);
-            inner.put("requestID", java.util.UUID.randomUUID().toString());
-
-            ObjectNode envelope = MAPPER.createObjectNode();
-            envelope.put("Request", MAPPER.writeValueAsString(inner));
-
-            Response raw = given()
-                    .relaxedHTTPSValidation()
-                    .contentType(ContentType.JSON)
-                    .body(envelope)
-                    .when()
-                    .post(baseUri + "api/requestbroker")
-                    .then()
-                    .extract()
-                    .response();
+            Response raw = postVerifyAccountProbe(
+                    baseUri, requirePreferencesAuthToken(), customerCode, premisesCode, emailAddress);
+            if (isAuthRejection(raw.statusCode())) {
+                log.info("Preferences probe HTTP {} — refreshing auth token and retrying once",
+                        raw.statusCode());
+                raw = postVerifyAccountProbe(
+                        baseUri, refreshPreferencesAuthToken(), customerCode, premisesCode, emailAddress);
+            }
             if (raw.statusCode() != 200) {
                 log.debug("Preferences probe HTTP {} for {}/{}", raw.statusCode(), customerCode, premisesCode);
                 return java.util.Optional.empty();
@@ -199,6 +221,92 @@ public class PreferencesVerifyAccountUtil {
             return java.util.Optional.of(data);
         } catch (Exception ex) {
             log.warn("Preferences probe failed for {}/{}: {}", customerCode, premisesCode, ex.getMessage());
+            return java.util.Optional.empty();
+        }
+    }
+
+    private static Response postVerifyAccountProbe(String baseUri,
+                                                   String token,
+                                                   String customerCode,
+                                                   String premisesCode,
+                                                   String emailAddress) throws Exception {
+        ObjectNode inner = MAPPER.createObjectNode();
+        inner.put("acctSearchType", "email");
+        inner.put("actions", "VerifyAccount");
+        inner.put("custCode", customerCode.trim());
+        inner.put("premCode", premisesCode.trim());
+        inner.put("emailAddress", emailAddress.trim());
+        inner.put("Module", "PEW");
+        inner.put("authenticationToken", token);
+        inner.put("requestID", java.util.UUID.randomUUID().toString());
+
+        ObjectNode envelope = MAPPER.createObjectNode();
+        envelope.put("Request", MAPPER.writeValueAsString(inner));
+
+        return given()
+                .relaxedHTTPSValidation()
+                .contentType(ContentType.JSON)
+                .body(envelope)
+                .when()
+                .post(baseUri + "api/requestbroker")
+                .then()
+                .extract()
+                .response();
+    }
+
+    /**
+     * Probe WAPI Swagger {@code /Accounts/VerifyAccount}. Returns data when ErrorCode=0.
+     */
+    public static java.util.Optional<ObjectNode> trySwaggerVerifyAccount(
+            String baseUri,
+            String bearerToken,
+            String customerCode,
+            String premisesCode,
+            String emailAddress) {
+        if (baseUri == null || bearerToken == null || customerCode == null || premisesCode == null
+                || emailAddress == null || emailAddress.isBlank()) {
+            return java.util.Optional.empty();
+        }
+        try {
+            String uri = baseUri.endsWith("/") ? baseUri.substring(0, baseUri.length() - 1) : baseUri;
+            ObjectNode body = MAPPER.createObjectNode();
+            body.put("requestID", java.util.UUID.randomUUID().toString().replace("-", ""));
+            body.put("verifyType", "email");
+            body.put("customerCode", customerCode.trim());
+            body.put("premisesCode", premisesCode.trim());
+            body.put("emailAddress", emailAddress.trim());
+            body.put("origin", "Macquarium");
+            body.put("loginID", "autotester");
+
+            Response raw = given()
+                    .relaxedHTTPSValidation()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + bearerToken.trim())
+                    .body(body)
+                    .when()
+                    .post(uri + "/Accounts/VerifyAccount")
+                    .then()
+                    .extract()
+                    .response();
+            if (raw.statusCode() != 200) {
+                log.debug("Swagger probe HTTP {} for {}/{}", raw.statusCode(), customerCode, premisesCode);
+                return java.util.Optional.empty();
+            }
+            JsonNode root = MAPPER.readTree(raw.asString());
+            int errorCode = root.path("errorCode").asInt(root.path("ErrorCode").asInt(-1));
+            if (errorCode != 0) {
+                log.debug("Swagger probe ErrorCode={} for {}/{} email={}",
+                        errorCode, customerCode, premisesCode, emailAddress);
+                return java.util.Optional.empty();
+            }
+            JsonNode data = root.path("data");
+            if (data.isMissingNode() || data.isNull()) {
+                return java.util.Optional.empty();
+            }
+            log.info("Swagger VerifyAccount probe OK for {}/{}", customerCode, premisesCode);
+            return java.util.Optional.of((ObjectNode) data);
+        } catch (Exception ex) {
+            log.warn("Swagger probe failed for {}/{}: {}", customerCode, premisesCode, ex.getMessage());
             return java.util.Optional.empty();
         }
     }
@@ -294,11 +402,48 @@ public class PreferencesVerifyAccountUtil {
         if (value == null || value.isBlank()) {
             return null;
         }
-        String digits = value.replaceAll("\\D", "");
-        if (digits.length() >= 8) {
+        String trimmed = value.trim()
+                .replace('\u2013', '-')
+                .replace('\u2014', '-')
+                .replace('/', '-');
+        if (trimmed.matches("\\d{8}")) {
+            return trimmed;
+        }
+        String digits = trimmed.replaceAll("\\D", "");
+        if (digits.length() >= 8 && !trimmed.matches("(?i).*[A-Z].*")) {
             return digits.substring(0, 8);
         }
-        return value.trim();
+        // Preferences PEW often returns Oracle-style dates (e.g. 15-MAR-26)
+        String upper = trimmed.toUpperCase(Locale.ENGLISH);
+        String[] patterns = {"d-MMM-yy", "dd-MMM-yy", "d-MMM-yyyy", "dd-MMM-yyyy",
+                "yyyy-MM-dd", "M-d-yyyy", "MM-dd-yyyy"};
+        for (String pattern : patterns) {
+            try {
+                java.text.SimpleDateFormat in =
+                        new java.text.SimpleDateFormat(pattern, Locale.ENGLISH);
+                in.setLenient(true);
+                java.text.SimpleDateFormat out = new java.text.SimpleDateFormat("yyyyMMdd");
+                return out.format(in.parse(upper));
+            } catch (Exception ignored) {
+                // try next pattern
+            }
+        }
+        for (DateTimeFormatter formatter : new DateTimeFormatter[]{
+                DateTimeFormatter.ofPattern("d-MMM-yy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("dd-MMM-yy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("d-MMM-yyyy", Locale.ENGLISH),
+                DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH),
+                DateTimeFormatter.ISO_LOCAL_DATE
+        }) {
+            try {
+                return LocalDate.parse(upper, formatter)
+                        .format(DateTimeFormatter.BASIC_ISO_DATE);
+            } catch (DateTimeParseException ignored) {
+                // try next pattern
+            }
+        }
+        log.warn("Unable to normalize confirm date '{}' to YYYYMMDD", value);
+        return trimmed;
     }
 
     private static boolean textOrBool(JsonNode node, String... keys) {

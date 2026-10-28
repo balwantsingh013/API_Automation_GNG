@@ -17,7 +17,7 @@ Feature: Verify UpdatePassword Api
       | TC_18__Negative__Invalid_Username_format__Alphanumeric           | 10353     | Invalid Username Format                                                   |
       | TC_19__Negative__Invalid_Username__Not_Found                     | 10357     | Username Not Found                                                        |
       | TC_20__Negative__Invalid_Username__Inactive                      | 10355     | Inactive Username                                                         |
-      | TC_21__Negative__Missing_Password                                | 10113     | Missing Password                                                          |
+      | TC_21__Negative__Missing_Password                                | 10142     | Missing Password                                                          |
       | TC_22__Negative__Invalid_Password_Format__Length___Too_Short____ | 10157     | Invalid Password Length. The password must be between 8 and 64 characters.|
       | TC_23__Negative__Invalid_Password_Format__Length___Too_Long____  | 10157     | Invalid Password Length. The password must be between 8 and 64 characters.|
 

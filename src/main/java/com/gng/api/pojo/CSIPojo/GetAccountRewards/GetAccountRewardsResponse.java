@@ -45,8 +45,9 @@ public class GetAccountRewardsResponse {
         private String status;
         private String rewardEstablishedDate;
         private String rewardInitiatedDate;
-        private Object remainingOccurrences;
-        private Object totalOccurrences;
+        // QRE Phase 1 v1.1: numeric → String; underlying 9999 is returned as "Unlimited"
+        private String remainingOccurrences;
+        private String totalOccurrences;
         private String restrictions;
         private String referenceCustomerCode;
         private String referencePremisesCode;

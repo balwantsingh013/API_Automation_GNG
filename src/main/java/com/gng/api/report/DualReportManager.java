@@ -135,6 +135,9 @@ public class DualReportManager {
         ensureInitialized();
         try {
             SimplifiedExtentReportManager.logTestDescription(description);
+            if (isDualMode) {
+                DetailedExtentReportManager.logInfoToReport("Test Description: " + description);
+            }
         } catch (Exception e) {
             log.error("Error logging test description: {}", e.getMessage(), e);
         }

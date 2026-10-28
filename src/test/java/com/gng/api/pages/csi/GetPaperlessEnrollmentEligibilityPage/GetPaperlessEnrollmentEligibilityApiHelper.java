@@ -108,10 +108,7 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_168__Positive__Corr_Reason_Code_Format_:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail();
-                payload.setCustomerCode(accountData.get("customerCode").toString());
-                payload.setPremisesCode(accountData.get("premisesCode").toString());
+                applyAccount(payload, setupHelper.ensureActiveNoEmailIneligibleAccount());
                 break;
 
             case TC_169__Positive__Bill_Reason_Code_Format_:
@@ -136,10 +133,7 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_172__Positive__Correspondence_NULL_Defaults_to_P_:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithNullCorrPreference();
-                payload.setCustomerCode(accountData.get("customerCode").toString());
-                payload.setPremisesCode(accountData.get("premisesCode").toString());
+                applyAccount(payload, setupHelper.ensureNullCorrPreferenceAccount());
                 break;
 
             case TC_173__Positive__Correspondence_P_Mapping_:
@@ -157,10 +151,7 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_175__Positive__Bill_NULL_Defaults_to_P_:
-                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getActiveAccountWithNullBillPreference();
-                payload.setCustomerCode(accountData.get("customerCode").toString());
-                payload.setPremisesCode(accountData.get("premisesCode").toString());
+                applyAccount(payload, setupHelper.ensureNullBillPreferenceAccount());
                 break;
 
             case TC_176__Positive__Bill_P_Mapping_:
@@ -182,21 +173,21 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_179__Positive__Corr_Ineligible_No_Email_:
-                applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail());
+                applyAccount(payload, setupHelper.ensureActiveNoEmailIneligibleAccount());
                 break;
 
             case TC_180__Positive__Bill_Ineligible_No_Email_:
-                applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail());
+                applyAccount(payload, setupHelper.ensureActiveNoEmailIneligibleAccount());
                 break;
 
             case TC_181__Positive__Corr_Reason_Code_1_:
             case TC_181A__Positive__Corr_Reason_Desc_1_:
-                applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail());
+                applyAccount(payload, setupHelper.ensureActiveNoEmailIneligibleAccount());
                 break;
 
             case TC_182__Positive__Bill_Reason_Code_1_:
             case TC_182A__Positive__Bill_Reason_Desc_1_:
-                applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail());
+                applyAccount(payload, setupHelper.ensureActiveNoEmailIneligibleAccount());
                 break;
 
             case TC_183__Positive__Corr_Eligible_:
@@ -235,7 +226,7 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_191__Positive__Corr_Reason_Description_:
-                applyAccount(payload, ApplicationContext.get().getDbAction().getActiveAccountWithNoBannerEmail());
+                applyAccount(payload, setupHelper.ensureActiveNoEmailIneligibleAccount());
                 break;
 
             case TC_192__Positive__Bill_Reason_Description_:
@@ -279,7 +270,7 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 break;
 
             case TC_204__Positive__New_Confirmed_Bill_:
-                applyAccount(payload, ApplicationContext.get().getDbAction().getNewAccountWithConfirmedBillPreference());
+                applyAccount(payload, setupHelper.ensureNewConfirmedBillPreference());
                 break;
 
             case TC_205__Positive__New_Paper_Bill_:

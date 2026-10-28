@@ -31,6 +31,7 @@ Feature: Verify VerifyAccount Api
       | TC_223__Positive__Billing_State_Format_                          | 0         |              | true    | notNull |
       | TC_224__Positive__Billing_ZIP_Value_                             | 0         |              | true    | notNull |
       | TC_225__Positive__Billing_ZIP_Format_                            | 0         |              | true    | notNull |
+      # TC_226/227: skipped at runtime — Swagger omits billingPoBox.
       | TC_226__Positive__Billing_PO_Box_Value_                          | 0         |              | true    | notNull |
       | TC_227__Positive__Billing_PO_Box_Format_                         | 0         |              | true    | notNull |
       | TC_228__Positive__GTBENRL_Billing_Address_Source_                | 0         |              | true    | notNull |

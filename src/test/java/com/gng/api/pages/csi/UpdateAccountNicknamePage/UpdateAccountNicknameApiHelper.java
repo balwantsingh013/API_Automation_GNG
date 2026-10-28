@@ -29,8 +29,18 @@ public class UpdateAccountNicknameApiHelper {
         return BasePage.deserializeJsonToPojo(jsonFileName, UpdateAccountNicknameRequest.class);
     }
 
+    /**
+     * TC_79: the login ID sent on the request must be persisted to GZRAPIL.
+     * <p>
+     * Uses {@code getStoredLoginId}, which looks the value up with
+     * {@code WHERE gzrapil_login_id = ?}. This previously called a helper whose query had no bind
+     * placeholder at all, so passing the login ID failed every run with ORA-17003 (Invalid column
+     * index); that query also returned the newest row in the whole table rather than this test's,
+     * so even without the bind error it would only have passed when nothing else had written to
+     * GZRAPIL in between. Both have since been deleted.
+     */
     public void validateIfLoginIdIsSaved(){
-        Map<String, Object>accountData = ApplicationContext.get().getDbAction().getLatestLoginIdStored();
+        Map<String, Object>accountData = ApplicationContext.get().getDbAction().getStoredLoginId(testContext.getLoginId());
         Assert.assertEquals(accountData.get("gzrapil_login_id").toString(),testContext.getLoginId());
     }
 

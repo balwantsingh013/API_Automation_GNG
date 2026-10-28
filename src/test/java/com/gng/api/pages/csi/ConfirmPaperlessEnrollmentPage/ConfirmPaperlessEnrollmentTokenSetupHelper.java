@@ -1123,13 +1123,16 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
     }
 
     /**
-     * TC_149: Banner email present and matching PPER at token create.
-     * Banner email is cleared mid-Confirm (after token validation) by the page — clearing
-     * before the API call returns 40287 (Email Address is Not Present).
+     * TC_149: Banner email is present when the token is created/validated, then removed during Confirm
+     * so there is no email on file. Clearing it before Confirm returns 40287.
      */
     String bootstrapTc149ClearBannerEmailBeforeConfirmAndGetToken() {
         DualReportManager.logInfo(
-                "TC_149 — STEP 1: enroll ACTIVE bill with Banner email present (token create)");
+                "TC_149 — REVIEWER NOTE: Banner email is present when the token is validated. "
+                        + "It will then be removed so there is no Banner email on file. "
+                        + "Confirm still succeeds; the confirmation email is skipped and that does not fail the test.");
+        DualReportManager.logInfo(
+                "TC_149 — enroll ACTIVE bill while Banner email is on file (token create)");
         String token = bootstrapEnrollmentAndGetToken(
                 UpdatePaperlessCommunicationsLabel.TC_98__Positive__Active_Account_Bill_Enrollment_Initiated_);
         String customerCode = testContext.getCustomerCode();
@@ -1138,26 +1141,60 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
         String bannerEmailAtTokenCreate = bannerDb.getActiveBannerEmailForCustomer(customerCode);
         var pperAtCreate = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(
                 customerCode, testContext.getPremisesCode());
-        String pperEmail = pperAtCreate.get("pendingEmail");
+        String tokenRecordEmail = pperAtCreate.get("custadvEmailSentTo");
+        String tokenPreview = pperAtCreate.get("custadvTokenPreview");
+        String accountNumber = DBAction.buildCustAdvAccountNumber(
+                customerCode, testContext.getPremisesCode());
+        DualReportManager.logDatabaseQuery(
+                DBQuery.SELECT_CUSTADV_ANY_LATEST_PAPERLESS_TOKEN_FOR_ACCOUNT
+                        + "\n-- bind: account_number='" + accountNumber + "'",
+                "TC_149 — token record at create: "
+                        + pperAtCreate,
+                0L);
+        DualReportManager.logDatabaseQuery(
+                DBQuery.SELECT_ACTIVE_BANNER_EMAIL_BY_CUST
+                        + "\n-- bind: GZBEMCP_CUST_CODE='" + customerCode + "'",
+                "TC_149 — Banner email at token create: "
+                        + "rowPresent=" + (bannerEmailAtTokenCreate != null)
+                        + ", GZBEMCP_EMAIL_ADDR='" + bannerEmailAtTokenCreate + "'",
+                0L);
         DualReportManager.logInfo(
-                "TC_149 — STEP 1 evidence (token create): bannerEmail='" + bannerEmailAtTokenCreate
-                        + "', PPER email='" + pperEmail + "'");
+                "TC_149 — Banner email at token create='" + bannerEmailAtTokenCreate + "'");
+        DualReportManager.logInfo(
+                "TC_149 — token/PPER at token create: id="
+                        + pperAtCreate.get("custadvVerificationId")
+                        + ", token=" + tokenPreview
+                        + ", email='" + tokenRecordEmail
+                        + "', bill=" + pperAtCreate.get("custadvBillType")
+                        + ", corr=" + pperAtCreate.get("custadvCorrType"));
         if (bannerEmailAtTokenCreate == null || bannerEmailAtTokenCreate.isBlank()) {
             throw new IllegalStateException(
                     "TC_149 requires Banner email present when token is created for " + customerCode);
         }
+        if (tokenPreview == null || tokenPreview.isBlank() || "(none)".equals(tokenPreview)) {
+            throw new IllegalStateException(
+                    "TC_149 requires a created PPER-linked confirmation token record for "
+                            + customerCode + "/" + testContext.getPremisesCode());
+        }
+        if (tokenRecordEmail == null
+                || !bannerEmailAtTokenCreate.trim().equalsIgnoreCase(tokenRecordEmail.trim())) {
+            throw new IllegalStateException(
+                    "TC_149 requires Banner GZBEMCP email to match the created token record email; "
+                            + "bannerEmail='" + bannerEmailAtTokenCreate
+                            + "', tokenRecordEmail='" + tokenRecordEmail + "'");
+        }
         DualReportManager.logInfo(
-                "TC_149 — STEP 2: Banner email exists and matches PPER at token create. "
-                        + "STEP 3 (clear Banner email) runs mid-Confirm after token validation "
-                        + "so confirmation email is skipped without 40287.");
+                "TC_149 — PPER email matches Banner email on file. "
+                        + "Banner email stays present for token validation, then is removed so "
+                        + "the confirmation email is skipped.");
         TC149_SAVED_BANNER_EMAIL.set(bannerEmailAtTokenCreate);
         TC149_CUSTOMER_FOR_RESTORE.set(customerCode);
         return token;
     }
 
     /**
-     * TC_149 STEP 3: expire Banner email during Confirm (after token validation).
-     * Returns true when email is absent after expire.
+     * TC_149: expire Banner email during Confirm (after token validation).
+     * Returns true when there is no Banner email on file afterward.
      */
     static boolean clearBannerEmailMidConfirm(String customerCode) {
         if (customerCode == null || customerCode.isBlank()) {
@@ -1165,32 +1202,32 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
         }
         DBAction bannerDb = ApplicationContext.get().getDbAction();
         String before = bannerDb.getActiveBannerEmailForCustomer(customerCode);
-        DualReportManager.logInfo(
-                "TC_149 — STEP 3: clear Banner email DURING Confirm (after token validation). "
-                        + "bannerEmail before clear='" + before + "'");
-        long start = System.currentTimeMillis();
-        try {
-            bannerDb.expireActiveBannerEmailsQuiet(customerCode);
-            DualReportManager.logDatabaseQuery(
-                    DBQuery.UPDATE_EXPIRE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER
-                            + "\n-- bind: customerCode='" + customerCode + "'",
-                    "Expired active Banner GZBEMCP email(s) mid-Confirm for customer " + customerCode
-                            + " (was '" + before + "')",
-                    System.currentTimeMillis() - start);
-        } catch (RuntimeException ex) {
-            DualReportManager.logDatabaseQuery(
-                    DBQuery.UPDATE_EXPIRE_ACTIVE_BANNER_EMAIL_FOR_CUSTOMER,
-                    null,
-                    System.currentTimeMillis() - start,
-                    false,
-                    ex.getMessage());
-            throw ex;
-        }
+        // Extent scenario loggers are thread-local. This method runs on the TC149 worker,
+        // so only mutate/query here; the main scenario thread logs the evidence afterward.
+        bannerDb.expireActiveBannerEmailsQuiet(customerCode);
         String after = bannerDb.getActiveBannerEmailForCustomer(customerCode);
-        DualReportManager.logInfo(
-                "TC_149 — STEP 3 evidence: bannerEmail after mid-Confirm clear='"
-                        + after + "' (expect null/blank → confirmation email skipped)");
+        log.info("TC_149 mid-Confirm GZBEMCP removal for customer {}: before='{}', after='{}'",
+                customerCode, before, after);
         return after == null || after.isBlank();
+    }
+
+    /** Logs TC149 Banner-removal evidence from the main Cucumber scenario thread. */
+    static void logTc149BannerRemovalEvidence(String customerCode, boolean removalSucceeded) {
+        String after = ApplicationContext.get().getDbAction()
+                .getActiveBannerEmailForCustomer(customerCode);
+        DualReportManager.logInfo(
+                "TC_149 — REVIEWER NOTE: Banner email was present when the token was validated, "
+                        + "then there is no Banner email on file (removed=" + removalSucceeded
+                        + ", Banner email now='" + after
+                        + "'). Confirm still succeeds; the confirmation email is skipped and "
+                        + "that does not fail the test.");
+        DualReportManager.logDatabaseQuery(
+                DBQuery.SELECT_ACTIVE_BANNER_EMAIL_BY_CUST
+                        + "\n-- bind: GZBEMCP_CUST_CODE='" + customerCode + "'",
+                "TC_149 — Banner email after removal: "
+                        + "activeRowPresent=" + (after != null)
+                        + ", GZBEMCP_EMAIL_ADDR='" + after + "'",
+                0L);
     }
 
     /** Restores TC_149 Banner email after expire. Safe if setup never ran. */
@@ -1223,27 +1260,52 @@ public class ConfirmPaperlessEnrollmentTokenSetupHelper {
 
     /**
      * TC_150: unused Confirm token for ACTIVE bill enrollment.
-     * Failed confirmation-email send is forced deterministically at Confirm time by setting
-     * {@code NEW_TEST_EMAIL_ADDR} to a known undeliverable address (not blank — blank is TC_133 / 40321).
+     * An invalid/fake email is used at Confirm time so the confirmation email cannot be sent/delivered.
+     * Blank routing is TC_133 (40321) and is not used here.
      */
     String bootstrapTc150ConfirmationEmailFailureAndGetToken() {
         DualReportManager.logInfo(
-                "TC_150 — STEP 1: enroll ACTIVE bill with matching Banner email "
-                        + "(token valid; preference update path must succeed on Confirm)");
+                "TC_150 — REVIEWER NOTE: an invalid/fake email is used so the confirmation email "
+                        + "cannot be sent/delivered. Confirm still succeeds; a failed email does not fail enrollment.");
+        DualReportManager.logInfo(
+                "TC_150 — enroll ACTIVE bill (unused token, pending confirmation)");
         String token = bootstrapEnrollmentAndGetToken(
                 UpdatePaperlessCommunicationsLabel.TC_98__Positive__Active_Account_Bill_Enrollment_Initiated_);
         String customerCode = testContext.getCustomerCode();
+        String premisesCode = testContext.getPremisesCode();
         String bannerEmail = ApplicationContext.get().getDbAction().getActiveBannerEmailForCustomer(customerCode);
         String failureAddress = resolveTc150FailureEmailAddress();
         TC150_FAILURE_EMAIL.set(failureAddress);
+        var pper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+        if (!"true".equalsIgnoreCase(pper.get("pperPresent"))) {
+            for (int attempt = 0; attempt < 6 && !"true".equalsIgnoreCase(pper.get("pperPresent")); attempt++) {
+                try {
+                    Thread.sleep(500L);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                pper = PaperlessTokenPperEvidenceUtil.capturePperSnapshot(customerCode, premisesCode);
+            }
+        }
         DualReportManager.logInfo(
-                "TC_150 — STEP 1 evidence: unused token ready; bannerEmail='" + bannerEmail
-                        + "'; forced failure address for Confirm='" + failureAddress + "'");
+                "TC_150 — setup: unused token, pending confirmation, Banner email='" + bannerEmail
+                        + "', invalid/fake email for Confirm='" + failureAddress
+                        + "', pperPresent=" + pper.get("pperPresent")
+                        + ", pendingBill=" + pper.get("pendingBillType"));
+        if (pper.get("custadvLinkConfirmed") != null && !pper.get("custadvLinkConfirmed").isBlank()) {
+            throw new IllegalStateException(
+                    "TC_150 requires an unused token (date_time_link_confirmed must be null)");
+        }
+        if (token == null || token.isBlank()) {
+            throw new IllegalStateException(
+                    "TC_150 requires a valid unused confirmation token for "
+                            + customerCode + "/" + premisesCode);
+        }
         DualReportManager.logInfo(
-                "TC_150 — STEP 2 (at Confirm): set NEW_TEST_EMAIL_ADDR to '" + failureAddress
-                        + "' so Paperless Enrollment Confirmation email send is forced to fail, "
-                        + "while enrollment must still return success=true / errorCode=0 "
-                        + "(distinct from TC_133 blank override → 40321 rollback)");
+                "TC_150 — Confirm will route the confirmation email to invalid/fake address '"
+                        + failureAddress
+                        + "'. Enrollment must still succeed.");
         return token;
     }
 

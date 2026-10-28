@@ -16,6 +16,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.gng.api.constants.ApiEndPoint.GET_PAPERLESS_ENROLLMENT_ELIGIBILITY;
@@ -25,6 +26,10 @@ import static com.gng.api.constants.ApiEndPoint.UPDATE_PAPERLESS_COMMUNICATIONS;
 public class GetPaperlessEnrollmentEligibilitySetupHelper {
 
     private static final int BOOTSTRAP_MAX_ATTEMPTS = 3;
+    private static final String EMAIL_NOT_PRESENT = "Email Address is Not Present";
+
+    /** Shared across the eight no-email TCs so they all assert against the same account. */
+    private static volatile Map<String, Object> noEmailIneligibleAccount;
 
     private final TestContext testContext;
 
@@ -156,6 +161,55 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
         }
         throw new IllegalStateException(
                 "Could not resolve ACTIVE no-email account with pending bill PPER returning billDeliveryOption=I.");
+    }
+
+    /**
+     * Resolved once per run and shared by all eight no-email TCs (168/179/180/181/181A/182/182A/191).
+     * <p>
+     * Resolving per TC let each one land on a different account, so the paired code/description
+     * TCs could assert against different data — and it re-probed the pool up to 40 times per TC.
+     * Nothing in this suite mutates the selected account, so caching is safe.
+     */
+    Map<String, Object> ensureActiveNoEmailIneligibleAccount() {
+        Map<String, Object> cached = noEmailIneligibleAccount;
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (GetPaperlessEnrollmentEligibilitySetupHelper.class) {
+            if (noEmailIneligibleAccount != null) {
+                return noEmailIneligibleAccount;
+            }
+            noEmailIneligibleAccount = resolveActiveNoEmailIneligibleAccount();
+            return noEmailIneligibleAccount;
+        }
+    }
+
+    private Map<String, Object> resolveActiveNoEmailIneligibleAccount() {
+        DBAction dbAction = ApplicationContext.get().getDbAction();
+
+        Map<String, Object> direct = dbAction.getActiveAccountWithNoBannerEmail();
+        if (matchesNoEmailEligibility(direct)) {
+            log.info("Resolved ACTIVE no-email ineligible account (primary seed) {}/{}",
+                    direct.get("customerCode"), direct.get("premisesCode"));
+            return direct;
+        }
+
+        List<Map<String, Object>> candidates = dbAction.listActiveAccountWithNoBannerEmailCandidates();
+        int probed = 0;
+        for (Map<String, Object> candidate : candidates) {
+            probed++;
+            if (matchesNoEmailEligibility(candidate)) {
+                log.info("Resolved ACTIVE no-email ineligible account via probe {}/{}",
+                        candidate.get("customerCode"), candidate.get("premisesCode"));
+                return candidate;
+            }
+        }
+
+        throw new IllegalStateException(
+                "Could not resolve ACTIVE account that returns no-email ineligibility "
+                        + "(paperlessCorr/BillIneligReasonCode=1, '" + EMAIL_NOT_PRESENT + "') from "
+                        + "GetPaperlessEnrollmentEligibility. Probed " + probed
+                        + " of " + candidates.size() + " candidate(s) plus the primary seed.");
     }
 
     /**
@@ -300,6 +354,93 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
         return actual != null && actual == expected;
     }
 
+    private boolean matchesNoEmailEligibility(Map<String, Object> account) {
+        if (account == null) {
+            return false;
+        }
+        Response response;
+        try {
+            response = callGetPaperlessEnrollmentEligibility(account);
+        } catch (RuntimeException ex) {
+            // An unusable candidate row must skip to the next one, never abort the scenario.
+            log.warn("No-email probe skipped for {}: {}", account.keySet(), ex.getMessage());
+            return false;
+        }
+        if (response.jsonPath().getInt("errorCode") != 0) {
+            return false;
+        }
+        Boolean corrEligible = response.jsonPath().get("data.paperlessCorrespondenceEligible");
+        Boolean billEligible = response.jsonPath().get("data.paperlessBillEligible");
+        Integer corrReasonCode = response.jsonPath().get("data.paperlessCorrIneligReasonCode");
+        Integer billReasonCode = response.jsonPath().get("data.paperlessBillIneligReasonCode");
+        String corrReasonDesc = response.jsonPath().getString("data.paperlessCorrIneligReasonDesc");
+        String billReasonDesc = response.jsonPath().getString("data.paperlessBillIneligReasonDesc");
+
+        return Boolean.FALSE.equals(corrEligible)
+                && Boolean.FALSE.equals(billEligible)
+                && Integer.valueOf(1).equals(corrReasonCode)
+                && Integer.valueOf(1).equals(billReasonCode)
+                && EMAIL_NOT_PRESENT.equals(corrReasonDesc)
+                && EMAIL_NOT_PRESENT.equals(billReasonDesc);
+    }
+
+    /**
+     * TC_172: ACTIVE account whose Banner correspondence preference is NULL, verified to answer
+     * correspondenceDeliveryOption=P. Probe-and-retry over the pool, matching TC_203/205 — the
+     * single-row seed could hand the TC an account the API answers I for.
+     */
+    Map<String, Object> ensureNullCorrPreferenceAccount() {
+        return ensureProbedDeliveryOption(
+                "correspondenceDeliveryOption", "P", "TC_172 NULL corr preference",
+                ApplicationContext.get().getDbAction()
+                        .listActiveAccountWithNullCorrPreferenceCandidates(),
+                () -> ApplicationContext.get().getDbAction().getActiveAccountWithNullCorrPreference());
+    }
+
+    /** TC_175: ACTIVE account whose Banner bill preference is NULL, verified to answer P. */
+    Map<String, Object> ensureNullBillPreferenceAccount() {
+        return ensureProbedDeliveryOption(
+                "billDeliveryOption", "P", "TC_175 NULL bill preference",
+                ApplicationContext.get().getDbAction()
+                        .listActiveAccountWithNullBillPreferenceCandidates(),
+                () -> ApplicationContext.get().getDbAction().getActiveAccountWithNullBillPreference());
+    }
+
+    /** TC_204: NEW account with confirmed (E) Banner bill preference, verified to answer E. */
+    Map<String, Object> ensureNewConfirmedBillPreference() {
+        return ensureProbedDeliveryOption(
+                "billDeliveryOption", "E", "TC_204 NEW confirmed bill",
+                ApplicationContext.get().getDbAction()
+                        .listNewAccountWithConfirmedBillPreferenceCandidates(),
+                () -> ApplicationContext.get().getDbAction().getNewAccountWithConfirmedBillPreference());
+    }
+
+    /**
+     * Returns the first candidate the API actually answers {@code expected} for. Falls back to
+     * the original single-row lookup when the pool is empty, so this is never worse than the
+     * unprobed selection it replaces.
+     */
+    private Map<String, Object> ensureProbedDeliveryOption(
+            String fieldName,
+            String expected,
+            String label,
+            List<Map<String, Object>> candidates,
+            java.util.function.Supplier<Map<String, Object>> singleRowFallback) {
+        if (candidates != null) {
+            for (Map<String, Object> candidate : candidates) {
+                if (probeDeliveryOption(candidate, fieldName, expected)) {
+                    log.info("{} selected after eligibility probe {}/{} ({}={})", label,
+                            candidate.get("customerCode"), candidate.get("premisesCode"),
+                            fieldName, expected);
+                    return candidate;
+                }
+            }
+        }
+        log.warn("{}: no candidate answered {}={} across {} row(s) — using single-row seed",
+                label, fieldName, expected, candidates == null ? 0 : candidates.size());
+        return singleRowFallback.get();
+    }
+
     private String probeEligibilityField(Map<String, Object> account, String fieldName) {
         Response response = callGetPaperlessEnrollmentEligibility(account);
         if (response.jsonPath().getInt("errorCode") != 0) {
@@ -382,6 +523,16 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
         payload.setUpdateBillDeliveryOption("E");
         payload.setUpdateCorrDeliveryOption(null);
         postEnrollment(payload, "Bootstrap pending bill enrollment");
+    }
+
+    /** TC_236 only — UpdatePaperless bill=E on a prepared account. */
+    public void bootstrapPendingBillEnrollment(Map<String, Object> accountData) {
+        initiateBillEnrollment(accountData);
+    }
+
+    /** TC_237 only — UpdatePaperless corr=E on a prepared account. */
+    public void bootstrapPendingCorrEnrollment(Map<String, Object> accountData) {
+        initiateCorrEnrollment(accountData);
     }
 
     private UpdatePaperlessCommunicationsRequest buildEnrollmentPayload(Map<String, Object> accountData) {

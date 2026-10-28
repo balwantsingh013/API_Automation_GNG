@@ -44,7 +44,6 @@ Feature: Verify GetUsageHistory Api
       | TC_23__Positive__Usage_History_Days_Of_Service_Format          | 0         |              | notNull |
       | TC_24__Positive__Usage_History_Reading_Format                  | 0         |              | notNull |
       | TC_25__Positive__Usage_History_Read_Type_Format__Actual        | 0         |              | notNull |
-##
 
   @GetUsageHistoryPositive @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
@@ -62,8 +61,7 @@ Feature: Verify GetUsageHistory Api
     Then verify response code of "GetUsageHistory" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
     And usage history response should match database for customer and premises code
-#
-#
+
     Examples:
       | testCondition                                                   | errorCode | errorMessage | data    |
       | TC_27__Positive__Usage_History_Read_Type_Format__Estimated     | 0         |              | notNull |
@@ -71,7 +69,6 @@ Feature: Verify GetUsageHistory Api
       | TC_29__Positive__Usage_History_Average_Temperature_Format      | 0         |              | notNull |
       | TC_30__Positive__Usage_History_Heating_Degree_Days_Format      | 0         |              | notNull |
       | TC_31__Positive__Usage_History_Bill_History_Transaction_Format | 0         |              | notNull |
-#
 
    @HappyFlow @CSI
   Scenario Outline: "<testCondition>"
