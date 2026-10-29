@@ -277,6 +277,10 @@ public class GetPaperlessEnrollmentEligibilityApiHelper {
                 applyAccount(payload, setupHelper.ensureNewPaperBillPreference());
                 break;
 
+            case SP1_01__Positive__NEW_No_Pending_Bill_Preference_Record_:
+                applyAccount(payload, setupHelper.ensureNewNoPendingBillPreference());
+                break;
+
             default:
                 log.warn("Unhandled test condition: {}", testCondition);
                 break;

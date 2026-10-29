@@ -55,5 +55,9 @@ public enum GetBillHistoryLabel {
     SP1_07__Positive__Guaranteed_Bill_Amount_Format,
     SP1_08__Positive__Guaranteed_Bill_Amount_Null,
     SP1_09__Positive__Budget_Billing_Historical_Values,
-    SP1_10__Positive__Guaranteed_Bill_Historical_Values
+    SP1_10__Positive__Guaranteed_Bill_Historical_Values,
+    SP1_11__Positive__Standard_Bill_History_Values,
+    SP1_12__Positive__Consumption_Values,
+    SP1_13__Positive__Balance_Brought_Forward_Values,
+    SP1_14__Positive__Promotional_Discount_Values
 }

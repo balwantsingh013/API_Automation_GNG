@@ -15,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.testng.SkipException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.gng.api.constants.ApiEndPoint.GET_BILL_HISTORY;
 
@@ -125,7 +127,6 @@ public class GetBillHistoryApiHelper {
             case TC_81__Positive__Usage_History_BalanceBroughtForward_Format:
             case TC_82__Positive__Usage_History_GasServiceCharges_Format:
             case TC_85__Positive__Usage_History_Taxes_Format:
-            case TC_87__Positive__Usage_History_NotBudgetBillingAccount:
             case TC_88__Positive__Usage_History_TotalBillAmount_Format:
             case TC_89__Positive__Usage_History_BillHistoryTransactionNumber_Format:
             case SP1_02__Positive__Budget_Billing_Actual_Charges_Null:
@@ -134,6 +135,16 @@ public class GetBillHistoryApiHelper {
             case SP1_08__Positive__Guaranteed_Bill_Amount_Null:
                 // SELECT_VALID_BILL_HISTORY_ACCOUNT excludes BB seed 2955/2568 (slow Banner lookback).
                 accountInfo = ApplicationContext.get().getDbAction().getAccountWithBillHistory();
+                payload.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
+                payload.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
+                payload.setNumberOfMonths(24);
+                testContext.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
+                testContext.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
+                break;
+
+            case TC_87__Positive__Usage_History_NotBudgetBillingAccount:
+                // No active UABBUDG row (uabbudg_status_ind = 'A').
+                accountInfo = ApplicationContext.get().getDbAction().getNonBudgetBillHistoryAccount();
                 payload.setCustomerCode(accountInfo.get("UBBBHST_cust_code").toString());
                 payload.setPremisesCode(accountInfo.get("UBBBHST_prem_code").toString());
                 payload.setNumberOfMonths(24);
@@ -154,6 +165,13 @@ public class GetBillHistoryApiHelper {
             case SP1_07__Positive__Guaranteed_Bill_Amount_Format:
             case SP1_10__Positive__Guaranteed_Bill_Historical_Values:
                 applyGuaranteedBillHistorySeedOrSkip(payload, testCondition.name());
+                break;
+
+            case SP1_11__Positive__Standard_Bill_History_Values:
+            case SP1_12__Positive__Consumption_Values:
+            case SP1_13__Positive__Balance_Brought_Forward_Values:
+            case SP1_14__Positive__Promotional_Discount_Values:
+                applyTwoMonthBannerValueSeed(payload, testCondition);
                 break;
 
 
@@ -344,33 +362,20 @@ public class GetBillHistoryApiHelper {
     }
 
     /**
-     * SP1_07 / SP1_10: reuse GetAccountInfo Guaranteed Bill candidate pools; skip if API
-     * never returns a non-null guaranteedBillAmount.
+     * SP1_07 / SP1_10: guaranteed-bill rate codes (CGBP, RGBP, SGBP, RGB6, SGB6, RPGC, SPGC)
+     * with a positive billed charge. Skip if the API never returns a non-null guaranteedBillAmount.
      */
     private void applyGuaranteedBillHistorySeedOrSkip(GetBillHistoryRequest payload, String testCondition) {
         List<Map<String, Object>> candidates = new java.util.ArrayList<>();
         try {
-            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5PriceProCandidates());
+            candidates.addAll(ApplicationContext.get().getDbAction().listBillHistoryGuaranteedBillSeeds());
         } catch (Exception e) {
-            log.warn("Guaranteed PRICEPRO candidate query failed: {}", e.getMessage());
-        }
-        try {
-            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5AnyDiscountCandidates());
-        } catch (Exception e) {
-            log.warn("Guaranteed any-discount candidate query failed: {}", e.getMessage());
-        }
-        try {
-            Map<String, Object> withoutDiscount = ApplicationContext.get().getDbAction()
-                    .getAccountDetailsTC5WithoutDiscount();
-            if (withoutDiscount != null) {
-                candidates.add(withoutDiscount);
-            }
-        } catch (Exception e) {
-            log.warn("Guaranteed without-discount candidate query failed: {}", e.getMessage());
+            log.warn("Guaranteed bill seed query failed: {}", e.getMessage());
         }
 
+        Set<String> seen = new HashSet<>();
         int probed = 0;
-        final int maxProbes = 5;
+        final int maxProbes = 10;
         for (Map<String, Object> candidate : candidates) {
             if (candidate == null) {
                 continue;
@@ -381,9 +386,16 @@ public class GetBillHistoryApiHelper {
             String cust;
             String prem;
             try {
-                cust = firstNonNull(candidate, "ucracct_cust_code", "UCRACCT_CUST_CODE").toString();
-                prem = firstNonNull(candidate, "ucracct_prem_code", "UCRACCT_PREM_CODE").toString();
+                cust = firstNonNull(candidate,
+                        "uabopen_cust_code", "UABOPEN_CUST_CODE",
+                        "ubbbhst_cust_code", "UBBBHST_CUST_CODE").toString();
+                prem = firstNonNull(candidate,
+                        "uabopen_prem_code", "UABOPEN_PREM_CODE",
+                        "ubbbhst_prem_code", "UBBBHST_PREM_CODE").toString();
             } catch (Exception e) {
+                continue;
+            }
+            if (!seen.add(cust + "/" + prem)) {
                 continue;
             }
             probed++;
@@ -421,6 +433,121 @@ public class GetBillHistoryApiHelper {
         skipWhenNoAutomatableSeed(testCondition,
                 "No automatable Guaranteed Bill GetBillHistory seed; "
                         + "manual account creation is not permitted for automation.");
+    }
+
+    /**
+     * SP1.11–SP1.14 request two months of history. numberOfMatches is the bill
+     * count in that window, which can be greater than two when one month has two bills.
+     */
+    private void applyTwoMonthBannerValueSeed(GetBillHistoryRequest payload, GetBillHistoryLabel testCondition) {
+        final int lookbackMonths = 2;
+        List<Map<String, Object>> candidates = twoMonthCandidates(testCondition);
+        if (candidates.isEmpty()) {
+            skipWhenNoAutomatableSeed(testCondition.name(),
+                    "No account with more than one qualifying bill in the last 2 months; "
+                            + "manual account creation is not permitted for automation.");
+        }
+
+        int probed = 0;
+        final int maxProbes = 20;
+        for (Map<String, Object> candidate : candidates) {
+            if (candidate == null || probed >= maxProbes) {
+                break;
+            }
+            String cust;
+            String prem;
+            try {
+                cust = firstNonNull(candidate, "ubbbhst_cust_code", "UBBBHST_CUST_CODE").toString();
+                prem = firstNonNull(candidate, "ubbbhst_prem_code", "UBBBHST_PREM_CODE").toString();
+            } catch (Exception e) {
+                continue;
+            }
+            probed++;
+            List<Map<String, Object>> rows = ApplicationContext.get().getDbAction()
+                    .getBillHistory2(cust, prem, lookbackMonths);
+            if (rows == null || rows.size() < 2 || !matchesTwoMonthValueCondition(testCondition, rows)) {
+                continue;
+            }
+            payload.setLoginID(null);
+            payload.setCustomerCode(cust);
+            payload.setPremisesCode(prem);
+            payload.setNumberOfMonths(lookbackMonths);
+            testContext.setCustomerCode(cust);
+            testContext.setPremisesCode(prem);
+            testContext.setRequestedNumberOfMonths(lookbackMonths);
+            testContext.setExpectedNumberOfMatches(rows.size());
+            DualReportManager.logInfo(
+                    testCondition.name() + " two-month seed " + cust + "/" + prem
+                            + " lookbackMonths=" + lookbackMonths
+                            + " billMatches=" + rows.size());
+            return;
+        }
+
+        skipWhenNoAutomatableSeed(testCondition.name(),
+                "No 2-month bill history account satisfied " + testCondition.name()
+                        + "; manual account creation is not permitted for automation.");
+    }
+
+    private List<Map<String, Object>> twoMonthCandidates(GetBillHistoryLabel testCondition) {
+        List<Map<String, Object>> candidates = new java.util.ArrayList<>();
+        try {
+            if (testCondition == GetBillHistoryLabel.SP1_13__Positive__Balance_Brought_Forward_Values) {
+                candidates.addAll(ApplicationContext.get().getDbAction().listBillHistoryTwoMonthBalanceCandidates());
+            } else if (testCondition == GetBillHistoryLabel.SP1_14__Positive__Promotional_Discount_Values) {
+                candidates.addAll(ApplicationContext.get().getDbAction().listBillHistoryTwoMonthPromoCandidates());
+            }
+            if (candidates.isEmpty()
+                    && testCondition != GetBillHistoryLabel.SP1_14__Positive__Promotional_Discount_Values) {
+                candidates.addAll(ApplicationContext.get().getDbAction().listBillHistoryTwoMonthCandidates());
+            }
+        } catch (Exception e) {
+            log.warn("Two-month bill history candidate query failed: {}", e.getMessage());
+        }
+        return candidates;
+    }
+
+    private static boolean matchesTwoMonthValueCondition(GetBillHistoryLabel testCondition,
+                                                         List<Map<String, Object>> rows) {
+        boolean everyBillHasServiceDates = rows.stream().allMatch(row ->
+                present(column(row, "BILL_FROM_DATE"))
+                        && present(column(row, "BILL_TO_DATE"))
+                        && column(row, "DAYS_OF_SERVICE") != null);
+        if (!everyBillHasServiceDates) {
+            return false;
+        }
+        if (testCondition == GetBillHistoryLabel.SP1_12__Positive__Consumption_Values) {
+            return rows.stream().anyMatch(row ->
+                    greaterThanZero(column(row, "DAYS_OF_SERVICE"))
+                            && greaterThanZero(column(row, "HEATING_DEGREE_DAYS"))
+                            && greaterThanZero(column(row, "TOTAL_BILLED_CONSUMPTION")));
+        }
+        if (testCondition == GetBillHistoryLabel.SP1_13__Positive__Balance_Brought_Forward_Values) {
+            return rows.stream().anyMatch(row -> notZero(column(row, "BALANCE_BROUGHT_FORWARD")));
+        }
+        if (testCondition == GetBillHistoryLabel.SP1_14__Positive__Promotional_Discount_Values) {
+            return rows.stream().anyMatch(row -> notZero(column(row, "PROMOTIONAL_DISCOUNTS")));
+        }
+        return true;
+    }
+
+    private static Object column(Map<String, Object> row, String name) {
+        Object value = row.get(name);
+        if (value == null) {
+            value = row.get(name.toLowerCase());
+        }
+        return value;
+    }
+
+    private static boolean present(Object value) {
+        return value != null && !String.valueOf(value).isBlank();
+    }
+
+    private static boolean greaterThanZero(Object value) {
+        return value != null && new java.math.BigDecimal(String.valueOf(value)).compareTo(java.math.BigDecimal.ZERO) > 0;
+    }
+
+    private static boolean notZero(Object value) {
+        return value != null && new java.math.BigDecimal(String.valueOf(value)).compareTo(java.math.BigDecimal.ZERO) != 0;
     }
 
     private static void skipWhenNoAutomatableSeed(String testCondition, String reason) {

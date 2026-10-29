@@ -416,6 +416,35 @@ public class GetPaperlessEnrollmentEligibilitySetupHelper {
     }
 
     /**
+     * SP1.01: NEW account with no pending bill preference record in Banner (no GZRPPTH),
+     * verified to answer billDeliveryOption=P. Distinct from TC_205 (explicit GZRPPTH P).
+     */
+    Map<String, Object> ensureNewNoPendingBillPreference() {
+        Map<String, Object> account = ensureProbedDeliveryOption(
+                "billDeliveryOption", "P", "SP1.01 NEW no pending bill preference",
+                ApplicationContext.get().getDbAction()
+                        .listNewAccountWithNoPendingBillPreferenceCandidates(),
+                () -> ApplicationContext.get().getDbAction().getNewAccountWithNoPendingBillPreference());
+        if (account == null) {
+            throw new IllegalStateException(
+                    "Could not resolve NEW account with no pending bill preference record in Banner "
+                            + "(no GZRPPTH history) returning billDeliveryOption=P.");
+        }
+        if (!probeDeliveryOption(account, "billDeliveryOption", "P")) {
+            throw new IllegalStateException(
+                    "NEW account with no pending bill preference did not return billDeliveryOption=P for "
+                            + account.get("customerCode") + "/" + account.get("premisesCode"));
+        }
+        com.gng.api.report.DualReportManager.logInfo(
+                "SP1.01 NEW no pending bill preference seed "
+                        + account.get("customerCode") + "/" + account.get("premisesCode")
+                        + " — no GZRPPTH pending bill preference record");
+        log.info("Using NEW account with no pending bill preference {}/{}",
+                account.get("customerCode"), account.get("premisesCode"));
+        return account;
+    }
+
+    /**
      * Returns the first candidate the API actually answers {@code expected} for. Falls back to
      * the original single-row lookup when the pool is empty, so this is never worse than the
      * unprobed selection it replaces.

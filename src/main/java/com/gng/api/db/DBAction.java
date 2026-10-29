@@ -920,6 +920,25 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getNonBudgetBillHistoryAccount() {
+        long startTime = System.currentTimeMillis();
+        String query = DBQuery.SELECT_NON_BUDGET_BILL_HISTORY_ACCOUNT;
+
+        logQueryInAllure("get non-budget bill history account", query);
+
+        Map<String, Object> result = jdbcTemplate.queryForMap(query);
+
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                query,
+                result.toString(),
+                elapsed
+        );
+
+        return result;
+    }
+
     public List<Map<String, Object>> getBudgetBillingAccount() {
         long startTime = System.currentTimeMillis();
         String query = DBQuery.SELECT_BUDGET_BILLING_ACCOUNT;
@@ -939,6 +958,85 @@ public class DBAction {
         return result;
     }
 
+    public Map<String, Object> getReportPaymentAccount(String query, String label) {
+        long startTime = System.currentTimeMillis();
+        logQueryInAllure(label, query);
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(query);
+            SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(),
+                    System.currentTimeMillis() - startTime);
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            throw new IllegalStateException("No ReportPayment account seed for " + label, ex);
+        }
+    }
+
+    public List<Map<String, Object>> getReportPaymentAccounts(String query, String label) {
+        return getReportPaymentAccounts(query, label, new Object[0]);
+    }
+
+    public List<Map<String, Object>> getReportPaymentAccounts(String query, String label, Object... args) {
+        long startTime = System.currentTimeMillis();
+        logQueryInAllure(label, query);
+        List<Map<String, Object>> result = (args == null || args.length == 0)
+                ? jdbcTemplate.queryForList(query)
+                : jdbcTemplate.queryForList(query, args);
+        SimplifiedExtentReportManager.logDatabaseQuery(query, result.toString(),
+                System.currentTimeMillis() - startTime);
+        return result;
+    }
+
+    public String getNotifyPaymentDelinquencyLookbackDays() {
+        try {
+            return jdbcTemplate.queryForObject(
+                    DBQuery.SELECT_NOTIFY_PAYMENT_DELINQUENCY_LOOKBACK, String.class);
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
+    public void updateNotifyPaymentDelinquencyLookbackDays(String days) {
+        int updated = jdbcTemplate.update(DBQuery.UPDATE_NOTIFY_PAYMENT_DELINQUENCY_LOOKBACK, days);
+        if (updated != 1) {
+            throw new IllegalStateException(
+                    "Expected 1 UZRPSTO row updated for DELINQUENCY_LOOKBACK_DAYS, got " + updated);
+        }
+        log.info("Updated NOTIFY_PAYMENT.DELINQUENCY_LOOKBACK_DAYS to {}", days);
+    }
+
+    public java.time.LocalDate getNewestActivePrecOccurrenceDate() {
+        Object value = jdbcTemplate.queryForObject(
+                DBQuery.SELECT_NEWEST_ACTIVE_PREC_DATE, Object.class);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof java.sql.Timestamp ts) {
+            return ts.toLocalDateTime().toLocalDate();
+        }
+        if (value instanceof java.sql.Date d) {
+            return d.toLocalDate();
+        }
+        if (value instanceof java.util.Date d) {
+            return new java.sql.Date(d.getTime()).toLocalDate();
+        }
+        String text = value.toString().trim();
+        return java.time.LocalDate.parse(text.length() >= 10 ? text.substring(0, 10) : text);
+    }
+
+    public Map<String, Object> getReportPaymentPastDueOverThreshold() {
+        List<Map<String, Object>> accounts = getReportPaymentAccounts(
+                DBQuery.SELECT_RP_PAST_DUE_OVER_THRESHOLD,
+                "past due over 10000");
+        if (accounts.isEmpty()) {
+            throw new IllegalStateException("No ReportPayment account seed for past due over 10000");
+        }
+        return accounts.get(0);
+    }
+
+    public int countReportPaymentCondition(String sql, Object customerCode, Object premisesCode) {
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, customerCode, premisesCode);
+        return count == null ? 0 : count;
+    }
 
     public Map<String, Object> getAccountWithPaymentHistory() {
         long startTime = System.currentTimeMillis();
@@ -1402,6 +1500,22 @@ public class DBAction {
         return listBillHistoryCandidates(DBQuery.SELECT_BILL_HISTORY_TC96_ACCOUNT,
                 "get bill history TC96 candidate accounts last 9 months");
     }
+
+    public List<Map<String, Object>> listBillHistoryTwoMonthCandidates() {
+        return listBillHistoryCandidates(DBQuery.SELECT_BILL_HISTORY_TWO_MONTH_ACCOUNT,
+                "get bill history SP1.11-14 candidate accounts last 2 months");
+    }
+
+    public List<Map<String, Object>> listBillHistoryTwoMonthBalanceCandidates() {
+        return listBillHistoryCandidates(DBQuery.SELECT_BILL_HISTORY_TWO_MONTH_BBF_ACCOUNT,
+                "get bill history SP1.13 non-zero balance brought forward accounts");
+    }
+
+    public List<Map<String, Object>> listBillHistoryTwoMonthPromoCandidates() {
+        return listBillHistoryCandidates(DBQuery.SELECT_BILL_HISTORY_TWO_MONTH_PROMO_ACCOUNT,
+                "get bill history SP1.14 promotional discount accounts");
+    }
+
 
     private List<Map<String, Object>> listBillHistoryCandidates(String query, String allureLabel) {
         logQueryInAllure(allureLabel, query);
@@ -2463,6 +2577,21 @@ public class DBAction {
                 "list NEW accounts with confirmed bill preference (TC_204)");
     }
 
+    /** SP1.01 candidate pool (probe-and-retry): NEW with no pending bill preference record. */
+    public List<Map<String, Object>> listNewAccountWithNoPendingBillPreferenceCandidates() {
+        List<Map<String, Object>> rows = listEligibilityCandidates(
+                DBQuery.SELECT_NEW_ACCOUNT_NO_PENDING_BILL_PREFERENCE_CANDIDATES,
+                "list NEW accounts with no pending bill preference (SP1.01)");
+        List<Map<String, Object>> normalized = new java.util.ArrayList<>(rows.size());
+        for (Map<String, Object> row : rows) {
+            Map<String, Object> mapped = normalizeEligibilityAccountKeys(row);
+            if (mapped != null) {
+                normalized.add(mapped);
+            }
+        }
+        return normalized;
+    }
+
     private List<Map<String, Object>> listEligibilityCandidates(String query, String allureLabel) {
         long startTime = System.currentTimeMillis();
         logQueryInAllure(allureLabel, query);
@@ -2958,6 +3087,52 @@ public class DBAction {
         return querySinglePaperlessAccount(
                 DBQuery.SELECT_NEW_ACCOUNT_CONFIRMED_BILL_PREFERENCE,
                 "get NEW account with confirmed electronic bill preference");
+    }
+
+    /** SP1.01: NEW account with no pending bill preference record in Banner (no GZRPPTH). */
+    public Map<String, Object> getNewAccountWithNoPendingBillPreference() {
+        return normalizeEligibilityAccountKeys(tryQuerySinglePaperlessAccount(
+                DBQuery.SELECT_NEW_ACCOUNT_NO_PENDING_BILL_PREFERENCE,
+                "get NEW account with no pending bill preference (SP1.01)",
+                false));
+    }
+
+    /** Ensures camelCase customerCode/premisesCode keys for eligibility applyAccount. */
+    private Map<String, Object> normalizeEligibilityAccountKeys(Map<String, Object> row) {
+        if (row == null) {
+            return null;
+        }
+        Object customerCode = row.get("customerCode");
+        Object premisesCode = row.get("premisesCode");
+        if (customerCode == null || premisesCode == null) {
+            for (Map.Entry<String, Object> entry : row.entrySet()) {
+                if (customerCode == null && "customerCode".equalsIgnoreCase(entry.getKey())) {
+                    customerCode = entry.getValue();
+                }
+                if (premisesCode == null && "premisesCode".equalsIgnoreCase(entry.getKey())) {
+                    premisesCode = entry.getValue();
+                }
+            }
+        }
+        if (customerCode == null || premisesCode == null) {
+            return null;
+        }
+        Map<String, Object> normalized = new java.util.HashMap<>(row);
+        normalized.put("customerCode", customerCode);
+        normalized.put("premisesCode", premisesCode);
+        Object accountStatus = normalized.get("accountStatus");
+        if (accountStatus == null) {
+            for (Map.Entry<String, Object> entry : row.entrySet()) {
+                if ("accountStatus".equalsIgnoreCase(entry.getKey()) && entry.getValue() != null) {
+                    accountStatus = entry.getValue();
+                    break;
+                }
+            }
+        }
+        if (accountStatus != null) {
+            normalized.put("accountStatus", accountStatus);
+        }
+        return normalized;
     }
 
     public Map<String, Object> getVerifyAccountWithUcraddrStreet() {
@@ -7415,6 +7590,84 @@ public class DBAction {
                 elapsed
         );
 
+        return result;
+    }
+
+    /** V1.4 GetBillingInfo validation. Does not replace {@link #getBillInfo}. */
+    public List<Map<String, Object>> getBillInfoV14(String customerCode, String premisesCode) {
+        long startTime = System.currentTimeMillis();
+        String queryTemplate = DBQuery.GET_BILL_INFO_V14;
+        String loggedQuery = queryTemplate
+                .replaceFirst("\\?", "'" + customerCode.replace("'", "''") + "'")
+                .replaceFirst("\\?", "'" + premisesCode.replace("'", "''") + "'");
+        logQueryInAllure("get billing info v1.4", loggedQuery);
+        List<Map<String, Object>> result;
+        try {
+            result = jdbcTemplate.queryForList(queryTemplate, customerCode, premisesCode);
+        } catch (EmptyResultDataAccessException e) {
+            result = Collections.emptyList();
+        }
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(
+                loggedQuery,
+                "rows=" + result.size(),
+                elapsed
+        );
+        return result;
+    }
+
+    public List<Map<String, Object>> listBillingInfoTc12Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_TC12_ONE_BILL, "TC12 one-bill seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoTc21Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_TC21_PREV_BAL_ZERO, "TC21 previous balance 0 seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoTc26Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_TC26_BBF_NEGATIVE, "TC26 negative balance brought forward seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoGuaranteedBillSeeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_GUARANTEED_BILL, "SP1-09 guaranteed bill seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoTc17Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_TC17_PAST_DUE, "TC17 past due seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoTc32Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_TC32_BALANCE, "TC32 non-zero current balance seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoTc49Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_TC49_REWARD, "TC49 reward line seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoTc51Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_TC51_MISC_CREDIT, "TC51 miscellaneous credit seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoSp101Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_SP101_ADJ_APPLIED, "SP1-01 adjustments applied seed");
+    }
+
+    public List<Map<String, Object>> listBillingInfoSp103Seeds() {
+        return listBillingInfoSeeds(DBQuery.SELECT_BILLING_INFO_SP103_ADJ_SINCE, "SP1-03 adjustments since last bill seed");
+    }
+
+    public List<Map<String, Object>> listBillHistoryGuaranteedBillSeeds() {
+        return listBillingInfoSeeds(
+                DBQuery.SELECT_BILL_HISTORY_GUARANTEED_BILL,
+                "GetBillHistory guaranteed bill seed");
+    }
+
+    private List<Map<String, Object>> listBillingInfoSeeds(String query, String label) {
+        long startTime = System.currentTimeMillis();
+        logQueryInAllure(label, query);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+        long elapsed = System.currentTimeMillis() - startTime;
+        SimplifiedExtentReportManager.logDatabaseQuery(query, "candidateCount=" + result.size(), elapsed);
         return result;
     }
 

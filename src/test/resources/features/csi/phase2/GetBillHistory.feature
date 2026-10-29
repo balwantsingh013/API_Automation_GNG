@@ -146,3 +146,18 @@ Feature: Verify GetBillHistory Api
        | testCondition                                            | errorCode | errorMessage | data    |
        | SP1_09__Positive__Budget_Billing_Historical_Values                 | 0 |              | notNull |
        | SP1_10__Positive__Guaranteed_Bill_Historical_Values                | 0 |              | notNull |
+
+  # SP1.11–SP1.14 — two-month lookback; numberOfMatches is the bill count, compared to Banner
+   @GetBillHistoryPositive @HappyFlow @CSI @BillHistoryDbVerify @BillHistoryTwoMonth
+   Scenario Outline: "<testCondition>"
+     When a request is made to GetBillHistory Api for "<testCondition>"
+     Then verify response code of "GetBillHistory" Api is 200
+     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+     And bill history response should match database for customer and premises code
+     And bill history banner values should satisfy "<testCondition>"
+     Examples:
+       | testCondition                                            | errorCode | errorMessage | data    |
+       | SP1_11__Positive__Standard_Bill_History_Values                     | 0 |              | notNull |
+       | SP1_12__Positive__Consumption_Values                               | 0 |              | notNull |
+       | SP1_13__Positive__Balance_Brought_Forward_Values                   | 0 |              | notNull |
+       | SP1_14__Positive__Promotional_Discount_Values                      | 0 |              | notNull |

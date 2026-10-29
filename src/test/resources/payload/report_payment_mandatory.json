@@ -7,5 +7,5 @@
   "paymentAmount": "10.00",
   "paymentType": "OT",
   "confirmationNumber": "1234567",
-  "origin": "IVR"
+  "origin": "CSI"
 }

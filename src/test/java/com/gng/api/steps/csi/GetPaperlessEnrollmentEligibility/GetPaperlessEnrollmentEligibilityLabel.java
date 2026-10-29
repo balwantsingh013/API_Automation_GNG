@@ -66,5 +66,6 @@ public enum GetPaperlessEnrollmentEligibilityLabel {
     TC_202A__Positive__Bill_Override_Eligible_,
     TC_203__Positive__New_Unconfirmed_Bill_,
     TC_204__Positive__New_Confirmed_Bill_,
-    TC_205__Positive__New_Paper_Bill_
+    TC_205__Positive__New_Paper_Bill_,
+    SP1_01__Positive__NEW_No_Pending_Bill_Preference_Record_
 }

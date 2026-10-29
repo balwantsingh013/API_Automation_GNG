@@ -13,9 +13,12 @@ import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.SkipException;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.gng.api.constants.ApiEndPoint.GET_BILLING_INFO;
 
@@ -102,7 +105,11 @@ public class GetBillingInfoApiHelper {
                 break;
 
             case TC_12__Positive__Valid_Account_with_1_Month_Billing_History:
-                accountData = resolveOneMonthBillingCandidate(null);
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoTc12Seeds(),
+                        "TC_12",
+                        "no account with exactly one bill in the last 24 months",
+                        response -> response.jsonPath().get("data") != null);
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
@@ -150,7 +157,11 @@ public class GetBillingInfoApiHelper {
 //
             case TC_17__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Greater_Than_0:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("147670", "151572");
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoTc17Seeds(),
+                        "TC_17",
+                        "no account with past due amount greater than 0",
+                        response -> isPositive(response.jsonPath().get("data.pastDueAmount")));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows6 = ApplicationContext.get()
@@ -190,7 +201,11 @@ public class GetBillingInfoApiHelper {
 
             case TC_21__Positive__Billing_Info_Previous_Bill_Amount_Format__Previous_Bill_Amount_Equals_0:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = resolveOneMonthBillingCandidate("data.previousBillAmount");
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoTc21Seeds(),
+                        "TC_21",
+                        "no recent bill with previous balance 0",
+                        response -> isZero(response.jsonPath().get("data.previousBillAmount")));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows10 = ApplicationContext.get()
@@ -240,7 +255,11 @@ public class GetBillingInfoApiHelper {
 //
             case TC_26__Positive__Balance_Brought_Forward_Less_Than_0_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("116057", "118649");
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoTc26Seeds(),
+                        "TC_26",
+                        "no recent bill with balance brought forward less than 0",
+                        response -> isNegative(response.jsonPath().get("data.balanceBroughtForward")));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows15 = ApplicationContext.get()
@@ -300,7 +319,11 @@ public class GetBillingInfoApiHelper {
 //
             case TC_32__Positive__Current_Balance_Format:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("147670", "151572");
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoTc32Seeds(),
+                        "TC_32",
+                        "no account with a non-zero current balance",
+                        response -> isNonZero(response.jsonPath().get("data.currentBalance")));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows21 = ApplicationContext.get()
@@ -374,10 +397,29 @@ public class GetBillingInfoApiHelper {
                         .getBillInfo(accountData.get("ubbbhst_cust_code").toString(), accountData.get("ubbbhst_prem_code").toString());
                 break;
 
-            // Supplemental adjustments reuse multi-month bill history until dedicated seeds exist
             case SP1_01__Positive__Adjustments_Applied_Amount_Greater_Than_0_Format_:
-            case SP1_02__Positive__Adjustments_Applied_Amount_Equals_0_:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoSp101Seeds(),
+                        "SP1_01",
+                        "no account with adjustments applied greater than 0",
+                        response -> isPositive(response.jsonPath().get("data.adjustmentsApplied")));
+                payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
+                break;
+
             case SP1_03__Positive__Adjustments_Since_Last_Bill_Greater_Than_0_Format_:
+                payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoSp103Seeds(),
+                        "SP1_03",
+                        "no account with adjustments since last bill greater than 0",
+                        response -> isPositive(response.jsonPath().get("data.adjustmentsSinceLastBill")));
+                payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
+                payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
+                break;
+
+            case SP1_02__Positive__Adjustments_Applied_Amount_Equals_0_:
             case SP1_04__Positive__Adjustments_Since_Last_Bill_Equals_0_:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
                 accountData = ApplicationContext.get().getDbAction().getUsageHistoryMoreThanOne();
@@ -439,7 +481,11 @@ public class GetBillingInfoApiHelper {
 
             case TC_49__Positive__Bill_Line_Items_Reward_Order:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2984", "2597");
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoTc49Seeds(),
+                        "TC_49",
+                        "no account whose current bill contains a reward line",
+                        response -> hasCategory(response, "REWARD"));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows32 = ApplicationContext.get()
@@ -519,7 +565,11 @@ public class GetBillingInfoApiHelper {
 
             case TC_51__Positive__Bill_Line_Items_Miscellaneous_Credit_Order:
                 payload.setRequestID(FakerDataGenerator.generateAlphanumeric(6));
-                accountData = ApplicationContext.get().getDbAction().getAccountForBillInfo("2215558", "2237254");
+                accountData = resolveListedSeed(
+                        ApplicationContext.get().getDbAction().listBillingInfoTc51Seeds(),
+                        "TC_51",
+                        "no account whose current bill contains a miscellaneous credit line",
+                        response -> hasCategory(response, "MISCCREDIT"));
                 payload.setCustomerCode(accountData.get("ubbbhst_cust_code").toString());
                 payload.setPremisesCode(accountData.get("ubbbhst_prem_code").toString());
                 List<Map<String, Object>> dbRows40 = ApplicationContext.get()
@@ -544,34 +594,19 @@ public class GetBillingInfoApiHelper {
     }
 
     /**
-     * Probe Guaranteed Bill seeds (same TC_5 pools as GetBillHistory SP1_10).
-     * Returns first account where GetBillingInfo returns non-null {@code data.guaranteedBillAmount};
-     * SkipException only when no candidate probes successfully.
+     * SP1-09 / SP1-12 seed from guaranteed-bill rate codes. Skip only when none of those
+     * accounts return a non-null guaranteedBillAmount.
      */
     private Map<String, Object> resolveGuaranteedBillBillingInfoCandidate(String testCondition) {
         List<Map<String, Object>> candidates = new ArrayList<>();
         try {
-            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5PriceProCandidates());
+            candidates.addAll(ApplicationContext.get().getDbAction().listBillingInfoGuaranteedBillSeeds());
         } catch (Exception e) {
-            log.warn("Guaranteed PRICEPRO candidate query failed: {}", e.getMessage());
-        }
-        try {
-            candidates.addAll(ApplicationContext.get().getDbAction().listAccountDetailsTC5AnyDiscountCandidates());
-        } catch (Exception e) {
-            log.warn("Guaranteed any-discount candidate query failed: {}", e.getMessage());
-        }
-        try {
-            Map<String, Object> withoutDiscount = ApplicationContext.get().getDbAction()
-                    .getAccountDetailsTC5WithoutDiscount();
-            if (withoutDiscount != null) {
-                candidates.add(withoutDiscount);
-            }
-        } catch (Exception e) {
-            log.warn("Guaranteed without-discount candidate query failed: {}", e.getMessage());
+            log.warn("Guaranteed bill seed query failed: {}", e.getMessage());
         }
 
         int probed = 0;
-        final int maxProbes = 5;
+        final int maxProbes = 10;
         for (Map<String, Object> candidate : candidates) {
             if (candidate == null) {
                 continue;
@@ -700,5 +735,270 @@ public class GetBillingInfoApiHelper {
                 .header("Authorization", "Bearer " + testContext.getAuthToken())
                 .body(payload)
                 .post(uri);
+    }
+
+    private Map<String, Object> resolveListedSeed(List<Map<String, Object>> candidates,
+                                                   String label,
+                                                   String emptyReason,
+                                                   Predicate<Response> accept) {
+        if (candidates == null || candidates.isEmpty()) {
+            skipListed(label, emptyReason);
+        }
+        int probed = 0;
+        for (Map<String, Object> candidate : candidates) {
+            if (candidate == null || probed >= 25) {
+                if (probed >= 25) {
+                    break;
+                }
+                continue;
+            }
+            String cust;
+            String prem;
+            try {
+                cust = firstNonNull(candidate, "ubbbhst_cust_code", "UBBBHST_CUST_CODE").toString();
+                prem = firstNonNull(candidate, "ubbbhst_prem_code", "UBBBHST_PREM_CODE").toString();
+            } catch (Exception e) {
+                continue;
+            }
+            probed++;
+            Map<String, Object> account = new HashMap<>();
+            account.put("ubbbhst_cust_code", cust);
+            account.put("ubbbhst_prem_code", prem);
+            Response response = callGetBillingInfo(account);
+            if (response.statusCode() != 200) {
+                continue;
+            }
+            Object err = response.jsonPath().get("errorCode");
+            if (!(err instanceof Number) || ((Number) err).intValue() != 0) {
+                continue;
+            }
+            if (accept != null && !accept.test(response)) {
+                continue;
+            }
+            if (!matchesBillInfoV14(cust, prem, response)) {
+                continue;
+            }
+            DualReportManager.logInfo(label + " seed " + cust + "/" + prem);
+            return account;
+        }
+        skipListed(label, "no probe-validated account; " + emptyReason);
+        return null;
+    }
+
+    private boolean matchesBillInfoV14(String customerCode, String premisesCode, Response response) {
+        try {
+            GetBillingInfoRequest probe = new GetBillingInfoRequest();
+            probe.setCustomerCode(customerCode);
+            probe.setPremisesCode(premisesCode);
+            assertApiMatchesBillInfoV14(probe, response);
+            return true;
+        } catch (AssertionError e) {
+            log.info("Rejected seed {}/{}: {}", customerCode, premisesCode, e.getMessage());
+            return false;
+        }
+    }
+
+    private static void skipListed(String label, String reason) {
+        String message = label + " — " + reason
+                + "; manual account creation is not permitted for automation.";
+        DualReportManager.logInfo("SKIPPED: " + message);
+        throw new SkipException(message);
+    }
+
+    private static boolean isZero(Object value) {
+        return value instanceof Number && Math.abs(((Number) value).doubleValue()) < 0.0001d;
+    }
+
+    private static boolean isNegative(Object value) {
+        return value instanceof Number && ((Number) value).doubleValue() < 0d;
+    }
+
+    private static boolean isPositive(Object value) {
+        return value instanceof Number && ((Number) value).doubleValue() > 0.0001d;
+    }
+
+    private static boolean isNonZero(Object value) {
+        return value instanceof Number && Math.abs(((Number) value).doubleValue()) > 0.0001d;
+    }
+
+    private static boolean hasCategory(Response response, String category) {
+        List<Map<String, Object>> lines = response.jsonPath().getList("data.billLineItems");
+        if (lines == null) {
+            return false;
+        }
+        for (Map<String, Object> line : lines) {
+            Object value = line.get("category");
+            if (value != null && category.equalsIgnoreCase(String.valueOf(value))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Fails the scenario when the chosen account does not actually contain the value under test.
+     */
+    public void assertScenarioEvidence(GetBillingInfoLabel testCondition, Response response) {
+        if (testCondition == null || response == null) {
+            return;
+        }
+        switch (testCondition) {
+            case TC_17__Positive__Billing_Info_Past_Due_Amount_Format__Past_Due_Amount_Greater_Than_0:
+                requireEvidence(isPositive(response.jsonPath().get("data.pastDueAmount")),
+                        "TC17 pastDueAmount must be greater than 0");
+                break;
+            case TC_32__Positive__Current_Balance_Format:
+                requireEvidence(isNonZero(response.jsonPath().get("data.currentBalance")),
+                        "TC32 currentBalance must be non-zero");
+                break;
+            case TC_49__Positive__Bill_Line_Items_Reward_Order:
+                requireEvidence(hasCategory(response, "REWARD"),
+                        "TC49 bill line items must include category REWARD");
+                break;
+            case TC_51__Positive__Bill_Line_Items_Miscellaneous_Credit_Order:
+                requireEvidence(hasCategory(response, "MISCCREDIT"),
+                        "TC51 bill line items must include category MISCCREDIT");
+                break;
+            case SP1_01__Positive__Adjustments_Applied_Amount_Greater_Than_0_Format_:
+                requireEvidence(isPositive(response.jsonPath().get("data.adjustmentsApplied")),
+                        "SP1-01 adjustmentsApplied must be greater than 0");
+                break;
+            case SP1_03__Positive__Adjustments_Since_Last_Bill_Greater_Than_0_Format_:
+                requireEvidence(isPositive(response.jsonPath().get("data.adjustmentsSinceLastBill")),
+                        "SP1-03 adjustmentsSinceLastBill must be greater than 0");
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static void requireEvidence(boolean proven, String message) {
+        if (!proven) {
+            throw new AssertionError(message);
+        }
+    }
+
+    /**
+     * Compares a successful GetBillingInfo payload to the V1.4 Banner query.
+     * Negative responses and empty data are left to the existing error-code checks.
+     */
+    public void assertApiMatchesBillInfoV14(GetBillingInfoRequest payload, Response response) {
+        if (payload == null || payload.getCustomerCode() == null || payload.getCustomerCode().isBlank()
+                || payload.getPremisesCode() == null || payload.getPremisesCode().isBlank()) {
+            return;
+        }
+        Object errorCode = response.jsonPath().get("errorCode");
+        if (!(errorCode instanceof Number) || ((Number) errorCode).intValue() != 0) {
+            return;
+        }
+        if (response.jsonPath().get("data") == null) {
+            return;
+        }
+
+        List<Map<String, Object>> dbRows = ApplicationContext.get().getDbAction()
+                .getBillInfoV14(payload.getCustomerCode(), payload.getPremisesCode());
+        if (dbRows == null || dbRows.isEmpty()) {
+            throw new AssertionError("V1.4 GetBillingInfo returned no current bill for "
+                    + payload.getCustomerCode() + "/" + payload.getPremisesCode());
+        }
+
+        Map<String, Object> header = dbRows.get(0);
+        String row = payload.getCustomerCode() + "/" + payload.getPremisesCode();
+        assertText(row, "billDate", response.jsonPath().get("data.billDate"), col(header, "billDate"));
+        assertText(row, "billFromDate", response.jsonPath().get("data.billFromDate"), col(header, "billFromDate"));
+        assertText(row, "billToDate", response.jsonPath().get("data.billToDate"), col(header, "billToDate"));
+        assertText(row, "pastDueDate", response.jsonPath().get("data.pastDueDate"), col(header, "pastDueDate"));
+        assertText(row, "billDueDate", response.jsonPath().get("data.billDueDate"), col(header, "billDueDate"));
+        assertText(row, "budgetBillingStartDate", response.jsonPath().get("data.budgetBillingStartDate"), col(header, "budgetBillingStartDate"));
+        assertText(row, "budgetBillingTrueUpDate", response.jsonPath().get("data.budgetBillingTrueUpDate"), col(header, "budgetBillingTrueUpDate"));
+        assertMoney(row, "pastDueAmount", response.jsonPath().get("data.pastDueAmount"), col(header, "pastDueAmount"));
+        assertMoney(row, "previousBillAmount", response.jsonPath().get("data.previousBillAmount"), col(header, "previousBillAmount"));
+        assertMoney(row, "paymentsApplied", response.jsonPath().get("data.paymentsApplied"), col(header, "paymentsApplied"));
+        assertMoney(row, "adjustmentsApplied", response.jsonPath().get("data.adjustmentsApplied"), col(header, "adjustmentsApplied"));
+        assertMoney(row, "balanceBroughtForward", response.jsonPath().get("data.balanceBroughtForward"), col(header, "balanceBroughtForward"));
+        assertMoney(row, "currentCharges", response.jsonPath().get("data.currentCharges"), col(header, "currentCharges"));
+        assertMoney(row, "paymentsSinceLastBill", response.jsonPath().get("data.paymentsSinceLastBill"), col(header, "paymentsSinceLastBill"));
+        assertMoney(row, "adjustmentsSinceLastBill", response.jsonPath().get("data.adjustmentsSinceLastBill"), col(header, "adjustmentsSinceLastBill"));
+        assertMoney(row, "currentBalance", response.jsonPath().get("data.currentBalance"), col(header, "currentBalance"));
+        assertMoney(row, "totalAmountDue", response.jsonPath().get("data.totalAmountDue"), col(header, "totalAmountDue"));
+        assertMoney(row, "budgetBillingAmount", response.jsonPath().get("data.budgetBillingAmount"), col(header, "budgetBillingAmount"));
+        assertMoney(row, "budgetBillingActualCharges", response.jsonPath().get("data.budgetBillingActualCharges"), col(header, "budgetBillingActualCharges"));
+        assertMoney(row, "budgetBillingTotalVariance", response.jsonPath().get("data.budgetBillingTotalVariance"), col(header, "budgetBillingTotalVariance"));
+        assertMoney(row, "guaranteedBillAmount", response.jsonPath().get("data.guaranteedBillAmount"), col(header, "guaranteedBillAmount"));
+
+        List<Map<String, Object>> apiLines = response.jsonPath().getList("data.billLineItems");
+        List<Map<String, Object>> dbLines = new ArrayList<>();
+        for (Map<String, Object> dbRow : dbRows) {
+            if (col(dbRow, "code") != null) {
+                dbLines.add(dbRow);
+            }
+        }
+        int apiSize = apiLines == null ? 0 : apiLines.size();
+        if (apiSize != dbLines.size()) {
+            throw new AssertionError(row + " billLineItems size api=" + apiSize + " db=" + dbLines.size());
+        }
+        for (int i = 0; i < dbLines.size(); i++) {
+            Map<String, Object> apiLine = apiLines.get(i);
+            Map<String, Object> dbLine = dbLines.get(i);
+            String line = row + " line[" + i + "]";
+            assertText(line, "code", apiLine.get("code"), col(dbLine, "code"));
+            assertText(line, "description", apiLine.get("description"), col(dbLine, "description"));
+            assertText(line, "category", apiLine.get("category"), col(dbLine, "category"));
+            assertMoney(line, "amount", apiLine.get("amount"), col(dbLine, "amount"));
+        }
+    }
+
+    private static Object col(Map<String, Object> row, String name) {
+        if (row == null || name == null) {
+            return null;
+        }
+        if (row.containsKey(name)) {
+            return row.get(name);
+        }
+        String upper = name.toUpperCase();
+        if (row.containsKey(upper)) {
+            return row.get(upper);
+        }
+        for (Map.Entry<String, Object> entry : row.entrySet()) {
+            if (entry.getKey() != null && entry.getKey().equalsIgnoreCase(name)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    private static String textOrNull(Object value) {
+        if (value == null) {
+            return null;
+        }
+        String text = String.valueOf(value).trim();
+        if (text.isEmpty() || "null".equalsIgnoreCase(text)) {
+            return null;
+        }
+        return text;
+    }
+
+    private static void assertText(String row, String field, Object api, Object db) {
+        String apiText = textOrNull(api);
+        String dbText = textOrNull(db);
+        if (apiText == null && dbText == null) {
+            return;
+        }
+        if (apiText == null || !apiText.equals(dbText)) {
+            throw new AssertionError(row + " " + field + " api=" + api + " db=" + db);
+        }
+    }
+
+    private static void assertMoney(String row, String field, Object api, Object db) {
+        if (textOrNull(api) == null && textOrNull(db) == null) {
+            return;
+        }
+        if (textOrNull(api) == null || textOrNull(db) == null) {
+            throw new AssertionError(row + " " + field + " api=" + api + " db=" + db);
+        }
+        BigDecimal difference = new BigDecimal(String.valueOf(api)).subtract(new BigDecimal(String.valueOf(db))).abs();
+        if (difference.compareTo(new BigDecimal("0.01")) > 0) {
+            throw new AssertionError(row + " " + field + " api=" + api + " db=" + db);
+        }
     }
 }
