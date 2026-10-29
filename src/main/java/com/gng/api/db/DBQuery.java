@@ -2818,45 +2818,241 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             FETCH FIRST 1 ROWS ONLY
             """;
 
+    /**
+     * TC87: bill-history account with no active budget-billing row in UABBUDG
+     * ({@code uabbudg_status_ind = 'A'}).
+     */
+    public static final String SELECT_NON_BUDGET_BILL_HISTORY_ACCOUNT = """
+            SELECT UBBBHST_cust_code, UBBBHST_prem_code
+            FROM UBBBHST
+            JOIN ucracct
+              ON UBBBHST_cust_code = ucracct_cust_code
+            WHERE UBBBHST_PRINTED_DATE > ADD_MONTHS(TRUNC(SYSDATE), -24)
+              AND LENGTH(UBBBHST_cust_code) >= 4
+              AND ucracct_status_ind = 'A'
+              AND NOT (UBBBHST_cust_code = '2955' AND UBBBHST_prem_code = '2568')
+              AND NOT (UBBBHST_cust_code = '2962' AND UBBBHST_prem_code = '2575')
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM uabbudg b
+                    WHERE b.uabbudg_cust_code = ubbbhst_cust_code
+                      AND b.uabbudg_prem_code = ubbbhst_prem_code
+                      AND b.uabbudg_status_ind = 'A'
+              )
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** SP1_07 / SP1_10: guaranteed-bill rate codes with a positive charge in the last 24 months. */
+    public static final String SELECT_BILL_HISTORY_GUARANTEED_BILL = """
+            SELECT
+                   o.uabopen_cust_code,
+                   o.uabopen_prem_code,
+                   o.uabopen_bhst_tran_num,
+                   h.ubbbhst_printed_date,
+                   o.uabopen_srat_code,
+                   o.uabopen_billed_chg
+            FROM uabopen o,
+                 ubbbhst h
+            WHERE o.uabopen_srat_code IN
+                  ('CGBP',
+                   'RGBP',
+                   'SGBP',
+                   'RGB6',
+                   'SGB6',
+                   'RPGC',
+                   'SPGC')
+              AND o.uabopen_billed_chg > 0
+              AND h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+              AND NVL(h.ubbbhst_cancel_ind, 0) = 0
+              AND h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+              AND ROWNUM <= 50
+            """;
+
     public static final String SELECT_BUDGET_BILLING_ACCOUNT= """
-            WITH params AS (
-                SELECT ADD_MONTHS(TRUNC(SYSDATE), -24) AS win_start,
-                       TRUNC(SYSDATE)                 AS win_end
-                FROM dual
-            ),
-            valid_bills AS (
-                SELECT h.ubbbhst_cust_code,
-                       h.ubbbhst_prem_code,
-                       h.ubbbhst_tran_num
-                FROM UBBBHST h
-                CROSS JOIN params p
-                WHERE h.ubbbhst_printed_date >= p.win_start
-                  AND h.ubbbhst_printed_date <  p.win_end + 1
-                  AND NVL(h.ubbbhst_cancel_ind, 0) = 0
-                  AND EXISTS (
-                        SELECT 1
-                        FROM UABOPEN o
-                        WHERE o.uabopen_bhst_tran_num = h.ubbbhst_tran_num
-                  )
-            ),
-            budget_accounts AS (
-                SELECT DISTINCT
-                       v.ubbbhst_cust_code,
-                       v.ubbbhst_prem_code
-                FROM valid_bills v
-                JOIN UABOPEN o
-                  ON o.uabopen_bhst_tran_num = v.ubbbhst_tran_num
-                WHERE o.uabopen_item_type = 'B'
-                  AND NVL(o.uabopen_orig_budget_amt, 0) > 0
-            )
-            SELECT *
+            SELECT h.ubbbhst_cust_code,
+                   h.ubbbhst_prem_code
+            FROM UABOPEN o
+            JOIN UBBBHST h
+              ON h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+            WHERE o.uabopen_item_type = 'B'
+              AND NVL(o.uabopen_orig_budget_amt, 0) > 0
+              AND NVL(h.ubbbhst_cancel_ind, 0) = 0
+              AND h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+              AND h.ubbbhst_printed_date < TRUNC(SYSDATE) + 1
+              AND ROWNUM = 1
+            """;
+
+    /** Open SONP service order inside NOTIFY_PAYMENT.SONP_LOOKBACK_DAYS (30). */
+    public static final String SELECT_RP_OPEN_SONP_ACCOUNT = """
+            SELECT s.ucbsvco_cust_code AS ucracct_cust_code,
+                   s.ucbsvco_prem_code AS ucracct_prem_code
+            FROM ucbsvco s
+            JOIN ucracct a
+              ON a.ucracct_cust_code = s.ucbsvco_cust_code
+             AND a.ucracct_prem_code = s.ucbsvco_prem_code
+            WHERE s.ucbsvco_sotp_code = 'SONP'
+              AND s.ucbsvco_stus_code = 'O'
+              AND s.ucbsvco_date_created >= TRUNC(SYSDATE) - 30
+              AND a.ucracct_status_ind = 'A'
+              AND ROWNUM = 1
+            """;
+
+    /** SONP credit-history row inside the 30-day lookback. */
+    public static final String SELECT_RP_SONP_CREDIT_HISTORY_ACCOUNT = """
+            SELECT h.ucrcrhs_cust_code AS ucracct_cust_code,
+                   h.ucrcrhs_prem_code AS ucracct_prem_code
+            FROM ucrcrhs h
+            JOIN ucracct a
+              ON a.ucracct_cust_code = h.ucrcrhs_cust_code
+             AND a.ucracct_prem_code = h.ucrcrhs_prem_code
+            WHERE h.ucrcrhs_ccat_code = 'SONP'
+              AND h.ucrcrhs_occurance_date >= TRUNC(SYSDATE) - 30
+              AND a.ucracct_status_ind = 'A'
+              AND ROWNUM = 1
+            """;
+
+    /**
+     * Unresolved SONP collection transaction inside the 30-day lookback.
+     * Mirrors SPK_REPORT_PAYMENT: no later PAID, and no DERR/RERR/NACT/RMCL resolution.
+     */
+    public static final String SELECT_RP_UNRESOLVED_SONP_ACCOUNT = """
+            SELECT h.gtbtrnh_cust_code AS ucracct_cust_code,
+                   h.gtbtrnh_prem_code AS ucracct_prem_code
+            FROM gtbtrnh h
+            JOIN ucracct a
+              ON a.ucracct_cust_code = h.gtbtrnh_cust_code
+             AND a.ucracct_prem_code = h.gtbtrnh_prem_code
+            WHERE h.gtbtrnh_tran_type = 'SONP'
+              AND h.gtbtrnh_tran_date >= TRUNC(SYSDATE) - 30
+              AND a.ucracct_status_ind = 'A'
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM gtbtrnh f
+                    WHERE f.gtbtrnh_cust_code = h.gtbtrnh_cust_code
+                      AND f.gtbtrnh_prem_code = h.gtbtrnh_prem_code
+                      AND f.gtbtrnh_tran_date >= h.gtbtrnh_tran_date
+                      AND f.gtbtrnh_tran_type = 'PAID')
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM up_pwq d, up_reg_err e
+                    WHERE d.aglc_acct_nbr = a.ucracct_old_account
+                      AND d.orig_date >= h.gtbtrnh_tran_date
+                      AND d.trans_type IN ('DERR', 'RERR', 'NACT')
+                      AND d.pwq_id = e.pwq_id
+                      AND e.orig_trans_type = 'SONP')
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM up_pwq g
+                    WHERE g.aglc_acct_nbr = a.ucracct_old_account
+                      AND g.orig_date >= h.gtbtrnh_tran_date
+                      AND g.trans_type = 'RMCL')
+              AND ROWNUM = 1
+            """;
+
+    /**
+     * Active account with a past-due open item over PAST_DUE_MAX_BALANCE (10000).
+     * Driven from the account and balance-indicator indexes.
+     */
+    public static final String SELECT_RP_PAST_DUE_OVER_THRESHOLD = """
+            SELECT o.uabopen_cust_code AS ucracct_cust_code,
+                   o.uabopen_prem_code AS ucracct_prem_code,
+                   o.uabopen_balance AS past_due
+            FROM ucracct a
+            JOIN uabopen o
+              ON o.uabopen_cust_code = a.ucracct_cust_code
+             AND o.uabopen_prem_code = a.ucracct_prem_code
+            WHERE a.ucracct_status_ind = 'A'
+              AND o.uabopen_balance_ind = 'P'
+              AND o.uabopen_due_date < TRUNC(SYSDATE)
+              AND o.uabopen_balance > 10000
+            FETCH FIRST 5 ROWS ONLY
+            """;
+
+    /**
+     * Active account with a net past-due balance above 1.00 and at or below 10000,
+     * and none of the SONP ineligibility conditions.
+     */
+    public static final String SELECT_RP_PAST_DUE_BELOW_THRESHOLD = """
+            SELECT cust_code AS ucracct_cust_code,
+                   prem_code AS ucracct_prem_code,
+                   past_due
             FROM (
-                SELECT /*+ ALL_ROWS */
-                       b.ubbbhst_cust_code,
-                       b.ubbbhst_prem_code
-                FROM budget_accounts b
-                ORDER BY b.ubbbhst_cust_code, b.ubbbhst_prem_code
+                SELECT a.ucracct_cust_code AS cust_code,
+                       a.ucracct_prem_code AS prem_code,
+                       GCISMGR.F_GET_PAST_DUE_AMT(a.ucracct_cust_code, a.ucracct_prem_code) AS past_due
+                FROM ucracct a
+                WHERE a.ucracct_status_ind = 'A'
+                  AND GCISMGR.F_DOES_WU_CREDIT_CARD_EXIST(a.ucracct_cust_code, a.ucracct_prem_code) = 'Y'
+                  AND NOT EXISTS (
+                        SELECT 1 FROM ucbsvco s
+                        WHERE s.ucbsvco_cust_code = a.ucracct_cust_code
+                          AND s.ucbsvco_prem_code = a.ucracct_prem_code
+                          AND s.ucbsvco_sotp_code = 'SONP'
+                          AND s.ucbsvco_stus_code = 'O'
+                          AND s.ucbsvco_date_created >= TRUNC(SYSDATE) - 30)
+                  AND NOT EXISTS (
+                        SELECT 1 FROM ucrcrhs h
+                        WHERE h.ucrcrhs_cust_code = a.ucracct_cust_code
+                          AND h.ucrcrhs_prem_code = a.ucracct_prem_code
+                          AND h.ucrcrhs_ccat_code = 'SONP'
+                          AND h.ucrcrhs_occurance_date >= TRUNC(SYSDATE) - 30)
+                  AND NOT EXISTS (
+                        SELECT 1 FROM gtbtrnh t
+                        WHERE t.gtbtrnh_cust_code = a.ucracct_cust_code
+                          AND t.gtbtrnh_prem_code = a.ucracct_prem_code
+                          AND t.gtbtrnh_tran_type = 'SONP'
+                          AND t.gtbtrnh_tran_date >= TRUNC(SYSDATE) - 30)
+                  AND ROWNUM <= 8
             )
+            WHERE past_due > 1
+              AND past_due <= 10000
+              AND ROWNUM = 1
+            """;
+
+    /**
+     * PREC credit history inside the active NOTIFY_PAYMENT.DELINQUENCY_LOOKBACK_DAYS.
+     * Bind 1 = lookback days.
+     */
+    public static final String SELECT_RP_RECENT_PREC_ACCOUNTS = """
+            SELECT h.ucrcrhs_cust_code AS ucracct_cust_code,
+                   h.ucrcrhs_prem_code AS ucracct_prem_code,
+                   GCISMGR.F_GET_PAST_DUE_AMT(h.ucrcrhs_cust_code, h.ucrcrhs_prem_code) AS past_due
+            FROM ucrcrhs h
+            JOIN ucracct a
+              ON a.ucracct_cust_code = h.ucrcrhs_cust_code
+             AND a.ucracct_prem_code = h.ucrcrhs_prem_code
+            WHERE h.ucrcrhs_ccat_code = 'PREC'
+              AND h.ucrcrhs_occurance_date >= TRUNC(SYSDATE) - ?
+              AND a.ucracct_status_ind = 'A'
+              AND ROWNUM <= 30
+            """;
+
+    public static final String SELECT_NOTIFY_PAYMENT_DELINQUENCY_LOOKBACK = """
+            SELECT UZRPSTO_PARM_VALUE
+            FROM UZRPSTO
+            WHERE UZRPSTO_OBJECT = 'NOTIFY_PAYMENT'
+              AND UZRPSTO_PARM_NAME = 'DELINQUENCY_LOOKBACK_DAYS'
+            """;
+
+    public static final String UPDATE_NOTIFY_PAYMENT_DELINQUENCY_LOOKBACK = """
+            UPDATE UZRPSTO
+               SET UZRPSTO_PARM_VALUE = ?,
+                   UZRPSTO_ACTIVITY_DATE = SYSDATE,
+                   UZRPSTO_USER_ID = USER,
+                   UZRPSTO_COMMENT = 'ReportPayment automation TC37-48 dynamic lookback'
+             WHERE UZRPSTO_OBJECT = 'NOTIFY_PAYMENT'
+               AND UZRPSTO_PARM_NAME = 'DELINQUENCY_LOOKBACK_DAYS'
+            """;
+
+    public static final String SELECT_NEWEST_ACTIVE_PREC_DATE = """
+            SELECT MAX(h.ucrcrhs_occurance_date) AS newest_prec
+            FROM ucrcrhs h
+            JOIN ucracct a
+              ON a.ucracct_cust_code = h.ucrcrhs_cust_code
+             AND a.ucracct_prem_code = h.ucrcrhs_prem_code
+            WHERE h.ucrcrhs_ccat_code = 'PREC'
+              AND a.ucracct_status_ind = 'A'
+              AND h.ucrcrhs_occurance_date >= ADD_MONTHS(TRUNC(SYSDATE), -6)
             """;
 
     public static final String SELECT_NO_PAYMENT_HISTORY_ACCOUNT= """
@@ -3370,6 +3566,120 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
             HAVING COUNT(DISTINCT TRUNC(bh.ubbbhst_printed_date)) >= 2
             ORDER BY total DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /**
+     * SP1.11-SP1.14 seed. Two-month lookback with more than one qualifying bill.
+     * total is a bill count (matches), not a calendar-month count.
+     * Smallest match counts are returned first so normal two-bill accounts are probed before high-volume accounts.
+     */
+    public static final String SELECT_BILL_HISTORY_TWO_MONTH_ACCOUNT = """
+            SELECT
+                bh.ubbbhst_cust_code AS ubbbhst_cust_code,
+                bh.ubbbhst_prem_code AS ubbbhst_prem_code,
+                COUNT(*) AS total
+            FROM ubbbhst bh
+            JOIN ucracct ua
+                ON ua.ucracct_cust_code = bh.ubbbhst_cust_code
+               AND ua.ucracct_prem_code = bh.ubbbhst_prem_code
+            WHERE ua.ucracct_status_ind = 'A'
+              AND LENGTH(bh.ubbbhst_cust_code) >= 4
+              AND TRUNC(bh.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -2)
+              AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+              AND (
+                    bh.ubbbhst_ending_bal <> 0
+                    OR EXISTS (
+                         SELECT 1
+                         FROM uabopen o
+                         WHERE o.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
+                           AND NVL(o.uabopen_billed_chg, 0) <> 0
+                           AND o.uabopen_chrg_calc_num IS NOT NULL
+                    )
+                  )
+            GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
+            HAVING COUNT(*) > 1
+            ORDER BY total ASC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** SP1.13 seed: two-month window with more than one bill and a non-zero brought-forward balance. */
+    public static final String SELECT_BILL_HISTORY_TWO_MONTH_BBF_ACCOUNT = """
+            SELECT
+                bh.ubbbhst_cust_code AS ubbbhst_cust_code,
+                bh.ubbbhst_prem_code AS ubbbhst_prem_code,
+                COUNT(*) AS total
+            FROM ubbbhst bh
+            JOIN ucracct ua
+                ON ua.ucracct_cust_code = bh.ubbbhst_cust_code
+               AND ua.ucracct_prem_code = bh.ubbbhst_prem_code
+            WHERE ua.ucracct_status_ind = 'A'
+              AND LENGTH(bh.ubbbhst_cust_code) >= 4
+              AND TRUNC(bh.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -2)
+              AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+              AND (
+                    bh.ubbbhst_ending_bal <> 0
+                    OR EXISTS (
+                         SELECT 1
+                         FROM uabopen o
+                         WHERE o.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
+                           AND NVL(o.uabopen_billed_chg, 0) <> 0
+                           AND o.uabopen_chrg_calc_num IS NOT NULL
+                    )
+                  )
+            GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
+            HAVING COUNT(*) > 1
+               AND SUM(CASE
+                        WHEN NVL(bh.ubbbhst_prev_bal, 0) - NVL(bh.ubbbhst_payments, 0) <> 0
+                        THEN 1 ELSE 0
+                   END) > 0
+            ORDER BY total ASC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** SP1.14 seed: two-month window with a non-zero promotional discount charge. */
+    public static final String SELECT_BILL_HISTORY_TWO_MONTH_PROMO_ACCOUNT = """
+            SELECT
+                bh.ubbbhst_cust_code AS ubbbhst_cust_code,
+                bh.ubbbhst_prem_code AS ubbbhst_prem_code,
+                COUNT(*) AS total
+            FROM ubbbhst bh
+            JOIN ucracct ua
+                ON ua.ucracct_cust_code = bh.ubbbhst_cust_code
+               AND ua.ucracct_prem_code = bh.ubbbhst_prem_code
+            WHERE ua.ucracct_status_ind = 'A'
+              AND LENGTH(bh.ubbbhst_cust_code) >= 4
+              AND TRUNC(bh.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -2)
+              AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+              AND (
+                    bh.ubbbhst_ending_bal <> 0
+                    OR EXISTS (
+                         SELECT 1
+                         FROM uabopen o
+                         WHERE o.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
+                           AND NVL(o.uabopen_billed_chg, 0) <> 0
+                           AND o.uabopen_chrg_calc_num IS NOT NULL
+                    )
+                  )
+              AND EXISTS (
+                    SELECT 1
+                    FROM uabopen o
+                    JOIN utrsrat r
+                      ON r.utrsrat_srat_code = o.uabopen_srat_code
+                     AND r.utrsrat_scat_code = o.uabopen_scat_code
+                    JOIN ubbbhst h2
+                      ON h2.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+                    WHERE h2.ubbbhst_cust_code = bh.ubbbhst_cust_code
+                      AND h2.ubbbhst_prem_code = bh.ubbbhst_prem_code
+                      AND NVL(h2.ubbbhst_cancel_ind, 0) = 0
+                      AND TRUNC(h2.ubbbhst_printed_date) > ADD_MONTHS(TRUNC(SYSDATE), -2)
+                      AND UPPER(r.utrsrat_bill_print_desc) LIKE '%PROMO%DISCOUNT%'
+                      AND NVL(o.uabopen_billed_chg, 0) <> 0
+                      AND o.uabopen_charge_date BETWEEN r.utrsrat_effect_date AND r.utrsrat_nchg_date
+                  )
+            GROUP BY bh.ubbbhst_cust_code, bh.ubbbhst_prem_code
+            HAVING COUNT(*) > 1
+            ORDER BY total ASC
             FETCH FIRST 40 ROWS ONLY
             """;
 
@@ -6475,6 +6785,53 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY g.GZRPPTH_CUST_CODE DESC
             FETCH FIRST 1 ROWS ONLY
             """;
+
+    /**
+     * SP1.01: NEW enrollment with no pending bill preference record in Banner (no GZRPPTH).
+     * Distinct from TC_205, which requires an explicit GZRPPTH bill preference of 'P'.
+     * <p>
+     * Driven from GTBENRL (not a full UCRACCT anti-join on GZRPPTH) to keep the seed within
+     * UAT PGA limits while still selecting accounts the eligibility API recognizes as NEW.
+     */
+    public static final String SELECT_NEW_ACCOUNT_NO_PENDING_BILL_PREFERENCE = """
+            SELECT
+                g.GTBENRL_CUST_CODE AS "customerCode",
+                g.GTBENRL_PREM_CODE AS "premisesCode",
+                'N'                 AS "accountStatus",
+                CAST(NULL AS VARCHAR2(1)) AS "billDeliveryOption",
+                CAST(NULL AS VARCHAR2(1)) AS "corrDeliveryOption"
+            FROM GTBENRL g
+            WHERE g.GTBENRL_PROC_FLAG = 'N'
+              AND g.GTBENRL_CUST_CODE IS NOT NULL
+              AND g.GTBENRL_PREM_CODE IS NOT NULL
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM UCRACCT a
+                  WHERE a.UCRACCT_CUST_CODE = g.GTBENRL_CUST_CODE
+                    AND a.UCRACCT_PREM_CODE = g.GTBENRL_PREM_CODE
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM GZRPPTH p
+                  WHERE p.GZRPPTH_CUST_CODE = g.GTBENRL_CUST_CODE
+                    AND p.GZRPPTH_PREM_CODE = g.GTBENRL_PREM_CODE
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM OCSEPCI p
+                  WHERE p.OCSEPCI_CUST_CODE = g.GTBENRL_CUST_CODE
+                    AND p.OCSEPCI_PREM_CODE = g.GTBENRL_PREM_CODE
+                    AND p.OCSEPCI_EMAIL_EXP_DATE > SYSDATE
+                    AND p.OCSEPCI_EMAIL_COMP_DATE IS NULL
+              )
+            ORDER BY g.GTBENRL_CUST_CODE DESC
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+    /** SP1.01 pool — probe-and-retry variant of {@link #SELECT_NEW_ACCOUNT_NO_PENDING_BILL_PREFERENCE}. */
+    public static final String SELECT_NEW_ACCOUNT_NO_PENDING_BILL_PREFERENCE_CANDIDATES =
+            SELECT_NEW_ACCOUNT_NO_PENDING_BILL_PREFERENCE
+                    .replace("FETCH FIRST 1 ROWS ONLY", "FETCH FIRST 25 ROWS ONLY");
 
     /** ACTIVE accounts with valid unused pending bill enrollment (for TC_129 probing). */
     public static final String SELECT_LIST_ACTIVE_ACCOUNTS_PENDING_BILL_ENROLLMENT = """
@@ -13392,6 +13749,743 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 bl.amount DESC
     """;
 
+    /**
+     * GetBillingInfo V1.4 validation. Additive: {@link #GET_BILL_INFO} is unchanged.
+     * Bind order: customer code, premises code.
+     */
+    public static final String GET_BILL_INFO_V14 = """
+            WITH params AS (
+                SELECT
+                    ? AS cust_code,
+                    ? AS prem_code
+                FROM dual
+            ),
+            bill_candidates AS (
+                SELECT h.*
+                FROM ubbbhst h
+                JOIN params p
+                  ON p.cust_code = h.ubbbhst_cust_code
+                 AND p.prem_code = h.ubbbhst_prem_code
+                WHERE NVL(h.ubbbhst_cancel_ind,0) = 0
+            ),
+            eligible_bills AS (
+                SELECT h.*
+                FROM bill_candidates h
+                WHERE h.ubbbhst_ending_bal <> 0
+                   OR EXISTS (
+                        SELECT 1
+                        FROM uabopen o
+                        WHERE o.uabopen_bhst_tran_num = h.ubbbhst_tran_num
+                          AND NVL(o.uabopen_billed_chg,0) <> 0
+                          AND o.uabopen_chrg_calc_num IS NOT NULL
+                   )
+            ),
+            current_bill AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.*,
+                        ROW_NUMBER() OVER (
+                            ORDER BY
+                                h.ubbbhst_printed_date DESC,
+                                h.ubbbhst_tran_num DESC
+                        ) rn
+                    FROM eligible_bills h
+                )
+                WHERE rn = 1
+            ),
+            billing_window AS (
+                SELECT
+                    MAX(r.urrshis_action_date) billToDate,
+                    SUM(r.urrshis_dos) daysOfService,
+                    MAX(r.urrshis_action_date)
+                      - SUM(r.urrshis_dos) billFromDate
+                FROM urrshis r
+                JOIN current_bill cb
+                  ON cb.ubbbhst_cust_code = r.urrshis_cust_code
+                 AND cb.ubbbhst_prem_code = r.urrshis_prem_code
+                WHERE r.urrshis_action_date = (
+                    SELECT MAX(r2.urrshis_action_date)
+                    FROM urrshis r2
+                    WHERE r2.urrshis_cust_code = cb.ubbbhst_cust_code
+                      AND r2.urrshis_prem_code = cb.ubbbhst_prem_code
+                      AND r2.urrshis_action_date <= cb.ubbbhst_printed_date
+                )
+                  AND EXISTS (
+                        SELECT 1
+                        FROM uabopen o
+                        WHERE o.uabopen_bhst_tran_num = cb.ubbbhst_tran_num
+                          AND o.uabopen_chrg_calc_num IS NOT NULL
+                  )
+            ),
+            bill_financials AS (
+                SELECT
+                    SUM(o.uabopen_billed_chg) currentCharges,
+                    MAX(o.uabopen_due_date) billDueDate,
+                    SUM(
+                        CASE
+                            WHEN o.uabopen_item_type = 'B'
+                            THEN NVL(o.uabopen_orig_budget_amt,0)
+                            ELSE 0
+                        END
+                    ) budgetBillingAmount
+                FROM uabopen o
+                JOIN current_bill cb
+                  ON cb.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+            ),
+            budget_variance AS (
+                SELECT
+                    NVL(
+                        SUM(
+                            NVL(
+                                o.uabopen_budget_variance,
+                                0
+                            )
+                        ),
+                        0
+                    ) AS budgetBillingTotalVariance
+                FROM uabopen o
+                JOIN current_bill cb
+                  ON o.uabopen_cust_code = cb.ubbbhst_cust_code
+                  AND o.uabopen_prem_code = cb.ubbbhst_prem_code
+            ),
+            payments_since_bill AS (
+                SELECT
+                    NVL(SUM(p.uabpymt_amount),0)
+                        AS paymentsSinceLastBill
+                FROM uabpymt p
+                JOIN current_bill cb
+                  ON cb.ubbbhst_cust_code = p.uabpymt_cust_code
+                 AND cb.ubbbhst_prem_code = p.uabpymt_prem_code
+                WHERE p.uabpymt_pymt_date > cb.ubbbhst_printed_date
+            ),
+            past_due_info AS (
+                SELECT
+                    GREATEST(
+                    (
+                        NVL(
+                            (
+                                SELECT SUM(NVL(o.uabopen_balance,0))
+                                FROM uabopen o
+                                WHERE o.uabopen_cust_code = cb.ubbbhst_cust_code
+                                  AND o.uabopen_prem_code = cb.ubbbhst_prem_code
+                                  AND o.uabopen_balance_ind IN ('N','P')
+                                  AND TRUNC(o.uabopen_due_date) < TRUNC(SYSDATE)
+                            ),
+                            0
+                        )
+                        -
+                        (
+                            NVL(
+                                (
+                                    SELECT SUM(NVL(p.uabpymt_balance,0))
+                                    FROM uabpymt p
+                                    WHERE p.uabpymt_cust_code = cb.ubbbhst_cust_code
+                                      AND p.uabpymt_prem_code = cb.ubbbhst_prem_code
+                                ),
+                                0
+                            )
+                            +
+                            NVL(
+                                GCISMGR.F_GET_PENDING_PYMT_BAL(
+                                    cb.ubbbhst_cust_code,
+                                    cb.ubbbhst_prem_code
+                                ),
+                                0
+                            )
+                        )
+                    ),
+                    0
+                    ) AS pastDueAmount,
+                    (
+                        SELECT MIN(TRUNC(o.uabopen_due_date))
+                        FROM uabopen o
+                        WHERE o.uabopen_cust_code = cb.ubbbhst_cust_code
+                          AND o.uabopen_prem_code = cb.ubbbhst_prem_code
+                          AND o.uabopen_balance_ind IN ('N','P')
+                          AND TRUNC(o.uabopen_due_date) < TRUNC(SYSDATE)
+                    ) AS pastDueDate
+                FROM current_bill cb
+            ),
+            pre_adj AS (
+                SELECT
+                    NVL(
+                        SUM(
+                            NVL(
+                                a.uabadje_billed_chg,
+                                NVL(a.uabadje_balance,0)
+                            )
+                        ),
+                        0
+                    ) adjustmentsApplied
+                FROM current_bill cb
+                JOIN uabadje a
+                  ON a.uabadje_bhst_tran_num = cb.ubbbhst_tran_num
+                WHERE a.uabadje_printed_ind = 'Y'
+            ),
+            post_adj AS (
+                SELECT
+                    NVL(
+                        SUM(
+                            NVL(
+                                a.uabadje_billed_chg,
+                                NVL(a.uabadje_balance,0)
+                            )
+                        ),
+                        0
+                    ) adjustmentsSinceLastBill
+                FROM current_bill cb
+                JOIN uabopen o
+                  ON o.uabopen_cust_code = cb.ubbbhst_cust_code
+                 AND o.uabopen_prem_code = cb.ubbbhst_prem_code
+                JOIN uabadje a
+                  ON a.uabadje_origin_ar_trans = o.uabopen_ar_trans
+                WHERE NVL(a.uabadje_printed_ind,'N') <> 'Y'
+                  AND a.uabadje_bhst_tran_num IS NULL
+            ),
+            budget_info AS (
+                SELECT
+                    (
+                        SELECT b.uabbudg_bdgt_start_date
+                        FROM uabbudg b
+                        JOIN current_bill cb
+                          ON b.uabbudg_cust_code = cb.ubbbhst_cust_code
+                         AND b.uabbudg_prem_code = cb.ubbbhst_prem_code
+                        WHERE b.uabbudg_bdgt_start_date <= cb.ubbbhst_printed_date
+                        ORDER BY b.uabbudg_bdgt_start_date DESC
+                        FETCH FIRST 1 ROW ONLY
+                    ) budgetBillingStartDate
+                FROM dual
+            ),
+            guaranteed_bill AS (
+                SELECT
+                    NULLIF(
+                        SUM(
+                            CASE
+                                WHEN UPPER(r.utrsrat_bill_print_desc)
+                                       LIKE '%GUARANTEED%'
+                                 AND UPPER(r.utrsrat_bill_print_desc)
+                                       NOT LIKE '%REWARD%'
+                                THEN NVL(o.uabopen_billed_chg,0)
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) guaranteedBillAmount
+                FROM current_bill cb
+                JOIN uabopen o
+                  ON cb.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+                JOIN utrsrat r
+                  ON r.utrsrat_srat_code = o.uabopen_srat_code
+                 AND r.utrsrat_scat_code = o.uabopen_scat_code
+            ),
+            bill_lines AS (
+                SELECT
+                    r.utrsrat_srat_code code,
+                    r.utrsrat_bill_print_desc description,
+                    ROUND(SUM(o.uabopen_billed_chg),2) amount,
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM gzrrwdr g
+                            WHERE g.gzrrwdr_srat_code =
+                                  o.uabopen_srat_code
+                        ) THEN 'REWARD'
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%BASE%CHARGE%'
+                        THEN 'BASE'
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%CUSTOMER%SERVICE%CHARGE%'
+                        THEN 'SERVICE'
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%GAS%CHARGE%'
+                        THEN 'GAS'
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%GUARANTEED%'
+                         AND UPPER(r.utrsrat_bill_print_desc)
+                             NOT LIKE '%REWARD%'
+                        THEN 'GUARANTEE'
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%INTERSTATE%CAPACITY%'
+                        THEN 'INTERSTATE'
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%DISCOUNT%'
+                          OR UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%PROMO%'
+                        THEN 'DISCOUNT'
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%TAX%'
+                        THEN 'TAX'
+                        WHEN SUM(o.uabopen_billed_chg) < 0
+                        THEN 'MISCCREDIT'
+                        ELSE 'MISCCHARGE'
+                    END category,
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM gzrrwdr g
+                            WHERE g.gzrrwdr_srat_code = o.uabopen_srat_code
+                        ) THEN 7
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%BASE%CHARGE%' THEN 1
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%CUSTOMER%SERVICE%CHARGE%' THEN 2
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%GAS%CHARGE%' THEN 3
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%GUARANTEED%'
+                         AND UPPER(r.utrsrat_bill_print_desc)
+                             NOT LIKE '%REWARD%' THEN 4
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%INTERSTATE%CAPACITY%' THEN 5
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%DISCOUNT%'
+                          OR UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%PROMO%' THEN 6
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                             LIKE '%TAX%' THEN 10
+                        WHEN SUM(o.uabopen_billed_chg) < 0 THEN 9
+                        ELSE 8
+                    END category_sort_order
+                FROM current_bill cb
+                JOIN uabopen o
+                  ON cb.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+                JOIN utrsrat r
+                  ON r.utrsrat_srat_code = o.uabopen_srat_code
+                 AND r.utrsrat_scat_code = o.uabopen_scat_code
+                 AND o.uabopen_charge_date
+                     BETWEEN r.utrsrat_effect_date
+                         AND r.utrsrat_nchg_date
+                WHERE o.uabopen_printed_ind = 'Y'
+                GROUP BY
+                    r.utrsrat_srat_code,
+                    r.utrsrat_bill_print_desc,
+                    o.uabopen_srat_code
+            )
+            SELECT
+                cb.ubbbhst_cust_code customerCode,
+                cb.ubbbhst_prem_code premisesCode,
+                TO_CHAR(cb.ubbbhst_printed_date, 'YYYYMMDD') billDate,
+                TO_CHAR(bw.billFromDate, 'YYYYMMDD') billFromDate,
+                TO_CHAR(bw.billToDate, 'YYYYMMDD') billToDate,
+                pdi.pastDueAmount,
+                TO_CHAR(pdi.pastDueDate, 'YYYYMMDD') pastDueDate,
+                cb.ubbbhst_prev_bal previousBillAmount,
+                cb.ubbbhst_payments paymentsApplied,
+                pa.adjustmentsApplied,
+                (
+                    cb.ubbbhst_prev_bal
+                    - cb.ubbbhst_payments
+                    + pa.adjustmentsApplied
+                ) balanceBroughtForward,
+                bf.currentCharges,
+                psb.paymentsSinceLastBill,
+                psa.adjustmentsSinceLastBill,
+                GCISMGR.F_CALCARBALANCE(
+                    cb.ubbbhst_cust_code,
+                    cb.ubbbhst_prem_code
+                ) currentBalance,
+                CASE
+                    WHEN NULLIF(bf.budgetBillingAmount, 0) IS NOT NULL
+                    THEN NVL(cb.ubbbhst_prev_bal, 0)
+                       - NVL(cb.ubbbhst_payments, 0)
+                       + bf.budgetBillingAmount
+                    WHEN (
+                            NVL(cb.ubbbhst_prev_bal, 0)
+                          - NVL(cb.ubbbhst_payments, 0)
+                          + NVL(pa.adjustmentsApplied, 0)
+                         ) < 0
+                    THEN bf.currentCharges
+                    ELSE cb.ubbbhst_ending_bal
+                END totalAmountDue,
+                CASE
+                    WHEN NVL(cb.ubbbhst_ending_bal, 0) > 0
+                    THEN TO_CHAR(bf.billDueDate, 'YYYYMMDD')
+                    ELSE ''
+                END billDueDate,
+                NULLIF(bf.budgetBillingAmount, 0) budgetBillingAmount,
+                CASE
+                    WHEN NULLIF(bf.budgetBillingAmount, 0) IS NULL
+                      OR bi.budgetBillingStartDate IS NULL
+                    THEN NULL
+                    ELSE bf.currentCharges
+                END budgetBillingActualCharges,
+                NULLIF(bv.budgetBillingTotalVariance, 0) budgetBillingTotalVariance,
+                CASE
+                    WHEN NULLIF(bf.budgetBillingAmount, 0) IS NULL THEN ''
+                    ELSE TO_CHAR(bi.budgetBillingStartDate, 'YYYYMMDD')
+                END budgetBillingStartDate,
+                CASE
+                    WHEN NULLIF(bf.budgetBillingAmount, 0) IS NULL
+                      OR bi.budgetBillingStartDate IS NULL THEN ''
+                    ELSE TO_CHAR(
+                        ADD_MONTHS(
+                            bi.budgetBillingStartDate,
+                            12 * GREATEST(
+                                1,
+                                CEIL(MONTHS_BETWEEN(TRUNC(SYSDATE), bi.budgetBillingStartDate) / 12)
+                            )
+                        ),
+                        'YYYYMMDD'
+                    )
+                END budgetBillingTrueUpDate,
+                gb.guaranteedBillAmount,
+                bl.code,
+                bl.description,
+                bl.amount,
+                bl.category,
+                bw.daysOfService
+            FROM current_bill cb
+            LEFT JOIN billing_window bw ON 1=1
+            LEFT JOIN bill_financials bf ON 1=1
+            LEFT JOIN budget_variance bv ON 1=1
+            LEFT JOIN payments_since_bill psb ON 1=1
+            LEFT JOIN past_due_info pdi ON 1=1
+            LEFT JOIN pre_adj pa ON 1=1
+            LEFT JOIN post_adj psa ON 1=1
+            LEFT JOIN budget_info bi ON 1=1
+            LEFT JOIN guaranteed_bill gb ON 1=1
+            LEFT JOIN bill_lines bl ON 1=1
+            ORDER BY
+                bl.category_sort_order,
+                bl.description,
+                bl.amount DESC
+            """;
+
+    /** TC12 seed: exactly one non-cancelled bill in the last 24 months. */
+    public static final String SELECT_BILLING_INFO_TC12_ONE_BILL = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            )
+            SELECT
+                   r.ubbbhst_cust_code,
+                   r.ubbbhst_prem_code,
+                   COUNT(*) bill_count
+            FROM recent_trans r
+            JOIN ubbbhst h
+              ON h.ubbbhst_cust_code = r.ubbbhst_cust_code
+             AND h.ubbbhst_prem_code = r.ubbbhst_prem_code
+            WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+              AND NVL(h.ubbbhst_cancel_ind,0) = 0
+            GROUP BY
+                   r.ubbbhst_cust_code,
+                   r.ubbbhst_prem_code
+            HAVING COUNT(*) = 1
+            """;
+
+    /** TC21 seed: recent bill whose previous balance is 0. */
+    public static final String SELECT_BILLING_INFO_TC21_PREV_BAL_ZERO = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num,
+                        h.ubbbhst_prev_bal,
+                        h.ubbbhst_printed_date
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            )
+            SELECT
+                   ubbbhst_cust_code,
+                   ubbbhst_prem_code,
+                   ubbbhst_tran_num,
+                   ubbbhst_printed_date
+            FROM recent_trans
+            WHERE NVL(ubbbhst_prev_bal,0) = 0
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** TC26 seed: balance brought forward less than 0, including printed adjustments. */
+    public static final String SELECT_BILLING_INFO_TC26_BBF_NEGATIVE = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num,
+                        h.ubbbhst_prev_bal,
+                        h.ubbbhst_payments,
+                        h.ubbbhst_printed_date
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            ),
+            adjustments AS (
+                SELECT
+                    a.uabadje_bhst_tran_num tran_num,
+                    SUM(
+                        NVL(a.uabadje_billed_chg,
+                            NVL(a.uabadje_balance,0))
+                    ) adjustments_applied
+                FROM uabadje a
+                WHERE a.uabadje_printed_ind = 'Y'
+                  AND a.uabadje_bhst_tran_num IS NOT NULL
+                GROUP BY a.uabadje_bhst_tran_num
+            )
+            SELECT
+                r.ubbbhst_cust_code,
+                r.ubbbhst_prem_code,
+                r.ubbbhst_tran_num,
+                r.ubbbhst_prev_bal,
+                r.ubbbhst_payments,
+                NVL(adj.adjustments_applied,0) adjustments_applied,
+                (
+                    NVL(r.ubbbhst_prev_bal,0)
+                  - NVL(r.ubbbhst_payments,0)
+                  + NVL(adj.adjustments_applied,0)
+                ) balance_brought_forward
+            FROM recent_trans r
+            LEFT JOIN adjustments adj
+                ON adj.tran_num = r.ubbbhst_tran_num
+            WHERE (
+                    NVL(r.ubbbhst_prev_bal,0)
+                  - NVL(r.ubbbhst_payments,0)
+                  + NVL(adj.adjustments_applied,0)
+                  ) < 0
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** SP1-09 / SP1-12 seed: recent guaranteed-bill rate codes with a non-zero charge. */
+    public static final String SELECT_BILLING_INFO_GUARANTEED_BILL = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            )
+            SELECT *
+            FROM (
+                SELECT DISTINCT
+                       rt.ubbbhst_cust_code,
+                       rt.ubbbhst_prem_code,
+                       rt.ubbbhst_tran_num,
+                       o.uabopen_srat_code
+                FROM recent_trans rt
+                JOIN uabopen o
+                  ON o.uabopen_bhst_tran_num = rt.ubbbhst_tran_num
+                WHERE o.uabopen_srat_code IN (
+                    'CGBP',
+                    'RGBP',
+                    'SGBP',
+                    'RPGC',
+                    'SPGC',
+                    'RGB6',
+                    'SGB6'
+                )
+                  AND NVL(o.uabopen_billed_chg,0) <> 0
+                ORDER BY rt.ubbbhst_tran_num DESC
+            )
+            WHERE ROWNUM <= 40
+            """;
+
+    /** TC17 seed: open balance already past its due date. */
+    public static final String SELECT_BILLING_INFO_TC17_PAST_DUE = """
+            SELECT DISTINCT
+                   o.uabopen_cust_code AS ubbbhst_cust_code,
+                   o.uabopen_prem_code AS ubbbhst_prem_code
+            FROM uabopen o
+            WHERE o.uabopen_balance_ind IN ('N','P')
+              AND TRUNC(o.uabopen_due_date) < TRUNC(SYSDATE)
+              AND NVL(o.uabopen_balance,0) > 0
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** TC32 seed: current account balance is not zero. */
+    public static final String SELECT_BILLING_INFO_TC32_BALANCE = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            )
+            SELECT ubbbhst_cust_code, ubbbhst_prem_code
+            FROM (
+                SELECT cust_code AS ubbbhst_cust_code, prem_code AS ubbbhst_prem_code
+                FROM (
+                    SELECT DISTINCT
+                           r.ubbbhst_cust_code AS cust_code,
+                           r.ubbbhst_prem_code AS prem_code
+                    FROM recent_trans r
+                )
+                WHERE ROWNUM <= 80
+            )
+            WHERE NVL(GCISMGR.F_CALCARBALANCE(ubbbhst_cust_code, ubbbhst_prem_code), 0) <> 0
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** TC49 seed: current or recent bill contains a reward rate code. */
+    public static final String SELECT_BILLING_INFO_TC49_REWARD = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            )
+            SELECT DISTINCT
+                   rt.ubbbhst_cust_code,
+                   rt.ubbbhst_prem_code,
+                   rt.ubbbhst_tran_num
+            FROM recent_trans rt
+            JOIN uabopen o
+              ON o.uabopen_bhst_tran_num = rt.ubbbhst_tran_num
+            WHERE EXISTS (
+                    SELECT 1
+                    FROM gzrrwdr g
+                    WHERE g.gzrrwdr_srat_code = o.uabopen_srat_code
+                  )
+              AND NVL(o.uabopen_billed_chg,0) <> 0
+            ORDER BY rt.ubbbhst_tran_num DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** TC51 seed: a negative charge that is not a named bill category. */
+    public static final String SELECT_BILLING_INFO_TC51_MISC_CREDIT = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            )
+            SELECT DISTINCT
+                   rt.ubbbhst_cust_code,
+                   rt.ubbbhst_prem_code,
+                   rt.ubbbhst_tran_num
+            FROM recent_trans rt
+            JOIN uabopen o
+              ON o.uabopen_bhst_tran_num = rt.ubbbhst_tran_num
+            JOIN utrsrat r
+              ON r.utrsrat_srat_code = o.uabopen_srat_code
+             AND r.utrsrat_scat_code = o.uabopen_scat_code
+            WHERE NVL(o.uabopen_billed_chg,0) < 0
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM gzrrwdr g
+                    WHERE g.gzrrwdr_srat_code = o.uabopen_srat_code
+                  )
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%BASE%CHARGE%'
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%CUSTOMER%SERVICE%CHARGE%'
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%GAS%CHARGE%'
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%GUARANTEED%'
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%INTERSTATE%CAPACITY%'
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%DISCOUNT%'
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%PROMO%'
+              AND UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%TAX%'
+            ORDER BY rt.ubbbhst_tran_num DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** SP1-01 seed: printed adjustments on a recent bill are greater than 0. */
+    public static final String SELECT_BILLING_INFO_SP101_ADJ_APPLIED = """
+            WITH recent_trans AS (
+                SELECT *
+                FROM (
+                    SELECT
+                        h.ubbbhst_cust_code,
+                        h.ubbbhst_prem_code,
+                        h.ubbbhst_tran_num
+                    FROM ubbbhst h
+                    WHERE h.ubbbhst_printed_date >= ADD_MONTHS(TRUNC(SYSDATE), -24)
+                      AND NVL(h.ubbbhst_cancel_ind,0) = 0
+                    ORDER BY h.ubbbhst_tran_num DESC
+                )
+                WHERE ROWNUM <= 5000
+            )
+            SELECT
+                   r.ubbbhst_cust_code,
+                   r.ubbbhst_prem_code,
+                   r.ubbbhst_tran_num,
+                   SUM(NVL(a.uabadje_billed_chg, NVL(a.uabadje_balance,0))) adjustments_applied
+            FROM recent_trans r
+            JOIN uabadje a
+              ON a.uabadje_bhst_tran_num = r.ubbbhst_tran_num
+            WHERE a.uabadje_printed_ind = 'Y'
+            GROUP BY r.ubbbhst_cust_code, r.ubbbhst_prem_code, r.ubbbhst_tran_num
+            HAVING SUM(NVL(a.uabadje_billed_chg, NVL(a.uabadje_balance,0))) > 0
+            ORDER BY r.ubbbhst_tran_num DESC
+            FETCH FIRST 40 ROWS ONLY
+            """;
+
+    /** SP1-03 seed: unprinted adjustments after the bill are greater than 0. */
+    public static final String SELECT_BILLING_INFO_SP103_ADJ_SINCE = """
+            SELECT ubbbhst_cust_code, ubbbhst_prem_code, adjustments_since_last_bill
+            FROM (
+                SELECT
+                       o.uabopen_cust_code AS ubbbhst_cust_code,
+                       o.uabopen_prem_code AS ubbbhst_prem_code,
+                       SUM(
+                           CASE
+                               WHEN NVL(a.uabadje_billed_chg, 0) <> 0 THEN a.uabadje_billed_chg
+                               ELSE NVL(a.uabadje_balance, 0)
+                           END
+                       ) AS adjustments_since_last_bill
+                FROM uabadje a
+                JOIN uabopen o
+                  ON a.uabadje_origin_ar_trans = o.uabopen_ar_trans
+                WHERE NVL(a.uabadje_printed_ind, 'N') <> 'Y'
+                  AND a.uabadje_bhst_tran_num IS NULL
+                GROUP BY o.uabopen_cust_code, o.uabopen_prem_code
+                HAVING SUM(
+                           CASE
+                               WHEN NVL(a.uabadje_billed_chg, 0) <> 0 THEN a.uabadje_billed_chg
+                               ELSE NVL(a.uabadje_balance, 0)
+                           END
+                       ) > 0
+            )
+            WHERE ROWNUM <= 40
+            """;
 
     public static final String GET_USAGE_HISTORY = """
             WITH seed_hist AS (
@@ -13826,7 +14920,7 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
             ORDER BY h.paymentdate DESC
     """;
 
-    /** SP_GET_BILL_HISTORY approximation. numberOfMonths is a lookback window, not a bill count. */
+    /** GetBillingHistory V1.1. numberOfMonths is a lookback window, not a bill count. */
     public static final String GET_BILL_HISTORY = """
         WITH
         params AS (
@@ -13836,43 +14930,59 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
                 ? AS v_max_months
             FROM dual
         ),
+
+        delivery_group AS (
+            SELECT ucbprem_alternate_location AS load_zone
+            FROM ucbprem
+            CROSS JOIN params p
+            WHERE ucbprem_code = p.prem_code
+        ),
+
         bills_data AS (
             SELECT
-                bh.ubbbhst_tran_num AS billHistoryTransactionNumber,
+                bh.ubbbhst_tran_num bill_history_transaction_number,
                 bh.ubbbhst_cust_code,
                 bh.ubbbhst_prem_code,
-                bh.ubbbhst_printed_date AS billDate,
-                NVL(bh.ubbbhst_prev_bal, 0)
-                    - NVL(bh.ubbbhst_payments, 0) AS balanceBroughtForward
+                bh.ubbbhst_printed_date bill_date,
+                NVL(bh.ubbbhst_prev_bal,0)
+                    - NVL(bh.ubbbhst_payments,0)
+                    balance_brought_forward
             FROM ubbbhst bh
             CROSS JOIN params p
             WHERE bh.ubbbhst_cust_code = p.cust_code
               AND bh.ubbbhst_prem_code = p.prem_code
-              AND NVL(bh.ubbbhst_cancel_ind, 0) = 0
+              AND NVL(bh.ubbbhst_cancel_ind,0) = 0
               AND TRUNC(bh.ubbbhst_printed_date)
-                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
+                      > ADD_MONTHS(TRUNC(SYSDATE),-p.v_max_months)
               AND (
                     bh.ubbbhst_ending_bal <> 0
                     OR EXISTS (
                         SELECT 1
                         FROM uabopen o
                         WHERE o.uabopen_bhst_tran_num = bh.ubbbhst_tran_num
-                          AND NVL(o.uabopen_billed_chg, 0) <> 0
+                          AND NVL(o.uabopen_billed_chg,0) <> 0
                           AND o.uabopen_chrg_calc_num IS NOT NULL
                     )
                   )
         ),
+
+        match_count AS (
+            SELECT COUNT(*) number_of_matches
+            FROM bills_data
+        ),
+
         service_hist AS (
             SELECT
                 s.urrshis_cust_code,
                 s.urrshis_prem_code,
                 s.urrshis_serv_num,
                 b.ubbbhst_tran_num,
-                MAX(s.urrshis_action_date) AS billToDate_svc,
+                MAX(s.urrshis_action_date) bill_to_date_svc,
                 MAX(s.urrshis_action_date)
-                    - SUM(s.urrshis_dos) AS usageFromDate_svc,
-                SUM(s.urrshis_dos) AS daysOfService_svc,
-                SUM(NVL(c.ubbchst_billed_consump, 0)) AS totalBilledConsumption_svc
+                    - SUM(s.urrshis_dos) usage_from_date_svc,
+                SUM(s.urrshis_dos) days_of_service_svc,
+                SUM(NVL(c.ubbchst_billed_consump,0))
+                    total_billed_consumption_svc
             FROM urrshis s,
                  ubbchst c,
                  ubbbhst b,
@@ -13882,9 +14992,11 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND b.ubbbhst_cust_code = c.ubbchst_cust_code
               AND b.ubbbhst_prem_code = c.ubbchst_prem_code
               AND s.urrshis_chrg_calc_num = c.ubbchst_chrg_calc_num
-              AND s.urrshis_serv_num = c.ubbchst_serv_num
-              AND (s.urrshis_serv_num, s.urrshis_chrg_calc_num) IN (
-                    SELECT o.uabopen_serv_num, o.uabopen_chrg_calc_num
+              AND s.urrshis_serv_num      = c.ubbchst_serv_num
+              AND (s.urrshis_serv_num,s.urrshis_chrg_calc_num) IN (
+                    SELECT
+                        o.uabopen_serv_num,
+                        o.uabopen_chrg_calc_num
                     FROM uabopen o
                     WHERE o.uabopen_bhst_tran_num = b.ubbbhst_tran_num
                       AND o.uabopen_serv_num IS NOT NULL
@@ -13894,212 +15006,291 @@ public static final String GET_CUSTOMER_AND_PREMISES_WITH_DEFAULTED_PA_ACTIVE_BU
               AND b.ubbbhst_prem_code = p.prem_code
               AND NVL(b.ubbbhst_cancel_ind,0) = 0
               AND TRUNC(b.ubbbhst_printed_date)
-                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
+                      > ADD_MONTHS(TRUNC(SYSDATE),-p.v_max_months)
             GROUP BY
                 s.urrshis_cust_code,
                 s.urrshis_prem_code,
                 b.ubbbhst_tran_num,
                 s.urrshis_serv_num
         ),
+
         service_hist_agg AS (
             SELECT
                 urrshis_cust_code,
                 urrshis_prem_code,
-                ubbbhst_tran_num AS billHistoryTransactionNumber,
-                MIN(usageFromDate_svc) AS usageFromDate,
-                MAX(billToDate_svc) AS billToDate,
-                MAX(daysOfService_svc) AS daysOfService,
-                SUM(totalBilledConsumption_svc) AS totalBilledConsumption
+                ubbbhst_tran_num bill_history_transaction_number,
+                MIN(usage_from_date_svc) usage_from_date,
+                MAX(bill_to_date_svc) bill_to_date,
+                MAX(days_of_service_svc) days_of_service,
+                SUM(total_billed_consumption_svc)
+                    total_billed_consumption
             FROM service_hist
             GROUP BY
                 urrshis_cust_code,
                 urrshis_prem_code,
                 ubbbhst_tran_num
         ),
+
         uabopen_agg AS (
             SELECT
-                uabopen_bhst_tran_num AS billHistoryTransactionNumber,
-                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) LIKE '%TAX%'
-                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS taxes,
-                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) LIKE '%PROMO%DISCOUNT%'
-                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS promotionalDiscounts,
-                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) IN (
+                o.uabopen_bhst_tran_num bill_history_transaction_number,
+
+                SUM(
+                    CASE
+                        WHEN UPPER(r.utrsrat_bill_print_desc) LIKE '%TAX%'
+                        THEN NVL(o.uabopen_billed_chg,0)
+                        ELSE 0
+                    END
+                ) taxes,
+
+                SUM(
+                    CASE
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                                LIKE '%PROMO%DISCOUNT%'
+                        THEN NVL(o.uabopen_billed_chg,0)
+                        ELSE 0
+                    END
+                ) promotional_discounts,
+
+                SUM(
+                    CASE
+                        WHEN UPPER(r.utrsrat_bill_print_desc) IN (
                             'BASE CHARGE',
                             'CUSTOMER SERVICE CHARGE',
                             'GAS CHARGE',
                             'INTERSTATE PIPELINE CAPACITY CHARGE',
                             'INTERSTATE PIPELINE CAPACITY'
-                         ) THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS gasServiceCharges,
-                SUM(CASE WHEN UPPER(utrsrat_bill_print_desc) NOT LIKE '%TAX%'
-                          AND UPPER(utrsrat_bill_print_desc) NOT LIKE '%PROMO%DISCOUNT%'
-                          AND UPPER(utrsrat_bill_print_desc) NOT IN (
-                                'BASE CHARGE',
-                                'CUSTOMER SERVICE CHARGE',
-                                'GAS CHARGE',
-                                'INTERSTATE PIPELINE CAPACITY CHARGE',
-                                'INTERSTATE PIPELINE CAPACITY'
-                              )
-                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS otherCharges,
-                SUM(CASE WHEN uabopen_item_type = 'B'
-                         THEN NVL(uabopen_orig_budget_amt,0) ELSE 0 END) AS uabbudg_bdgt_bill_amt,
-                SUM(CASE WHEN LOWER(utrsrat_bill_print_desc) LIKE '%guaranteed%'
-                          AND LOWER(utrsrat_bill_print_desc) LIKE '%amount%'
-                         THEN NVL(uabopen_billed_chg,0) ELSE 0 END) AS guaranteed_bill_amt
-            FROM uabopen,
-                 utrsrat,
-                 ubbbhst,
-                 params p
-            WHERE ubbbhst_cust_code = p.cust_code
-              AND ubbbhst_prem_code = p.prem_code
-              AND uabopen_cust_code = ubbbhst_cust_code
-              AND uabopen_prem_code = ubbbhst_prem_code
-              AND utrsrat_srat_code = uabopen_srat_code
-              AND utrsrat_scat_code = uabopen_scat_code
-              AND ubbbhst_tran_num = uabopen_bhst_tran_num
-              AND NVL(ubbbhst_cancel_ind,0) = 0
-              AND TRUNC(ubbbhst_printed_date)
-                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
-              AND uabopen_charge_date BETWEEN utrsrat_effect_date AND utrsrat_nchg_date
-            GROUP BY uabopen_bhst_tran_num
+                        )
+                        THEN NVL(o.uabopen_billed_chg,0)
+                        ELSE 0
+                    END
+                ) gas_service_charges,
+
+                SUM(
+                    CASE
+                        WHEN UPPER(r.utrsrat_bill_print_desc) NOT LIKE '%TAX%'
+                         AND UPPER(r.utrsrat_bill_print_desc)
+                                NOT LIKE '%PROMO%DISCOUNT%'
+                         AND UPPER(r.utrsrat_bill_print_desc) NOT IN (
+                            'BASE CHARGE',
+                            'CUSTOMER SERVICE CHARGE',
+                            'GAS CHARGE',
+                            'INTERSTATE PIPELINE CAPACITY CHARGE',
+                            'INTERSTATE PIPELINE CAPACITY'
+                         )
+                        THEN NVL(o.uabopen_billed_chg,0)
+                        ELSE 0
+                    END
+                ) other_charges,
+
+                SUM(
+                    CASE
+                        WHEN o.uabopen_item_type = 'B'
+                        THEN NVL(o.uabopen_orig_budget_amt,0)
+                        ELSE 0
+                    END
+                ) budget_billing_amount,
+
+                SUM(
+                    CASE
+                        WHEN o.uabopen_item_type = 'B'
+                        THEN NVL(o.uabopen_budget_variance,0)
+                        ELSE 0
+                    END
+                ) budget_billing_monthly_variance,
+
+                SUM(NVL(o.uabopen_billed_chg,0))
+                    current_charges,
+
+                SUM(
+                    CASE
+                        WHEN UPPER(r.utrsrat_bill_print_desc)
+                                LIKE '%GUARANTEED%AMOUNT%'
+                          OR UPPER(r.utrsrat_bill_print_desc)
+                                LIKE '%GUARANTEED%CHARGE%'
+                        THEN NVL(o.uabopen_billed_chg,0)
+                        ELSE 0
+                    END
+                ) guaranteed_bill_amount
+
+            FROM uabopen o
+            JOIN ubbbhst h
+              ON h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
+            JOIN utrsrat r
+              ON r.utrsrat_srat_code = o.uabopen_srat_code
+             AND r.utrsrat_scat_code = o.uabopen_scat_code
+            CROSS JOIN params p
+            WHERE h.ubbbhst_cust_code = p.cust_code
+              AND h.ubbbhst_prem_code = p.prem_code
+              AND NVL(h.ubbbhst_cancel_ind,0) = 0
+              AND TRUNC(h.ubbbhst_printed_date)
+                      > ADD_MONTHS(TRUNC(SYSDATE),-p.v_max_months)
+              AND o.uabopen_charge_date
+                      BETWEEN r.utrsrat_effect_date
+                          AND r.utrsrat_nchg_date
+            GROUP BY o.uabopen_bhst_tran_num
         ),
+
         adj_agg_by_adjm AS (
             SELECT
-                ubbbhst_tran_num,
-                uabadje_adjm_code,
-                SUM(NVL(uabadje_billed_chg, NVL(uabadje_balance,0))) adjm_amount
+                h.ubbbhst_tran_num,
+                a.uabadje_adjm_code,
+                SUM(
+                    NVL(
+                        a.uabadje_billed_chg,
+                        NVL(a.uabadje_balance,0)
+                    )
+                ) adjm_amount
             FROM uabadje a,
                  ubbbhst h,
                  uabopen o,
                  params p
             WHERE h.ubbbhst_cust_code = p.cust_code
               AND h.ubbbhst_prem_code = p.prem_code
-              AND a.uabadje_bhst_tran_num = h.ubbbhst_tran_num
+              AND a.uabadje_bhst_tran_num   = h.ubbbhst_tran_num
               AND a.uabadje_origin_ar_trans = o.uabopen_ar_trans
               AND o.uabopen_cust_code = h.ubbbhst_cust_code
               AND o.uabopen_prem_code = h.ubbbhst_prem_code
-              AND TRUNC(h.ubbbhst_printed_date)
-                  > ADD_MONTHS(TRUNC(SYSDATE), -p.v_max_months)
               AND NVL(h.ubbbhst_cancel_ind,0) = 0
               AND a.uabadje_printed_ind = 'Y'
-            GROUP BY uabadje_adjm_code, ubbbhst_tran_num
+              AND TRUNC(h.ubbbhst_printed_date)
+                      > ADD_MONTHS(TRUNC(SYSDATE),-p.v_max_months)
+            GROUP BY
+                h.ubbbhst_tran_num,
+                a.uabadje_adjm_code
         ),
+
         adj_agg AS (
             SELECT
-                ubbbhst_tran_num AS billHistoryTransactionNumber,
-                SUM(CASE SIGN(adjm_amount) WHEN -1 THEN 0 ELSE adjm_amount END) AS oth_chrg,
-                SUM(CASE SIGN(adjm_amount) WHEN 1 THEN 0 ELSE adjm_amount END) AS bal_forward
+                ubbbhst_tran_num bill_history_transaction_number,
+
+                SUM(
+                    CASE SIGN(adjm_amount)
+                        WHEN -1 THEN 0
+                        ELSE adjm_amount
+                    END
+                ) oth_chrg,
+
+                SUM(
+                    CASE SIGN(adjm_amount)
+                        WHEN 1 THEN 0
+                        ELSE adjm_amount
+                    END
+                ) bal_forward
+
             FROM adj_agg_by_adjm
             GROUP BY ubbbhst_tran_num
-        ),
-        bill_rows AS (
-            SELECT
-                bd.billDate,
-                TO_CHAR(bd.billDate, 'YYYYMMDD') AS bill_date,
-                TO_CHAR(sh.usageFromDate, 'YYYYMMDD') AS bill_from_date,
-                TO_CHAR(sh.billToDate, 'YYYYMMDD') AS bill_to_date,
-                sh.daysOfService AS days_of_service,
-                NVL((
-                    SELECT SUM(NVL(ocsweat_heating_degree_days, 0))
-                    FROM ocsweat
-                    CROSS JOIN params p
-                    WHERE ocsweat_load_zone_code = (
-                              SELECT ucbprem_alternate_location
-                              FROM ucbprem
-                              WHERE ucbprem_code = p.prem_code
-                          )
-                      AND ocsweat_weather_date BETWEEN sh.usageFromDate AND sh.billToDate
-                ), 0) AS heating_degree_days,
-                sh.totalBilledConsumption AS total_billed_consumption,
-                bd.balanceBroughtForward + NVL(adj.bal_forward,0) AS balance_brought_forward,
-                ua.gasServiceCharges AS gas_service_charges,
-                ua.otherCharges + NVL(adj.oth_chrg,0) AS other_charges,
-                ua.promotionalDiscounts AS promotional_discounts,
-                ua.taxes AS taxes,
-                DECODE(ua.uabbudg_bdgt_bill_amt, 0, NULL, ua.uabbudg_bdgt_bill_amt) AS budget_billing_amount,
-                CASE
-                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
-                    THEN NVL(ua.gasServiceCharges,0)
-                       + NVL(ua.otherCharges,0)
-                       + NVL(adj.oth_chrg,0)
-                       + NVL(ua.promotionalDiscounts,0)
-                       + NVL(ua.taxes,0)
-                    ELSE NULL
-                END AS budget_billing_actual_charges,
-                CASE
-                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
-                    THEN (
-                          NVL(ua.gasServiceCharges,0)
-                        + NVL(ua.otherCharges,0)
-                        + NVL(adj.oth_chrg,0)
-                        + NVL(ua.promotionalDiscounts,0)
-                        + NVL(ua.taxes,0)
-                        - ua.uabbudg_bdgt_bill_amt
-                    )
-                    ELSE NULL
-                END AS budget_billing_monthly_variance,
-                CASE
-                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
-                    THEN (
-                        -- Cumulative BB variance through this bill (not lookback-limited).
-                        -- Per-bill uabopen_budget_variance equals monthly variance only.
-                        SELECT SUM(NVL(o.uabopen_budget_variance, 0))
-                        FROM uabopen o
-                        JOIN ubbbhst h
-                          ON h.ubbbhst_tran_num = o.uabopen_bhst_tran_num
-                        CROSS JOIN params p
-                        WHERE h.ubbbhst_cust_code = p.cust_code
-                          AND h.ubbbhst_prem_code = p.prem_code
-                          AND NVL(h.ubbbhst_cancel_ind, 0) = 0
-                          AND o.uabopen_item_type = 'B'
-                          AND TRUNC(h.ubbbhst_printed_date) <= TRUNC(bd.billDate)
-                    )
-                    ELSE NULL
-                END AS budget_billing_total_variance,
-                DECODE(ua.guaranteed_bill_amt, 0, NULL, ua.guaranteed_bill_amt) AS guaranteed_bill_amount,
-                CASE
-                    WHEN NVL(ua.uabbudg_bdgt_bill_amt,0) > 0
-                    THEN ua.uabbudg_bdgt_bill_amt
-                    ELSE
-                          NVL(ua.gasServiceCharges,0)
-                        + NVL(ua.otherCharges,0)
-                        + NVL(adj.oth_chrg,0)
-                        + NVL(bd.balanceBroughtForward,0)
-                        + NVL(adj.bal_forward,0)
-                        + NVL(ua.promotionalDiscounts,0)
-                        + NVL(ua.taxes,0)
-                END AS total_bill_amount,
-                bd.billHistoryTransactionNumber AS bill_history_transaction_number
-            FROM bills_data bd
-            LEFT JOIN service_hist_agg sh
-                ON sh.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
-            LEFT JOIN uabopen_agg ua
-                ON ua.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
-            LEFT JOIN adj_agg adj
-                ON adj.billHistoryTransactionNumber = bd.billHistoryTransactionNumber
         )
-        SELECT
-            bill_date,
-            bill_from_date,
-            bill_to_date,
-            days_of_service,
-            heating_degree_days,
-            total_billed_consumption,
-            balance_brought_forward,
-            gas_service_charges,
-            other_charges,
-            promotional_discounts,
-            taxes,
-            budget_billing_amount,
-            budget_billing_actual_charges,
-            budget_billing_monthly_variance,
-            budget_billing_total_variance,
-            guaranteed_bill_amount,
-            total_bill_amount,
-            bill_history_transaction_number
-        FROM bill_rows
-        ORDER BY billDate DESC
-        """;
 
+        SELECT
+            mc.number_of_matches,
+
+            TO_CHAR(bd.bill_date,'YYYYMMDD')
+                AS bill_date,
+
+            TO_CHAR(sh.usage_from_date,'YYYYMMDD')
+                AS bill_from_date,
+
+            TO_CHAR(sh.bill_to_date,'YYYYMMDD')
+                AS bill_to_date,
+
+            sh.days_of_service,
+
+            TRUNC(
+            (
+                SELECT SUM(NVL(w.ocsweat_heating_degree_days,0))
+                FROM ocsweat w
+                WHERE w.ocsweat_load_zone_code =
+                      (SELECT load_zone FROM delivery_group)
+                  AND w.ocsweat_weather_date
+                      BETWEEN sh.usage_from_date
+                          AND sh.bill_to_date
+            )
+        ) AS heating_degree_days,
+
+            sh.total_billed_consumption,
+
+            bd.balance_brought_forward
+                + NVL(adj.bal_forward,0)
+                AS balance_brought_forward,
+
+            ua.gas_service_charges,
+
+            ua.other_charges
+                + NVL(adj.oth_chrg,0)
+                AS other_charges,
+
+            ua.promotional_discounts,
+
+            ua.taxes,
+
+            DECODE(
+                ua.budget_billing_amount,
+                0,
+                NULL,
+                ua.budget_billing_amount
+            ) AS budget_billing_amount,
+
+            DECODE(
+                ua.budget_billing_amount,
+                0,
+                NULL,
+                ua.current_charges
+            ) AS budget_billing_actual_charges,
+
+            DECODE(
+                ua.budget_billing_monthly_variance,
+                0,
+                NULL,
+                ua.budget_billing_monthly_variance
+            ) AS budget_billing_monthly_variance,
+
+            (
+                SELECT SUM(NVL(o.uabopen_budget_variance,0))
+                FROM uabopen o
+                WHERE o.uabopen_cust_code = bd.ubbbhst_cust_code
+                  AND o.uabopen_prem_code = bd.ubbbhst_prem_code
+                  AND o.uabopen_serv_num = 1
+                  AND o.uabopen_item_type = 'B'
+                  AND TRUNC(o.uabopen_printed_date)
+                          <= TRUNC(bd.bill_date)
+            ) AS budget_billing_total_variance,
+
+            DECODE(
+                ua.guaranteed_bill_amount,
+                0,
+                NULL,
+                ua.guaranteed_bill_amount
+            ) AS guaranteed_bill_amount,
+
+            CASE
+                WHEN NVL(ua.budget_billing_amount,0) > 0
+                THEN ua.budget_billing_amount
+                ELSE
+                      NVL(ua.gas_service_charges,0)
+                    + NVL(ua.other_charges,0)
+                    + NVL(adj.oth_chrg,0)
+                    + NVL(bd.balance_brought_forward,0)
+                    + NVL(adj.bal_forward,0)
+                    + NVL(ua.promotional_discounts,0)
+                    + NVL(ua.taxes,0)
+            END AS total_bill_amount,
+
+            bd.bill_history_transaction_number
+
+        FROM bills_data bd
+        CROSS JOIN match_count mc
+        LEFT JOIN service_hist_agg sh
+            ON sh.bill_history_transaction_number =
+               bd.bill_history_transaction_number
+        LEFT JOIN uabopen_agg ua
+            ON ua.bill_history_transaction_number =
+               bd.bill_history_transaction_number
+        LEFT JOIN adj_agg adj
+            ON adj.bill_history_transaction_number =
+               bd.bill_history_transaction_number
+        ORDER BY bd.bill_date DESC
+        """;
 
 
     public static final String GET_USAGE_HISTORY2 = """

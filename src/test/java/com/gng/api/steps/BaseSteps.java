@@ -175,6 +175,56 @@ public class BaseSteps {
         throw new IllegalArgumentException("Unsupported historical-values condition: " + testCondition);
     }
 
+    @And("bill history banner values should satisfy {string}")
+    public void billHistoryBannerValuesShouldSatisfy(String testCondition) {
+        Response response = testContext.getResponse();
+        int matches = response.jsonPath().getInt("data.numberOfMatches");
+        List<Map<String, Object>> billHistory = response.jsonPath().getList("data.billHistory");
+        Integer requestedMonths = testContext.getRequestedNumberOfMonths();
+
+        assertThat("billHistory should not be null", billHistory, notNullValue());
+        assertThat("numberOfMatches is the bill count, not the lookback month count",
+                matches, equalTo(billHistory.size()));
+        assertThat("two-month window should return more than one bill",
+                matches, greaterThan(1));
+        if (requestedMonths != null) {
+            assertThat("numberOfMonths lookback should be 2",
+                    requestedMonths.intValue(), equalTo(2));
+        }
+
+        if (testCondition.contains("Consumption_Values")) {
+            boolean qualified = billHistory.stream().anyMatch(row ->
+                    greaterThanZero(row.get("daysOfService"))
+                            && greaterThanZero(row.get("heatingDegreeDays"))
+                            && greaterThanZero(row.get("totalBilledConsumption")));
+            assertThat("SP1_12: at least one bill should have daysOfService, heatingDegreeDays, "
+                            + "and totalBilledConsumption greater than 0",
+                    qualified, equalTo(true));
+            return;
+        }
+        if (testCondition.contains("Balance_Brought_Forward_Values")) {
+            boolean qualified = billHistory.stream()
+                    .anyMatch(row -> notZero(row.get("balanceBroughtForward")));
+            assertThat("SP1_13: at least one bill should have balanceBroughtForward not equal to 0",
+                    qualified, equalTo(true));
+            return;
+        }
+        if (testCondition.contains("Promotional_Discount_Values")) {
+            boolean qualified = billHistory.stream()
+                    .anyMatch(row -> notZero(row.get("promotionalDiscounts")));
+            assertThat("SP1_14: at least one bill should have promotionalDiscounts not equal to 0",
+                    qualified, equalTo(true));
+        }
+    }
+
+    private static boolean greaterThanZero(Object value) {
+        return value != null && new BigDecimal(String.valueOf(value)).compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    private static boolean notZero(Object value) {
+        return value != null && new BigDecimal(String.valueOf(value)).compareTo(BigDecimal.ZERO) != 0;
+    }
+
 
     @And("response should have ErrorCode {int} and ErrorMessage {string} with Invalid State code {string}")
     public void responseShouldHaveErrorCodeAndErrorMessageWithInvalidStateCode(int errorCode, String errorMessage, String invalidStateCode) {
@@ -760,9 +810,8 @@ public class BaseSteps {
                     ((Number) apiRow.get("daysOfService")).intValue(),
                     equalTo(((Number) dbRow.get("DAYS_OF_SERVICE")).intValue()));
 
-            assertThat(rowContext + " | heatingDegreeDays mismatch",
-                    ((Number) apiRow.get("heatingDegreeDays")).intValue(),
-                    equalTo(((Number) dbRow.get("HEATING_DEGREE_DAYS")).intValue()));
+            assertNullableInt(rowContext + " | heatingDegreeDays mismatch",
+                    apiRow.get("heatingDegreeDays"), dbRow.get("HEATING_DEGREE_DAYS"));
 
             // ── Monetary fields (1 cent tolerance) ───────────────────────────
             assertMonetary(rowContext + " | totalBilledConsumption mismatch",
@@ -793,8 +842,8 @@ public class BaseSteps {
                     apiRow.get("budgetBillingActualCharges"), dbRow.get("BUDGET_BILLING_ACTUAL_CHARGES"));
             assertNullableMonetary(rowContext + " | budgetBillingMonthlyVariance",
                     apiRow.get("budgetBillingMonthlyVariance"), dbRow.get("BUDGET_BILLING_MONTHLY_VARIANCE"));
-            // totalVariance uses SUM(uabopen_budget_variance) for item_type B (same as GetBillingInfo).
-            // If Banner SP uses a different cumulative source, mismatch is reported with both values.
+            // totalVariance is SUM(uabopen_budget_variance) for item_type B, service 1,
+            // with printed date on or before the bill date (GetBillingHistory V1.1).
             assertNullableMonetary(rowContext + " | budgetBillingTotalVariance",
                     apiRow.get("budgetBillingTotalVariance"), dbRow.get("BUDGET_BILLING_TOTAL_VARIANCE"));
             assertNullableMonetary(rowContext + " | guaranteedBillAmount",
@@ -805,6 +854,17 @@ public class BaseSteps {
                     ((Number) apiRow.get("billHistoryTransactionNumber")).longValue(),
                     equalTo(((Number) dbRow.get("BILL_HISTORY_TRANSACTION_NUMBER")).longValue()));
         }
+    }
+
+    private void assertNullableInt(String context, Object apiValue, Object dbValue) {
+        if (apiValue == null && dbValue == null) {
+            return;
+        }
+        assertThat(context + " (api=" + apiValue + ", db=" + dbValue + ")", apiValue, notNullValue());
+        assertThat(context + " (api=" + apiValue + ", db=" + dbValue + ")", dbValue, notNullValue());
+        assertThat(context,
+                ((Number) apiValue).intValue(),
+                equalTo(((Number) dbValue).intValue()));
     }
 
     private void assertNullableMonetary(String context, Object apiValue, Object dbValue) {

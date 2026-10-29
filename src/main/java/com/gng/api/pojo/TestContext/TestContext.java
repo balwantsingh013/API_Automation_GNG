@@ -155,6 +155,7 @@ public class TestContext {
     private Object confirmPaperlessEnrollmentApiPage;
     private ConfirmPaperlessEnrollmentResponse confirmPaperlessEnrollmentResponse;
     @Getter @Setter
+    private String reportPaymentExpectedPaAmount;
     private String paperlessConfirmationToken;
     @Getter @Setter
     private Object updatePasswordApiPage;

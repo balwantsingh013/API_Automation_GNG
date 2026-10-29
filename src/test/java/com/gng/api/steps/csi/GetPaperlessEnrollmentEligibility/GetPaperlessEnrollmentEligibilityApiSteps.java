@@ -313,6 +313,10 @@ public class GetPaperlessEnrollmentEligibilityApiSteps {
                 assertDeliveryOption("billDeliveryOption", "P");
                 break;
 
+            case SP1_01__Positive__NEW_No_Pending_Bill_Preference_Record_:
+                assertDeliveryOption("billDeliveryOption", "P");
+                break;
+
             default:
                 throw new IllegalArgumentException("No GetPaperlessEnrollmentEligibility validation for: " + testCondition);
         }

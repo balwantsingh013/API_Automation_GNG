@@ -27,6 +27,8 @@ public class GetBillingInfoPage extends BasePage {
         GetBillingInfoResponse getBillingInfoResponse = deserializeResponseToPojo(response, GetBillingInfoResponse.class);
         testContext.setGetBillingInfoResponse(getBillingInfoResponse);
         testContext.setResponse(response);
+        helper.assertApiMatchesBillInfoV14(payload, response);
+        helper.assertScenarioEvidence(testCondition, response);
     }
 
 }

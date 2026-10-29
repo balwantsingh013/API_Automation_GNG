@@ -5,6 +5,7 @@ Feature: Verify ReportPayment Api
     When a request is made to ReportPayment Api for "<testCondition>"
     Then verify response code of "ReportPayment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And response success is "<success>" and data is "<data>"
 
     Examples:
       | testCondition                                                                    | errorCode | errorMessage                                      | success | data |
@@ -47,21 +48,23 @@ Feature: Verify ReportPayment Api
     When a request is made to ReportPayment Api for "<testCondition>"
     Then verify response code of "ReportPayment" Api is 200
     And response should have ErrorCode <errorCode> and ErrorMessage "<errorMessage>"
+    And response success is "<success>" and data is "<data>"
+    And ReportPayment paCreated is "<paCreated>" paAmount is "<paAmount>" and paDueDate is "<paDueDate>"
 
     Examples:
-      | testCondition                                                                    | errorCode | errorMessage | success | data    |
-      | TC_34__Positive__OT_Payment_Type_Without_Confirmation_Number_              | 0         |              | true    | notNull |
-      | TC_35__Positive__Payment_Amount_Less_Than_Past_Due_Balance_                | 0         |              | true    | notNull |
-      | TC_36__Positive__No_Recent_PREC_                                           | 0         |              | true    | notNull |
-      | TC_37__Positive__Net_Past_Due_Balance_Zero_or_Negative_                    | 0         |              | true    | notNull |
-      | TC_38__Positive__Existing_Payment_Arrangement_                             | 0         |              | true    | notNull |
-      | TC_39__Positive__Active_Bank_Draft_                                        | 0         |              | true    | notNull |
-      | TC_40__Positive__Active_Budget_Billing_                                    | 0         |              | true    | notNull |
-      | TC_41__Positive__Home_Warranty_                                            | 0         |              | true    | notNull |
-      | TC_42__Positive__Recurring_Credit_Card_                                    | 0         |              | true    | notNull |
-      | TC_43__Positive__MPAY_Defaulted_Payment_Arrangement_History_               | 0         |              | true    | notNull |
-      | TC_44__Positive__Delinquency_Stage_Update_Rule_                            | 0         |              | true    | notNull |
-      | TC_45__Positive__Hold_Payment_Arrangement_Created_                         | 0         |              | true    | notNull |
-      | TC_46__Positive__Hold_Response_Amount_                                     | 0         |              | true    | notNull |
-      | TC_47__Positive__Hold_Response_Due_Date_                                   | 0         |              | true    | notNull |
-      | TC_48__Positive__Payment_Arrangement_Enrollment_Note_Created_              | 0         |              | true    | notNull |
+      | testCondition                                                              | errorCode | errorMessage | success | data    | paCreated | paAmount      | paDueDate |
+      | TC_34__Positive__OT_Payment_Type_Without_Confirmation_Number_              | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_35__Positive__Payment_Amount_Less_Than_Past_Due_Balance_                | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_36__Positive__No_Recent_PREC_                                           | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_37__Positive__Net_Past_Due_Balance_Zero_or_Negative_                    | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_38__Positive__Existing_Payment_Arrangement_                             | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_39__Positive__Active_Bank_Draft_                                        | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_40__Positive__Active_Budget_Billing_                                    | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_41__Positive__Home_Warranty_                                            | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_42__Positive__Recurring_Credit_Card_                                    | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_43__Positive__MPAY_Defaulted_Payment_Arrangement_History_               | 0         |              | true    | notNull | false     | null          | null      |
+      | TC_44__Positive__Delinquency_Stage_Update_Rule_                            | 0         |              | true    | notNull | true      | notNull       | notNull   |
+      | TC_45__Positive__Hold_Payment_Arrangement_Created_                         | 0         |              | true    | notNull | true      | notNull       | notNull   |
+      | TC_46__Positive__Hold_Response_Amount_                                     | 0         |              | true    | notNull | true      | matchesPastDue | notNull  |
+      | TC_47__Positive__Hold_Response_Due_Date_                                   | 0         |              | true    | notNull | true      | notNull       | notNull   |
+      | TC_48__Positive__Payment_Arrangement_Enrollment_Note_Created_              | 0         |              | true    | notNull | true      | notNull       | notNull   |

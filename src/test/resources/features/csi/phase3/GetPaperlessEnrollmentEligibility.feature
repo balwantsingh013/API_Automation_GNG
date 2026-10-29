@@ -81,3 +81,4 @@ Feature: Verify GetPaperlessEnrollmentEligibility Api
       | TC_203__Positive__New_Unconfirmed_Bill_            | 0         |              | true    | notNull |
       | TC_204__Positive__New_Confirmed_Bill_              | 0         |              | true    | notNull |
       | TC_205__Positive__New_Paper_Bill_                  | 0         |              | true    | notNull |
+      | SP1_01__Positive__NEW_No_Pending_Bill_Preference_Record_ | 0   |              | true    | notNull |
